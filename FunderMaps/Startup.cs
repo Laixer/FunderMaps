@@ -14,25 +14,42 @@ namespace FunderMaps
 {
     public class Startup
     {
+        public readonly IConfiguration _configuration;
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
-
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureDatastore(services);
+            ConfigureIdentity(services);
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+
+            // In production, the frontend framework files will be served from this directory.
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist";
+            });
+        }
+
+        private void ConfigureDatastore(IServiceCollection services)
+        {
             services.AddDbContext<FunderMapsDbContext>(options =>
             {
-                options.UseNpgsql(Configuration.GetConnectionString("FunderMapsConnection"), pgOptions =>
+                options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"), pgOptions =>
                 {
                     pgOptions.MigrationsHistoryTable("migrations_history", "meta");
                 });
             })
             .AddEntityFrameworkNpgsql();
+        }
 
+        private void ConfigureIdentity(IServiceCollection services)
+        {
             services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>
             {
                 // Password settings.
@@ -52,14 +69,6 @@ namespace FunderMaps
             .AddEntityFrameworkStores<FunderMapsDbContext>()
             .AddDefaultUI()
             .AddDefaultTokenProviders();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
-
-            // In production, the frontend framework files will be served from this directory.
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
