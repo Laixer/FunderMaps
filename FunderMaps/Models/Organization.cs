@@ -10,12 +10,6 @@ namespace FunderMaps.Models
         {
         }
 
-        public Organization(OrganizationProposal proposal)
-        {
-            Name = proposal.Name;
-            Email = proposal.Email;
-        }
-
         public Guid Id { get; set; }
         public string Name { get; set; }
 
@@ -40,7 +34,10 @@ namespace FunderMaps.Models
         [IgnoreDataMember]
         public int AttestationOrganizationId { get; set; }
 
+        [Required]
         public virtual Address HomeAddress { get; set; }
+
+        [Required]
         public virtual Address PostalAddres { get; set; }
     }
 }
