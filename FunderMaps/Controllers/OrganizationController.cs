@@ -3,8 +3,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
+using FunderMaps.Data.Identity;
 using FunderMaps.Models;
 
 namespace FunderMaps.Controllers
@@ -14,9 +16,9 @@ namespace FunderMaps.Controllers
     public class OrganizationController : ControllerBase
     {
         private readonly FunderMapsDbContext _context;
-        private readonly Microsoft.AspNetCore.Identity.UserManager<Data.Identity.FunderMapsUser> _userManager;
+        private readonly UserManager<FunderMapsUser> _userManager;
 
-        public OrganizationController(FunderMapsDbContext context, Microsoft.AspNetCore.Identity.UserManager<Data.Identity.FunderMapsUser> userManager)
+        public OrganizationController(FunderMapsDbContext context, UserManager<FunderMapsUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -29,11 +31,11 @@ namespace FunderMaps.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET: api/organization/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: api/organization/{id}
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> Get(Guid id)
         {
-            return "value";
+            return Ok(await _context.Organizations.FindAsync(id));
         }
 
         // POST: api/organization/proposal/{token}
@@ -91,12 +93,6 @@ namespace FunderMaps.Controllers
         // PUT: api/organization/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE: api/organization/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
         {
         }
     }
