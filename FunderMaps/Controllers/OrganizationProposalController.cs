@@ -48,8 +48,12 @@ namespace FunderMaps.Controllers
                 return Conflict(proposal.Name);
             }
 
+            // TODO: Check if organization name already exists
+
             await _context.OrganizationProposals.AddAsync(proposal);
             await _context.SaveChangesAsync();
+
+            // TODO: Send email with registration link
 
             return Ok(proposal);
         }
