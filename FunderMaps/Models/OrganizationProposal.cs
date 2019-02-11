@@ -7,9 +7,12 @@ namespace FunderMaps.Models
     {
         [Required]
         public string Name { get; set; }
+
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
-        public Guid Token { get; set; } = Guid.NewGuid();
+
+        public Guid Token { get; set; }
 
         public OrganizationProposal(string name, string email)
         {

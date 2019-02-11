@@ -8,6 +8,8 @@ namespace FunderMaps.Data
 {
     public class FunderMapsDbContext : IdentityDbContext<FunderMapsUser, FunderMapsRole, Guid>
     {
+        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
         public DbSet<OrganizationProposal> OrganizationProposals { get; set; }
 
         public FunderMapsDbContext(DbContextOptions<FunderMapsDbContext> options)
