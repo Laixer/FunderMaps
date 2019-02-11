@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Models;
 
@@ -17,6 +20,23 @@ namespace FunderMaps.Controllers
             _context = context;
         }
 
+        // GET: api/organizationproposal/{token}
+        [HttpGet("{token:guid}")]
+        public async Task<IActionResult> Get(Guid token)
+        {
+            var proposal = await _context.OrganizationProposals
+                .Where(s => s.Token == token)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+            if (proposal == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(proposal);
+        }
+
         // POST: api/organizationproposal
         [HttpPost]
         [ProducesResponseType(typeof(OrganizationProposal), StatusCodes.Status200OK)]
@@ -27,10 +47,6 @@ namespace FunderMaps.Controllers
             {
                 return Conflict(proposal.Name);
             }
-
-            // Always generate a new token so that the user cannot
-            // control the token input.
-            proposal.GenerateToken();
 
             await _context.OrganizationProposals.AddAsync(proposal);
             await _context.SaveChangesAsync();
