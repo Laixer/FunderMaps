@@ -36,7 +36,7 @@ namespace FunderMaps.Data.Migrations
                     LastName = table.Column<string>(maxLength: 256, nullable: true, name: "last_name"),
                     Email = table.Column<string>(maxLength: 256, name: "email"),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true, name: "normalized_email"),
-                    Avatar = table.Column<string>(maxLength: 256, name: "avatar"),
+                    Avatar = table.Column<string>(maxLength: 256, nullable: true, name: "avatar"),
                     EmailConfirmed = table.Column<bool>(nullable: false, defaultValue: false, name: "email_confirmed"),
                     JobTitle = table.Column<string>(nullable: true, name: "job_title"),
                     PasswordHash = table.Column<string>(nullable: true, name: "password_hash"),
