@@ -38,12 +38,20 @@ namespace FunderMaps
 
         private void ConfigureDatastore(IServiceCollection services)
         {
+            // Application database
             services.AddDbContext<FunderMapsDbContext>(options =>
             {
                 options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"), pgOptions =>
                 {
                     pgOptions.MigrationsHistoryTable("migrations_history", "meta");
                 });
+            })
+            .AddEntityFrameworkNpgsql();
+
+            // FIS database
+            services.AddDbContext<FisDbContext>(options =>
+            {
+                options.UseNpgsql(_configuration.GetConnectionString("FISConnection"));
             })
             .AddEntityFrameworkNpgsql();
         }

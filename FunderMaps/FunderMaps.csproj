@@ -9,6 +9,18 @@
     <LangVersion>latest</LangVersion>
     <UserSecretsId>aspnet-FunderMaps-1BA92925-643A-4F0A-817C-62E1B7DBC479</UserSecretsId>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
+    <Authors>ZanHos IT Consultancy &amp; Services</Authors>
+    <Copyright>Copyright ZanHos IT Consultancy &amp; Services</Copyright>
+    <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' or '$(Configuration)|$(Platform)'=='Debug|Any CPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU' or '$(Configuration)|$(Platform)'=='Release|Any CPU'">
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
