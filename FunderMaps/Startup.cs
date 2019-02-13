@@ -30,7 +30,9 @@ namespace FunderMaps
 
             services.ConfigureApplicationCookie(options =>
             {
-                //
+                options.Cookie.Name = "IdentityToken";
+                options.Cookie.IsEssential = true;
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
@@ -77,7 +79,7 @@ namespace FunderMaps
                 options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<FunderMapsDbContext>()
-            .AddDefaultUI()
+            //.AddDefaultUI()
             .AddDefaultTokenProviders()
             .AddUserManager<FunderMapsUserManager>();
         }
