@@ -43,7 +43,7 @@ namespace FunderMaps.Data.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false, name: "id", defaultValueSql: "uuid_generate_v4()"),
                     Name = table.Column<string>(maxLength: 256, nullable: false, name: "name"),
-                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true, name: "normalized_name"),
+                    NormalizedName = table.Column<string>(maxLength: 256, nullable: false, name: "normalized_name"),
                     Email = table.Column<string>(maxLength: 256, name: "email"),
                     PhoneNumber = table.Column<string>(nullable: true, name: "phone_number"),
                     HomeAddressId = table.Column<int>(nullable: false, name: "home_address_id"),

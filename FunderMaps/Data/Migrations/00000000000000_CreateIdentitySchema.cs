@@ -30,14 +30,14 @@ namespace FunderMaps.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, name: "id"),
-                    UserName = table.Column<string>(maxLength: 256, nullable: false, name: "username"),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: false, name: "normalized_username"),
                     GivenName = table.Column<string>(maxLength: 256, nullable: true, name: "given_name"),
                     LastName = table.Column<string>(maxLength: 256, nullable: true, name: "last_name"),
-                    Email = table.Column<string>(maxLength: 256, name: "email"),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true, name: "normalized_email"),
-                    Avatar = table.Column<string>(maxLength: 256, nullable: true, name: "avatar"),
+                    UserName = table.Column<string>(maxLength: 256, nullable: false, name: "username"),
+                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: false, name: "normalized_username"),
+                    Email = table.Column<string>(maxLength: 256, nullable: false, name: "email"),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: false, name: "normalized_email"),
                     EmailConfirmed = table.Column<bool>(nullable: false, defaultValue: false, name: "email_confirmed"),
+                    Avatar = table.Column<string>(maxLength: 256, nullable: true, name: "avatar"),
                     JobTitle = table.Column<string>(nullable: true, name: "job_title"),
                     PasswordHash = table.Column<string>(nullable: true, name: "password_hash"),
                     SecurityStamp = table.Column<string>(nullable: true, name: "security_stamp"),
@@ -206,15 +206,9 @@ namespace FunderMaps.Data.Migrations
                 name: "idx_user_normalized_email",
                 schema: "identity",
                 table: "user",
-                column: "normalized_email");
-
-            migrationBuilder.CreateIndex(
-                name: "idx_user_normalized_username",
-                schema: "identity",
-                table: "user",
-                column: "normalized_username",
+                column: "normalized_email",
                 unique: true,
-                filter: "\"normalized_username\" IS NOT NULL");
+                filter: "\"normalized_email\" IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

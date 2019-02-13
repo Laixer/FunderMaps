@@ -45,26 +45,34 @@ namespace FunderMaps.Data.Builder
             {
                 entity.HasKey(e => e.Id).HasName("pk_user");
 
+
                 entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
-                entity.Property(e => e.UserName).HasColumnName("username").HasMaxLength(256).IsRequired();
-                entity.Property(e => e.AccessFailedCount).HasColumnName("access_failed_count");
-                entity.Property(e => e.ConcurrencyStamp).HasColumnName("concurrency_stamp").IsConcurrencyToken();
-                entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(256);
-                entity.Property(e => e.EmailConfirmed).HasColumnName("email_confirmed").HasDefaultValue(false);
-                entity.Property(e => e.LockoutEnabled).HasColumnName("lockout_enabled").HasDefaultValue(false);
-                entity.Property(e => e.LockoutEnd).HasColumnName("lockout_end");
-                entity.Property(e => e.NormalizedEmail).HasColumnName("normalized_email").HasMaxLength(256);
+                entity.Property(e => e.GivenName).HasColumnName("given_name").HasMaxLength(256);
+                entity.Property(e => e.LastName).HasColumnName("last_name").HasMaxLength(256);
+                entity.Property(e => e.UserName).HasColumnName("username").HasMaxLength(256);
                 entity.Property(e => e.NormalizedUserName).HasColumnName("normalized_username").HasMaxLength(256);
+                entity.Property(e => e.Email).HasColumnName("email").IsRequired().HasMaxLength(256);
+                entity.Property(e => e.NormalizedEmail).HasColumnName("normalized_email").IsRequired().HasMaxLength(256);
+                entity.Property(e => e.EmailConfirmed).HasColumnName("email_confirmed").HasDefaultValue(false);
+                entity.Property(e => e.Avatar).HasColumnName("avatar").HasMaxLength(256);
+                entity.Property(e => e.JobTitle).HasColumnName("job_title");
                 entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
+                entity.Property(e => e.SecurityStamp).HasColumnName("security_stamp");
                 entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
                 entity.Property(e => e.PhoneNumberConfirmed).HasColumnName("phone_number_confirmed").HasDefaultValue(false);
-                entity.Property(e => e.SecurityStamp).HasColumnName("security_stamp");
                 entity.Property(e => e.TwoFactorEnabled).HasColumnName("two_factor_enabled").HasDefaultValue(false);
+                entity.Property(e => e.LockoutEnd).HasColumnName("lockout_end");
+                entity.Property(e => e.LockoutEnabled).HasColumnName("lockout_enabled").HasDefaultValue(false);
+                entity.Property(e => e.AccessFailedCount).HasColumnName("access_failed_count");
+                entity.Property(e => e.AttestationPrincipalId).HasColumnName("attestation_principal_id");
 
-                entity.HasIndex(e => e.NormalizedEmail).HasName("idx_user_normalized_email");
+                entity.Property(e => e.ConcurrencyStamp).HasColumnName("concurrency_stamp").IsConcurrencyToken();
 
-                entity.HasIndex(e => e.NormalizedUserName).IsUnique().HasName("idx_user_normalized_username")
-                    .HasFilter("\"normalized_username\" IS NOT NULL");
+                entity.HasIndex(e => e.NormalizedUserName).HasName("idx_user_normalized_username")
+                    .IsUnique().HasFilter("\"normalized_username\" IS NOT NULL");
+
+                entity.HasIndex(e => e.NormalizedEmail).HasName("idx_user_normalized_email")
+                    .IsUnique().HasFilter("\"normalized_email\" IS NOT NULL");
 
                 entity.ToTable("user", "identity");
 

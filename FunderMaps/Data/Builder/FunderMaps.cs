@@ -47,6 +47,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("uuid_generate_v4()");
                 entity.Property(e => e.Name).HasColumnName("name").IsRequired().HasMaxLength(256);
+                entity.Property(e => e.NormalizedName).HasColumnName("normalized_name").IsRequired().HasMaxLength(256);
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(256);
                 entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
                 entity.Property(e => e.HomeAddressId).HasColumnName("home_address_id");
@@ -58,6 +59,9 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.AttestationOrganizationId).HasColumnName("attestation_organization_id");
 
                 entity.ToTable("organization", "application");
+
+                entity.HasIndex(e => e.NormalizedName).IsUnique().HasName("idx_organization_normalized_name")
+                    .HasFilter("\"normalized_name\" IS NOT NULL");
 
                 entity.HasOne(d => d.HomeAddress)
                    .WithOne()

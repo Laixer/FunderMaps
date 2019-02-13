@@ -1,26 +1,49 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using FunderMaps.Models;
-using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Data
 {
-    public class FunderMapsDbContext : IdentityDbContext<FunderMapsUser, FunderMapsRole, Guid>
+    public class FunderMapsDbContext : FunderMapsIdentityDbContext
     {
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<Organization> Organizations { get; set; }
-        public DbSet<OrganizationProposal> OrganizationProposals { get; set; }
-        public DbSet<OrganizationUser> OrganizationUsers { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="options">The options to be used by a <see cref="DbContext"/>.</param>
         public FunderMapsDbContext(DbContextOptions<FunderMapsDbContext> options)
             : base(options)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        protected FunderMapsDbContext()
+        {
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of Address.
+        /// </summary>
+        public DbSet<Address> Addresses { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of Organizations.
+        /// </summary>
+        public DbSet<Organization> Organizations { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of OrganizationProposals.
+        /// </summary>
+        public DbSet<OrganizationProposal> OrganizationProposals { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of OrganizationUsers.
+        /// </summary>
+        public DbSet<OrganizationUser> OrganizationUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Builder.Identity.ModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
             Builder.FunderMaps.ModelCreating(modelBuilder);
         }
     }
