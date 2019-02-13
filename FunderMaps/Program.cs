@@ -8,10 +8,12 @@ namespace FunderMaps
     {
         public static async Task Main(string[] args)
         {
-            await WebHost
-                .CreateDefaultBuilder<Startup>(args)
-                .Build()
-                .RunAsync();
+            await BuildWebHost(args).RunAsync();
         }
+
+        public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseStartup<Startup>()
+                .Build();
     }
 }

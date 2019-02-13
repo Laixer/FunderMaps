@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FunderMaps.Data;
+using FunderMaps.Identity;
 using FunderMaps.Models.Identity;
 
 namespace FunderMaps
@@ -26,6 +27,11 @@ namespace FunderMaps
         {
             ConfigureDatastore(services);
             ConfigureIdentity(services);
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                //
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
@@ -64,19 +70,16 @@ namespace FunderMaps
                 options.Password = Constants.PasswordPolicy;
 
                 // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-                options.Lockout.MaxFailedAccessAttempts = 5;
-                options.Lockout.AllowedForNewUsers = true;
-
-                // SignIn settings.
-                options.SignIn.RequireConfirmedEmail = false;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
 
                 // User settings.
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<FunderMapsDbContext>()
             .AddDefaultUI()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddUserManager<FunderMapsUserManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
