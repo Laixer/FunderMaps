@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FunderMaps.Data;
-using FunderMaps.Data.Identity;
+using FunderMaps.Models.Identity;
 
 namespace FunderMaps
 {
@@ -69,7 +69,7 @@ namespace FunderMaps
                 options.Lockout.AllowedForNewUsers = true;
 
                 // SignIn settings.
-                options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
 
                 // User settings.
                 options.User.RequireUniqueEmail = false;

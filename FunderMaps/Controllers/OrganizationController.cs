@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
-using FunderMaps.Data.Identity;
 using FunderMaps.Models;
+using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Controllers
 {

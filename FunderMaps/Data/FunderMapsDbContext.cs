@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Models;
-using FunderMaps.Data.Identity;
+using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Data
 {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
-namespace FunderMaps.Data.Identity
+namespace FunderMaps.Models.Identity
 {
     public class FunderMapsUser : IdentityUser<Guid>
     {
