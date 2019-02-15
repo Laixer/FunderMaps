@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Models.Fis;
+using FunderMaps.Interfaces;
+
+//using Microsoft.WindowsAzure.Storage;
+//using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace FunderMaps.Controllers
 {
@@ -17,10 +21,12 @@ namespace FunderMaps.Controllers
     public class ReportController : ControllerBase
     {
         private readonly FisDbContext _context;
+        private readonly IFileStorageService _fileStorageService;
 
-        public ReportController(FisDbContext context)
+        public ReportController(FisDbContext context, IFileStorageService fileStorageService)
         {
             _context = context;
+            _fileStorageService = fileStorageService;
         }
 
         // GET: api/report
@@ -112,10 +118,18 @@ namespace FunderMaps.Controllers
         }
 
         // POST: api/report/attach_document
-        [HttpPost("attach_document"), DisableRequestSizeLimit]
-        public async Task AttachDocument([FromBody] Report report)
+        [HttpPost("attach_document")]
+        public async Task<IActionResult> AttachDocument()
         {
-            await _context.SaveChangesAsync();
+            if (Request.ContentLength == 0)
+            {
+                return BadRequest();
+            }
+
+            // Store the report
+            await _fileStorageService.StoreFileAsync("kaas.pak", Request.Body);
+
+            return Ok();
         }
 
         // PUT: api/report
