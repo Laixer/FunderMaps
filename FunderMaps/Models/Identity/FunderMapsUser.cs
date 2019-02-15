@@ -13,6 +13,7 @@ namespace FunderMaps.Models.Identity
         public FunderMapsUser(string email)
         {
             Email = email;
+            UserName = email;
         }
 
         /// <summary>
