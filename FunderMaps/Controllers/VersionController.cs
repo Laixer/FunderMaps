@@ -18,6 +18,10 @@ namespace FunderMaps.Controllers
         }
 
         // GET: api/version
+        /// <summary>
+        /// Return application versioning information.
+        /// </summary>
+        /// <returns>VersionOutputModel.</returns>
         [HttpGet]
         public VersionOutputModel Get()
         {
