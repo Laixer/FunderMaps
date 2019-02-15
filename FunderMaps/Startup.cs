@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FunderMaps.Data;
-using FunderMaps.Identity;
 using FunderMaps.Models.Identity;
 
 namespace FunderMaps
@@ -72,8 +71,7 @@ namespace FunderMaps
                 options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<FunderMapsDbContext>()
-            .AddDefaultTokenProviders()
-            .AddUserManager<FunderMapsUserManager>();
+            .AddDefaultTokenProviders();
 
             // Configure identity cookie
             services.ConfigureApplicationCookie(options =>
