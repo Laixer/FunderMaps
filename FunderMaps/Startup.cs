@@ -28,13 +28,6 @@ namespace FunderMaps
             ConfigureDatastore(services);
             ConfigureIdentity(services);
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "IdentityToken";
-                options.Cookie.IsEssential = true;
-                options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
-            });
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // In production, the frontend framework files will be served from this directory.
@@ -82,6 +75,13 @@ namespace FunderMaps
             //.AddDefaultUI()
             .AddDefaultTokenProviders()
             .AddUserManager<FunderMapsUserManager>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = "SpaIdentityToken";
+                options.Cookie.IsEssential = true;
+                options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
