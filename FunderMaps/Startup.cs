@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FunderMaps.Data;
 using FunderMaps.Models.Identity;
+using FunderMaps.Interfaces;
+using FunderMaps.Services;
 
 namespace FunderMaps
 {
@@ -34,6 +36,9 @@ namespace FunderMaps
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            services.AddTransient<IFileStorageService, AzureBlobStorageService>();
+            services.AddTransient<IMailService, MailService>();
         }
 
         private void ConfigureDatastore(IServiceCollection services)
