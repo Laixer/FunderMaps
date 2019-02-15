@@ -72,10 +72,10 @@ namespace FunderMaps
                 options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<FunderMapsDbContext>()
-            //.AddDefaultUI()
             .AddDefaultTokenProviders()
             .AddUserManager<FunderMapsUserManager>();
 
+            // Configure identity cookie
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.Name = "SpaIdentityToken";
