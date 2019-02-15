@@ -93,5 +93,37 @@ namespace FunderMaps.Controllers
             await _signInManager.SignOutAsync();
             return Ok();
         }
+
+        public sealed class ChangePasswordInputModel
+        {
+            [Required]
+            [DataType(DataType.Password)]
+            public string NewPassword { get; set; }
+
+            [Required]
+            [DataType(DataType.Password)]
+            public string OldPassword { get; set; }
+        }
+
+        // POST: api/authentication/change_password
+        [Authorize]
+        [HttpPost("change_password")]
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                return BadRequest();
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            return Ok();
+        }
     }
 }
