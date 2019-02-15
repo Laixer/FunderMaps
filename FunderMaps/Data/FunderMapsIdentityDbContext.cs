@@ -1,6 +1,6 @@
 ﻿using System;
+using FunderMaps.Data.Builder;
 using FunderMaps.Models.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,9 +24,11 @@ namespace FunderMaps.Data
         {
         }
 
+        // NOTE: We're not calling the base method since that would override the
+        // entity properties.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            Builder.Identity.ModelCreating(modelBuilder);
+            Identity.ModelCreating(modelBuilder);
         }
     }
 }
