@@ -2,8 +2,10 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Models;
@@ -11,36 +13,41 @@ using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OrganizationController : ControllerBase
     {
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly ILookupNormalizer _keyNormalizer;
 
-        public OrganizationController(FunderMapsDbContext context, UserManager<FunderMapsUser> userManager)
+        public OrganizationController(FunderMapsDbContext context, UserManager<FunderMapsUser> userManager, ILookupNormalizer keyNormalizer)
         {
             _context = context;
             _userManager = userManager;
-        }
-
-        // GET: api/organization
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
+            _keyNormalizer = keyNormalizer;
         }
 
         // GET: api/organization/{id}
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> Get(Guid id)
+        public async Task<Organization> Get(Guid id)
         {
-            return Ok(await _context.Organizations.FindAsync(id));
+            return await _context.Organizations.FindAsync(id);
+        }
+
+        public class OrganizationInitiationInputModel
+        {
+            [Required]
+            public FunderMapsUser User { get; set; }
+
+            [Required]
+            public Organization Organization { get; set; }
         }
 
         // POST: api/organization/proposal/{token}
         [HttpPost("proposal/{token:guid}")]
-        public async Task<IActionResult> FromProposal([FromRoute] Guid token, [FromBody] OrganizationInitiation value)
+        public async Task<IActionResult> FromProposal([FromRoute] Guid token, [FromBody] OrganizationInitiationInputModel value)
         {
             var proposal = await _context.OrganizationProposals
                 .Where(s => s.Token == token)
@@ -68,6 +75,7 @@ namespace FunderMaps.Controllers
                 // Create organization
                 organization.Id = Guid.NewGuid();
                 organization.Name = proposal.Name;
+                organization.NormalizedName = _keyNormalizer.Normalize(proposal.Name);
                 organization.Email = proposal.Email;
                 _context.Organizations.Add(organization);
                 await _context.SaveChangesAsync();
@@ -88,12 +96,6 @@ namespace FunderMaps.Controllers
 
                 return Ok(organization);
             }
-        }
-
-        // PUT: api/organization/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
     }
 }
