@@ -57,5 +57,21 @@ namespace FunderMaps.Controllers
 
             return Ok(proposal);
         }
+
+        // DELETE: api/organizationproposal/{token}
+        [HttpDelete("{token:guid}")]
+        public async Task Delete(Guid token)
+        {
+            var proposal = await _context.OrganizationProposals
+                .Where(s => s.Token == token)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+
+            if (proposal != null)
+            {
+                _context.OrganizationProposals.Remove(proposal);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
