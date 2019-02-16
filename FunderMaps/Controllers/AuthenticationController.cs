@@ -125,5 +125,25 @@ namespace FunderMaps.Controllers
             await _signInManager.RefreshSignInAsync(user);
             return Ok();
         }
+
+        // POST: api/authentication/verification_email
+        [Authorize]
+        [HttpPost("verification_email")]
+        public async Task<IActionResult> SendVerificationEmailAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userId = await _userManager.GetUserIdAsync(user);
+            var email = await _userManager.GetEmailAsync(user);
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            // TODO: Send email with registration link
+
+            return Ok();
+        }
     }
 }
