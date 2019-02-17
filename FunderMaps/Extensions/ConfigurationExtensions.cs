@@ -52,7 +52,7 @@ namespace FunderMaps.Extensions
         /// <param name="configuration">The configuration.</param>
         public static string GetJwtIssuer(this IConfiguration configuration)
         {
-            return configuration?.GetSection("Jwt")?["Issuer"];
+            return GetConfigSection(configuration, "Jwt", "Issuer");
         }
 
         /// <summary>

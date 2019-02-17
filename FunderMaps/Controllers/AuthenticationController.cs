@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
+using FunderMaps.Identity;
+using FunderMaps.Extensions;
 
 namespace FunderMaps.Controllers
 {
@@ -17,11 +21,16 @@ namespace FunderMaps.Controllers
     {
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationController(UserManager<FunderMapsUser> userManager, SignInManager<FunderMapsUser> signInManager)
+        public AuthenticationController(
+            UserManager<FunderMapsUser> userManager,
+            SignInManager<FunderMapsUser> signInManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _configuration = configuration;
         }
 
         public sealed class UserOutputModel
@@ -80,7 +89,15 @@ namespace FunderMaps.Controllers
                 lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                return Ok();
+                // FUTURE: Retrieve signed in user via singing manager.
+                var user = await _userManager.Users.SingleOrDefaultAsync(s => s.Email == input.Email);
+                var token = new JwtTokenIdentityUser<FunderMapsUser, Guid>(user, _configuration.GetJwtSignKey())
+                {
+                    Issuer = _configuration.GetJwtIssuer(),
+                    Audience = _configuration.GetJwtAudience(),
+                    TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
+                };
+                return Ok(token.WriteToken());
             }
             return NotFound();
         }

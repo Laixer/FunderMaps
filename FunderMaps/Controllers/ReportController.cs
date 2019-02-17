@@ -10,9 +10,6 @@ using FunderMaps.Data;
 using FunderMaps.Models.Fis;
 using FunderMaps.Interfaces;
 
-//using Microsoft.WindowsAzure.Storage;
-//using Microsoft.WindowsAzure.Storage.Blob;
-
 namespace FunderMaps.Controllers
 {
     [Authorize]
