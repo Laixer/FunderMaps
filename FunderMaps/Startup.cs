@@ -4,19 +4,23 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using FunderMaps.Data;
 using FunderMaps.Models.Identity;
 using FunderMaps.Interfaces;
 using FunderMaps.Services;
+using FunderMaps.Helpers;
+using FunderMaps.Extensions;
 
 namespace FunderMaps
 {
     public class Startup
     {
-        public readonly IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public Startup(IConfiguration configuration)
         {
@@ -79,11 +83,30 @@ namespace FunderMaps
             .AddDefaultTokenProviders();
 
             // Configure identity cookie
-            services.ConfigureApplicationCookie(options =>
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.Name = "SpaIdentityToken";
+            //    options.Cookie.IsEssential = true;
+            //    options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+            //});
+
+            services.AddAuthentication(options =>
             {
-                options.Cookie.Name = "SpaIdentityToken";
-                options.Cookie.IsEssential = true;
-                options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = _configuration.GetJwtIssuer(),
+                    ValidAudience = _configuration.GetJwtAudience(),
+                    IssuerSigningKey = _configuration.GetJwtSignKey(),
+
+                    NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
+                };
             });
         }
 
