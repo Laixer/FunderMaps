@@ -14,6 +14,7 @@ using FunderMaps.Extensions;
 
 namespace FunderMaps.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
@@ -45,7 +46,10 @@ namespace FunderMaps.Controllers
         }
 
         // GET: api/authentication
-        [Authorize]
+        /// <summary>
+        /// Get authentication principal properties.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<UserOutputModel> Get()
         {
@@ -106,9 +110,11 @@ namespace FunderMaps.Controllers
             return NotFound();
         }
 
-        // POST: api/authentication/destroy
-        [Authorize]
-        [HttpPost("destroy")]
+        // POST: api/authentication/signout
+        /// <summary>
+        /// Signout all current sessions.
+        /// </summary>
+        [HttpPost("signout")]
         public async Task<IActionResult> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
@@ -127,7 +133,6 @@ namespace FunderMaps.Controllers
         }
 
         // POST: api/authentication/change_password
-        [Authorize]
         [HttpPost("change_password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
         {
@@ -147,15 +152,22 @@ namespace FunderMaps.Controllers
             return Ok();
         }
 
-        // POST: api/authentication/verification_email
-        [Authorize]
-        [HttpPost("verification_email")]
-        public async Task<IActionResult> SendVerificationEmailAsync()
+        // FUTURE: Fix
+        // POST: api/authentication/confirm_email
+        [AllowAnonymous]
+        [HttpPost("confirm_email")]
+        public async Task<IActionResult> SendConfirmEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound();
+            }
+
+            // Skip if email is confirmed already.
+            if (await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return Ok();
             }
 
             var userId = await _userManager.GetUserIdAsync(user);

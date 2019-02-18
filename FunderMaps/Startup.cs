@@ -106,6 +106,14 @@ namespace FunderMaps
                     IssuerSigningKey = _configuration.GetJwtSignKey(),
                 };
             });
+
+            //services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("AdministratorPolicy", policy =>
+            //    {
+            //        //
+            //    });
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -129,9 +137,15 @@ namespace FunderMaps
 
             app.UseMvc(routes =>
             {
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
+
+                routes.MapRoute(
+                    name: "oops",
+                    template: "oops",
+                    defaults: new { controller = "Error", action = "Error" });
 
                 //routes.MapSpaFallbackRoute(
                 //    name: "spa-fallback",
