@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Hosting;
 using FunderMaps.Models.Identity;
 using FunderMaps.Helpers;
 
@@ -8,9 +9,12 @@ namespace FunderMaps.Data.Seed
 {
     public class IdentitySeed
     {
-        public static async Task SeedAsync(UserManager<FunderMapsUser> userManager, RoleManager<FunderMapsRole> roleManager)
+        public static async Task SeedAsync(
+            IHostingEnvironment env,
+            UserManager<FunderMapsUser> userManager,
+            RoleManager<FunderMapsRole> roleManager)
         {
-            // Check if seeding is done already
+            // Check if seeding is done already.
             if (userManager.Users.Any()) { return; }
 
             await roleManager.CreateAsync(new FunderMapsRole(Constants.AdministratorRole));
@@ -22,13 +26,21 @@ namespace FunderMaps.Data.Seed
             };
             await userManager.CreateAsync(adminUser);
 
+            await userManager.AddToRoleAsync(adminUser, Constants.AdministratorRole);
+
+            if (env.IsDevelopment() || env.IsStaging())
+            {
+                await SeedTestingDataAsync(userManager);
+            }
+        }
+
+        private static async Task SeedTestingDataAsync(UserManager<FunderMapsUser> userManager)
+        {
             var defaultUser = new FunderMapsUser("user@contoso.com")
             {
                 EmailConfirmed = true
             };
             await userManager.CreateAsync(defaultUser);
-
-            await userManager.AddToRoleAsync(adminUser, Constants.AdministratorRole);
         }
     }
 }

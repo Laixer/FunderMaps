@@ -37,6 +37,21 @@ namespace FunderMaps.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+               name: "organization_role",
+               schema: "application",
+               columns: table => new
+               {
+                   Id = table.Column<Guid>(nullable: false, name: "id", defaultValueSql: "uuid_generate_v4()"),
+                   Name = table.Column<string>(maxLength: 256, nullable: true, name: "name"),
+                   NormalizedName = table.Column<string>(maxLength: 256, nullable: true, name: "normalized_name"),
+                   ConcurrencyStamp = table.Column<string>(nullable: true, name: "concurrency_stamp")
+               },
+               constraints: table =>
+               {
+                   table.PrimaryKey("pk_organization_role", x => x.Id);
+               });
+
+            migrationBuilder.CreateTable(
                 name: "organization",
                 schema: "application",
                 columns: table => new
@@ -51,7 +66,7 @@ namespace FunderMaps.Data.Migrations
                     RegistrationNumber = table.Column<string>(maxLength: 40, nullable: true, name: "registration_number"),
                     IsDefault = table.Column<bool>(nullable: false, defaultValue: false, name: "is_default"),
                     IsValidated = table.Column<bool>(nullable: false, defaultValue: false, name: "is_validated"),
-                    BrandingLogo = table.Column<string>(nullable: false, maxLength: 256, name: "branding_logo"),
+                    BrandingLogo = table.Column<string>(nullable: true, maxLength: 256, name: "branding_logo"),
                     AttestationOrganizationId = table.Column<int>(nullable: true, name: "attestation_organization_id")
                 },
                 constraints: table =>
@@ -79,7 +94,8 @@ namespace FunderMaps.Data.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false, name: "user_id"),
-                    OrganizationId = table.Column<Guid>(nullable: false, name: "organization_id")
+                    OrganizationId = table.Column<Guid>(nullable: false, name: "organization_id"),
+                    OrganizationRoleId = table.Column<Guid>(nullable: true, name: "organization_role_id")
                 },
                 constraints: table =>
                 {
@@ -92,10 +108,17 @@ namespace FunderMaps.Data.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_organization_user_role_id",
+                        name: "fk_organization_user_organization_id",
                         column: x => x.OrganizationId,
                         principalSchema: "application",
                         principalTable: "organization",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_organization_user_organization_role_id",
+                        column: x => x.OrganizationRoleId,
+                        principalSchema: "application",
+                        principalTable: "organization_role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -105,14 +128,23 @@ namespace FunderMaps.Data.Migrations
                 schema: "application",
                 columns: table => new
                 {
+                    Token = table.Column<Guid>(nullable: false, name: "token", defaultValueSql: "uuid_generate_v4()"),
                     Name = table.Column<string>(maxLength: 256, nullable: false, name: "name"),
+                    NormalizedName = table.Column<string>(maxLength: 256, nullable: false, name: "normalized_name"),
                     Email = table.Column<string>(maxLength: 256, nullable: false, name: "email"),
-                    Value = table.Column<Guid>(nullable: false, name: "value", defaultValueSql: "uuid_generate_v4()"),
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_organization_proposal", x => x.Name);
+                    table.PrimaryKey("pk_organization_proposal", x => x.Token);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "idx_organization_role_normalized_name",
+                schema: "application",
+                table: "organization_role",
+                column: "normalized_name",
+                unique: true,
+                filter: "\"normalized_name\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "idx_organization_normalized_name",
@@ -123,12 +155,12 @@ namespace FunderMaps.Data.Migrations
                 filter: "\"normalized_name\" IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "idx_organization_proposal_value",
+                name: "idx_organization_proposal_normalized_name",
                 schema: "application",
                 table: "organization_proposal",
-                column: "value",
+                column: "normalized_name",
                 unique: true,
-                filter: "\"value\" IS NOT NULL");
+                filter: "\"normalized_name\" IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -138,6 +170,8 @@ namespace FunderMaps.Data.Migrations
             migrationBuilder.DropTable("organization_user", "application");
 
             migrationBuilder.DropTable("organization", "application");
+
+            migrationBuilder.DropTable("organization_role", "application");
 
             migrationBuilder.DropTable("address", "application");
 
