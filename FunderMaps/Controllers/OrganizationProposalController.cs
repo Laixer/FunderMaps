@@ -3,12 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Models;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Controllers
 {
+    [Authorize(Roles = Constants.AdministratorRole)]
     [Route("api/[controller]")]
     [ApiController]
     public class OrganizationProposalController : ControllerBase
@@ -48,7 +51,12 @@ namespace FunderMaps.Controllers
                 return Conflict(proposal.Name);
             }
 
-            // TODO: Check if organization name already exists
+            // FUTURE: Use NormalizedName
+            // Organization proposals cannot use an existing organization name.
+            if (await _context.Organizations.AnyAsync(s => s.Name == proposal.Name))
+            {
+                return Conflict(proposal.Name);
+            }
 
             await _context.OrganizationProposals.AddAsync(proposal);
             await _context.SaveChangesAsync();
