@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
 using FunderMaps.Identity;
 using FunderMaps.Extensions;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Controllers
 {
@@ -35,12 +36,12 @@ namespace FunderMaps.Controllers
 
         public sealed class UserOutputModel
         {
-            public string GivenName { get; set; }
-            public string LastName { get; set; }
-            public string Avatar { get; set; }
-            public string JobTitle { get; set; }
+            //public string GivenName { get; set; }
+            //public string LastName { get; set; }
+            //public string Avatar { get; set; }
+            //public string JobTitle { get; set; }
             public string Email { get; set; }
-            public string PhoneNumber { get; set; }
+            //public string PhoneNumber { get; set; }
             public IList<string> Roles { get; set; }
             public IList<Claim> Claims { get; set; }
         }
@@ -56,12 +57,12 @@ namespace FunderMaps.Controllers
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             return new UserOutputModel
             {
-                GivenName = user.GivenName,
-                LastName = user.LastName,
-                Avatar = user.Avatar,
-                JobTitle = user.JobTitle,
+                //GivenName = user.GivenName,
+                //LastName = user.LastName,
+                //Avatar = user.Avatar,
+                //JobTitle = user.JobTitle,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
+                //PhoneNumber = user.PhoneNumber,
                 Roles = await _userManager.GetRolesAsync(user),
                 Claims = await _userManager.GetClaimsAsync(user),
             };
@@ -143,6 +144,43 @@ namespace FunderMaps.Controllers
             }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                return BadRequest();
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            return Ok();
+        }
+
+        public sealed class SetPasswordInputModel
+        {
+            [Required]
+            [DataType(DataType.EmailAddress)]
+            public string Email { get; set; }
+
+            [Required]
+            [DataType(DataType.Password)]
+            public string Password { get; set; }
+        }
+
+        // POST: api/authentication/set_password
+        [Authorize(Roles = Constants.AdministratorRole)]
+        [HttpPost("set_password")]
+        public async Task<IActionResult> SetPasswordAsync([FromBody] SetPasswordInputModel input)
+        {
+            var user = await _userManager.FindByEmailAsync(input.Email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (await _userManager.HasPasswordAsync(user))
+            {
+                await _userManager.RemovePasswordAsync(user);
+            }
+
+            var changePasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
             if (!changePasswordResult.Succeeded)
             {
                 return BadRequest();

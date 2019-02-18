@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Models;
@@ -17,10 +17,12 @@ namespace FunderMaps.Controllers
     public class OrganizationProposalController : ControllerBase
     {
         private readonly FunderMapsDbContext _context;
+        private readonly ILookupNormalizer _keyNormalizer;
 
-        public OrganizationProposalController(FunderMapsDbContext context)
+        public OrganizationProposalController(FunderMapsDbContext context, ILookupNormalizer keyNormalizer)
         {
             _context = context;
+            _keyNormalizer = keyNormalizer;
         }
 
         // GET: api/organizationproposal/{token}
@@ -42,18 +44,18 @@ namespace FunderMaps.Controllers
 
         // POST: api/organizationproposal
         [HttpPost]
-        [ProducesResponseType(typeof(OrganizationProposal), StatusCodes.Status200OK)]
         public async Task<IActionResult> Post([FromBody] OrganizationProposal proposal)
         {
+            proposal.NormalizedName = _keyNormalizer.Normalize(proposal.Name);
+
             // Organization proposals must be unique.
-            if (await _context.OrganizationProposals.FindAsync(proposal.Name) != null)
+            if (await _context.OrganizationProposals.AnyAsync(s => s.NormalizedName == proposal.NormalizedName))
             {
                 return Conflict(proposal.Name);
             }
 
-            // FUTURE: Use NormalizedName
             // Organization proposals cannot use an existing organization name.
-            if (await _context.Organizations.AnyAsync(s => s.Name == proposal.Name))
+            if (await _context.Organizations.AnyAsync(s => s.NormalizedName == proposal.NormalizedName))
             {
                 return Conflict(proposal.Name);
             }

@@ -12,7 +12,7 @@ namespace FunderMaps.Data.Builder
             {
                 entity.HasKey(e => e.Id).HasName("pk_address");
 
-                entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedNever();
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('application.address_id_seq'::regclass)");
                 entity.Property(e => e.Street).IsRequired().HasColumnName("address").HasMaxLength(256);
                 entity.Property(e => e.AddressNumber).IsRequired().HasColumnName("address_number");
                 entity.Property(e => e.AddressNumberPostfix).HasColumnName("address_number_postfix").HasMaxLength(8);

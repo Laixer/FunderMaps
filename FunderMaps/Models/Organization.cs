@@ -24,6 +24,7 @@ namespace FunderMaps.Models
         /// Gets or sets the normalized name for the organization.
         /// </summary>
         [PersonalData]
+        [IgnoreDataMember]
         public virtual string NormalizedName { get; set; }
 
         public string Email { get; set; }
