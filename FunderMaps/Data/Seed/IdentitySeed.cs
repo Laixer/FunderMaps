@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using FunderMaps.Models.Identity;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Data.Seed
 {
@@ -12,17 +13,22 @@ namespace FunderMaps.Data.Seed
             // Check if seeding is done already
             if (userManager.Users.Any()) { return; }
 
-            await roleManager.CreateAsync(new FunderMapsRole("Administrator"));
+            await roleManager.CreateAsync(new FunderMapsRole(Constants.AdministratorRole));
 
             var adminUser = new FunderMapsUser("admin@contoso.com")
             {
                 JobTitle = "Administrator",
                 EmailConfirmed = true
             };
-
             await userManager.CreateAsync(adminUser);
 
-            await userManager.AddToRoleAsync(adminUser, "Administrator");
+            var defaultUser = new FunderMapsUser("user@contoso.com")
+            {
+                EmailConfirmed = true
+            };
+            await userManager.CreateAsync(defaultUser);
+
+            await userManager.AddToRoleAsync(adminUser, Constants.AdministratorRole);
         }
     }
 }

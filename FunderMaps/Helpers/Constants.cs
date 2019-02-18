@@ -13,5 +13,7 @@ namespace FunderMaps.Helpers
             RequiredLength = 6,
             RequiredUniqueChars = 1,
         };
+
+        public const string AdministratorRole = "Administrator";
     }
 }

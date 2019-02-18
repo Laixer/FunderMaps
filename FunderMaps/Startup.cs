@@ -104,8 +104,6 @@ namespace FunderMaps
                     ValidIssuer = _configuration.GetJwtIssuer(),
                     ValidAudience = _configuration.GetJwtAudience(),
                     IssuerSigningKey = _configuration.GetJwtSignKey(),
-
-                    NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
                 };
             });
         }
