@@ -32,20 +32,26 @@ namespace FunderMaps
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                var env = services.GetRequiredService<IHostingEnvironment>();
+
                 try
                 {
                     var dbContext = services.GetRequiredService<FunderMapsDbContext>();
-                    dbContext.Database.EnsureCreated();
-                    dbContext.Database.Migrate();
-                    FunderMapsSeed.SeedAsync(dbContext).Wait();
 
+                    logger.LogInformation("Run database migrations.");
+                    dbContext.Database.Migrate();
+
+                    logger.LogInformation("Run application database seeder.");
+                    FunderMapsSeed.SeedAsync(env, dbContext).Wait();
+
+                    logger.LogInformation("Run identity database seeder.");
                     var userManager = services.GetRequiredService<UserManager<FunderMapsUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<FunderMapsRole>>();
-                    IdentitySeed.SeedAsync(userManager, roleManager).Wait();
+                    IdentitySeed.SeedAsync(env, userManager, roleManager).Wait();
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred while initializing the database.");
                 }
             }

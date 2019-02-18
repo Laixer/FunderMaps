@@ -1,8 +1,8 @@
 ﻿using System;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +31,8 @@ namespace FunderMaps
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureDatastore(services);
-            ConfigureIdentity(services);
+            ConfigureAuthentication(services);
+            ConfigureAuthorization(services);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
 
@@ -45,6 +46,10 @@ namespace FunderMaps
             services.AddTransient<IMailService, MailService>();
         }
 
+        /// <summary>
+        /// Setup various data stores for entities.
+        /// </summary>
+        /// <param name="services"></param>
         private void ConfigureDatastore(IServiceCollection services)
         {
             // Application database
@@ -65,7 +70,10 @@ namespace FunderMaps
             .AddEntityFrameworkNpgsql();
         }
 
-        private void ConfigureIdentity(IServiceCollection services)
+        /// <summary>
+        /// Configure the identity framework and the authentications methods.
+        /// </summary>
+        private void ConfigureAuthentication(IServiceCollection services)
         {
             services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>
             {
@@ -95,7 +103,6 @@ namespace FunderMaps
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
             })
             .AddJwtBearer(options =>
             {
@@ -106,7 +113,13 @@ namespace FunderMaps
                     IssuerSigningKey = _configuration.GetJwtSignKey(),
                 };
             });
+        }
 
+        /// <summary>
+        /// Configure the authorization policies.
+        /// </summary>
+        private void ConfigureAuthorization(IServiceCollection services)
+        {
             //services.AddAuthorization(options =>
             //{
             //    options.AddPolicy("AdministratorPolicy", policy =>
@@ -116,7 +129,7 @@ namespace FunderMaps
             //});
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

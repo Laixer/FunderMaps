@@ -8,6 +8,11 @@ namespace FunderMaps.Models
         [Required]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Gets or sets the normalized name for the organization proposal.
+        /// </summary>
+        public virtual string NormalizedName { get; set; }
+
         [Required]
         [EmailAddress]
         public string Email { get; set; }
