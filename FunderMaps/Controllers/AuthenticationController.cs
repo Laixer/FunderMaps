@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +40,8 @@ namespace FunderMaps.Controllers
             public string JobTitle { get; set; }
             public string Email { get; set; }
             public string PhoneNumber { get; set; }
+            public IList<string> Roles { get; set; }
+            public IList<Claim> Claims { get; set; }
         }
 
         // GET: api/authentication
@@ -57,6 +58,8 @@ namespace FunderMaps.Controllers
                 JobTitle = user.JobTitle,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
+                Roles = await _userManager.GetRolesAsync(user),
+                Claims = await _userManager.GetClaimsAsync(user),
             };
         }
 
@@ -97,6 +100,7 @@ namespace FunderMaps.Controllers
                     Audience = _configuration.GetJwtAudience(),
                     TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
                 };
+                token.AddRoleClaims(await _userManager.GetRolesAsync(user));
                 return Ok(token.WriteToken());
             }
             return NotFound();
