@@ -27,6 +27,9 @@ namespace FunderMaps
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>();
 
+        /// <summary>
+        /// Initialize the database by running the migrations and seeding the database.
+        /// </summary>
         private static void DatabaseInitialization(IWebHost host)
         {
             using (var scope = host.Services.CreateScope())

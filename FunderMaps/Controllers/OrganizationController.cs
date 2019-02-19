@@ -36,14 +36,22 @@ namespace FunderMaps.Controllers
         // FUTURE: Only organization users or admins
         // GET: api/organization/{id}
         [HttpGet("{id:guid}")]
-        public async Task<Organization> GetAsync(Guid id)
+        public async Task<IActionResult> GetAsync(Guid id)
         {
-            return await _context.Organizations
-                .AsNoTracking()
-                .Include(a => a.HomeAddress)
-                .Include(a => a.PostalAddres)
-                .Where(q => q.Id == id)
-                .SingleOrDefaultAsync();
+            var organization = await _context.Organizations
+                    .AsNoTracking()
+                    .Include(a => a.HomeAddress)
+                    .Include(a => a.PostalAddres)
+                    .Where(q => q.Id == id)
+                    .SingleOrDefaultAsync();
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                return Ok(organization);
+            }
+
+            return new ForbidResult();
         }
 
         public sealed class OrganizationInitiationInputModel
@@ -181,16 +189,16 @@ namespace FunderMaps.Controllers
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromBody] Organization organization)
         {
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "");
-            if (authorizationResult.Succeeded)
-            {
+            //var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "");
+            //if (authorizationResult.Succeeded)
+            //{
                 _context.Organizations.Update(organization);
                 await _context.SaveChangesAsync();
 
                 return Ok(organization);
-            }
+            //}
 
-            return new ForbidResult();
+            //return new ForbidResult();
         }
     }
 }

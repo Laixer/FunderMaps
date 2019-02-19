@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,8 @@ using FunderMaps.Interfaces;
 using FunderMaps.Services;
 using FunderMaps.Helpers;
 using FunderMaps.Extensions;
+using FunderMaps.Authorization.Handler;
+using FunderMaps.Authorization.Requirement;
 
 namespace FunderMaps
 {
@@ -120,13 +123,15 @@ namespace FunderMaps
         /// </summary>
         private void ConfigureAuthorization(IServiceCollection services)
         {
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("AdministratorPolicy", policy =>
-            //    {
-            //        //
-            //    });
-            //});
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("OrganizationMemberPolicy", policy =>
+                {
+                    policy.AddRequirements(new OrganizationMemberRequirement());
+                });
+            });
+
+            services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();
         }
 
         // This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.

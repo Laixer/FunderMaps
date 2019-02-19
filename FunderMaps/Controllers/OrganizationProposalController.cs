@@ -19,19 +19,28 @@ namespace FunderMaps.Controllers
         private readonly FunderMapsDbContext _context;
         private readonly ILookupNormalizer _keyNormalizer;
 
-        public OrganizationProposalController(FunderMapsDbContext context, ILookupNormalizer keyNormalizer)
+        /// <summary>
+        /// Create a new instance of the OrganizationProposalController.
+        /// </summary>
+        public OrganizationProposalController(
+            FunderMapsDbContext context,
+            ILookupNormalizer keyNormalizer)
         {
             _context = context;
             _keyNormalizer = keyNormalizer;
         }
 
         // GET: api/organizationproposal/{token}
+        /// <summary>
+        /// Get the proposal by token.
+        /// </summary>
+        /// <param name="token">Proposal token.</param>
         [HttpGet("{token:guid}")]
-        public async Task<IActionResult> Get(Guid token)
+        public async Task<IActionResult> GetAsync(Guid token)
         {
             var proposal = await _context.OrganizationProposals
-                .Where(s => s.Token == token)
                 .AsNoTracking()
+                .Where(s => s.Token == token)
                 .SingleOrDefaultAsync();
 
             if (proposal == null)
@@ -44,7 +53,7 @@ namespace FunderMaps.Controllers
 
         // POST: api/organizationproposal
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] OrganizationProposal proposal)
+        public async Task<IActionResult> PostAsync([FromBody] OrganizationProposal proposal)
         {
             proposal.NormalizedName = _keyNormalizer.Normalize(proposal.Name);
 
@@ -69,12 +78,17 @@ namespace FunderMaps.Controllers
         }
 
         // DELETE: api/organizationproposal/{token}
+        /// <summary>
+        /// Remove the proposal from the datastore. This operation will
+        /// not return an error if the proposal cannot be found.
+        /// </summary>
+        /// <param name="token">Proposal token.</param>
         [HttpDelete("{token:guid}")]
-        public async Task Delete(Guid token)
+        public async Task DeleteAsync(Guid token)
         {
             var proposal = await _context.OrganizationProposals
-                .Where(s => s.Token == token)
                 .AsNoTracking()
+                .Where(s => s.Token == token)
                 .SingleOrDefaultAsync();
 
             if (proposal != null)

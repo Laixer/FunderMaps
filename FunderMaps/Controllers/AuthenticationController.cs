@@ -36,36 +36,43 @@ namespace FunderMaps.Controllers
 
         public sealed class UserOutputModel
         {
-            //public string GivenName { get; set; }
-            //public string LastName { get; set; }
-            //public string Avatar { get; set; }
-            //public string JobTitle { get; set; }
+            public Guid Id { get; set; }
+            public bool? TwoFactorEnabled { get; set; }
+            public bool? EmailConfirmed { get; set; }
+            public bool? LockoutEnabled { get; set; }
+            public bool? PhoneNumberConfirmed { get; set; }
+            public int AccessFailedCount { get; set; }
             public string Email { get; set; }
-            //public string PhoneNumber { get; set; }
             public IList<string> Roles { get; set; }
             public IList<Claim> Claims { get; set; }
         }
 
         // GET: api/authentication
         /// <summary>
-        /// Get authentication principal properties.
+        /// Get authentication principal properties related to
+        /// the current authenticated object.
         /// </summary>
-        /// <returns></returns>
         [HttpGet]
-        public async Task<UserOutputModel> Get()
+        public async Task<IActionResult> GetAsync()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            return new UserOutputModel
+            if (user == null)
             {
-                //GivenName = user.GivenName,
-                //LastName = user.LastName,
-                //Avatar = user.Avatar,
-                //JobTitle = user.JobTitle,
+                return NotFound();
+            }
+
+            return Ok(new UserOutputModel
+            {
+                Id = user.Id,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                EmailConfirmed = user.EmailConfirmed,
+                LockoutEnabled = user.LockoutEnabled,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                AccessFailedCount = user.AccessFailedCount,
                 Email = user.Email,
-                //PhoneNumber = user.PhoneNumber,
                 Roles = await _userManager.GetRolesAsync(user),
                 Claims = await _userManager.GetClaimsAsync(user),
-            };
+            });
         }
 
         public sealed class LoginInputModel
@@ -78,8 +85,6 @@ namespace FunderMaps.Controllers
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
-
-            public bool IsPersistent { get; set; } = false;
         }
 
         // POST: api/authentication/authenticate
@@ -93,8 +98,9 @@ namespace FunderMaps.Controllers
             // Authenticate and return the token as cookie
             var result = await _signInManager.PasswordSignInAsync(input.Email,
                 input.Password,
-                isPersistent: input.IsPersistent,
+                isPersistent: false,
                 lockoutOnFailure: true);
+
             if (result.Succeeded)
             {
                 // FUTURE: Retrieve signed in user via singing manager.
@@ -106,20 +112,24 @@ namespace FunderMaps.Controllers
                     TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
                 };
                 token.AddRoleClaims(await _userManager.GetRolesAsync(user));
+
                 return Ok(token.WriteToken());
             }
+
+            // TODO: Handle the other result types
+
             return NotFound();
         }
 
         // POST: api/authentication/signout
         /// <summary>
-        /// Signout all current sessions.
+        /// Signout all current sessions. With token based
+        /// authentication this is not strictly required.
         /// </summary>
         [HttpPost("signout")]
-        public async Task<IActionResult> SignOutAsync()
+        public async Task SignOutAsync()
         {
             await _signInManager.SignOutAsync();
-            return Ok();
         }
 
         public sealed class ChangePasswordInputModel
