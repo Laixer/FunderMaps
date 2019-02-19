@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data;
 using FunderMaps.Models;
@@ -12,19 +12,23 @@ using FunderMaps.Helpers;
 
 namespace FunderMaps.Authorization.Handler
 {
-    public class OrganizationMemberHandler : AuthorizationHandler<OrganizationMemberRequirement, Organization>
+    public class OrganizationRoleHandler : AuthorizationHandler<OrganizationRoleRequirement, Organization>
     {
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly ILookupNormalizer _keyNormalizer;
 
-        public OrganizationMemberHandler(FunderMapsDbContext context, UserManager<FunderMapsUser> userManager)
+        public OrganizationRoleHandler(FunderMapsDbContext context,
+            UserManager<FunderMapsUser> userManager,
+            ILookupNormalizer keyNormalizer)
         {
             _context = context;
             _userManager = userManager;
+            _keyNormalizer = keyNormalizer;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
-            OrganizationMemberRequirement requirement,
+            OrganizationRoleRequirement requirement,
             Organization organization)
         {
             // Authentication is required.
@@ -43,11 +47,13 @@ namespace FunderMaps.Authorization.Handler
             }
 
             // Test if user is organization member
-            if (await IsOrganizationMemberAsync(user, organization))
+            if (await HasOrganizationRoleAsync(user, organization, requirement.Role))
             {
                 context.Succeed(requirement);
                 return;
             }
+
+            await Task.FromResult(0);
         }
 
         /// <summary>
@@ -65,10 +71,16 @@ namespace FunderMaps.Authorization.Handler
         /// </summary>
         /// <param name="user">Identity user.</param>
         /// <param name="organization">Organization resource.</param>
+        /// <param name="role">Organization role.</param>
         /// <returns>True on success.</returns>
-        private async Task<bool> IsOrganizationMemberAsync(FunderMapsUser user, Organization organization)
+        private async Task<bool> HasOrganizationRoleAsync(FunderMapsUser user, Organization organization, string role)
         {
-            return await _context.OrganizationUsers.FindAsync(user.Id, organization.Id) != null;
+            return await _context.OrganizationUsers
+                .Include(e => e.OrganizationRole)
+                .Where(s => s.User.Id == user.Id &&
+                    s.Organization.Id == organization.Id &&
+                    s.OrganizationRole.NormalizedName == _keyNormalizer.Normalize(role))
+                .FirstOrDefaultAsync() != null;
         }
     }
 }

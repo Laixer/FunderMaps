@@ -125,13 +125,14 @@ namespace FunderMaps
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("OrganizationMemberPolicy", policy =>
-                {
-                    policy.AddRequirements(new OrganizationMemberRequirement());
-                });
+                options.AddPolicy("OrganizationMemberPolicy",
+                    policy => policy.AddRequirements(new OrganizationMemberRequirement()));
+                options.AddPolicy("OrganizationRolePolicy",
+                    policy => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
             });
 
             services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();
+            services.AddScoped<IAuthorizationHandler, OrganizationRoleHandler>();
         }
 
         // This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
