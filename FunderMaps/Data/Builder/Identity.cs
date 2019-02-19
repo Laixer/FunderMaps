@@ -21,7 +21,7 @@ namespace FunderMaps.Data.Builder
                 entity.HasIndex(e => e.NormalizedName).IsUnique().HasName("idx_role_normalized_name")
                     .HasFilter("\"normalized_name\" IS NOT NULL");
 
-                entity.ToTable("role", "identity");
+                entity.ToTable("role", "application");
 
                 entity.HasMany<IdentityUserRole<Guid>>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
                 entity.HasMany<IdentityRoleClaim<Guid>>().WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
@@ -38,7 +38,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.HasIndex(e => e.RoleId).HasName("idx_role_claim_role_id");
 
-                entity.ToTable("role_claim", "identity");
+                entity.ToTable("role_claim", "application");
             });
 
             modelBuilder.Entity<FunderMapsUser>(entity =>
@@ -74,7 +74,7 @@ namespace FunderMaps.Data.Builder
                 entity.HasIndex(e => e.NormalizedEmail).HasName("idx_user_normalized_email")
                     .IsUnique().HasFilter("\"normalized_email\" IS NOT NULL");
 
-                entity.ToTable("user", "identity");
+                entity.ToTable("user", "application");
 
                 entity.HasMany<IdentityUserClaim<Guid>>().WithOne().HasForeignKey(uc => uc.UserId).IsRequired();
                 entity.HasMany<IdentityUserLogin<Guid>>().WithOne().HasForeignKey(ul => ul.UserId).IsRequired();
@@ -93,7 +93,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.HasIndex(e => e.UserId).HasName("idx_user_claim_user_id");
 
-                entity.ToTable("user_claim", "identity");
+                entity.ToTable("user_claim", "application");
             });
 
             modelBuilder.Entity<IdentityUserLogin<Guid>>(entity =>
@@ -107,7 +107,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.HasIndex(e => e.UserId).HasName("idx_user_login_user_id");
 
-                entity.ToTable("user_login", "identity");
+                entity.ToTable("user_login", "application");
             });
 
             modelBuilder.Entity<IdentityUserRole<Guid>>(entity =>
@@ -119,7 +119,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.HasIndex(e => e.RoleId).HasName("idx_user_role_role_id");
 
-                entity.ToTable("user_role", "identity");
+                entity.ToTable("user_role", "application");
             });
 
             modelBuilder.Entity<IdentityUserToken<Guid>>(entity =>
@@ -131,7 +131,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.Name).HasColumnName("name").HasMaxLength(128);
                 entity.Property(e => e.Value).HasColumnName("valuee");
 
-                entity.ToTable("user_token", "identity");
+                entity.ToTable("user_token", "application");
             });
         }
     }
