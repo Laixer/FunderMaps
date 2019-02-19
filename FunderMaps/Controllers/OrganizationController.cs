@@ -65,14 +65,13 @@ namespace FunderMaps.Controllers
             public string Password { get; set; }
         }
 
-        // FUTURE: Only administrators or superusers
         // POST: api/organization/{id}/new_superuser
         [HttpPost("{id:guid}/new_superuser")]
         public async Task<IActionResult> NewSuperUserAsync(Guid id, [FromBody] UserInputModel input)
         {
             var organization = await _context.Organizations.FindAsync(id);
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationRolePolicy");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
                 // Create everything at once, or nothing at all if an error occurs.
@@ -97,6 +96,44 @@ namespace FunderMaps.Controllers
                         User = user,
                         Organization = organization,
                         OrganizationRole = role,
+                    });
+                    await _context.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    return Ok();
+                }
+            }
+
+            return Forbid();
+        }
+
+        // POST: api/organization/{id}/new_user
+        [HttpPost("{id:guid}/new_user")]
+        public async Task<IActionResult> NewUserAsync(Guid id, [FromBody] UserInputModel input)
+        {
+            var organization = await _context.Organizations.FindAsync(id);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                // Create everything at once, or nothing at all if an error occurs.
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    // Prepare user account
+                    var user = new FunderMapsUser(input.Email);
+                    var result = await _userManager.CreateAsync(user, input.Password);
+                    if (!result.Succeeded)
+                    {
+                        transaction.Rollback();
+                        return Conflict();
+                    }
+
+                    // Attach user to organization
+                    _context.OrganizationUsers.Add(new OrganizationUser
+                    {
+                        User = user,
+                        Organization = organization,
                     });
                     await _context.SaveChangesAsync();
 

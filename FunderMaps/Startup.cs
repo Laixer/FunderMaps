@@ -127,7 +127,7 @@ namespace FunderMaps
             {
                 options.AddPolicy("OrganizationMemberPolicy",
                     policy => policy.AddRequirements(new OrganizationMemberRequirement()));
-                options.AddPolicy("OrganizationRolePolicy",
+                options.AddPolicy("OrganizationSuperuserPolicy",
                     policy => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
             });
 
