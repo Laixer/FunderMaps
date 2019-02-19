@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Models
 {
@@ -11,6 +12,7 @@ namespace FunderMaps.Models
         /// <summary>
         /// Gets or sets the normalized name for the organization proposal.
         /// </summary>
+        [IgnoreDataMember]
         public virtual string NormalizedName { get; set; }
 
         [Required]

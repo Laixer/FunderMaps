@@ -36,7 +36,7 @@ namespace FunderMaps.Authorization.Handler
             var user = await _userManager.FindByEmailAsync(context.User.Identity.Name);
 
             // Administrator roles can access anything
-            if (await IsAdministrator(user))
+            if (requirement.AllowAdministratorAlways && await IsAdministrator(user))
             {
                 context.Succeed(requirement);
                 return;
@@ -50,11 +50,22 @@ namespace FunderMaps.Authorization.Handler
             }
         }
 
+        /// <summary>
+        /// Test if user claims the administrator role.
+        /// </summary>
+        /// <param name="user">Identity user.</param>
+        /// <returns>True on success.</returns>
         private async Task<bool> IsAdministrator(FunderMapsUser user)
         {
             return await _userManager.IsInRoleAsync(user, Constants.AdministratorRole);
         }
 
+        /// <summary>
+        /// Test if user belongs to organization as member.
+        /// </summary>
+        /// <param name="user">Identity user.</param>
+        /// <param name="organization">Organization resource.</param>
+        /// <returns>True on success.</returns>
         private async Task<bool> IsOrganizationMember(FunderMapsUser user, Organization organization)
         {
             return await _context.OrganizationUsers.FindAsync(user.Id, organization.Id) != null;

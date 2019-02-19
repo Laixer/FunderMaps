@@ -51,7 +51,7 @@ namespace FunderMaps.Controllers
                 return Ok(organization);
             }
 
-            return new ForbidResult();
+            return Forbid();
         }
 
         public sealed class OrganizationInitiationInputModel
