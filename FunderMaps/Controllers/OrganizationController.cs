@@ -150,7 +150,7 @@ namespace FunderMaps.Controllers
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromBody] Organization organization)
         {
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
                 _context.Organizations.Update(organization);

@@ -67,6 +67,9 @@ namespace FunderMaps.Data.Migrations
                     IsDefault = table.Column<bool>(nullable: false, defaultValue: false, name: "is_default"),
                     IsValidated = table.Column<bool>(nullable: false, defaultValue: false, name: "is_validated"),
                     BrandingLogo = table.Column<string>(nullable: true, maxLength: 256, name: "branding_logo"),
+                    InvoiceName = table.Column<string>(nullable: true, maxLength: 256, name: "invoice_name"),
+                    InvoicePONumber = table.Column<string>(nullable: true, maxLength: 256, name: "invoice_po_number"),
+                    InvoiceEmail = table.Column<string>(nullable: true, maxLength: 256, name: "invoice_email"),
                     AttestationOrganizationId = table.Column<int>(nullable: true, name: "attestation_organization_id")
                 },
                 constraints: table =>
@@ -103,7 +106,7 @@ namespace FunderMaps.Data.Migrations
                     table.ForeignKey(
                         name: "fk_organization_user_user_id",
                         column: x => x.UserId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);

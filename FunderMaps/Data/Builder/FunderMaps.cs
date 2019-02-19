@@ -70,6 +70,9 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.IsDefault).HasColumnName("is_default").IsRequired().HasDefaultValue(false);
                 entity.Property(e => e.IsValidated).HasColumnName("is_validated").IsRequired().HasDefaultValue(false);
                 entity.Property(e => e.BrandingLogo).HasColumnName("branding_logo").HasMaxLength(256);
+                entity.Property(e => e.InvoiceName).HasColumnName("invoice_name").HasMaxLength(256);
+                entity.Property(e => e.InvoicePONumber).HasColumnName("invoice_po_number").HasMaxLength(256);
+                entity.Property(e => e.InvoiceEmail).HasColumnName("invoice_email").HasMaxLength(256);
                 entity.Property(e => e.AttestationOrganizationId).HasColumnName("attestation_organization_id");
 
                 entity.ToTable("organization", "application");

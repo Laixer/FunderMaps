@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using FunderMaps.Models;
 
@@ -8,6 +9,9 @@ namespace FunderMaps.Data.Seed
     {
         public static async Task SeedAsync(IHostingEnvironment env, FunderMapsDbContext catalogContext)
         {
+            // Check if seeding is done already.
+            if (catalogContext.OrganizationRoles.Any()) { return; }
+
             await catalogContext.OrganizationRoles.AddRangeAsync(new OrganizationRole
             {
                 Name = "Superuser",
