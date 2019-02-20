@@ -99,11 +99,11 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<OrganizationUser>(entity =>
             {
-                entity.HasKey(e => new { e.UserId, e.OrganizationId }).HasName("pk_organization_user");
+                entity.HasKey(e => new { e.UserId, e.OrganizationId, e.OrganizationRoleId }).HasName("pk_organization_user");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id").IsRequired();
                 entity.Property(e => e.OrganizationId).HasColumnName("organization_id").IsRequired();
-                entity.Property(e => e.OrganizationRoleId).HasColumnName("organization_role_id");
+                entity.Property(e => e.OrganizationRoleId).HasColumnName("organization_role_id").IsRequired();
 
                 entity.HasOne(d => d.User)
                    .WithOne()
@@ -126,7 +126,8 @@ namespace FunderMaps.Data.Builder
                    .HasForeignKey<OrganizationUser>(s => s.OrganizationRoleId)
                    .HasPrincipalKey<OrganizationRole>(c => c.Id)
                    .OnDelete(DeleteBehavior.Cascade)
-                   .HasConstraintName("fk_organization_user_organization_role_id"); ;
+                   .HasConstraintName("fk_organization_user_organization_role_id")
+                   .IsRequired();
 
                 entity.ToTable("organization_user", "application");
             });

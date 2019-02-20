@@ -72,5 +72,10 @@ namespace FunderMaps.Models
 
         [Required]
         public virtual Address PostalAddres { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

@@ -98,11 +98,11 @@ namespace FunderMaps.Data.Migrations
                 {
                     UserId = table.Column<Guid>(nullable: false, name: "user_id"),
                     OrganizationId = table.Column<Guid>(nullable: false, name: "organization_id"),
-                    OrganizationRoleId = table.Column<Guid>(nullable: true, name: "organization_role_id")
+                    OrganizationRoleId = table.Column<Guid>(nullable: false, name: "organization_role_id")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_organization_user", x => new { x.UserId, x.OrganizationId });
+                    table.PrimaryKey("pk_organization_user", x => new { x.UserId, x.OrganizationId, x.OrganizationRoleId });
                     table.ForeignKey(
                         name: "fk_organization_user_user_id",
                         column: x => x.UserId,
