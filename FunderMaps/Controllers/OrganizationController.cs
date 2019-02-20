@@ -43,8 +43,7 @@ namespace FunderMaps.Controllers
                     .AsNoTracking()
                     .Include(a => a.HomeAddress)
                     .Include(a => a.PostalAddres)
-                    .Where(q => q.Id == id)
-                    .SingleOrDefaultAsync();
+                    .SingleOrDefaultAsync(q => q.Id == id);
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
             if (authorizationResult.Succeeded)

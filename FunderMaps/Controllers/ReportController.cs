@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
-using FunderMaps.Models.Fis;
 using FunderMaps.Interfaces;
+using FunderMaps.Models.Fis;
+using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Controllers
 {
@@ -17,33 +19,69 @@ namespace FunderMaps.Controllers
     [ApiController]
     public class ReportController : ControllerBase
     {
-        private readonly FisDbContext _context;
+        private readonly FisDbContext _fisContext;
+        private readonly FunderMapsDbContext _context;
         private readonly IFileStorageService _fileStorageService;
+        private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly IReportService _reportService;
 
-        public ReportController(FisDbContext context, IFileStorageService fileStorageService)
+        public ReportController(
+            FisDbContext fixContext,
+            FunderMapsDbContext context,
+            UserManager<FunderMapsUser> userManager,
+            IFileStorageService fileStorageService,
+            IReportService reportService)
         {
+            _fisContext = fixContext;
             _context = context;
+            _userManager = userManager;
             _fileStorageService = fileStorageService;
+            _reportService = reportService;
         }
 
         // GET: api/report
         [HttpGet]
-        public async Task<IEnumerable<Report>> Get([FromQuery] uint? offset = null, [FromQuery] uint? limit = null)
+        public async Task<IActionResult> GetAsync([FromQuery] int? offset = null, [FromQuery] int limit = 100)
         {
-            var query = _context.Report
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var organization = await _context.OrganizationUsers
+                .Include(s => s.Organization)
+                .Select(s => new { s.UserId, s.Organization.AttestationOrganizationId })
+                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+
+            if (organization == null || organization.AttestationOrganizationId == 0)
+            {
+                return NotFound();
+            }
+
+            var query = _fisContext.Report
                 .AsNoTracking()
-                .AsQueryable();
+                .Include(s => s.TypeNavigation)
+                .Include(s => s.OwnerNavigation)
+                .Where(s => s.Owner == organization.AttestationOrganizationId)
+                .Select(s => new
+                {
+                    s.Id,
+                    s.DocumentId,
+                    s.Inspection,
+                    s.JointMeasurement,
+                    s.FloorMeasurement,
+                    s.ConformF3o,
+                    s.CreateDate,
+                    s.UpdateDate,
+                    s.Note,
+                    s.Status,
+                    s.Type,
+                    TypeNavigationNameNl = s.TypeNavigation.NameNl
+                })
+                .Take(limit);
 
             if (offset.HasValue)
             {
-                query = query.Skip((int)offset.Value);
-            }
-            if (limit.HasValue)
-            {
-                query = query.Take((int)limit.Value);
+                query = query.Skip(offset.Value);
             }
 
-            return await query.ToListAsync();
+            return Ok(await query.ToListAsync());
         }
 
         public sealed class InputModel
@@ -99,17 +137,17 @@ namespace FunderMaps.Controllers
         [HttpGet("{id}/{document}")]
         public async Task<Report> Get(int id, string document)
         {
-            return await _context.Report.FindAsync(id, document);
+            return await _fisContext.Report.FindAsync(id, document);
         }
 
         // POST: api/report
         [HttpPost]
-        public async Task<Report> Post([FromBody] InputModel input)
+        public async Task<Report> PostAsync([FromBody] InputModel input)
         {
             var report = Map(input);
 
-            _context.Report.Add(report);
-            await _context.SaveChangesAsync();
+            _fisContext.Report.Add(report);
+            await _fisContext.SaveChangesAsync();
 
             return report;
         }
@@ -124,31 +162,31 @@ namespace FunderMaps.Controllers
             }
 
             // Store the report
-            await _fileStorageService.StoreFileAsync("kaas.pak", Request.Body);
+            await _fileStorageService.StoreFileAsync("report", "kaas.pak", Request.Body);
 
             return Ok();
         }
 
         // PUT: api/report
         [HttpPut]
-        public async Task<Report> Put([FromBody] Report report)
+        public async Task<Report> PutAsync([FromBody] Report report)
         {
             report.DeleteDate = DateTime.Now;
 
-            _context.Report.Update(report);
-            await _context.SaveChangesAsync();
+            _fisContext.Report.Update(report);
+            await _fisContext.SaveChangesAsync();
 
             return report;
         }
 
         // DELETE: api/report
         [HttpDelete]
-        public async Task Delete([FromBody] Report report)
+        public async Task DeleteAsync([FromBody] Report report)
         {
             report.DeleteDate = DateTime.Now;
 
-            _context.Report.Update(report);
-            await _context.SaveChangesAsync();
+            _fisContext.Report.Update(report);
+            await _fisContext.SaveChangesAsync();
         }
     }
 }

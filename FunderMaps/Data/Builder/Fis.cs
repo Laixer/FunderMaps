@@ -255,68 +255,25 @@ namespace FunderMaps.Data.Builder
                     .HasName("report_id_key")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('report.report_id_seq'::regclass)");
-
-                entity.Property(e => e.DocumentId)
-                    .HasColumnName("document_id")
-                    .HasMaxLength(64)
-                    .ForNpgsqlHasComment("User provided document identifier");
-
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('report.report_id_seq'::regclass)");
+                entity.Property(e => e.DocumentId).HasColumnName("document_id").HasMaxLength(64).ForNpgsqlHasComment("User provided document identifier");
                 entity.Property(e => e.ConformF3o).HasColumnName("conform_f3o");
-
                 entity.Property(e => e.Contractor).HasColumnName("contractor");
-
-                entity.Property(e => e.CreateDate)
-                    .HasColumnName("create_date")
-                    .HasColumnType("timestamp with time zone")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                    .ForNpgsqlHasComment("Timestamp of record creation, set by insert");
-
+                entity.Property(e => e.CreateDate).HasColumnName("create_date").HasColumnType("timestamp with time zone").HasDefaultValueSql("CURRENT_TIMESTAMP").ForNpgsqlHasComment("Timestamp of record creation, set by insert");
                 entity.Property(e => e.Creator).HasColumnName("creator");
-
-                entity.Property(e => e.DeleteDate)
-                    .HasColumnName("delete_date")
-                    .HasColumnType("timestamp with time zone")
-                    .ForNpgsqlHasComment("Timestamp of soft delete");
-
-                entity.Property(e => e.DocumentDate)
-                    .HasColumnName("document_date")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.DocumentName)
-                    .HasColumnName("document_name")
-                    .HasMaxLength(128);
-
+                entity.Property(e => e.DeleteDate).HasColumnName("delete_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of soft delete");
+                entity.Property(e => e.DocumentDate).HasColumnName("document_date").HasColumnType("date");
+                entity.Property(e => e.DocumentName).HasColumnName("document_name").HasMaxLength(128);
                 entity.Property(e => e.FloorMeasurement).HasColumnName("floor_measurement");
-
                 entity.Property(e => e.Inspection).HasColumnName("inspection");
-
                 entity.Property(e => e.JointMeasurement).HasColumnName("joint_measurement");
-
                 entity.Property(e => e.Note).HasColumnName("note");
-
                 entity.Property(e => e.Owner).HasColumnName("owner");
-
                 entity.Property(e => e.Project).HasColumnName("project");
-
                 entity.Property(e => e.Reviewer).HasColumnName("reviewer");
-
-                entity.Property(e => e.Status)
-                    .HasColumnName("status")
-                    .HasMaxLength(32);
-
-                entity.Property(e => e.Type)
-                    .IsRequired()
-                    .HasColumnName("type")
-                    .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
-
-                entity.Property(e => e.UpdateDate)
-                    .HasColumnName("update_date")
-                    .HasColumnType("timestamp with time zone")
-                    .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
+                entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(32);
+                entity.Property(e => e.Type).IsRequired().HasColumnName("type").HasMaxLength(32).HasDefaultValueSql("'unknown'::character varying");
+                entity.Property(e => e.UpdateDate).HasColumnName("update_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
                 entity.HasOne(d => d.ContractorNavigation)
                     .WithMany(p => p.ReportContractorNavigation)

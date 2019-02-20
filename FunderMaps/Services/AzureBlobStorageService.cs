@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -24,9 +21,9 @@ namespace FunderMaps.Services
         protected CloudBlobContainer SetContainer(string name) =>
             _blobClient.GetContainerReference(name);
 
-        protected CloudBlockBlob PrepareBlob(string filename, BlobProperties properties)
+        protected CloudBlockBlob PrepareBlob(string container, string filename, BlobProperties properties)
         {
-            CloudBlockBlob cloudBlockBlob = SetContainer("report").GetBlockBlobReference(filename);
+            CloudBlockBlob cloudBlockBlob = SetContainer(container).GetBlockBlobReference(filename);
 
             cloudBlockBlob.Properties.CacheControl = properties.CacheControl;
             cloudBlockBlob.Properties.ContentMD5 = properties.ContentMD5;
@@ -37,19 +34,19 @@ namespace FunderMaps.Services
             return cloudBlockBlob;
         }
 
-        protected CloudBlockBlob PrepareBlob(string filename)
+        protected CloudBlockBlob PrepareBlob(string store, string filename)
         {
-            return PrepareBlob(filename, new BlobProperties());
+            return PrepareBlob(store, filename, new BlobProperties());
         }
 
-        public async Task StoreFileAsync(string name, byte[] content)
+        public async Task StoreFileAsync(string store, string name, byte[] content)
         {
-            await PrepareBlob(name).UploadFromByteArrayAsync(content, 0, 0);
+            await PrepareBlob(store, name).UploadFromByteArrayAsync(content, 0, 0);
         }
 
-        public async Task StoreFileAsync(string name, Stream stream)
+        public async Task StoreFileAsync(string store, string name, Stream stream)
         {
-            await PrepareBlob(name).UploadFromStreamAsync(stream);
+            await PrepareBlob(store, name).UploadFromStreamAsync(stream);
         }
     }
 }
