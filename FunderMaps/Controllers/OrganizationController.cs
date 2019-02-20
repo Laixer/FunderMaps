@@ -21,16 +21,18 @@ namespace FunderMaps.Controllers
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
+        private readonly ILookupNormalizer _keyNormalizer;
 
         public OrganizationController(
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
-            ILookupNormalizer keyNormalizer,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService,
+            ILookupNormalizer keyNormalizer)
         {
             _context = context;
             _userManager = userManager;
             _authorizationService = authorizationService;
+            _keyNormalizer = keyNormalizer;
         }
 
         // GET: api/organization/{id}
@@ -53,6 +55,28 @@ namespace FunderMaps.Controllers
             return Forbid();
         }
 
+        // FUTURE: Map user results
+        // GET: api/organization/{id}/users
+        [HttpGet("{id:guid}/users")]
+        public async Task<IActionResult> GetUsersAsync(Guid id)
+        {
+            var organization = await _context.Organizations.FindAsync(id);
+            var organizationUser = await _context.OrganizationUsers
+                    .AsNoTracking()
+                    .Include(a => a.User)
+                    .Where(q => q.Organization == organization)
+                    .Select(s => s.User)
+                    .ToListAsync();
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                return Ok(organizationUser);
+            }
+
+            return Forbid();
+        }
+
         public sealed class UserInputModel
         {
             [Required]
@@ -63,13 +87,19 @@ namespace FunderMaps.Controllers
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }
+
+            public string Role { get; set; }
         }
 
-        // POST: api/organization/{id}/new_superuser
-        [HttpPost("{id:guid}/new_superuser")]
-        public async Task<IActionResult> NewSuperUserAsync(Guid id, [FromBody] UserInputModel input)
+        // POST: api/organization/{id}/add_user
+        [HttpPost("{id:guid}/add_user")]
+        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
             var organization = await _context.Organizations.FindAsync(id);
+            if (organization == null)
+            {
+                return NotFound();
+            }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
@@ -78,8 +108,19 @@ namespace FunderMaps.Controllers
                 using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
                     var role = await _context.OrganizationRoles
-                        .Where(s => s.Name == Constants.SuperuserRole)
-                        .SingleAsync();
+                            .SingleAsync(s => s.NormalizedName == _keyNormalizer.Normalize(Constants.ReaderRole));
+
+                    // Check if role exists
+                    if (!string.IsNullOrEmpty(input.Role))
+                    {
+                        role = await _context.OrganizationRoles
+                            .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role));
+
+                        if (role == null)
+                        {
+                            return BadRequest();
+                        }
+                    }
 
                     // Prepare user account
                     var user = new FunderMapsUser(input.Email);
@@ -91,12 +132,7 @@ namespace FunderMaps.Controllers
                     }
 
                     // Attach user to organization
-                    _context.OrganizationUsers.Add(new OrganizationUser
-                    {
-                        User = user,
-                        Organization = organization,
-                        OrganizationRole = role,
-                    });
+                    await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
                     await _context.SaveChangesAsync();
 
                     transaction.Commit();
@@ -108,47 +144,24 @@ namespace FunderMaps.Controllers
             return Forbid();
         }
 
-        // POST: api/organization/{id}/new_user
-        [HttpPost("{id:guid}/new_user")]
-        public async Task<IActionResult> NewUserAsync(Guid id, [FromBody] UserInputModel input)
+        // POST: api/organization/{id}/remove_user
+        [HttpPost("{id:guid}/remove_user")]
+        public async Task<IActionResult> RemoveUserAsync(Guid id, [FromBody] UserInputModel input)
         {
             var organization = await _context.Organizations.FindAsync(id);
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
-                // Create everything at once, or nothing at all if an error occurs.
-                using (var transaction = await _context.Database.BeginTransactionAsync())
-                {
-                    // Prepare user account
-                    var user = new FunderMapsUser(input.Email);
-                    var result = await _userManager.CreateAsync(user, input.Password);
-                    if (!result.Succeeded)
-                    {
-                        transaction.Rollback();
-                        return Conflict();
-                    }
-
-                    // Attach user to organization
-                    _context.OrganizationUsers.Add(new OrganizationUser
-                    {
-                        User = user,
-                        Organization = organization,
-                    });
-                    await _context.SaveChangesAsync();
-
-                    transaction.Commit();
-
-                    return Ok();
-                }
+                return Ok();
             }
 
             return Forbid();
         }
 
-        // PUT: api/organization
-        [HttpPut]
-        public async Task<IActionResult> PutAsync([FromBody] Organization organization)
+        // PUT: api/organization/{id}
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization organization)
         {
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)

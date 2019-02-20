@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -117,12 +115,7 @@ namespace FunderMaps.Controllers
                 await _context.SaveChangesAsync();
 
                 // Attach user to organization
-                await _context.OrganizationUsers.AddAsync(new OrganizationUser
-                {
-                    User = user,
-                    Organization = organization,
-                    OrganizationRole = role,
-                });
+                await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
                 await _context.SaveChangesAsync();
 
                 // Remove proposal

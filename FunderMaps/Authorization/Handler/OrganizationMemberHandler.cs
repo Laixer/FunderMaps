@@ -1,26 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data;
 using FunderMaps.Models;
 using FunderMaps.Models.Identity;
-using FunderMaps.Helpers;
 
 namespace FunderMaps.Authorization.Handler
 {
-    public class OrganizationMemberHandler : AuthorizationHandler<OrganizationMemberRequirement, Organization>
+    public class OrganizationMemberHandler : OrganizationHandler<OrganizationMemberRequirement>
     {
-        private readonly FunderMapsDbContext _context;
-        private readonly UserManager<FunderMapsUser> _userManager;
-
         public OrganizationMemberHandler(FunderMapsDbContext context, UserManager<FunderMapsUser> userManager)
+            : base(context, userManager)
         {
-            _context = context;
-            _userManager = userManager;
         }
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
@@ -32,8 +24,12 @@ namespace FunderMaps.Authorization.Handler
             {
                 return;
             }
+            if (organization == null)
+            {
+                return;
+            }
 
-            var user = await _userManager.FindByEmailAsync(context.User.Identity.Name);
+            var user = await UserManager.FindByEmailAsync(context.User.Identity.Name);
 
             // Administrator roles can access anything
             if (requirement.AllowAdministratorAlways && await IsAdministratorAsync(user))
@@ -51,16 +47,6 @@ namespace FunderMaps.Authorization.Handler
         }
 
         /// <summary>
-        /// Test if user claims the administrator role.
-        /// </summary>
-        /// <param name="user">Identity user.</param>
-        /// <returns>True on success.</returns>
-        private async Task<bool> IsAdministratorAsync(FunderMapsUser user)
-        {
-            return await _userManager.IsInRoleAsync(user, Constants.AdministratorRole);
-        }
-
-        /// <summary>
         /// Test if user belongs to organization as member.
         /// </summary>
         /// <param name="user">Identity user.</param>
@@ -68,7 +54,7 @@ namespace FunderMaps.Authorization.Handler
         /// <returns>True on success.</returns>
         private async Task<bool> IsOrganizationMemberAsync(FunderMapsUser user, Organization organization)
         {
-            return await _context.OrganizationUsers.FindAsync(user.Id, organization.Id) != null;
+            return await Context.OrganizationUsers.FindAsync(user.Id, organization.Id) != null;
         }
     }
 }

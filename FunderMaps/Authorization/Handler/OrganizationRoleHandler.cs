@@ -8,22 +8,18 @@ using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data;
 using FunderMaps.Models;
 using FunderMaps.Models.Identity;
-using FunderMaps.Helpers;
 
 namespace FunderMaps.Authorization.Handler
 {
-    public class OrganizationRoleHandler : AuthorizationHandler<OrganizationRoleRequirement, Organization>
+    public class OrganizationRoleHandler : OrganizationHandler<OrganizationRoleRequirement>
     {
-        private readonly FunderMapsDbContext _context;
-        private readonly UserManager<FunderMapsUser> _userManager;
         private readonly ILookupNormalizer _keyNormalizer;
 
         public OrganizationRoleHandler(FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             ILookupNormalizer keyNormalizer)
+            : base(context, userManager)
         {
-            _context = context;
-            _userManager = userManager;
             _keyNormalizer = keyNormalizer;
         }
 
@@ -36,8 +32,12 @@ namespace FunderMaps.Authorization.Handler
             {
                 return;
             }
+            if (organization == null)
+            {
+                return;
+            }
 
-            var user = await _userManager.FindByEmailAsync(context.User.Identity.Name);
+            var user = await UserManager.FindByEmailAsync(context.User.Identity.Name);
 
             // Administrator roles can access anything
             if (requirement.AllowAdministratorAlways && await IsAdministratorAsync(user))
@@ -52,18 +52,6 @@ namespace FunderMaps.Authorization.Handler
                 context.Succeed(requirement);
                 return;
             }
-
-            await Task.FromResult(0);
-        }
-
-        /// <summary>
-        /// Test if user claims the administrator role.
-        /// </summary>
-        /// <param name="user">Identity user.</param>
-        /// <returns>True on success.</returns>
-        private async Task<bool> IsAdministratorAsync(FunderMapsUser user)
-        {
-            return await _userManager.IsInRoleAsync(user, Constants.AdministratorRole);
         }
 
         /// <summary>
@@ -75,12 +63,11 @@ namespace FunderMaps.Authorization.Handler
         /// <returns>True on success.</returns>
         private async Task<bool> HasOrganizationRoleAsync(FunderMapsUser user, Organization organization, string role)
         {
-            return await _context.OrganizationUsers
+            return await Context.OrganizationUsers
+                .AsNoTracking()
                 .Include(e => e.OrganizationRole)
-                .Where(s => s.User.Id == user.Id &&
-                    s.Organization.Id == organization.Id &&
-                    s.OrganizationRole.NormalizedName == _keyNormalizer.Normalize(role))
-                .FirstOrDefaultAsync() != null;
+                .Where(s => s.OrganizationRole.NormalizedName == _keyNormalizer.Normalize(role))
+                .FirstOrDefaultAsync(s => s.User.Id == user.Id && s.Organization.Id == organization.Id) != null;
         }
     }
 }
