@@ -153,7 +153,21 @@ namespace FunderMaps.Controllers
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
-                return Ok();
+                // Create everything at once, or nothing at all if an error occurs.
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    var user = await _userManager.FindByEmailAsync(input.Email);
+                    var organizationUser = await _context.OrganizationUsers
+                        .SingleAsync(s => s.User == user && s.Organization == organization);
+                    _context.OrganizationUsers.Remove(organizationUser);
+                    await _context.SaveChangesAsync();
+
+                    await _userManager.DeleteAsync(user);
+
+                    transaction.Commit();
+
+                    return Ok();
+                }
             }
 
             return Forbid();

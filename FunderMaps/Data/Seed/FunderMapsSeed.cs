@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using FunderMaps.Models;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Data.Seed
 {
@@ -12,15 +13,12 @@ namespace FunderMaps.Data.Seed
             // Check if seeding is done already.
             if (catalogContext.OrganizationRoles.Any()) { return; }
 
-            await catalogContext.OrganizationRoles.AddRangeAsync(new OrganizationRole
-            {
-                Name = "Superuser",
-                NormalizedName = "SUPERUSER"
-            }, new OrganizationRole
-            {
-                Name = "User",
-                NormalizedName = "USER"
-            });
+            await catalogContext.OrganizationRoles.AddRangeAsync(
+                new OrganizationRole { Name = Constants.SuperuserRole, NormalizedName = Constants.SuperuserRole.ToUpper() },
+                new OrganizationRole { Name = Constants.VerifierRole, NormalizedName = Constants.VerifierRole.ToUpper() },
+                new OrganizationRole { Name = Constants.WriterRole, NormalizedName = Constants.WriterRole.ToUpper() },
+                new OrganizationRole { Name = Constants.ReaderRole, NormalizedName = Constants.ReaderRole.ToUpper() }
+            );
             await catalogContext.SaveChangesAsync();
 
             if (env.IsDevelopment() || env.IsStaging())

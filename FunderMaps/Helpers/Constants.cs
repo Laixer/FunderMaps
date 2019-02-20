@@ -16,6 +16,8 @@ namespace FunderMaps.Helpers
 
         public const string AdministratorRole = "Administrator";
         public const string SuperuserRole = "Superuser";
-        public const string UserRole = "User";
+        public const string VerifierRole = "Verifier";
+        public const string WriterRole = "Writer";
+        public const string ReaderRole = "Reader";
     }
 }
