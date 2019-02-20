@@ -56,7 +56,7 @@ namespace FunderMaps
         private void ConfigureDatastore(IServiceCollection services)
         {
             // Application database
-            services.AddDbContext<FunderMapsDbContext>(options =>
+            services.AddDbContextPool<FunderMapsDbContext>(options =>
             {
                 options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"), pgOptions =>
                 {
@@ -66,7 +66,7 @@ namespace FunderMaps
             .AddEntityFrameworkNpgsql();
 
             // FIS database
-            services.AddDbContext<FisDbContext>(options =>
+            services.AddDbContextPool<FisDbContext>(options =>
             {
                 options.UseNpgsql(_configuration.GetConnectionString("FISConnection"));
             })
