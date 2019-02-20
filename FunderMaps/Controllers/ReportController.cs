@@ -23,12 +23,14 @@ namespace FunderMaps.Controllers
         private readonly FunderMapsDbContext _context;
         private readonly IFileStorageService _fileStorageService;
         private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly IAuthorizationService _authorizationService;
         private readonly IReportService _reportService;
 
         public ReportController(
             FisDbContext fixContext,
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
+            IAuthorizationService authorizationService,
             IFileStorageService fileStorageService,
             IReportService reportService)
         {
@@ -36,6 +38,7 @@ namespace FunderMaps.Controllers
             _context = context;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
+            _authorizationService = authorizationService;
             _reportService = reportService;
         }
 
@@ -96,19 +99,14 @@ namespace FunderMaps.Controllers
             public bool FloorMeasurement { get; set; }
             public bool ConformF3o { get; set; }
             public string Note { get; set; }
-            public string Status { get; set; }
             public string Type { get; set; }
             public int? Reviewer { get; set; }
-            public int? Creator { get; set; }
-
-            [Required]
-            public int? Owner { get; set; }
 
             [Required]
             public int? Contractor { get; set; }
 
+            [Required]
             public DateTime DocumentDate { get; set; }
-            public string DocumentName { get; set; }
         }
 
         private Report Map(InputModel input)
@@ -122,36 +120,61 @@ namespace FunderMaps.Controllers
                 FloorMeasurement = input.FloorMeasurement,
                 ConformF3o = input.ConformF3o,
                 Note = input.Note,
-                Status = input.Status,
-                Type = input.Type,
+                Status = "todo",
+                Type = input.Type ?? "unknown",
                 Reviewer = input.Reviewer,
-                Creator = input.Creator,
-                Owner = input.Owner.Value,
                 Contractor = input.Contractor.Value,
                 DocumentDate = input.DocumentDate,
-                DocumentName = input.DocumentName
             };
         }
 
         // GET: api/report/{id}/{document}
         [HttpGet("{id}/{document}")]
-        public async Task<Report> Get(int id, string document)
+        public async Task<IActionResult> Get(int id, string document)
         {
-            return await _fisContext.Report.FindAsync(id, document);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var organization = await _context.OrganizationUsers
+                .Include(s => s.Organization)
+                .Select(s => new { s.UserId, s.Organization.AttestationOrganizationId })
+                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+
+            var report = await _fisContext.Report.FindAsync(id, document);
+            if (report == null)
+            {
+                return NotFound();
+            }
+
+            //var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, "OrganizationMemberPolicy");
+            //if (authorizationResult.Succeeded)
+            //{
+            return Ok(report);
+            //}
+
+            return Forbid();
         }
 
         // POST: api/report
         [HttpPost]
         public async Task<Report> PostAsync([FromBody] InputModel input)
         {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var organization = await _context.OrganizationUsers
+                .Include(s => s.Organization)
+                .Select(s => new { s.UserId, s.Organization.AttestationOrganizationId })
+                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+
             var report = Map(input);
 
-            _fisContext.Report.Add(report);
+            report.Creator = user.AttestationPrincipalId;
+            report.Owner = organization.AttestationOrganizationId;
+
+            await _fisContext.Report.AddAsync(report);
             await _fisContext.SaveChangesAsync();
 
             return report;
         }
 
+        // TODO: Upload files via form
         // POST: api/report/attach_document
         [HttpPost("attach_document")]
         public async Task<IActionResult> AttachDocument()
@@ -167,26 +190,43 @@ namespace FunderMaps.Controllers
             return Ok();
         }
 
-        // PUT: api/report
-        [HttpPut]
-        public async Task<Report> PutAsync([FromBody] Report report)
+        // TODO:
+        // PUT: api/report/{id}/{document}
+        [HttpPut("{id}/{document}")]
+        public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report report)
         {
-            report.DeleteDate = DateTime.Now;
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var organization = await _context.OrganizationUsers
+                .Include(s => s.Organization)
+                .Select(s => new { s.UserId, s.Organization.AttestationOrganizationId })
+                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+
+            if (id != report.Id || document != report.DocumentId)
+            {
+                return BadRequest();
+            }
 
             _fisContext.Report.Update(report);
             await _fisContext.SaveChangesAsync();
 
-            return report;
+            return NoContent();
         }
 
-        // DELETE: api/report
-        [HttpDelete]
-        public async Task DeleteAsync([FromBody] Report report)
+        // TODO:
+        // DELETE: api/report/{id}/{document}
+        [HttpDelete("{id}/{document}")]
+        public async Task<IActionResult> DeleteAsync(int id, string document)
         {
-            report.DeleteDate = DateTime.Now;
+            var report = await _fisContext.Report.FindAsync(id, document);
+            if (report == null)
+            {
+                return NotFound();
+            }
 
-            _fisContext.Report.Update(report);
+            _fisContext.Report.Remove(report);
             await _fisContext.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

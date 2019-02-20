@@ -2,8 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using FunderMaps.Data;
+using FunderMaps.Interfaces;
 using FunderMaps.Models.Fis;
+using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Controllers
 {
@@ -12,11 +15,24 @@ namespace FunderMaps.Controllers
     [ApiController]
     public class SampleController : ControllerBase
     {
-        private readonly FisDbContext _context;
+        private readonly FisDbContext _fisContext;
+        private readonly FunderMapsDbContext _context;
+        private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IReportService _reportService;
 
-        public SampleController(FisDbContext context)
+        public SampleController(
+            FisDbContext fixContext,
+            FunderMapsDbContext context,
+            UserManager<FunderMapsUser> userManager,
+            IAuthorizationService authorizationService,
+            IReportService reportService)
         {
+            _fisContext = fixContext;
             _context = context;
+            _userManager = userManager;
+            _authorizationService = authorizationService;
+            _reportService = reportService;
         }
 
         // GET: api/sample
@@ -30,33 +46,48 @@ namespace FunderMaps.Controllers
         [HttpGet("{id}/{report}")]
         public async Task<Sample> Get(int id, int report)
         {
-            return await _context.Sample.FindAsync(id, report);
+            return await _fisContext.Sample.FindAsync(id, report);
         }
 
         // POST: api/sample
         [HttpPost]
         public async Task<Sample> Post([FromBody] Sample sample)
         {
-            _context.Sample.Add(sample);
-            await _context.SaveChangesAsync();
+            await _fisContext.Sample.AddAsync(sample);
+            await _fisContext.SaveChangesAsync();
 
             return sample;
         }
 
-        // PUT: api/sample
-        [HttpPut]
-        public async Task<Sample> Put([FromBody] Sample sample)
+        // PUT: api/sample/{id}/{report}
+        [HttpPut("{id}/{report}")]
+        public async Task<IActionResult> Put(int id, int report, [FromBody] Sample sample)
         {
-            _context.Sample.Update(sample);
-            await _context.SaveChangesAsync();
+            if (id != sample.Id || report != sample.Report)
+            {
+                return BadRequest();
+            }
 
-            return sample;
+            _fisContext.Sample.Update(sample);
+            await _fisContext.SaveChangesAsync();
+
+            return NoContent();
         }
 
-        // DELETE: api/sample/{id}
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // DELETE: api/sample/{id}/{report}
+        [HttpDelete("{id}/{report}")]
+        public async Task<IActionResult> Delete(int id, int report)
         {
+            var sample = await _fisContext.Sample.FindAsync(id, report);
+            if (sample == null)
+            {
+                return NotFound();
+            }
+
+            _fisContext.Sample.Remove(sample);
+            await _fisContext.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
