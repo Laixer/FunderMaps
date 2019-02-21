@@ -16,7 +16,7 @@ namespace FunderMaps.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrganizationController : ControllerBase
+    public class OrganizationController : AbstractMicroController
     {
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
@@ -51,7 +51,7 @@ namespace FunderMaps.Controllers
                 return Ok(organization);
             }
 
-            return Forbid();
+            return ResourceForbid();
         }
 
         // FUTURE: Map user results
@@ -73,7 +73,7 @@ namespace FunderMaps.Controllers
                 return Ok(organizationUser);
             }
 
-            return Forbid();
+            return ResourceForbid();
         }
 
         public sealed class UserInputModel
@@ -97,7 +97,7 @@ namespace FunderMaps.Controllers
             var organization = await _context.Organizations.FindAsync(id);
             if (organization == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
@@ -117,7 +117,7 @@ namespace FunderMaps.Controllers
 
                         if (role == null)
                         {
-                            return BadRequest();
+                            return BadRequest(0, "Role not found");
                         }
                     }
 
@@ -127,7 +127,7 @@ namespace FunderMaps.Controllers
                     if (!result.Succeeded)
                     {
                         transaction.Rollback();
-                        return Conflict();
+                        return ResourceExists();
                     }
 
                     // Attach user to organization
@@ -140,7 +140,7 @@ namespace FunderMaps.Controllers
                 }
             }
 
-            return Forbid();
+            return ResourceForbid();
         }
 
         // POST: api/organization/{id}/remove_user
@@ -169,7 +169,7 @@ namespace FunderMaps.Controllers
                 }
             }
 
-            return Forbid();
+            return ResourceForbid();
         }
 
         // PUT: api/organization/{id}
@@ -185,7 +185,7 @@ namespace FunderMaps.Controllers
                 return Ok(organization);
             }
 
-            return Forbid();
+            return ResourceForbid();
         }
     }
 }

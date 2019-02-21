@@ -12,13 +12,14 @@ using FunderMaps.Models.Identity;
 using FunderMaps.Identity;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
+using FunderMaps.Models;
 
 namespace FunderMaps.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController : ControllerBase
+    public class AuthenticationController : AbstractMicroController
     {
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
@@ -47,6 +48,21 @@ namespace FunderMaps.Controllers
             public IList<Claim> Claims { get; set; }
         }
 
+        /// <summary>
+        /// Map identity errors to error output model.
+        /// </summary>
+        /// <param name="errors">List of errors.</param>
+        /// <returns>ErrorOutputModel.</returns>
+        protected ErrorOutputModel IdentityErrorResponse(IEnumerable<IdentityError> errors)
+        {
+            var errorModel = new ErrorOutputModel();
+            foreach (var item in errors)
+            {
+                errorModel.AddError(0, item.Description);
+            }
+            return errorModel;
+        }
+
         // GET: api/authentication
         /// <summary>
         /// Get authentication principal properties related to
@@ -58,7 +74,7 @@ namespace FunderMaps.Controllers
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             return Ok(new UserOutputModel
@@ -92,22 +108,6 @@ namespace FunderMaps.Controllers
             public UserOutputModel User { get; set; }
 
             public string Token { get; set; }
-        }
-
-        public class ErrorOutputModel
-        {
-            public class Error
-            {
-                public int Code { get; set; }
-                public string Message { get; set; }
-            }
-
-            public IList<Error> Errors { get; set; }
-
-            public ErrorOutputModel(int code, string message)
-            {
-                Errors = new List<Error> { new Error { Code = code, Message = message } };
-            }
         }
 
         // POST: api/authentication/authenticate
@@ -155,18 +155,18 @@ namespace FunderMaps.Controllers
             }
             else if (result.IsLockedOut)
             {
-                return StatusCode(401, new ErrorOutputModel(101, "Principal is locked out, contact the administrator"));
+                return Unauthorized(101, "Principal is locked out, contact the administrator");
             }
             else if (result.IsNotAllowed)
             {
-                return StatusCode(401, new ErrorOutputModel(102, "Principal is not allowed to login"));
+                return Unauthorized(102, "Principal is not allowed to login");
             }
             else if (result.RequiresTwoFactor)
             {
                 // TODO:
             }
 
-            return StatusCode(401, new ErrorOutputModel(103, "Invalid credentials provided"));
+            return Unauthorized(103, "Invalid credentials provided");
         }
 
         // POST: api/authentication/signout
@@ -175,9 +175,11 @@ namespace FunderMaps.Controllers
         /// authentication this is not strictly required.
         /// </summary>
         [HttpPost("signout")]
-        public async Task SignOutAsync()
+        public async Task<IActionResult> SignOutAsync()
         {
             await _signInManager.SignOutAsync();
+
+            return Ok();
         }
 
         public sealed class ChangePasswordInputModel
@@ -198,13 +200,13 @@ namespace FunderMaps.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
-                return BadRequest();
+                return BadRequest(IdentityErrorResponse(changePasswordResult.Errors));
             }
 
             await _signInManager.RefreshSignInAsync(user);
@@ -230,7 +232,7 @@ namespace FunderMaps.Controllers
             var user = await _userManager.FindByEmailAsync(input.Email);
             if (user == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             if (await _userManager.HasPasswordAsync(user))
@@ -238,10 +240,10 @@ namespace FunderMaps.Controllers
                 await _userManager.RemovePasswordAsync(user);
             }
 
-            var changePasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
-            if (!changePasswordResult.Succeeded)
+            var addPasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
+            if (!addPasswordResult.Succeeded)
             {
-                return BadRequest();
+                return BadRequest(IdentityErrorResponse(addPasswordResult.Errors));
             }
 
             await _signInManager.RefreshSignInAsync(user);
@@ -257,7 +259,7 @@ namespace FunderMaps.Controllers
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             // Skip if email is confirmed already.
