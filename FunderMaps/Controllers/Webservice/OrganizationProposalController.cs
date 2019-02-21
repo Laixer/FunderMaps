@@ -9,12 +9,12 @@ using FunderMaps.Data;
 using FunderMaps.Models;
 using FunderMaps.Helpers;
 
-namespace FunderMaps.Controllers
+namespace FunderMaps.Controllers.Webservice
 {
     [Authorize(Roles = Constants.AdministratorRole)]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrganizationProposalController : ControllerBase
+    public class OrganizationProposalController : AbstractMicroController
     {
         private readonly FunderMapsDbContext _context;
         private readonly ILookupNormalizer _keyNormalizer;

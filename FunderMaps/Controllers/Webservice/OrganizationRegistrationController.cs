@@ -11,12 +11,12 @@ using FunderMaps.Helpers;
 using FunderMaps.Models;
 using FunderMaps.Models.Identity;
 
-namespace FunderMaps.Controllers
+namespace FunderMaps.Controllers.Webservice
 {
     [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrganizationRegistrationController : ControllerBase
+    public class OrganizationRegistrationController : AbstractMicroController
     {
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;

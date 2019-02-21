@@ -8,12 +8,12 @@ using FunderMaps.Interfaces;
 using FunderMaps.Models.Fis;
 using FunderMaps.Models.Identity;
 
-namespace FunderMaps.Controllers
+namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class SampleController : ControllerBase
+    public class SampleController : AbstractMicroController
     {
         private readonly FisDbContext _fisContext;
         private readonly FunderMapsDbContext _context;
@@ -39,19 +39,21 @@ namespace FunderMaps.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
+            // TODO: ...
+
             return new string[] { "value1", "value2" };
         }
 
         // GET: api/sample/{id}/{report}
         [HttpGet("{id}/{report}")]
-        public async Task<Sample> Get(int id, int report)
+        public async Task<Sample> GetAsync(int id, int report)
         {
             return await _fisContext.Sample.FindAsync(id, report);
         }
 
         // POST: api/sample
         [HttpPost]
-        public async Task<Sample> Post([FromBody] Sample sample)
+        public async Task<Sample> PostAsync([FromBody] Sample sample)
         {
             await _fisContext.Sample.AddAsync(sample);
             await _fisContext.SaveChangesAsync();
@@ -61,11 +63,11 @@ namespace FunderMaps.Controllers
 
         // PUT: api/sample/{id}/{report}
         [HttpPut("{id}/{report}")]
-        public async Task<IActionResult> Put(int id, int report, [FromBody] Sample sample)
+        public async Task<IActionResult> PutAsync(int id, int report, [FromBody] Sample sample)
         {
             if (id != sample.Id || report != sample.Report)
             {
-                return BadRequest();
+                return BadRequest(0, "Identifiers do not match entity");
             }
 
             _fisContext.Sample.Update(sample);
@@ -76,12 +78,12 @@ namespace FunderMaps.Controllers
 
         // DELETE: api/sample/{id}/{report}
         [HttpDelete("{id}/{report}")]
-        public async Task<IActionResult> Delete(int id, int report)
+        public async Task<IActionResult> DeleteAsync(int id, int report)
         {
             var sample = await _fisContext.Sample.FindAsync(id, report);
             if (sample == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             _fisContext.Sample.Remove(sample);

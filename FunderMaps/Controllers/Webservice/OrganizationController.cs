@@ -11,7 +11,7 @@ using FunderMaps.Models;
 using FunderMaps.Models.Identity;
 using FunderMaps.Helpers;
 
-namespace FunderMaps.Controllers
+namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
     [Route("api/[controller]")]

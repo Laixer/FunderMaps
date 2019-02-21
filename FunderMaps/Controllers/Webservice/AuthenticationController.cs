@@ -14,7 +14,7 @@ using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Models;
 
-namespace FunderMaps.Controllers
+namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
     [Route("api/[controller]")]
@@ -43,7 +43,9 @@ namespace FunderMaps.Controllers
             public bool? LockoutEnabled { get; set; }
             public bool? PhoneNumberConfirmed { get; set; }
             public int AccessFailedCount { get; set; }
+            public DateTimeOffset? LockoutEnd { get; set; }
             public string Email { get; set; }
+            public int? AttestationPrincipalId { get; set; }
             public IList<string> Roles { get; set; }
             public IList<Claim> Claims { get; set; }
         }
@@ -85,7 +87,9 @@ namespace FunderMaps.Controllers
                 LockoutEnabled = user.LockoutEnabled,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed,
                 AccessFailedCount = user.AccessFailedCount,
+                LockoutEnd = user.LockoutEnd,
                 Email = user.Email,
+                AttestationPrincipalId = user.AttestationPrincipalId,
                 Roles = await _userManager.GetRolesAsync(user),
                 Claims = await _userManager.GetClaimsAsync(user),
             });
@@ -146,7 +150,9 @@ namespace FunderMaps.Controllers
                         LockoutEnabled = user.LockoutEnabled,
                         PhoneNumberConfirmed = user.PhoneNumberConfirmed,
                         AccessFailedCount = user.AccessFailedCount,
+                        LockoutEnd = user.LockoutEnd,
                         Email = user.Email,
+                        AttestationPrincipalId = user.AttestationPrincipalId,
                         Roles = await _userManager.GetRolesAsync(user),
                         Claims = await _userManager.GetClaimsAsync(user),
                     },

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
@@ -12,12 +11,12 @@ using FunderMaps.Interfaces;
 using FunderMaps.Models.Fis;
 using FunderMaps.Models.Identity;
 
-namespace FunderMaps.Controllers
+namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ReportController : ControllerBase
+    public class ReportController : AbstractMicroController
     {
         private readonly FisDbContext _fisContext;
         private readonly FunderMapsDbContext _context;
@@ -54,7 +53,7 @@ namespace FunderMaps.Controllers
 
             if (organization == null || organization.AttestationOrganizationId == 0)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             var query = _fisContext.Report
@@ -130,7 +129,7 @@ namespace FunderMaps.Controllers
 
         // GET: api/report/{id}/{document}
         [HttpGet("{id}/{document}")]
-        public async Task<IActionResult> Get(int id, string document)
+        public async Task<IActionResult> GetAsync(int id, string document)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var organization = await _context.OrganizationUsers
@@ -141,7 +140,7 @@ namespace FunderMaps.Controllers
             var report = await _fisContext.Report.FindAsync(id, document);
             if (report == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             //var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, "OrganizationMemberPolicy");
@@ -150,12 +149,12 @@ namespace FunderMaps.Controllers
             return Ok(report);
             //}
 
-            return Forbid();
+            return ResourceForbid();
         }
 
         // POST: api/report
         [HttpPost]
-        public async Task<Report> PostAsync([FromBody] InputModel input)
+        public async Task<IActionResult> PostAsync([FromBody] InputModel input)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             var organization = await _context.OrganizationUsers
@@ -171,7 +170,7 @@ namespace FunderMaps.Controllers
             await _fisContext.Report.AddAsync(report);
             await _fisContext.SaveChangesAsync();
 
-            return report;
+            return Ok(report);
         }
 
         // TODO: Upload files via form
@@ -181,7 +180,7 @@ namespace FunderMaps.Controllers
         {
             if (Request.ContentLength == 0)
             {
-                return BadRequest();
+                return BadRequest(0, "Content is empty");
             }
 
             // Store the report
@@ -190,7 +189,6 @@ namespace FunderMaps.Controllers
             return Ok();
         }
 
-        // TODO:
         // PUT: api/report/{id}/{document}
         [HttpPut("{id}/{document}")]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report report)
@@ -203,7 +201,7 @@ namespace FunderMaps.Controllers
 
             if (id != report.Id || document != report.DocumentId)
             {
-                return BadRequest();
+                return BadRequest(0, "Identifiers do not match entity");
             }
 
             _fisContext.Report.Update(report);
@@ -212,7 +210,6 @@ namespace FunderMaps.Controllers
             return NoContent();
         }
 
-        // TODO:
         // DELETE: api/report/{id}/{document}
         [HttpDelete("{id}/{document}")]
         public async Task<IActionResult> DeleteAsync(int id, string document)
@@ -220,8 +217,10 @@ namespace FunderMaps.Controllers
             var report = await _fisContext.Report.FindAsync(id, document);
             if (report == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
+
+            // TODO: Only allow removal if there a no samples.
 
             _fisContext.Report.Remove(report);
             await _fisContext.SaveChangesAsync();
