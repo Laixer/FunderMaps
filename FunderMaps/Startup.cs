@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
 using FunderMaps.Data;
 using FunderMaps.Models.Identity;
 using FunderMaps.Interfaces;
@@ -37,7 +38,13 @@ namespace FunderMaps
             ConfigureAuthentication(services);
             ConfigureAuthorization(services);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                };
+            }).SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
@@ -47,6 +54,7 @@ namespace FunderMaps
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
+            services.AddScoped<IReportService, ReportService>();
         }
 
         /// <summary>
@@ -61,6 +69,7 @@ namespace FunderMaps
                 options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"), pgOptions =>
                 {
                     pgOptions.MigrationsHistoryTable("migrations_history", "meta");
+                    pgOptions.EnableRetryOnFailure();
                 });
             })
             .AddEntityFrameworkNpgsql();

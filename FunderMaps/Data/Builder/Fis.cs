@@ -271,7 +271,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.Owner).HasColumnName("owner");
                 entity.Property(e => e.Project).HasColumnName("project");
                 entity.Property(e => e.Reviewer).HasColumnName("reviewer");
-                entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(32);
+                entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(32).HasDefaultValueSql("'todo'::character varying");
                 entity.Property(e => e.Type).IsRequired().HasColumnName("type").HasMaxLength(32).HasDefaultValueSql("'unknown'::character varying");
                 entity.Property(e => e.UpdateDate).HasColumnName("update_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
