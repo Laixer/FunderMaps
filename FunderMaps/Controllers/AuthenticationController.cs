@@ -75,7 +75,7 @@ namespace FunderMaps.Controllers
             });
         }
 
-        public sealed class LoginInputModel
+        public sealed class AuthenticationInputModel
         {
             [Required]
             [EmailAddress]
@@ -87,10 +87,33 @@ namespace FunderMaps.Controllers
             public string Password { get; set; }
         }
 
+        public sealed class AuthenticationOutputModel
+        {
+            public UserOutputModel User { get; set; }
+
+            public string Token { get; set; }
+        }
+
+        public class ErrorOutputModel
+        {
+            public class Error
+            {
+                public int Code { get; set; }
+                public string Message { get; set; }
+            }
+
+            public IList<Error> Errors { get; set; }
+
+            public ErrorOutputModel(int code, string message)
+            {
+                Errors = new List<Error> { new Error { Code = code, Message = message } };
+            }
+        }
+
         // POST: api/authentication/authenticate
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> SignInAsync([FromBody] LoginInputModel input)
+        public async Task<IActionResult> SignInAsync([FromBody] AuthenticationInputModel input)
         {
             // Signout any previous sessions
             await _signInManager.SignOutAsync();
@@ -113,12 +136,37 @@ namespace FunderMaps.Controllers
                 };
                 token.AddRoleClaims(await _userManager.GetRolesAsync(user));
 
-                return Ok(token.WriteToken());
+                return Ok(new AuthenticationOutputModel
+                {
+                    User = new UserOutputModel
+                    {
+                        Id = user.Id,
+                        TwoFactorEnabled = user.TwoFactorEnabled,
+                        EmailConfirmed = user.EmailConfirmed,
+                        LockoutEnabled = user.LockoutEnabled,
+                        PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                        AccessFailedCount = user.AccessFailedCount,
+                        Email = user.Email,
+                        Roles = await _userManager.GetRolesAsync(user),
+                        Claims = await _userManager.GetClaimsAsync(user),
+                    },
+                    Token = token.WriteToken()
+                });
+            }
+            else if (result.IsLockedOut)
+            {
+                return StatusCode(401, new ErrorOutputModel(101, "Principal is locked out, contact the administrator"));
+            }
+            else if (result.IsNotAllowed)
+            {
+                return StatusCode(401, new ErrorOutputModel(102, "Principal is not allowed to login"));
+            }
+            else if (result.RequiresTwoFactor)
+            {
+                // TODO:
             }
 
-            // TODO: Handle the other result types
-
-            return NotFound();
+            return StatusCode(401, new ErrorOutputModel(103, "Invalid credentials provided"));
         }
 
         // POST: api/authentication/signout
