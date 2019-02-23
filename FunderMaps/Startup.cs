@@ -110,6 +110,7 @@ namespace FunderMaps
             })
             .AddJwtBearer(options =>
             {
+                options.SaveToken = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuer = _configuration.GetJwtIssuer(),
@@ -165,10 +166,6 @@ namespace FunderMaps
                     name: "oops",
                     template: "oops",
                     defaults: new { controller = "Error", action = "Error" });
-
-                //routes.MapSpaFallbackRoute(
-                //    name: "spa-fallback",
-                //    defaults: new { controller = "home", action = "index" });
             });
 
             app.UseSpa(spa =>

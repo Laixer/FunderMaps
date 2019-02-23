@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
@@ -24,15 +25,18 @@ namespace FunderMaps.Controllers.Webservice
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<AuthenticationController> _logger;
 
         public AuthenticationController(
             UserManager<FunderMapsUser> userManager,
             SignInManager<FunderMapsUser> signInManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AuthenticationController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public class PrincipalOutputModel
@@ -123,19 +127,20 @@ namespace FunderMaps.Controllers.Webservice
         [HttpPost("authenticate")]
         public async Task<IActionResult> SignInAsync([FromBody] AuthenticationInputModel input)
         {
-            // Signout any previous sessions
-            await _signInManager.SignOutAsync();
+            // Find user for authnetication, if the user object cannot be found then return an
+            // authentication faillure since the client is not allowed to guess the credentials.
+            var user = await _userManager.Users.SingleOrDefaultAsync(s => s.Email == input.Email);
+            if (user == null)
+            {
+                _logger.LogWarning("Authentication failed, unknown object {user}", input.Email);
+                return Unauthorized(103, "Invalid credentials provided");
+            }
 
-            // Authenticate and return the token as cookie
-            var result = await _signInManager.PasswordSignInAsync(input.Email,
-                input.Password,
-                isPersistent: false,
-                lockoutOnFailure: true);
-
+            var result = await _signInManager.CheckPasswordSignInAsync(user, input.Password, true);
             if (result.Succeeded)
             {
-                // FUTURE: Retrieve signed in user via singing manager.
-                var user = await _userManager.Users.SingleOrDefaultAsync(s => s.Email == input.Email);
+                _logger.LogInformation("Authentication successful, returning security token");
+
                 var token = new JwtTokenIdentityUser<FunderMapsUser, Guid>(user, _configuration.GetJwtSignKey())
                 {
                     Issuer = _configuration.GetJwtIssuer(),
@@ -168,19 +173,6 @@ namespace FunderMaps.Controllers.Webservice
             // FUTURE: RequiresTwoFactor
 
             return Unauthorized(103, "Invalid credentials provided");
-        }
-
-        // POST: api/authentication/signout
-        /// <summary>
-        /// Signout all current sessions. With token based
-        /// authentication this is not strictly required.
-        /// </summary>
-        [HttpPost("signout")]
-        public async Task<IActionResult> SignOutAsync()
-        {
-            await _signInManager.SignOutAsync();
-
-            return Ok();
         }
 
         public sealed class ChangePasswordInputModel
