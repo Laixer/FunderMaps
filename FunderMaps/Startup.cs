@@ -102,14 +102,6 @@ namespace FunderMaps
             .AddEntityFrameworkStores<FunderMapsDbContext>()
             .AddDefaultTokenProviders();
 
-            // Configure identity cookie
-            //services.ConfigureApplicationCookie(options =>
-            //{
-            //    options.Cookie.Name = "SpaIdentityToken";
-            //    options.Cookie.IsEssential = true;
-            //    options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
-            //});
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -165,7 +157,6 @@ namespace FunderMaps
 
             app.UseMvc(routes =>
             {
-
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");

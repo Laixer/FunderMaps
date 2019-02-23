@@ -35,19 +35,23 @@ namespace FunderMaps.Controllers.Webservice
             _configuration = configuration;
         }
 
-        public sealed class UserOutputModel
+        public class PrincipalOutputModel
         {
             public Guid Id { get; set; }
+            public string Email { get; set; }
+            public IList<string> Roles { get; set; }
+            public IList<Claim> Claims { get; set; }
+        }
+
+        public sealed class UserOutputModel : PrincipalOutputModel
+        {
             public bool? TwoFactorEnabled { get; set; }
             public bool? EmailConfirmed { get; set; }
             public bool? LockoutEnabled { get; set; }
             public bool? PhoneNumberConfirmed { get; set; }
             public int AccessFailedCount { get; set; }
             public DateTimeOffset? LockoutEnd { get; set; }
-            public string Email { get; set; }
             public int? AttestationPrincipalId { get; set; }
-            public IList<string> Roles { get; set; }
-            public IList<Claim> Claims { get; set; }
         }
 
         /// <summary>
@@ -109,7 +113,7 @@ namespace FunderMaps.Controllers.Webservice
 
         public sealed class AuthenticationOutputModel
         {
-            public UserOutputModel User { get; set; }
+            public PrincipalOutputModel Principal { get; set; }
 
             public string Token { get; set; }
         }
@@ -142,17 +146,10 @@ namespace FunderMaps.Controllers.Webservice
 
                 return Ok(new AuthenticationOutputModel
                 {
-                    User = new UserOutputModel
+                    Principal = new PrincipalOutputModel
                     {
                         Id = user.Id,
-                        TwoFactorEnabled = user.TwoFactorEnabled,
-                        EmailConfirmed = user.EmailConfirmed,
-                        LockoutEnabled = user.LockoutEnabled,
-                        PhoneNumberConfirmed = user.PhoneNumberConfirmed,
-                        AccessFailedCount = user.AccessFailedCount,
-                        LockoutEnd = user.LockoutEnd,
                         Email = user.Email,
-                        AttestationPrincipalId = user.AttestationPrincipalId,
                         Roles = await _userManager.GetRolesAsync(user),
                         Claims = await _userManager.GetClaimsAsync(user),
                     },
@@ -167,10 +164,8 @@ namespace FunderMaps.Controllers.Webservice
             {
                 return Unauthorized(102, "Principal is not allowed to login");
             }
-            else if (result.RequiresTwoFactor)
-            {
-                // TODO:
-            }
+
+            // FUTURE: RequiresTwoFactor
 
             return Unauthorized(103, "Invalid credentials provided");
         }
