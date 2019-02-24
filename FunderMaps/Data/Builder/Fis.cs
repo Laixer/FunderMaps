@@ -1,5 +1,7 @@
-﻿using FunderMaps.Models.Fis;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
+using FunderMaps.Data.Converters;
+using FunderMaps.Models.Fis;
 
 namespace FunderMaps.Data.Builder
 {
@@ -7,7 +9,7 @@ namespace FunderMaps.Data.Builder
     {
         public static void ModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ForNpgsqlHasEnum("report", "access_policy", new[] { "public", "private", "protected" })
+            modelBuilder.ForNpgsqlHasEnum("report", "access_policy", new[] { "public", "protected", "private" })
                 .ForNpgsqlHasEnum("report", "base_level", new[] { "NAP (NL)", "TAW (BE)", "NN (DE)" })
                 .ForNpgsqlHasEnum("report", "enforcement_term", new[] { "0-5", "5-10", "10-20", "5", "10", "15", "20", "25", "30" });
 
@@ -271,6 +273,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.Owner).HasColumnName("owner");
                 entity.Property(e => e.Project).HasColumnName("project");
                 entity.Property(e => e.Reviewer).HasColumnName("reviewer");
+                entity.Property(e => e.AccessPolicy).HasColumnName("access_policy").HasConversion(new AccessPolicyConverter());
                 entity.Property(e => e.Status).HasColumnName("status").HasMaxLength(32).HasDefaultValueSql("'todo'::character varying");
                 entity.Property(e => e.Type).IsRequired().HasColumnName("type").HasMaxLength(32).HasDefaultValueSql("'unknown'::character varying");
                 entity.Property(e => e.UpdateDate).HasColumnName("update_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
@@ -350,86 +353,27 @@ namespace FunderMaps.Data.Builder
 
                 entity.ToTable("sample", "report");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('report.sample_id_seq'::regclass)");
-
-                entity.Property(e => e.Report)
-                    .HasColumnName("report")
-                    .ForNpgsqlHasComment("Link to the report entity");
-
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('report.sample_id_seq'::regclass)");
+                entity.Property(e => e.Report).HasColumnName("report").ForNpgsqlHasComment("Link to the report entity");
                 entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
-
-                entity.Property(e => e.BuildingNumberSuffix)
-                    .HasColumnName("building_number_suffix")
-                    .HasColumnType("character(2)");
-
-                entity.Property(e => e.BuiltYear)
-                    .HasColumnName("built_year")
-                    .HasColumnType("report.year");
-
-                entity.Property(e => e.Cpt)
-                    .HasColumnName("CPT")
-                    .HasMaxLength(32);
-
-                entity.Property(e => e.CreateDate)
-                    .HasColumnName("create_date")
-                    .HasColumnType("timestamp with time zone")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                    .ForNpgsqlHasComment("Timestamp of record creation, set by insert");
-
-                entity.Property(e => e.DeleteDate)
-                    .HasColumnName("delete_date")
-                    .HasColumnType("timestamp with time zone")
-                    .ForNpgsqlHasComment("Timestamp of soft delete");
-
-                entity.Property(e => e.FoundationDamageCause)
-                    .IsRequired()
-                    .HasColumnName("foundation_damage_cause")
-                    .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
-
-                entity.Property(e => e.FoundationQuality)
-                    .HasColumnName("foundation_quality")
-                    .HasMaxLength(32);
-
+                entity.Property(e => e.BuildingNumberSuffix).HasColumnName("building_number_suffix").HasColumnType("character(2)");
+                entity.Property(e => e.BuiltYear).HasColumnName("built_year").HasColumnType("report.year");
+                entity.Property(e => e.Cpt).HasColumnName("CPT").HasMaxLength(32);
+                entity.Property(e => e.CreateDate).HasColumnName("create_date").HasColumnType("timestamp with time zone").HasDefaultValueSql("CURRENT_TIMESTAMP").ForNpgsqlHasComment("Timestamp of record creation, set by insert");
+                entity.Property(e => e.DeleteDate).HasColumnName("delete_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of soft delete");
+                entity.Property(e => e.FoundationDamageCause).IsRequired().HasColumnName("foundation_damage_cause").HasMaxLength(32).HasDefaultValueSql("'unknown'::character varying");
+                entity.Property(e => e.FoundationQuality).HasColumnName("foundation_quality").HasMaxLength(32);
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
-
-                entity.Property(e => e.FoundationType)
-                    .HasColumnName("foundation_type")
-                    .HasMaxLength(32);
-
-                entity.Property(e => e.Groudlevel)
-                    .HasColumnName("groudlevel")
-                    .HasColumnType("report.height");
-
-                entity.Property(e => e.GroundwaterLevel)
-                    .HasColumnName("groundwater_level")
-                    .HasColumnType("report.height");
-
-                entity.Property(e => e.MonitoringWell)
-                    .HasColumnName("monitoring_well")
-                    .HasMaxLength(32);
-
+                entity.Property(e => e.FoundationType).HasColumnName("foundation_type").HasMaxLength(32);
+                entity.Property(e => e.Groudlevel).HasColumnName("groudlevel").HasColumnType("report.height");
+                entity.Property(e => e.GroundwaterLevel).HasColumnName("groundwater_level").HasColumnType("report.height");
+                entity.Property(e => e.MonitoringWell).HasColumnName("monitoring_well").HasMaxLength(32);
                 entity.Property(e => e.Note).HasColumnName("note");
-
-                entity.Property(e => e.StreetName)
-                    .IsRequired()
-                    .HasColumnName("street_name")
-                    .HasMaxLength(128);
-
-                entity.Property(e => e.Substructure)
-                    .HasColumnName("substructure")
-                    .HasMaxLength(32);
-
-                entity.Property(e => e.UpdateDate)
-                    .HasColumnName("update_date")
-                    .HasColumnType("timestamp with time zone")
-                    .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
-
-                entity.Property(e => e.WoodLevel)
-                    .HasColumnName("wood_level")
-                    .HasColumnType("report.height");
+                entity.Property(e => e.StreetName).IsRequired().HasColumnName("street_name").HasMaxLength(128);
+                entity.Property(e => e.AccessPolicy).HasColumnName("access_policy").HasConversion(new AccessPolicyConverter());
+                entity.Property(e => e.Substructure).HasColumnName("substructure").HasMaxLength(32);
+                entity.Property(e => e.UpdateDate).HasColumnName("update_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
+                entity.Property(e => e.WoodLevel).HasColumnName("wood_level").HasColumnType("report.height");
 
                 entity.HasOne(d => d.FoundationDamageCauseNavigation)
                     .WithMany(p => p.Sample)

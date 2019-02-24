@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class Report
+    public partial class Report : AccessControl
     {
         public Report()
         {
