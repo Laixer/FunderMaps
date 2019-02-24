@@ -46,7 +46,7 @@ namespace FunderMaps.Authorization.Handler
                 return;
             }
 
-            // Test if user is organization member
+            // Test if user has organization role
             if (await HasOrganizationRoleAsync(user, organization, requirement.Role))
             {
                 context.Succeed(requirement);
@@ -61,7 +61,7 @@ namespace FunderMaps.Authorization.Handler
         /// <param name="organization">Organization resource.</param>
         /// <param name="role">Organization role.</param>
         /// <returns>True on success.</returns>
-        private async Task<bool> HasOrganizationRoleAsync(FunderMapsUser user, Organization organization, string role)
+        protected async Task<bool> HasOrganizationRoleAsync(FunderMapsUser user, Organization organization, string role)
         {
             return await Context.OrganizationUsers
                 .AsNoTracking()
