@@ -21,7 +21,9 @@ namespace FunderMaps.Controllers.Webservice
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
 
-        public OrganizationRegistrationController(FunderMapsDbContext context, UserManager<FunderMapsUser> userManager)
+        public OrganizationRegistrationController(
+            FunderMapsDbContext context,
+            UserManager<FunderMapsUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -57,6 +59,60 @@ namespace FunderMaps.Controllers.Webservice
             public OrganizationModel Organization { get; set; }
         }
 
+        /// <summary>
+        /// Create an organization with superuser from the proposal.
+        /// </summary>
+        /// <param name="proposal">Organization proposal.</param>
+        /// <param name="input">Client input.</param>
+        /// <returns></returns>
+        private async Task CreateOrganizationFromProposal(OrganizationProposal proposal, OrganizationInitiationInputModel input)
+        {
+            var role = await _context.OrganizationRoles
+                .Where(s => s.Name == Constants.SuperuserRole)
+                .SingleAsync();
+
+            // Prepare new user account
+            var user = new FunderMapsUser(input.User.Email);
+            var result = await _userManager.CreateAsync(user, input.User.Password);
+            if (!result.Succeeded)
+            {
+                throw new Exception();
+            }
+
+            // Attach attestation object to user
+            //user.AttestationPrincipalId = attestationPrincipal.Id;
+
+            // Create new organization address
+            var address = new Address
+            {
+                Street = input.Organization.Address,
+                AddressNumber = input.Organization.AddressNumber,
+            };
+            await _context.Addresses.AddAsync(address);
+            await _context.SaveChangesAsync();
+
+            // Create new organization
+            var organization = new Organization
+            {
+                Name = proposal.Name,
+                NormalizedName = proposal.NormalizedName,
+                Email = proposal.Email,
+                HomeAddress = address,
+                PostalAddres = address,
+                //AttestationOrganizationId = attestationOrganization.Id,
+            };
+            await _context.Organizations.AddAsync(organization);
+            await _context.SaveChangesAsync();
+
+            // Attach user to organization with superuser role
+            await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
+            await _context.SaveChangesAsync();
+
+            // Remove proposal
+            _context.OrganizationProposals.Remove(proposal);
+            await _context.SaveChangesAsync();
+        }
+
         // POST: api/organization/proposal/{token}
         /// <summary>
         /// Create a new organization from an organization proposal. At the same time a superuser
@@ -68,64 +124,33 @@ namespace FunderMaps.Controllers.Webservice
         public async Task<IActionResult> FromProposalAsync([FromRoute] Guid token, [FromBody] OrganizationInitiationInputModel input)
         {
             var proposal = await _context.OrganizationProposals
-                .Where(s => s.Token == token)
                 .AsNoTracking()
+                .Where(s => s.Token == token)
                 .SingleOrDefaultAsync();
 
             if (proposal == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
-            // Create everything at once, or nothing at all if an error occurs.
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
             {
-                var role = await _context.OrganizationRoles
-                    .Where(s => s.Name == Constants.SuperuserRole)
-                    .SingleAsync();
-
-                // Prepare user account
-                var user = new FunderMapsUser(input.User.Email);
-                var result = await _userManager.CreateAsync(user, input.User.Password);
-                if (!result.Succeeded)
+                // Create everything at once, or nothing at all if an error occurs.
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    transaction.Rollback();
-                    return Conflict();
+                    try
+                    {
+                        await CreateOrganizationFromProposal(proposal, input);
+                        transaction.Commit();
+                        return NoContent();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        return ResourceExists();
+                    }
                 }
-
-                // Create organization address
-                var address = new Address
-                {
-                    Street = input.Organization.Address,
-                    AddressNumber = input.Organization.AddressNumber,
-                };
-                await _context.Addresses.AddAsync(address);
-                await _context.SaveChangesAsync();
-
-                // Create organization
-                var organization = new Organization
-                {
-                    Name = proposal.Name,
-                    NormalizedName = proposal.NormalizedName,
-                    Email = proposal.Email,
-                    HomeAddress = address,
-                    PostalAddres = address,
-                };
-                await _context.Organizations.AddAsync(organization);
-                await _context.SaveChangesAsync();
-
-                // Attach user to organization
-                await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
-                await _context.SaveChangesAsync();
-
-                // Remove proposal
-                _context.OrganizationProposals.Remove(proposal);
-                await _context.SaveChangesAsync();
-
-                transaction.Commit();
-
-                return Ok(organization);
-            }
+            });
         }
     }
 }
