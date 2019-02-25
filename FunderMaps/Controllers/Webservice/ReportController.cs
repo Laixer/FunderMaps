@@ -11,6 +11,7 @@ using FunderMaps.Interfaces;
 using FunderMaps.Models.Fis;
 using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
+using FunderMaps.Data.Authorization;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -46,70 +47,57 @@ namespace FunderMaps.Controllers.Webservice
         [HttpGet]
         public async Task<IActionResult> GetAsync([FromQuery] int? offset = null, [FromQuery] int limit = 100)
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            var organization = await _context.OrganizationUsers
-                .Include(s => s.Organization)
-                .Select(s => new { s.UserId, s.Organization.AttestationOrganizationId })
-                .SingleOrDefaultAsync(q => q.UserId == user.Id);
-
-            if (organization == null || organization.AttestationOrganizationId == 0)
-            {
-                return ResourceNotFound();
-            }
+            var attestationOrganizationId = User.Claims.Where(s => s.Type == FisClaimTypes.OrganizationAttestationIdentifier).First();
 
             var query = _fisContext.Report
                 .AsNoTracking()
                 .Include(s => s.TypeNavigation)
                 .Include(s => s.OwnerNavigation)
-                .Where(s => s.Owner == organization.AttestationOrganizationId)
-                .Select(s => new
-                {
-                    s.Id,
-                    s.DocumentId,
-                    s.Inspection,
-                    s.JointMeasurement,
-                    s.FloorMeasurement,
-                    s.ConformF3o,
-                    s.CreateDate,
-                    s.UpdateDate,
-                    s.Note,
-                    s.Status,
-                    s.Type,
-                    TypeNavigationNameNl = s.TypeNavigation.NameNl
-                })
                 .Take(limit);
+            //.WhereAccessLevel(AccessPolicy.Public);
+
+            if (attestationOrganizationId == null)
+            {
+                query = query.Where(s => s.AccessPolicy == AccessPolicy.Public);
+            }
+            else
+            {
+                query = query.Where(s => s.Owner == int.Parse(attestationOrganizationId.Value) || s.AccessPolicy == AccessPolicy.Public);
+            }
+
+            var query2 = query.Select(s => new
+            {
+                s.Id,
+                s.DocumentId,
+                s.Inspection,
+                s.JointMeasurement,
+                s.FloorMeasurement,
+                s.ConformF3o,
+                s.CreateDate,
+                s.UpdateDate,
+                s.Note,
+                s.Status,
+                s.Type,
+                TypeNavigationNameNl = s.TypeNavigation.NameNl
+            });
 
             if (offset.HasValue)
             {
-                query = query.Skip(offset.Value);
+                query2 = query2.Skip(offset.Value);
             }
 
-            return Ok(await query.ToListAsync());
-        }
-
-        public sealed class InputModel
-        {
-            public int? Project { get; set; }
-
-            [Required]
-            public string DocumentId { get; set; }
-
-            public bool Inspection { get; set; }
-            public bool JointMeasurement { get; set; }
-            public bool FloorMeasurement { get; set; }
-            public bool ConformF3o { get; set; }
-            public string Note { get; set; }
-            public string Type { get; set; }
-            public int? Reviewer { get; set; }
-
-            [Required]
-            public int? Contractor { get; set; }
-
-            [Required]
-            public DateTime DocumentDate { get; set; }
+            return Ok(await query2.ToListAsync());
         }
 
         // GET: api/report/{id}/{document}
+        /// <summary>
+        /// Retrieve the report by identifier. The report is returned
+        /// if the the record is public or if the organization user has
+        /// access to the record.
+        /// </summary>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
+        /// <returns>Report.</returns>
         [HttpGet("{id}/{document}")]
         public async Task<IActionResult> GetAsync(int id, string document)
         {
@@ -119,19 +107,13 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            // Public data is accessible to any clients
+            // Public data is accessible to anyone
             if (report.IsPublic())
             {
                 return Ok(report);
             }
 
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            var organizationUser = await _context.OrganizationUsers
-                .Include(s => s.Organization)
-                .Select(s => new { s.UserId, s.Organization })
-                .SingleOrDefaultAsync(q => q.UserId == user.Id);
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organizationUser.Organization, OperationsRequirement.Read);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Read);
             if (authorizationResult.Succeeded)
             {
                 return Ok(report);
@@ -141,45 +123,54 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // POST: api/report
+        /// <summary>
+        /// Create a new report.
+        /// </summary>
+        /// <param name="input">Report data.</param>
+        /// <returns>Report.</returns>
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] InputModel input)
+        public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            var organizationUser = await _context.OrganizationUsers
-                .Include(s => s.Organization)
-                .Select(s => new { s.UserId, s.Organization })
-                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+            var attestationPrincipalId = User.Claims.Where(s => s.Type == FisClaimTypes.UserAttestationIdentifier).First();
+            var attestationOrganizationId = User.Claims.Where(s => s.Type == FisClaimTypes.OrganizationAttestationIdentifier).First();
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organizationUser.Organization, OperationsRequirement.Create);
+            if (attestationPrincipalId == null || attestationOrganizationId == null)
+            {
+                return ResourceForbid();
+            }
+
+            var report = new Report
+            {
+                Project = input.Project,
+                DocumentId = input.DocumentId,
+                Inspection = input.Inspection,
+                JointMeasurement = input.JointMeasurement,
+                FloorMeasurement = input.FloorMeasurement,
+                ConformF3o = input.ConformF3o,
+                Note = input.Note,
+                Status = "todo", // NOTE: HACK: The default value for database does not work, hence the default here
+                Type = input.Type ?? "unknown", // NOTE: HACK: The default value for database does not work, hence the default here
+                Reviewer = input.Reviewer,
+                Contractor = input.Contractor,
+                DocumentDate = input.DocumentDate,
+                Creator = int.Parse(attestationPrincipalId.Value),
+                Owner = int.Parse(attestationOrganizationId.Value),
+                AccessPolicy = AccessPolicy.Private, // NOTE: HACK: The default value for database does not work, hence the default here
+            };
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                var report = new Report
-                {
-                    Project = input.Project,
-                    DocumentId = input.DocumentId,
-                    Inspection = input.Inspection,
-                    JointMeasurement = input.JointMeasurement,
-                    FloorMeasurement = input.FloorMeasurement,
-                    ConformF3o = input.ConformF3o,
-                    Note = input.Note,
-                    Status = "todo",
-                    Type = input.Type ?? "unknown",
-                    Reviewer = input.Reviewer,
-                    Contractor = input.Contractor.Value,
-                    DocumentDate = input.DocumentDate,
-                    Creator = user.AttestationPrincipalId,
-                    Owner = organizationUser.Organization.AttestationOrganizationId,
-                };
-
                 await _fisContext.Report.AddAsync(report);
                 await _fisContext.SaveChangesAsync();
 
-                return NoContent();
+                return Ok(report);
             }
 
             return ResourceForbid();
         }
 
+        // TODO: Authorization
         // TODO: Upload files via form
         // POST: api/report/attach_document
         [HttpPost("attach_document")]
@@ -197,21 +188,35 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // PUT: api/report/{id}/{document}
+        /// <summary>
+        /// Update report if the organization user has access to the record.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="document"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPut("{id}/{document}")]
-        public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report report)
+        public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            var organizationUser = await _context.OrganizationUsers
-                .Include(s => s.Organization)
-                .Select(s => new { s.UserId, s.Organization })
-                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+            var report = await _fisContext.Report.FindAsync(id, document);
+            if (report == null)
+            {
+                return ResourceNotFound();
+            }
 
-            if (id != report.Id || document != report.DocumentId)
+            if (id != input.Id || document != input.DocumentId)
             {
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organizationUser.Organization, OperationsRequirement.Update);
+            report.Inspection = input.Inspection;
+            report.JointMeasurement = input.JointMeasurement;
+            report.FloorMeasurement = input.FloorMeasurement;
+            report.ConformF3o = input.ConformF3o;
+            report.Note = input.Note;
+            report.AccessPolicy = input.AccessPolicy;
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
                 _fisContext.Report.Update(report);
@@ -233,13 +238,7 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            var organizationUser = await _context.OrganizationUsers
-                .Include(s => s.Organization)
-                .Select(s => new { s.UserId, s.Organization })
-                .SingleOrDefaultAsync(q => q.UserId == user.Id);
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organizationUser.Organization, OperationsRequirement.Delete);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Delete);
             if (authorizationResult.Succeeded)
             {
                 // TODO: Only allow removal if there a no samples.

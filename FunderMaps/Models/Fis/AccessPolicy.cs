@@ -9,6 +9,5 @@ namespace FunderMaps.Models.Fis
     {
         Public,
         Private,
-        Protected
     }
 }
