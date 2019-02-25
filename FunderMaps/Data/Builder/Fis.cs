@@ -9,8 +9,7 @@ namespace FunderMaps.Data.Builder
     {
         public static void ModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ForNpgsqlHasEnum("report", "access_policy", new[] { "public", "protected", "private" })
-                .ForNpgsqlHasEnum("report", "base_level", new[] { "NAP (NL)", "TAW (BE)", "NN (DE)" })
+            modelBuilder.ForNpgsqlHasEnum("report", "base_level", new[] { "NAP (NL)", "TAW (BE)", "NN (DE)" })
                 .ForNpgsqlHasEnum("report", "enforcement_term", new[] { "0-5", "5-10", "10-20", "5", "10", "15", "20", "25", "30" });
 
             modelBuilder.Entity<Address>(entity =>

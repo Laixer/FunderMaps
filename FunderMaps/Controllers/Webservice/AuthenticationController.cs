@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
@@ -14,6 +15,8 @@ using FunderMaps.Identity;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Models;
+using FunderMaps.Data;
+using FunderMaps.Data.Authorization;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -22,17 +25,20 @@ namespace FunderMaps.Controllers.Webservice
     [ApiController]
     public class AuthenticationController : AbstractMicroController
     {
+        private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationController> _logger;
 
         public AuthenticationController(
+            FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             SignInManager<FunderMapsUser> signInManager,
             IConfiguration configuration,
             ILogger<AuthenticationController> logger)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
@@ -149,6 +155,30 @@ namespace FunderMaps.Controllers.Webservice
                 };
                 token.AddRoleClaims(await _userManager.GetRolesAsync(user));
 
+                // Add user attestation as claim
+                if (user.AttestationPrincipalId != 0)
+                {
+                    token.AddClaim(FisClaimTypes.UserAttestationIdentifier, user.AttestationPrincipalId);
+                }
+
+                var organizationUser = await _context.OrganizationUsers
+                    .AsNoTracking()
+                    .Include(s => s.Organization)
+                    .Include(s => s.OrganizationRole)
+                    .Select(s => new { s.UserId, s.Organization, s.OrganizationRole })
+                    .SingleOrDefaultAsync(q => q.UserId == user.Id);
+
+                if (organizationUser != null)
+                {
+                    token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.OrganizationRole.Name);
+
+                    // Add organization attestation as claim
+                    if (organizationUser.Organization.AttestationOrganizationId != 0)
+                    {
+                        token.AddClaim(FisClaimTypes.OrganizationAttestationIdentifier, organizationUser.Organization.AttestationOrganizationId);
+                    }
+                }
+
                 return Ok(new AuthenticationOutputModel
                 {
                     Principal = new PrincipalOutputModel
@@ -227,6 +257,8 @@ namespace FunderMaps.Controllers.Webservice
             {
                 return ResourceNotFound();
             }
+
+            // FUTURE: Wrap inside transaction
 
             if (await _userManager.HasPasswordAsync(user))
             {

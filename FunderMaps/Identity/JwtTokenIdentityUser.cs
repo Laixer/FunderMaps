@@ -50,7 +50,28 @@ namespace FunderMaps.Identity
             }
         }
 
-        // FUTURE: AddExternalClaims
+        
+        /// <summary>
+        /// Add additional security claims.
+        /// </summary>
+        /// <param name="claims">Additional security claims.</param>
+        public void AddClaims(IDictionary<string, string> claims)
+        {
+            foreach (var claim in claims)
+            {
+                Claims.Add(new Claim(claim.Key, claim.Value));
+            }
+        }
+
+        /// <summary>
+        /// Add single security claim.
+        /// </summary>
+        /// <param name="key">Claim key.</param>
+        /// <param name="value">Claim value.</param>
+        public void AddClaim(string key, object value)
+        {
+            Claims.Add(new Claim(key, value.ToString()));
+        }
 
         /// <summary>
         /// Use symmetric key as token signature credentials.
