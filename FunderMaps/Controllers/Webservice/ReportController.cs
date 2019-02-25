@@ -89,39 +89,6 @@ namespace FunderMaps.Controllers.Webservice
             return Ok(await query2.ToListAsync());
         }
 
-        // GET: api/report/{id}/{document}
-        /// <summary>
-        /// Retrieve the report by identifier. The report is returned
-        /// if the the record is public or if the organization user has
-        /// access to the record.
-        /// </summary>
-        /// <param name="id">Report identifier.</param>
-        /// <param name="document">Report identifier.</param>
-        /// <returns>Report.</returns>
-        [HttpGet("{id}/{document}")]
-        public async Task<IActionResult> GetAsync(int id, string document)
-        {
-            var report = await _fisContext.Report.FindAsync(id, document);
-            if (report == null)
-            {
-                return ResourceNotFound();
-            }
-
-            // Public data is accessible to anyone
-            if (report.IsPublic())
-            {
-                return Ok(report);
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Read);
-            if (authorizationResult.Succeeded)
-            {
-                return Ok(report);
-            }
-
-            return ResourceForbid();
-        }
-
         // POST: api/report
         /// <summary>
         /// Create a new report.
@@ -170,6 +137,39 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
+        // GET: api/report/{id}/{document}
+        /// <summary>
+        /// Retrieve the report by identifier. The report is returned
+        /// if the the record is public or if the organization user has
+        /// access to the record.
+        /// </summary>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
+        /// <returns>Report.</returns>
+        [HttpGet("{id}/{document}")]
+        public async Task<IActionResult> GetAsync(int id, string document)
+        {
+            var report = await _fisContext.Report.FindAsync(id, document);
+            if (report == null)
+            {
+                return ResourceNotFound();
+            }
+
+            // Public data is accessible to anyone
+            if (report.IsPublic())
+            {
+                return Ok(report);
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Read);
+            if (authorizationResult.Succeeded)
+            {
+                return Ok(report);
+            }
+
+            return ResourceForbid();
+        }
+
         // TODO: Authorization
         // TODO: Upload files via form
         // POST: api/report/attach_document
@@ -191,10 +191,9 @@ namespace FunderMaps.Controllers.Webservice
         /// <summary>
         /// Update report if the organization user has access to the record.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="document"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
+        /// <param name="input">Report data.</param>
         [HttpPut("{id}/{document}")]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
@@ -229,6 +228,11 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // DELETE: api/report/{id}/{document}
+        /// <summary>
+        /// Soft delete the report if the organization user has access to the record.
+        /// </summary>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
         [HttpDelete("{id}/{document}")]
         public async Task<IActionResult> DeleteAsync(int id, string document)
         {

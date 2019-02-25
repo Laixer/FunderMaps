@@ -248,6 +248,8 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<Report>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.HasKey(e => new { e.Id, e.DocumentId });
 
                 entity.ToTable("report", "report");
@@ -348,6 +350,8 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<Sample>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.HasKey(e => new { e.Id, e.Report });
 
                 entity.ToTable("sample", "report");

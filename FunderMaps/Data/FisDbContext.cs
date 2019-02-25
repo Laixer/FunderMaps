@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data.Builder;
 using FunderMaps.Models.Fis;
 
@@ -32,6 +35,42 @@ namespace FunderMaps.Data
             base.OnModelCreating(modelBuilder);
 
             Fis.ModelCreating(modelBuilder);
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            CheckSoftDelete();
+
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            CheckSoftDelete();
+
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void CheckSoftDelete()
+        {
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.Entity is ISoftDeletable)
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Deleted:
+                            entry.Property("DeleteDate").CurrentValue = System.DateTime.Now;
+                            entry.State = EntityState.Modified;
+                            break;
+                        case EntityState.Added:
+                            entry.Property("DeleteDate").CurrentValue = null;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         }
     }
 }
