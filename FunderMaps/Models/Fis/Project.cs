@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class Project
+    public class Project
     {
         public Project()
         {

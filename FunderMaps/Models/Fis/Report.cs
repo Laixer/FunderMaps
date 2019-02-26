@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class Report : AccessControl
+    public interface ISoftDeletable { }
+
+    public class Report : AccessControl, ISoftDeletable
     {
         public Report()
         {

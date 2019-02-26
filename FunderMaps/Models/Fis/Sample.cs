@@ -2,7 +2,7 @@
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class Sample : AccessControl
+    public class Sample : AccessControl
     {
         public int Id { get; set; }
         public int Report { get; set; }

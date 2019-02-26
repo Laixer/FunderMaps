@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class FoundationRecovery
+    public class FoundationRecovery
     {
         public string EvidenceDocument { get; set; }
         public string Note { get; set; }
