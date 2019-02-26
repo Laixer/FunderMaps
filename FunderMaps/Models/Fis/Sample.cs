@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Models.Fis
 {
-    public class Sample : AccessControl
+    public class Sample : AccessControl, ISoftDeletable
     {
         public int Id { get; set; }
         public int Report { get; set; }
@@ -26,10 +27,20 @@ namespace FunderMaps.Models.Fis
         public short? BuiltYear { get; set; }
 
         public Address Address { get; set; }
+
+        [IgnoreDataMember]
         public FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
+
+        [IgnoreDataMember]
         public FoundationQuality FoundationQualityNavigation { get; set; }
+
+        [IgnoreDataMember]
         public FoundationType FoundationTypeNavigation { get; set; }
+
+        [IgnoreDataMember]
         public Report ReportNavigation { get; set; }
+
+        [IgnoreDataMember]
         public Substructure SubstructureNavigation { get; set; }
     }
 }

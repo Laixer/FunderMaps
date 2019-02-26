@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using FunderMaps.Helpers;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Models.Fis;
 using FunderMaps.Data.Authorization;
+using FunderMaps.Extensions;
 
 namespace FunderMaps.Authorization.Handler
 {
@@ -30,9 +28,14 @@ namespace FunderMaps.Authorization.Handler
                 return Task.CompletedTask;
             }
 
+            var organizationClaim = context.User.GetClaim(FisClaimTypes.OrganizationUserRole);
+            if (organizationClaim == null)
+            {
+                return Task.CompletedTask;
+            }
+
             // User must have certain organization role for operation
-            var organizationClaim = context.User.Claims.Where(s => s.Type == FisClaimTypes.OrganizationUserRole).First();
-            switch (organizationClaim.Value)
+            switch (organizationClaim)
             {
                 case Constants.SuperuserRole:
                     if (requirement.Name == OperationsRequirement.Read.Name

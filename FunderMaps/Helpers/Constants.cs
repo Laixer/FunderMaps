@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Helpers
 {
     public class Constants
     {
+        /// <summary>
+        /// Default password policy.
+        /// </summary>
         public static readonly PasswordOptions PasswordPolicy = new PasswordOptions
         {
             RequireDigit = false,
@@ -12,6 +16,15 @@ namespace FunderMaps.Helpers
             RequireUppercase = false,
             RequiredLength = 6,
             RequiredUniqueChars = 1,
+        };
+
+        /// <summary>
+        /// Default lockout policy.
+        /// </summary>
+        public static readonly LockoutOptions LockoutOptions = new LockoutOptions
+        {
+            DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30),
+            MaxFailedAccessAttempts = 10,
         };
 
         public const string AdministratorRole = "Administrator";

@@ -6,8 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Models.Fis
 {
-    public interface ISoftDeletable { }
-
     public class Report : AccessControl, ISoftDeletable
     {
         public Report()
@@ -98,13 +96,5 @@ namespace FunderMaps.Models.Fis
 
         [IgnoreDataMember]
         public ICollection<Sample> Sample { get; set; }
-    }
-
-    public static class Kaas
-    {
-        public static System.Linq.IQueryable<Report> WhereAccessLevel(this System.Linq.IQueryable<Report> reports, AccessPolicy policy)
-        {
-            return null;
-        }
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,6 +10,7 @@ using FunderMaps.Models.Fis;
 using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
+using FunderMaps.Extensions;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -44,49 +43,29 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // GET: api/report
+        /// <summary>
+        /// Get a chunk of reports either by organization or as public data.
+        /// </summary>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
+        /// <returns>List of reports.</returns>
         [HttpGet]
-        public async Task<IActionResult> GetAsync([FromQuery] int? offset = null, [FromQuery] int limit = 100)
+        public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
-            var attestationOrganizationId = User.Claims.Where(s => s.Type == FisClaimTypes.OrganizationAttestationIdentifier).First();
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            var query = _fisContext.Report
+            // FUTURE: The 'where' could be improved
+            var reports = await _fisContext.Report
                 .AsNoTracking()
-                .Include(s => s.TypeNavigation)
-                .Include(s => s.OwnerNavigation)
-                .Take(limit);
-            //.WhereAccessLevel(AccessPolicy.Public);
+                .Where(s => attestationOrganizationId == null
+                    ? s.AccessPolicy == AccessPolicy.Public
+                    : s.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
+                .OrderByDescending(s => s.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
 
-            if (attestationOrganizationId == null)
-            {
-                query = query.Where(s => s.AccessPolicy == AccessPolicy.Public);
-            }
-            else
-            {
-                query = query.Where(s => s.Owner == int.Parse(attestationOrganizationId.Value) || s.AccessPolicy == AccessPolicy.Public);
-            }
-
-            var query2 = query.Select(s => new
-            {
-                s.Id,
-                s.DocumentId,
-                s.Inspection,
-                s.JointMeasurement,
-                s.FloorMeasurement,
-                s.ConformF3o,
-                s.CreateDate,
-                s.UpdateDate,
-                s.Note,
-                s.Status,
-                s.Type,
-                TypeNavigationNameNl = s.TypeNavigation.NameNl
-            });
-
-            if (offset.HasValue)
-            {
-                query2 = query2.Skip(offset.Value);
-            }
-
-            return Ok(await query2.ToListAsync());
+            return Ok(reports);
         }
 
         // POST: api/report
@@ -98,8 +77,8 @@ namespace FunderMaps.Controllers.Webservice
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
-            var attestationPrincipalId = User.Claims.Where(s => s.Type == FisClaimTypes.UserAttestationIdentifier).First();
-            var attestationOrganizationId = User.Claims.Where(s => s.Type == FisClaimTypes.OrganizationAttestationIdentifier).First();
+            var attestationPrincipalId = User.GetClaim(FisClaimTypes.UserAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
             if (attestationPrincipalId == null || attestationOrganizationId == null)
             {
@@ -120,8 +99,8 @@ namespace FunderMaps.Controllers.Webservice
                 Reviewer = input.Reviewer,
                 Contractor = input.Contractor,
                 DocumentDate = input.DocumentDate,
-                Creator = int.Parse(attestationPrincipalId.Value),
-                Owner = int.Parse(attestationOrganizationId.Value),
+                Creator = int.Parse(attestationPrincipalId),
+                Owner = int.Parse(attestationOrganizationId),
                 AccessPolicy = AccessPolicy.Private, // NOTE: HACK: The default value for database does not work, hence the default here
             };
 

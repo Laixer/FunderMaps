@@ -1,22 +1,22 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data.Builder;
 using FunderMaps.Models.Fis;
+using FunderMaps.Models;
 
 namespace FunderMaps.Data
 {
-    public partial class FisDbContext : DbContext
+    public class FisDbContext : DbContext
     {
-        public virtual DbSet<Address> Address { get; set; }
+        public virtual DbSet<Models.Fis.Address> Address { get; set; }
         public virtual DbSet<FoundationDamageCause> FoundationDamageCause { get; set; }
         public virtual DbSet<FoundationQuality> FoundationQuality { get; set; }
         public virtual DbSet<FoundationRecovery> FoundationRecovery { get; set; }
         public virtual DbSet<FoundationRecoveryEvidence> FoundationRecoveryEvidence { get; set; }
         public virtual DbSet<FoundationRecoveryType> FoundationRecoveryType { get; set; }
         public virtual DbSet<FoundationType> FoundationType { get; set; }
-        public virtual DbSet<Organization> Organization { get; set; }
+        public virtual DbSet<Models.Fis.Organization> Organization { get; set; }
         public virtual DbSet<Principal> Principal { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Report> Report { get; set; }
@@ -39,19 +39,23 @@ namespace FunderMaps.Data
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
-            CheckSoftDelete();
+            ChecEntityDelete();
 
             return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            CheckSoftDelete();
+            ChecEntityDelete();
 
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
-        private void CheckSoftDelete()
+        /// <summary>
+        /// Always initiate a soft delete if entity is configured so, otherwise ignore deletes
+        /// since the data store credentials never allow a hard delete.
+        /// </summary>
+        private void ChecEntityDelete()
         {
             foreach (var entry in ChangeTracker.Entries())
             {
@@ -68,6 +72,13 @@ namespace FunderMaps.Data
                             break;
                         default:
                             break;
+                    }
+                }
+                else
+                {
+                    if (entry.State == EntityState.Deleted)
+                    {
+                        entry.State = EntityState.Unchanged;
                     }
                 }
             }
