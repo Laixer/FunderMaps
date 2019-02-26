@@ -164,7 +164,7 @@ namespace FunderMaps.Controllers.Webservice
             sample.MonitoringWell = input.MonitoringWell;
             sample.Cpt = input.Cpt;
             sample.WoodLevel = input.WoodLevel;
-            sample.Groudlevel = input.Groudlevel;
+            sample.GroudLevel = input.GroudLevel;
             sample.GroundwaterLevel = input.GroundwaterLevel;
             sample.BuiltYear = input.BuiltYear;
             sample.Note = input.Note;

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data.Converters;
 using FunderMaps.Models.Fis;
 
@@ -101,15 +100,8 @@ namespace FunderMaps.Data.Builder
             {
                 entity.ToTable("foundation_type", "report");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
+                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
+                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
             });
 
             modelBuilder.Entity<Organization>(entity =>
@@ -120,14 +112,8 @@ namespace FunderMaps.Data.Builder
                     .HasName("organization_name_key")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('attestation.organization_id_seq'::regclass)");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasColumnName("name")
-                    .HasMaxLength(32);
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('attestation.organization_id_seq'::regclass)");
+                entity.Property(e => e.Name).IsRequired().HasColumnName("name").HasMaxLength(32);
             });
 
             modelBuilder.Entity<Principal>(entity =>
@@ -145,32 +131,12 @@ namespace FunderMaps.Data.Builder
                     .HasName("principal_first_name_middle_name_last_name_key")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('attestation.principal_id_seq'::regclass)");
-
-                entity.Property(e => e.Email)
-                    .IsRequired()
-                    .HasColumnName("email")
-                    .HasMaxLength(256);
-
-                entity.Property(e => e.FirstName)
-                    .HasColumnName("first_name")
-                    .HasMaxLength(64);
-
-                entity.Property(e => e.LastName)
-                    .HasColumnName("last_name")
-                    .HasMaxLength(96);
-
-                entity.Property(e => e.MiddleName)
-                    .HasColumnName("middle_name")
-                    .HasMaxLength(32);
-
-                entity.Property(e => e.NickName)
-                    .IsRequired()
-                    .HasColumnName("nick_name")
-                    .HasMaxLength(32);
-
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('attestation.principal_id_seq'::regclass)");
+                entity.Property(e => e.Email).IsRequired().HasColumnName("email").HasMaxLength(256);
+                entity.Property(e => e.FirstName).HasColumnName("first_name").HasMaxLength(64);
+                entity.Property(e => e.LastName).HasColumnName("last_name").HasMaxLength(96);
+                entity.Property(e => e.MiddleName).HasColumnName("middle_name").HasMaxLength(32);
+                entity.Property(e => e.NickName).IsRequired().HasColumnName("nick_name").HasMaxLength(32);
                 entity.Property(e => e.Organization).HasColumnName("organization");
 
                 entity.HasOne(d => d.OrganizationNavigation)
@@ -187,48 +153,18 @@ namespace FunderMaps.Data.Builder
                     .HasName("project_dossier_key")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasDefaultValueSql("nextval('report.project_id_seq'::regclass)");
-
+                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('report.project_id_seq'::regclass)");
                 entity.Property(e => e.Adviser).HasColumnName("adviser");
-
-                entity.Property(e => e.CreateDate)
-                    .HasColumnName("create_date")
-                    .HasColumnType("timestamp with time zone")
-                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                    .ForNpgsqlHasComment("Timestamp of record creation, set by insert");
-
+                entity.Property(e => e.CreateDate).HasColumnName("create_date").HasColumnType("timestamp with time zone").HasDefaultValueSql("CURRENT_TIMESTAMP").ForNpgsqlHasComment("Timestamp of record creation, set by insert");
                 entity.Property(e => e.Creator).HasColumnName("creator");
-
-                entity.Property(e => e.DeleteDate)
-                    .HasColumnName("delete_date")
-                    .HasColumnType("timestamp with time zone")
-                    .ForNpgsqlHasComment("Timestamp of soft delete");
-
-                entity.Property(e => e.Dossier)
-                    .HasColumnName("dossier")
-                    .HasMaxLength(256)
-                    .ForNpgsqlHasComment("User provided dossier number, must be unique");
-
-                entity.Property(e => e.EndDate)
-                    .HasColumnName("end_date")
-                    .HasColumnType("date");
-
+                entity.Property(e => e.DeleteDate).HasColumnName("delete_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of soft delete");
+                entity.Property(e => e.Dossier).HasColumnName("dossier").HasMaxLength(256).ForNpgsqlHasComment("User provided dossier number, must be unique");
+                entity.Property(e => e.EndDate).HasColumnName("end_date").HasColumnType("date");
                 entity.Property(e => e.Lead).HasColumnName("lead");
-
                 entity.Property(e => e.Note).HasColumnName("note");
-
                 entity.Property(e => e.Outline).HasColumnName("outline");
-
-                entity.Property(e => e.StartDate)
-                    .HasColumnName("start_date")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.UpdateDate)
-                    .HasColumnName("update_date")
-                    .HasColumnType("timestamp with time zone")
-                    .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
+                entity.Property(e => e.StartDate).HasColumnName("start_date").HasColumnType("date");
+                entity.Property(e => e.UpdateDate).HasColumnName("update_date").HasColumnType("timestamp with time zone").ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
                 entity.HasOne(d => d.AdviserNavigation)
                     .WithMany(p => p.ProjectAdviserNavigation)
@@ -322,30 +258,16 @@ namespace FunderMaps.Data.Builder
             {
                 entity.ToTable("report_status", "report");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
+                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
+                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
             });
 
             modelBuilder.Entity<ReportType>(entity =>
             {
                 entity.ToTable("report_type", "report");
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(54);
+                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
+                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(54);
             });
 
             modelBuilder.Entity<Sample>(entity =>
@@ -368,7 +290,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.FoundationQuality).HasColumnName("foundation_quality").HasMaxLength(32);
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
                 entity.Property(e => e.FoundationType).HasColumnName("foundation_type").HasMaxLength(32);
-                entity.Property(e => e.Groudlevel).HasColumnName("groudlevel").HasColumnType("report.height");
+                entity.Property(e => e.GroudLevel).HasColumnName("groudlevel").HasColumnType("report.height");
                 entity.Property(e => e.GroundwaterLevel).HasColumnName("groundwater_level").HasColumnType("report.height");
                 entity.Property(e => e.MonitoringWell).HasColumnName("monitoring_well").HasMaxLength(32);
                 entity.Property(e => e.Note).HasColumnName("note");
