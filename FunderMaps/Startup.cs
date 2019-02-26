@@ -52,6 +52,8 @@ namespace FunderMaps
                 configuration.RootPath = "ClientApp/dist";
             });
 
+            //services.AddCors();
+
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<IReportService, ReportService>();
@@ -93,8 +95,7 @@ namespace FunderMaps
                 options.Password = Constants.PasswordPolicy;
 
                 // Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-                options.Lockout.MaxFailedAccessAttempts = 10;
+                options.Lockout = Constants.LockoutOptions;
 
                 // User settings.
                 options.User.RequireUniqueEmail = true;
@@ -135,6 +136,7 @@ namespace FunderMaps
 
             services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();
             services.AddScoped<IAuthorizationHandler, OrganizationRoleHandler>();
+            services.AddSingleton<IAuthorizationHandler, FisOperationHandler>();
         }
 
         // This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
@@ -155,6 +157,11 @@ namespace FunderMaps
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseSpaStaticFiles();
+
+            //app.UseCors(builder =>
+            //{
+            //    builder.AllowAnyOrigin().AllowAnyHeader();
+            //});
 
             app.UseMvc(routes =>
             {
