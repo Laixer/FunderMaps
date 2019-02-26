@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Fis;
 using FunderMaps.Models.Identity;
+using FunderMaps.Authorization.Requirement;
+using FunderMaps.Extensions;
+using FunderMaps.Data.Authorization;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -36,60 +40,176 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // GET: api/sample
+        /// <summary>
+        /// Get a chunk of samples either by organization or as public data.
+        /// </summary>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
+        /// <returns>List of samples.</returns>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
-            // TODO: ...
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            return new string[] { "value1", "value2" };
-        }
+            // FUTURE: The 'where' could be improved
+            var samples = await _fisContext.Sample
+                .AsNoTracking()
+                .Include(s => s.ReportNavigation)
+                .Where(s => attestationOrganizationId == null
+                    ? s.AccessPolicy == AccessPolicy.Public
+                    : s.ReportNavigation.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
+                .OrderByDescending(s => s.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
 
-        // GET: api/sample/{id}/{report}
-        [HttpGet("{id}/{report}")]
-        public async Task<Sample> GetAsync(int id, int report)
-        {
-            return await _fisContext.Sample.FindAsync(id, report);
+            return Ok(samples);
         }
 
         // POST: api/sample
+        /// <summary>
+        /// Create a new sample for a report.
+        /// </summary>
+        /// <param name="input">Sample data.</param>
+        /// <returns>Report.</returns>
         [HttpPost]
-        public async Task<Sample> PostAsync([FromBody] Sample sample)
+        public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
-            await _fisContext.Sample.AddAsync(sample);
-            await _fisContext.SaveChangesAsync();
-
-            return sample;
-        }
-
-        // PUT: api/sample/{id}/{report}
-        [HttpPut("{id}/{report}")]
-        public async Task<IActionResult> PutAsync(int id, int report, [FromBody] Sample sample)
-        {
-            if (id != sample.Id || report != sample.Report)
+            var report = await _fisContext.Report
+                .SingleAsync(s => s.Id == input.Report);
+            if (report == null)
             {
-                return BadRequest(0, "Identifiers do not match entity");
+                return ResourceNotFound();
             }
 
-            _fisContext.Sample.Update(sample);
-            await _fisContext.SaveChangesAsync();
+            var sample = input;
+            sample.FoundationDamageCause = "unknown"; // NOTE: HACK: The default value for database does not work, hence the default here
+            sample.AccessPolicy = AccessPolicy.Private; // NOTE: HACK: The default value for database does not work, hence the default here
 
-            return NoContent();
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Create);
+            if (authorizationResult.Succeeded)
+            {
+                await _fisContext.Sample.AddAsync(sample);
+                await _fisContext.SaveChangesAsync();
+
+                return Ok(sample);
+            }
+
+            return ResourceForbid();
         }
 
-        // DELETE: api/sample/{id}/{report}
-        [HttpDelete("{id}/{report}")]
-        public async Task<IActionResult> DeleteAsync(int id, int report)
+        // GET: api/sample/{id}/{report}
+        /// <summary>
+        /// Retrieve the sample by identifier. The sample is returned
+        /// if the the record is public or if the organization user has
+        /// access to the record.
+        /// </summary>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
+        /// <returns>Report.</returns>
+        [HttpGet("{id}/{report}")]
+        public async Task<IActionResult> GetAsync(int id, int report)
         {
-            var sample = await _fisContext.Sample.FindAsync(id, report);
+            var sample = await _fisContext.Sample
+                .AsNoTracking()
+                .Include(s => s.ReportNavigation)
+                .SingleOrDefaultAsync(s => s.Id == id && s.Report == report);
             if (sample == null)
             {
                 return ResourceNotFound();
             }
 
-            _fisContext.Sample.Remove(sample);
-            await _fisContext.SaveChangesAsync();
+            // Public data is accessible to anyone
+            if (sample.IsPublic() && sample.ReportNavigation.IsPublic())
+            {
+                return Ok(sample);
+            }
 
-            return NoContent();
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Read);
+            if (authorizationResult.Succeeded)
+            {
+                return Ok(sample);
+            }
+
+            return ResourceForbid();
+        }
+
+        // PUT: api/sample/{id}/{report}
+        /// <summary>
+        /// Update sample if the organization user has access to the record.
+        /// </summary>
+        /// <param name="id">Sample identifier.</param>
+        /// <param name="document">Sample identifier.</param>
+        /// <param name="input">Sample data.</param>
+        [HttpPut("{id}/{report}")]
+        public async Task<IActionResult> PutAsync(int id, int report, [FromBody] Sample input)
+        {
+            var sample = await _fisContext.Sample
+                .AsNoTracking()
+                .Include(s => s.ReportNavigation)
+                .SingleOrDefaultAsync(s => s.Id == id && s.Report == report);
+            if (sample == null)
+            {
+                return ResourceNotFound();
+            }
+
+            if (id != input.Id || report != input.Report)
+            {
+                return BadRequest(0, "Identifiers do not match entity");
+            }
+
+            sample.StreetName = input.StreetName;
+            sample.BuildingNumber = input.BuildingNumber;
+            sample.BuildingNumberSuffix = input.BuildingNumberSuffix;
+            sample.MonitoringWell = input.MonitoringWell;
+            sample.Cpt = input.Cpt;
+            sample.WoodLevel = input.WoodLevel;
+            sample.Groudlevel = input.Groudlevel;
+            sample.GroundwaterLevel = input.GroundwaterLevel;
+            sample.BuiltYear = input.BuiltYear;
+            sample.Note = input.Note;
+            sample.AccessPolicy = input.AccessPolicy;
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Update);
+            if (authorizationResult.Succeeded)
+            {
+                _fisContext.Sample.Update(sample);
+                await _fisContext.SaveChangesAsync();
+
+                return NoContent();
+            }
+
+            return ResourceForbid();
+        }
+
+        // DELETE: api/sample/{id}/{report}
+        /// <summary>
+        /// Soft delete the sample if the organization user has access to the record.
+        /// </summary>
+        /// <param name="id">Sample identifier.</param>
+        /// <param name="document">Sample identifier.</param>
+        [HttpDelete("{id}/{report}")]
+        public async Task<IActionResult> DeleteAsync(int id, int report)
+        {
+            var sample = await _fisContext.Sample
+                .AsNoTracking()
+                .Include(s => s.ReportNavigation)
+                .SingleOrDefaultAsync(s => s.Id == id && s.Report == report);
+            if (sample == null)
+            {
+                return ResourceNotFound();
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Delete);
+            if (authorizationResult.Succeeded)
+            {
+                _fisContext.Sample.Remove(sample);
+                await _fisContext.SaveChangesAsync();
+
+                return NoContent();
+            }
+
+            return ResourceForbid();
         }
     }
 }

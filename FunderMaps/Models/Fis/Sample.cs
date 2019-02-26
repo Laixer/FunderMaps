@@ -1,14 +1,26 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Models.Fis
 {
     public class Sample : AccessControl, ISoftDeletable
     {
         public int Id { get; set; }
-        public int Report { get; set; }
+
+        [Required]
+        [BindProperty(Name = "report")]
+        public int? Report { get; set; }
+
+        [Required]
+        [BindProperty(Name = "street_name")]
         public string StreetName { get; set; }
-        public short BuildingNumber { get; set; }
+
+        [Required]
+        [BindProperty(Name = "building_number")]
+        public short? BuildingNumber { get; set; }
+
         public string BuildingNumberSuffix { get; set; }
         public string FoundationType { get; set; }
         public string FoundationQuality { get; set; }

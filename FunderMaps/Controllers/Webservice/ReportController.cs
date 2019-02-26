@@ -50,7 +50,7 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of reports.</returns>
         [HttpGet]
-        public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
