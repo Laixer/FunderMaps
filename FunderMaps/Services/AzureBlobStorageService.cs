@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using FunderMaps.Interfaces;
-using System.IO;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Services
 {
@@ -27,6 +28,7 @@ namespace FunderMaps.Services
 
             cloudBlockBlob.Properties.CacheControl = properties.CacheControl;
             cloudBlockBlob.Properties.ContentMD5 = properties.ContentMD5;
+            cloudBlockBlob.Properties.ContentType = properties.ContentType;
             cloudBlockBlob.Properties.ContentEncoding = properties.ContentEncoding;
             cloudBlockBlob.Properties.ContentLanguage = properties.ContentLanguage;
             cloudBlockBlob.Properties.ContentDisposition = properties.ContentDisposition;
@@ -34,19 +36,22 @@ namespace FunderMaps.Services
             return cloudBlockBlob;
         }
 
-        protected CloudBlockBlob PrepareBlob(string store, string filename)
-        {
-            return PrepareBlob(store, filename, new BlobProperties());
-        }
-
         public async Task StoreFileAsync(string store, string name, byte[] content)
         {
-            await PrepareBlob(store, name).UploadFromByteArrayAsync(content, 0, 0);
+            await PrepareBlob(store, name, new BlobProperties()).UploadFromByteArrayAsync(content, 0, 0);
         }
 
         public async Task StoreFileAsync(string store, string name, Stream stream)
         {
-            await PrepareBlob(store, name).UploadFromStreamAsync(stream);
+            await PrepareBlob(store, name, new BlobProperties()).UploadFromStreamAsync(stream);
+        }
+
+        public async Task StoreFileAsync(string store, ApplicationFile file, Stream stream)
+        {
+            await PrepareBlob(store, file.FileName, new BlobProperties
+            {
+                ContentType = file.ContentType
+            }).UploadFromStreamAsync(stream);
         }
     }
 }

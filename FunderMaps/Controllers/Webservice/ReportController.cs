@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -25,6 +27,11 @@ namespace FunderMaps.Controllers.Webservice
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportService _reportService;
+
+        private static readonly string[] allowedReportFileTypes =
+        {
+            "application/pdf",
+        };
 
         public ReportController(
             FisDbContext fixContext,
@@ -150,20 +157,26 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // TODO: Authorization
-        // TODO: Upload files via form
         // POST: api/report/attach_document
         [HttpPost("attach_document")]
-        public async Task<IActionResult> AttachDocument()
+        public async Task<IActionResult> AttachDocument(IFormFile file)
         {
-            if (Request.ContentLength == 0)
+            var reportFile = new ApplicationFile(file);
+
+            if (!allowedReportFileTypes.Contains(reportFile.ContentType))
             {
-                return BadRequest(0, "Content is empty");
+                return BadRequest(0, "file content type is not allowed");
+            }
+
+            if (reportFile.Empty())
+            {
+                return BadRequest(0, "file content is empty");
             }
 
             // Store the report
-            await _fileStorageService.StoreFileAsync("report", "kaas.pak", Request.Body);
+            await _fileStorageService.StoreFileAsync("report", reportFile, file.OpenReadStream());
 
-            return NoContent();
+            return Ok(reportFile);
         }
 
         // PUT: api/report/{id}/{document}
