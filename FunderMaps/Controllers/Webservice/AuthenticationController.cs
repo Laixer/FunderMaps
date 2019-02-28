@@ -220,7 +220,7 @@ namespace FunderMaps.Controllers.Webservice
         [HttpPost("change_password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)
             {
                 return ResourceNotFound();
