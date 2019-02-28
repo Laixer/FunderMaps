@@ -217,6 +217,10 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // POST: api/authentication/change_password
+        /// <summary>
+        /// Change user password.
+        /// </summary>
+        /// <param name="input">Password input model.</param>
         [HttpPost("change_password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
         {

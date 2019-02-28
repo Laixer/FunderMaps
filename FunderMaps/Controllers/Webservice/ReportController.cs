@@ -64,6 +64,8 @@ namespace FunderMaps.Controllers.Webservice
             // FUTURE: The 'where' could be improved
             var reports = await _fisContext.Report
                 .AsNoTracking()
+                .Include(s => s.TypeNavigation)
+                .Include(s => s.StatusNavigation)
                 .Where(s => attestationOrganizationId == null
                     ? s.AccessPolicy == AccessPolicy.Public
                     : s.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
@@ -73,6 +75,33 @@ namespace FunderMaps.Controllers.Webservice
                 .ToListAsync();
 
             return Ok(reports);
+        }
+
+        public sealed class EntityStatsOutputModel
+        {
+            public long Count { get; set; }
+        }
+
+        /// <summary>
+        /// Return entity statistics.
+        /// </summary>
+        /// <returns>EntityStatsOutputModel.</returns>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStatsAsync()
+        {
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+
+            long count = await _fisContext.Report
+                .AsNoTracking()
+                .Where(s => attestationOrganizationId == null
+                    ? s.AccessPolicy == AccessPolicy.Public
+                    : s.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
+                .CountAsync();
+
+            return Ok(new EntityStatsOutputModel
+            {
+                Count = count,
+            });
         }
 
         // POST: api/report
@@ -117,6 +146,9 @@ namespace FunderMaps.Controllers.Webservice
                 await _fisContext.Report.AddAsync(report);
                 await _fisContext.SaveChangesAsync();
 
+                await _fisContext.Entry(report).Reference(s => s.TypeNavigation).LoadAsync();
+                await _fisContext.Entry(report).Reference(s => s.StatusNavigation).LoadAsync();
+
                 return Ok(report);
             }
 
@@ -135,7 +167,11 @@ namespace FunderMaps.Controllers.Webservice
         [HttpGet("{id}/{document}")]
         public async Task<IActionResult> GetAsync(int id, string document)
         {
-            var report = await _fisContext.Report.FindAsync(id, document);
+            var report = await _fisContext.Report
+                .AsNoTracking()
+                .Include(s => s.TypeNavigation)
+                .Include(s => s.StatusNavigation)
+                .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
                 return ResourceNotFound();
