@@ -128,6 +128,53 @@ namespace FunderMaps.Controllers.Webservice
             public string Token { get; set; }
         }
 
+        private async Task<AuthenticationOutputModel> GenerateSecurityToken(FunderMapsUser user)
+        {
+            var token = new JwtTokenIdentityUser<FunderMapsUser, Guid>(user, _configuration.GetJwtSignKey())
+            {
+                Issuer = _configuration.GetJwtIssuer(),
+                Audience = _configuration.GetJwtAudience(),
+                TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
+            };
+            token.AddRoleClaims(await _userManager.GetRolesAsync(user));
+
+            // Add user attestation as claim
+            if (user.AttestationPrincipalId != 0)
+            {
+                token.AddClaim(FisClaimTypes.UserAttestationIdentifier, user.AttestationPrincipalId);
+            }
+
+            var organizationUser = await _context.OrganizationUsers
+                .AsNoTracking()
+                .Include(s => s.Organization)
+                .Include(s => s.OrganizationRole)
+                .Select(s => new { s.UserId, s.Organization, s.OrganizationRole })
+                .SingleOrDefaultAsync(q => q.UserId == user.Id);
+
+            if (organizationUser != null)
+            {
+                token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.OrganizationRole.Name);
+
+                // Add organization attestation as claim
+                if (organizationUser.Organization.AttestationOrganizationId != 0)
+                {
+                    token.AddClaim(FisClaimTypes.OrganizationAttestationIdentifier, organizationUser.Organization.AttestationOrganizationId);
+                }
+            }
+
+            return new AuthenticationOutputModel
+            {
+                Principal = new PrincipalOutputModel
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    Roles = await _userManager.GetRolesAsync(user),
+                    Claims = await _userManager.GetClaimsAsync(user),
+                },
+                Token = token.WriteToken()
+            };
+        }
+
         // POST: api/authentication/authenticate
         [AllowAnonymous]
         [HttpPost("authenticate")]
@@ -147,49 +194,7 @@ namespace FunderMaps.Controllers.Webservice
             {
                 _logger.LogInformation("Authentication successful, returning security token");
 
-                var token = new JwtTokenIdentityUser<FunderMapsUser, Guid>(user, _configuration.GetJwtSignKey())
-                {
-                    Issuer = _configuration.GetJwtIssuer(),
-                    Audience = _configuration.GetJwtAudience(),
-                    TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
-                };
-                token.AddRoleClaims(await _userManager.GetRolesAsync(user));
-
-                // Add user attestation as claim
-                if (user.AttestationPrincipalId != 0)
-                {
-                    token.AddClaim(FisClaimTypes.UserAttestationIdentifier, user.AttestationPrincipalId);
-                }
-
-                var organizationUser = await _context.OrganizationUsers
-                    .AsNoTracking()
-                    .Include(s => s.Organization)
-                    .Include(s => s.OrganizationRole)
-                    .Select(s => new { s.UserId, s.Organization, s.OrganizationRole })
-                    .SingleOrDefaultAsync(q => q.UserId == user.Id);
-
-                if (organizationUser != null)
-                {
-                    token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.OrganizationRole.Name);
-
-                    // Add organization attestation as claim
-                    if (organizationUser.Organization.AttestationOrganizationId != 0)
-                    {
-                        token.AddClaim(FisClaimTypes.OrganizationAttestationIdentifier, organizationUser.Organization.AttestationOrganizationId);
-                    }
-                }
-
-                return Ok(new AuthenticationOutputModel
-                {
-                    Principal = new PrincipalOutputModel
-                    {
-                        Id = user.Id,
-                        Email = user.Email,
-                        Roles = await _userManager.GetRolesAsync(user),
-                        Claims = await _userManager.GetClaimsAsync(user),
-                    },
-                    Token = token.WriteToken()
-                });
+                return Ok(await GenerateSecurityToken(user));
             }
             else if (result.IsLockedOut)
             {
@@ -203,6 +208,26 @@ namespace FunderMaps.Controllers.Webservice
             // FUTURE: RequiresTwoFactor
 
             return Unauthorized(103, "Invalid credentials provided");
+        }
+
+        // GET: api/authentication/refresh
+        [HttpGet("refresh")]
+        public async Task<IActionResult> RefreshSignInAsync()
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return ResourceNotFound();
+            }
+
+            if (await _signInManager.CanSignInAsync(user))
+            {
+                _logger.LogInformation("Authentication refreshed, returning security token");
+
+                return Ok(await GenerateSecurityToken(user));
+            }
+
+            return Unauthorized(102, "Principal is not allowed to login");
         }
 
         public sealed class ChangePasswordInputModel
@@ -236,8 +261,7 @@ namespace FunderMaps.Controllers.Webservice
                 return BadRequest(IdentityErrorResponse(changePasswordResult.Errors));
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            return Ok();
+            return NoContent();
         }
 
         public sealed class SetPasswordInputModel
@@ -275,8 +299,7 @@ namespace FunderMaps.Controllers.Webservice
                 return BadRequest(IdentityErrorResponse(addPasswordResult.Errors));
             }
 
-            await _signInManager.RefreshSignInAsync(user);
-            return Ok();
+            return NoContent();
         }
 
         // FUTURE: Fix
@@ -303,7 +326,7 @@ namespace FunderMaps.Controllers.Webservice
 
             // TODO: Send email with registration link
 
-            return Ok();
+            return NoContent();
         }
     }
 }

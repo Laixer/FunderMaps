@@ -88,7 +88,10 @@ namespace FunderMaps.Models.Fis
         [IgnoreDataMember]
         public Principal ReviewerNavigation { get; set; }
 
+        [BindProperty(Name = "status_navigation")]
         public ReportStatus StatusNavigation { get; set; }
+
+        [BindProperty(Name = "type_navigation")]
         public ReportType TypeNavigation { get; set; }
 
         [IgnoreDataMember]
