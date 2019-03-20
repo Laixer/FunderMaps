@@ -85,7 +85,7 @@ namespace FunderMaps.Controllers.Webservice
             // Check if we can add new samples to the report
             if (!report.CanHaveNewSamples())
             {
-                return Forbid(0, "Resource access forbidden with current status");
+                return Forbid(0, "Resource modification forbidden with current status");
             }
 
             // Set the report status to 'pending'

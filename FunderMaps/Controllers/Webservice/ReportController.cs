@@ -82,6 +82,7 @@ namespace FunderMaps.Controllers.Webservice
             public long Count { get; set; }
         }
 
+        // GET: api/report/stats
         /// <summary>
         /// Return entity statistics.
         /// </summary>
@@ -247,6 +248,91 @@ namespace FunderMaps.Controllers.Webservice
             if (authorizationResult.Succeeded)
             {
                 _fisContext.Report.Update(report);
+                await _fisContext.SaveChangesAsync();
+
+                return NoContent();
+            }
+
+            return ResourceForbid();
+        }
+
+        // PUT: api/report/{id}/{document}/done
+        /// <summary>
+        /// Mark the report for as done and prepare for verification.
+        /// </summary>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
+        [HttpPut("{id}/{document}/done")]
+        public async Task<IActionResult> PutSignalStatusDoneAsync(int id, string document)
+        {
+            var report = await _fisContext.Report.FindAsync(id, document);
+            if (report == null)
+            {
+                return ResourceNotFound();
+            }
+
+            if (!report.CanHaveNewSamples())
+            {
+                return Forbid(0, "Resource modification forbidden with current status");
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Create);
+            if (authorizationResult.Succeeded)
+            {
+                report.Status = "done";
+                await _fisContext.SaveChangesAsync();
+
+                return NoContent();
+            }
+
+            return ResourceForbid();
+        }
+
+        public sealed class VerificationInputModel
+        {
+            public enum VerificationResult
+            {
+                Verified,
+                Rejected
+            }
+
+            public VerificationResult Result { get; set; }
+        }
+
+        // PUT: api/report/{id}/{document}/validate
+        /// <summary>
+        /// Save the verification result to the report.
+        /// </summary>
+        /// <param name="id">Report identifier.</param>
+        /// <param name="document">Report identifier.</param>
+        /// <param name="input">Verification status.</param>
+        [HttpPut("{id}/{document}/validate")]
+        public async Task<IActionResult> PutValidateRequestAsync(int id, string document, [FromBody] VerificationInputModel input)
+        {
+            var report = await _fisContext.Report.FindAsync(id, document);
+            if (report == null)
+            {
+                return ResourceNotFound();
+            }
+
+            if (report.Status != "done")
+            {
+                return Forbid(0, "Resource modification forbidden with current status");
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Validate);
+            if (authorizationResult.Succeeded)
+            {
+                switch (input.Result)
+                {
+                    case VerificationInputModel.VerificationResult.Verified:
+                        report.Status = "verified";
+                        break;
+                    case VerificationInputModel.VerificationResult.Rejected:
+                        report.Status = "rejected";
+                        break;
+                }
+
                 await _fisContext.SaveChangesAsync();
 
                 return NoContent();
