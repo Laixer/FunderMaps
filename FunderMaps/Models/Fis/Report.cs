@@ -96,5 +96,22 @@ namespace FunderMaps.Models.Fis
 
         [IgnoreDataMember]
         public ICollection<Sample> Sample { get; set; }
+
+        /// <summary>
+        /// Check report status to see if new samples
+        /// can be added to the report.
+        /// </summary>
+        /// <returns>True on success.</returns>
+        public bool CanHaveNewSamples()
+        {
+            switch (Status)
+            {
+                case "todo":
+                case "pending":
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

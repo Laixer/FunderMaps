@@ -38,14 +38,7 @@ namespace FunderMaps.Authorization.Handler
             switch (organizationClaim)
             {
                 case Constants.SuperuserRole:
-                    if (requirement.Name == OperationsRequirement.Read.Name
-                        || requirement.Name == OperationsRequirement.Create.Name
-                        || requirement.Name == OperationsRequirement.Update.Name
-                        || requirement.Name == OperationsRequirement.Delete.Name
-                        || requirement.Name == OperationsRequirement.Validate.Name)
-                    {
-                        context.Succeed(requirement);
-                    }
+                    context.Succeed(requirement);
                     break;
                 case Constants.WriterRole:
                     if (requirement.Name == OperationsRequirement.Read.Name
