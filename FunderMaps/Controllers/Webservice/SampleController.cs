@@ -83,6 +83,8 @@ namespace FunderMaps.Controllers.Webservice
             }
 
             var sample = input;
+            sample.Id = 0;
+            sample.ReportNavigation = report;
             sample.FoundationDamageCause = "unknown"; // NOTE: HACK: The default value for database does not work, hence the default here
             sample.AccessPolicy = AccessPolicy.Private; // NOTE: HACK: The default value for database does not work, hence the default here
 
