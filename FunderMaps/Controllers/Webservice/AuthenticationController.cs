@@ -169,7 +169,7 @@ namespace FunderMaps.Controllers.Webservice
                     Id = user.Id,
                     Email = user.Email,
                     Roles = await _userManager.GetRolesAsync(user),
-                    Claims = await _userManager.GetClaimsAsync(user),
+                    Claims = token.Claims,
                 },
                 Token = token.WriteToken()
             };
