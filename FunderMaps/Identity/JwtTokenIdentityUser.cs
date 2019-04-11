@@ -49,7 +49,6 @@ namespace FunderMaps.Identity
                 Claims.Add(new Claim(ClaimTypes.Role, role));
             }
         }
-
         
         /// <summary>
         /// Add additional security claims.

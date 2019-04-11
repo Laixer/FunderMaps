@@ -126,6 +126,8 @@ namespace FunderMaps.Controllers.Webservice
             public PrincipalOutputModel Principal { get; set; }
 
             public string Token { get; set; }
+
+            public int TokenValid { get; set; }
         }
 
         private async Task<AuthenticationOutputModel> GenerateSecurityToken(FunderMapsUser user)
@@ -171,7 +173,8 @@ namespace FunderMaps.Controllers.Webservice
                     Roles = await _userManager.GetRolesAsync(user),
                     Claims = token.Claims,
                 },
-                Token = token.WriteToken()
+                Token = token.WriteToken(),
+                TokenValid = token.TokenValid,
             };
         }
 

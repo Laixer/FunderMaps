@@ -26,13 +26,13 @@ namespace FunderMaps.Controllers.Webservice
         private readonly IReportService _reportService;
 
         public SampleController(
-            FisDbContext fixContext,
+            FisDbContext fisContext,
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
             IReportService reportService)
         {
-            _fisContext = fixContext;
+            _fisContext = fisContext;
             _context = context;
             _userManager = userManager;
             _authorizationService = authorizationService;
