@@ -13,6 +13,6 @@ namespace FunderMaps.Models.Fis
         public string Id { get; set; }
         public string NameNl { get; set; }
 
-        public ICollection<FoundationRecovery> FoundationRecovery { get; set; }
+        public virtual ICollection<FoundationRecovery> FoundationRecovery { get; set; }
     }
 }

@@ -7,12 +7,14 @@ namespace FunderMaps.Models.Fis
     {
         public FoundationType()
         {
+            Incident = new HashSet<Incident>();
             Sample = new HashSet<Sample>();
         }
 
         public string Id { get; set; }
         public string NameNl { get; set; }
 
-        public ICollection<Sample> Sample { get; set; }
+        public virtual ICollection<Incident> Incident { get; set; }
+        public virtual ICollection<Sample> Sample { get; set; }
     }
 }

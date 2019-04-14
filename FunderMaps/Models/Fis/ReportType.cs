@@ -15,6 +15,6 @@ namespace FunderMaps.Models.Fis
         public string NameNl { get; set; }
 
         [IgnoreDataMember]
-        public ICollection<Report> Report { get; set; }
+        public virtual ICollection<Report> Report { get; set; }
     }
 }
