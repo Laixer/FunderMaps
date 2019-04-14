@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Data.Seed;
@@ -39,6 +40,7 @@ namespace FunderMaps
                 var services = scope.ServiceProvider;
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 var env = services.GetRequiredService<IHostingEnvironment>();
+                var config = services.GetRequiredService<IConfiguration>();
 
                 try
                 {
@@ -53,7 +55,7 @@ namespace FunderMaps
                     logger.LogInformation("Run identity database seeder.");
                     var userManager = services.GetRequiredService<UserManager<FunderMapsUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<FunderMapsRole>>();
-                    IdentitySeed.SeedAsync(env, userManager, roleManager).Wait();
+                    IdentitySeed.SeedAsync(env, userManager, roleManager, config).Wait();
                 }
                 catch (Exception ex)
                 {
