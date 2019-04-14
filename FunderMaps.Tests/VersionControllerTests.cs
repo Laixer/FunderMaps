@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using FunderMaps.Controllers.Webservice;
 using static FunderMaps.Controllers.Webservice.VersionController;
 
-namespace FunderMaps.Test
+namespace FunderMaps.Tests
 {
-    public class VersionControllerTest
+    public class VersionControllerTests
     {
         [Fact]
         public void Get_ReturnsVersionOutputModel()
