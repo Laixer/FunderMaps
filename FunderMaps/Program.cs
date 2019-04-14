@@ -16,17 +16,18 @@ namespace FunderMaps
     {
         public static async Task Main(string[] args)
         {
-            var host = BuildWebHost(args).Build();
+            var host = BuildWebHost(args);
 
             DatabaseInitialization(host);
 
             await host.RunAsync();
         }
 
-        public static IWebHostBuilder BuildWebHost(string[] args) =>
+        public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseApplicationInsights()
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .Build();
 
         /// <summary>
         /// Initialize the database by running the migrations and seeding the database.
