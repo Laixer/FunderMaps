@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Models.Fis
 {
@@ -9,7 +6,10 @@ namespace FunderMaps.Models.Fis
     {
         public AccessPolicy AccessPolicy { get; set; }
 
-        public bool IsPublic() => AccessPolicy == AccessPolicy.Public;
-        public bool IsPrivate() => AccessPolicy == AccessPolicy.Private;
+        public static readonly string Public = "public";
+        public static readonly string Private = "private";
+
+        public bool IsPublic() => AccessPolicy.Id == Public;
+        public bool IsPrivate() => AccessPolicy.Id == Private;
     }
 }

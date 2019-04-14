@@ -7,16 +7,16 @@ namespace FunderMaps.Models.Fis
     {
         public Organization()
         {
+            AttributionContractorNavigation = new HashSet<Attribution>();
+            AttributionOwnerNavigation = new HashSet<Attribution>();
             Principal = new HashSet<Principal>();
-            ReportContractorNavigation = new HashSet<Report>();
-            ReportOwnerNavigation = new HashSet<Report>();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
 
-        public ICollection<Principal> Principal { get; set; }
-        public ICollection<Report> ReportContractorNavigation { get; set; }
-        public ICollection<Report> ReportOwnerNavigation { get; set; }
+        public virtual ICollection<Attribution> AttributionContractorNavigation { get; set; }
+        public virtual ICollection<Attribution> AttributionOwnerNavigation { get; set; }
+        public virtual ICollection<Principal> Principal { get; set; }
     }
 }

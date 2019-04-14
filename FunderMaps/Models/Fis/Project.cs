@@ -8,7 +8,7 @@ namespace FunderMaps.Models.Fis
     {
         public Project()
         {
-            Report = new HashSet<Report>();
+            Attribution = new HashSet<Attribution>();
         }
 
         public int Id { get; set; }
@@ -24,9 +24,9 @@ namespace FunderMaps.Models.Fis
         public int? Lead { get; set; }
         public int? Creator { get; set; }
 
-        public Principal AdviserNavigation { get; set; }
-        public Principal CreatorNavigation { get; set; }
-        public Principal LeadNavigation { get; set; }
-        public ICollection<Report> Report { get; set; }
+        public virtual Principal AdviserNavigation { get; set; }
+        public virtual Principal CreatorNavigation { get; set; }
+        public virtual Principal LeadNavigation { get; set; }
+        public virtual ICollection<Attribution> Attribution { get; set; }
     }
 }

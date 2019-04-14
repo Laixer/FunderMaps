@@ -16,9 +16,6 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "id")]
         public int Id { get; set; }
 
-        [BindProperty(Name = "project")]
-        public int? Project { get; set; }
-
         [Required]
         [BindProperty(Name = "document_id")]
         public string DocumentId { get; set; }
@@ -31,9 +28,6 @@ namespace FunderMaps.Models.Fis
 
         [BindProperty(Name = "floor_measurement")]
         public bool FloorMeasurement { get; set; }
-
-        [BindProperty(Name = "conform_f3o")]
-        public bool ConformF3o { get; set; }
 
         [BindProperty(Name = "create_date")]
         public DateTime CreateDate { get; set; }
@@ -53,19 +47,6 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "type")]
         public string Type { get; set; }
 
-        [BindProperty(Name = "reviewer")]
-        public int? Reviewer { get; set; }
-
-        [IgnoreDataMember]
-        public int? Creator { get; set; }
-
-        [IgnoreDataMember]
-        public int Owner { get; set; }
-
-        [Required]
-        [BindProperty(Name = "contractor")]
-        public int Contractor { get; set; }
-
         [Required]
         [BindProperty(Name = "document_date")]
         public DateTime DocumentDate { get; set; }
@@ -73,29 +54,26 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "document_name")]
         public string DocumentName { get; set; }
 
-        [IgnoreDataMember]
-        public Organization ContractorNavigation { get; set; }
+        [BindProperty(Name = "attribution")]
+        public int Attribution { get; set; }
 
-        [IgnoreDataMember]
-        public Principal CreatorNavigation { get; set; }
+        [BindProperty(Name = "access_policy_navigation")]
+        public virtual AccessPolicy AccessPolicyNavigation { get; set; }
 
-        [IgnoreDataMember]
-        public Organization OwnerNavigation { get; set; }
-
-        [IgnoreDataMember]
-        public Project ProjectNavigation { get; set; }
-
-        [IgnoreDataMember]
-        public Principal ReviewerNavigation { get; set; }
+        [BindProperty(Name = "attribution_navigation")]
+        public virtual Attribution AttributionNavigation { get; set; }
 
         [BindProperty(Name = "status_navigation")]
-        public ReportStatus StatusNavigation { get; set; }
+        public virtual ReportStatus StatusNavigation { get; set; }
 
         [BindProperty(Name = "type_navigation")]
-        public ReportType TypeNavigation { get; set; }
+        public virtual ReportType TypeNavigation { get; set; }
+
+        [BindProperty(Name = "norm")]
+        public virtual Norm Norm { get; set; }
 
         [IgnoreDataMember]
-        public ICollection<Sample> Sample { get; set; }
+        public virtual ICollection<Sample> Sample { get; set; }
 
         /// <summary>
         /// Check report status to see if new samples

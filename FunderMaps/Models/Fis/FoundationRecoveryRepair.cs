@@ -8,6 +8,6 @@ namespace FunderMaps.Models.Fis
         public int Recovery { get; set; }
 
         public virtual FoundationRecoveryLocation LocationNavigation { get; set; }
-        public virtual FoundationRecovery FoundationRecovery { get; set; }
+        public virtual FoundationRecovery RecoveryNavigation { get; set; }
     }
 }

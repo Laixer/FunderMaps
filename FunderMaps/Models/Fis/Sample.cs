@@ -14,17 +14,6 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "report")]
         public int? Report { get; set; }
 
-        [Required]
-        [BindProperty(Name = "street_name")]
-        public string StreetName { get; set; }
-
-        [Required]
-        [BindProperty(Name = "building_number")]
-        public short? BuildingNumber { get; set; }
-
-        [BindProperty(Name = "building_number_suffix")]
-        public string BuildingNumberSuffix { get; set; }
-
         [BindProperty(Name = "foundation_type")]
         public string FoundationType { get; set; }
 
@@ -58,8 +47,8 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "ground_water_level")]
         public decimal? GroundwaterLevel { get; set; }
 
-        [BindProperty(Name = "groud_level")]
-        public decimal? GroudLevel { get; set; }
+        [BindProperty(Name = "ground_level")]
+        public decimal? GroundLevel { get; set; }
 
         [BindProperty(Name = "foundation_recovery_adviced")]
         public bool FoundationRecoveryAdviced { get; set; }
@@ -70,21 +59,40 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "built_year")]
         public short? BuiltYear { get; set; }
 
-        public Address Address { get; set; }
+        [BindProperty(Name = "address")]
+        public Guid Address { get; set; }
+
+        [BindProperty(Name = "enforcement_term")]
+        public string EnforcementTerm { get; set; }
+
+        [BindProperty(Name = "base_measurement_level")]
+        public string BaseMeasurementLevel { get; set; }
 
         [IgnoreDataMember]
-        public FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
+        public virtual AccessPolicy AccessPolicyNavigation { get; set; }
 
         [IgnoreDataMember]
-        public FoundationQuality FoundationQualityNavigation { get; set; }
+        public virtual Address AddressNavigation { get; set; }
 
         [IgnoreDataMember]
-        public FoundationType FoundationTypeNavigation { get; set; }
+        public virtual BaseLevel BaseMeasurementLevelNavigation { get; set; }
 
         [IgnoreDataMember]
-        public Report ReportNavigation { get; set; }
+        public virtual EnforcementTerm EnforcementTermNavigation { get; set; }
 
         [IgnoreDataMember]
-        public Substructure SubstructureNavigation { get; set; }
+        public virtual FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
+
+        [IgnoreDataMember]
+        public virtual FoundationQuality FoundationQualityNavigation { get; set; }
+
+        [IgnoreDataMember]
+        public virtual FoundationType FoundationTypeNavigation { get; set; }
+
+        [IgnoreDataMember]
+        public virtual Report ReportNavigation { get; set; }
+
+        [IgnoreDataMember]
+        public virtual Substructure SubstructureNavigation { get; set; }
     }
 }
