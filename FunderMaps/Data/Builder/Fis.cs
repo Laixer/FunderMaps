@@ -158,6 +158,8 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<FoundationRecovery>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.ToTable("foundation_recovery", "report");
 
                 entity.Property(e => e.Id)
@@ -225,6 +227,8 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<FoundationRecoveryEvidence>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.HasKey(e => e.Document)
                     .HasName("foundation_recovery_evidence_pkey");
 
@@ -525,21 +529,23 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("nick_name")
                     .HasMaxLength(32);
 
-                entity.Property(e => e.Organization).HasColumnName("organization");
+                entity.Property(e => e._Organization).HasColumnName("organization");
 
                 entity.Property(e => e.Phone)
                     .HasColumnName("phone")
                     .HasMaxLength(16);
 
-                entity.HasOne(d => d.OrganizationNavigation)
+                entity.HasOne(d => d.Organization)
                     .WithMany(p => p.Principal)
-                    .HasForeignKey(d => d.Organization)
+                    .HasForeignKey(d => d._Organization)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("principal_organization_fkey");
             });
 
             modelBuilder.Entity<Project>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.ToTable("project", "report");
 
                 entity.HasIndex(e => e.Dossier)
@@ -607,6 +613,8 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<Report>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.HasKey(e => new { e.Id, e.DocumentId })
                     .HasName("report_pkey");
 
@@ -731,6 +739,8 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<Sample>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.HasKey(e => new { e.Id, e.Report })
                     .HasName("sample_pkey");
 
