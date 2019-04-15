@@ -15,16 +15,26 @@ namespace FunderMaps.Models.Fis
 
         public int Id { get; set; }
         public int? Project { get; set; }
-        public int? Reviewer { get; set; }
+
+        [IgnoreDataMember]
+        public int? _Reviewer { get; set; }
+
+        [IgnoreDataMember]
+        public int _Contractor { get; set; }
+
+        [IgnoreDataMember]
+        public int _Creator { get; set; }
+
+        [IgnoreDataMember]
+        public int _Owner { get; set; }
+
+        public virtual Principal Reviewer { get; set; }
 
         [Required]
-        public int Creator { get; set; }
-        public int Owner { get; set; }
-        public int Contractor { get; set; }
+        public virtual Organization Contractor { get; set; }
 
-        public virtual Organization ContractorNavigation { get; set; }
-        public virtual Principal CreatorNavigation { get; set; }
-        public virtual Organization OwnerNavigation { get; set; }
+        public virtual Principal Creator { get; set; }
+        public virtual Organization Owner { get; set; }
         public virtual Project ProjectNavigation { get; set; }
 
         [IgnoreDataMember]

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Models.Fis
 {
@@ -13,61 +12,40 @@ namespace FunderMaps.Models.Fis
             Sample = new HashSet<Sample>();
         }
 
-        [BindProperty(Name = "id")]
         public int Id { get; set; }
 
         [Required]
-        [BindProperty(Name = "document_id")]
         public string DocumentId { get; set; }
 
-        [BindProperty(Name = "inspection")]
         public bool Inspection { get; set; }
-
-        [BindProperty(Name = "joint_measurement")]
         public bool JointMeasurement { get; set; }
-
-        [BindProperty(Name = "floor_measurement")]
         public bool FloorMeasurement { get; set; }
 
-        [BindProperty(Name = "create_date")]
         public DateTime CreateDate { get; set; }
-
-        [BindProperty(Name = "update_date")]
         public DateTime? UpdateDate { get; set; }
-
-        [BindProperty(Name = "delete_date")]
         public DateTime? DeleteDate { get; set; }
 
-        [BindProperty(Name = "note")]
         public string Note { get; set; }
 
-        [BindProperty(Name = "status")]
-        public string Status { get; set; }
+        [IgnoreDataMember]
+        public string _Status { get; set; }
 
-        [BindProperty(Name = "type")]
-        public string Type { get; set; }
+        [IgnoreDataMember]
+        public string _Type { get; set; }
 
         [Required]
-        [BindProperty(Name = "document_date")]
         public DateTime DocumentDate { get; set; }
 
-        [BindProperty(Name = "document_name")]
         public string DocumentName { get; set; }
 
         [IgnoreDataMember]
         public int _Attribution { get; set; }
 
         [Required]
-        [BindProperty(Name = "attribution")]
         public virtual Attribution Attribution { get; set; }
 
-        [BindProperty(Name = "status_navigation")]
-        public virtual ReportStatus StatusNavigation { get; set; }
-
-        [BindProperty(Name = "type_navigation")]
-        public virtual ReportType TypeNavigation { get; set; }
-
-        [BindProperty(Name = "norm")]
+        public virtual ReportStatus Status { get; set; }
+        public virtual ReportType Type { get; set; }
         public virtual Norm Norm { get; set; }
 
         [IgnoreDataMember]
@@ -80,7 +58,7 @@ namespace FunderMaps.Models.Fis
         /// <returns>True on success.</returns>
         public bool CanHaveNewSamples()
         {
-            switch (Status)
+            switch (Status.Id)
             {
                 case "todo":
                 case "pending":

@@ -47,37 +47,46 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<Attribution>(entity =>
             {
+                entity.HasKey(e => e.Id)
+                    .HasName("attribution_pkey");
+
                 entity.ToTable("attribution", "report");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("nextval('report.attribution_id_seq'::regclass)");
 
-                entity.Property(e => e.Contractor).HasColumnName("contractor");
+                entity.Property(e => e._Contractor).HasColumnName("contractor");
 
-                entity.Property(e => e.Creator).HasColumnName("creator");
+                entity.Property(e => e._Creator).HasColumnName("creator");
 
-                entity.Property(e => e.Owner).HasColumnName("owner");
+                entity.Property(e => e._Owner).HasColumnName("owner");
 
                 entity.Property(e => e.Project).HasColumnName("project");
 
-                entity.Property(e => e.Reviewer).HasColumnName("reviewer");
+                entity.Property(e => e._Reviewer).HasColumnName("reviewer");
 
-                entity.HasOne(d => d.ContractorNavigation)
+                entity.HasOne(d => d.Reviewer)
+                    .WithMany(p => p.AttributionReviewerNavigation)
+                    .HasForeignKey(d => d._Reviewer)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("attribution_reviewer_fkey");
+
+                entity.HasOne(d => d.Contractor)
                     .WithMany(p => p.AttributionContractorNavigation)
-                    .HasForeignKey(d => d.Contractor)
+                    .HasForeignKey(d => d._Contractor)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("attribution_contractor_fkey");
 
-                entity.HasOne(d => d.CreatorNavigation)
-                    .WithMany(p => p.Attribution)
-                    .HasForeignKey(d => d.Creator)
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.AttributionCreatorNavigation)
+                    .HasForeignKey(d => d._Creator)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("attribution_creator_fkey");
 
-                entity.HasOne(d => d.OwnerNavigation)
+                entity.HasOne(d => d.Owner)
                     .WithMany(p => p.AttributionOwnerNavigation)
-                    .HasForeignKey(d => d.Owner)
+                    .HasForeignKey(d => d._Owner)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("attribution_owner_fkey");
 
@@ -651,12 +660,12 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e.Status)
+                entity.Property(e => e._Status)
                     .HasColumnName("status")
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'todo'::character varying");
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e._Type)
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)
@@ -678,14 +687,14 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d._Attribution)
                     .HasConstraintName("report_attribution_fkey");
 
-                entity.HasOne(d => d.StatusNavigation)
+                entity.HasOne(d => d.Status)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.Status)
+                    .HasForeignKey(d => d._Status)
                     .HasConstraintName("report_status_fkey");
 
-                entity.HasOne(d => d.TypeNavigation)
+                entity.HasOne(d => d.Type)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.Type)
+                    .HasForeignKey(d => d._Type)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("report_type_fkey");
             });
