@@ -29,10 +29,12 @@ namespace FunderMaps.Models.Fis
         [Required]
         public string Email { get; set; }
 
-        public int? Organization { get; set; }
+        [IgnoreDataMember]
+        public int? _Organization { get; set; }
+
         public string Phone { get; set; }
 
-        public virtual Organization OrganizationNavigation { get; set; }
+        public virtual Organization Organization { get; set; }
 
         [IgnoreDataMember]
         public virtual ICollection<Attribution> AttributionReviewerNavigation { get; set; }

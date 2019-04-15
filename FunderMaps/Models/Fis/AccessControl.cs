@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace FunderMaps.Models.Fis
 {
-    public class AccessControl
+    public abstract class AccessControl : RecordControl
     {
         [IgnoreDataMember]
         public string _AccessPolicy { get; set; }

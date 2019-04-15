@@ -4,7 +4,7 @@ using NpgsqlTypes;
 
 namespace FunderMaps.Models.Fis
 {
-    public class Project
+    public class Project : RecordControl
     {
         public Project()
         {
@@ -16,9 +16,6 @@ namespace FunderMaps.Models.Fis
         public string Note { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public DateTime CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
-        public DateTime? DeleteDate { get; set; }
         public NpgsqlPolygon? Outline { get; set; }
         public int? Adviser { get; set; }
         public int? Lead { get; set; }

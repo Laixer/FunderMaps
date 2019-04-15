@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Models.Fis
 {
-    public class FoundationRecovery
+    public class FoundationRecovery : RecordControl
     {
         public FoundationRecovery()
         {
@@ -14,39 +14,23 @@ namespace FunderMaps.Models.Fis
             FoundationRecoveryRepair = new HashSet<FoundationRecoveryRepair>();
         }
 
-        [BindProperty(Name = "id")]
         public int Id { get; set; }
 
-        [BindProperty(Name = "note")]
         public string Note { get; set; }
 
-        [BindProperty(Name = "create_date")]
-        public DateTime CreateDate { get; set; }
-
-        [BindProperty(Name = "update_date")]
-        public DateTime? UpdateDate { get; set; }
-
-        [BindProperty(Name = "delete_date")]
-        public DateTime? DeleteDate { get; set; }
-
         [Required]
-        [BindProperty(Name = "type")]
         public string Type { get; set; }
 
         [Required]
-        [BindProperty(Name = "year")]
         public short? Year { get; set; }
 
         [Required]
-        [BindProperty(Name = "address")]
         public Guid Address { get; set; }
 
         [Required]
-        [BindProperty(Name = "access_policy")]
         public string AccessPolicy { get; set; }
 
         [Required]
-        [BindProperty(Name = "attribution")]
         public int Attribution { get; set; }
 
         [IgnoreDataMember]

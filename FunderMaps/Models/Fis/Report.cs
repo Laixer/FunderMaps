@@ -21,10 +21,6 @@ namespace FunderMaps.Models.Fis
         public bool JointMeasurement { get; set; }
         public bool FloorMeasurement { get; set; }
 
-        public DateTime CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
-        public DateTime? DeleteDate { get; set; }
-
         public string Note { get; set; }
 
         [IgnoreDataMember]
