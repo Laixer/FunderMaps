@@ -170,8 +170,18 @@ namespace FunderMaps.Controllers.Webservice
         {
             var report = await _fisContext.Report
                 .AsNoTracking()
-                .Include(s => s.TypeNavigation)
-                .Include(s => s.StatusNavigation)
+                .Include(s => s.Attribution)
+                    .ThenInclude(si => si.Reviewer)
+                .Include(s => s.Attribution)
+                    .ThenInclude(si => si.Contractor)
+                .Include(s => s.Attribution)
+                    .ThenInclude(si => si.Creator)
+                .Include(s => s.Attribution)
+                    .ThenInclude(si => si.Owner)
+                .Include(s => s.Type)
+                .Include(s => s.Status)
+                .Include(s => s.Norm)
+                .Include(s => s.AccessPolicy)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
@@ -184,7 +194,7 @@ namespace FunderMaps.Controllers.Webservice
                 return Ok(report);
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report, OperationsRequirement.Read);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Read);
             if (authorizationResult.Succeeded)
             {
                 return Ok(report);
