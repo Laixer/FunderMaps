@@ -9,6 +9,9 @@ namespace FunderMaps.Data.Builder
         {
             modelBuilder.Entity<AccessPolicy>(entity =>
             {
+                entity.HasKey(e => e.Id)
+                    .HasName("access_policy_pkey");
+
                 entity.ToTable("access_policy", "attestation");
 
                 entity.Property(e => e.Id)
@@ -613,13 +616,13 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64)
                     .ForNpgsqlHasComment("User provided document identifier");
 
-                entity.Property(e => e.AccessPolicy)
+                entity.Property(e => e._AccessPolicy)
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'private'::character varying");
 
-                entity.Property(e => e.Attribution).HasColumnName("attribution");
+                entity.Property(e => e._Attribution).HasColumnName("attribution");
 
                 entity.Property(e => e.CreateDate)
                     .HasColumnName("create_date")
@@ -664,15 +667,15 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
-                entity.HasOne(d => d.AccessPolicyNavigation)
+                entity.HasOne(d => d.AccessPolicy)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.AccessPolicy)
+                    .HasForeignKey(d => d._AccessPolicy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("report_access_policy_fkey");
 
-                entity.HasOne(d => d.AttributionNavigation)
+                entity.HasOne(d => d.Attribution)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.Attribution)
+                    .HasForeignKey(d => d._Attribution)
                     .HasConstraintName("report_attribution_fkey");
 
                 entity.HasOne(d => d.StatusNavigation)
@@ -736,7 +739,7 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("report")
                     .ForNpgsqlHasComment("Link to the report entity");
 
-                entity.Property(e => e.AccessPolicy)
+                entity.Property(e => e._AccessPolicy)
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
@@ -813,9 +816,9 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("wood_level")
                     .HasColumnType("numeric(5,2)");
 
-                entity.HasOne(d => d.AccessPolicyNavigation)
+                entity.HasOne(d => d.AccessPolicy)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.AccessPolicy)
+                    .HasForeignKey(d => d._AccessPolicy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_access_policy_fkey");
 

@@ -54,14 +54,12 @@ namespace FunderMaps.Models.Fis
         [BindProperty(Name = "document_name")]
         public string DocumentName { get; set; }
 
+        [IgnoreDataMember]
+        public int _Attribution { get; set; }
+
+        [Required]
         [BindProperty(Name = "attribution")]
-        public int Attribution { get; set; }
-
-        [BindProperty(Name = "access_policy_navigation")]
-        public virtual AccessPolicy AccessPolicyNavigation { get; set; }
-
-        [BindProperty(Name = "attribution_navigation")]
-        public virtual Attribution AttributionNavigation { get; set; }
+        public virtual Attribution Attribution { get; set; }
 
         [BindProperty(Name = "status_navigation")]
         public virtual ReportStatus StatusNavigation { get; set; }

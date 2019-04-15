@@ -34,14 +34,14 @@ namespace FunderMaps.Controllers.Webservice
         };
 
         public ReportController(
-            FisDbContext fixContext,
+            FisDbContext fisContext,
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
             IFileStorageService fileStorageService,
             IReportService reportService)
         {
-            _fisContext = fixContext;
+            _fisContext = fisContext;
             _context = context;
             _userManager = userManager;
             _fileStorageService = fileStorageService;

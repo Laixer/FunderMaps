@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Models.Fis
 {
@@ -15,8 +16,13 @@ namespace FunderMaps.Models.Fis
         public string Id { get; set; }
         public string NameNl { get; set; }
 
+        [IgnoreDataMember]
         public virtual ICollection<FoundationRecovery> FoundationRecovery { get; set; }
+
+        [IgnoreDataMember]
         public virtual ICollection<Report> Report { get; set; }
+
+        [IgnoreDataMember]
         public virtual ICollection<Sample> Sample { get; set; }
     }
 }

@@ -9,12 +9,18 @@ namespace FunderMaps.Data
 {
     public class FisDbContext : DbContext
     {
-        public FisDbContext()
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        public FisDbContext(DbContextOptions<FisDbContext> options)
+            : base(options)
         {
         }
 
-        public FisDbContext(DbContextOptions<FisDbContext> options)
-            : base(options)
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        protected FisDbContext()
         {
         }
 

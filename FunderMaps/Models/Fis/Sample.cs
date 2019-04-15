@@ -69,9 +69,6 @@ namespace FunderMaps.Models.Fis
         public string BaseMeasurementLevel { get; set; }
 
         [IgnoreDataMember]
-        public virtual AccessPolicy AccessPolicyNavigation { get; set; }
-
-        [IgnoreDataMember]
         public virtual Address AddressNavigation { get; set; }
 
         [IgnoreDataMember]
