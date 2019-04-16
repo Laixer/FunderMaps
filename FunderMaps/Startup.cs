@@ -58,7 +58,7 @@ namespace FunderMaps
 
             //services.AddCors();
 
-            // Register the Swagger generator, defining an openapi document
+            // Register the Swagger generator, defining an OpenAPI document
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });

@@ -33,6 +33,7 @@ namespace FunderMaps.Controllers.Webservice
         /// Return application versioning information.
         /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(VersionOutputModel), 200)]
         public IActionResult Get()
         {
             AssemblyName assembly = Assembly.GetEntryAssembly().GetName();

@@ -85,6 +85,7 @@ namespace FunderMaps.Controllers.Webservice
         /// the current authenticated object.
         /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(UserOutputModel), 200)]
         public async Task<IActionResult> GetAsync()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
@@ -181,6 +182,8 @@ namespace FunderMaps.Controllers.Webservice
         // POST: api/authentication/authenticate
         [AllowAnonymous]
         [HttpPost("authenticate")]
+        [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> SignInAsync([FromBody] AuthenticationInputModel input)
         {
             // Find user for authnetication, if the user object cannot be found then return an
@@ -215,6 +218,9 @@ namespace FunderMaps.Controllers.Webservice
 
         // GET: api/authentication/refresh
         [HttpGet("refresh")]
+        [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> RefreshSignInAsync()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
@@ -250,6 +256,9 @@ namespace FunderMaps.Controllers.Webservice
         /// </summary>
         /// <param name="input">Password input model.</param>
         [HttpPost("change_password")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
@@ -281,6 +290,9 @@ namespace FunderMaps.Controllers.Webservice
         // POST: api/authentication/set_password
         [Authorize(Roles = Constants.AdministratorRole)]
         [HttpPost("set_password")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         public async Task<IActionResult> SetPasswordAsync([FromBody] SetPasswordInputModel input)
         {
             var user = await _userManager.FindByEmailAsync(input.Email);
@@ -309,6 +321,8 @@ namespace FunderMaps.Controllers.Webservice
         // POST: api/authentication/confirm_email
         [AllowAnonymous]
         [HttpPost("confirm_email")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> SendConfirmEmailAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -320,7 +334,7 @@ namespace FunderMaps.Controllers.Webservice
             // Skip if email is confirmed already.
             if (await _userManager.IsEmailConfirmedAsync(user))
             {
-                return Ok();
+                return NoContent();
             }
 
             var userId = await _userManager.GetUserIdAsync(user);
