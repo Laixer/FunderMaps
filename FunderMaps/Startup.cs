@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
 using FunderMaps.Data;
 using FunderMaps.Models.Identity;
 using FunderMaps.Interfaces;
@@ -31,7 +32,10 @@ namespace FunderMaps
             _configuration = configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureDatastore(services);
@@ -54,6 +58,13 @@ namespace FunderMaps
 
             //services.AddCors();
 
+            // Register the Swagger generator, defining an openapi document
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });
+                c.CustomSchemaIds((type) => type.FullName);
+            });
+
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<IReportService, ReportService>();
@@ -62,7 +73,7 @@ namespace FunderMaps
         /// <summary>
         /// Setup various data stores for entities.
         /// </summary>
-        /// <param name="services"></param>
+        /// <param name="services">Service collection.</param>
         private void ConfigureDatastore(IServiceCollection services)
         {
             // Application database
@@ -146,6 +157,12 @@ namespace FunderMaps
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+
+                ConfigureOpenAPI(app);
+            }
+            if (env.IsStaging())
+            {
+                ConfigureOpenAPI(app);
             }
             else
             {
@@ -183,6 +200,15 @@ namespace FunderMaps
                 {
                     spa.UseReactDevelopmentServer(npmScript: "dev");
                 }
+            });
+        }
+
+        private void ConfigureOpenAPI(IApplicationBuilder app)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Backend API");
             });
         }
     }
