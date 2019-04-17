@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace FunderMaps.Controllers.Webservice
 {
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/version")]
     [ApiController]
     public class VersionController : AbstractMicroController
     {

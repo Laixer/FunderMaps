@@ -15,7 +15,7 @@ using FunderMaps.Helpers;
 namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/organization")]
     [ApiController]
     public class OrganizationController : AbstractMicroController
     {

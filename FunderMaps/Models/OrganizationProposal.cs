@@ -6,6 +6,11 @@ namespace FunderMaps.Models
 {
     public class OrganizationProposal
     {
+        public Guid Token { get; set; }
+
+        /// <summary>
+        /// Proposed organization name.
+        /// </summary>
         [Required]
         public string Name { get; set; }
 
@@ -19,12 +24,15 @@ namespace FunderMaps.Models
         [EmailAddress]
         public string Email { get; set; }
 
-        public Guid Token { get; set; }
-
         public OrganizationProposal(string name, string email)
         {
             Name = name;
             Email = email;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

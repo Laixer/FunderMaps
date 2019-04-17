@@ -21,7 +21,7 @@ using FunderMaps.Data.Authorization;
 namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/authentication")]
     [ApiController]
     public class AuthenticationController : AbstractMicroController
     {

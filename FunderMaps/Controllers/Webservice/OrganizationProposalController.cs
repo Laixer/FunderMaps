@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +11,7 @@ using FunderMaps.Helpers;
 namespace FunderMaps.Controllers.Webservice
 {
     [Authorize(Roles = Constants.AdministratorRole)]
-    [Route("api/[controller]")]
+    [Route("api/organization_proposal")]
     [ApiController]
     public class OrganizationProposalController : AbstractMicroController
     {
@@ -30,29 +29,34 @@ namespace FunderMaps.Controllers.Webservice
             _keyNormalizer = keyNormalizer;
         }
 
-        // GET: api/organizationproposal/{token}
+        // GET: api/organization_proposal/{token}
         /// <summary>
-        /// Get the proposal by token.
+        /// Get the organization proposal by token.
         /// </summary>
         /// <param name="token">Proposal token.</param>
         [HttpGet("{token:guid}")]
+        [ProducesResponseType(typeof(OrganizationProposal), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> GetAsync(Guid token)
         {
-            var proposal = await _context.OrganizationProposals
-                .AsNoTracking()
-                .Where(s => s.Token == token)
-                .SingleOrDefaultAsync();
-
+            var proposal = await _context.OrganizationProposals.FindAsync(token);
             if (proposal == null)
             {
-                return NotFound();
+                return ResourceNotFound();
             }
 
             return Ok(proposal);
         }
 
-        // POST: api/organizationproposal
+        // POST: api/organization_proposal
+        /// <summary>
+        /// Submit new organization proposal.
+        /// </summary>
+        /// <param name="proposal">See <see cref="OrganizationProposal"/>.</param>
+        /// <returns>See <see cref="OrganizationProposal"/>.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(OrganizationProposal), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> PostAsync([FromBody] OrganizationProposal proposal)
         {
             proposal.NormalizedName = _keyNormalizer.Normalize(proposal.Name);
@@ -72,30 +76,32 @@ namespace FunderMaps.Controllers.Webservice
             await _context.OrganizationProposals.AddAsync(proposal);
             await _context.SaveChangesAsync();
 
-            // TODO: Send email with registration link
+            // FUTURE: Send email with registration link
 
             return Ok(proposal);
         }
 
-        // DELETE: api/organizationproposal/{token}
+        // DELETE: api/organization_proposal/{token}
         /// <summary>
         /// Remove the proposal from the datastore. This operation will
         /// not return an error if the proposal cannot be found.
         /// </summary>
         /// <param name="token">Proposal token.</param>
         [HttpDelete("{token:guid}")]
-        public async Task DeleteAsync(Guid token)
+        [ProducesResponseType(typeof(OrganizationProposal), 204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        public async Task<IActionResult> DeleteAsync(Guid token)
         {
-            var proposal = await _context.OrganizationProposals
-                .AsNoTracking()
-                .Where(s => s.Token == token)
-                .SingleOrDefaultAsync();
-
-            if (proposal != null)
+            var proposal = await _context.OrganizationProposals.FindAsync(token);
+            if (proposal == null)
             {
-                _context.OrganizationProposals.Remove(proposal);
-                await _context.SaveChangesAsync();
+                return ResourceNotFound();
             }
+
+            _context.OrganizationProposals.Remove(proposal);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
