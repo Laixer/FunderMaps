@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
+using FunderMaps.Models;
 
 namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : AbstractMicroController
     {
@@ -51,6 +52,8 @@ namespace FunderMaps.Controllers.Webservice
         /// Get the profile of the current authenticated user.
         /// </summary>
         [HttpGet]
+        [ProducesResponseType(typeof(UserInputOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> GetAsync()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
@@ -74,6 +77,8 @@ namespace FunderMaps.Controllers.Webservice
         /// Update profile of the current authenticated user.
         /// </summary>
         [HttpPut]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync([FromBody] UserInputOutputModel input)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
