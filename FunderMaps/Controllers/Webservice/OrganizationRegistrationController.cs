@@ -14,7 +14,7 @@ using FunderMaps.Models.Identity;
 namespace FunderMaps.Controllers.Webservice
 {
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/organization_registration")]
     [ApiController]
     public class OrganizationRegistrationController : AbstractMicroController
     {
@@ -64,18 +64,16 @@ namespace FunderMaps.Controllers.Webservice
         /// </summary>
         /// <param name="proposal">Organization proposal.</param>
         /// <param name="input">Client input.</param>
-        /// <returns></returns>
         private async Task CreateOrganizationFromProposal(OrganizationProposal proposal, OrganizationInitiationInputModel input)
         {
-            var role = await _context.OrganizationRoles
-                .Where(s => s.Name == Constants.SuperuserRole)
-                .SingleAsync();
+            var role = await _context.OrganizationRoles.FirstAsync(s => s.Name == Constants.SuperuserRole);
 
             // Prepare new user account
             var user = new FunderMapsUser(input.User.Email);
             var result = await _userManager.CreateAsync(user, input.User.Password);
             if (!result.Succeeded)
             {
+                // TODO: Wrap errors in exception
                 throw new Exception();
             }
 
@@ -121,13 +119,12 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="token">Proposal token.</param>
         /// <param name="input">Organization and superuser information.</param>
         [HttpPost("proposal/{token:guid}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> FromProposalAsync([FromRoute] Guid token, [FromBody] OrganizationInitiationInputModel input)
         {
-            var proposal = await _context.OrganizationProposals
-                .AsNoTracking()
-                .Where(s => s.Token == token)
-                .SingleOrDefaultAsync();
-
+            var proposal = await _context.OrganizationProposals.FindAsync(token);
             if (proposal == null)
             {
                 return ResourceNotFound();
@@ -142,6 +139,7 @@ namespace FunderMaps.Controllers.Webservice
                     {
                         await CreateOrganizationFromProposal(proposal, input);
                         transaction.Commit();
+
                         return NoContent();
                     }
                     catch (Exception)
