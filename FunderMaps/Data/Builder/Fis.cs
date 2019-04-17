@@ -764,9 +764,9 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'private'::character varying");
 
-                entity.Property(e => e.Address).HasColumnName("address");
+                entity.Property(e => e._Address).HasColumnName("address");
 
-                entity.Property(e => e.BaseMeasurementLevel)
+                entity.Property(e => e._BaseMeasurementLevel)
                     .IsRequired()
                     .HasColumnName("base_measurement_level")
                     .HasMaxLength(32);
@@ -788,23 +788,23 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of soft delete");
 
-                entity.Property(e => e.EnforcementTerm)
+                entity.Property(e => e._EnforcementTerm)
                     .HasColumnName("enforcement_term")
                     .HasMaxLength(32);
 
-                entity.Property(e => e.FoundationDamageCause)
+                entity.Property(e => e._FoundationDamageCause)
                     .IsRequired()
                     .HasColumnName("foundation_damage_cause")
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'unknown'::character varying");
 
-                entity.Property(e => e.FoundationQuality)
+                entity.Property(e => e._FoundationQuality)
                     .HasColumnName("foundation_quality")
                     .HasMaxLength(32);
 
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
 
-                entity.Property(e => e.FoundationType)
+                entity.Property(e => e._FoundationType)
                     .HasColumnName("foundation_type")
                     .HasMaxLength(32);
 
@@ -822,7 +822,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e.Substructure)
+                entity.Property(e => e._Substructure)
                     .HasColumnName("substructure")
                     .HasMaxLength(32);
 
@@ -841,36 +841,36 @@ namespace FunderMaps.Data.Builder
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_access_policy_fkey");
 
-                entity.HasOne(d => d.AddressNavigation)
+                entity.HasOne(d => d.Address)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.Address)
+                    .HasForeignKey(d => d._Address)
                     .HasConstraintName("sample_address_fkey");
 
-                entity.HasOne(d => d.BaseMeasurementLevelNavigation)
+                entity.HasOne(d => d.BaseMeasurementLevel)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.BaseMeasurementLevel)
+                    .HasForeignKey(d => d._BaseMeasurementLevel)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_base_measurement_level_fkey");
 
-                entity.HasOne(d => d.EnforcementTermNavigation)
+                entity.HasOne(d => d.EnforcementTerm)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.EnforcementTerm)
+                    .HasForeignKey(d => d._EnforcementTerm)
                     .HasConstraintName("sample_enforcement_term_fkey");
 
-                entity.HasOne(d => d.FoundationDamageCauseNavigation)
+                entity.HasOne(d => d.FoundationDamageCause)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.FoundationDamageCause)
+                    .HasForeignKey(d => d._FoundationDamageCause)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_foundation_damage_case_fkey");
 
-                entity.HasOne(d => d.FoundationQualityNavigation)
+                entity.HasOne(d => d.FoundationQuality)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.FoundationQuality)
+                    .HasForeignKey(d => d._FoundationQuality)
                     .HasConstraintName("sample_foundation_quality_fkey");
 
-                entity.HasOne(d => d.FoundationTypeNavigation)
+                entity.HasOne(d => d.FoundationType)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.FoundationType)
+                    .HasForeignKey(d => d._FoundationType)
                     .HasConstraintName("sample_foundation_type_fkey");
 
                 entity.HasOne(d => d.ReportNavigation)
@@ -879,9 +879,9 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d.Report)
                     .HasConstraintName("sample_report_fkey");
 
-                entity.HasOne(d => d.SubstructureNavigation)
+                entity.HasOne(d => d.Substructure)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.Substructure)
+                    .HasForeignKey(d => d._Substructure)
                     .HasConstraintName("sample_substructure_fkey");
             });
 

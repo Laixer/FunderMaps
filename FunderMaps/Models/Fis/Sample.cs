@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Models.Fis
 {
@@ -12,9 +11,9 @@ namespace FunderMaps.Models.Fis
         [Required]
         public int? Report { get; set; }
 
-        public string FoundationType { get; set; }
-        public string FoundationQuality { get; set; }
-        public string Substructure { get; set; }
+        public string _FoundationType { get; set; }
+        public string _FoundationQuality { get; set; }
+        public string _Substructure { get; set; }
         public string MonitoringWell { get; set; }
         public string Cpt { get; set; }
         public string Note { get; set; }
@@ -22,34 +21,34 @@ namespace FunderMaps.Models.Fis
         public decimal? GroundwaterLevel { get; set; }
         public decimal? GroundLevel { get; set; }
         public bool FoundationRecoveryAdviced { get; set; }
-        public string FoundationDamageCause { get; set; }
+        public string _FoundationDamageCause { get; set; }
         public short? BuiltYear { get; set; }
-        public Guid Address { get; set; }
-        public string EnforcementTerm { get; set; }
-        public string BaseMeasurementLevel { get; set; }
+        public Guid _Address { get; set; }
+        public string _EnforcementTerm { get; set; }
+        public string _BaseMeasurementLevel { get; set; }
 
         [IgnoreDataMember]
-        public virtual Address AddressNavigation { get; set; }
+        public virtual Address Address { get; set; }
 
         [IgnoreDataMember]
-        public virtual BaseLevel BaseMeasurementLevelNavigation { get; set; }
+        public virtual BaseLevel BaseMeasurementLevel { get; set; }
 
         [IgnoreDataMember]
-        public virtual EnforcementTerm EnforcementTermNavigation { get; set; }
+        public virtual EnforcementTerm EnforcementTerm { get; set; }
 
         [IgnoreDataMember]
-        public virtual FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
+        public virtual FoundationDamageCause FoundationDamageCause { get; set; }
 
         [IgnoreDataMember]
-        public virtual FoundationQuality FoundationQualityNavigation { get; set; }
+        public virtual FoundationQuality FoundationQuality { get; set; }
 
         [IgnoreDataMember]
-        public virtual FoundationType FoundationTypeNavigation { get; set; }
+        public virtual FoundationType FoundationType { get; set; }
 
         [IgnoreDataMember]
         public virtual Report ReportNavigation { get; set; }
 
         [IgnoreDataMember]
-        public virtual Substructure SubstructureNavigation { get; set; }
+        public virtual Substructure Substructure { get; set; }
     }
 }
