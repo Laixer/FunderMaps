@@ -69,5 +69,41 @@ namespace FunderMaps.Models.Identity
         /// Gets or sets the lockout policy for this user.
         /// </summary>
         public new virtual bool? LockoutEnabled { get; set; }
+
+        /// <summary>
+        /// Gets or sets the normalized user name for this user.
+        /// </summary>
+        [IgnoreDataMember]
+        public override string NormalizedUserName { get => base.NormalizedUserName; set => base.NormalizedUserName = value; }
+
+        /// <summary>
+        /// Gets or sets the normalized email address for this user.
+        /// </summary>
+        [IgnoreDataMember]
+        public override string NormalizedEmail { get => base.NormalizedEmail; set => base.NormalizedEmail = value; }
+
+        /// <summary>
+        /// Gets or sets a salted and hashed representation of the password for this user.
+        /// </summary>
+        [IgnoreDataMember]
+        public override string PasswordHash { get => base.PasswordHash; set => base.PasswordHash = value; }
+
+        /// <summary>
+        /// A random value that must change whenever a users credentials change (password changed, login removed)
+        /// </summary>
+        [IgnoreDataMember]
+        public override string SecurityStamp { get => base.SecurityStamp; set => base.SecurityStamp = value; }
+
+        /// <summary>
+        /// A random value that must change whenever a user is persisted to the store
+        /// </summary>
+        [IgnoreDataMember]
+        public override string ConcurrencyStamp { get => base.ConcurrencyStamp; set => base.ConcurrencyStamp = value; }
+
+        /// <summary>
+        /// Gets or sets the number of failed login attempts for the current user.
+        /// </summary>
+        [IgnoreDataMember]
+        public override int AccessFailedCount { get => base.AccessFailedCount; set => base.AccessFailedCount = value; }
     }
 }

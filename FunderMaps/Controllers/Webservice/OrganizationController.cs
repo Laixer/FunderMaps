@@ -58,8 +58,8 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // FUTURE: Map user results
-        // GET: api/organization/{id}/users
-        [HttpGet("{id:guid}/users")]
+        // GET: api/organization/{id}/user
+        [HttpGet("{id:guid}/user")]
         [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUsersAsync(Guid id)
@@ -95,8 +95,8 @@ namespace FunderMaps.Controllers.Webservice
             public string Role { get; set; }
         }
 
-        // POST: api/organization/{id}/add_user
-        [HttpPost("{id:guid}/add_user")]
+        // POST: api/organization/{id}/user
+        [HttpPost("{id:guid}/user")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
@@ -113,52 +113,61 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
-                // Create everything at once, or nothing at all if an error occurs.
-                using (var transaction = await _context.Database.BeginTransactionAsync())
+                return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
                 {
-                    var role = await _context.OrganizationRoles
-                            .SingleAsync(s => s.NormalizedName == _keyNormalizer.Normalize(Constants.ReaderRole));
-
-                    // Check if role exists
-                    if (!string.IsNullOrEmpty(input.Role))
+                    // Create everything at once, or nothing at all if an error occurs.
+                    using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
-                        role = await _context.OrganizationRoles
-                            .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role));
+                        var role = await _context.OrganizationRoles
+                                .SingleAsync(s => s.NormalizedName == _keyNormalizer.Normalize(Constants.ReaderRole));
 
-                        if (role == null)
+                        // Check if role exists
+                        if (!string.IsNullOrEmpty(input.Role))
                         {
-                            return BadRequest(0, "Role not found");
+                            role = await _context.OrganizationRoles
+                                .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role));
+
+                            if (role == null)
+                            {
+                                return BadRequest(0, "Role not found");
+                            }
                         }
+
+                        // Prepare user account
+                        var user = new FunderMapsUser(input.Email);
+                        var result = await _userManager.CreateAsync(user, input.Password);
+                        if (!result.Succeeded)
+                        {
+                            transaction.Rollback();
+                            return ResourceExists();
+                        }
+
+                        // Attach user to organization
+                        await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
+                        await _context.SaveChangesAsync();
+
+                        transaction.Commit();
+
+                        return NoContent();
                     }
-
-                    // Prepare user account
-                    var user = new FunderMapsUser(input.Email);
-                    var result = await _userManager.CreateAsync(user, input.Password);
-                    if (!result.Succeeded)
-                    {
-                        transaction.Rollback();
-                        return ResourceExists();
-                    }
-
-                    // Attach user to organization
-                    await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
-                    await _context.SaveChangesAsync();
-
-                    transaction.Commit();
-
-                    return NoContent();
-                }
+                });
             }
 
             return ResourceForbid();
         }
 
-        // POST: api/organization/{id}/remove_user
-        [HttpPost("{id:guid}/remove_user")]
+        // DELETE: api/organization/{id}/user/{id}
+        /// <summary>
+        /// Remove an user from the organization if this user has access to the record.
+        /// </summary>
+        /// <param name="id">Organization id.</param>
+        /// <param name="user_id">User id.</param>
+        /// <returns></returns>
+        [HttpDelete("{id:guid}/user/{user_id:guid}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> RemoveUserAsync(Guid id, [FromBody] UserInputModel input)
+        public async Task<IActionResult> RemoveUserAsync(Guid id, Guid user_id)
         {
             var organization = await _context.Organizations.FindAsync(id);
             if (organization == null)
@@ -169,21 +178,34 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
-                // Create everything at once, or nothing at all if an error occurs.
-                using (var transaction = await _context.Database.BeginTransactionAsync())
+                return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
                 {
-                    var user = await _userManager.FindByEmailAsync(input.Email);
-                    var organizationUser = await _context.OrganizationUsers
-                        .SingleAsync(s => s.User == user && s.Organization == organization);
-                    _context.OrganizationUsers.Remove(organizationUser);
-                    await _context.SaveChangesAsync();
+                    // Create everything at once, or nothing at all if an error occurs.
+                    using (var transaction = await _context.Database.BeginTransactionAsync())
+                    {
+                        var user = await _userManager.FindByIdAsync(user_id.ToString());
+                        if (user == null)
+                        {
+                            return ResourceNotFound();
+                        }
 
-                    await _userManager.DeleteAsync(user);
+                        // If the user exists, but not in this organization, forbid deletion
+                        var organizationUser = await _context.OrganizationUsers
+                            .SingleAsync(s => s.User == user && s.Organization == organization);
+                        if (organizationUser == null)
+                        {
+                            return ResourceForbid();
+                        }
 
-                    transaction.Commit();
+                        // Remove the user from the organization and then delete the user
+                        _context.OrganizationUsers.Remove(organizationUser);
+                        await _userManager.DeleteAsync(user);
 
-                    return NoContent();
-                }
+                        transaction.Commit();
+
+                        return NoContent();
+                    }
+                });
             }
 
             return ResourceForbid();
