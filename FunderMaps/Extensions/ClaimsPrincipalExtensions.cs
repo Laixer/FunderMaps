@@ -12,13 +12,10 @@ namespace FunderMaps.Extensions
         /// <returns>claim value.</returns>
         public static string GetClaim(this ClaimsPrincipal principal, string claimName)
         {
-            var claim = principal.Claims.Where(s => s.Type == claimName).First();
-            if (claim != null)
-            {
-                return claim.Value;
-            }
+            var claim = principal.Claims.Where(s => s.Type == claimName).FirstOrDefault();
+            if (claim == null) { return null; }
 
-            return null;
+            return claim.Value;
         }
     }
 }
