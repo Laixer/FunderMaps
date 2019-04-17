@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,7 @@ using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
+using FunderMaps.Models;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -57,6 +59,8 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of reports.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(List<Report>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
@@ -96,6 +100,8 @@ namespace FunderMaps.Controllers.Webservice
         /// </summary>
         /// <returns>EntityStatsOutputModel.</returns>
         [HttpGet("stats")]
+        [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
@@ -119,6 +125,8 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="input">Report data.</param>
         /// <returns>Report.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(Report), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
             var attestationPrincipalId = User.GetClaim(FisClaimTypes.UserAttestationIdentifier);
@@ -173,6 +181,9 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="document">Report identifier.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{document}")]
+        [ProducesResponseType(typeof(Report), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id, string document)
         {
             var report = await _fisContext.Report
@@ -212,6 +223,9 @@ namespace FunderMaps.Controllers.Webservice
 
         // POST: api/report/attach_document
         [HttpPost("attach_document")]
+        [ProducesResponseType(typeof(ApplicationFile), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> AttachDocument(IFormFile file)
         {
             var reportFile = new ApplicationFile(file);
@@ -226,7 +240,7 @@ namespace FunderMaps.Controllers.Webservice
                 return BadRequest(0, "file content is empty");
             }
 
-            // Store the report
+            // Store the report with the file service
             await _fileStorageService.StoreFileAsync("report", reportFile, file.OpenReadStream());
 
             return Ok(reportFile);
@@ -240,6 +254,10 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Report data.</param>
         [HttpPut("{id}/{document}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
             var report = await _fisContext.Report
@@ -282,6 +300,9 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpPut("{id}/{document}/done")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutSignalStatusDoneAsync(int id, string document)
         {
             var report = await _fisContext.Report
@@ -329,6 +350,9 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Verification status.</param>
         [HttpPut("{id}/{document}/validate")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutValidateRequestAsync(int id, string document, [FromBody] VerificationInputModel input)
         {
             var report = await _fisContext.Report
@@ -373,6 +397,8 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpDelete("{id}/{document}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id, string document)
         {
             var report = await _fisContext.Report

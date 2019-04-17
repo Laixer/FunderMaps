@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
@@ -11,11 +12,12 @@ using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
+using FunderMaps.Models;
 
 namespace FunderMaps.Controllers.Webservice
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/sample")]
     [ApiController]
     public class SampleController : AbstractMicroController
     {
@@ -47,6 +49,8 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of samples.</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(List<Sample>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
@@ -55,9 +59,9 @@ namespace FunderMaps.Controllers.Webservice
             var samples = await _fisContext.Sample
                 .AsNoTracking()
                 .Include(s => s.ReportNavigation)
-                .Where(s => attestationOrganizationId == null
-                    ? s.AccessPolicy == AccessPolicy.Public
-                    : s.ReportNavigation.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
+                //.Where(s => attestationOrganizationId == null
+                //    ? s.IsPublic()
+                //    : s.ReportNavigation.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .OrderByDescending(s => s.CreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -73,10 +77,12 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="input">Sample data.</param>
         /// <returns>Report.</returns>
         [HttpPost]
+        [ProducesResponseType(typeof(Sample), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
-            var report = await _fisContext.Report
-                .SingleAsync(s => s.Id == input.Report);
+            var report = await _fisContext.Report.SingleAsync(s => s.Id == input.Report);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -89,16 +95,16 @@ namespace FunderMaps.Controllers.Webservice
             }
 
             // Set the report status to 'pending'
-            if (report.Status != "pending")
+            if (report.Status.Id != "pending")
             {
-                report.Status = "pending";
+                report.Status.Id = "pending";
             }
 
             var sample = input;
             sample.Id = 0;
             sample.ReportNavigation = report;
             sample.FoundationDamageCause = "unknown"; // NOTE: HACK: The default value for database does not work, hence the default here
-            sample.AccessPolicy = AccessPolicy.Private; // NOTE: HACK: The default value for database does not work, hence the default here
+            //sample.AccessPolicy = AccessControl.Private; // NOTE: HACK: The default value for database does not work, hence the default here
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
@@ -122,6 +128,9 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="document">Report identifier.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{report}")]
+        [ProducesResponseType(typeof(Sample), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id, int report)
         {
             var sample = await _fisContext.Sample
@@ -156,6 +165,10 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="document">Sample identifier.</param>
         /// <param name="input">Sample data.</param>
         [HttpPut("{id}/{report}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, int report, [FromBody] Sample input)
         {
             var sample = await _fisContext.Sample
@@ -172,13 +185,14 @@ namespace FunderMaps.Controllers.Webservice
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            sample.StreetName = input.StreetName;
-            sample.BuildingNumber = input.BuildingNumber;
-            sample.BuildingNumberSuffix = input.BuildingNumberSuffix;
+            //sample.StreetName = input.StreetName;
+            //sample.BuildingNumber = input.BuildingNumber;
+            //sample.BuildingNumberSuffix = input.BuildingNumberSuffix;
+            //sample.Address
             sample.MonitoringWell = input.MonitoringWell;
             sample.Cpt = input.Cpt;
             sample.WoodLevel = input.WoodLevel;
-            sample.GroudLevel = input.GroudLevel;
+            sample.GroundLevel = input.GroundLevel;
             sample.GroundwaterLevel = input.GroundwaterLevel;
             sample.BuiltYear = input.BuiltYear;
             sample.Note = input.Note;
@@ -203,6 +217,9 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="id">Sample identifier.</param>
         /// <param name="document">Sample identifier.</param>
         [HttpDelete("{id}/{report}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id, int report)
         {
             var sample = await _fisContext.Sample
