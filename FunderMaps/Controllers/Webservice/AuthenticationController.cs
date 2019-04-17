@@ -180,6 +180,11 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // POST: api/authentication/authenticate
+        /// <summary>
+        /// Authenticate user object.
+        /// </summary>
+        /// <param name="input">See <see cref="AuthenticationInputModel"/>.</param>
+        /// <returns>See <see cref="AuthenticationOutputModel"/>.</returns>
         [AllowAnonymous]
         [HttpPost("authenticate")]
         [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]

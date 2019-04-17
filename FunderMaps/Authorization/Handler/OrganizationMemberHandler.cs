@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data;
 using FunderMaps.Models;
@@ -54,7 +55,7 @@ namespace FunderMaps.Authorization.Handler
         /// <returns>True on success.</returns>
         private async Task<bool> IsOrganizationMemberAsync(FunderMapsUser user, Organization organization)
         {
-            return await Context.OrganizationUsers.FindAsync(user.Id, organization.Id) != null;
+            return await Context.OrganizationUsers.FirstOrDefaultAsync(s => s.UserId == user.Id && s.OrganizationId == organization.Id) != null;
         }
     }
 }
