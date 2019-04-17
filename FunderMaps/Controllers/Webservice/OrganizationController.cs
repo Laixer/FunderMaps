@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
@@ -37,6 +38,8 @@ namespace FunderMaps.Controllers.Webservice
 
         // GET: api/organization/{id}
         [HttpGet("{id:guid}")]
+        [ProducesResponseType(typeof(Organization), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(Guid id)
         {
             var organization = await _context.Organizations
@@ -57,6 +60,8 @@ namespace FunderMaps.Controllers.Webservice
         // FUTURE: Map user results
         // GET: api/organization/{id}/users
         [HttpGet("{id:guid}/users")]
+        [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUsersAsync(Guid id)
         {
             var organization = await _context.Organizations.FindAsync(id);
@@ -92,6 +97,11 @@ namespace FunderMaps.Controllers.Webservice
 
         // POST: api/organization/{id}/add_user
         [HttpPost("{id:guid}/add_user")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
             var organization = await _context.Organizations.FindAsync(id);
@@ -136,7 +146,7 @@ namespace FunderMaps.Controllers.Webservice
 
                     transaction.Commit();
 
-                    return Ok();
+                    return NoContent();
                 }
             }
 
@@ -145,9 +155,16 @@ namespace FunderMaps.Controllers.Webservice
 
         // POST: api/organization/{id}/remove_user
         [HttpPost("{id:guid}/remove_user")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> RemoveUserAsync(Guid id, [FromBody] UserInputModel input)
         {
             var organization = await _context.Organizations.FindAsync(id);
+            if (organization == null)
+            {
+                return ResourceNotFound();
+            }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
@@ -165,7 +182,7 @@ namespace FunderMaps.Controllers.Webservice
 
                     transaction.Commit();
 
-                    return Ok();
+                    return NoContent();
                 }
             }
 
@@ -173,16 +190,48 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // PUT: api/organization/{id}
+        /// <summary>
+        /// Update organization if the user has access to the record.
+        /// </summary>
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization organization)
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
+            var organization = await _context.Organizations
+                .Include(s => s.HomeAddress)
+                .Include(s => s.PostalAddres)
+                .FirstOrDefaultAsync(s => s.Id == id);
+            if (organization == null)
+            {
+                return ResourceNotFound();
+            }
+
+            if (id != input.Id)
+            {
+                return BadRequest(0, "Identifiers do not match entity");
+            }
+
+            organization.Email = input.Email;
+            organization.PhoneNumber = input.PhoneNumber;
+            organization.RegistrationNumber = input.RegistrationNumber;
+            organization.BrandingLogo = input.BrandingLogo;
+            organization.InvoiceName = input.InvoiceName;
+            organization.InvoicePONumber = input.InvoicePONumber;
+            organization.InvoiceEmail = input.InvoiceEmail;
+
+            organization.HomeAddress.Reassign(input.HomeAddress);
+            organization.PostalAddres.Reassign(input.PostalAddres);
+
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
                 _context.Organizations.Update(organization);
                 await _context.SaveChangesAsync();
 
-                return Ok(organization);
+                return NoContent();
             }
 
             return ResourceForbid();

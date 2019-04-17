@@ -58,10 +58,19 @@ namespace FunderMaps.Models
         /// </summary>
         public string BrandingLogo { get; set; }
 
+        /// <summary>
+        /// Name on the invoice.
+        /// </summary>
         public string InvoiceName { get; set; }
 
+        /// <summary>
+        /// Invoice PB box number.
+        /// </summary>
         public string InvoicePONumber { get; set; }
 
+        /// <summary>
+        /// Send invoices to designated email address.
+        /// </summary>
         public string InvoiceEmail { get; set; }
 
         [IgnoreDataMember]

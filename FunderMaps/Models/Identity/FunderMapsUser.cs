@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Models.Identity
@@ -43,6 +43,7 @@ namespace FunderMaps.Models.Identity
         /// <summary>
         /// Reference to the attestation principal.
         /// </summary>
+        [IgnoreDataMember]
         public virtual int? AttestationPrincipalId { get; set; }
 
         /// <summary>
