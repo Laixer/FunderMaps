@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Tests.Helpers
 {
-    public class LookupNormalizer : ILookupNormalizer
+    internal class LookupNormalizer : ILookupNormalizer
     {
         public string Normalize(string key)
         {

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using FunderMaps.Controllers.Webservice;
 using static FunderMaps.Controllers.Webservice.VersionController;
 
-namespace FunderMaps.Tests
+namespace FunderMaps.Tests.Controllers
 {
     public class VersionControllerTests
     {
