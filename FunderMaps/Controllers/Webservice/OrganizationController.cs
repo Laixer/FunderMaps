@@ -156,13 +156,60 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
-        // DELETE: api/organization/{id}/user/{id}
+        // PUT: api/organization/{id}/user/{user_id}
+        /// <summary>
+        /// Update organization user if this user has access to the record.
+        /// </summary>
+        /// <param name="id">Organization id.</param>
+        /// <param name="user_id">User id.</param>
+        /// <param name="input">User object.</param>
+        [HttpPut("{id:guid}/user/{user_id:guid}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id, FunderMapsUser input)
+        {
+            var organization = await _context.Organizations.FindAsync(id);
+            if (organization == null)
+            {
+                return ResourceNotFound();
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                var user = await _userManager.FindByIdAsync(user_id.ToString());
+                if (user == null)
+                {
+                    return ResourceNotFound();
+                }
+
+                // If the user exists, but not in this organization, forbid deletion
+                var organizationUser = await _context.OrganizationUsers
+                    .SingleAsync(s => s.User == user && s.Organization == organization);
+                if (organizationUser == null)
+                {
+                    return ResourceForbid();
+                }
+
+                user.PhoneNumber = input.PhoneNumber;
+                user.GivenName = input.GivenName;
+                user.LastName = input.LastName;
+                user.Avatar = input.Avatar;
+                user.JobTitle = input.JobTitle;
+
+                await _userManager.UpdateAsync(user);
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: api/organization/{id}/user/{user_id}
         /// <summary>
         /// Remove an user from the organization if this user has access to the record.
         /// </summary>
         /// <param name="id">Organization id.</param>
         /// <param name="user_id">User id.</param>
-        /// <returns></returns>
         [HttpDelete("{id:guid}/user/{user_id:guid}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
