@@ -1,60 +1,68 @@
 ﻿using System;
-using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using FunderMaps.Core.Helpers;
 
 namespace FunderMaps.Helpers
 {
-    public class ApplicationFile
+    public class ApplicationFileWrapper
     {
-        public string FileName { get; }
-        public string Name { get; }
-        public string ContentType { get; }
-        public long Size { get; }
-        public string Extension { get => Path.GetExtension(Name); }
-
-        public ApplicationFile(string name)
-        {
-            Name = name;
-        }
-
-        public ApplicationFile(string name, string newName)
-        {
-            FileName = newName;
-            Name = name;
-        }
-
-        public ApplicationFile(IFormFile formFile)
-        {
-            Name = formFile.FileName;
-            FileName = GenerateUniqueFileName(Extension);
-            ContentType = formFile.ContentType.ToLower().Trim();
-            Size = formFile.Length;
-        }
+        private readonly IEnumerable<string> allowedFileTypes;
 
         /// <summary>
-        /// Check if file is empty
+        /// Application file.
         /// </summary>
-        /// <returns></returns>
-        public bool Empty() => Size == 0;
+        public ApplicationFile File { get; }
 
         /// <summary>
-        /// Generate a unique name for the file.
+        /// Indicates the file is either valid or not.
         /// </summary>
-        /// <param name="extension">File extension.</param>
-        /// <returns>Unique filename.</returns>
-        public static string GenerateUniqueFileName(string extension)
+        public bool IsValid { get => string.IsNullOrEmpty(Error); }
+
+        /// <summary>
+        /// Validation error, if any.
+        /// </summary>
+        public string Error { get; private set; }
+
+        /// <summary>
+        /// Wrapper around IFormFIle to Application file.
+        /// </summary>
+        /// <param name="formFile">See <see cref="IFormFile"/>.</param>
+        /// <param name="allowedFileTypes">List of allowed mime types.</param>
+        public ApplicationFileWrapper(IFormFile formFile, IEnumerable<string> allowedFileTypes = null)
         {
-            if (extension == null)
+            if (formFile == null)
             {
                 throw new ArgumentNullException();
             }
 
-            if (extension[0] == '.')
+            this.allowedFileTypes = allowedFileTypes;
+
+            File = new ApplicationFile(formFile.FileName)
             {
-                extension = extension.Substring(1);
+                ContentType = formFile.ContentType.ToLower().Trim(),
+                Size = formFile.Length,
+            };
+
+            File.FileName = ApplicationFile.GenerateUniqueFileName(File.Extension);
+
+            CheckIfValid();
+        }
+
+        private void CheckIfValid()
+        {
+            // Mark empty document as invalid
+            if (File.Empty())
+            {
+                Error = "file content is empty";
             }
 
-            return $"{Guid.NewGuid()}.{extension}";
+            // Check if content type is allowed
+            if (allowedFileTypes.Count() > 0 && !allowedFileTypes.Contains(File.ContentType))
+            {
+                Error = "file content type is not allowed";
+            }
         }
     }
 }

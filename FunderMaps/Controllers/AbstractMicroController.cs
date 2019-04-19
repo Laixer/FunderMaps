@@ -97,5 +97,16 @@ namespace FunderMaps.Controllers
         {
             return Forbid(0, "Resource access forbidden with current principal");
         }
+
+        /// <summary>
+        /// Return application error with an error model.
+        /// </summary>
+        /// <param name="code">Error code.</param>
+        /// <param name="message">Error message.</param>
+        /// <returns>ActionResult.</returns>
+        protected ActionResult ApplicationError(int code = 0, string message = "Something went wrong during request processing")
+        {
+            return StatusCode(500, new ErrorOutputModel(code, message));
+        }
     }
 }

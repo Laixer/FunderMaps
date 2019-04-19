@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
-using FunderMaps.Helpers;
 using FunderMaps.Models;
 
 namespace FunderMaps.Controllers.Webservice
@@ -25,28 +23,20 @@ namespace FunderMaps.Controllers.Webservice
     {
         private readonly FisDbContext _fisContext;
         private readonly FunderMapsDbContext _context;
-        private readonly IFileStorageService _fileStorageService;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportService _reportService;
-
-        private static readonly string[] allowedReportFileTypes =
-        {
-            "application/pdf",
-        };
 
         public ReportController(
             FisDbContext fisContext,
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
-            IFileStorageService fileStorageService,
             IReportService reportService)
         {
             _fisContext = fisContext;
             _context = context;
             _userManager = userManager;
-            _fileStorageService = fileStorageService;
             _authorizationService = authorizationService;
             _reportService = reportService;
         }
@@ -219,31 +209,6 @@ namespace FunderMaps.Controllers.Webservice
             }
 
             return ResourceForbid();
-        }
-
-        // POST: api/report/attach_document
-        [HttpPost("attach_document")]
-        [ProducesResponseType(typeof(ApplicationFile), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> AttachDocument(IFormFile file)
-        {
-            var reportFile = new ApplicationFile(file);
-
-            if (!allowedReportFileTypes.Contains(reportFile.ContentType))
-            {
-                return BadRequest(0, "file content type is not allowed");
-            }
-
-            if (reportFile.Empty())
-            {
-                return BadRequest(0, "file content is empty");
-            }
-
-            // Store the report with the file service
-            await _fileStorageService.StoreFileAsync("report", reportFile, file.OpenReadStream());
-
-            return Ok(reportFile);
         }
 
         // PUT: api/report/{id}/{document}

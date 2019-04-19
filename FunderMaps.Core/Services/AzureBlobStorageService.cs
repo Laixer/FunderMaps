@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
-using FunderMaps.Interfaces;
-using FunderMaps.Helpers;
+using FunderMaps.Core.Helpers;
 
-namespace FunderMaps.Services
+using FunderMaps.Core.Interfaces;
+
+namespace FunderMaps.Core.Services
 {
     public class AzureBlobStorageService : IFileStorageService
     {

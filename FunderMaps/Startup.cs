@@ -20,6 +20,8 @@ using FunderMaps.Helpers;
 using FunderMaps.Extensions;
 using FunderMaps.Authorization.Handler;
 using FunderMaps.Authorization.Requirement;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
 
 namespace FunderMaps
 {

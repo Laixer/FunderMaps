@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Helpers
 {
-    public class Constants
+    /// <summary>
+    /// Application constants.
+    /// </summary>
+    public static class Constants
     {
         /// <summary>
         /// Default password policy.
