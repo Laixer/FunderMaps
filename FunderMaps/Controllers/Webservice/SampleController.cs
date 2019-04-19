@@ -152,7 +152,7 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
-        // GET: api/sample/{id}/{report}
+        // GET: api/sample/{id}
         /// <summary>
         /// Retrieve the sample by identifier. The sample is returned
         /// if the the record is public or if the organization user has
@@ -161,16 +161,27 @@ namespace FunderMaps.Controllers.Webservice
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         /// <returns>Report.</returns>
-        [HttpGet("{id}/{report}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAsync(int id, int report)
+        public async Task<IActionResult> GetAsync(int id)
         {
             var sample = await _fisContext.Sample
                 .AsNoTracking()
                 .Include(s => s.ReportNavigation)
-                .SingleOrDefaultAsync(s => s.Id == id && s.Report == report);
+                    .ThenInclude(si => si.Attribution)
+                .Include(s => s.ReportNavigation)
+                    .ThenInclude(si => si.Status)
+                .Include(s => s.Address)
+                .Include(s => s.BaseMeasurementLevel)
+                .Include(s => s.FoundationDamageCause)
+                .Include(s => s.EnforcementTerm)
+                .Include(s => s.FoundationQuality)
+                .Include(s => s.FoundationType)
+                .Include(s => s.Substructure)
+                .Include(s => s.AccessPolicy)
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (sample == null)
             {
                 return ResourceNotFound();
@@ -182,7 +193,7 @@ namespace FunderMaps.Controllers.Webservice
                 return Ok(sample);
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Read);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Read);
             if (authorizationResult.Succeeded)
             {
                 return Ok(sample);
@@ -191,38 +202,35 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
-        // PUT: api/sample/{id}/{report}
+        // PUT: api/sample/{id}
         /// <summary>
         /// Update sample if the organization user has access to the record.
         /// </summary>
         /// <param name="id">Sample identifier.</param>
         /// <param name="document">Sample identifier.</param>
         /// <param name="input">Sample data.</param>
-        [HttpPut("{id}/{report}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PutAsync(int id, int report, [FromBody] Sample input)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
         {
             var sample = await _fisContext.Sample
                 .AsNoTracking()
                 .Include(s => s.ReportNavigation)
-                .SingleOrDefaultAsync(s => s.Id == id && s.Report == report);
+                    .ThenInclude(si => si.Attribution)
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (sample == null)
             {
                 return ResourceNotFound();
             }
 
-            if (id != input.Id || report != input.Report)
+            if (id != input.Id)
             {
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            //sample.StreetName = input.StreetName;
-            //sample.BuildingNumber = input.BuildingNumber;
-            //sample.BuildingNumberSuffix = input.BuildingNumberSuffix;
-            //sample.Address
             sample.MonitoringWell = input.MonitoringWell;
             sample.Cpt = input.Cpt;
             sample.WoodLevel = input.WoodLevel;
@@ -230,9 +238,25 @@ namespace FunderMaps.Controllers.Webservice
             sample.GroundwaterLevel = input.GroundwaterLevel;
             sample.BuiltYear = input.BuiltYear;
             sample.Note = input.Note;
-            sample.AccessPolicy = input.AccessPolicy;
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Update);
+            if (input.EnforcementTerm != null)
+            {
+                sample.EnforcementTerm = await _fisContext.EnforcementTerm.FindAsync(input.EnforcementTerm.Id);
+            }
+            if (input.FoundationQuality != null)
+            {
+                sample.FoundationQuality = await _fisContext.FoundationQuality.FindAsync(input.FoundationQuality.Id);
+            }
+            if (input.FoundationType != null)
+            {
+                sample.FoundationType = await _fisContext.FoundationType.FindAsync(input.FoundationType.Id);
+            }
+            if (input.Substructure != null)
+            {
+                sample.Substructure = await _fisContext.Substructure.FindAsync(input.Substructure.Id);
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
                 _fisContext.Sample.Update(sample);
@@ -244,28 +268,29 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
-        // DELETE: api/sample/{id}/{report}
+        // DELETE: api/sample/{id}
         /// <summary>
         /// Soft delete the sample if the organization user has access to the record.
         /// </summary>
         /// <param name="id">Sample identifier.</param>
         /// <param name="document">Sample identifier.</param>
-        [HttpDelete("{id}/{report}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> DeleteAsync(int id, int report)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             var sample = await _fisContext.Sample
                 .AsNoTracking()
                 .Include(s => s.ReportNavigation)
-                .SingleOrDefaultAsync(s => s.Id == id && s.Report == report);
+                    .ThenInclude(si => si.Attribution)
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (sample == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Delete);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Delete);
             if (authorizationResult.Succeeded)
             {
                 _fisContext.Sample.Remove(sample);
