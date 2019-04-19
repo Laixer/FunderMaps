@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
@@ -63,6 +64,12 @@ namespace FunderMaps
             {
                 c.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });
                 c.CustomSchemaIds((type) => type.FullName);
+
+                var filePath = Path.Combine(AppContext.BaseDirectory, "DocumentationFunderMaps.xml");
+                if (File.Exists(filePath))
+                {
+                    c.IncludeXmlComments(filePath);
+                }
             });
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
