@@ -29,6 +29,16 @@ namespace FunderMaps.Controllers
         }
 
         /// <summary>
+        /// Return bad request with an existing error model.
+        /// </summary>
+        /// <param name="model">Error model.</param>
+        /// <returns>ActionResult.</returns>
+        protected ActionResult BadRequest(ErrorOutputModel model)
+        {
+            return StatusCode(400, model);
+        }
+
+        /// <summary>
         /// Return not found with an error model.
         /// </summary>
         /// <param name="code">Error code.</param>

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
@@ -60,16 +59,11 @@ namespace FunderMaps
             //services.AddCors();
 
             // Register the Swagger generator, defining an OpenAPI document
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });
-                c.CustomSchemaIds((type) => type.FullName);
-
-                var filePath = Path.Combine(AppContext.BaseDirectory, "DocumentationFunderMaps.xml");
-                if (File.Exists(filePath))
-                {
-                    c.IncludeXmlComments(filePath);
-                }
+                options.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });
+                options.CustomSchemaIds((type) => type.FullName);
+                options.IncludeXmlCommentsIfDocumentation(AppContext.BaseDirectory, "DocumentationFunderMaps.xml");
             });
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
@@ -157,7 +151,10 @@ namespace FunderMaps
             services.AddSingleton<IAuthorizationHandler, FisOperationHandler>();
         }
 
-        // This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
+
+        /// <summary>
+        /// This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
+        /// </summary>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

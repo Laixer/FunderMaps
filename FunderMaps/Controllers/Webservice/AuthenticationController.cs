@@ -76,6 +76,7 @@ namespace FunderMaps.Controllers.Webservice
             {
                 errorModel.AddError(0, item.Description);
             }
+
             return errorModel;
         }
 
@@ -222,6 +223,9 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // GET: api/authentication/refresh
+        /// <summary>
+        /// Refresh authentication token.
+        /// </summary>
         [HttpGet("refresh")]
         [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
@@ -293,6 +297,10 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // POST: api/authentication/set_password
+        /// <summary>
+        /// Set the password for a user.
+        /// </summary>
+        /// <param name="input">User password input model.</param>
         [Authorize(Roles = Constants.AdministratorRole)]
         [HttpPost("set_password")]
         [ProducesResponseType(204)]
@@ -306,24 +314,35 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            // FUTURE: Wrap inside transaction
-
-            if (await _userManager.HasPasswordAsync(user))
+            return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
             {
-                await _userManager.RemovePasswordAsync(user);
-            }
+                // Create everything at once, or nothing at all if an error occurs.
+                using (var transaction = await _context.Database.BeginTransactionAsync())
+                {
+                    if (await _userManager.HasPasswordAsync(user))
+                    {
+                        await _userManager.RemovePasswordAsync(user);
+                    }
 
-            var addPasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
-            if (!addPasswordResult.Succeeded)
-            {
-                return BadRequest(IdentityErrorResponse(addPasswordResult.Errors));
-            }
+                    var addPasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
+                    if (!addPasswordResult.Succeeded)
+                    {
+                        transaction.Rollback();
+                        return BadRequest(IdentityErrorResponse(addPasswordResult.Errors));
+                    }
 
-            return NoContent();
+                    transaction.Commit();
+
+                    return NoContent();
+                }
+            });
         }
 
         // FUTURE: Fix
         // POST: api/authentication/confirm_email
+        /// <summary>
+        /// Confirm email and activate account.
+        /// </summary>
         [AllowAnonymous]
         [HttpPost("confirm_email")]
         [ProducesResponseType(204)]
