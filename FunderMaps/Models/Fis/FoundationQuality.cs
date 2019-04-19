@@ -1,18 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class FoundationQuality
+    public class FoundationQuality
     {
         public FoundationQuality()
         {
+            Incident = new HashSet<Incident>();
             Sample = new HashSet<Sample>();
         }
 
         public string Id { get; set; }
         public string NameNl { get; set; }
 
-        public ICollection<Sample> Sample { get; set; }
+        [IgnoreDataMember]
+        public virtual ICollection<Incident> Incident { get; set; }
+
+        [IgnoreDataMember]
+        public virtual ICollection<Sample> Sample { get; set; }
     }
 }

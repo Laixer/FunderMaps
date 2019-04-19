@@ -1,5 +1,5 @@
-﻿using FunderMaps.Models.Fis;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using FunderMaps.Models.Fis;
 
 namespace FunderMaps.Data.Builder
 {
@@ -7,93 +7,348 @@ namespace FunderMaps.Data.Builder
     {
         public static void ModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ForNpgsqlHasEnum("report", "access_policy", new[] { "public", "private", "protected" })
-                .ForNpgsqlHasEnum("report", "base_level", new[] { "NAP (NL)", "TAW (BE)", "NN (DE)" })
-                .ForNpgsqlHasEnum("report", "enforcement_term", new[] { "0-5", "5-10", "10-20", "5", "10", "15", "20", "25", "30" });
+            modelBuilder.Entity<AccessPolicy>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("access_policy_pkey");
+
+                entity.ToTable("access_policy", "attestation");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
+            });
 
             modelBuilder.Entity<Address>(entity =>
             {
-                entity.HasKey(e => new { e.StreetName, e.BuildingNumber, e.BuildingNumberSuffix });
-
-                entity.Property(e => e.StreetName).HasColumnName("street_name").HasMaxLength(128);
-                entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
-                entity.Property(e => e.BuildingNumberSuffix).HasColumnName("building_number_suffix").HasColumnType("character(2)");
-                entity.Property(e => e.District).HasColumnName("district").HasMaxLength(64);
-                entity.Property(e => e.Neighborhood).HasColumnName("neighborhood").HasMaxLength(64);
-                entity.Property(e => e.Note).HasColumnName("note");
-                entity.Property(e => e.Subneighborhood).HasColumnName("subneighborhood").HasMaxLength(64);
-                entity.Property(e => e.Township).HasColumnName("township").HasMaxLength(64);
-
                 entity.ToTable("address", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("uuid_generate_v4()");
+
+                entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
+
+                entity.Property(e => e.BuildingNumberSuffix)
+                    .HasColumnName("building_number_suffix")
+                    .HasColumnType("character(2)");
+
+                entity.Property(e => e.StreetName)
+                    .IsRequired()
+                    .HasColumnName("street_name")
+                    .HasMaxLength(128);
+            });
+
+            modelBuilder.Entity<Attribution>(entity =>
+            {
+                entity.HasKey(e => e.Id)
+                    .HasName("attribution_pkey");
+
+                entity.ToTable("attribution", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("nextval('report.attribution_id_seq'::regclass)");
+
+                entity.Property(e => e._Contractor).HasColumnName("contractor");
+
+                entity.Property(e => e._Creator).HasColumnName("creator");
+
+                entity.Property(e => e._Owner).HasColumnName("owner");
+
+                entity.Property(e => e.Project).HasColumnName("project");
+
+                entity.Property(e => e._Reviewer).HasColumnName("reviewer");
+
+                entity.HasOne(d => d.Reviewer)
+                    .WithMany(p => p.AttributionReviewerNavigation)
+                    .HasForeignKey(d => d._Reviewer)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("attribution_reviewer_fkey");
+
+                entity.HasOne(d => d.Contractor)
+                    .WithMany(p => p.AttributionContractorNavigation)
+                    .HasForeignKey(d => d._Contractor)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("attribution_contractor_fkey");
+
+                entity.HasOne(d => d.Creator)
+                    .WithMany(p => p.AttributionCreatorNavigation)
+                    .HasForeignKey(d => d._Creator)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("attribution_creator_fkey");
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.AttributionOwnerNavigation)
+                    .HasForeignKey(d => d._Owner)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("attribution_owner_fkey");
+
+                entity.HasOne(d => d.ProjectNavigation)
+                    .WithMany(p => p.Attribution)
+                    .HasForeignKey(d => d.Project)
+                    .HasConstraintName("attribution_project_fkey");
+            });
+
+            modelBuilder.Entity<BaseLevel>(entity =>
+            {
+                entity.ToTable("base_level", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
+            });
+
+            modelBuilder.Entity<EnforcementTerm>(entity =>
+            {
+                entity.ToTable("enforcement_term", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<FoundationDamageCause>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
-                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
-
                 entity.ToTable("foundation_damage_cause", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<FoundationQuality>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
-                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
-
                 entity.ToTable("foundation_quality", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<FoundationRecovery>(entity =>
             {
-                entity.HasKey(e => new { e.BuildingNumber, e.StreetName, e.BuildingNumberSuffix });
+                entity.HasQueryFilter(e => e.DeleteDate == null);
 
                 entity.ToTable("foundation_recovery", "report");
 
-                entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
-                entity.Property(e => e.StreetName).HasColumnName("street_name").HasMaxLength(128);
-                entity.Property(e => e.BuildingNumberSuffix).HasColumnName("building_number_suffix").HasColumnType("character(2)");
-                entity.Property(e => e.ContractorName).HasColumnName("contractor_name").HasMaxLength(96);
-                entity.Property(e => e.CreateDate).HasColumnName("create_date").HasColumnType("time with time zone");
-                entity.Property(e => e.DeleteDate).HasColumnName("delete_date").HasColumnType("time with time zone");
-                entity.Property(e => e.Evidence).IsRequired().HasColumnName("evidence").HasMaxLength(32);
-                entity.Property(e => e.EvidenceDocument).IsRequired().HasColumnName("evidence_document").HasColumnType("character varying(256)[]");
-                entity.Property(e => e.EvidenceName).IsRequired().HasColumnName("evidence_name").HasMaxLength(96);
-                entity.Property(e => e.Note).HasColumnName("note");
-                entity.Property(e => e.Type).HasColumnName("type").HasMaxLength(32);
-                entity.Property(e => e.UpdateDate).HasColumnName("update_date").HasColumnType("time with time zone");
-                entity.Property(e => e.Year).HasColumnName("year").HasColumnType("report.year");
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("nextval('report.foundation_recovery_id_seq'::regclass)");
 
-                entity.HasOne(d => d.EvidenceNavigation)
+                entity.Property(e => e.AccessPolicy)
+                    .IsRequired()
+                    .HasColumnName("access_policy")
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'private'::character varying");
+
+                entity.Property(e => e.Address).HasColumnName("address");
+
+                entity.Property(e => e.Attribution).HasColumnName("attribution");
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnName("create_date")
+                    .HasColumnType("timestamp with time zone")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ForNpgsqlHasComment("Timestamp of record creation, set by insert");
+
+                entity.Property(e => e.DeleteDate)
+                    .HasColumnName("delete_date")
+                    .HasColumnType("timestamp with time zone")
+                    .ForNpgsqlHasComment("Timestamp of soft delete");
+
+                entity.Property(e => e.Note).HasColumnName("note");
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasColumnName("type")
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'unknown'::character varying");
+
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnName("update_date")
+                    .HasColumnType("timestamp with time zone")
+                    .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
+
+                entity.Property(e => e.Year).HasColumnName("year");
+
+                entity.HasOne(d => d.AccessPolicyNavigation)
                     .WithMany(p => p.FoundationRecovery)
-                    .HasForeignKey(d => d.Evidence)
+                    .HasForeignKey(d => d.AccessPolicy)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_evidence_fkey");
+                    .HasConstraintName("foundation_recovery_access_policy_fkey");
+
+                entity.HasOne(d => d.AddressNavigation)
+                    .WithMany(p => p.FoundationRecovery)
+                    .HasForeignKey(d => d.Address)
+                    .HasConstraintName("foundation_recovery_address_fkey");
+
+                entity.HasOne(d => d.AttributionNavigation)
+                    .WithMany(p => p.FoundationRecovery)
+                    .HasForeignKey(d => d.Attribution)
+                    .HasConstraintName("foundation_recovery_attribution_fkey");
 
                 entity.HasOne(d => d.TypeNavigation)
                     .WithMany(p => p.FoundationRecovery)
                     .HasForeignKey(d => d.Type)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("foundation_recovery_type_fkey");
-
-                entity.HasOne(d => d.Address)
-                    .WithMany(p => p.FoundationRecovery)
-                    .HasForeignKey(d => new { d.StreetName, d.BuildingNumber, d.BuildingNumberSuffix })
-                    .HasConstraintName("foundation_recovery_street_name_fkey");
             });
 
             modelBuilder.Entity<FoundationRecoveryEvidence>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
-                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
+                entity.HasKey(e => e.Document)
+                    .HasName("foundation_recovery_evidence_pkey");
 
                 entity.ToTable("foundation_recovery_evidence", "report");
+
+                entity.Property(e => e.Document)
+                    .HasColumnName("document")
+                    .HasMaxLength(256)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.CreateDate)
+                    .HasColumnName("create_date")
+                    .HasColumnType("timestamp with time zone")
+                    .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                    .ForNpgsqlHasComment("Timestamp of record creation, set by insert");
+
+                entity.Property(e => e.DeleteDate)
+                    .HasColumnName("delete_date")
+                    .HasColumnType("timestamp with time zone")
+                    .ForNpgsqlHasComment("Timestamp of soft delete");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasColumnName("name")
+                    .HasMaxLength(96);
+
+                entity.Property(e => e.Note).HasColumnName("note");
+
+                entity.Property(e => e.Recovery).HasColumnName("recovery");
+
+                entity.Property(e => e.Type)
+                    .IsRequired()
+                    .HasColumnName("type")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.UpdateDate)
+                    .HasColumnName("update_date")
+                    .HasColumnType("timestamp with time zone")
+                    .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
+
+                entity.HasOne(d => d.RecoveryNavigation)
+                    .WithMany(p => p.FoundationRecoveryEvidence)
+                    .HasForeignKey(d => d.Recovery)
+                    .HasConstraintName("foundation_recovery_evidence_recovery_fkey");
+
+                entity.HasOne(d => d.TypeNavigation)
+                    .WithMany(p => p.FoundationRecoveryEvidence)
+                    .HasForeignKey(d => d.Type)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("foundation_recovery_evidence_type_fkey");
+            });
+
+            modelBuilder.Entity<FoundationRecoveryEvidenceType>(entity =>
+            {
+                entity.ToTable("foundation_recovery_evidence_type", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
+            });
+
+            modelBuilder.Entity<FoundationRecoveryLocation>(entity =>
+            {
+                entity.ToTable("foundation_recovery_location", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
+            });
+
+            modelBuilder.Entity<FoundationRecoveryRepair>(entity =>
+            {
+                entity.HasKey(e => new { e.Location, e.Recovery })
+                    .HasName("foundation_recovery_repair_pkey");
+
+                entity.ToTable("foundation_recovery_repair", "report");
+
+                entity.Property(e => e.Location)
+                    .HasColumnName("location")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.Recovery).HasColumnName("recovery");
+
+                entity.HasOne(d => d.LocationNavigation)
+                    .WithMany(p => p.FoundationRecoveryRepair)
+                    .HasForeignKey(d => d.Location)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("foundation_recovery_repair_location_fkey");
+
+                entity.HasOne(d => d.RecoveryNavigation)
+                    .WithMany(p => p.FoundationRecoveryRepair)
+                    .HasForeignKey(d => d.Recovery)
+                    .HasConstraintName("foundation_recovery_repair_recovery_fkey");
             });
 
             modelBuilder.Entity<FoundationRecoveryType>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
-                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
-
                 entity.ToTable("foundation_recovery_type", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<FoundationType>(entity =>
@@ -109,6 +364,110 @@ namespace FunderMaps.Data.Builder
                     .IsRequired()
                     .HasColumnName("name_nl")
                     .HasMaxLength(64);
+            });
+
+            modelBuilder.Entity<Incident>(entity =>
+            {
+                entity.ToTable("incident", "statement");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasDefaultValueSql("nextval('statement.incident_id_seq'::regclass)");
+
+                entity.Property(e => e.Address).HasColumnName("address");
+
+                entity.Property(e => e.DocumentName)
+                    .HasColumnName("document_name")
+                    .HasMaxLength(256);
+
+                entity.Property(e => e.FoundationDamageCause)
+                    .HasColumnName("foundation_damage_cause")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.FoundationQuality)
+                    .HasColumnName("foundation_quality")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.FoundationType)
+                    .HasColumnName("foundation_type")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.Note).HasColumnName("note");
+
+                entity.Property(e => e.Owner).HasColumnName("owner");
+
+                entity.Property(e => e.Substructure)
+                    .HasColumnName("substructure")
+                    .HasMaxLength(32);
+
+                entity.HasOne(d => d.AddressNavigation)
+                    .WithMany(p => p.Incident)
+                    .HasForeignKey(d => d.Address)
+                    .HasConstraintName("incident_address_fkey");
+
+                entity.HasOne(d => d.FoundationDamageCauseNavigation)
+                    .WithMany(p => p.Incident)
+                    .HasForeignKey(d => d.FoundationDamageCause)
+                    .HasConstraintName("incident_foundation_damage_cause_fkey");
+
+                entity.HasOne(d => d.FoundationQualityNavigation)
+                    .WithMany(p => p.Incident)
+                    .HasForeignKey(d => d.FoundationQuality)
+                    .HasConstraintName("incident_foundation_quality_fkey");
+
+                entity.HasOne(d => d.FoundationTypeNavigation)
+                    .WithMany(p => p.Incident)
+                    .HasForeignKey(d => d.FoundationType)
+                    .HasConstraintName("incident_foundation_type_fkey");
+
+                entity.HasOne(d => d.OwnerNavigation)
+                    .WithMany(p => p.Incident)
+                    .HasForeignKey(d => d.Owner)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("incident_owner_fkey");
+
+                entity.HasOne(d => d.SubstructureNavigation)
+                    .WithMany(p => p.Incident)
+                    .HasForeignKey(d => d.Substructure)
+                    .HasConstraintName("incident_substructure_fkey");
+            });
+
+            modelBuilder.Entity<Norm>(entity =>
+            {
+                entity.ToTable("norm", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.ConformF3o).HasColumnName("conform_f3o");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Norm)
+                    .HasPrincipalKey<Report>(p => p.Id)
+                    .HasForeignKey<Norm>(d => d.Id)
+                    .HasConstraintName("norm_id_fkey");
+            });
+
+            modelBuilder.Entity<Object>(entity =>
+            {
+                entity.ToTable("object", "report");
+
+                entity.HasIndex(e => e.Bag)
+                    .HasName("object_bag_idx")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Bag).HasColumnName("bag");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.Object)
+                    .HasForeignKey<Object>(d => d.Id)
+                    .HasConstraintName("object_id_fkey");
             });
 
             modelBuilder.Entity<Organization>(entity =>
@@ -170,16 +529,23 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("nick_name")
                     .HasMaxLength(32);
 
-                entity.Property(e => e.Organization).HasColumnName("organization");
+                entity.Property(e => e._Organization).HasColumnName("organization");
 
-                entity.HasOne(d => d.OrganizationNavigation)
+                entity.Property(e => e.Phone)
+                    .HasColumnName("phone")
+                    .HasMaxLength(16);
+
+                entity.HasOne(d => d.Organization)
                     .WithMany(p => p.Principal)
-                    .HasForeignKey(d => d.Organization)
+                    .HasForeignKey(d => d._Organization)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("principal_organization_fkey");
             });
 
             modelBuilder.Entity<Project>(entity =>
             {
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
                 entity.ToTable("project", "report");
 
                 entity.HasIndex(e => e.Dossier)
@@ -247,7 +613,10 @@ namespace FunderMaps.Data.Builder
 
             modelBuilder.Entity<Report>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.DocumentId });
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
+                entity.HasKey(e => new { e.Id, e.DocumentId })
+                    .HasName("report_pkey");
 
                 entity.ToTable("report", "report");
 
@@ -264,17 +633,19 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64)
                     .ForNpgsqlHasComment("User provided document identifier");
 
-                entity.Property(e => e.ConformF3o).HasColumnName("conform_f3o");
+                entity.Property(e => e._AccessPolicy)
+                    .IsRequired()
+                    .HasColumnName("access_policy")
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'private'::character varying");
 
-                entity.Property(e => e.Contractor).HasColumnName("contractor");
+                entity.Property(e => e._Attribution).HasColumnName("attribution");
 
                 entity.Property(e => e.CreateDate)
                     .HasColumnName("create_date")
                     .HasColumnType("timestamp with time zone")
                     .HasDefaultValueSql("CURRENT_TIMESTAMP")
                     .ForNpgsqlHasComment("Timestamp of record creation, set by insert");
-
-                entity.Property(e => e.Creator).HasColumnName("creator");
 
                 entity.Property(e => e.DeleteDate)
                     .HasColumnName("delete_date")
@@ -287,7 +658,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.DocumentName)
                     .HasColumnName("document_name")
-                    .HasMaxLength(128);
+                    .HasMaxLength(256);
 
                 entity.Property(e => e.FloorMeasurement).HasColumnName("floor_measurement");
 
@@ -297,17 +668,12 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e.Owner).HasColumnName("owner");
-
-                entity.Property(e => e.Project).HasColumnName("project");
-
-                entity.Property(e => e.Reviewer).HasColumnName("reviewer");
-
-                entity.Property(e => e.Status)
+                entity.Property(e => e._Status)
                     .HasColumnName("status")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'todo'::character varying");
 
-                entity.Property(e => e.Type)
+                entity.Property(e => e._Type)
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)
@@ -318,41 +684,25 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
-                entity.HasOne(d => d.ContractorNavigation)
-                    .WithMany(p => p.ReportContractorNavigation)
-                    .HasForeignKey(d => d.Contractor)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("report_contractor_fkey");
-
-                entity.HasOne(d => d.CreatorNavigation)
-                    .WithMany(p => p.ReportCreatorNavigation)
-                    .HasForeignKey(d => d.Creator)
-                    .HasConstraintName("report_creator_fkey");
-
-                entity.HasOne(d => d.OwnerNavigation)
-                    .WithMany(p => p.ReportOwnerNavigation)
-                    .HasForeignKey(d => d.Owner)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("report_owner_fkey");
-
-                entity.HasOne(d => d.ProjectNavigation)
+                entity.HasOne(d => d.AccessPolicy)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.Project)
-                    .HasConstraintName("report_project_fkey");
+                    .HasForeignKey(d => d._AccessPolicy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("report_access_policy_fkey");
 
-                entity.HasOne(d => d.ReviewerNavigation)
-                    .WithMany(p => p.ReportReviewerNavigation)
-                    .HasForeignKey(d => d.Reviewer)
-                    .HasConstraintName("report_reviewer_fkey");
-
-                entity.HasOne(d => d.StatusNavigation)
+                entity.HasOne(d => d.Attribution)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.Status)
+                    .HasForeignKey(d => d._Attribution)
+                    .HasConstraintName("report_attribution_fkey");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Report)
+                    .HasForeignKey(d => d._Status)
                     .HasConstraintName("report_status_fkey");
 
-                entity.HasOne(d => d.TypeNavigation)
+                entity.HasOne(d => d.Type)
                     .WithMany(p => p.Report)
-                    .HasForeignKey(d => d.Type)
+                    .HasForeignKey(d => d._Type)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("report_type_fkey");
             });
@@ -384,14 +734,21 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.NameNl)
                     .IsRequired()
                     .HasColumnName("name_nl")
-                    .HasMaxLength(54);
+                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<Sample>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.Report });
+                entity.HasQueryFilter(e => e.DeleteDate == null);
+
+                entity.HasKey(e => new { e.Id, e.Report })
+                    .HasName("sample_pkey");
 
                 entity.ToTable("sample", "report");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("sample_id_key")
+                    .IsUnique();
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -401,18 +758,23 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("report")
                     .ForNpgsqlHasComment("Link to the report entity");
 
-                entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
+                entity.Property(e => e._AccessPolicy)
+                    .IsRequired()
+                    .HasColumnName("access_policy")
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'private'::character varying");
 
-                entity.Property(e => e.BuildingNumberSuffix)
-                    .HasColumnName("building_number_suffix")
-                    .HasColumnType("character(2)");
+                entity.Property(e => e._Address).HasColumnName("address");
 
-                entity.Property(e => e.BuiltYear)
-                    .HasColumnName("built_year")
-                    .HasColumnType("report.year");
+                entity.Property(e => e._BaseMeasurementLevel)
+                    .IsRequired()
+                    .HasColumnName("base_measurement_level")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e.BuiltYear).HasColumnName("built_year");
 
                 entity.Property(e => e.Cpt)
-                    .HasColumnName("CPT")
+                    .HasColumnName("cpt")
                     .HasMaxLength(32);
 
                 entity.Property(e => e.CreateDate)
@@ -426,29 +788,33 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of soft delete");
 
-                entity.Property(e => e.FoundationDamageCause)
+                entity.Property(e => e._EnforcementTerm)
+                    .HasColumnName("enforcement_term")
+                    .HasMaxLength(32);
+
+                entity.Property(e => e._FoundationDamageCause)
                     .IsRequired()
                     .HasColumnName("foundation_damage_cause")
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'unknown'::character varying");
 
-                entity.Property(e => e.FoundationQuality)
+                entity.Property(e => e._FoundationQuality)
                     .HasColumnName("foundation_quality")
                     .HasMaxLength(32);
 
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
 
-                entity.Property(e => e.FoundationType)
+                entity.Property(e => e._FoundationType)
                     .HasColumnName("foundation_type")
                     .HasMaxLength(32);
 
-                entity.Property(e => e.Groudlevel)
-                    .HasColumnName("groudlevel")
-                    .HasColumnType("report.height");
+                entity.Property(e => e.GroundLevel)
+                    .HasColumnName("groundlevel")
+                    .HasColumnType("numeric(5,2)");
 
                 entity.Property(e => e.GroundwaterLevel)
                     .HasColumnName("groundwater_level")
-                    .HasColumnType("report.height");
+                    .HasColumnType("numeric(5,2)");
 
                 entity.Property(e => e.MonitoringWell)
                     .HasColumnName("monitoring_well")
@@ -456,12 +822,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e.StreetName)
-                    .IsRequired()
-                    .HasColumnName("street_name")
-                    .HasMaxLength(128);
-
-                entity.Property(e => e.Substructure)
+                entity.Property(e => e._Substructure)
                     .HasColumnName("substructure")
                     .HasMaxLength(32);
 
@@ -472,22 +833,44 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.WoodLevel)
                     .HasColumnName("wood_level")
-                    .HasColumnType("report.height");
+                    .HasColumnType("numeric(5,2)");
 
-                entity.HasOne(d => d.FoundationDamageCauseNavigation)
+                entity.HasOne(d => d.AccessPolicy)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.FoundationDamageCause)
+                    .HasForeignKey(d => d._AccessPolicy)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("sample_access_policy_fkey");
+
+                entity.HasOne(d => d.Address)
+                    .WithMany(p => p.Sample)
+                    .HasForeignKey(d => d._Address)
+                    .HasConstraintName("sample_address_fkey");
+
+                entity.HasOne(d => d.BaseMeasurementLevel)
+                    .WithMany(p => p.Sample)
+                    .HasForeignKey(d => d._BaseMeasurementLevel)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("sample_base_measurement_level_fkey");
+
+                entity.HasOne(d => d.EnforcementTerm)
+                    .WithMany(p => p.Sample)
+                    .HasForeignKey(d => d._EnforcementTerm)
+                    .HasConstraintName("sample_enforcement_term_fkey");
+
+                entity.HasOne(d => d.FoundationDamageCause)
+                    .WithMany(p => p.Sample)
+                    .HasForeignKey(d => d._FoundationDamageCause)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_foundation_damage_case_fkey");
 
-                entity.HasOne(d => d.FoundationQualityNavigation)
+                entity.HasOne(d => d.FoundationQuality)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.FoundationQuality)
+                    .HasForeignKey(d => d._FoundationQuality)
                     .HasConstraintName("sample_foundation_quality_fkey");
 
-                entity.HasOne(d => d.FoundationTypeNavigation)
+                entity.HasOne(d => d.FoundationType)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.FoundationType)
+                    .HasForeignKey(d => d._FoundationType)
                     .HasConstraintName("sample_foundation_type_fkey");
 
                 entity.HasOne(d => d.ReportNavigation)
@@ -496,29 +879,32 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d.Report)
                     .HasConstraintName("sample_report_fkey");
 
-                entity.HasOne(d => d.SubstructureNavigation)
+                entity.HasOne(d => d.Substructure)
                     .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d.Substructure)
+                    .HasForeignKey(d => d._Substructure)
                     .HasConstraintName("sample_substructure_fkey");
-
-                entity.HasOne(d => d.Address)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => new { d.StreetName, d.BuildingNumber, d.BuildingNumberSuffix })
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("sample_street_name_fkey");
             });
 
             modelBuilder.Entity<Substructure>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("id").HasMaxLength(32).ValueGeneratedNever();
-                entity.Property(e => e.NameNl).IsRequired().HasColumnName("name_nl").HasMaxLength(64);
-
                 entity.ToTable("substructure", "report");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasMaxLength(32)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.NameNl)
+                    .IsRequired()
+                    .HasColumnName("name_nl")
+                    .HasMaxLength(64);
             });
 
             modelBuilder.HasSequence<int>("organization_id_seq");
 
             modelBuilder.HasSequence<int>("principal_id_seq").IncrementsBy(5);
+
+            modelBuilder.HasSequence<int>("foundation_recovery_id_seq");
 
             modelBuilder.HasSequence<int>("project_id_seq");
 

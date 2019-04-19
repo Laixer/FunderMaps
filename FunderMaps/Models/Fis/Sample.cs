@@ -1,36 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class Sample
+    public class Sample : AccessControl, ISoftDeletable
     {
         public int Id { get; set; }
-        public int Report { get; set; }
-        public string StreetName { get; set; }
-        public short BuildingNumber { get; set; }
-        public string BuildingNumberSuffix { get; set; }
-        public string FoundationType { get; set; }
-        public string FoundationQuality { get; set; }
-        public string Substructure { get; set; }
+
+        [Required]
+        public int? Report { get; set; }
+
+        [IgnoreDataMember]
+        public string _FoundationType { get; set; }
+
+        [IgnoreDataMember]
+        public string _FoundationQuality { get; set; }
+
+        [IgnoreDataMember]
+        public string _Substructure { get; set; }
+
         public string MonitoringWell { get; set; }
         public string Cpt { get; set; }
-        public DateTime CreateDate { get; set; }
-        public DateTime? UpdateDate { get; set; }
-        public DateTime? DeleteDate { get; set; }
         public string Note { get; set; }
         public decimal? WoodLevel { get; set; }
         public decimal? GroundwaterLevel { get; set; }
-        public decimal? Groudlevel { get; set; }
+        public decimal? GroundLevel { get; set; }
         public bool FoundationRecoveryAdviced { get; set; }
-        public string FoundationDamageCause { get; set; }
+
+        [IgnoreDataMember]
+        public string _FoundationDamageCause { get; set; }
+
         public short? BuiltYear { get; set; }
 
-        public Address Address { get; set; }
-        public FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
-        public FoundationQuality FoundationQualityNavigation { get; set; }
-        public FoundationType FoundationTypeNavigation { get; set; }
-        public Report ReportNavigation { get; set; }
-        public Substructure SubstructureNavigation { get; set; }
+        [IgnoreDataMember]
+        public Guid _Address { get; set; }
+
+        [IgnoreDataMember]
+        public string _EnforcementTerm { get; set; }
+
+        [IgnoreDataMember]
+        public string _BaseMeasurementLevel { get; set; }
+
+        [Required]
+        public virtual Address Address { get; set; }
+
+        public virtual BaseLevel BaseMeasurementLevel { get; set; }
+
+        public virtual EnforcementTerm EnforcementTerm { get; set; }
+
+        public virtual FoundationDamageCause FoundationDamageCause { get; set; }
+
+        public virtual FoundationQuality FoundationQuality { get; set; }
+
+        public virtual FoundationType FoundationType { get; set; }
+
+        [IgnoreDataMember]
+        public virtual Report ReportNavigation { get; set; }
+
+        public virtual Substructure Substructure { get; set; }
     }
 }

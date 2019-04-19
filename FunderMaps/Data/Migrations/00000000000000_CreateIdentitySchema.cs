@@ -7,11 +7,11 @@ namespace FunderMaps.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureSchema("identity");
+            migrationBuilder.EnsureSchema("application");
 
             migrationBuilder.CreateTable(
                 name: "role",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, name: "id"),
@@ -26,7 +26,7 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false, name: "id"),
@@ -57,7 +57,7 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "role_claim",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false, name: "id"),
@@ -71,7 +71,7 @@ namespace FunderMaps.Data.Migrations
                     table.ForeignKey(
                         name: "fk_role_claim_role_id",
                         column: x => x.RoleId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -79,7 +79,7 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user_claim",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false, name: "id"),
@@ -93,7 +93,7 @@ namespace FunderMaps.Data.Migrations
                     table.ForeignKey(
                         name: "fk_user_claim_user_id",
                         column: x => x.UserId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -101,7 +101,7 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user_login",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     LoginProvider = table.Column<string>(maxLength: 128, nullable: false, name: "login_provider"),
@@ -115,7 +115,7 @@ namespace FunderMaps.Data.Migrations
                     table.ForeignKey(
                         name: "fk_user_login_user_id",
                         column: x => x.UserId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -123,7 +123,7 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user_role",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false, name: "user_id"),
@@ -135,14 +135,14 @@ namespace FunderMaps.Data.Migrations
                     table.ForeignKey(
                         name: "fk_user_role_role_id",
                         column: x => x.RoleId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "role",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "fk_user_role_user_id",
                         column: x => x.UserId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -150,7 +150,7 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateTable(
                 name: "user_token",
-                schema: "identity",
+                schema: "application",
                 columns: table => new
                 {
                     UserId = table.Column<Guid>(nullable: false, name: "user_id"),
@@ -164,7 +164,7 @@ namespace FunderMaps.Data.Migrations
                     table.ForeignKey(
                         name: "fk_user_token_user_id",
                         column: x => x.UserId,
-                        principalSchema: "identity",
+                        principalSchema: "application",
                         principalTable: "user",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -172,13 +172,13 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "idx_role_claim_role_id",
-                schema: "identity",
+                schema: "application",
                 table: "role_claim",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "idx_role_normalized_name",
-                schema: "identity",
+                schema: "application",
                 table: "role",
                 column: "normalized_name",
                 unique: true,
@@ -186,25 +186,25 @@ namespace FunderMaps.Data.Migrations
 
             migrationBuilder.CreateIndex(
                 name: "idx_user_claim_user_id",
-                schema: "identity",
+                schema: "application",
                 table: "user_claim",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "idx_user_login_user_id",
-                schema: "identity",
+                schema: "application",
                 table: "user_login",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
                 name: "idx_user_role_role_id",
-                schema: "identity",
+                schema: "application",
                 table: "user_role",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "idx_user_normalized_email",
-                schema: "identity",
+                schema: "application",
                 table: "user",
                 column: "normalized_email",
                 unique: true,
@@ -213,21 +213,21 @@ namespace FunderMaps.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable("role_claim", "identity");
+            migrationBuilder.DropTable("role_claim", "application");
 
-            migrationBuilder.DropTable("user_claim", "identity");
+            migrationBuilder.DropTable("user_claim", "application");
 
-            migrationBuilder.DropTable("user_login", "identity");
+            migrationBuilder.DropTable("user_login", "application");
 
-            migrationBuilder.DropTable("user_role", "identity");
+            migrationBuilder.DropTable("user_role", "application");
 
-            migrationBuilder.DropTable("user_token", "identity");
+            migrationBuilder.DropTable("user_token", "application");
 
-            migrationBuilder.DropTable("role", "identity");
+            migrationBuilder.DropTable("role", "application");
 
-            migrationBuilder.DropTable("user", "identity");
+            migrationBuilder.DropTable("user", "application");
 
-            migrationBuilder.DropSchema("identity");
+            migrationBuilder.DropSchema("application");
         }
     }
 }

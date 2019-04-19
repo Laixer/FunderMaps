@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class FoundationRecoveryType
+    public class FoundationRecoveryType
     {
         public FoundationRecoveryType()
         {
@@ -13,6 +13,6 @@ namespace FunderMaps.Models.Fis
         public string Id { get; set; }
         public string NameNl { get; set; }
 
-        public ICollection<FoundationRecovery> FoundationRecovery { get; set; }
+        public virtual ICollection<FoundationRecovery> FoundationRecovery { get; set; }
     }
 }

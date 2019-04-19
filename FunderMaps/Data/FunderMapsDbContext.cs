@@ -41,6 +41,11 @@ namespace FunderMaps.Data
         /// </summary>
         public DbSet<OrganizationUser> OrganizationUsers { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of OrganizationRoles.
+        /// </summary>
+        public DbSet<OrganizationRole> OrganizationRoles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

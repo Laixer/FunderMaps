@@ -12,6 +12,9 @@ namespace FunderMaps.Models
         {
         }
 
+        /// <summary>
+        /// Organization identifier.
+        /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
@@ -24,8 +27,12 @@ namespace FunderMaps.Models
         /// Gets or sets the normalized name for the organization.
         /// </summary>
         [PersonalData]
+        [IgnoreDataMember]
         public virtual string NormalizedName { get; set; }
 
+        /// <summary>
+        /// Gets or sets the email address for the organization.
+        /// </summary>
         public string Email { get; set; }
 
         [FromQuery(Name = "phone_number")]
@@ -46,7 +53,25 @@ namespace FunderMaps.Models
         [IgnoreDataMember]
         public bool? IsValidated { get; set; }
 
+        /// <summary>
+        /// Gets or sets the organization logo.
+        /// </summary>
         public string BrandingLogo { get; set; }
+
+        /// <summary>
+        /// Name on the invoice.
+        /// </summary>
+        public string InvoiceName { get; set; }
+
+        /// <summary>
+        /// Invoice PB box number.
+        /// </summary>
+        public string InvoicePONumber { get; set; }
+
+        /// <summary>
+        /// Send invoices to designated email address.
+        /// </summary>
+        public string InvoiceEmail { get; set; }
 
         [IgnoreDataMember]
         public int AttestationOrganizationId { get; set; }
@@ -56,5 +81,10 @@ namespace FunderMaps.Models
 
         [Required]
         public virtual Address PostalAddres { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

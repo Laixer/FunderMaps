@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace FunderMaps.Models.Fis
 {
-    public partial class FoundationRecoveryEvidence
+    public class FoundationRecoveryEvidence : RecordControl
     {
-        public FoundationRecoveryEvidence()
-        {
-            FoundationRecovery = new HashSet<FoundationRecovery>();
-        }
+        public string Name { get; set; }
+        public string Document { get; set; }
+        public string Note { get; set; }
+        public string Type { get; set; }
+        public int Recovery { get; set; }
 
-        public string Id { get; set; }
-        public string NameNl { get; set; }
-
-        public ICollection<FoundationRecovery> FoundationRecovery { get; set; }
+        public virtual FoundationRecovery RecoveryNavigation { get; set; }
+        public virtual FoundationRecoveryEvidenceType TypeNavigation { get; set; }
     }
 }
