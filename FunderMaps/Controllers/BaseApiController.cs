@@ -4,7 +4,7 @@ using FunderMaps.Models;
 namespace FunderMaps.Controllers
 {
     [Controller]
-    public abstract class AbstractMicroController : ControllerBase
+    public abstract class BaseApiController : ControllerBase
     {
         /// <summary>
         /// Return unauthorized with an error model.

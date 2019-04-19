@@ -16,7 +16,7 @@ namespace FunderMaps.Controllers.Webservice
     [AllowAnonymous]
     [Route("api/organization_registration")]
     [ApiController]
-    public class OrganizationRegistrationController : AbstractMicroController
+    public class OrganizationRegistrationController : BaseApiController
     {
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;

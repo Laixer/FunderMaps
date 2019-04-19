@@ -19,7 +19,7 @@ namespace FunderMaps.Controllers.Webservice
     [Authorize]
     [Route("api/report")]
     [ApiController]
-    public class ReportController : AbstractMicroController
+    public class ReportController : BaseApiController
     {
         private readonly FisDbContext _fisContext;
         private readonly FunderMapsDbContext _context;

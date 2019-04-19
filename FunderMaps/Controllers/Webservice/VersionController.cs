@@ -8,7 +8,7 @@ namespace FunderMaps.Controllers.Webservice
     [AllowAnonymous]
     [Route("api/version")]
     [ApiController]
-    public class VersionController : AbstractMicroController
+    public class VersionController : BaseApiController
     {
         public sealed class VersionOutputModel
         {

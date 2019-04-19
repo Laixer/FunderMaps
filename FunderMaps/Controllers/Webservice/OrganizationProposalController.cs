@@ -13,7 +13,7 @@ namespace FunderMaps.Controllers.Webservice
     [Authorize(Roles = Constants.AdministratorRole)]
     [Route("api/organization_proposal")]
     [ApiController]
-    public class OrganizationProposalController : AbstractMicroController
+    public class OrganizationProposalController : BaseApiController
     {
         private readonly FunderMapsDbContext _context;
         private readonly ILookupNormalizer _keyNormalizer;

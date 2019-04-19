@@ -23,7 +23,7 @@ namespace FunderMaps.Controllers.Webservice
     [Authorize]
     [Route("api/authentication")]
     [ApiController]
-    public class AuthenticationController : AbstractMicroController
+    public class AuthenticationController : BaseApiController
     {
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;

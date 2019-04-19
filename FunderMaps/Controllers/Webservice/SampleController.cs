@@ -19,7 +19,7 @@ namespace FunderMaps.Controllers.Webservice
     [Authorize]
     [Route("api/sample")]
     [ApiController]
-    public class SampleController : AbstractMicroController
+    public class SampleController : BaseApiController
     {
         private readonly FisDbContext _fisContext;
         private readonly FunderMapsDbContext _context;

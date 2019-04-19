@@ -13,7 +13,7 @@ namespace FunderMaps.Controllers.Api
     [Authorize]
     [Route("api/upload")]
     [ApiController]
-    public class UploadController : AbstractMicroController
+    public class UploadController : BaseApiController
     {
         private readonly IFileStorageService _fileStorageService;
 
