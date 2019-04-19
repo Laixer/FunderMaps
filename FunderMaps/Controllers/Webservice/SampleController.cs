@@ -55,13 +55,16 @@ namespace FunderMaps.Controllers.Webservice
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
+            // TODO: attestationOrganizationId can be null
+            // TODO: administrator can query anything
+
             // FUTURE: The 'where' could be improved
             var samples = await _fisContext.Sample
                 .AsNoTracking()
                 .Include(s => s.ReportNavigation)
-                //.Where(s => attestationOrganizationId == null
-                //    ? s.IsPublic()
-                //    : s.ReportNavigation.Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
+                    .ThenInclude(si => si.Attribution)
+                .Include(s => s.AccessPolicy)
+                .Where(s => s.ReportNavigation.Attribution._Owner == int.Parse(attestationOrganizationId) || s._AccessPolicy == AccessControl.Public)
                 .OrderByDescending(s => s.CreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -82,7 +85,10 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
-            var report = await _fisContext.Report.SingleAsync(s => s.Id == input.Report);
+            var report = await _fisContext.Report
+                .Include(s => s.Attribution)
+                .Include(s => s.Status)
+                .FirstOrDefaultAsync(s => s.Id == input.Report);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -94,19 +100,47 @@ namespace FunderMaps.Controllers.Webservice
                 return Forbid(0, "Resource modification forbidden with current status");
             }
 
+            var sample = new Sample
+            {
+                ReportNavigation = report,
+                MonitoringWell = input.MonitoringWell,
+                Cpt = input.Cpt,
+                Note = input.Note,
+                WoodLevel = input.WoodLevel,
+                GroundwaterLevel = input.GroundwaterLevel,
+                GroundLevel = input.GroundLevel,
+                FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
+                BuiltYear = input.BuiltYear,
+                Address = input.Address,
+                BaseMeasurementLevel = await _fisContext.BaseLevel.FindAsync("NAP"),
+                FoundationDamageCause = await _fisContext.FoundationDamageCause.FindAsync(input.FoundationDamageCause != null ? input.FoundationDamageCause.Id : "unknown"),
+                AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
+            };
+
             // Set the report status to 'pending'
             if (report.Status.Id != "pending")
             {
-                report.Status.Id = "pending";
+                report.Status = await _fisContext.ReportStatus.FindAsync("pending");
             }
 
-            var sample = input;
-            sample.Id = 0;
-            sample.ReportNavigation = report;
-            sample.FoundationDamageCause = "unknown"; // NOTE: HACK: The default value for database does not work, hence the default here
-            //sample.AccessPolicy = AccessControl.Private; // NOTE: HACK: The default value for database does not work, hence the default here
+            if (input.EnforcementTerm != null)
+            {
+                sample.EnforcementTerm = await _fisContext.EnforcementTerm.FindAsync(input.EnforcementTerm.Id);
+            }
+            if (input.FoundationQuality != null)
+            {
+                sample.FoundationQuality = await _fisContext.FoundationQuality.FindAsync(input.FoundationQuality.Id);
+            }
+            if (input.FoundationType != null)
+            {
+                sample.FoundationType = await _fisContext.FoundationType.FindAsync(input.FoundationType.Id);
+            }
+            if (input.Substructure != null)
+            {
+                sample.Substructure = await _fisContext.Substructure.FindAsync(input.Substructure.Id);
+            }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation, OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 await _fisContext.Sample.AddAsync(sample);

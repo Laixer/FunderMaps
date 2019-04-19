@@ -11,9 +11,15 @@ namespace FunderMaps.Models.Fis
         [Required]
         public int? Report { get; set; }
 
+        [IgnoreDataMember]
         public string _FoundationType { get; set; }
+
+        [IgnoreDataMember]
         public string _FoundationQuality { get; set; }
+
+        [IgnoreDataMember]
         public string _Substructure { get; set; }
+
         public string MonitoringWell { get; set; }
         public string Cpt { get; set; }
         public string Note { get; set; }
@@ -21,34 +27,37 @@ namespace FunderMaps.Models.Fis
         public decimal? GroundwaterLevel { get; set; }
         public decimal? GroundLevel { get; set; }
         public bool FoundationRecoveryAdviced { get; set; }
+
+        [IgnoreDataMember]
         public string _FoundationDamageCause { get; set; }
+
         public short? BuiltYear { get; set; }
+
+        [IgnoreDataMember]
         public Guid _Address { get; set; }
+
+        [IgnoreDataMember]
         public string _EnforcementTerm { get; set; }
+
+        [IgnoreDataMember]
         public string _BaseMeasurementLevel { get; set; }
 
-        [IgnoreDataMember]
+        [Required]
         public virtual Address Address { get; set; }
 
-        [IgnoreDataMember]
         public virtual BaseLevel BaseMeasurementLevel { get; set; }
 
-        [IgnoreDataMember]
         public virtual EnforcementTerm EnforcementTerm { get; set; }
 
-        [IgnoreDataMember]
         public virtual FoundationDamageCause FoundationDamageCause { get; set; }
 
-        [IgnoreDataMember]
         public virtual FoundationQuality FoundationQuality { get; set; }
 
-        [IgnoreDataMember]
         public virtual FoundationType FoundationType { get; set; }
 
         [IgnoreDataMember]
         public virtual Report ReportNavigation { get; set; }
 
-        [IgnoreDataMember]
         public virtual Substructure Substructure { get; set; }
     }
 }
