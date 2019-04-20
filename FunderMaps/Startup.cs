@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using FunderMaps.Data;
+using FunderMaps.Data.Repositories;
 using FunderMaps.Models.Identity;
 using FunderMaps.Interfaces;
 using FunderMaps.Services;
@@ -70,6 +71,7 @@ namespace FunderMaps
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
+            services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportService, ReportService>();
         }
 

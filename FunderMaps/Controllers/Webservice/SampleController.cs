@@ -26,19 +26,22 @@ namespace FunderMaps.Controllers.Webservice
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportService _reportService;
+        private readonly ISampleRepository _sampleRepository;
 
         public SampleController(
             FisDbContext fisContext,
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
-            IReportService reportService)
+            IReportService reportService,
+            ISampleRepository sampleRepository)
         {
             _fisContext = fisContext;
             _context = context;
             _userManager = userManager;
             _authorizationService = authorizationService;
             _reportService = reportService;
+            _sampleRepository = sampleRepository;
         }
 
         // GET: api/sample
@@ -159,7 +162,6 @@ namespace FunderMaps.Controllers.Webservice
         /// access to the record.
         /// </summary>
         /// <param name="id">Report identifier.</param>
-        /// <param name="document">Report identifier.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Sample), 200)]
@@ -167,21 +169,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var sample = await _fisContext.Sample
-                .AsNoTracking()
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Status)
-                .Include(s => s.Address)
-                .Include(s => s.BaseMeasurementLevel)
-                .Include(s => s.FoundationDamageCause)
-                .Include(s => s.EnforcementTerm)
-                .Include(s => s.FoundationQuality)
-                .Include(s => s.FoundationType)
-                .Include(s => s.Substructure)
-                .Include(s => s.AccessPolicy)
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var sample = await _sampleRepository.GetByIdWithItemsAsync(id);
             if (sample == null)
             {
                 return ResourceNotFound();
@@ -207,7 +195,6 @@ namespace FunderMaps.Controllers.Webservice
         /// Update sample if the organization user has access to the record.
         /// </summary>
         /// <param name="id">Sample identifier.</param>
-        /// <param name="document">Sample identifier.</param>
         /// <param name="input">Sample data.</param>
         [HttpPut("{id}")]
         [ProducesResponseType(204)]
@@ -273,7 +260,6 @@ namespace FunderMaps.Controllers.Webservice
         /// Soft delete the sample if the organization user has access to the record.
         /// </summary>
         /// <param name="id">Sample identifier.</param>
-        /// <param name="document">Sample identifier.</param>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]

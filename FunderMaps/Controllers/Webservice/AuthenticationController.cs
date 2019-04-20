@@ -202,19 +202,19 @@ namespace FunderMaps.Controllers.Webservice
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, input.Password, true);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("Authentication successful, returning security token");
-
-                return Ok(await GenerateSecurityToken(user));
-            }
-            else if (result.IsLockedOut)
+            if (result.IsLockedOut)
             {
                 return Unauthorized(101, "Principal is locked out, contact the administrator");
             }
             else if (result.IsNotAllowed)
             {
                 return Unauthorized(102, "Principal is not allowed to login");
+            }
+            else if (result.Succeeded)
+            {
+                _logger.LogInformation("Authentication successful, returning security token");
+
+                return Ok(await GenerateSecurityToken(user));
             }
 
             // FUTURE: RequiresTwoFactor
