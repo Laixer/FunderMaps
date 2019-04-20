@@ -25,7 +25,7 @@ namespace FunderMaps.Controllers.Webservice
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
-        private readonly IReportService _reportService;
+        //private readonly IReportService _reportService;
         private readonly ISampleRepository _sampleRepository;
 
         public SampleController(
@@ -40,7 +40,7 @@ namespace FunderMaps.Controllers.Webservice
             _context = context;
             _userManager = userManager;
             _authorizationService = authorizationService;
-            _reportService = reportService;
+            //_reportService = reportService;
             _sampleRepository = sampleRepository;
         }
 
@@ -203,11 +203,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
         {
-            var sample = await _fisContext.Sample
-                .AsNoTracking()
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var sample = await _sampleRepository.GetByIdAsync(id);
             if (sample == null)
             {
                 return ResourceNotFound();
@@ -246,8 +242,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
-                _fisContext.Sample.Update(sample);
-                await _fisContext.SaveChangesAsync();
+                await _sampleRepository.UpdateAsync(sample);
 
                 return NoContent();
             }
@@ -266,11 +261,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var sample = await _fisContext.Sample
-                .AsNoTracking()
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id);
+            var sample = await _sampleRepository.GetByIdAsync(id);
             if (sample == null)
             {
                 return ResourceNotFound();
@@ -279,8 +270,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Delete);
             if (authorizationResult.Succeeded)
             {
-                _fisContext.Sample.Remove(sample);
-                await _fisContext.SaveChangesAsync();
+                await _sampleRepository.DeleteAsync(sample);
 
                 return NoContent();
             }

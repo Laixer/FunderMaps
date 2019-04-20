@@ -24,12 +24,16 @@ namespace FunderMaps.Data.Repositories
 
         public Task DeleteAsync(Sample entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(entity).State = EntityState.Deleted;
+            return _dbContext.SaveChangesAsync();
         }
 
         public Task<Sample> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return _dbContext.Sample
+                .Include(s => s.ReportNavigation)
+                    .ThenInclude(si => si.Attribution)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public Task<IReadOnlyList<Sample>> ListAllAsync()
@@ -39,7 +43,8 @@ namespace FunderMaps.Data.Repositories
 
         public Task UpdateAsync(Sample entity)
         {
-            throw new NotImplementedException();
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            return _dbContext.SaveChangesAsync();
         }
 
         public Task<Sample> GetByIdWithItemsAsync(int id)
