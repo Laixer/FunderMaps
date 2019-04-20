@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
     public class FoundationRecovery : RecordControl
     {

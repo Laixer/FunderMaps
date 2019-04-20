@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
     public class FoundationType
     {

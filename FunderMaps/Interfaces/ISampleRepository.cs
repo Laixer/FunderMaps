@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Models.Fis;
 
 namespace FunderMaps.Interfaces
 {

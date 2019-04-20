@@ -2,29 +2,25 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
-    public class Address
+    public class AccessPolicy
     {
-        public Address()
+        public AccessPolicy()
         {
             FoundationRecovery = new HashSet<FoundationRecovery>();
-            Incident = new HashSet<Incident>();
+            Report = new HashSet<Report>();
             Sample = new HashSet<Sample>();
         }
 
-        public Guid Id { get; set; }
-        public string StreetName { get; set; }
-        public short BuildingNumber { get; set; }
-        public string BuildingNumberSuffix { get; set; }
-
-        public virtual Object Object { get; set; }
+        public string Id { get; set; }
+        public string NameNl { get; set; }
 
         [IgnoreDataMember]
         public virtual ICollection<FoundationRecovery> FoundationRecovery { get; set; }
 
         [IgnoreDataMember]
-        public virtual ICollection<Incident> Incident { get; set; }
+        public virtual ICollection<Report> Report { get; set; }
 
         [IgnoreDataMember]
         public virtual ICollection<Sample> Sample { get; set; }

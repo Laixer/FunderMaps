@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
     public class Organization
     {

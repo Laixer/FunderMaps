@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
     public class FoundationRecoveryEvidence : RecordControl
     {

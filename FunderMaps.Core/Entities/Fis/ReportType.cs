@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
-    public class BaseLevel
+    public class ReportType
     {
-        public BaseLevel()
+        public ReportType()
         {
-            Sample = new HashSet<Sample>();
+            Report = new HashSet<Report>();
         }
 
         public string Id { get; set; }
         public string NameNl { get; set; }
 
         [IgnoreDataMember]
-        public virtual ICollection<Sample> Sample { get; set; }
+        public virtual ICollection<Report> Report { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using NpgsqlTypes;
+//using NpgsqlTypes;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
     public class Project : RecordControl
     {
@@ -16,7 +16,7 @@ namespace FunderMaps.Models.Fis
         public string Note { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public NpgsqlPolygon? Outline { get; set; }
+        //public NpgsqlPolygon? Outline { get; set; }
         public int? Adviser { get; set; }
         public int? Lead { get; set; }
         public int? Creator { get; set; }

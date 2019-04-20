@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
-    public partial class EnforcementTerm
+    public class BaseLevel
     {
-        public EnforcementTerm()
+        public BaseLevel()
         {
             Sample = new HashSet<Sample>();
         }

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
-    public class Incident
+    public class Incident : BaseEntity
     {
         public int Id { get; set; }
         public string FoundationType { get; set; }

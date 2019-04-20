@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Interfaces;
-using FunderMaps.Models.Fis;
 using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Models;
+using FunderMaps.Core.Entities.Fis;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -146,8 +146,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                await _fisContext.Sample.AddAsync(sample);
-                await _fisContext.SaveChangesAsync();
+                await _sampleRepository.AddAsync(sample);
 
                 return Ok(sample);
             }

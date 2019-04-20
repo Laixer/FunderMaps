@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
-    public class Substructure
+    public class FoundationQuality
     {
-        public Substructure()
+        public FoundationQuality()
         {
             Incident = new HashSet<Incident>();
             Sample = new HashSet<Sample>();

@@ -1,28 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Services
 {
     public class ReportService : IReportService
     {
+        private readonly ILogger _logger;
+
         public const string FileContainer = "report";
+
+        public ReportService(ILogger<ReportService> logger)
+        {
+            _logger = logger;
+        }
 
         public Task CreateAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task DeleteAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task ValidateAsync()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

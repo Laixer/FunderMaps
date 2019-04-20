@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces
 {
-    public interface IAsyncRepository<T>
+    public interface IAsyncRepository<TEntry>
     {
-        Task<T> GetByIdAsync(int id);
-        Task<IReadOnlyList<T>> ListAllAsync();
-        Task<T> AddAsync(T entity);
-        Task UpdateAsync(T entity);
-        Task DeleteAsync(T entity);
+        Task<TEntry> GetByIdAsync(int id);
+        Task<IReadOnlyList<TEntry>> ListAllAsync();
+        Task<TEntry> AddAsync(TEntry entity);
+        Task UpdateAsync(TEntry entity);
+        Task DeleteAsync(TEntry entity);
+        Task<int> CountAsync();
     }
 }

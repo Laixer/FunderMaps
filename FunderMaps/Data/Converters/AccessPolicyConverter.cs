@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using FunderMaps.Models.Fis;
+using FunderMaps.Core.Entities.Fis;
 
 namespace FunderMaps.Data.Converters
 {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using FunderMaps.Models.Fis;
+using FunderMaps.Core.Entities.Fis;
 
 namespace FunderMaps.Data.Builder
 {
@@ -584,7 +584,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e.Outline).HasColumnName("outline");
+                //entity.Property(e => e.Outline).HasColumnName("outline");
 
                 entity.Property(e => e.StartDate)
                     .HasColumnName("start_date")

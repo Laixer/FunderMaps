@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace FunderMaps.Models.Fis
+namespace FunderMaps.Core.Entities.Fis
 {
-    public abstract class RecordControl
+    public abstract class RecordControl : BaseEntity 
     {
         public DateTime CreateDate { get; set; }
         public DateTime? UpdateDate { get; set; }

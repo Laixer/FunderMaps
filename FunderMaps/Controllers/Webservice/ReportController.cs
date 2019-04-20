@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Interfaces;
-using FunderMaps.Models.Fis;
+using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
