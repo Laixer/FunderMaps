@@ -56,10 +56,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Converters\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
   </ItemGroup>
 

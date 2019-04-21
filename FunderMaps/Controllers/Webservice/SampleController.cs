@@ -13,9 +13,13 @@ using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Models;
 using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Services;
 
 namespace FunderMaps.Controllers.Webservice
 {
+    /// <summary>
+    /// Endpoint controller for sample operations.
+    /// </summary>
     [Authorize]
     [Route("api/sample")]
     [ApiController]

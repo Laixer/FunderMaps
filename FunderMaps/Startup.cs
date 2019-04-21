@@ -26,10 +26,17 @@ using FunderMaps.Core.Services;
 
 namespace FunderMaps
 {
+    /// <summary>
+    /// Application configuration.
+    /// </summary>
     public class Startup
     {
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Create a new instance.
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -178,8 +185,14 @@ namespace FunderMaps
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
+                }
+            });
             app.UseSpaStaticFiles();
 
             //app.UseCors(builder =>

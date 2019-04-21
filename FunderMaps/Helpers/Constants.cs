@@ -30,6 +30,8 @@ namespace FunderMaps.Helpers
             MaxFailedAccessAttempts = 10,
         };
 
+        public const int StaticFileCacheRetention = 60;
+
         public const string AdministratorRole = "Administrator";
         public const string SuperuserRole = "Superuser";
         public const string VerifierRole = "Verifier";

@@ -16,6 +16,9 @@ using FunderMaps.Models;
 
 namespace FunderMaps.Controllers.Webservice
 {
+    /// <summary>
+    /// Endpoint controller for report operations.
+    /// </summary>
     [Authorize]
     [Route("api/report")]
     [ApiController]
@@ -27,6 +30,9 @@ namespace FunderMaps.Controllers.Webservice
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportService _reportService;
 
+        /// <summary>
+        /// Create a new instance.
+        /// </summary>
         public ReportController(
             FisDbContext fisContext,
             FunderMapsDbContext context,
