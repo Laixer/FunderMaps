@@ -3,13 +3,19 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// Return application versioning information.
+    /// </summary>
     [AllowAnonymous]
     [Route("api/version")]
     [ApiController]
     public class VersionController : BaseApiController
     {
+        /// <summary>
+        /// Version output model.
+        /// </summary>
         public sealed class VersionOutputModel
         {
             /// <summary>
@@ -33,6 +39,7 @@ namespace FunderMaps.Controllers.Webservice
         /// Return application versioning information.
         /// </summary>
         [HttpGet]
+        [ResponseCache(Duration = 86400)]
         [ProducesResponseType(typeof(VersionOutputModel), 200)]
         public IActionResult Get()
         {

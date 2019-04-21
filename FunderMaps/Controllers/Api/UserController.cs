@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
 using FunderMaps.Models;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// Current user profile operations.
+    /// </summary>
     [Authorize]
     [Route("api/user")]
     [ApiController]
@@ -14,11 +17,18 @@ namespace FunderMaps.Controllers.Webservice
     {
         private readonly UserManager<FunderMapsUser> _userManager;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
         public UserController(UserManager<FunderMapsUser> userManager)
         {
             _userManager = userManager;
         }
 
+        /// <summary>
+        /// User profile model.
+        /// </summary>
         public sealed class UserInputOutputModel
         {
             /// <summary>
