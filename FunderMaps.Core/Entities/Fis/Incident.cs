@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities.Fis
     {
         public int Id { get; set; }
         public string FoundationType { get; set; }
-        public string FoundationQuality { get; set; }
+        public FoundationQuality? FoundationQuality { get; set; }
         public string Substructure { get; set; }
         public string Note { get; set; }
         public string FoundationDamageCause { get; set; }

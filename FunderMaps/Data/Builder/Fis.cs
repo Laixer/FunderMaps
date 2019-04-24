@@ -141,21 +141,6 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64);
             });
 
-            modelBuilder.Entity<FoundationQuality>(entity =>
-            {
-                entity.ToTable("foundation_quality", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<FoundationRecovery>(entity =>
             {
                 entity.HasQueryFilter(e => e.DeleteDate == null);
@@ -386,7 +371,8 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new Converters.FoundationQualityConverter());
 
                 entity.Property(e => e.FoundationType)
                     .HasColumnName("foundation_type")
@@ -409,11 +395,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.Incident)
                     .HasForeignKey(d => d.FoundationDamageCause)
                     .HasConstraintName("incident_foundation_damage_cause_fkey");
-
-                entity.HasOne(d => d.FoundationQualityNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.FoundationQuality)
-                    .HasConstraintName("incident_foundation_quality_fkey");
 
                 entity.HasOne(d => d.FoundationTypeNavigation)
                     .WithMany(p => p.Incident)
@@ -798,9 +779,10 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'unknown'::character varying");
 
-                entity.Property(e => e._FoundationQuality)
+                entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new Converters.FoundationQualityConverter());
 
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
 
@@ -862,11 +844,6 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d._FoundationDamageCause)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_foundation_damage_case_fkey");
-
-                entity.HasOne(d => d.FoundationQuality)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._FoundationQuality)
-                    .HasConstraintName("sample_foundation_quality_fkey");
 
                 entity.HasOne(d => d.FoundationType)
                     .WithMany(p => p.Sample)

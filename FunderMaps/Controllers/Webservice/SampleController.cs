@@ -29,22 +29,22 @@ namespace FunderMaps.Controllers.Webservice
         private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
-        //private readonly IReportService _reportService;
         private readonly ISampleRepository _sampleRepository;
 
+        /// <summary>
+        /// Create a new instance.
+        /// </summary>
         public SampleController(
             FisDbContext fisContext,
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
-            IReportService reportService,
             ISampleRepository sampleRepository)
         {
             _fisContext = fisContext;
             _context = context;
             _userManager = userManager;
             _authorizationService = authorizationService;
-            //_reportService = reportService;
             _sampleRepository = sampleRepository;
         }
 
@@ -119,6 +119,7 @@ namespace FunderMaps.Controllers.Webservice
                 FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
                 BuiltYear = input.BuiltYear,
                 Address = input.Address,
+                FoundationQuality = input.FoundationQuality,
                 BaseMeasurementLevel = await _fisContext.BaseLevel.FindAsync("NAP"),
                 FoundationDamageCause = await _fisContext.FoundationDamageCause.FindAsync(input.FoundationDamageCause != null ? input.FoundationDamageCause.Id : "unknown"),
                 AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
@@ -129,14 +130,9 @@ namespace FunderMaps.Controllers.Webservice
             {
                 report.Status = await _fisContext.ReportStatus.FindAsync("pending");
             }
-
             if (input.EnforcementTerm != null)
             {
                 sample.EnforcementTerm = await _fisContext.EnforcementTerm.FindAsync(input.EnforcementTerm.Id);
-            }
-            if (input.FoundationQuality != null)
-            {
-                sample.FoundationQuality = await _fisContext.FoundationQuality.FindAsync(input.FoundationQuality.Id);
             }
             if (input.FoundationType != null)
             {
@@ -229,10 +225,10 @@ namespace FunderMaps.Controllers.Webservice
             {
                 sample.EnforcementTerm = await _fisContext.EnforcementTerm.FindAsync(input.EnforcementTerm.Id);
             }
-            if (input.FoundationQuality != null)
-            {
-                sample.FoundationQuality = await _fisContext.FoundationQuality.FindAsync(input.FoundationQuality.Id);
-            }
+            //if (input.FoundationQuality != null)
+            //{
+            //    sample.FoundationQuality = await _fisContext.FoundationQuality.FindAsync(input.FoundationQuality.Id);
+            //}
             if (input.FoundationType != null)
             {
                 sample.FoundationType = await _fisContext.FoundationType.FindAsync(input.FoundationType.Id);

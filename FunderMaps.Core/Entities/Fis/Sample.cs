@@ -15,8 +15,7 @@ namespace FunderMaps.Core.Entities.Fis
         [IgnoreDataMember]
         public string _FoundationType { get; set; }
 
-        [IgnoreDataMember]
-        public string _FoundationQuality { get; set; }
+        public FoundationQuality? FoundationQuality { get; set; }
 
         [IgnoreDataMember]
         public string _Substructure { get; set; }
@@ -51,8 +50,6 @@ namespace FunderMaps.Core.Entities.Fis
         public virtual EnforcementTerm EnforcementTerm { get; set; }
 
         public virtual FoundationDamageCause FoundationDamageCause { get; set; }
-
-        public virtual FoundationQuality FoundationQuality { get; set; }
 
         public virtual FoundationType FoundationType { get; set; }
 

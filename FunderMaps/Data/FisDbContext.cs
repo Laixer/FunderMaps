@@ -30,7 +30,6 @@ namespace FunderMaps.Data
         public virtual DbSet<BaseLevel> BaseLevel { get; set; }
         public virtual DbSet<EnforcementTerm> EnforcementTerm { get; set; }
         public virtual DbSet<FoundationDamageCause> FoundationDamageCause { get; set; }
-        public virtual DbSet<FoundationQuality> FoundationQuality { get; set; }
         public virtual DbSet<FoundationRecovery> FoundationRecovery { get; set; }
         public virtual DbSet<FoundationRecoveryEvidence> FoundationRecoveryEvidence { get; set; }
         public virtual DbSet<FoundationRecoveryEvidenceType> FoundationRecoveryEvidenceType { get; set; }
