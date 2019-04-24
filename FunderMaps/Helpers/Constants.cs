@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Helpers
@@ -37,5 +38,21 @@ namespace FunderMaps.Helpers
         public const string VerifierRole = "Verifier";
         public const string WriterRole = "Writer";
         public const string ReaderRole = "Reader";
+
+        /// <summary>
+        /// Retrieve application version.
+        /// </summary>
+        public static Version ApplicationVersion
+        {
+            get => Assembly.GetEntryAssembly().GetName().Version;
+        }
+
+        /// <summary>
+        /// Retrieve application name.
+        /// </summary>
+        public static string ApplicationName
+        {
+            get => Assembly.GetEntryAssembly().GetName().Name;
+        }
     }
 }

@@ -337,37 +337,5 @@ namespace FunderMaps.Controllers.Webservice
                 }
             });
         }
-
-        // FUTURE: Fix
-        // POST: api/authentication/confirm_email
-        /// <summary>
-        /// Confirm email and activate account.
-        /// </summary>
-        [AllowAnonymous]
-        [HttpPost("confirm_email")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        public async Task<IActionResult> SendConfirmEmailAsync()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                return ResourceNotFound();
-            }
-
-            // Skip if email is confirmed already.
-            if (await _userManager.IsEmailConfirmedAsync(user))
-            {
-                return NoContent();
-            }
-
-            var userId = await _userManager.GetUserIdAsync(user);
-            var email = await _userManager.GetEmailAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-
-            // TODO: Send email with registration link
-
-            return NoContent();
-        }
     }
 }

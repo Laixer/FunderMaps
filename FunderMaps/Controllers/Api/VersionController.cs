@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -43,13 +43,11 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(VersionOutputModel), 200)]
         public IActionResult Get()
         {
-            AssemblyName assembly = Assembly.GetEntryAssembly().GetName();
-
             return Ok(new VersionOutputModel
             {
-                Name = assembly.Name,
-                Version = assembly.Version,
-                VersionString = assembly.Version.ToString(),
+                Name = Constants.ApplicationName,
+                Version = Constants.ApplicationVersion,
+                VersionString = Constants.ApplicationVersion.ToString(),
             });
         }
     }

@@ -71,9 +71,14 @@ namespace FunderMaps
             // Register the Swagger generator, defining an OpenAPI document
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });
+                options.SwaggerDoc("v1", new Info
+                {
+                    Version = Constants.ApplicationVersion.ToString(),
+                    Title = $"{Constants.ApplicationName} Backend",
+                    Description = "Internal API between frontend and backend",
+                });
                 options.CustomSchemaIds((type) => type.FullName);
-                options.IncludeXmlCommentsIfDocumentation(AppContext.BaseDirectory, "DocumentationFunderMaps.xml");
+                options.IncludeXmlCommentsIfDocumentation(AppContext.BaseDirectory, $"Documentation{Constants.ApplicationName}.xml");
             });
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
@@ -228,7 +233,7 @@ namespace FunderMaps
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Backend API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Constants.ApplicationName} Backend API");
             });
         }
     }
