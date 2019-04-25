@@ -32,7 +32,6 @@ namespace FunderMaps.Data.Repositories
                 .Include(s => s.BaseMeasurementLevel)
                 .Include(s => s.FoundationDamageCause)
                 .Include(s => s.FoundationType)
-                .Include(s => s.Substructure)
                 .Include(s => s.AccessPolicy)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }

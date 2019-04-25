@@ -121,6 +121,7 @@ namespace FunderMaps.Controllers.Webservice
                 Address = input.Address,
                 FoundationQuality = input.FoundationQuality,
                 EnforcementTerm = input.EnforcementTerm,
+                Substructure = input.Substructure,
                 BaseMeasurementLevel = await _fisContext.BaseLevel.FindAsync("NAP"),
                 FoundationDamageCause = await _fisContext.FoundationDamageCause.FindAsync(input.FoundationDamageCause != null ? input.FoundationDamageCause.Id : "unknown"),
                 AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
@@ -134,10 +135,6 @@ namespace FunderMaps.Controllers.Webservice
             if (input.FoundationType != null)
             {
                 sample.FoundationType = await _fisContext.FoundationType.FindAsync(input.FoundationType.Id);
-            }
-            if (input.Substructure != null)
-            {
-                sample.Substructure = await _fisContext.Substructure.FindAsync(input.Substructure.Id);
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Create);
@@ -219,14 +216,11 @@ namespace FunderMaps.Controllers.Webservice
             sample.Note = input.Note;
             sample.FoundationQuality = input.FoundationQuality;
             sample.EnforcementTerm = input.EnforcementTerm;
+            sample.Substructure = input.Substructure;
 
             if (input.FoundationType != null)
             {
                 sample.FoundationType = await _fisContext.FoundationType.FindAsync(input.FoundationType.Id);
-            }
-            if (input.Substructure != null)
-            {
-                sample.Substructure = await _fisContext.Substructure.FindAsync(input.Substructure.Id);
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Update);

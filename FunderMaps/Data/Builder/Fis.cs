@@ -370,7 +370,8 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Substructure)
                     .HasColumnName("substructure")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<Substructure>());
 
                 entity.HasOne(d => d.AddressNavigation)
                     .WithMany(p => p.Incident)
@@ -392,11 +393,6 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d.Owner)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("incident_owner_fkey");
-
-                entity.HasOne(d => d.SubstructureNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.Substructure)
-                    .HasConstraintName("incident_substructure_fkey");
             });
 
             modelBuilder.Entity<Norm>(entity =>
@@ -791,9 +787,10 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e._Substructure)
+                entity.Property(e => e.Substructure)
                     .HasColumnName("substructure")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<Substructure>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -837,26 +834,6 @@ namespace FunderMaps.Data.Builder
                     .HasPrincipalKey(p => p.Id)
                     .HasForeignKey(d => d.Report)
                     .HasConstraintName("sample_report_fkey");
-
-                entity.HasOne(d => d.Substructure)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._Substructure)
-                    .HasConstraintName("sample_substructure_fkey");
-            });
-
-            modelBuilder.Entity<Substructure>(entity =>
-            {
-                entity.ToTable("substructure", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.HasSequence<int>("organization_id_seq");
