@@ -58,18 +58,7 @@ namespace FunderMaps.Controllers.Webservice
             // TODO: attestationOrganizationId can be null
             // TODO: administrator can query anything
 
-            // FUTURE: The 'where' could be improved
-            var samples = await _fisContext.Sample
-                .AsNoTracking()
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .Where(s => s.ReportNavigation.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(offset)
-                .Take(limit)
-                .ToListAsync();
-
-            return Ok(samples);
+            return Ok(await _sampleRepository.ListAllPublicAsync(int.Parse(attestationOrganizationId), offset, limit));
         }
 
         // POST: api/sample
