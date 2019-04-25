@@ -11,8 +11,9 @@ using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Models;
+using FunderMaps.ViewModels;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
     /// <summary>
     /// Endpoint controller for report operations.
@@ -59,11 +60,6 @@ namespace FunderMaps.Controllers.Webservice
             return Ok(await _reportRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
         }
 
-        public sealed class EntityStatsOutputModel
-        {
-            public long Count { get; set; }
-        }
-
         // GET: api/report/stats
         /// <summary>
         /// Return entity statistics.
@@ -101,31 +97,31 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceForbid();
             }
 
-            var report = new Report
-            {
-                DocumentId = input.DocumentId,
-                Inspection = input.Inspection,
-                JointMeasurement = input.JointMeasurement,
-                FloorMeasurement = input.FloorMeasurement,
-                Note = input.Note,
-                Norm = input.Norm,
-                Status = ReportStatus.Todo,
-                Type = input.Type,
-                DocumentDate = input.DocumentDate,
-                AccessPolicy = AccessPolicy.Private,
-                Attribution = new Attribution
-                {
-                    Project = input.Attribution.Project,
-                    Reviewer = await _fisContext.Principal.GetOrAddAsync(input.Attribution.Reviewer, s => s.NickName == input.Attribution.Reviewer.NickName || s.Email == input.Attribution.Reviewer.Email),
-                    Contractor = await _fisContext.Organization.GetOrAddAsync(input.Attribution.Contractor, s => s.Name == input.Attribution.Contractor.Name),
-                    Creator = await _fisContext.Principal.FindAsync(int.Parse(attestationPrincipalId)),
-                    Owner = await _fisContext.Organization.FindAsync(int.Parse(attestationOrganizationId)),
-                },
-            };
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution.Owner.Id, OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, int.Parse(attestationOrganizationId), OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
+                var report = new Report
+                {
+                    DocumentId = input.DocumentId,
+                    Inspection = input.Inspection,
+                    JointMeasurement = input.JointMeasurement,
+                    FloorMeasurement = input.FloorMeasurement,
+                    Note = input.Note,
+                    Norm = input.Norm,
+                    Status = ReportStatus.Todo,
+                    Type = input.Type,
+                    DocumentDate = input.DocumentDate,
+                    AccessPolicy = AccessPolicy.Private,
+                    Attribution = new Attribution
+                    {
+                        Project = input.Attribution.Project,
+                        Reviewer = await _fisContext.Principal.GetOrAddAsync(input.Attribution.Reviewer, s => s.NickName == input.Attribution.Reviewer.NickName || s.Email == input.Attribution.Reviewer.Email),
+                        Contractor = await _fisContext.Organization.GetOrAddAsync(input.Attribution.Contractor, s => s.Name == input.Attribution.Contractor.Name),
+                        Creator = await _fisContext.Principal.FindAsync(int.Parse(attestationPrincipalId)),
+                        Owner = await _fisContext.Organization.FindAsync(int.Parse(attestationOrganizationId)),
+                    },
+                };
+
                 await _reportRepository.AddAsync(report);
 
                 return Ok(report);
@@ -195,15 +191,15 @@ namespace FunderMaps.Controllers.Webservice
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            report.Inspection = input.Inspection;
-            report.JointMeasurement = input.JointMeasurement;
-            report.FloorMeasurement = input.FloorMeasurement;
-            report.Note = input.Note;
-            report.Norm = input.Norm;
-
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
+                report.Inspection = input.Inspection;
+                report.JointMeasurement = input.JointMeasurement;
+                report.FloorMeasurement = input.FloorMeasurement;
+                report.Note = input.Note;
+                report.Norm = input.Norm;
+
                 _fisContext.Entry(report.Norm).State = EntityState.Modified;
 
                 await _reportRepository.UpdateAsync(report);
@@ -214,11 +210,14 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
-        // TODO: Remove and be replaced by /validate
         // PUT: api/report/{id}/{document}/done
         /// <summary>
-        /// Mark the report for as done and prepare for verification.
+        /// Mark the report as done and prepare for verification.
         /// </summary>
+        /// <remarks>
+        /// This operation can be done by anyone with the create permissions
+        /// which can be different than validation.
+        /// </remarks>
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpPut("{id}/{document}/done")]
@@ -233,15 +232,16 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
-            {
-                return Forbid(0, "Resource modification forbidden with current status");
-            }
-
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
+                if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
+                {
+                    return Forbid(0, "Resource modification forbidden with current status");
+                }
+
                 report.Status = ReportStatus.Done;
+
                 await _reportRepository.UpdateAsync(report);
 
                 return NoContent();
@@ -250,14 +250,29 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'ReportController.VerificationInputModel'
         public sealed class VerificationInputModel
+#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'ReportController.VerificationInputModel'
         {
+            /// <summary>
+            /// Posible verification results.
+            /// </summary>
             public enum VerificationResult
             {
+                /// <summary>
+                /// Report is in order and can be marked as verified.
+                /// </summary>
                 Verified,
-                Rejected
+
+                /// <summary>
+                /// Report is rejected.
+                /// </summary>
+                Rejected,
             }
 
+            /// <summary>
+            /// Verification result.
+            /// </summary>
             public VerificationResult Result { get; set; }
         }
 
@@ -280,14 +295,14 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            if (report.Status != ReportStatus.Done)
-            {
-                return Forbid(0, "Resource modification forbidden with current status");
-            }
-
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Validate);
             if (authorizationResult.Succeeded)
             {
+                if (report.Status != ReportStatus.Done)
+                {
+                    return Forbid(0, "Resource modification forbidden with current status");
+                }
+
                 switch (input.Result)
                 {
                     case VerificationInputModel.VerificationResult.Verified:

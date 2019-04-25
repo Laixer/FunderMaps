@@ -10,7 +10,7 @@ using FunderMaps.Models;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
     /// <summary>
     /// Endpoint controller for sample operations.
@@ -75,39 +75,39 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            // Check if we can add new samples to the report
-            if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
-            {
-                return Forbid(0, "Resource modification forbidden with current status");
-            }
-
-            var sample = new Sample
-            {
-                ReportNavigation = report,
-                MonitoringWell = input.MonitoringWell,
-                Cpt = input.Cpt,
-                Note = input.Note,
-                WoodLevel = input.WoodLevel,
-                GroundwaterLevel = input.GroundwaterLevel,
-                GroundLevel = input.GroundLevel,
-                FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
-                BuiltYear = input.BuiltYear,
-                Address = input.Address,
-                FoundationQuality = input.FoundationQuality,
-                EnforcementTerm = input.EnforcementTerm,
-                Substructure = input.Substructure,
-                FoundationType = input.FoundationType,
-                BaseMeasurementLevel = BaseLevel.NAP,
-                FoundationDamageCause = input.FoundationDamageCause,
-                AccessPolicy = AccessPolicy.Private,
-            };
-
-            // Set the report status to 'pending'
-            report.Status = ReportStatus.Pending;
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
+                // Check if we can add new samples to the report
+                if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
+                {
+                    return Forbid(0, "Resource modification forbidden with current status");
+                }
+
+                var sample = new Sample
+                {
+                    ReportNavigation = report,
+                    MonitoringWell = input.MonitoringWell,
+                    Cpt = input.Cpt,
+                    Note = input.Note,
+                    WoodLevel = input.WoodLevel,
+                    GroundwaterLevel = input.GroundwaterLevel,
+                    GroundLevel = input.GroundLevel,
+                    FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
+                    BuiltYear = input.BuiltYear,
+                    Address = input.Address,
+                    FoundationQuality = input.FoundationQuality,
+                    EnforcementTerm = input.EnforcementTerm,
+                    Substructure = input.Substructure,
+                    FoundationType = input.FoundationType,
+                    BaseMeasurementLevel = BaseLevel.NAP,
+                    FoundationDamageCause = input.FoundationDamageCause,
+                    AccessPolicy = AccessPolicy.Private,
+                };
+
+                // Set the report status to 'pending'
+                report.Status = ReportStatus.Pending;
+
                 await _sampleRepository.AddAsync(sample);
                 await _reportRepository.UpdateAsync(report);
 
@@ -176,21 +176,21 @@ namespace FunderMaps.Controllers.Webservice
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            sample.MonitoringWell = input.MonitoringWell;
-            sample.Cpt = input.Cpt;
-            sample.WoodLevel = input.WoodLevel;
-            sample.GroundLevel = input.GroundLevel;
-            sample.GroundwaterLevel = input.GroundwaterLevel;
-            sample.BuiltYear = input.BuiltYear;
-            sample.Note = input.Note;
-            sample.FoundationQuality = input.FoundationQuality;
-            sample.EnforcementTerm = input.EnforcementTerm;
-            sample.Substructure = input.Substructure;
-            sample.FoundationType = input.FoundationType;
-
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
+                sample.MonitoringWell = input.MonitoringWell;
+                sample.Cpt = input.Cpt;
+                sample.WoodLevel = input.WoodLevel;
+                sample.GroundLevel = input.GroundLevel;
+                sample.GroundwaterLevel = input.GroundwaterLevel;
+                sample.BuiltYear = input.BuiltYear;
+                sample.Note = input.Note;
+                sample.FoundationQuality = input.FoundationQuality;
+                sample.EnforcementTerm = input.EnforcementTerm;
+                sample.Substructure = input.Substructure;
+                sample.FoundationType = input.FoundationType;
+
                 await _sampleRepository.UpdateAsync(sample);
 
                 return NoContent();
