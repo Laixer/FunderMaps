@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// This endpoint deals with file uploads.
+    /// </summary>
     [Authorize]
     [Route("api/upload")]
     [ApiController]
@@ -20,6 +23,12 @@ namespace FunderMaps.Controllers.Api
         private static readonly string[] allowedReportFileTypes =
         {
             "application/pdf",
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/bmp",
+            "image/tiff",
+            "image/webp",
         };
 
         public UploadController(IFileStorageService fileStorageService) => _fileStorageService = fileStorageService;

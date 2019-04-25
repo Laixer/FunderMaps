@@ -273,9 +273,7 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member 'ReportController.VerificationInputModel'
         public sealed class VerificationInputModel
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member 'ReportController.VerificationInputModel'
         {
             /// <summary>
             /// Posible verification results.
