@@ -134,7 +134,8 @@ namespace FunderMaps.Data.Builder
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationRecoveryType>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -158,12 +159,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.FoundationRecovery)
                     .HasForeignKey(d => d.Attribution)
                     .HasConstraintName("foundation_recovery_attribution_fkey");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.FoundationRecovery)
-                    .HasForeignKey(d => d.Type)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_type_fkey");
             });
 
             modelBuilder.Entity<FoundationRecoveryEvidence>(entity =>
@@ -203,7 +198,8 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.Type)
                     .IsRequired()
                     .HasColumnName("type")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationRecoveryEvidenceType>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -214,42 +210,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.FoundationRecoveryEvidence)
                     .HasForeignKey(d => d.Recovery)
                     .HasConstraintName("foundation_recovery_evidence_recovery_fkey");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.FoundationRecoveryEvidence)
-                    .HasForeignKey(d => d.Type)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_evidence_type_fkey");
-            });
-
-            modelBuilder.Entity<FoundationRecoveryEvidenceType>(entity =>
-            {
-                entity.ToTable("foundation_recovery_evidence_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<FoundationRecoveryLocation>(entity =>
-            {
-                entity.ToTable("foundation_recovery_location", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<FoundationRecoveryRepair>(entity =>
@@ -261,35 +221,15 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Location)
                     .HasColumnName("location")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationRecoveryLocation>());
 
                 entity.Property(e => e.Recovery).HasColumnName("recovery");
-
-                entity.HasOne(d => d.LocationNavigation)
-                    .WithMany(p => p.FoundationRecoveryRepair)
-                    .HasForeignKey(d => d.Location)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_repair_location_fkey");
 
                 entity.HasOne(d => d.RecoveryNavigation)
                     .WithMany(p => p.FoundationRecoveryRepair)
                     .HasForeignKey(d => d.Recovery)
                     .HasConstraintName("foundation_recovery_repair_recovery_fkey");
-            });
-
-            modelBuilder.Entity<FoundationRecoveryType>(entity =>
-            {
-                entity.ToTable("foundation_recovery_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<Incident>(entity =>
