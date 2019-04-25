@@ -57,6 +57,38 @@ namespace FunderMaps.Controllers.Api
             return Ok(await _sampleRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
         }
 
+        // GET: api/sample/stats
+        /// <summary>
+        /// Return entity statistics.
+        /// </summary>
+        /// <returns>EntityStatsOutputModel.</returns>
+        [HttpGet("stats")]
+        [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetStatsAsync()
+        {
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+
+            // Administrator can query anything
+            if (User.IsInRole(Constants.AdministratorRole))
+            {
+                return Ok(new EntityStatsOutputModel
+                {
+                    Count = await _sampleRepository.CountAsync()
+                });
+            }
+
+            if (attestationOrganizationId == null)
+            {
+                return ResourceForbid();
+            }
+
+            return Ok(new EntityStatsOutputModel
+            {
+                Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId))
+            });
+        }
+
         // POST: api/sample
         /// <summary>
         /// Create a new sample for a report.

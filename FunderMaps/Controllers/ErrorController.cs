@@ -1,19 +1,20 @@
 ﻿using System.Diagnostics;
+using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Controllers
 {
+    /// <summary>
+    /// API error handler.
+    /// </summary>
     public class ErrorController : Controller
     {
-        public sealed class ErrorOutoutModel
-        {
-            public string Title { get; set; }
-            public int Status { get; set; }
-            public string TraceId { get; set; }
-        }
-
         // GET: oops
+        /// <summary>
+        /// Return a server error to the client.
+        /// </summary>
+        /// <returns></returns>
         [Produces("application/json")]
         public IActionResult Error()
         {
