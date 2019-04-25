@@ -9,6 +9,8 @@ using FunderMaps.Data.Authorization;
 using FunderMaps.Models;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
+using FunderMaps.ViewModels;
+using FunderMaps.Helpers;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -51,8 +53,16 @@ namespace FunderMaps.Controllers.Api
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // TODO: attestationOrganizationId can be null
-            // TODO: administrator can query anything
+            // Administrator can query anything
+            if (User.IsInRole(Constants.AdministratorRole))
+            {
+                return Ok(await _sampleRepository.ListAllAsync(new Navigation(offset, limit)));
+            }
+
+            if (attestationOrganizationId == null)
+            {
+                return ResourceForbid();
+            }
 
             return Ok(await _sampleRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
         }

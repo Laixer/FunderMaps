@@ -9,6 +9,8 @@ namespace FunderMaps.Interfaces
 {
     public interface ISampleRepository : IAsyncRepository<Sample>
     {
+        Task<IReadOnlyList<Sample>> ListAllAsync(Navigation navigation);
         Task<IReadOnlyList<Sample>> ListAllAsync(int org_id, Navigation navigation);
+        Task<int> CountAsync(int org_id);
     }
 }

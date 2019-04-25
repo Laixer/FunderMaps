@@ -40,6 +40,15 @@ namespace FunderMaps.Data.Repositories
             return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
         }
 
+        public async Task<IReadOnlyList<Report>> ListAllAsync(Navigation navigation)
+        {
+            return await DefaultQuery()
+                .OrderByDescending(s => s.CreateDate)
+                .Skip(navigation.Offset)
+                .Take(navigation.Limit)
+                .ToListAsync();
+        }
+
         public async Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation)
         {
             return await DefaultQuery()
