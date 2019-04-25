@@ -9,13 +9,12 @@ namespace FunderMaps.Core.Entities.Fis
         public FoundationQuality? FoundationQuality { get; set; }
         public Substructure Substructure { get; set; }
         public string Note { get; set; }
-        public string FoundationDamageCause { get; set; }
+        public FoundationDamageCause FoundationDamageCause { get; set; }
         public Guid Address { get; set; }
         public int Owner { get; set; }
         public string DocumentName { get; set; }
 
         public virtual Address AddressNavigation { get; set; }
-        public virtual FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
         public virtual FoundationQuality FoundationQualityNavigation { get; set; }
         public virtual Principal OwnerNavigation { get; set; }
     }

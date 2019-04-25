@@ -25,8 +25,7 @@ namespace FunderMaps.Core.Entities.Fis
         public decimal? GroundLevel { get; set; }
         public bool FoundationRecoveryAdviced { get; set; }
 
-        [IgnoreDataMember]
-        public string _FoundationDamageCause { get; set; }
+        public FoundationDamageCause FoundationDamageCause { get; set; }
 
         public short? BuiltYear { get; set; }
 
@@ -42,8 +41,6 @@ namespace FunderMaps.Core.Entities.Fis
         public virtual Address Address { get; set; }
 
         public virtual BaseLevel BaseMeasurementLevel { get; set; }
-
-        public virtual FoundationDamageCause FoundationDamageCause { get; set; }
 
         [IgnoreDataMember]
         public virtual Report ReportNavigation { get; set; }

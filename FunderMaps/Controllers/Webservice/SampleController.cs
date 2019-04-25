@@ -124,7 +124,7 @@ namespace FunderMaps.Controllers.Webservice
                 Substructure = input.Substructure,
                 FoundationType = input.FoundationType,
                 BaseMeasurementLevel = await _fisContext.BaseLevel.FindAsync("NAP"),
-                FoundationDamageCause = await _fisContext.FoundationDamageCause.FindAsync(input.FoundationDamageCause != null ? input.FoundationDamageCause.Id : "unknown"),
+                FoundationDamageCause = input.FoundationDamageCause,
                 AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
             };
 

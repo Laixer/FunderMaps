@@ -112,21 +112,6 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64);
             });
 
-            modelBuilder.Entity<FoundationDamageCause>(entity =>
-            {
-                entity.ToTable("foundation_damage_cause", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<FoundationRecovery>(entity =>
             {
                 entity.HasQueryFilter(e => e.DeleteDate == null);
@@ -338,7 +323,9 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.FoundationDamageCause)
                     .HasColumnName("foundation_damage_cause")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationDamageCause>());
 
                 entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
@@ -363,11 +350,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.Incident)
                     .HasForeignKey(d => d.Address)
                     .HasConstraintName("incident_address_fkey");
-
-                entity.HasOne(d => d.FoundationDamageCauseNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.FoundationDamageCause)
-                    .HasConstraintName("incident_foundation_damage_cause_fkey");
 
                 entity.HasOne(d => d.OwnerNavigation)
                     .WithMany(p => p.Incident)
@@ -737,11 +719,12 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(32)
                     .HasConversion(new EnumSnakeCaseConverter<EnforcementTerm>());
 
-                entity.Property(e => e._FoundationDamageCause)
+                entity.Property(e => e.FoundationDamageCause)
                     .IsRequired()
                     .HasColumnName("foundation_damage_cause")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationDamageCause>());
 
                 entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
@@ -799,12 +782,6 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d._BaseMeasurementLevel)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_base_measurement_level_fkey");
-
-                entity.HasOne(d => d.FoundationDamageCause)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._FoundationDamageCause)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("sample_foundation_damage_case_fkey");
 
                 entity.HasOne(d => d.ReportNavigation)
                     .WithMany(p => p.Sample)
