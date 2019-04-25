@@ -28,6 +28,11 @@ namespace FunderMaps.Data.Repositories
             return await DefaultQuery().ToListAsync();
         }
 
+        public override Task<Sample> GetByIdAsync(int id)
+        {
+            return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id);
+        }
+
         public async Task<IReadOnlyList<Sample>> ListAllPublicAsync(int org_id, Navigation navigation)
         {
             return await DefaultQuery()
@@ -36,11 +41,6 @@ namespace FunderMaps.Data.Repositories
                 .Skip(navigation.Offset)
                 .Take(navigation.Limit)
                 .ToListAsync();
-        }
-
-        public override Task<Sample> GetByIdAsync(int id)
-        {
-            return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public Task<Sample> GetByIdWithItemsAsync(int id)

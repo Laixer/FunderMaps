@@ -84,6 +84,7 @@ namespace FunderMaps
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<ISampleRepository, SampleRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IReportService, ReportService>();
         }
 

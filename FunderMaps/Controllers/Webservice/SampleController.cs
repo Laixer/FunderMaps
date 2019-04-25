@@ -22,21 +22,21 @@ namespace FunderMaps.Controllers.Webservice
     [ApiController]
     public class SampleController : BaseApiController
     {
-        private readonly FisDbContext _fisContext;
         private readonly IAuthorizationService _authorizationService;
         private readonly ISampleRepository _sampleRepository;
+        private readonly IReportRepository _reportRepository;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         public SampleController(
-            FisDbContext fisContext,
             IAuthorizationService authorizationService,
-            ISampleRepository sampleRepository)
+            ISampleRepository sampleRepository,
+            IReportRepository reportRepository)
         {
-            _fisContext = fisContext;
             _authorizationService = authorizationService;
             _sampleRepository = sampleRepository;
+            _reportRepository = reportRepository;
         }
 
         // GET: api/sample
@@ -71,9 +71,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
-            var report = await _fisContext.Report
-                .Include(s => s.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == input.Report);
+            var report = await _reportRepository.GetByIdAsync(input.Report.Value);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -113,8 +111,7 @@ namespace FunderMaps.Controllers.Webservice
             if (authorizationResult.Succeeded)
             {
                 await _sampleRepository.AddAsync(sample);
-
-                _fisContext.Report.Update(report);
+                await _reportRepository.UpdateAsync(report);
 
                 return Ok(sample);
             }
