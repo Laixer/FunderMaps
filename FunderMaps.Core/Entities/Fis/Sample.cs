@@ -12,10 +12,9 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         public int? Report { get; set; }
 
-        public FoundationType FoundationType { get; set; }
-
+        public FoundationType? FoundationType { get; set; }
         public FoundationQuality? FoundationQuality { get; set; }
-        public Substructure Substructure { get; set; }
+        public Substructure? Substructure { get; set; }
 
         public string MonitoringWell { get; set; }
         public string Cpt { get; set; }
@@ -32,7 +31,7 @@ namespace FunderMaps.Core.Entities.Fis
         [IgnoreDataMember]
         public Guid _Address { get; set; }
 
-        public EnforcementTerm EnforcementTerm { get; set; }
+        public EnforcementTerm? EnforcementTerm { get; set; }
 
         public BaseLevel BaseMeasurementLevel { get; set; }
 

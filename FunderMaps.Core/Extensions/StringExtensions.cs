@@ -12,7 +12,7 @@ namespace FunderMaps.Core.Extensions
                 throw new ArgumentException("message", nameof(str));
             }
 
-            return Regex.Replace(str, "(?<=.)([A-Z])", "_$0", RegexOptions.Compiled).ToLower();
+            return Regex.Replace(str, "(?<=[a-z])([A-Z0-9])", "_$0", RegexOptions.Compiled).ToLower();
         }
     }
 }

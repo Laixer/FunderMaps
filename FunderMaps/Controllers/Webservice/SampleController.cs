@@ -63,7 +63,6 @@ namespace FunderMaps.Controllers.Webservice
                 .AsNoTracking()
                 .Include(s => s.ReportNavigation)
                     .ThenInclude(si => si.Attribution)
-                .Include(s => s.AccessPolicy)
                 .Where(s => s.ReportNavigation.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .OrderByDescending(s => s.CreateDate)
                 .Skip(offset)
@@ -94,7 +93,7 @@ namespace FunderMaps.Controllers.Webservice
             }
 
             // Check if we can add new samples to the report
-            if (!report.CanHaveNewSamples())
+            if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
             {
                 return Forbid(0, "Resource modification forbidden with current status");
             }

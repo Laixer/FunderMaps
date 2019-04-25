@@ -43,22 +43,5 @@ namespace FunderMaps.Core.Entities.Fis
 
         [IgnoreDataMember]
         public virtual ICollection<Sample> Sample { get; set; }
-
-        /// <summary>
-        /// Check report status to see if new samples
-        /// can be added to the report.
-        /// </summary>
-        /// <returns>True on success.</returns>
-        public bool CanHaveNewSamples()
-        {
-            switch (Status)
-            {
-                case ReportStatus.Todo:
-                case ReportStatus.Pending:
-                    return true;
-            }
-
-            return false;
-        }
     }
 }

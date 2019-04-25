@@ -279,7 +279,7 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            if (!report.CanHaveNewSamples())
+            if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
             {
                 return Forbid(0, "Resource modification forbidden with current status");
             }
