@@ -72,8 +72,6 @@ namespace FunderMaps.Controllers.Webservice
                     .ThenInclude(si => si.Creator)
                 .Include(s => s.Attribution)
                     .ThenInclude(si => si.Owner)
-                .Include(s => s.Type)
-                .Include(s => s.Status)
                 .Include(s => s.Norm)
                 .Include(s => s.AccessPolicy)
                 .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
@@ -192,10 +190,7 @@ namespace FunderMaps.Controllers.Webservice
                     .ThenInclude(si => si.Creator)
                 .Include(s => s.Attribution)
                     .ThenInclude(si => si.Owner)
-                .Include(s => s.Type)
-                .Include(s => s.Status)
                 .Include(s => s.Norm)
-                .Include(s => s.AccessPolicy)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
@@ -278,7 +273,6 @@ namespace FunderMaps.Controllers.Webservice
         {
             var report = await _fisContext.Report
                 .Include(s => s.Attribution)
-                .Include(s => s.Status)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
@@ -328,7 +322,6 @@ namespace FunderMaps.Controllers.Webservice
         {
             var report = await _fisContext.Report
                 .Include(s => s.Attribution)
-                .Include(s => s.Status)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {

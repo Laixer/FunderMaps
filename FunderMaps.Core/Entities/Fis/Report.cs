@@ -24,11 +24,9 @@ namespace FunderMaps.Core.Entities.Fis
 
         public string Note { get; set; }
 
-        [IgnoreDataMember]
-        public string _Status { get; set; }
+        public ReportStatus Status { get; set; }
 
-        [IgnoreDataMember]
-        public string _Type { get; set; }
+        public ReportType Type { get; set; }
 
         [Required]
         public DateTime DocumentDate { get; set; }
@@ -41,8 +39,6 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         public virtual Attribution Attribution { get; set; }
 
-        public virtual ReportStatus Status { get; set; }
-        public virtual ReportType Type { get; set; }
         public virtual Norm Norm { get; set; }
 
         [IgnoreDataMember]

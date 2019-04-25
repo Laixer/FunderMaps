@@ -497,13 +497,13 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e._Status)
+                entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasMaxLength(32)
                     .HasDefaultValueSql("'todo'::character varying")
                     .HasConversion(new EnumSnakeCaseConverter<ReportStatus>());
 
-                entity.Property(e => e._Type)
+                entity.Property(e => e.Type)
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)

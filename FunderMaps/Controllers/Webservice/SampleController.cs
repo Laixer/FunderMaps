@@ -87,7 +87,6 @@ namespace FunderMaps.Controllers.Webservice
         {
             var report = await _fisContext.Report
                 .Include(s => s.Attribution)
-                .Include(s => s.Status)
                 .FirstOrDefaultAsync(s => s.Id == input.Report);
             if (report == null)
             {
