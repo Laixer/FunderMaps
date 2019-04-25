@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using FunderMaps.Models;
+using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers
 {

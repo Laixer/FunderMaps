@@ -11,6 +11,7 @@ using FunderMaps.Data;
 using FunderMaps.Models;
 using FunderMaps.Models.Identity;
 using FunderMaps.Helpers;
+using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers.Webservice
 {

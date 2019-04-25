@@ -14,12 +14,15 @@ using FunderMaps.Models.Identity;
 using FunderMaps.Identity;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
-using FunderMaps.Models;
 using FunderMaps.Data;
 using FunderMaps.Data.Authorization;
+using FunderMaps.ViewModels;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// Authentication endpoint.
+    /// </summary>
     [Authorize]
     [Route("api/authentication")]
     [ApiController]

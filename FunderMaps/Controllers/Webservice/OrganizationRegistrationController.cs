@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +9,7 @@ using FunderMaps.Data;
 using FunderMaps.Helpers;
 using FunderMaps.Models;
 using FunderMaps.Models.Identity;
+using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers.Webservice
 {

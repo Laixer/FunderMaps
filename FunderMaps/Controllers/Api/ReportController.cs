@@ -10,7 +10,6 @@ using FunderMaps.Core.Repositories;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
-using FunderMaps.Models;
 using FunderMaps.ViewModels;
 using FunderMaps.Helpers;
 

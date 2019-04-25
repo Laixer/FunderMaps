@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace FunderMaps.Models
+namespace FunderMaps.ViewModels
 {
     public class ErrorOutputModel
     {

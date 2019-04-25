@@ -6,7 +6,6 @@ using FunderMaps.Interfaces;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
-using FunderMaps.Models;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 using FunderMaps.ViewModels;

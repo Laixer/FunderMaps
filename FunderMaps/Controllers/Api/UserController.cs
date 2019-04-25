@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
-using FunderMaps.Models;
+using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers.Api
 {
