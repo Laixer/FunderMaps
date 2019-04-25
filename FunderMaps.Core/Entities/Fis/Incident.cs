@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities.Fis
     public class Incident : BaseEntity
     {
         public int Id { get; set; }
-        public string FoundationType { get; set; }
+        public FoundationType FoundationType { get; set; }
         public FoundationQuality? FoundationQuality { get; set; }
         public Substructure Substructure { get; set; }
         public string Note { get; set; }
@@ -17,7 +17,6 @@ namespace FunderMaps.Core.Entities.Fis
         public virtual Address AddressNavigation { get; set; }
         public virtual FoundationDamageCause FoundationDamageCauseNavigation { get; set; }
         public virtual FoundationQuality FoundationQualityNavigation { get; set; }
-        public virtual FoundationType FoundationTypeNavigation { get; set; }
         public virtual Principal OwnerNavigation { get; set; }
     }
 }

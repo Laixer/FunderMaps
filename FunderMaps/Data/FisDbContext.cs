@@ -35,7 +35,6 @@ namespace FunderMaps.Data
         public virtual DbSet<FoundationRecoveryLocation> FoundationRecoveryLocation { get; set; }
         public virtual DbSet<FoundationRecoveryRepair> FoundationRecoveryRepair { get; set; }
         public virtual DbSet<FoundationRecoveryType> FoundationRecoveryType { get; set; }
-        public virtual DbSet<FoundationType> FoundationType { get; set; }
         public virtual DbSet<Incident> Incident { get; set; }
         public virtual DbSet<Norm> Norm { get; set; }
         public virtual DbSet<Object> Object { get; set; }

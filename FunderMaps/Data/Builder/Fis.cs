@@ -322,21 +322,6 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64);
             });
 
-            modelBuilder.Entity<FoundationType>(entity =>
-            {
-                entity.ToTable("foundation_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<Incident>(entity =>
             {
                 entity.ToTable("incident", "statement");
@@ -362,7 +347,8 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.FoundationType)
                     .HasColumnName("foundation_type")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationType>());
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
@@ -382,11 +368,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.Incident)
                     .HasForeignKey(d => d.FoundationDamageCause)
                     .HasConstraintName("incident_foundation_damage_cause_fkey");
-
-                entity.HasOne(d => d.FoundationTypeNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.FoundationType)
-                    .HasConstraintName("incident_foundation_type_fkey");
 
                 entity.HasOne(d => d.OwnerNavigation)
                     .WithMany(p => p.Incident)
@@ -769,9 +750,10 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
 
-                entity.Property(e => e._FoundationType)
+                entity.Property(e => e.FoundationType)
                     .HasColumnName("foundation_type")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationType>());
 
                 entity.Property(e => e.GroundLevel)
                     .HasColumnName("groundlevel")
@@ -823,11 +805,6 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d._FoundationDamageCause)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_foundation_damage_case_fkey");
-
-                entity.HasOne(d => d.FoundationType)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._FoundationType)
-                    .HasConstraintName("sample_foundation_type_fkey");
 
                 entity.HasOne(d => d.ReportNavigation)
                     .WithMany(p => p.Sample)

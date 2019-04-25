@@ -12,8 +12,7 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         public int? Report { get; set; }
 
-        [IgnoreDataMember]
-        public string _FoundationType { get; set; }
+        public FoundationType FoundationType { get; set; }
 
         public FoundationQuality? FoundationQuality { get; set; }
         public Substructure Substructure { get; set; }
@@ -45,8 +44,6 @@ namespace FunderMaps.Core.Entities.Fis
         public virtual BaseLevel BaseMeasurementLevel { get; set; }
 
         public virtual FoundationDamageCause FoundationDamageCause { get; set; }
-
-        public virtual FoundationType FoundationType { get; set; }
 
         [IgnoreDataMember]
         public virtual Report ReportNavigation { get; set; }
