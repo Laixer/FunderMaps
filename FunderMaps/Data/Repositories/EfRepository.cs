@@ -64,7 +64,7 @@ namespace FunderMaps.Data.Repositories
 
         public virtual Task<int> CountAsync()
         {
-            return _dbContext.Set<TEntry>().CountAsync();
+            return _dbContext.Set<TEntry>().AsNoTracking().CountAsync();
         }
     }
 }

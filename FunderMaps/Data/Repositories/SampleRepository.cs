@@ -20,7 +20,8 @@ namespace FunderMaps.Data.Repositories
         {
             return _dbContext.Sample
                 .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution);
+                    .ThenInclude(si => si.Attribution)
+                .Include(s => s.Address);
         }
 
         public override async Task<IReadOnlyList<Sample>> ListAllAsync()
@@ -33,7 +34,7 @@ namespace FunderMaps.Data.Repositories
             return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id);
         }
 
-        public async Task<IReadOnlyList<Sample>> ListAllPublicAsync(int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Sample>> ListAllAsync(int org_id, Navigation navigation)
         {
             return await DefaultQuery()
                 .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
@@ -41,14 +42,6 @@ namespace FunderMaps.Data.Repositories
                 .Skip(navigation.Offset)
                 .Take(navigation.Limit)
                 .ToListAsync();
-        }
-
-        public Task<Sample> GetByIdWithItemsAsync(int id)
-        {
-            return DefaultQuery()
-                .Include(s => s.ReportNavigation)
-                .Include(s => s.Address)
-                .FirstOrDefaultAsync(s => s.Id == id);
         }
     }
 }

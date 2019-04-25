@@ -1,14 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Interfaces;
 using FunderMaps.Core.Entities.Fis;
-using FunderMaps.Models.Identity;
+using FunderMaps.Core.Repositories;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
@@ -25,26 +23,20 @@ namespace FunderMaps.Controllers.Webservice
     public class ReportController : BaseApiController
     {
         private readonly FisDbContext _fisContext;
-        private readonly FunderMapsDbContext _context;
-        private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
-        private readonly IReportService _reportService;
+        private readonly IReportRepository _reportRepository;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         public ReportController(
             FisDbContext fisContext,
-            FunderMapsDbContext context,
-            UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
-            IReportService reportService)
+            IReportRepository reportRepository)
         {
             _fisContext = fisContext;
-            _context = context;
-            _userManager = userManager;
             _authorizationService = authorizationService;
-            _reportService = reportService;
+            _reportRepository = reportRepository;
         }
 
         // GET: api/report
@@ -61,26 +53,10 @@ namespace FunderMaps.Controllers.Webservice
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // FUTURE: The 'where' could be improved
-            var reports = await _fisContext.Report
-                .AsNoTracking()
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Reviewer)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Contractor)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Creator)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Owner)
-                .Include(s => s.Norm)
-                .Include(s => s.AccessPolicy)
-                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(offset)
-                .Take(limit)
-                .ToListAsync();
+            // TODO: attestationOrganizationId can be null
+            // TODO: administrator can query anything
 
-            return Ok(reports);
+            return Ok(await _reportRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
         }
 
         public sealed class EntityStatsOutputModel
@@ -100,15 +76,9 @@ namespace FunderMaps.Controllers.Webservice
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            long count = await _fisContext.Report
-                .AsNoTracking()
-                .Include(s => s.Attribution)
-                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
-                .CountAsync();
-
             return Ok(new EntityStatsOutputModel
             {
-                Count = count,
+                Count = await _reportRepository.CountAsync(int.Parse(attestationOrganizationId)),
             });
         }
 
@@ -156,8 +126,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution.Owner.Id, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                await _fisContext.Report.AddAsync(report);
-                await _fisContext.SaveChangesAsync();
+                await _reportRepository.AddAsync(report);
 
                 return Ok(report);
             }
@@ -180,18 +149,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id, string document)
         {
-            var report = await _fisContext.Report
-                .AsNoTracking()
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Reviewer)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Contractor)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Creator)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Owner)
-                .Include(s => s.Norm)
-                .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
+            var report = await _reportRepository.GetByIdAsync(id, document);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -226,9 +184,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
-            var report = await _fisContext.Report
-                .Include(s => s.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
+            var report = await _reportRepository.GetByIdAsync(id, document);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -245,13 +201,12 @@ namespace FunderMaps.Controllers.Webservice
             report.Note = input.Note;
             report.Norm = input.Norm;
 
-            _fisContext.Entry(report.Norm).State = EntityState.Modified;
-
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
-                _fisContext.Report.Update(report);
-                await _fisContext.SaveChangesAsync();
+                _fisContext.Entry(report.Norm).State = EntityState.Modified;
+
+                await _reportRepository.UpdateAsync(report);
 
                 return NoContent();
             }
@@ -259,6 +214,7 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
+        // TODO: Remove and be replaced by /validate
         // PUT: api/report/{id}/{document}/done
         /// <summary>
         /// Mark the report for as done and prepare for verification.
@@ -271,9 +227,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutSignalStatusDoneAsync(int id, string document)
         {
-            var report = await _fisContext.Report
-                .Include(s => s.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
+            var report = await _reportRepository.GetByIdAsync(id, document);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -288,7 +242,7 @@ namespace FunderMaps.Controllers.Webservice
             if (authorizationResult.Succeeded)
             {
                 report.Status = ReportStatus.Done;
-                await _fisContext.SaveChangesAsync();
+                await _reportRepository.UpdateAsync(report);
 
                 return NoContent();
             }
@@ -320,9 +274,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutValidateRequestAsync(int id, string document, [FromBody] VerificationInputModel input)
         {
-            var report = await _fisContext.Report
-                .Include(s => s.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
+            var report = await _reportRepository.GetByIdAsync(id, document);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -346,7 +298,7 @@ namespace FunderMaps.Controllers.Webservice
                         break;
                 }
 
-                await _fisContext.SaveChangesAsync();
+                await _reportRepository.UpdateAsync(report);
 
                 return NoContent();
             }
@@ -354,6 +306,7 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
+        // TODO: Only allow removal if there a no samples.
         // DELETE: api/report/{id}/{document}
         /// <summary>
         /// Soft delete the report if the organization user has access to the record.
@@ -365,9 +318,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id, string document)
         {
-            var report = await _fisContext.Report
-                .Include(s => s.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
+            var report = await _reportRepository.GetByIdAsync(id, document);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -376,10 +327,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Delete);
             if (authorizationResult.Succeeded)
             {
-                // TODO: Only allow removal if there a no samples.
-
-                _fisContext.Report.Remove(report);
-                await _fisContext.SaveChangesAsync();
+                await _reportRepository.DeleteAsync(report);
 
                 return NoContent();
             }
