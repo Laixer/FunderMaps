@@ -141,8 +141,8 @@ namespace FunderMaps.Controllers.Webservice
                 FloorMeasurement = input.FloorMeasurement,
                 Note = input.Note,
                 Norm = input.Norm,
-                Status = await _fisContext.ReportStatus.FindAsync("todo"),
-                Type = await _fisContext.ReportType.FindAsync(input.Type != null ? input.Type.Id : "unknown"),
+                Status = ReportStatus.Todo,
+                Type = input.Type,
                 DocumentDate = input.DocumentDate,
                 Attribution = new Attribution
                 {
@@ -293,7 +293,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                report.Status = await _fisContext.ReportStatus.FindAsync("done");
+                report.Status = ReportStatus.Done;
                 await _fisContext.SaveChangesAsync();
 
                 return NoContent();
@@ -335,7 +335,7 @@ namespace FunderMaps.Controllers.Webservice
                 return ResourceNotFound();
             }
 
-            if (report.Status.Id != "done")
+            if (report.Status != ReportStatus.Done)
             {
                 return Forbid(0, "Resource modification forbidden with current status");
             }
@@ -346,10 +346,10 @@ namespace FunderMaps.Controllers.Webservice
                 switch (input.Result)
                 {
                     case VerificationInputModel.VerificationResult.Verified:
-                        report.Status = await _fisContext.ReportStatus.FindAsync("verified");
+                        report.Status = ReportStatus.Verified;
                         break;
                     case VerificationInputModel.VerificationResult.Rejected:
-                        report.Status = await _fisContext.ReportStatus.FindAsync("rejected");
+                        report.Status = ReportStatus.Rejected;
                         break;
                 }
 

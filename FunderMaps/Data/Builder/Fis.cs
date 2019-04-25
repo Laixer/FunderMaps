@@ -522,13 +522,15 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e._Status)
                     .HasColumnName("status")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'todo'::character varying");
+                    .HasDefaultValueSql("'todo'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<ReportStatus>());
 
                 entity.Property(e => e._Type)
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<ReportType>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -545,47 +547,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.Report)
                     .HasForeignKey(d => d._Attribution)
                     .HasConstraintName("report_attribution_fkey");
-
-                entity.HasOne(d => d.Status)
-                    .WithMany(p => p.Report)
-                    .HasForeignKey(d => d._Status)
-                    .HasConstraintName("report_status_fkey");
-
-                entity.HasOne(d => d.Type)
-                    .WithMany(p => p.Report)
-                    .HasForeignKey(d => d._Type)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("report_type_fkey");
-            });
-
-            modelBuilder.Entity<ReportStatus>(entity =>
-            {
-                entity.ToTable("report_status", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<ReportType>(entity =>
-            {
-                entity.ToTable("report_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<Sample>(entity =>

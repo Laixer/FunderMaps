@@ -13,7 +13,6 @@ using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Models;
 using FunderMaps.Core.Entities.Fis;
-using FunderMaps.Services;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -26,8 +25,6 @@ namespace FunderMaps.Controllers.Webservice
     public class SampleController : BaseApiController
     {
         private readonly FisDbContext _fisContext;
-        private readonly FunderMapsDbContext _context;
-        private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly ISampleRepository _sampleRepository;
 
@@ -36,14 +33,10 @@ namespace FunderMaps.Controllers.Webservice
         /// </summary>
         public SampleController(
             FisDbContext fisContext,
-            FunderMapsDbContext context,
-            UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
             ISampleRepository sampleRepository)
         {
             _fisContext = fisContext;
-            _context = context;
-            _userManager = userManager;
             _authorizationService = authorizationService;
             _sampleRepository = sampleRepository;
         }
@@ -129,15 +122,14 @@ namespace FunderMaps.Controllers.Webservice
             };
 
             // Set the report status to 'pending'
-            if (report.Status.Id != "pending")
-            {
-                report.Status = await _fisContext.ReportStatus.FindAsync("pending");
-            }
+            report.Status = ReportStatus.Pending;
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 await _sampleRepository.AddAsync(sample);
+
+                _fisContext.Report.Update(report);
 
                 return Ok(sample);
             }

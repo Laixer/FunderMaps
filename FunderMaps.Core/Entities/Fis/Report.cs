@@ -55,10 +55,10 @@ namespace FunderMaps.Core.Entities.Fis
         /// <returns>True on success.</returns>
         public bool CanHaveNewSamples()
         {
-            switch (Status.Id)
+            switch (Status)
             {
-                case "todo":
-                case "pending":
+                case ReportStatus.Todo:
+                case ReportStatus.Pending:
                     return true;
             }
 

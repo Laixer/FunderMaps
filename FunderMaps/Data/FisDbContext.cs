@@ -37,8 +37,6 @@ namespace FunderMaps.Data
         public virtual DbSet<Principal> Principal { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Report> Report { get; set; }
-        public virtual DbSet<ReportStatus> ReportStatus { get; set; }
-        public virtual DbSet<ReportType> ReportType { get; set; }
         public virtual DbSet<Sample> Sample { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
