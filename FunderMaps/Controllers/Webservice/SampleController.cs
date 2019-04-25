@@ -120,6 +120,7 @@ namespace FunderMaps.Controllers.Webservice
                 BuiltYear = input.BuiltYear,
                 Address = input.Address,
                 FoundationQuality = input.FoundationQuality,
+                EnforcementTerm = input.EnforcementTerm,
                 BaseMeasurementLevel = await _fisContext.BaseLevel.FindAsync("NAP"),
                 FoundationDamageCause = await _fisContext.FoundationDamageCause.FindAsync(input.FoundationDamageCause != null ? input.FoundationDamageCause.Id : "unknown"),
                 AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
@@ -129,10 +130,6 @@ namespace FunderMaps.Controllers.Webservice
             if (report.Status.Id != "pending")
             {
                 report.Status = await _fisContext.ReportStatus.FindAsync("pending");
-            }
-            if (input.EnforcementTerm != null)
-            {
-                sample.EnforcementTerm = await _fisContext.EnforcementTerm.FindAsync(input.EnforcementTerm.Id);
             }
             if (input.FoundationType != null)
             {
@@ -220,15 +217,9 @@ namespace FunderMaps.Controllers.Webservice
             sample.GroundwaterLevel = input.GroundwaterLevel;
             sample.BuiltYear = input.BuiltYear;
             sample.Note = input.Note;
+            sample.FoundationQuality = input.FoundationQuality;
+            sample.EnforcementTerm = input.EnforcementTerm;
 
-            if (input.EnforcementTerm != null)
-            {
-                sample.EnforcementTerm = await _fisContext.EnforcementTerm.FindAsync(input.EnforcementTerm.Id);
-            }
-            //if (input.FoundationQuality != null)
-            //{
-            //    sample.FoundationQuality = await _fisContext.FoundationQuality.FindAsync(input.FoundationQuality.Id);
-            //}
             if (input.FoundationType != null)
             {
                 sample.FoundationType = await _fisContext.FoundationType.FindAsync(input.FoundationType.Id);

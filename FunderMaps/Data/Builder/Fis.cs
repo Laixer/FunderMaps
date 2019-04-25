@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Data.Converters;
 
 namespace FunderMaps.Data.Builder
 {
@@ -99,21 +100,6 @@ namespace FunderMaps.Data.Builder
             modelBuilder.Entity<BaseLevel>(entity =>
             {
                 entity.ToTable("base_level", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<EnforcementTerm>(entity =>
-            {
-                entity.ToTable("enforcement_term", "report");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -372,7 +358,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
                     .HasMaxLength(32)
-                    .HasConversion(new Converters.FoundationQualityConverter());
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationQuality>());
 
                 entity.Property(e => e.FoundationType)
                     .HasColumnName("foundation_type")
@@ -769,9 +755,10 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of soft delete");
 
-                entity.Property(e => e._EnforcementTerm)
+                entity.Property(e => e.EnforcementTerm)
                     .HasColumnName("enforcement_term")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<EnforcementTerm>());
 
                 entity.Property(e => e._FoundationDamageCause)
                     .IsRequired()
@@ -782,7 +769,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
                     .HasMaxLength(32)
-                    .HasConversion(new Converters.FoundationQualityConverter());
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationQuality>());
 
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
 
@@ -833,11 +820,6 @@ namespace FunderMaps.Data.Builder
                     .HasForeignKey(d => d._BaseMeasurementLevel)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("sample_base_measurement_level_fkey");
-
-                entity.HasOne(d => d.EnforcementTerm)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._EnforcementTerm)
-                    .HasConstraintName("sample_enforcement_term_fkey");
 
                 entity.HasOne(d => d.FoundationDamageCause)
                     .WithMany(p => p.Sample)

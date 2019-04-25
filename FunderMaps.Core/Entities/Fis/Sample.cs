@@ -36,8 +36,7 @@ namespace FunderMaps.Core.Entities.Fis
         [IgnoreDataMember]
         public Guid _Address { get; set; }
 
-        [IgnoreDataMember]
-        public string _EnforcementTerm { get; set; }
+        public EnforcementTerm EnforcementTerm { get; set; }
 
         [IgnoreDataMember]
         public string _BaseMeasurementLevel { get; set; }
@@ -46,8 +45,6 @@ namespace FunderMaps.Core.Entities.Fis
         public virtual Address Address { get; set; }
 
         public virtual BaseLevel BaseMeasurementLevel { get; set; }
-
-        public virtual EnforcementTerm EnforcementTerm { get; set; }
 
         public virtual FoundationDamageCause FoundationDamageCause { get; set; }
 

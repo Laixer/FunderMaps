@@ -15,7 +15,7 @@ namespace FunderMaps.Data.Converters
         /// </summary>
         public EnumSnakeCaseConverter(ConverterMappingHints mappingHints = null)
             : base(v => v.ToString().ToUnderscore(),
-                  v => (TEnum)Enum.Parse(typeof(TEnum), v, true),
+                  v => (TEnum)Enum.Parse(typeof(TEnum), v.Replace("_", "").Replace("-", "_"), true),
                   mappingHints)
         {
         }

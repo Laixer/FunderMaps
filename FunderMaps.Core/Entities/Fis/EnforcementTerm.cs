@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
 {
-    public partial class EnforcementTerm
+    public enum EnforcementTerm
     {
-        public EnforcementTerm()
-        {
-            Sample = new HashSet<Sample>();
-        }
-
-        public string Id { get; set; }
-        public string NameNl { get; set; }
-
-        [IgnoreDataMember]
-        public virtual ICollection<Sample> Sample { get; set; }
+        Term0_5,
+        Term5_10,
+        Term10_20,
+        Term5,
+        Term10,
+        Term15,
+        Term20,
+        Term25,
+        Term30,
     }
 }
