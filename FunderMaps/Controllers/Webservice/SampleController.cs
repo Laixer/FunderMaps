@@ -123,7 +123,7 @@ namespace FunderMaps.Controllers.Webservice
                 EnforcementTerm = input.EnforcementTerm,
                 Substructure = input.Substructure,
                 FoundationType = input.FoundationType,
-                BaseMeasurementLevel = await _fisContext.BaseLevel.FindAsync("NAP"),
+                BaseMeasurementLevel = BaseLevel.NAP,
                 FoundationDamageCause = input.FoundationDamageCause,
                 AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
             };

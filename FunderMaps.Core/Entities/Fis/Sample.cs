@@ -34,13 +34,10 @@ namespace FunderMaps.Core.Entities.Fis
 
         public EnforcementTerm EnforcementTerm { get; set; }
 
-        [IgnoreDataMember]
-        public string _BaseMeasurementLevel { get; set; }
+        public BaseLevel BaseMeasurementLevel { get; set; }
 
         [Required]
         public virtual Address Address { get; set; }
-
-        public virtual BaseLevel BaseMeasurementLevel { get; set; }
 
         [IgnoreDataMember]
         public virtual Report ReportNavigation { get; set; }

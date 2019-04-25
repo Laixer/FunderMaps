@@ -29,7 +29,6 @@ namespace FunderMaps.Data.Repositories
                 .Include(s => s.ReportNavigation)
                     .ThenInclude(si => si.Status)
                 .Include(s => s.Address)
-                .Include(s => s.BaseMeasurementLevel)
                 .Include(s => s.AccessPolicy)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }

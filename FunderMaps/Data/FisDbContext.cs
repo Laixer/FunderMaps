@@ -27,7 +27,6 @@ namespace FunderMaps.Data
         public virtual DbSet<AccessPolicy> AccessPolicy { get; set; }
         public virtual DbSet<Core.Entities.Fis.Address> Address { get; set; }
         public virtual DbSet<Attribution> Attribution { get; set; }
-        public virtual DbSet<BaseLevel> BaseLevel { get; set; }
         public virtual DbSet<FoundationRecovery> FoundationRecovery { get; set; }
         public virtual DbSet<FoundationRecoveryEvidence> FoundationRecoveryEvidence { get; set; }
         public virtual DbSet<FoundationRecoveryEvidenceType> FoundationRecoveryEvidenceType { get; set; }

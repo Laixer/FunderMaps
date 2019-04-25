@@ -97,21 +97,6 @@ namespace FunderMaps.Data.Builder
                     .HasConstraintName("attribution_project_fkey");
             });
 
-            modelBuilder.Entity<BaseLevel>(entity =>
-            {
-                entity.ToTable("base_level", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<FoundationRecovery>(entity =>
             {
                 entity.HasQueryFilter(e => e.DeleteDate == null);
@@ -692,10 +677,11 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e._Address).HasColumnName("address");
 
-                entity.Property(e => e._BaseMeasurementLevel)
+                entity.Property(e => e.BaseMeasurementLevel)
                     .IsRequired()
                     .HasColumnName("base_measurement_level")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<BaseLevel>());
 
                 entity.Property(e => e.BuiltYear).HasColumnName("built_year");
 
@@ -776,12 +762,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.Sample)
                     .HasForeignKey(d => d._Address)
                     .HasConstraintName("sample_address_fkey");
-
-                entity.HasOne(d => d.BaseMeasurementLevel)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._BaseMeasurementLevel)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("sample_base_measurement_level_fkey");
 
                 entity.HasOne(d => d.ReportNavigation)
                     .WithMany(p => p.Sample)
