@@ -64,7 +64,7 @@ namespace FunderMaps.Controllers.Webservice
                 .Include(s => s.ReportNavigation)
                     .ThenInclude(si => si.Attribution)
                 .Include(s => s.AccessPolicy)
-                .Where(s => s.ReportNavigation.Attribution._Owner == int.Parse(attestationOrganizationId) || s._AccessPolicy == AccessControl.Public)
+                .Where(s => s.ReportNavigation.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .OrderByDescending(s => s.CreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -118,7 +118,7 @@ namespace FunderMaps.Controllers.Webservice
                 FoundationType = input.FoundationType,
                 BaseMeasurementLevel = BaseLevel.NAP,
                 FoundationDamageCause = input.FoundationDamageCause,
-                AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
+                AccessPolicy = AccessPolicy.Private,
             };
 
             // Set the report status to 'pending'

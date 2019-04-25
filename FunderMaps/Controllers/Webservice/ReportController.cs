@@ -76,7 +76,7 @@ namespace FunderMaps.Controllers.Webservice
                 .Include(s => s.Status)
                 .Include(s => s.Norm)
                 .Include(s => s.AccessPolicy)
-                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s._AccessPolicy == AccessControl.Public)
+                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .OrderByDescending(s => s.CreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -105,7 +105,7 @@ namespace FunderMaps.Controllers.Webservice
             long count = await _fisContext.Report
                 .AsNoTracking()
                 .Include(s => s.Attribution)
-                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s._AccessPolicy == AccessControl.Public)
+                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .CountAsync();
 
             return Ok(new EntityStatsOutputModel
@@ -144,6 +144,7 @@ namespace FunderMaps.Controllers.Webservice
                 Status = ReportStatus.Todo,
                 Type = input.Type,
                 DocumentDate = input.DocumentDate,
+                AccessPolicy = AccessPolicy.Private,
                 Attribution = new Attribution
                 {
                     Project = input.Attribution.Project,
@@ -152,7 +153,6 @@ namespace FunderMaps.Controllers.Webservice
                     Creator = await _fisContext.Principal.FindAsync(int.Parse(attestationPrincipalId)),
                     Owner = await _fisContext.Organization.FindAsync(int.Parse(attestationOrganizationId)),
                 },
-                AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
             };
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution.Owner.Id, OperationsRequirement.Create);

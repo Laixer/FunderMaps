@@ -8,24 +8,6 @@ namespace FunderMaps.Data.Builder
     {
         public static void ModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AccessPolicy>(entity =>
-            {
-                entity.HasKey(e => e.Id)
-                    .HasName("access_policy_pkey");
-
-                entity.ToTable("access_policy", "attestation");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<Address>(entity =>
             {
                 entity.ToTable("address", "report");
@@ -111,7 +93,8 @@ namespace FunderMaps.Data.Builder
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'private'::character varying");
+                    .HasDefaultValueSql("'private'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<AccessPolicy>());
 
                 entity.Property(e => e.Address).HasColumnName("address");
 
@@ -143,12 +126,6 @@ namespace FunderMaps.Data.Builder
                     .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
                 entity.Property(e => e.Year).HasColumnName("year");
-
-                entity.HasOne(d => d.AccessPolicyNavigation)
-                    .WithMany(p => p.FoundationRecovery)
-                    .HasForeignKey(d => d.AccessPolicy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_access_policy_fkey");
 
                 entity.HasOne(d => d.AddressNavigation)
                     .WithMany(p => p.FoundationRecovery)
@@ -484,11 +461,12 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64)
                     .ForNpgsqlHasComment("User provided document identifier");
 
-                entity.Property(e => e._AccessPolicy)
+                entity.Property(e => e.AccessPolicy)
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'private'::character varying");
+                    .HasDefaultValueSql("'private'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<AccessPolicy>());
 
                 entity.Property(e => e._Attribution).HasColumnName("attribution");
 
@@ -537,12 +515,6 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
-                entity.HasOne(d => d.AccessPolicy)
-                    .WithMany(p => p.Report)
-                    .HasForeignKey(d => d._AccessPolicy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("report_access_policy_fkey");
-
                 entity.HasOne(d => d.Attribution)
                     .WithMany(p => p.Report)
                     .HasForeignKey(d => d._Attribution)
@@ -570,11 +542,12 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("report")
                     .ForNpgsqlHasComment("Link to the report entity");
 
-                entity.Property(e => e._AccessPolicy)
+                entity.Property(e => e.AccessPolicy)
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'private'::character varying");
+                    .HasDefaultValueSql("'private'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<AccessPolicy>());
 
                 entity.Property(e => e._Address).HasColumnName("address");
 
@@ -652,12 +625,6 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.WoodLevel)
                     .HasColumnName("wood_level")
                     .HasColumnType("numeric(5,2)");
-
-                entity.HasOne(d => d.AccessPolicy)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._AccessPolicy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("sample_access_policy_fkey");
 
                 entity.HasOne(d => d.Address)
                     .WithMany(p => p.Sample)
