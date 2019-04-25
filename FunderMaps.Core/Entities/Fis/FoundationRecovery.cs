@@ -18,7 +18,7 @@ namespace FunderMaps.Core.Entities.Fis
         public string Note { get; set; }
 
         [Required]
-        public string Type { get; set; }
+        public FoundationRecoveryType Type { get; set; }
 
         [Required]
         public short? Year { get; set; }
@@ -26,23 +26,16 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         public Guid Address { get; set; }
 
-        [Required]
-        public string AccessPolicy { get; set; }
+        public AccessPolicy AccessPolicy { get; set; }
 
         [Required]
         public int Attribution { get; set; }
-
-        [IgnoreDataMember]
-        public virtual AccessPolicy AccessPolicyNavigation { get; set; }
 
         [IgnoreDataMember]
         public virtual Address AddressNavigation { get; set; }
 
         [IgnoreDataMember]
         public virtual Attribution AttributionNavigation { get; set; }
-
-        [IgnoreDataMember]
-        public virtual FoundationRecoveryType TypeNavigation { get; set; }
 
         [IgnoreDataMember]
         public virtual ICollection<FoundationRecoveryEvidence> FoundationRecoveryEvidence { get; set; }

@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
 {
-    public class ReportStatus
+    public enum ReportStatus
     {
-        public ReportStatus()
-        {
-            Report = new HashSet<Report>();
-        }
-
-        public string Id { get; set; }
-        public string NameNl { get; set; }
-
-        [IgnoreDataMember]
-        public virtual ICollection<Report> Report { get; set; }
+        Todo,
+        Pending,
+        Done,
+        Discarded,
+        Verified,
+        Rejected,
     }
 }

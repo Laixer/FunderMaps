@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
 {
-    public class ReportType
+    public enum ReportType
     {
-        public ReportType()
-        {
-            Report = new HashSet<Report>();
-        }
-
-        public string Id { get; set; }
-        public string NameNl { get; set; }
-
-        [IgnoreDataMember]
-        public virtual ICollection<Report> Report { get; set; }
+        AdditiionalResearch,
+        Monitoring,
+        Note,
+        Quickscan,
+        Unknown,
+        DemolitionResearch,
+        SecondOpinion,
+        ArchieveResearch,
+        ArchitecturalResearch,
+        FoundationAdvice,
+        Inspectionpit,
+        FoundationResearch,
+        GroundWaterLevelResearch,
     }
 }

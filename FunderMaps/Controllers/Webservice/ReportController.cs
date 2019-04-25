@@ -72,11 +72,9 @@ namespace FunderMaps.Controllers.Webservice
                     .ThenInclude(si => si.Creator)
                 .Include(s => s.Attribution)
                     .ThenInclude(si => si.Owner)
-                .Include(s => s.Type)
-                .Include(s => s.Status)
                 .Include(s => s.Norm)
                 .Include(s => s.AccessPolicy)
-                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s._AccessPolicy == AccessControl.Public)
+                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .OrderByDescending(s => s.CreateDate)
                 .Skip(offset)
                 .Take(limit)
@@ -105,7 +103,7 @@ namespace FunderMaps.Controllers.Webservice
             long count = await _fisContext.Report
                 .AsNoTracking()
                 .Include(s => s.Attribution)
-                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s._AccessPolicy == AccessControl.Public)
+                .Where(s => s.Attribution._Owner == int.Parse(attestationOrganizationId) || s.AccessPolicy == AccessPolicy.Public)
                 .CountAsync();
 
             return Ok(new EntityStatsOutputModel
@@ -141,9 +139,10 @@ namespace FunderMaps.Controllers.Webservice
                 FloorMeasurement = input.FloorMeasurement,
                 Note = input.Note,
                 Norm = input.Norm,
-                Status = await _fisContext.ReportStatus.FindAsync("todo"),
-                Type = await _fisContext.ReportType.FindAsync(input.Type != null ? input.Type.Id : "unknown"),
+                Status = ReportStatus.Todo,
+                Type = input.Type,
                 DocumentDate = input.DocumentDate,
+                AccessPolicy = AccessPolicy.Private,
                 Attribution = new Attribution
                 {
                     Project = input.Attribution.Project,
@@ -152,7 +151,6 @@ namespace FunderMaps.Controllers.Webservice
                     Creator = await _fisContext.Principal.FindAsync(int.Parse(attestationPrincipalId)),
                     Owner = await _fisContext.Organization.FindAsync(int.Parse(attestationOrganizationId)),
                 },
-                AccessPolicy = await _fisContext.AccessPolicy.FindAsync(AccessControl.Private),
             };
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution.Owner.Id, OperationsRequirement.Create);
@@ -192,10 +190,7 @@ namespace FunderMaps.Controllers.Webservice
                     .ThenInclude(si => si.Creator)
                 .Include(s => s.Attribution)
                     .ThenInclude(si => si.Owner)
-                .Include(s => s.Type)
-                .Include(s => s.Status)
                 .Include(s => s.Norm)
-                .Include(s => s.AccessPolicy)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
@@ -278,14 +273,13 @@ namespace FunderMaps.Controllers.Webservice
         {
             var report = await _fisContext.Report
                 .Include(s => s.Attribution)
-                .Include(s => s.Status)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            if (!report.CanHaveNewSamples())
+            if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
             {
                 return Forbid(0, "Resource modification forbidden with current status");
             }
@@ -293,7 +287,7 @@ namespace FunderMaps.Controllers.Webservice
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                report.Status = await _fisContext.ReportStatus.FindAsync("done");
+                report.Status = ReportStatus.Done;
                 await _fisContext.SaveChangesAsync();
 
                 return NoContent();
@@ -328,14 +322,13 @@ namespace FunderMaps.Controllers.Webservice
         {
             var report = await _fisContext.Report
                 .Include(s => s.Attribution)
-                .Include(s => s.Status)
                 .FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            if (report.Status.Id != "done")
+            if (report.Status != ReportStatus.Done)
             {
                 return Forbid(0, "Resource modification forbidden with current status");
             }
@@ -346,10 +339,10 @@ namespace FunderMaps.Controllers.Webservice
                 switch (input.Result)
                 {
                     case VerificationInputModel.VerificationResult.Verified:
-                        report.Status = await _fisContext.ReportStatus.FindAsync("verified");
+                        report.Status = ReportStatus.Verified;
                         break;
                     case VerificationInputModel.VerificationResult.Rejected:
-                        report.Status = await _fisContext.ReportStatus.FindAsync("rejected");
+                        report.Status = ReportStatus.Rejected;
                         break;
                 }
 

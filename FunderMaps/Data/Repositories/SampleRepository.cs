@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Interfaces;
@@ -13,29 +15,38 @@ namespace FunderMaps.Data.Repositories
         {
         }
 
-        public override Task<Sample> GetByIdAsync(int id)
+        private IQueryable<Sample> DefaultQuery()
         {
             return _dbContext.Sample
                 .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .FirstOrDefaultAsync(s => s.Id == id);
+                    .ThenInclude(si => si.Attribution);
+        }
+
+        public override async Task<IReadOnlyList<Sample>> ListAllAsync()
+        {
+            return await DefaultQuery().ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<Sample>> ListAllPublicAsync(int org_id, int offset, int limit)
+        {
+            return await DefaultQuery()
+                .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
+                .OrderByDescending(s => s.CreateDate)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+        }
+
+        public override Task<Sample> GetByIdAsync(int id)
+        {
+            return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public Task<Sample> GetByIdWithItemsAsync(int id)
         {
-            return _dbContext.Sample
+            return DefaultQuery()
                 .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Status)
                 .Include(s => s.Address)
-                .Include(s => s.BaseMeasurementLevel)
-                .Include(s => s.FoundationDamageCause)
-                .Include(s => s.EnforcementTerm)
-                .Include(s => s.FoundationQuality)
-                .Include(s => s.FoundationType)
-                .Include(s => s.Substructure)
-                .Include(s => s.AccessPolicy)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
     }
