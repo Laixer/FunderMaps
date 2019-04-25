@@ -1,18 +1,16 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data;
 using FunderMaps.Interfaces;
-using FunderMaps.Models.Identity;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Models;
 using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Repositories;
 
 namespace FunderMaps.Controllers.Webservice
 {
@@ -58,7 +56,7 @@ namespace FunderMaps.Controllers.Webservice
             // TODO: attestationOrganizationId can be null
             // TODO: administrator can query anything
 
-            return Ok(await _sampleRepository.ListAllPublicAsync(int.Parse(attestationOrganizationId), offset, limit));
+            return Ok(await _sampleRepository.ListAllPublicAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
         }
 
         // POST: api/sample

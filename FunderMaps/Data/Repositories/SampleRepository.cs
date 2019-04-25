@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,13 +28,13 @@ namespace FunderMaps.Data.Repositories
             return await DefaultQuery().ToListAsync();
         }
 
-        public async Task<IReadOnlyList<Sample>> ListAllPublicAsync(int org_id, int offset, int limit)
+        public async Task<IReadOnlyList<Sample>> ListAllPublicAsync(int org_id, Navigation navigation)
         {
             return await DefaultQuery()
                 .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
                 .OrderByDescending(s => s.CreateDate)
-                .Skip(offset)
-                .Take(limit)
+                .Skip(navigation.Offset)
+                .Take(navigation.Limit)
                 .ToListAsync();
         }
 
