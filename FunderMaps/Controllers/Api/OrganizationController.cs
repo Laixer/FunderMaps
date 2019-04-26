@@ -49,7 +49,7 @@ namespace FunderMaps.Controllers.Api
 
         // GET: api/organization
         /// <summary>
-        /// Get all organizations of which the current authenticated user is amember of 
+        /// Get all organizations of which the current authenticated user is a member of
         /// or get all organizations as admin.
         /// </summary>
         [HttpGet]
@@ -85,7 +85,9 @@ namespace FunderMaps.Controllers.Api
                 .Include(s => s.Organization)
                 .Include(s => s.OrganizationRole)
                 .Where(s => s.UserId == user.Id)
-                .Select(s => new { s.UserId, s.Organization, s.OrganizationRole })
+                .Select(s => s.Organization)
+                .Include(s => s.HomeAddress)
+                .Include(s => s.PostalAddres)
                 .ToListAsync());
         }
 
