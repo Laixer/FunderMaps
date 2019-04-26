@@ -34,6 +34,9 @@ namespace FunderMaps.Controllers.Api
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationController> _logger;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public AuthenticationController(
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,

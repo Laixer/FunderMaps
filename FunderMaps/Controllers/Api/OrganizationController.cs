@@ -13,6 +13,8 @@ using FunderMaps.Models.Identity;
 using FunderMaps.Helpers;
 using FunderMaps.ViewModels;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Extensions;
+using FunderMaps.Data.Authorization;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -45,22 +47,63 @@ namespace FunderMaps.Controllers.Api
             _keyNormalizer = keyNormalizer;
         }
 
+        // GET: api/organization
+        /// <summary>
+        /// Get all organizations of which the current authenticated user is amember of 
+        /// or get all organizations as admin.
+        /// </summary>
+        [HttpGet]
+        [ProducesResponseType(typeof(List<Organization>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetAsync()
+        {
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+
+            // Administrator can query anything
+            if (User.IsInRole(Constants.AdministratorRole))
+            {
+                return Ok(await _context.Organizations
+                    .AsNoTracking()
+                    .Include(a => a.HomeAddress)
+                    .Include(a => a.PostalAddres)
+                    .ToListAsync());
+            }
+
+            if (attestationOrganizationId == null)
+            {
+                return ResourceForbid();
+            }
+
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return ResourceNotFound();
+            }
+
+            return Ok(await _context.OrganizationUsers
+                .AsNoTracking()
+                .Include(s => s.Organization)
+                .Include(s => s.OrganizationRole)
+                .Where(s => s.UserId == user.Id)
+                .Select(s => new { s.UserId, s.Organization, s.OrganizationRole })
+                .ToListAsync());
+        }
+
         // GET: api/organization/{id}
         /// <summary>
         /// Get organization by id.
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(Organization), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAsync(Guid id)
+        public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             var organization = await _context.Organizations
-                    .AsNoTracking()
-                    .Include(a => a.HomeAddress)
-                    .Include(a => a.PostalAddres)
-                    .SingleOrDefaultAsync(q => q.Id == id);
+                .AsNoTracking()
+                .Include(a => a.HomeAddress)
+                .Include(a => a.PostalAddres)
+                .SingleOrDefaultAsync(q => q.Id == id);
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
             if (authorizationResult.Succeeded)
@@ -84,11 +127,11 @@ namespace FunderMaps.Controllers.Api
         {
             var organization = await _context.Organizations.FindAsync(id);
             var organizationUser = await _context.OrganizationUsers
-                    .AsNoTracking()
-                    .Include(a => a.User)
-                    .Where(q => q.Organization == organization)
-                    .Select(s => s.User)
-                    .ToListAsync();
+                .AsNoTracking()
+                .Include(a => a.User)
+                .Where(q => q.Organization == organization)
+                .Select(s => s.User)
+                .ToListAsync();
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
             if (authorizationResult.Succeeded)
@@ -143,7 +186,7 @@ namespace FunderMaps.Controllers.Api
                     using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
                         var role = await _context.OrganizationRoles
-                                .SingleAsync(s => s.NormalizedName == _keyNormalizer.Normalize(Constants.ReaderRole));
+                            .SingleAsync(s => s.NormalizedName == _keyNormalizer.Normalize(Constants.ReaderRole));
 
                         // Check if role exists
                         if (!string.IsNullOrEmpty(input.Role))
