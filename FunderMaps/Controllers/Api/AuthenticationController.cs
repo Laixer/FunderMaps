@@ -130,11 +130,22 @@ namespace FunderMaps.Controllers.Api
         {
             public PrincipalOutputModel Principal { get; set; }
 
+            /// <summary>
+            /// Token as encoded string.
+            /// </summary>
             public string Token { get; set; }
 
+            /// <summary>
+            /// Token validity in seconds.
+            /// </summary>
             public int TokenValid { get; set; }
         }
 
+        /// <summary>
+        /// Generate authentication token for user.
+        /// </summary>
+        /// <param name="user">See <see cref="FunderMapsUser"/>.</param>
+        /// <returns>AuthenticationOutputModel.</returns>
         private async Task<AuthenticationOutputModel> GenerateSecurityToken(FunderMapsUser user)
         {
             var token = new JwtTokenIdentityUser<FunderMapsUser, Guid>(user, _configuration.GetJwtSignKey())
@@ -143,13 +154,9 @@ namespace FunderMaps.Controllers.Api
                 Audience = _configuration.GetJwtAudience(),
                 TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
             };
-            token.AddRoleClaims(await _userManager.GetRolesAsync(user));
 
-            // Add user attestation as claim
-            if (user.AttestationPrincipalId != 0)
-            {
-                token.AddClaim(FisClaimTypes.UserAttestationIdentifier, user.AttestationPrincipalId);
-            }
+            token.AddRoleClaims(await _userManager.GetRolesAsync(user));
+            token.AddClaim(FisClaimTypes.UserAttestationIdentifier, user.AttestationPrincipalId);
 
             var organizationUser = await _context.OrganizationUsers
                 .AsNoTracking()
@@ -161,12 +168,7 @@ namespace FunderMaps.Controllers.Api
             if (organizationUser != null)
             {
                 token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.OrganizationRole.Name);
-
-                // Add organization attestation as claim
-                if (organizationUser.Organization.AttestationOrganizationId != 0)
-                {
-                    token.AddClaim(FisClaimTypes.OrganizationAttestationIdentifier, organizationUser.Organization.AttestationOrganizationId);
-                }
+                token.AddClaim(FisClaimTypes.OrganizationAttestationIdentifier, organizationUser.Organization.AttestationOrganizationId);
             }
 
             return new AuthenticationOutputModel

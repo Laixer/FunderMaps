@@ -19,13 +19,16 @@ namespace FunderMaps.Controllers.Webservice
     public class OrganizationRegistrationController : BaseApiController
     {
         private readonly FunderMapsDbContext _context;
+        private readonly FisDbContext _fisContext;
         private readonly UserManager<FunderMapsUser> _userManager;
 
         public OrganizationRegistrationController(
             FunderMapsDbContext context,
+            FisDbContext fisContext,
             UserManager<FunderMapsUser> userManager)
         {
             _context = context;
+            _fisContext = fisContext;
             _userManager = userManager;
         }
 
@@ -68,17 +71,38 @@ namespace FunderMaps.Controllers.Webservice
         {
             var role = await _context.OrganizationRoles.FirstAsync(s => s.Name == Constants.SuperuserRole);
 
+            var attestationOrganization = new Core.Entities.Fis.Organization
+            {
+                Name = proposal.Name
+            };
+            
+            // NOTE: This can fail because entity exists
+            await _fisContext.Organization.AddAsync(attestationOrganization);
+            await _fisContext.SaveChangesAsync();
+
+            var attestationPrincipal = new Core.Entities.Fis.Principal
+            {
+                NickName = input.User.Email,
+                Email = input.User.Email,
+                Organization = attestationOrganization,
+            };
+
+            // NOTE: This can fail because entity exists
+            await _fisContext.Principal.AddAsync(attestationPrincipal);
+            await _fisContext.SaveChangesAsync();
+
             // Prepare new user account
-            var user = new FunderMapsUser(input.User.Email);
+            var user = new FunderMapsUser(input.User.Email)
+            {
+                AttestationPrincipalId = attestationPrincipal.Id
+            };
+
             var result = await _userManager.CreateAsync(user, input.User.Password);
             if (!result.Succeeded)
             {
                 // TODO: Wrap errors in exception
                 throw new Exception();
             }
-
-            // Attach attestation object to user
-            //user.AttestationPrincipalId = attestationPrincipal.Id;
 
             // Create new organization address
             var address = new Address
@@ -97,7 +121,7 @@ namespace FunderMaps.Controllers.Webservice
                 Email = proposal.Email,
                 HomeAddress = address,
                 PostalAddres = address,
-                //AttestationOrganizationId = attestationOrganization.Id,
+                AttestationOrganizationId = attestationOrganization.Id,
             };
             await _context.Organizations.AddAsync(organization);
             await _context.SaveChangesAsync();

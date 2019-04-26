@@ -73,7 +73,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.InvoiceName).HasColumnName("invoice_name").HasMaxLength(256);
                 entity.Property(e => e.InvoicePONumber).HasColumnName("invoice_po_number").HasMaxLength(256);
                 entity.Property(e => e.InvoiceEmail).HasColumnName("invoice_email").HasMaxLength(256);
-                entity.Property(e => e.AttestationOrganizationId).HasColumnName("attestation_organization_id");
+                entity.Property(e => e.AttestationOrganizationId).HasColumnName("attestation_organization_id").IsRequired();
 
                 entity.ToTable("organization", "application");
 

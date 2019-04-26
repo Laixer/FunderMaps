@@ -12,9 +12,13 @@ using FunderMaps.Models;
 using FunderMaps.Models.Identity;
 using FunderMaps.Helpers;
 using FunderMaps.ViewModels;
+using FunderMaps.Core.Interfaces;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// Organization operation endpoint.
+    /// </summary>
     [Authorize]
     [Route("api/organization")]
     [ApiController]
@@ -24,7 +28,11 @@ namespace FunderMaps.Controllers.Webservice
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly ILookupNormalizer _keyNormalizer;
+        private readonly IAsyncRepository<Organization> _organizationRepository;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public OrganizationController(
             FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
@@ -38,6 +46,11 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // GET: api/organization/{id}
+        /// <summary>
+        /// Get organization by id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id:guid}")]
         [ProducesResponseType(typeof(Organization), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -58,8 +71,12 @@ namespace FunderMaps.Controllers.Webservice
             return ResourceForbid();
         }
 
-        // FUTURE: Map user results
         // GET: api/organization/{id}/user
+        /// <summary>
+        /// Get organization user.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id:guid}/user")]
         [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -97,6 +114,12 @@ namespace FunderMaps.Controllers.Webservice
         }
 
         // POST: api/organization/{id}/user
+        /// <summary>
+        /// Add user to organization.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="input"></param>
+        /// <returns></returns>
         [HttpPost("{id:guid}/user")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
