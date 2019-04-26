@@ -1,8 +1,8 @@
 ﻿using System;
 using Xunit;
 using Microsoft.AspNetCore.Mvc;
-using FunderMaps.Controllers.Webservice;
-using static FunderMaps.Controllers.Webservice.VersionController;
+using FunderMaps.Controllers.Api;
+using static FunderMaps.Controllers.Api.VersionController;
 
 namespace FunderMaps.Tests.Controllers
 {
