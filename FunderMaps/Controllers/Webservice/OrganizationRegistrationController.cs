@@ -13,6 +13,10 @@ using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers.Webservice
 {
+    /// <summary>
+    /// Endpoint for new organizations. This turns an organization proposal
+    /// into an actual organization.
+    /// </summary>
     [AllowAnonymous]
     [Route("api/organization_registration")]
     [ApiController]
@@ -22,6 +26,9 @@ namespace FunderMaps.Controllers.Webservice
         private readonly FisDbContext _fisContext;
         private readonly UserManager<FunderMapsUser> _userManager;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public OrganizationRegistrationController(
             FunderMapsDbContext context,
             FisDbContext fisContext,
