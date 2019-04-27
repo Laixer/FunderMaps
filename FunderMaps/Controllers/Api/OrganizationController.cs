@@ -62,11 +62,7 @@ namespace FunderMaps.Controllers.Api
             // Administrator can query anything
             if (User.IsInRole(Constants.AdministratorRole))
             {
-                return Ok(await _context.Organizations
-                    .AsNoTracking()
-                    .Include(a => a.HomeAddress)
-                    .Include(a => a.PostalAddres)
-                    .ToListAsync());
+                return Ok(await _context.Organizations.AsNoTracking().ToListAsync());
             }
 
             if (attestationOrganizationId == null)
@@ -86,8 +82,6 @@ namespace FunderMaps.Controllers.Api
                 .Include(s => s.OrganizationRole)
                 .Where(s => s.UserId == user.Id)
                 .Select(s => s.Organization)
-                .Include(s => s.HomeAddress)
-                .Include(s => s.PostalAddres)
                 .ToListAsync());
         }
 
@@ -103,9 +97,11 @@ namespace FunderMaps.Controllers.Api
         {
             var organization = await _context.Organizations
                 .AsNoTracking()
-                .Include(a => a.HomeAddress)
-                .Include(a => a.PostalAddres)
                 .SingleOrDefaultAsync(q => q.Id == id);
+            if (organization == null)
+            {
+                return ResourceNotFound();
+            }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
             if (authorizationResult.Succeeded)
@@ -128,17 +124,20 @@ namespace FunderMaps.Controllers.Api
         public async Task<IActionResult> GetUsersAsync(Guid id)
         {
             var organization = await _context.Organizations.FindAsync(id);
-            var organizationUser = await _context.OrganizationUsers
-                .AsNoTracking()
-                .Include(a => a.User)
-                .Where(q => q.Organization == organization)
-                .Select(s => s.User)
-                .ToListAsync();
+            if (organization == null)
+            {
+                return ResourceNotFound();
+            }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
             if (authorizationResult.Succeeded)
             {
-                return Ok(organizationUser);
+                return Ok(await _context.OrganizationUsers
+                    .AsNoTracking()
+                    .Include(a => a.User)
+                    .Where(q => q.Organization == organization)
+                    .Select(s => s.User)
+                    .ToListAsync());
             }
 
             return ResourceForbid();
@@ -339,8 +338,6 @@ namespace FunderMaps.Controllers.Api
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
             var organization = await _context.Organizations
-                .Include(s => s.HomeAddress)
-                .Include(s => s.PostalAddres)
                 .FirstOrDefaultAsync(s => s.Id == id);
             if (organization == null)
             {
@@ -352,20 +349,35 @@ namespace FunderMaps.Controllers.Api
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            organization.Email = input.Email;
-            organization.PhoneNumber = input.PhoneNumber;
-            organization.RegistrationNumber = input.RegistrationNumber;
-            organization.BrandingLogo = input.BrandingLogo;
-            organization.InvoiceName = input.InvoiceName;
-            organization.InvoicePONumber = input.InvoicePONumber;
-            organization.InvoiceEmail = input.InvoiceEmail;
-
-            organization.HomeAddress.Reassign(input.HomeAddress);
-            organization.PostalAddres.Reassign(input.PostalAddres);
-
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
             if (authorizationResult.Succeeded)
             {
+                organization.Email = input.Email;
+                organization.PhoneNumber = input.PhoneNumber;
+                organization.RegistrationNumber = input.RegistrationNumber;
+                organization.BrandingLogo = input.BrandingLogo;
+                organization.InvoiceName = input.InvoiceName;
+                organization.InvoicePONumber = input.InvoicePONumber;
+                organization.InvoiceEmail = input.InvoiceEmail;
+
+                organization.HomeStreet = input.HomeStreet;
+                organization.HomeAddressNumber = input.HomeAddressNumber;
+                organization.HomeAddressNumberPostfix = input.HomeAddressNumberPostfix;
+                organization.HomeCity = input.HomeCity;
+                organization.HomePostbox = input.HomePostbox;
+                organization.HomeZipcode = input.HomeZipcode;
+                organization.HomeState = input.HomeState;
+                organization.HomeCountry = input.HomeCountry;
+
+                organization.PostalStreet = input.PostalStreet;
+                organization.PostalAddressNumber = input.PostalAddressNumber;
+                organization.PostalAddressNumberPostfix = input.PostalAddressNumberPostfix;
+                organization.PostalCity = input.PostalCity;
+                organization.PostalPostbox = input.PostalPostbox;
+                organization.PostalZipcode = input.PostalZipcode;
+                organization.PostalState = input.PostalState;
+                organization.PostalCountry = input.PostalCountry;
+
                 _context.Organizations.Update(organization);
                 await _context.SaveChangesAsync();
 

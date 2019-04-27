@@ -35,33 +35,38 @@ namespace FunderMaps.Data.Seed
             });
             await catalogContext.SaveChangesAsync();
 
-            var address = new Address
+            await catalogContext.Organizations.AddAsync(new Organization
             {
-                Street = "Mainstreet",
-                AddressNumber = 123,
-                AddressNumberPostfix = "b",
-                City = "Phoenix",
-                Postbox = "93789",
-                Zipcode = "92641",
-                State = "Colorado",
-                Country = "USA"
-            };
-            await catalogContext.Addresses.AddAsync(address);
-
-            var organization = new Organization
-            {
-                Name = "Consoto",
+                Name = "Contoso",
                 NormalizedName = "CONTOSO",
-                Email = "info@consoto.com",
-                PhoneNumber = "1900362185",
-                RegistrationNumber = "XGHA83",
+                Email = "info@contoso.com",
+                PhoneNumber = "+1900731753",
+                RegistrationNumber = "US6793426",
                 IsDefault = true,
                 IsValidated = true,
-                HomeAddress = address,
-                PostalAddres = address,
-            };
-            await catalogContext.Organizations.AddAsync(organization);
+                InvoiceName = "Contoso",
+                InvoicePONumber = "837-OR",
+                InvoiceEmail = "invoice@contoso.com",
+                AttestationOrganizationId = 0,
 
+                HomeStreet = "Mainstreet",
+                HomeAddressNumber = 123,
+                HomeAddressNumberPostfix = "b",
+                HomeCity = "Phoenix",
+                HomePostbox = "93789",
+                HomeZipcode = "92641",
+                HomeState = "Colorado",
+                HomeCountry = "USA",
+
+                PostalStreet = "Mainstreet",
+                PostalAddressNumber = 123,
+                PostalAddressNumberPostfix = "b",
+                PostalCity = "Phoenix",
+                PostalPostbox = "93789",
+                PostalZipcode = "92641",
+                PostalState = "Colorado",
+                PostalCountry = "USA",
+            });
             await catalogContext.SaveChangesAsync();
         }
     }

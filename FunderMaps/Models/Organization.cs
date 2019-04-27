@@ -8,10 +8,6 @@ namespace FunderMaps.Models
 {
     public class Organization
     {
-        public Organization()
-        {
-        }
-
         /// <summary>
         /// Organization identifier.
         /// </summary>
@@ -42,12 +38,6 @@ namespace FunderMaps.Models
         public string RegistrationNumber { get; set; }
 
         [IgnoreDataMember]
-        public int HomeAddressId { get; set; }
-
-        [IgnoreDataMember]
-        public int PostalAddressId { get; set; }
-
-        [IgnoreDataMember]
         public bool? IsDefault { get; set; }
 
         [IgnoreDataMember]
@@ -76,11 +66,23 @@ namespace FunderMaps.Models
         [IgnoreDataMember]
         public int AttestationOrganizationId { get; set; }
 
-        [Required]
-        public virtual Address HomeAddress { get; set; }
+        public string HomeStreet { get; set; }
+        public int? HomeAddressNumber { get; set; }
+        public string HomeAddressNumberPostfix { get; set; }
+        public string HomeCity { get; set; }
+        public string HomePostbox { get; set; }
+        public string HomeZipcode { get; set; }
+        public string HomeState { get; set; }
+        public string HomeCountry { get; set; }
 
-        [Required]
-        public virtual Address PostalAddres { get; set; }
+        public string PostalStreet { get; set; }
+        public int? PostalAddressNumber { get; set; }
+        public string PostalAddressNumberPostfix { get; set; }
+        public string PostalCity { get; set; }
+        public string PostalPostbox { get; set; }
+        public string PostalZipcode { get; set; }
+        public string PostalState { get; set; }
+        public string PostalCountry { get; set; }
 
         public override string ToString()
         {
