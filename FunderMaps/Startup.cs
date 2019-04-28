@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 using FunderMaps.Data;
 using FunderMaps.Data.Repositories;
 using FunderMaps.Models.Identity;
@@ -69,17 +67,7 @@ namespace FunderMaps
             //services.AddCors();
 
             // Register the Swagger generator, defining an OpenAPI document
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new Info
-                {
-                    Version = Constants.ApplicationVersion.ToString(),
-                    Title = $"{Constants.ApplicationName} Backend",
-                    Description = "Internal API between frontend and backend",
-                });
-                options.CustomSchemaIds((type) => type.FullName);
-                options.IncludeXmlCommentsIfDocumentation(AppContext.BaseDirectory, $"Documentation{Constants.ApplicationName}.xml");
-            });
+            services.AddSwaggerDocumentation();
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
@@ -178,11 +166,11 @@ namespace FunderMaps
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
 
-                ConfigureOpenAPI(app);
+                app.UseSwaggerDocumentation();
             }
             if (env.IsStaging())
             {
-                ConfigureOpenAPI(app);
+                app.UseSwaggerDocumentation();
             }
             else
             {
@@ -226,15 +214,6 @@ namespace FunderMaps
                 {
                     spa.UseReactDevelopmentServer(npmScript: "dev");
                 }
-            });
-        }
-
-        private void ConfigureOpenAPI(IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{Constants.ApplicationName} Backend API");
             });
         }
     }

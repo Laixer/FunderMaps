@@ -4,7 +4,7 @@ namespace FunderMaps.Core.Entities.Fis
 {
     public enum ReportType
     {
-        AdditiionalResearch,
+        AdditionalResearch,
         Monitoring,
         Note,
         Quickscan,
