@@ -12,11 +12,19 @@ namespace FunderMaps.Data.Builder
             {
                 entity.ToTable("address", "report");
 
+                entity.HasIndex(e => new { e.StreetName, e.BuildingNumber, e.BuildingNumberSuffix })
+                    .HasName("address_street_name_building_number_building_number_suffix_key")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.StreetName, e.BuildingNumber })
+                    .HasName("address_street_name_building_number_idx")
+                    .IsUnique();
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("uuid_generate_v4()");
 
-                entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
+                entity.Property(e => e.BuildingNumber).IsRequired().HasColumnName("building_number");
 
                 entity.Property(e => e.BuildingNumberSuffix)
                     .HasColumnName("building_number_suffix")

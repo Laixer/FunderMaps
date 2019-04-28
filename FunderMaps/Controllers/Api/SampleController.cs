@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,7 @@ namespace FunderMaps.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly ISampleRepository _sampleRepository;
         private readonly IReportRepository _reportRepository;
+        private readonly IAddressService _addressService;
 
         /// <summary>
         /// Create a new instance.
@@ -31,11 +33,14 @@ namespace FunderMaps.Controllers.Api
         public SampleController(
             IAuthorizationService authorizationService,
             ISampleRepository sampleRepository,
-            IReportRepository reportRepository)
+            IReportRepository reportRepository,
+            IAddressRepository addressRepository,
+            IAddressService addressService)
         {
             _authorizationService = authorizationService;
             _sampleRepository = sampleRepository;
             _reportRepository = reportRepository;
+            _addressService = addressService;
         }
 
         // GET: api/sample
@@ -136,7 +141,7 @@ namespace FunderMaps.Controllers.Api
                     GroundLevel = input.GroundLevel,
                     FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
                     BuiltYear = input.BuiltYear,
-                    Address = input.Address,
+                    Address = await _addressService.FindAddressAsync(input.Address),
                     FoundationQuality = input.FoundationQuality,
                     EnforcementTerm = input.EnforcementTerm,
                     Substructure = input.Substructure,

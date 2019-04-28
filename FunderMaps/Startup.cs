@@ -73,7 +73,8 @@ namespace FunderMaps
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
-            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IAddressService, AddressService>();
         }
 
         /// <summary>

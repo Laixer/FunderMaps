@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
@@ -14,8 +15,13 @@ namespace FunderMaps.Core.Entities.Fis
         }
 
         public Guid Id { get; set; }
+
+        [Required]
         public string StreetName { get; set; }
+
+        [Required]
         public short BuildingNumber { get; set; }
+
         public string BuildingNumberSuffix { get; set; }
 
         public virtual Object Object { get; set; }
