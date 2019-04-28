@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Extensions;
 using FunderMaps.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace FunderMaps.Data.Repositories
 {
@@ -15,16 +12,10 @@ namespace FunderMaps.Data.Repositories
         {
         }
 
-        public Task<Address> GetByIdAsync(Guid id)
-        {
-            return _dbContext.Address.FindAsync(id);
-        }
-
-        public Task<Address> GetByAddressAsync(string street, short building_number, string building_number_suffix)
-        {
-            return _dbContext.Address.FirstOrDefaultAsync(s => s.StreetName == street &&
-                s.BuildingNumber == building_number &&
-                s.BuildingNumberSuffix == building_number_suffix);
-        }
+        public Task<Address> GetOrAddAsync(Address address)
+            => _dbContext.Address.GetOrAddAsync(address, s => s.Id == address.Id ||
+                    s.StreetName == address.StreetName &&
+                    s.BuildingNumber == address.BuildingNumber &&
+                    s.BuildingNumberSuffix == address.BuildingNumberSuffix);
     }
 }

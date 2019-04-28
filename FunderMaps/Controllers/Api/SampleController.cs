@@ -25,7 +25,7 @@ namespace FunderMaps.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly ISampleRepository _sampleRepository;
         private readonly IReportRepository _reportRepository;
-        private readonly IAddressService _addressService;
+        private readonly IAddressRepository _addressRepository;
 
         /// <summary>
         /// Create a new instance.
@@ -34,13 +34,12 @@ namespace FunderMaps.Controllers.Api
             IAuthorizationService authorizationService,
             ISampleRepository sampleRepository,
             IReportRepository reportRepository,
-            IAddressRepository addressRepository,
-            IAddressService addressService)
+            IAddressRepository addressRepository)
         {
             _authorizationService = authorizationService;
             _sampleRepository = sampleRepository;
             _reportRepository = reportRepository;
-            _addressService = addressService;
+            _addressRepository = addressRepository;
         }
 
         // GET: api/sample
@@ -141,7 +140,7 @@ namespace FunderMaps.Controllers.Api
                     GroundLevel = input.GroundLevel,
                     FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
                     BuiltYear = input.BuiltYear,
-                    Address = await _addressService.FindAddressAsync(input.Address),
+                    Address = await _addressRepository.GetOrAddAsync(input.Address),
                     FoundationQuality = input.FoundationQuality,
                     EnforcementTerm = input.EnforcementTerm,
                     Substructure = input.Substructure,
