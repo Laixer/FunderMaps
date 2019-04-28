@@ -8,23 +8,6 @@ namespace FunderMaps.Data.Builder
     {
         public static void ModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Address>(entity =>
-            {
-                entity.HasKey(e => e.Id).HasName("pk_address");
-
-                entity.Property(e => e.Id).HasColumnName("id").HasDefaultValueSql("nextval('application.address_id_seq'::regclass)");
-                entity.Property(e => e.Street).IsRequired().HasColumnName("address").HasMaxLength(256);
-                entity.Property(e => e.AddressNumber).IsRequired().HasColumnName("address_number");
-                entity.Property(e => e.AddressNumberPostfix).HasColumnName("address_number_postfix").HasMaxLength(8);
-                entity.Property(e => e.City).HasColumnName("city").HasMaxLength(256);
-                entity.Property(e => e.Postbox).HasColumnName("postbox").HasMaxLength(8);
-                entity.Property(e => e.Zipcode).HasColumnName("zipcode").HasMaxLength(8);
-                entity.Property(e => e.State).HasColumnName("state").HasMaxLength(256);
-                entity.Property(e => e.Country).HasColumnName("country").HasMaxLength(256);
-
-                entity.ToTable("address", "application");
-            });
-
             modelBuilder.Entity<OrganizationProposal>(entity =>
             {
                 entity.HasKey(e => e.Token).HasName("pk_organization_proposal");
@@ -64,8 +47,6 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.NormalizedName).HasColumnName("normalized_name").IsRequired().HasMaxLength(256);
                 entity.Property(e => e.Email).HasColumnName("email").HasMaxLength(256);
                 entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
-                entity.Property(e => e.HomeAddressId).HasColumnName("home_address_id");
-                entity.Property(e => e.PostalAddressId).HasColumnName("postal_address_id");
                 entity.Property(e => e.RegistrationNumber).HasColumnName("registration_number").HasMaxLength(40);
                 entity.Property(e => e.IsDefault).HasColumnName("is_default").IsRequired().HasDefaultValue(false);
                 entity.Property(e => e.IsValidated).HasColumnName("is_validated").IsRequired().HasDefaultValue(false);
@@ -75,26 +56,28 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.InvoiceEmail).HasColumnName("invoice_email").HasMaxLength(256);
                 entity.Property(e => e.AttestationOrganizationId).HasColumnName("attestation_organization_id").IsRequired();
 
+                entity.Property(e => e.HomeStreet).HasColumnName("home_address").HasMaxLength(256);
+                entity.Property(e => e.HomeAddressNumber).HasColumnName("home_address_number");
+                entity.Property(e => e.HomeAddressNumberPostfix).HasColumnName("home_address_number_postfix").HasMaxLength(8);
+                entity.Property(e => e.HomeCity).HasColumnName("home_city").HasMaxLength(256);
+                entity.Property(e => e.HomePostbox).HasColumnName("home_postbox").HasMaxLength(8);
+                entity.Property(e => e.HomeZipcode).HasColumnName("home_zipcode").HasMaxLength(8);
+                entity.Property(e => e.HomeState).HasColumnName("home_state").HasMaxLength(256);
+                entity.Property(e => e.HomeCountry).HasColumnName("home_country").HasMaxLength(256);
+
+                entity.Property(e => e.PostalStreet).HasColumnName("postal_address").HasMaxLength(256);
+                entity.Property(e => e.PostalAddressNumber).HasColumnName("postal_address_number");
+                entity.Property(e => e.PostalAddressNumberPostfix).HasColumnName("postal_address_number_postfix").HasMaxLength(8);
+                entity.Property(e => e.PostalCity).HasColumnName("postal_city").HasMaxLength(256);
+                entity.Property(e => e.PostalPostbox).HasColumnName("postal_postbox").HasMaxLength(8);
+                entity.Property(e => e.PostalZipcode).HasColumnName("postal_zipcode").HasMaxLength(8);
+                entity.Property(e => e.PostalState).HasColumnName("postal_state").HasMaxLength(256);
+                entity.Property(e => e.PostalCountry).HasColumnName("postal_country").HasMaxLength(256);
+
                 entity.ToTable("organization", "application");
 
                 entity.HasIndex(e => e.NormalizedName).IsUnique().HasName("idx_organization_normalized_name")
                     .HasFilter("\"normalized_name\" IS NOT NULL");
-
-                entity.HasOne(d => d.HomeAddress)
-                   .WithOne()
-                   .HasForeignKey<Organization>(s => s.HomeAddressId)
-                   .HasPrincipalKey<Address>(c => c.Id)
-                   .OnDelete(DeleteBehavior.Cascade)
-                   .HasConstraintName("fk_address_home_address_id")
-                   .IsRequired();
-
-                entity.HasOne(d => d.PostalAddres)
-                   .WithOne()
-                   .HasForeignKey<Organization>(s => s.PostalAddressId)
-                   .HasPrincipalKey<Address>(c => c.Id)
-                   .OnDelete(DeleteBehavior.Cascade)
-                   .HasConstraintName("fk_address_postal_address_id")
-                   .IsRequired();
             });
 
             modelBuilder.Entity<OrganizationUser>(entity =>

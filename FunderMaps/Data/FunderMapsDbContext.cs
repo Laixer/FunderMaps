@@ -22,11 +22,6 @@ namespace FunderMaps.Data
         }
 
         /// <summary>
-        /// Gets or sets the <see cref="DbSet{TEntity}"/> of Address.
-        /// </summary>
-        public DbSet<Address> Addresses { get; set; }
-
-        /// <summary>
         /// Gets or sets the <see cref="DbSet{TEntity}"/> of Organizations.
         /// </summary>
         public DbSet<Organization> Organizations { get; set; }

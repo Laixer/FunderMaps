@@ -111,23 +111,14 @@ namespace FunderMaps.Controllers.Webservice
                 throw new Exception();
             }
 
-            // Create new organization address
-            var address = new Address
-            {
-                Street = input.Organization.Address,
-                AddressNumber = input.Organization.AddressNumber,
-            };
-            await _context.Addresses.AddAsync(address);
-            await _context.SaveChangesAsync();
-
             // Create new organization
             var organization = new Organization
             {
                 Name = proposal.Name,
                 NormalizedName = proposal.NormalizedName,
                 Email = proposal.Email,
-                HomeAddress = address,
-                PostalAddres = address,
+                HomeStreet = input.Organization.Address,
+                HomeAddressNumber = input.Organization.AddressNumber,
                 AttestationOrganizationId = attestationOrganization.Id,
             };
             await _context.Organizations.AddAsync(organization);
