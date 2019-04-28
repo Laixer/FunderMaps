@@ -136,18 +136,18 @@ namespace FunderMaps.Controllers.Api
                     Cpt = input.Cpt,
                     Note = input.Note,
                     WoodLevel = input.WoodLevel,
-                    GroundwaterLevel = input.GroundwaterLevel,
                     GroundLevel = input.GroundLevel,
+                    GroundwaterLevel = input.GroundwaterLevel,
                     FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
                     BuiltYear = input.BuiltYear,
-                    Address = await _addressRepository.GetOrAddAsync(input.Address),
                     FoundationQuality = input.FoundationQuality,
                     EnforcementTerm = input.EnforcementTerm,
                     Substructure = input.Substructure,
                     FoundationType = input.FoundationType,
                     BaseMeasurementLevel = BaseLevel.NAP,
                     FoundationDamageCause = input.FoundationDamageCause,
-                    AccessPolicy = AccessPolicy.Private,
+                    AccessPolicy = input.AccessPolicy,
+                    Address = await _addressRepository.GetOrAddAsync(input.Address),
                 };
 
                 // Set the report status to 'pending'
@@ -226,15 +226,19 @@ namespace FunderMaps.Controllers.Api
             {
                 sample.MonitoringWell = input.MonitoringWell;
                 sample.Cpt = input.Cpt;
+                sample.Note = input.Note;
                 sample.WoodLevel = input.WoodLevel;
                 sample.GroundLevel = input.GroundLevel;
                 sample.GroundwaterLevel = input.GroundwaterLevel;
+                sample.FoundationRecoveryAdviced = input.FoundationRecoveryAdviced;
                 sample.BuiltYear = input.BuiltYear;
-                sample.Note = input.Note;
                 sample.FoundationQuality = input.FoundationQuality;
                 sample.EnforcementTerm = input.EnforcementTerm;
                 sample.Substructure = input.Substructure;
                 sample.FoundationType = input.FoundationType;
+                sample.FoundationDamageCause = input.FoundationDamageCause;
+                sample.AccessPolicy = input.AccessPolicy;
+                sample.Address = await _addressRepository.GetOrAddAsync(input.Address);
 
                 await _sampleRepository.UpdateAsync(sample);
 

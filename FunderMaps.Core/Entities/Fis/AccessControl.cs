@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Entities.Fis
 
     public abstract class AccessControl : RecordControl
     {
-        public AccessPolicy AccessPolicy { get; set; }
+        public AccessPolicy AccessPolicy { get; set; } = AccessPolicy.Private;
 
         public bool IsPublic() => AccessPolicy == AccessPolicy.Public;
         public bool IsPrivate() => AccessPolicy == AccessPolicy.Private;
