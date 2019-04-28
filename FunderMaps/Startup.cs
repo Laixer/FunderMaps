@@ -56,7 +56,8 @@ namespace FunderMaps
                 {
                     NamingStrategy = new SnakeCaseNamingStrategy()
                 };
-            }).SetCompatibilityVersion(CompatibilityVersion.Latest);
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
@@ -64,7 +65,7 @@ namespace FunderMaps
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            //services.AddCors();
+            services.AddCors();
 
             // Register the Swagger generator, defining an OpenAPI document
             services.AddSwaggerDocumentation();
