@@ -31,7 +31,6 @@ namespace FunderMaps.Controllers.Api
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly ILookupNormalizer _keyNormalizer;
-        private readonly IAsyncRepository<Organization> _organizationRepository;
 
         /// <summary>
         /// Create new instance.
@@ -239,6 +238,47 @@ namespace FunderMaps.Controllers.Api
             }
 
             return ResourceForbid();
+        }
+
+        // GET: api/organization/{id}/user/{user_id}
+        /// <summary>
+        /// Get organization user if this user has access to the record.
+        /// </summary>
+        /// <param name="id">Organization id.</param>
+        /// <param name="user_id">User id.</param>
+        [HttpGet("{id:guid}/user/{user_id:guid}")]
+        [ProducesResponseType(typeof(FunderMapsUser), 204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id)
+        {
+            var organization = await _context.Organizations.FindAsync(id);
+            if (organization == null)
+            {
+                return ResourceNotFound();
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                var user = await _userManager.FindByIdAsync(user_id.ToString());
+                if (user == null)
+                {
+                    return ResourceNotFound();
+                }
+
+                // If the user exists, but not in this organization, forbid deletion
+                var organizationUser = await _context.OrganizationUsers
+                    .SingleAsync(s => s.User == user && s.Organization == organization);
+                if (organizationUser == null)
+                {
+                    return ResourceForbid();
+                }
+
+                return Ok(user);
+            }
+
+            return NoContent();
         }
 
         // PUT: api/organization/{id}/user/{user_id}
