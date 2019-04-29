@@ -26,6 +26,7 @@ namespace FunderMaps.Controllers.Api
         private readonly FisDbContext _fisContext;
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportRepository _reportRepository;
+        private readonly IPrincipalRepository _principalRepository;
 
         /// <summary>
         /// Create a new instance.
@@ -33,11 +34,13 @@ namespace FunderMaps.Controllers.Api
         public ReportController(
             FisDbContext fisContext,
             IAuthorizationService authorizationService,
-            IReportRepository reportRepository)
+            IReportRepository reportRepository,
+            IPrincipalRepository principalRepository)
         {
             _fisContext = fisContext;
             _authorizationService = authorizationService;
             _reportRepository = reportRepository;
+            _principalRepository = principalRepository;
         }
 
         // GET: api/report
@@ -133,11 +136,11 @@ namespace FunderMaps.Controllers.Api
                     Status = ReportStatus.Todo,
                     Type = input.Type,
                     DocumentDate = input.DocumentDate,
-                    AccessPolicy = AccessPolicy.Private,
+                    AccessPolicy = input.AccessPolicy,
                     Attribution = new Attribution
                     {
                         Project = input.Attribution.Project,
-                        Reviewer = await _fisContext.Principal.GetOrAddAsync(input.Attribution.Reviewer, s => s.NickName == input.Attribution.Reviewer.NickName || s.Email == input.Attribution.Reviewer.Email),
+                        Reviewer = await _principalRepository.GetOrAddAsync(input.Attribution.Reviewer),
                         Contractor = await _fisContext.Organization.GetOrAddAsync(input.Attribution.Contractor, s => s.Name == input.Attribution.Contractor.Name),
                         Creator = await _fisContext.Principal.FindAsync(int.Parse(attestationPrincipalId)),
                         Owner = await _fisContext.Organization.FindAsync(int.Parse(attestationOrganizationId)),
@@ -221,6 +224,7 @@ namespace FunderMaps.Controllers.Api
                 report.FloorMeasurement = input.FloorMeasurement;
                 report.Note = input.Note;
                 report.Norm = input.Norm;
+                report.AccessPolicy = input.AccessPolicy;
 
                 _fisContext.Entry(report.Norm).State = EntityState.Modified;
 

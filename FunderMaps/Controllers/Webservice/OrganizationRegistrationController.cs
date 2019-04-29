@@ -53,20 +53,8 @@ namespace FunderMaps.Controllers.Webservice
                 public string Password { get; set; }
             }
 
-            public sealed class OrganizationModel
-            {
-                [Required]
-                public string Address { get; set; }
-
-                [Required]
-                public int AddressNumber { get; set; }
-            }
-
             [Required]
             public UserModel User { get; set; }
-
-            [Required]
-            public OrganizationModel Organization { get; set; }
         }
 
         /// <summary>
@@ -117,8 +105,6 @@ namespace FunderMaps.Controllers.Webservice
                 Name = proposal.Name,
                 NormalizedName = proposal.NormalizedName,
                 Email = proposal.Email,
-                HomeStreet = input.Organization.Address,
-                HomeAddressNumber = input.Organization.AddressNumber,
                 AttestationOrganizationId = attestationOrganization.Id,
             };
             await _context.Organizations.AddAsync(organization);

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
 {
-    public class Organization
+    public class Organization : BaseEntity
     {
         public Organization()
         {
