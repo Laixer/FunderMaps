@@ -9,7 +9,7 @@ using FunderMaps.Models;
 using FunderMaps.Helpers;
 using FunderMaps.ViewModels;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
     [Authorize(Roles = Constants.AdministratorRole)]
     [Route("api/organization_proposal")]

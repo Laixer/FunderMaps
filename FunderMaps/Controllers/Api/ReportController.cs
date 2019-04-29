@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using FunderMaps.Data;
 using FunderMaps.Interfaces;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
@@ -23,24 +21,27 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class ReportController : BaseApiController
     {
-        private readonly FisDbContext _fisContext;
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportRepository _reportRepository;
         private readonly IPrincipalRepository _principalRepository;
+        private readonly ISampleRepository _sampleRepository;
+        private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         public ReportController(
-            FisDbContext fisContext,
             IAuthorizationService authorizationService,
             IReportRepository reportRepository,
-            IPrincipalRepository principalRepository)
+            ISampleRepository sampleRepository,
+            IPrincipalRepository principalRepository,
+            IOrganizationRepository organizationRepository)
         {
-            _fisContext = fisContext;
             _authorizationService = authorizationService;
             _reportRepository = reportRepository;
+            _sampleRepository = sampleRepository;
             _principalRepository = principalRepository;
+            _organizationRepository = organizationRepository;
         }
 
         // GET: api/report
@@ -141,9 +142,9 @@ namespace FunderMaps.Controllers.Api
                     {
                         Project = input.Attribution.Project,
                         Reviewer = await _principalRepository.GetOrAddAsync(input.Attribution.Reviewer),
-                        Contractor = await _fisContext.Organization.GetOrAddAsync(input.Attribution.Contractor, s => s.Name == input.Attribution.Contractor.Name),
-                        Creator = await _fisContext.Principal.FindAsync(int.Parse(attestationPrincipalId)),
-                        Owner = await _fisContext.Organization.FindAsync(int.Parse(attestationOrganizationId)),
+                        Contractor = await _organizationRepository.GetOrAddAsync(input.Attribution.Contractor),
+                        _Creator = int.Parse(attestationPrincipalId),
+                        _Owner = int.Parse(attestationOrganizationId),
                     },
                 };
 
@@ -226,7 +227,17 @@ namespace FunderMaps.Controllers.Api
                 report.Norm = input.Norm;
                 report.AccessPolicy = input.AccessPolicy;
 
-                _fisContext.Entry(report.Norm).State = EntityState.Modified;
+                if (input.Norm != null)
+                {
+                    if (report.Norm != null)
+                    {
+                        report.Norm.ConformF3o = input.Norm.ConformF3o;
+                    }
+                    else
+                    {
+                        report.Norm = input.Norm;
+                    }
+                }
 
                 await _reportRepository.UpdateAsync(report);
 
@@ -266,6 +277,7 @@ namespace FunderMaps.Controllers.Api
                     return Forbid(0, "Resource modification forbidden with current status");
                 }
 
+                // Report cannot be altered anymore
                 report.Status = ReportStatus.Done;
 
                 await _reportRepository.UpdateAsync(report);
@@ -276,6 +288,9 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
+        /// <summary>
+        /// Report verification input model.
+        /// </summary>
         public sealed class VerificationInputModel
         {
             /// <summary>
@@ -345,7 +360,6 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
-        // TODO: Only allow removal if there a no samples.
         // DELETE: api/report/{id}/{document}
         /// <summary>
         /// Soft delete the report if the organization user has access to the record.
@@ -366,6 +380,8 @@ namespace FunderMaps.Controllers.Api
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Delete);
             if (authorizationResult.Succeeded)
             {
+                // TODO: Remove only when empty
+
                 await _reportRepository.DeleteAsync(report);
 
                 return NoContent();

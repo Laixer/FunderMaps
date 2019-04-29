@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +10,7 @@ using FunderMaps.Models;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 
-namespace FunderMaps.Controllers.Webservice
+namespace FunderMaps.Controllers.Api
 {
     /// <summary>
     /// Endpoint for new organizations. This turns an organization proposal
@@ -39,30 +38,12 @@ namespace FunderMaps.Controllers.Webservice
             _userManager = userManager;
         }
 
-        public sealed class OrganizationInitiationInputModel
-        {
-            public sealed class UserModel
-            {
-                [Required]
-                [EmailAddress]
-                [DataType(DataType.EmailAddress)]
-                public string Email { get; set; }
-
-                [Required]
-                [DataType(DataType.Password)]
-                public string Password { get; set; }
-            }
-
-            [Required]
-            public UserModel User { get; set; }
-        }
-
         /// <summary>
         /// Create an organization with superuser from the proposal.
         /// </summary>
         /// <param name="proposal">Organization proposal.</param>
         /// <param name="input">Client input.</param>
-        private async Task CreateOrganizationFromProposal(OrganizationProposal proposal, OrganizationInitiationInputModel input)
+        private async Task CreateOrganizationFromProposal(OrganizationProposal proposal, UserInputModel input)
         {
             var role = await _context.OrganizationRoles.FirstAsync(s => s.Name == Constants.SuperuserRole);
 
@@ -70,15 +51,15 @@ namespace FunderMaps.Controllers.Webservice
             {
                 Name = proposal.Name
             };
-            
+
             // NOTE: This can fail because entity exists
             await _fisContext.Organization.AddAsync(attestationOrganization);
             await _fisContext.SaveChangesAsync();
 
             var attestationPrincipal = new Core.Entities.Fis.Principal
             {
-                NickName = input.User.Email,
-                Email = input.User.Email,
+                NickName = input.Email,
+                Email = input.Email,
                 Organization = attestationOrganization,
             };
 
@@ -87,12 +68,12 @@ namespace FunderMaps.Controllers.Webservice
             await _fisContext.SaveChangesAsync();
 
             // Prepare new user account
-            var user = new FunderMapsUser(input.User.Email)
+            var user = new FunderMapsUser(input.Email)
             {
                 AttestationPrincipalId = attestationPrincipal.Id
             };
 
-            var result = await _userManager.CreateAsync(user, input.User.Password);
+            var result = await _userManager.CreateAsync(user, input.Password);
             if (!result.Succeeded)
             {
                 // TODO: Wrap errors in exception
@@ -130,7 +111,7 @@ namespace FunderMaps.Controllers.Webservice
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
-        public async Task<IActionResult> FromProposalAsync([FromRoute] Guid token, [FromBody] OrganizationInitiationInputModel input)
+        public async Task<IActionResult> FromProposalAsync([FromRoute] Guid token, [FromBody] UserInputModel input)
         {
             var proposal = await _context.OrganizationProposals.FindAsync(token);
             if (proposal == null)

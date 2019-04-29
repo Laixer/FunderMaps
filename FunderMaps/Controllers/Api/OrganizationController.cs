@@ -145,27 +145,12 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
-        public sealed class UserInputModel
-        {
-            [Required]
-            [EmailAddress]
-            [DataType(DataType.EmailAddress)]
-            public string Email { get; set; }
-
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-
-            public string Role { get; set; }
-        }
-
         // POST: api/organization/{id}/user
         /// <summary>
         /// Add user to organization.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
+        /// <param name="id">User id.</param>
+        /// <param name="input">See <see cref="UserInputModel"/>.</param>
         [HttpPost("{id:guid}/user")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]

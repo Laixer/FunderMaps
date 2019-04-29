@@ -117,18 +117,6 @@ namespace FunderMaps.Controllers.Api
             });
         }
 
-        public sealed class AuthenticationInputModel
-        {
-            [Required]
-            [EmailAddress]
-            [DataType(DataType.EmailAddress)]
-            public string Email { get; set; }
-
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-        }
-
         public sealed class AuthenticationOutputModel
         {
             public PrincipalOutputModel Principal { get; set; }
@@ -192,13 +180,13 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Authenticate user object.
         /// </summary>
-        /// <param name="input">See <see cref="AuthenticationInputModel"/>.</param>
+        /// <param name="input">See <see cref="UserInputModel"/>.</param>
         /// <returns>See <see cref="AuthenticationOutputModel"/>.</returns>
         [AllowAnonymous]
         [HttpPost("authenticate")]
         [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> SignInAsync([FromBody] AuthenticationInputModel input)
+        public async Task<IActionResult> SignInAsync([FromBody] UserInputModel input)
         {
             // Find user for authnetication, if the user object cannot be found then return an
             // authentication faillure since the client is not allowed to guess the credentials.
@@ -293,20 +281,9 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
 
-        public sealed class SetPasswordInputModel
-        {
-            [Required]
-            [DataType(DataType.EmailAddress)]
-            public string Email { get; set; }
-
-            [Required]
-            [DataType(DataType.Password)]
-            public string Password { get; set; }
-        }
-
         // POST: api/authentication/set_password
         /// <summary>
-        /// Set the password for a user.
+        /// Set the password for a user. Only an administrator can do this.
         /// </summary>
         /// <param name="input">User password input model.</param>
         [Authorize(Roles = Constants.AdministratorRole)]
@@ -314,7 +291,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        public async Task<IActionResult> SetPasswordAsync([FromBody] SetPasswordInputModel input)
+        public async Task<IActionResult> SetPasswordAsync([FromBody] UserInputModel input)
         {
             var user = await _userManager.FindByEmailAsync(input.Email);
             if (user == null)
