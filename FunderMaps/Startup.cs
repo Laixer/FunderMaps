@@ -70,13 +70,25 @@ namespace FunderMaps
             // Register the Swagger generator, defining an OpenAPI document
             services.AddSwaggerDocumentation();
 
+            // Configure local repositories
+            ConfigureRepository(services);
+
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
+            services.AddScoped<IAddressService, AddressService>();
+        }
+
+        /// <summary>
+        /// Setup local repositories and register them with the service collector.
+        /// </summary>
+        /// <param name="services">Service collection.</param>
+        private void ConfigureRepository(IServiceCollection services)
+        {
             services.AddScoped<IPrincipalRepository, PrincipalRepository>();
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             services.AddScoped<IAddressRepository, AddressRepository>();
-            services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         }
 
         /// <summary>
