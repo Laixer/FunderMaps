@@ -24,7 +24,6 @@ namespace FunderMaps.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportRepository _reportRepository;
         private readonly IPrincipalRepository _principalRepository;
-        private readonly ISampleRepository _sampleRepository;
         private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
@@ -39,7 +38,6 @@ namespace FunderMaps.Controllers.Api
         {
             _authorizationService = authorizationService;
             _reportRepository = reportRepository;
-            _sampleRepository = sampleRepository;
             _principalRepository = principalRepository;
             _organizationRepository = organizationRepository;
         }
@@ -162,8 +160,8 @@ namespace FunderMaps.Controllers.Api
         /// if the the record is public or if the organization user has
         /// access to the record.
         /// </summary>
-        /// <param name="id">Report identifier.</param>
-        /// <param name="document">Report identifier.</param>
+        /// <param name="id">Report identifier, see <see cref="Report.Id"/>.</param>
+        /// <param name="document">Report identifier, <see cref="Report.DocumentId"/>.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{document}")]
         [ProducesResponseType(typeof(Report), 200)]

@@ -44,7 +44,7 @@ namespace FunderMaps.Controllers.Api
 
         // GET: api/sample
         /// <summary>
-        /// Get a chunk of samples either by organization or as public data.
+        /// Get all samples filtered either by organization or as public data.
         /// </summary>
         /// <param name="offset">Offset into the list.</param>
         /// <param name="limit">Limit the output.</param>
@@ -68,6 +68,35 @@ namespace FunderMaps.Controllers.Api
             }
 
             return Ok(await _sampleRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
+        }
+
+        // GET: api/sample/report/{id}
+        /// <summary>
+        /// Get all samples filtered by report.
+        /// </summary>
+        /// <param name="id">Limit the output.</param>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
+        /// <returns>List of samples, see <see cref="Report"/>.</returns>
+        [HttpGet("report/{id}")]
+        [ProducesResponseType(typeof(List<Sample>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetAllAsync(int id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        {
+            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+
+            // Administrator can query anything
+            if (User.IsInRole(Constants.AdministratorRole))
+            {
+                return Ok(await _sampleRepository.ListAllReportAsync(id, new Navigation(offset, limit)));
+            }
+
+            if (attestationOrganizationId == null)
+            {
+                return ResourceForbid();
+            }
+
+            return Ok(await _sampleRepository.ListAllReportAsync(id, int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
         }
 
         // GET: api/sample/stats

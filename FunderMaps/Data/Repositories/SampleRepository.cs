@@ -48,6 +48,27 @@ namespace FunderMaps.Data.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, Navigation navigation)
+        {
+            return await DefaultQuery()
+                .Where(s => s.ReportNavigation.Id == report)
+                .OrderByDescending(s => s.CreateDate)
+                .Skip(navigation.Offset)
+                .Take(navigation.Limit)
+                .ToListAsync();
+        }
+
+        public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, int org_id, Navigation navigation)
+        {
+            return await DefaultQuery()
+                .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
+                .Where(s => s.ReportNavigation.Id == report)
+                .OrderByDescending(s => s.CreateDate)
+                .Skip(navigation.Offset)
+                .Take(navigation.Limit)
+                .ToListAsync();
+        }
+
         public Task<int> CountAsync(int org_id)
         {
             return DefaultQuery()
