@@ -106,8 +106,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Create a new sample for a report.
         /// </summary>
-        /// <param name="input">Sample data.</param>
-        /// <returns>Report.</returns>
+        /// <param name="input">See <see cref="Sample"/>.</param>
+        /// <returns>See <see cref="Sample"/>.</returns>
         [HttpPost]
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
@@ -168,7 +168,7 @@ namespace FunderMaps.Controllers.Api
         /// if the the record is public or if the organization user has
         /// access to the record.
         /// </summary>
-        /// <param name="id">Report identifier.</param>
+        /// <param name="id">Sample identifier.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Sample), 200)]

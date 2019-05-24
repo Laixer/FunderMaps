@@ -46,7 +46,7 @@ namespace FunderMaps.Controllers.Api
 
         // GET: api/report
         /// <summary>
-        /// Get a chunk of reports either by organization or as public data.
+        /// Get all reports filtered either by organization or as public data.
         /// </summary>
         /// <param name="offset">Offset into the list.</param>
         /// <param name="limit">Limit the output.</param>

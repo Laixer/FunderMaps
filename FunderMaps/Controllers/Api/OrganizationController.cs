@@ -124,10 +124,10 @@ namespace FunderMaps.Controllers.Api
 
         // GET: api/organization/{id}/user
         /// <summary>
-        /// Get organization user.
+        /// Get organization user list.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">User identifier.</param>
+        /// <returns>List of users, see <see cref="FunderMapsUser"/>.</returns>
         [HttpGet("{id:guid}/user")]
         [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
