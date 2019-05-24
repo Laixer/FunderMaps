@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using FunderMaps.Models.Fis;
+using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Data.Converters;
 
 namespace FunderMaps.Data.Builder
 {
@@ -7,33 +8,23 @@ namespace FunderMaps.Data.Builder
     {
         public static void ModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AccessPolicy>(entity =>
-            {
-                entity.HasKey(e => e.Id)
-                    .HasName("access_policy_pkey");
-
-                entity.ToTable("access_policy", "attestation");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<Address>(entity =>
             {
                 entity.ToTable("address", "report");
+
+                entity.HasIndex(e => new { e.StreetName, e.BuildingNumber, e.BuildingNumberSuffix })
+                    .HasName("address_street_name_building_number_building_number_suffix_key")
+                    .IsUnique();
+
+                entity.HasIndex(e => new { e.StreetName, e.BuildingNumber })
+                    .HasName("address_street_name_building_number_idx")
+                    .IsUnique();
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasDefaultValueSql("uuid_generate_v4()");
 
-                entity.Property(e => e.BuildingNumber).HasColumnName("building_number");
+                entity.Property(e => e.BuildingNumber).IsRequired().HasColumnName("building_number");
 
                 entity.Property(e => e.BuildingNumberSuffix)
                     .HasColumnName("building_number_suffix")
@@ -96,66 +87,6 @@ namespace FunderMaps.Data.Builder
                     .HasConstraintName("attribution_project_fkey");
             });
 
-            modelBuilder.Entity<BaseLevel>(entity =>
-            {
-                entity.ToTable("base_level", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<EnforcementTerm>(entity =>
-            {
-                entity.ToTable("enforcement_term", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<FoundationDamageCause>(entity =>
-            {
-                entity.ToTable("foundation_damage_cause", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<FoundationQuality>(entity =>
-            {
-                entity.ToTable("foundation_quality", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
             modelBuilder.Entity<FoundationRecovery>(entity =>
             {
                 entity.HasQueryFilter(e => e.DeleteDate == null);
@@ -170,7 +101,8 @@ namespace FunderMaps.Data.Builder
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'private'::character varying");
+                    .HasDefaultValueSql("'private'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<AccessPolicy>());
 
                 entity.Property(e => e.Address).HasColumnName("address");
 
@@ -193,7 +125,8 @@ namespace FunderMaps.Data.Builder
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationRecoveryType>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -201,12 +134,6 @@ namespace FunderMaps.Data.Builder
                     .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
                 entity.Property(e => e.Year).HasColumnName("year");
-
-                entity.HasOne(d => d.AccessPolicyNavigation)
-                    .WithMany(p => p.FoundationRecovery)
-                    .HasForeignKey(d => d.AccessPolicy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_access_policy_fkey");
 
                 entity.HasOne(d => d.AddressNavigation)
                     .WithMany(p => p.FoundationRecovery)
@@ -217,12 +144,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.FoundationRecovery)
                     .HasForeignKey(d => d.Attribution)
                     .HasConstraintName("foundation_recovery_attribution_fkey");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.FoundationRecovery)
-                    .HasForeignKey(d => d.Type)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_type_fkey");
             });
 
             modelBuilder.Entity<FoundationRecoveryEvidence>(entity =>
@@ -262,7 +183,8 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.Type)
                     .IsRequired()
                     .HasColumnName("type")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationRecoveryEvidenceType>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -273,42 +195,6 @@ namespace FunderMaps.Data.Builder
                     .WithMany(p => p.FoundationRecoveryEvidence)
                     .HasForeignKey(d => d.Recovery)
                     .HasConstraintName("foundation_recovery_evidence_recovery_fkey");
-
-                entity.HasOne(d => d.TypeNavigation)
-                    .WithMany(p => p.FoundationRecoveryEvidence)
-                    .HasForeignKey(d => d.Type)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_evidence_type_fkey");
-            });
-
-            modelBuilder.Entity<FoundationRecoveryEvidenceType>(entity =>
-            {
-                entity.ToTable("foundation_recovery_evidence_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<FoundationRecoveryLocation>(entity =>
-            {
-                entity.ToTable("foundation_recovery_location", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<FoundationRecoveryRepair>(entity =>
@@ -320,50 +206,15 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Location)
                     .HasColumnName("location")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationRecoveryLocation>());
 
                 entity.Property(e => e.Recovery).HasColumnName("recovery");
-
-                entity.HasOne(d => d.LocationNavigation)
-                    .WithMany(p => p.FoundationRecoveryRepair)
-                    .HasForeignKey(d => d.Location)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("foundation_recovery_repair_location_fkey");
 
                 entity.HasOne(d => d.RecoveryNavigation)
                     .WithMany(p => p.FoundationRecoveryRepair)
                     .HasForeignKey(d => d.Recovery)
                     .HasConstraintName("foundation_recovery_repair_recovery_fkey");
-            });
-
-            modelBuilder.Entity<FoundationRecoveryType>(entity =>
-            {
-                entity.ToTable("foundation_recovery_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<FoundationType>(entity =>
-            {
-                entity.ToTable("foundation_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<Incident>(entity =>
@@ -382,15 +233,19 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.FoundationDamageCause)
                     .HasColumnName("foundation_damage_cause")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationDamageCause>());
 
                 entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationQuality>());
 
                 entity.Property(e => e.FoundationType)
                     .HasColumnName("foundation_type")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationType>());
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
@@ -398,38 +253,19 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Substructure)
                     .HasColumnName("substructure")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<Substructure>());
 
                 entity.HasOne(d => d.AddressNavigation)
                     .WithMany(p => p.Incident)
                     .HasForeignKey(d => d.Address)
                     .HasConstraintName("incident_address_fkey");
 
-                entity.HasOne(d => d.FoundationDamageCauseNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.FoundationDamageCause)
-                    .HasConstraintName("incident_foundation_damage_cause_fkey");
-
-                entity.HasOne(d => d.FoundationQualityNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.FoundationQuality)
-                    .HasConstraintName("incident_foundation_quality_fkey");
-
-                entity.HasOne(d => d.FoundationTypeNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.FoundationType)
-                    .HasConstraintName("incident_foundation_type_fkey");
-
                 entity.HasOne(d => d.OwnerNavigation)
                     .WithMany(p => p.Incident)
                     .HasForeignKey(d => d.Owner)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("incident_owner_fkey");
-
-                entity.HasOne(d => d.SubstructureNavigation)
-                    .WithMany(p => p.Incident)
-                    .HasForeignKey(d => d.Substructure)
-                    .HasConstraintName("incident_substructure_fkey");
             });
 
             modelBuilder.Entity<Norm>(entity =>
@@ -584,7 +420,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e.Outline).HasColumnName("outline");
+                //entity.Property(e => e.Outline).HasColumnName("outline");
 
                 entity.Property(e => e.StartDate)
                     .HasColumnName("start_date")
@@ -633,11 +469,12 @@ namespace FunderMaps.Data.Builder
                     .HasMaxLength(64)
                     .ForNpgsqlHasComment("User provided document identifier");
 
-                entity.Property(e => e._AccessPolicy)
+                entity.Property(e => e.AccessPolicy)
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'private'::character varying");
+                    .HasDefaultValueSql("'private'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<AccessPolicy>());
 
                 entity.Property(e => e._Attribution).HasColumnName("attribution");
 
@@ -668,73 +505,28 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e._Status)
+                entity.Property(e => e.Status)
                     .HasColumnName("status")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'todo'::character varying");
+                    .HasDefaultValueSql("'todo'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<ReportStatus>());
 
-                entity.Property(e => e._Type)
+                entity.Property(e => e.Type)
                     .IsRequired()
                     .HasColumnName("type")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<ReportType>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of last record update, automatically updated on record modification");
 
-                entity.HasOne(d => d.AccessPolicy)
-                    .WithMany(p => p.Report)
-                    .HasForeignKey(d => d._AccessPolicy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("report_access_policy_fkey");
-
                 entity.HasOne(d => d.Attribution)
                     .WithMany(p => p.Report)
                     .HasForeignKey(d => d._Attribution)
                     .HasConstraintName("report_attribution_fkey");
-
-                entity.HasOne(d => d.Status)
-                    .WithMany(p => p.Report)
-                    .HasForeignKey(d => d._Status)
-                    .HasConstraintName("report_status_fkey");
-
-                entity.HasOne(d => d.Type)
-                    .WithMany(p => p.Report)
-                    .HasForeignKey(d => d._Type)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("report_type_fkey");
-            });
-
-            modelBuilder.Entity<ReportStatus>(entity =>
-            {
-                entity.ToTable("report_status", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
-            });
-
-            modelBuilder.Entity<ReportType>(entity =>
-            {
-                entity.ToTable("report_type", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<Sample>(entity =>
@@ -758,18 +550,20 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("report")
                     .ForNpgsqlHasComment("Link to the report entity");
 
-                entity.Property(e => e._AccessPolicy)
+                entity.Property(e => e.AccessPolicy)
                     .IsRequired()
                     .HasColumnName("access_policy")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'private'::character varying");
+                    .HasDefaultValueSql("'private'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<AccessPolicy>());
 
                 entity.Property(e => e._Address).HasColumnName("address");
 
-                entity.Property(e => e._BaseMeasurementLevel)
+                entity.Property(e => e.BaseMeasurementLevel)
                     .IsRequired()
                     .HasColumnName("base_measurement_level")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<BaseLevel>());
 
                 entity.Property(e => e.BuiltYear).HasColumnName("built_year");
 
@@ -788,25 +582,29 @@ namespace FunderMaps.Data.Builder
                     .HasColumnType("timestamp with time zone")
                     .ForNpgsqlHasComment("Timestamp of soft delete");
 
-                entity.Property(e => e._EnforcementTerm)
+                entity.Property(e => e.EnforcementTerm)
                     .HasColumnName("enforcement_term")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<EnforcementTerm>());
 
-                entity.Property(e => e._FoundationDamageCause)
+                entity.Property(e => e.FoundationDamageCause)
                     .IsRequired()
                     .HasColumnName("foundation_damage_cause")
                     .HasMaxLength(32)
-                    .HasDefaultValueSql("'unknown'::character varying");
+                    .HasDefaultValueSql("'unknown'::character varying")
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationDamageCause>());
 
-                entity.Property(e => e._FoundationQuality)
+                entity.Property(e => e.FoundationQuality)
                     .HasColumnName("foundation_quality")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationQuality>());
 
                 entity.Property(e => e.FoundationRecoveryAdviced).HasColumnName("foundation_recovery_adviced");
 
-                entity.Property(e => e._FoundationType)
+                entity.Property(e => e.FoundationType)
                     .HasColumnName("foundation_type")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<FoundationType>());
 
                 entity.Property(e => e.GroundLevel)
                     .HasColumnName("groundlevel")
@@ -822,9 +620,10 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.Note).HasColumnName("note");
 
-                entity.Property(e => e._Substructure)
+                entity.Property(e => e.Substructure)
                     .HasColumnName("substructure")
-                    .HasMaxLength(32);
+                    .HasMaxLength(32)
+                    .HasConversion(new EnumSnakeCaseConverter<Substructure>());
 
                 entity.Property(e => e.UpdateDate)
                     .HasColumnName("update_date")
@@ -835,69 +634,16 @@ namespace FunderMaps.Data.Builder
                     .HasColumnName("wood_level")
                     .HasColumnType("numeric(5,2)");
 
-                entity.HasOne(d => d.AccessPolicy)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._AccessPolicy)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("sample_access_policy_fkey");
-
                 entity.HasOne(d => d.Address)
                     .WithMany(p => p.Sample)
                     .HasForeignKey(d => d._Address)
                     .HasConstraintName("sample_address_fkey");
-
-                entity.HasOne(d => d.BaseMeasurementLevel)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._BaseMeasurementLevel)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("sample_base_measurement_level_fkey");
-
-                entity.HasOne(d => d.EnforcementTerm)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._EnforcementTerm)
-                    .HasConstraintName("sample_enforcement_term_fkey");
-
-                entity.HasOne(d => d.FoundationDamageCause)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._FoundationDamageCause)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("sample_foundation_damage_case_fkey");
-
-                entity.HasOne(d => d.FoundationQuality)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._FoundationQuality)
-                    .HasConstraintName("sample_foundation_quality_fkey");
-
-                entity.HasOne(d => d.FoundationType)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._FoundationType)
-                    .HasConstraintName("sample_foundation_type_fkey");
 
                 entity.HasOne(d => d.ReportNavigation)
                     .WithMany(p => p.Sample)
                     .HasPrincipalKey(p => p.Id)
                     .HasForeignKey(d => d.Report)
                     .HasConstraintName("sample_report_fkey");
-
-                entity.HasOne(d => d.Substructure)
-                    .WithMany(p => p.Sample)
-                    .HasForeignKey(d => d._Substructure)
-                    .HasConstraintName("sample_substructure_fkey");
-            });
-
-            modelBuilder.Entity<Substructure>(entity =>
-            {
-                entity.ToTable("substructure", "report");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .HasMaxLength(32)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.NameNl)
-                    .IsRequired()
-                    .HasColumnName("name_nl")
-                    .HasMaxLength(64);
             });
 
             modelBuilder.HasSequence<int>("organization_id_seq");

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Data.Builder;
-using FunderMaps.Models.Fis;
+using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Models;
 
 namespace FunderMaps.Data
@@ -24,31 +24,19 @@ namespace FunderMaps.Data
         {
         }
 
-        public virtual DbSet<AccessPolicy> AccessPolicy { get; set; }
-        public virtual DbSet<Models.Fis.Address> Address { get; set; }
+        public virtual DbSet<Core.Entities.Fis.Address> Address { get; set; }
         public virtual DbSet<Attribution> Attribution { get; set; }
-        public virtual DbSet<BaseLevel> BaseLevel { get; set; }
-        public virtual DbSet<EnforcementTerm> EnforcementTerm { get; set; }
-        public virtual DbSet<FoundationDamageCause> FoundationDamageCause { get; set; }
-        public virtual DbSet<FoundationQuality> FoundationQuality { get; set; }
         public virtual DbSet<FoundationRecovery> FoundationRecovery { get; set; }
         public virtual DbSet<FoundationRecoveryEvidence> FoundationRecoveryEvidence { get; set; }
-        public virtual DbSet<FoundationRecoveryEvidenceType> FoundationRecoveryEvidenceType { get; set; }
-        public virtual DbSet<FoundationRecoveryLocation> FoundationRecoveryLocation { get; set; }
         public virtual DbSet<FoundationRecoveryRepair> FoundationRecoveryRepair { get; set; }
-        public virtual DbSet<FoundationRecoveryType> FoundationRecoveryType { get; set; }
-        public virtual DbSet<FoundationType> FoundationType { get; set; }
         public virtual DbSet<Incident> Incident { get; set; }
         public virtual DbSet<Norm> Norm { get; set; }
         public virtual DbSet<Object> Object { get; set; }
-        public virtual DbSet<Models.Fis.Organization> Organization { get; set; }
+        public virtual DbSet<Core.Entities.Fis.Organization> Organization { get; set; }
         public virtual DbSet<Principal> Principal { get; set; }
         public virtual DbSet<Project> Project { get; set; }
         public virtual DbSet<Report> Report { get; set; }
-        public virtual DbSet<ReportStatus> ReportStatus { get; set; }
-        public virtual DbSet<ReportType> ReportType { get; set; }
         public virtual DbSet<Sample> Sample { get; set; }
-        public virtual DbSet<Substructure> Substructure { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

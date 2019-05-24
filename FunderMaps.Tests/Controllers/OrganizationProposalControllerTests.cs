@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using FunderMaps.Data;
 using FunderMaps.Models;
 using FunderMaps.Tests.Helpers;
+using FunderMaps.ViewModels;
 
 namespace FunderMaps.Tests.Controllers
 {

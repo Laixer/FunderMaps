@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -11,8 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 using FunderMaps.Data;
+using FunderMaps.Data.Repositories;
 using FunderMaps.Models.Identity;
 using FunderMaps.Interfaces;
 using FunderMaps.Services;
@@ -20,13 +19,22 @@ using FunderMaps.Helpers;
 using FunderMaps.Extensions;
 using FunderMaps.Authorization.Handler;
 using FunderMaps.Authorization.Requirement;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
 
 namespace FunderMaps
 {
+    /// <summary>
+    /// Application configuration.
+    /// </summary>
     public class Startup
     {
         private readonly IConfiguration _configuration;
 
+        /// <summary>
+        /// Create a new instance.
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -48,7 +56,8 @@ namespace FunderMaps
                 {
                     NamingStrategy = new SnakeCaseNamingStrategy()
                 };
-            }).SetCompatibilityVersion(CompatibilityVersion.Latest);
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Latest);
 
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
@@ -56,19 +65,18 @@ namespace FunderMaps
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            //services.AddCors();
+            services.AddCors();
 
             // Register the Swagger generator, defining an OpenAPI document
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new Info { Title = "FunderMaps Backend" });
-                options.CustomSchemaIds((type) => type.FullName);
-                options.IncludeXmlCommentsIfDocumentation(AppContext.BaseDirectory, "DocumentationFunderMaps.xml");
-            });
+            services.AddSwaggerDocumentation();
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddTransient<IMailService, MailService>();
-            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<IPrincipalRepository, PrincipalRepository>();
+            services.AddScoped<ISampleRepository, SampleRepository>();
+            services.AddScoped<IReportRepository, ReportRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IAddressService, AddressService>();
         }
 
         /// <summary>
@@ -151,7 +159,6 @@ namespace FunderMaps
             services.AddSingleton<IAuthorizationHandler, FisOperationHandler>();
         }
 
-
         /// <summary>
         /// This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
         /// </summary>
@@ -162,11 +169,11 @@ namespace FunderMaps
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
 
-                ConfigureOpenAPI(app);
+                app.UseSwaggerDocumentation();
             }
             if (env.IsStaging())
             {
-                ConfigureOpenAPI(app);
+                app.UseSwaggerDocumentation();
             }
             else
             {
@@ -175,8 +182,14 @@ namespace FunderMaps
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = context =>
+                {
+                    context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
+                }
+            });
             app.UseSpaStaticFiles();
 
             //app.UseCors(builder =>
@@ -188,7 +201,7 @@ namespace FunderMaps
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    template: "{controller}/{action}/{id?}");
 
                 routes.MapRoute(
                     name: "oops",
@@ -204,15 +217,6 @@ namespace FunderMaps
                 {
                     spa.UseReactDevelopmentServer(npmScript: "dev");
                 }
-            });
-        }
-
-        private void ConfigureOpenAPI(IApplicationBuilder app)
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Backend API");
             });
         }
     }

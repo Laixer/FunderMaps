@@ -64,7 +64,7 @@ namespace FunderMaps.Data.Builder
                 entity.Property(e => e.LockoutEnd).HasColumnName("lockout_end");
                 entity.Property(e => e.LockoutEnabled).HasColumnName("lockout_enabled").HasDefaultValue(false);
                 entity.Property(e => e.AccessFailedCount).HasColumnName("access_failed_count");
-                entity.Property(e => e.AttestationPrincipalId).HasColumnName("attestation_principal_id");
+                entity.Property(e => e.AttestationPrincipalId).HasColumnName("attestation_principal_id").IsRequired();
 
                 entity.Property(e => e.ConcurrencyStamp).HasColumnName("concurrency_stamp").IsConcurrencyToken();
 
