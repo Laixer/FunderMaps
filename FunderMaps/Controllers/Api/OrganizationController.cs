@@ -114,6 +114,14 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
+        public sealed class OrganizationUserInputOutputModel
+        {
+            [Required]
+            public FunderMapsUser User { get; set; }
+
+            public OrganizationRole Role { get; set; }
+        }
+
         // GET: api/organization/{id}/user
         /// <summary>
         /// Get organization user.
@@ -138,7 +146,7 @@ namespace FunderMaps.Controllers.Api
                     .AsNoTracking()
                     .Include(a => a.User)
                     .Where(q => q.Organization == organization)
-                    .Select(s => s.User)
+                    .Select(s => new OrganizationUserInputOutputModel { User = s.User, Role = s.OrganizationRole })
                     .ToListAsync());
             }
 
@@ -254,13 +262,18 @@ namespace FunderMaps.Controllers.Api
 
                 // If the user exists, but not in this organization, forbid deletion
                 var organizationUser = await _context.OrganizationUsers
+                    .Include(s => s.OrganizationRole)
                     .SingleAsync(s => s.User == user && s.Organization == organization);
                 if (organizationUser == null)
                 {
                     return ResourceForbid();
                 }
 
-                return Ok(user);
+                return Ok(new OrganizationUserInputOutputModel
+                {
+                    User = user,
+                    Role = organizationUser.OrganizationRole
+                });
             }
 
             return NoContent();
