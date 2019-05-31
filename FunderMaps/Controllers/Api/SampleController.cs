@@ -74,7 +74,7 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get all samples filtered by report.
         /// </summary>
-        /// <param name="id">Limit the output.</param>
+        /// <param name="id">Report identifier, see <see cref="Report.Id"/>.</param>
         /// <param name="offset">Offset into the list.</param>
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of samples, see <see cref="Report"/>.</returns>

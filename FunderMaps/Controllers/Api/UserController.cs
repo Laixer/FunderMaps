@@ -23,6 +23,7 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
+        /// <param name="fisContext">See <see cref="FisDbContext"/>.</param>
         public UserController(UserManager<FunderMapsUser> userManager, FisDbContext fisContext)
         {
             _userManager = userManager;

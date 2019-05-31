@@ -30,6 +30,10 @@ namespace FunderMaps.Controllers.Api
             "image/webp",
         };
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="fileStorageService"></param>
         public UploadController(IFileStorageService fileStorageService) => _fileStorageService = fileStorageService;
 
         // PUT: api/upload

@@ -246,10 +246,16 @@ namespace FunderMaps.Controllers.Api
 
         public sealed class ChangePasswordInputModel
         {
+            /// <summary>
+            /// New password.
+            /// </summary>
             [Required]
             [DataType(DataType.Password)]
             public string NewPassword { get; set; }
 
+            /// <summary>
+            /// Old (current) password.
+            /// </summary>
             [Required]
             [DataType(DataType.Password)]
             public string OldPassword { get; set; }

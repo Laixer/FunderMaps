@@ -3,6 +3,9 @@ using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers
 {
+    /// <summary>
+    /// Base controller for all API controllers.
+    /// </summary>
     [Controller]
     public abstract class BaseApiController : ControllerBase
     {
