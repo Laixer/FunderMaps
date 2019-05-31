@@ -65,7 +65,18 @@ namespace FunderMaps
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddCors();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CORSDeveloperPolicy",
+                builder =>
+                {
+                    // TODO: Add current HTTP_HOST
+                    builder.WithOrigins("https://localhost:8080",
+                                        "http://localhost:8080")
+                                        .AllowAnyHeader()
+                                        .AllowCredentials();
+                });
+            });
 
             // Register the Swagger generator, defining an OpenAPI document
             services.AddSwaggerDocumentation();
@@ -182,10 +193,12 @@ namespace FunderMaps
                 app.UseDatabaseErrorPage();
 
                 app.UseSwaggerDocumentation();
+                app.UseCors("CORSDeveloperPolicy");
             }
             if (env.IsStaging())
             {
                 app.UseSwaggerDocumentation();
+                app.UseCors("CORSDeveloperPolicy");
             }
             else
             {
@@ -203,11 +216,6 @@ namespace FunderMaps
                 }
             });
             app.UseSpaStaticFiles();
-
-            //app.UseCors(builder =>
-            //{
-            //    builder.AllowAnyOrigin().AllowAnyHeader();
-            //});
 
             app.UseMvc(routes =>
             {
@@ -227,7 +235,7 @@ namespace FunderMaps
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "dev");
+                    spa.UseReactDevelopmentServer(npmScript: "serve");
                 }
             });
         }
