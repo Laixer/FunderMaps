@@ -74,6 +74,7 @@ namespace FunderMaps
                     builder.WithOrigins("https://localhost:8080",
                                         "http://localhost:8080")
                                         .AllowAnyHeader()
+                                        .AllowAnyMethod()
                                         .AllowCredentials();
                 });
             });
