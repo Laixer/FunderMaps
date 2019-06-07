@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Entities.Fis
         Pending,
         Done,
         Discarded,
-        Verified,
+        PendingReview,
         Rejected,
     }
 }

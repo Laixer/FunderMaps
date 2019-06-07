@@ -106,6 +106,10 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Create a new report.
         /// </summary>
+        /// <remarks>
+        /// Report state:
+        ///     [start] -> todo
+        /// </remarks>
         /// <param name="input">Report data.</param>
         /// <returns>Report.</returns>
         [HttpPost]
@@ -245,17 +249,20 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
-        // PUT: api/report/{id}/{document}/done
+        // PUT: api/report/{id}/{document}/review
         /// <summary>
-        /// Mark the report as done and prepare for verification.
+        /// Mark the report as 'pending_review'.
         /// </summary>
         /// <remarks>
         /// This operation can be done by anyone with the create permissions
         /// which can be different than validation.
+        ///
+        /// Report state:
+        ///     pending -> pending_review
         /// </remarks>
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
-        [HttpPut("{id}/{document}/done")]
+        [HttpPut("{id}/{document}/review")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -270,13 +277,13 @@ namespace FunderMaps.Controllers.Api
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
+                if (report.Status != ReportStatus.Pending)
                 {
                     return Forbid(0, "Resource modification forbidden with current status");
                 }
 
                 // Report cannot be altered anymore
-                report.Status = ReportStatus.Done;
+                report.Status = ReportStatus.PendingReview;
 
                 await _reportRepository.UpdateAsync(report);
 
@@ -315,8 +322,13 @@ namespace FunderMaps.Controllers.Api
 
         // PUT: api/report/{id}/{document}/validate
         /// <summary>
-        /// Save the verification result to the report.
+        /// Save the validation result to the report.
         /// </summary>
+        /// <remarks>
+        /// Report state:
+        ///     pending_review -> done
+        ///     pending_review -> rejected
+        /// </remarks>
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Verification status.</param>
@@ -335,7 +347,7 @@ namespace FunderMaps.Controllers.Api
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Validate);
             if (authorizationResult.Succeeded)
             {
-                if (report.Status != ReportStatus.Done)
+                if (report.Status != ReportStatus.PendingReview)
                 {
                     return Forbid(0, "Resource modification forbidden with current status");
                 }
@@ -343,10 +355,11 @@ namespace FunderMaps.Controllers.Api
                 switch (input.Result)
                 {
                     case VerificationInputModel.VerificationResult.Verified:
-                        report.Status = ReportStatus.Verified;
+                        report.Status = ReportStatus.Done;
                         break;
                     case VerificationInputModel.VerificationResult.Rejected:
                         report.Status = ReportStatus.Rejected;
+                        // TODO: Notify user
                         break;
                 }
 
