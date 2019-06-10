@@ -318,6 +318,11 @@ namespace FunderMaps.Controllers.Api
             /// Verification result.
             /// </summary>
             public VerificationResult Result { get; set; }
+
+            /// <summary>
+            /// Rejection or approval reason.
+            /// </summary>
+            public string Message { get; set; }
         }
 
         // PUT: api/report/{id}/{document}/validate
@@ -359,7 +364,7 @@ namespace FunderMaps.Controllers.Api
                         break;
                     case VerificationInputModel.VerificationResult.Rejected:
                         report.Status = ReportStatus.Rejected;
-                        // TODO: Notify user
+                        // TODO: Notify user via input.Message
                         break;
                 }
 

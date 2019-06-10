@@ -240,7 +240,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Organization id.</param>
         /// <param name="user_id">User id.</param>
         [HttpGet("{id:guid}/user/{user_id:guid}")]
-        [ProducesResponseType(typeof(FunderMapsUser), 204)]
+        [ProducesResponseType(typeof(OrganizationUserInputOutputModel), 204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id)
@@ -290,7 +290,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id, FunderMapsUser input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id, OrganizationUserInputOutputModel input)
         {
             var organization = await _context.Organizations.FindAsync(id);
             if (organization == null)
@@ -307,7 +307,7 @@ namespace FunderMaps.Controllers.Api
                     return ResourceNotFound();
                 }
 
-                // If the user exists, but not in this organization, forbid deletion
+                // If the user exists, but not in this organization, forbid alteration
                 var organizationUser = await _context.OrganizationUsers
                     .SingleAsync(s => s.User == user && s.Organization == organization);
                 if (organizationUser == null)
@@ -315,11 +315,31 @@ namespace FunderMaps.Controllers.Api
                     return ResourceForbid();
                 }
 
-                user.PhoneNumber = input.PhoneNumber;
-                user.GivenName = input.GivenName;
-                user.LastName = input.LastName;
-                user.Avatar = input.Avatar;
-                user.JobTitle = input.JobTitle;
+                if (input.User != null)
+                {
+                    user.PhoneNumber = input.User.PhoneNumber;
+                    user.GivenName = input.User.GivenName;
+                    user.LastName = input.User.LastName;
+                    user.Avatar = input.User.Avatar;
+                    user.JobTitle = input.User.JobTitle;
+                }
+
+                if (input.Role != null)
+                {
+                    // TODO: wrap in transaction
+                    var role = await _context.OrganizationRoles
+                                .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role.Name));
+
+                    if (role == null)
+                    {
+                        return BadRequest(0, "Role not found");
+                    }
+
+                    organizationUser.OrganizationRoleId = role.Id;
+
+                    _context.OrganizationUsers.Update(organizationUser);
+                    await _context.SaveChangesAsync();
+                }
 
                 await _userManager.UpdateAsync(user);
             }
