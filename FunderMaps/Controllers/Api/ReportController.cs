@@ -32,7 +32,6 @@ namespace FunderMaps.Controllers.Api
         public ReportController(
             IAuthorizationService authorizationService,
             IReportRepository reportRepository,
-            ISampleRepository sampleRepository,
             IPrincipalRepository principalRepository,
             IOrganizationRepository organizationRepository)
         {
