@@ -43,7 +43,6 @@ namespace FunderMaps.Models.Identity
         /// <summary>
         /// Reference to the attestation principal.
         /// </summary>
-        [IgnoreDataMember]
         public virtual int? AttestationPrincipalId { get; set; }
 
         /// <summary>
