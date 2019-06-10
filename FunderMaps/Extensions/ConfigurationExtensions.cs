@@ -4,6 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FunderMaps.Extensions
 {
+    /// <summary>
+    /// Extensions to the configuration interface.
+    /// </summary>
     public static class ConfigurationExtensions
     {
         /// <summary>
@@ -40,6 +43,15 @@ namespace FunderMaps.Extensions
         public static int GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
         {
             return int.Parse(configuration["Jwt:TokenValidity"]);
+        }
+
+        /// <summary>
+        /// Get the HTTP_HOST setting if configured.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        public static string GetDomainHost(this IConfiguration configuration)
+        {
+            return configuration["HTTP_HOST"];
         }
     }
 }

@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities.Fis
     {
         Drainage,
         ConstructionFlaw,
-        Crystand,
+        Drystand,
         Overcharge,
         OverchargeNegativeCling,
         NegativeCling,

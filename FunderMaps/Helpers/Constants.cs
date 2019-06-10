@@ -31,28 +31,44 @@ namespace FunderMaps.Helpers
             MaxFailedAccessAttempts = 10,
         };
 
+        /// <summary>
+        /// Static file cache retention.
+        /// </summary>
         public const int StaticFileCacheRetention = 60;
 
+        /// <summary>
+        /// Application role for administrator
+        /// </summary>
         public const string AdministratorRole = "Administrator";
+        
+        /// <summary>
+        /// Organization role for superuser
+        /// </summary>
         public const string SuperuserRole = "Superuser";
+
+        /// <summary>
+        /// Organization role for verifier
+        /// </summary>
         public const string VerifierRole = "Verifier";
+
+        /// <summary>
+        /// Organization role for writer
+        /// </summary>
         public const string WriterRole = "Writer";
+
+        /// <summary>
+        /// Organization role for reader
+        /// </summary>
         public const string ReaderRole = "Reader";
 
         /// <summary>
         /// Retrieve application version.
         /// </summary>
-        public static Version ApplicationVersion
-        {
-            get => Assembly.GetEntryAssembly().GetName().Version;
-        }
+        public static Version ApplicationVersion => Assembly.GetEntryAssembly().GetName().Version;
 
         /// <summary>
         /// Retrieve application name.
         /// </summary>
-        public static string ApplicationName
-        {
-            get => Assembly.GetEntryAssembly().GetName().Name;
-        }
+        public static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
     }
 }

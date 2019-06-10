@@ -70,12 +70,17 @@ namespace FunderMaps
                 options.AddPolicy("CORSDeveloperPolicy",
                 builder =>
                 {
-                    // TODO: Add current HTTP_HOST
                     builder.WithOrigins("https://localhost:8080",
                                         "http://localhost:8080")
                                         .AllowAnyHeader()
                                         .AllowAnyMethod()
                                         .AllowCredentials();
+
+                    var domain = _configuration.GetDomainHost();
+                    if (domain != null)
+                    {
+                        builder.WithOrigins($"https://{domain}");
+                    }
                 });
             });
 
