@@ -326,18 +326,16 @@ namespace FunderMaps.Controllers.Api
 
                 if (input.Role != null)
                 {
-                    // TODO: wrap in transaction
                     var role = await _context.OrganizationRoles
                                 .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role.Name));
-
                     if (role == null)
                     {
                         return BadRequest(0, "Role not found");
                     }
 
-                    organizationUser.OrganizationRoleId = role.Id;
-
-                    _context.OrganizationUsers.Update(organizationUser);
+                    // TODO: Wrap in transaction. If an error occurs after the delete then the user is left without a role.
+                    _context.OrganizationUsers.Remove(organizationUser);
+                    await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
                     await _context.SaveChangesAsync();
                 }
 
