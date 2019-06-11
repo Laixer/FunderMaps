@@ -26,6 +26,7 @@ namespace FunderMaps
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .UseKestrel(c => c.AddServerHeader = false)
                 .UseApplicationInsights()
                 .UseStartup<Startup>()
                 .Build();
