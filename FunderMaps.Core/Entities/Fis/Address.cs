@@ -17,11 +17,13 @@ namespace FunderMaps.Core.Entities.Fis
         public Guid Id { get; set; }
 
         [Required]
+        [MaxLength(128)]
         public string StreetName { get; set; }
 
         [Required]
         public short BuildingNumber { get; set; }
 
+        [MaxLength(8)]
         public string BuildingNumberSuffix { get; set; }
 
         public virtual Object Object { get; set; }

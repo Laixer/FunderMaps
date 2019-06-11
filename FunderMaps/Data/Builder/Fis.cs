@@ -28,7 +28,7 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.BuildingNumberSuffix)
                     .HasColumnName("building_number_suffix")
-                    .HasColumnType("character(2)");
+                    .HasMaxLength(8);
 
                 entity.Property(e => e.StreetName)
                     .IsRequired()
