@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.IO.Compression;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -84,7 +86,16 @@ namespace FunderMaps
                 });
             });
 
-            // Register the Swagger generator, defining an OpenAPI document
+            // Enable response compression.
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
+
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+
+            // Register the Swagger generator, defining an OpenAPI document.
             services.AddSwaggerDocumentation();
 
             // Configure local repositories
@@ -212,6 +223,7 @@ namespace FunderMaps
                 app.UseHsts();
             }
 
+            app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseStaticFiles(new StaticFileOptions
