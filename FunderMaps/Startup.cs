@@ -23,6 +23,7 @@ using FunderMaps.Authorization.Handler;
 using FunderMaps.Authorization.Requirement;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
+using FunderMaps.Middleware;
 
 namespace FunderMaps
 {
@@ -216,11 +217,13 @@ namespace FunderMaps
             {
                 app.UseSwaggerDocumentation();
                 app.UseCors("CORSDeveloperPolicy");
+                app.UseHsts();
             }
             else
             {
                 app.UseExceptionHandler("/oops");
                 app.UseHsts();
+                app.UseEnhancedSecurity();
             }
 
             app.UseResponseCompression();

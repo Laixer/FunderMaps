@@ -11,20 +11,13 @@ namespace FunderMaps.Middleware
         private readonly SecurityPolicy _policy = new SecurityPolicy();
 
         /// <summary>
-        /// The number of seconds in one year
-        /// </summary>
-        public const int OneYearInSeconds = 60 * 60 * 24 * 365;
-
-        /// <summary>
         /// Add default headers in accordance with most secure approach
         /// </summary>
         public SecurityBuilder AddDefaultSecurePolicy()
         {
-            AddFrameOptionsDeny();
+            AddFrameOptionsSameOrigin();
             AddXssProtectionBlock();
             AddContentTypeOptionsNoSniff();
-            AddStrictTransportSecurityMaxAge();
-            RemoveServerHeader();
 
             return this;
         }
@@ -101,51 +94,12 @@ namespace FunderMaps.Middleware
         }
 
         /// <summary>
-        /// Add Strict-Transport-Security max-age=<see cref="maxAge"/> to all requests.
-        /// Tells the user-agent to cache the domain in the STS list for the number of seconds provided.
-        /// </summary>
-        public SecurityBuilder AddStrictTransportSecurityMaxAge(int maxAge = OneYearInSeconds)
-        {
-            _policy.SetHeaders[StrictTransportSecurityConstants.Header] = string.Format(StrictTransportSecurityConstants.MaxAge, maxAge);
-            return this;
-        }
-
-        /// <summary>
-        /// Add Strict-Transport-Security max-age=<see cref="maxAge"/>; includeSubDomains to all requests.
-        /// Tells the user-agent to cache the domain in the STS list for the number of seconds provided and include any sub-domains.
-        /// </summary>
-        public SecurityBuilder AddStrictTransportSecurityMaxAgeIncludeSubDomains(int maxAge = OneYearInSeconds)
-        {
-            _policy.SetHeaders[StrictTransportSecurityConstants.Header] = string.Format(StrictTransportSecurityConstants.MaxAgeIncludeSubdomains, maxAge);
-            return this;
-        }
-
-        /// <summary>
-        /// Add Strict-Transport-Security max-age=0 to all requests.
-        /// Tells the user-agent to remove, or not cache the host in the STS cache
-        /// </summary>
-        public SecurityBuilder AddStrictTransportSecurityNoCache()
-        {
-            _policy.SetHeaders[StrictTransportSecurityConstants.Header] = StrictTransportSecurityConstants.NoCache;
-            return this;
-        }
-
-        /// <summary>
         /// Add X-Content-Type-Options nosniff to all requests.
         /// Can be set to protect against MIME type confusion attacks.
         /// </summary>
         public SecurityBuilder AddContentTypeOptionsNoSniff()
         {
             _policy.SetHeaders[ContentTypeOptionsConstants.Header] = ContentTypeOptionsConstants.NoSniff;
-            return this;
-        }
-
-        /// <summary>
-        /// Removes the Server header from all responses.
-        /// </summary>
-        public SecurityBuilder RemoveServerHeader()
-        {
-            _policy.RemoveHeaders.Add(ServerConstants.Header);
             return this;
         }
 

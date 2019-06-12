@@ -1,17 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 
 namespace FunderMaps.Middleware
 {
     public static class SecurityMiddlewareExtensions
     {
-        public static IApplicationBuilder UseSecurityHeadersMiddleware(this IApplicationBuilder app, SecurityBuilder builder)
+        public static IApplicationBuilder UseEnhancedSecurity(this IApplicationBuilder app)
         {
-            SecurityPolicy policy = builder.Build();
-            return app.UseMiddleware<SecurityMiddleware>(policy);
+            return app.UseMiddleware<SecurityMiddleware>(new SecurityBuilder().AddDefaultSecurePolicy().Build());
+        }
+
+        public static IApplicationBuilder UseEnhancedSecurity(this IApplicationBuilder app, SecurityBuilder builder)
+        {
+            return app.UseMiddleware<SecurityMiddleware>(builder.Build());
         }
     }
 }
