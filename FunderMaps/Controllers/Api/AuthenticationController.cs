@@ -244,6 +244,9 @@ namespace FunderMaps.Controllers.Api
             return Unauthorized(102, "Principal is not allowed to login");
         }
 
+        /// <summary>
+        /// Change password model.
+        /// </summary>
         public sealed class ChangePasswordInputModel
         {
             /// <summary>

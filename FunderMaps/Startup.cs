@@ -133,6 +133,7 @@ namespace FunderMaps
                 {
                     pgOptions.MigrationsHistoryTable("migrations_history", "meta");
                     pgOptions.EnableRetryOnFailure();
+                    pgOptions.UseNetTopologySuite();
                 });
             })
             .AddEntityFrameworkNpgsql();
