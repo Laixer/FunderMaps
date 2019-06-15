@@ -38,12 +38,11 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Find the organization by partial name and return list of possible values.
         /// </summary>
-        /// <param name="name">Partial organization name.</param>
         /// <returns>List of organizations.</returns>
         [HttpPost("organization")]
         [ProducesResponseType(typeof(List<Organization>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostOrganizationAsync([FromBody] string name)
+        public async Task<IActionResult> PostOrganizationAsync()
         {
             return Ok(await _organizationRepository.ListAllAsync());
         }
@@ -53,12 +52,11 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Find the principal by partial name and return list of possible values.
         /// </summary>
-        /// <param name="name">Partial principal name.</param>
         /// <returns>List of principals.</returns>
         [HttpPost("principal")]
         [ProducesResponseType(typeof(List<Principal>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostPrincipalAsync([FromBody] string name)
+        public async Task<IActionResult> PostPrincipalAsync()
         {
             return Ok(await _principalRepository.ListAllAsync());
         }
