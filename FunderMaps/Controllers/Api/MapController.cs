@@ -4,6 +4,7 @@ using Dapper;
 using FunderMaps.Data;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
+using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -52,9 +53,20 @@ namespace FunderMaps.Controllers.Api
             public PropertyModel Properties { get; set; }
         }
 
+        class FeatureCollection
+        {
+            public string Type { get; set; } = "FeatureCollection";
+            public ICollection<FeatureModel> Features { get; set; }
+        }
+
         // GET: api/map
+        /// <summary>
+        /// Get the samples as GeoJSON.
+        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [ProducesResponseType(typeof(FeatureCollection), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetAsync()
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
@@ -96,10 +108,9 @@ namespace FunderMaps.Controllers.Api
                 }
             }
 
-            return Ok(new
+            return Ok(new FeatureCollection
             {
-                Type = "FeatureCollection",
-                features = collection,
+                Features = collection,
             });
         }
     }
