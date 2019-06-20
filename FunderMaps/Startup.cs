@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@ using FunderMaps.Authorization.Requirement;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Middleware;
+using FunderMaps.HealthChecks;
 
 namespace FunderMaps
 {
@@ -95,6 +97,8 @@ namespace FunderMaps
 
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+
+            services.AddHealthChecks().AddCheck<ApiHealthCheck>("api_health_check");
 
             // Register the Swagger generator, defining an OpenAPI document.
             services.AddSwaggerDocumentation();
@@ -238,6 +242,8 @@ namespace FunderMaps
                 }
             });
             app.UseSpaStaticFiles();
+
+            app.UseHealthChecks("/health");
 
             app.UseMvc(routes =>
             {
