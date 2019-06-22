@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,9 @@ using FunderMaps.ViewModels;
 
 namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// Process organization proposals.
+    /// </summary>
     [Authorize(Roles = Constants.AdministratorRole)]
     [Route("api/organization_proposal")]
     [ApiController]
@@ -28,6 +32,18 @@ namespace FunderMaps.Controllers.Api
         {
             _context = context;
             _keyNormalizer = keyNormalizer;
+        }
+
+        // GET: api/organization_proposal
+        /// <summary>
+        /// Get all organization proposals.
+        /// </summary>
+        [HttpGet()]
+        [ProducesResponseType(typeof(List<OrganizationProposal>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        public async Task<IActionResult> GetAllAsync(Guid token)
+        {
+            return Ok(await _context.OrganizationProposals.ToListAsync());
         }
 
         // GET: api/organization_proposal/{token}
