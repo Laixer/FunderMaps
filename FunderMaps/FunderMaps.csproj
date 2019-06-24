@@ -13,9 +13,9 @@
     <Copyright>Copyright ZanHos IT Consultancy &amp; Services</Copyright>
     <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
-    <AssemblyVersion>1.4.7.0</AssemblyVersion>
-    <FileVersion>1.4.7.0</FileVersion>
-    <Version>0.9.2</Version>
+    <AssemblyVersion>1.4.9.0</AssemblyVersion>
+    <FileVersion>1.4.9.0</FileVersion>
+    <Version>1.4.9.0</Version>
     <Company>FunderMaps B.V.</Company>
     <PackageProjectUrl>https://github.com/Zanhos/FunderMaps</PackageProjectUrl>
     <ApplicationInsightsResourceId>/subscriptions/a04530e8-9b1b-42e0-a7e9-500d068c4785/resourcegroups/fundermaps/providers/microsoft.insights/components/fundermaps</ApplicationInsightsResourceId>
