@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
@@ -20,18 +19,26 @@ namespace FunderMaps.Core.Entities.Fis
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(32)]
         public string NickName { get; set; }
 
+        [MaxLength(64)]
         public string FirstName { get; set; }
+        [MaxLength(32)]
         public string MiddleName { get; set; }
+        [MaxLength(96)]
         public string LastName { get; set; }
 
         [Required]
+        [EmailAddress]
+        [DataType(DataType.EmailAddress)]
+        [MaxLength(256)]
         public string Email { get; set; }
 
         [IgnoreDataMember]
         public int? _Organization { get; set; }
 
+        [MaxLength(16)]
         public string Phone { get; set; }
 
         public virtual Organization Organization { get; set; }

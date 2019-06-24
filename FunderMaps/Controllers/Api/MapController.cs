@@ -12,6 +12,9 @@ using Npgsql;
 
 namespace FunderMaps.Controllers.Api
 {
+    /// <summary>
+    /// Map data endpoint.
+    /// </summary>
     [Authorize]
     [Route("api/map")]
     [ApiController]

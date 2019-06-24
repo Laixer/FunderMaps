@@ -16,7 +16,9 @@ namespace FunderMaps.Core.Entities.Fis
         public FoundationQuality? FoundationQuality { get; set; }
         public Substructure? Substructure { get; set; }
 
+        [MaxLength(32)]
         public string MonitoringWell { get; set; }
+        [MaxLength(32)]
         public string Cpt { get; set; }
         public string Note { get; set; }
         public decimal? WoodLevel { get; set; }

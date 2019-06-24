@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Models
+﻿namespace FunderMaps.Models
 {
+    /// <summary>
+    /// Interface for soft deletable entities.
+    /// </summary>
     public interface ISoftDeletable
     {
     }

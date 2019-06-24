@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Security.Claims;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -51,25 +49,6 @@ namespace FunderMaps.Controllers.Api
             _logger = logger;
         }
 
-        public class PrincipalOutputModel
-        {
-            public Guid Id { get; set; }
-            public string Email { get; set; }
-            public IList<string> Roles { get; set; }
-            public IList<Claim> Claims { get; set; }
-        }
-
-        public sealed class UserOutputModel : PrincipalOutputModel
-        {
-            public bool? TwoFactorEnabled { get; set; }
-            public bool? EmailConfirmed { get; set; }
-            public bool? LockoutEnabled { get; set; }
-            public bool? PhoneNumberConfirmed { get; set; }
-            public int AccessFailedCount { get; set; }
-            public DateTimeOffset? LockoutEnd { get; set; }
-            public int? AttestationPrincipalId { get; set; }
-        }
-
         /// <summary>
         /// Map identity errors to error output model.
         /// </summary>
@@ -115,21 +94,6 @@ namespace FunderMaps.Controllers.Api
                 Roles = await _userManager.GetRolesAsync(user),
                 Claims = await _userManager.GetClaimsAsync(user),
             });
-        }
-
-        public sealed class AuthenticationOutputModel
-        {
-            public PrincipalOutputModel Principal { get; set; }
-
-            /// <summary>
-            /// Token as encoded string.
-            /// </summary>
-            public string Token { get; set; }
-
-            /// <summary>
-            /// Token validity in seconds.
-            /// </summary>
-            public int TokenValid { get; set; }
         }
 
         /// <summary>
@@ -242,26 +206,6 @@ namespace FunderMaps.Controllers.Api
             }
 
             return Unauthorized(102, "Principal is not allowed to login");
-        }
-
-        /// <summary>
-        /// Change password model.
-        /// </summary>
-        public sealed class ChangePasswordInputModel
-        {
-            /// <summary>
-            /// New password.
-            /// </summary>
-            [Required]
-            [DataType(DataType.Password)]
-            public string NewPassword { get; set; }
-
-            /// <summary>
-            /// Old (current) password.
-            /// </summary>
-            [Required]
-            [DataType(DataType.Password)]
-            public string OldPassword { get; set; }
         }
 
         // POST: api/authentication/change_password

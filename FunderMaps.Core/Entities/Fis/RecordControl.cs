@@ -2,6 +2,9 @@
 
 namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Record timestamps.
+    /// </summary>
     public abstract class RecordControl : BaseEntity 
     {
         public DateTime CreateDate { get; set; }

@@ -13,8 +13,15 @@ using FunderMaps.Models.Identity;
 
 namespace FunderMaps
 {
+    /// <summary>
+    /// Application entry.
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Application entry point.
+        /// </summary>
+        /// <param name="args">Commandline arguments.</param>
         public static async Task Main(string[] args)
         {
             var host = BuildWebHost(args);
@@ -24,6 +31,11 @@ namespace FunderMaps
             await host.RunAsync();
         }
 
+        /// <summary>
+        /// Build a webhost and run the application.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel(c => c.AddServerHeader = false)

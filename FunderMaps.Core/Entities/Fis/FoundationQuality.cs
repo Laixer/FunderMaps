@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities.Fis
+﻿namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Foundation quality.
+    /// </summary>
     public enum FoundationQuality
     {
         Bad,

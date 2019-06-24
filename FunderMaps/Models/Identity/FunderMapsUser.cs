@@ -4,12 +4,22 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Models.Identity
 {
+    /// <summary>
+    /// Application user.
+    /// </summary>
     public class FunderMapsUser : IdentityUser<Guid>
     {
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public FunderMapsUser()
         {
         }
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="email">User email.</param>
         public FunderMapsUser(string email)
         {
             Email = email;

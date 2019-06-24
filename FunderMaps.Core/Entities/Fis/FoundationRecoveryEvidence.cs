@@ -1,10 +1,12 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities.Fis
 {
     public class FoundationRecoveryEvidence : RecordControl
     {
+        [MaxLength(96)]
         public string Name { get; set; }
+        [MaxLength(256)]
         public string Document { get; set; }
         public string Note { get; set; }
         public FoundationRecoveryEvidenceType Type { get; set; }

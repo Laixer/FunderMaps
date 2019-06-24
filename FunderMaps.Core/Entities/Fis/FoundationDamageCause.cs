@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities.Fis
+﻿namespace FunderMaps.Core.Entities.Fis
 {
     public enum FoundationDamageCause
     {

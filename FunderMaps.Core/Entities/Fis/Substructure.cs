@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities.Fis
+﻿namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Substructure.
+    /// </summary>
     public enum Substructure
     {
         Cellar,

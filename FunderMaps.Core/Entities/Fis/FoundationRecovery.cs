@@ -7,6 +7,9 @@ namespace FunderMaps.Core.Entities.Fis
 {
     public class FoundationRecovery : RecordControl
     {
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public FoundationRecovery()
         {
             FoundationRecoveryEvidence = new HashSet<FoundationRecoveryEvidence>();

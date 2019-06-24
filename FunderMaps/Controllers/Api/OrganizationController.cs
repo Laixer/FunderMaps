@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +11,6 @@ using FunderMaps.Models;
 using FunderMaps.Models.Identity;
 using FunderMaps.Helpers;
 using FunderMaps.ViewModels;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Extensions;
 using FunderMaps.Data.Authorization;
 
@@ -112,14 +110,6 @@ namespace FunderMaps.Controllers.Api
             }
 
             return ResourceForbid();
-        }
-
-        public sealed class OrganizationUserInputOutputModel
-        {
-            [Required]
-            public FunderMapsUser User { get; set; }
-
-            public OrganizationRole Role { get; set; }
         }
 
         // GET: api/organization/{id}/user

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.ViewModels
+﻿namespace FunderMaps.ViewModels
 {
     /// <summary>
     /// Output model for entity statistics

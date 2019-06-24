@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-//using NpgsqlTypes;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Project entity.
+    /// </summary>
     public class Project : RecordControl
     {
         public Project()
@@ -12,11 +15,11 @@ namespace FunderMaps.Core.Entities.Fis
         }
 
         public int Id { get; set; }
+        [MaxLength(256)]
         public string Dossier { get; set; }
         public string Note { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        //public NpgsqlPolygon? Outline { get; set; }
         public int? Adviser { get; set; }
         public int? Lead { get; set; }
         public int? Creator { get; set; }

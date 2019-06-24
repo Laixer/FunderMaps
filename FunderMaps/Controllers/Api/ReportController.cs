@@ -292,38 +292,6 @@ namespace FunderMaps.Controllers.Api
             return ResourceForbid();
         }
 
-        /// <summary>
-        /// Report verification input model.
-        /// </summary>
-        public sealed class VerificationInputModel
-        {
-            /// <summary>
-            /// Posible verification results.
-            /// </summary>
-            public enum VerificationResult
-            {
-                /// <summary>
-                /// Report is in order and can be marked as verified.
-                /// </summary>
-                Verified,
-
-                /// <summary>
-                /// Report is rejected.
-                /// </summary>
-                Rejected,
-            }
-
-            /// <summary>
-            /// Verification result.
-            /// </summary>
-            public VerificationResult Result { get; set; }
-
-            /// <summary>
-            /// Rejection or approval reason.
-            /// </summary>
-            public string Message { get; set; }
-        }
-
         // PUT: api/report/{id}/{document}/validate
         /// <summary>
         /// Save the validation result to the report.

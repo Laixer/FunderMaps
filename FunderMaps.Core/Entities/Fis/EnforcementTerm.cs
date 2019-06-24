@@ -1,7 +1,8 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities.Fis
+﻿namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Enforcement term.
+    /// </summary>
     public enum EnforcementTerm
     {
         Term0_5,

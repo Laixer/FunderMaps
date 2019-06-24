@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FunderMaps.Middleware
 {
+    /// <summary>
+    /// Security policy structure.
+    /// </summary>
     public sealed class SecurityPolicy
     {
         /// <summary>

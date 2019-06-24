@@ -30,43 +30,12 @@ namespace FunderMaps.Controllers.Api
             _fisContext = fisContext;
         }
 
-        /// <summary>
-        /// User profile model.
-        /// </summary>
-        public sealed class UserInputOutputModel
-        {
-            /// <summary>
-            /// Gets or sets the given name for the user.
-            /// </summary>
-            public string GivenName { get; set; }
-
-            /// <summary>
-            /// Gets or sets the last name for the user.
-            /// </summary>
-            public string LastName { get; set; }
-
-            /// <summary>
-            /// Gets or sets a user avatar.
-            /// </summary>
-            public string Avatar { get; set; }
-
-            /// <summary>
-            /// Gets or sets the job title for the user.
-            /// </summary>
-            public string JobTitle { get; set; }
-
-            /// <summary>
-            /// Gets or sets the phone number for the user.
-            /// </summary>
-            public string PhoneNumber { get; set; }
-        }
-
         // GET: api/user
         /// <summary>
         /// Get the profile of the current authenticated user.
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(UserInputOutputModel), 200)]
+        [ProducesResponseType(typeof(ProfileInputOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> GetAsync()
         {
@@ -76,7 +45,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            return Ok(new UserInputOutputModel
+            return Ok(new ProfileInputOutputModel
             {
                 GivenName = user.GivenName,
                 LastName = user.LastName,
@@ -93,7 +62,7 @@ namespace FunderMaps.Controllers.Api
         [HttpPut]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        public async Task<IActionResult> PutAsync([FromBody] UserInputOutputModel input)
+        public async Task<IActionResult> PutAsync([FromBody] ProfileInputOutputModel input)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)

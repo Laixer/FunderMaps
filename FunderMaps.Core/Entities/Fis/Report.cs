@@ -6,6 +6,9 @@ using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Report entity.
+    /// </summary>
     public class Report : AccessControl, ISoftDeletable
     {
         public Report()
@@ -16,6 +19,7 @@ namespace FunderMaps.Core.Entities.Fis
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(64)]
         public string DocumentId { get; set; }
 
         public bool Inspection { get; set; }
@@ -31,6 +35,7 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         public DateTime DocumentDate { get; set; }
 
+        [MaxLength(256)]
         public string DocumentName { get; set; }
 
         [IgnoreDataMember]

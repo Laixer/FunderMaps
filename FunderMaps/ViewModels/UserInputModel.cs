@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.ViewModels
 {
     /// <summary>
-    /// User input model used for creation, authentication.
+    /// User input model.
     /// </summary>
     public sealed class UserInputModel
     {
@@ -14,6 +13,7 @@ namespace FunderMaps.ViewModels
         [Required]
         [EmailAddress]
         [DataType(DataType.EmailAddress)]
+        [MaxLength(256)]
         public string Email { get; set; }
 
         /// <summary>
@@ -26,6 +26,7 @@ namespace FunderMaps.ViewModels
         /// <summary>
         /// Optional user role.
         /// </summary>
+        [MaxLength(256)]
         public string Role { get; set; }
     }
 }
