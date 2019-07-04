@@ -26,7 +26,9 @@ namespace FunderMaps
         {
             var host = BuildWebHost(args);
 
+#if _SEED_
             DatabaseInitialization(host);
+#endif
 
             await host.RunAsync();
         }
@@ -42,7 +44,7 @@ namespace FunderMaps
                 .UseApplicationInsights()
                 .UseStartup<Startup>()
                 .Build();
-
+#if _SEED_
         /// <summary>
         /// Initialize the database by running the migrations and seeding the database.
         /// </summary>
@@ -76,5 +78,6 @@ namespace FunderMaps
                 }
             }
         }
+#endif
     }
 }

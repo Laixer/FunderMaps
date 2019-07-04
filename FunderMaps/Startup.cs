@@ -131,12 +131,7 @@ namespace FunderMaps
             // Application database
             services.AddDbContextPool<FunderMapsDbContext>(options =>
             {
-                options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"), pgOptions =>
-                {
-                    pgOptions.MigrationsHistoryTable("migrations_history", "meta");
-                    pgOptions.EnableRetryOnFailure();
-                    pgOptions.UseNetTopologySuite();
-                });
+                options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"));
             })
             .AddEntityFrameworkNpgsql();
 
@@ -155,13 +150,8 @@ namespace FunderMaps
         {
             services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>
             {
-                // Password settings.
                 options.Password = Constants.PasswordPolicy;
-
-                // Lockout settings.
                 options.Lockout = Constants.LockoutOptions;
-
-                // User settings.
                 options.User.RequireUniqueEmail = true;
             })
             .AddEntityFrameworkStores<FunderMapsDbContext>()

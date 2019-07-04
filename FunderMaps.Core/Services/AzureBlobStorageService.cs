@@ -4,7 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using FunderMaps.Core.Helpers;
-
 using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Core.Services
