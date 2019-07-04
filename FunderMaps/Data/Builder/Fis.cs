@@ -350,20 +350,19 @@ namespace FunderMaps.Data.Builder
 
                 entity.Property(e => e.FirstName)
                     .HasColumnName("first_name")
-                    .HasMaxLength(64);
+                    .HasMaxLength(256);
 
                 entity.Property(e => e.LastName)
                     .HasColumnName("last_name")
-                    .HasMaxLength(96);
+                    .HasMaxLength(256);
 
                 entity.Property(e => e.MiddleName)
                     .HasColumnName("middle_name")
-                    .HasMaxLength(32);
+                    .HasMaxLength(256);
 
                 entity.Property(e => e.NickName)
-                    .IsRequired()
                     .HasColumnName("nick_name")
-                    .HasMaxLength(32);
+                    .HasMaxLength(256);
 
                 entity.Property(e => e._Organization).HasColumnName("organization");
 

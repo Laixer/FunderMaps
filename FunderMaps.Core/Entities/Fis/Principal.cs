@@ -18,15 +18,14 @@ namespace FunderMaps.Core.Entities.Fis
 
         public int Id { get; set; }
 
-        [Required]
-        [MaxLength(32)]
+        [MaxLength(256)]
         public string NickName { get; set; }
 
-        [MaxLength(64)]
+        [MaxLength(256)]
         public string FirstName { get; set; }
-        [MaxLength(32)]
+        [MaxLength(256)]
         public string MiddleName { get; set; }
-        [MaxLength(96)]
+        [MaxLength(256)]
         public string LastName { get; set; }
 
         [Required]
