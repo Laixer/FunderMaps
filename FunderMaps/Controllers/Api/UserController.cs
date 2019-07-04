@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 using FunderMaps.Data;
+using FunderMaps.Event;
+using FunderMaps.Middleware;
+using FunderMaps.Core.Event;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -16,18 +19,18 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class UserController : BaseApiController
     {
-        private readonly FisDbContext _fisContext;
         private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly IEventService _eventService;
 
         /// <summary>
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
         /// <param name="fisContext">See <see cref="FisDbContext"/>.</param>
-        public UserController(UserManager<FunderMapsUser> userManager, FisDbContext fisContext)
+        public UserController(UserManager<FunderMapsUser> userManager, FisDbContext fisContext, IEventService eventService, System.IServiceProvider sp)
         {
             _userManager = userManager;
-            _fisContext = fisContext;
+            _eventService = eventService;
         }
 
         // GET: api/user
@@ -70,12 +73,6 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            var principal = await _fisContext.Principal.FindAsync(user.AttestationPrincipalId);
-            if (principal == null)
-            {
-                return ResourceNotFound();
-            }
-
             user.GivenName = input.GivenName;
             user.LastName = input.LastName;
             user.Avatar = input.Avatar;
@@ -84,22 +81,10 @@ namespace FunderMaps.Controllers.Api
 
             await _userManager.UpdateAsync(user);
 
-            if (!string.IsNullOrEmpty(user.GivenName))
+            await _eventService.FireEventAsync(new UpdateUserProfileEvent
             {
-                principal.NickName = user.GivenName.Replace(" ", "").ToLower();
-                principal.FirstName = user.GivenName;
-            }
-            if (!string.IsNullOrEmpty(user.LastName))
-            {
-                principal.LastName = user.LastName;
-            }
-            if (!string.IsNullOrEmpty(user.PhoneNumber))
-            {
-                principal.Phone = user.PhoneNumber;
-            }
-
-            _fisContext.Principal.Update(principal);
-            await _fisContext.SaveChangesAsync();
+                User = user
+            });
 
             return NoContent();
         }

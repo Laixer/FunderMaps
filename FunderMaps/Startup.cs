@@ -101,6 +101,9 @@ namespace FunderMaps
             // Register the Swagger generator, defining an OpenAPI document.
             services.AddSwaggerDocumentation();
 
+            services.AddEventService()
+                .AddTransient<Core.Event.IEventTriggerHandler<Event.IUpdateUserProfileEvent>, Event.Handlers.UpdateUserProfileHandler>();
+
             // Configure local repositories
             ConfigureRepository(services);
 
