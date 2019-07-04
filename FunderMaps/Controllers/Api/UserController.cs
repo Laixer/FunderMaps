@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
-using FunderMaps.Data;
 using FunderMaps.Event;
 using FunderMaps.Middleware;
-using FunderMaps.Core.Event;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -26,8 +24,7 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
-        /// <param name="fisContext">See <see cref="FisDbContext"/>.</param>
-        public UserController(UserManager<FunderMapsUser> userManager, FisDbContext fisContext, IEventService eventService, System.IServiceProvider sp)
+        public UserController(UserManager<FunderMapsUser> userManager, IEventService eventService)
         {
             _userManager = userManager;
             _eventService = eventService;
@@ -81,6 +78,7 @@ namespace FunderMaps.Controllers.Api
 
             await _userManager.UpdateAsync(user);
 
+            // Fire event for updated user profile
             await _eventService.FireEventAsync(new UpdateUserProfileEvent
             {
                 User = user

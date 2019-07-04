@@ -96,7 +96,9 @@ namespace FunderMaps
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
-            services.AddHealthChecks().AddCheck<ApiHealthCheck>("api_health_check");
+            services.AddHealthChecks()
+                .AddCheck<ApiHealthCheck>("api_health_check")
+                .AddCheck<DatabaseHealthCheck>("db_health_check");
 
             // Register the Swagger generator, defining an OpenAPI document.
             services.AddSwaggerDocumentation();
