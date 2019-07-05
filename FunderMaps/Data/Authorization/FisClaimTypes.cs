@@ -1,11 +1,23 @@
-﻿using System;
-
-namespace FunderMaps.Data.Authorization
+﻿namespace FunderMaps.Data.Authorization
 {
+    /// <summary>
+    /// FIS attestation claims.
+    /// </summary>
     public static class FisClaimTypes
     {
-        public static readonly string UserAttestationIdentifier = "fis_user_id";
-        public static readonly string OrganizationUserRole = "fis_org_role";
-        public static readonly string OrganizationAttestationIdentifier = "fis_org_id";
+        /// <summary>
+        /// FIS user identifier.
+        /// </summary>
+        public static readonly string UserAttestationIdentifier = "http://fundermaps.com/2019/identity/claims/fisuseridentifier";
+        
+        /// <summary>
+        /// FIS role.
+        /// </summary>
+        public static readonly string OrganizationUserRole = "http://fundermaps.com/2019/identity/claims/fisuserrole";
+        
+        /// <summary>
+        /// FIS organization identifier.
+        /// </summary>
+        public static readonly string OrganizationAttestationIdentifier = "http://fundermaps.com/2019/identity/claims/fisorgidentifier";
     }
 }
