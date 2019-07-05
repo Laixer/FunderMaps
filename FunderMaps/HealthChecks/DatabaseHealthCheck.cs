@@ -17,7 +17,7 @@ namespace FunderMaps.HealthChecks
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        /// <param name="configuration">Application context.</param>
+        /// <param name="configuration">Application configuration.</param>
         public DatabaseHealthCheck(IConfiguration configuration)
         {
             _configuration = configuration;

@@ -8,8 +8,16 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace FunderMaps.Extensions
 {
+    /// <summary>
+    /// Swagger service extensions.
+    /// </summary>
     public static class SwaggerServiceExtensions
     {
+        /// <summary>
+        /// Add API documentation options for swagger.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        /// <returns>See <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
@@ -42,6 +50,11 @@ namespace FunderMaps.Extensions
             return services;
         }
 
+        /// <summary>
+        /// Use the API documentation for swagger UI.
+        /// </summary>
+        /// <param name="app">See <see cref="IApplicationBuilder"/>.</param>
+        /// <returns>See <see cref="IApplicationBuilder"/>.</returns>
         public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
         {
             app.UseSwagger();

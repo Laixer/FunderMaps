@@ -2,6 +2,9 @@
 
 namespace FunderMaps.Extensions
 {
+    /// <summary>
+    /// Extensions to the migration builder.
+    /// </summary>
     public static class MigrationBuilderExtensions
     {
         /// <summary>
