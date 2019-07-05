@@ -1,0 +1,45 @@
+
+/**
+ * The Toggle
+ */
+.custom-switch {
+  padding-left: 0 !important;
+}
+.custom-control-label {
+  padding-top: calc( (1.25rem - 14px) / 2);
+  width: 100%;
+  font-size: 14px;
+  user-select: none;
+}
+.custom-switch .custom-control-label::after {
+  left: auto !important;
+  right: calc(0.75rem + 2px) !important;
+}
+.custom-switch .custom-control-label::before {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/**
+ * The Modal
+ */
+.modal-header {
+  border-bottom: none !important;
+  padding-left: 2rem;
+}
+.modal-title {
+  font-weight: 600 !important;
+}
+.modal-body {
+  padding: 1rem 2rem;
+}
+.modal-footer {
+  border-top: 1px solid #CED0DA;
+  background: #F0F3F8;
+}
+.modal-backdrop {
+  background-color: #354052 !important;
+}
+.modal-backdrop.show {
+  opacity: 0.8 !important;
+}

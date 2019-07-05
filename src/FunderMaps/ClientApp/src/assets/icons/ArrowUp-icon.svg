@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="7px" height="4px" viewBox="0 0 7 4" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Dropdown</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.900000036">
+        <g id="Rapport-detail-uitgeklapt" transform="translate(-1123.000000, -714.000000)" fill="#292B2C">
+            <g id="Adres-uitgeklapt" transform="translate(280.000000, 685.000000)">
+                <g id="dropdown-arrow" transform="translate(842.000000, 28.000000)">
+                    <path d="M3.00121852,6.00040617 L6.50230122,6.00040617 C6.77717266,6.00040617 7,6.23215136 7,6.5 C7,6.77591805 6.78515625,6.99959383 6.50230122,6.99959383 L2.52142551,6.99959383 C2.51484929,6.99986375 2.50824803,7 2.5016247,7 C2.27152299,7 2.07775431,6.85058226 2.01974806,6.63690788 C2.00689237,6.59309818 2,6.54710746 2,6.5 C2,6.48441122 2.00068578,6.4689892 2.00203087,6.45376485 L2.00203087,2.49769878 C2.00203087,2.22282734 2.23377605,2 2.5016247,2 C2.77754275,2 3.00121852,2.21484375 3.00121852,2.49769878 L3.00121852,6.00040617 Z" id="Dropdown" transform="translate(4.500000, 4.500000) scale(1, -1) rotate(-45.000000) translate(-4.500000, -4.500000) "></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

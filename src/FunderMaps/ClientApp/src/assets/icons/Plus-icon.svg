@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="10px" viewBox="0 0 10 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Plus Icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Upload-C" transform="translate(-1114.000000, -345.000000)" fill="#7F8FA4">
+            <g id="Stap-3" transform="translate(520.000000, 300.000000)">
+                <g id="Adres-toevoegen-btn" transform="translate(577.000000, 30.000000)">
+                    <path d="M23,19 L27,19 L27,21 L23,21 L23,25 L21,25 L21,21 L17,21 L17,19 L21,19 L21,15 L23,15 L23,19 Z" id="Plus-Icon"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Check Icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Upload-D" transform="translate(-560.000000, -645.000000)" fill="#28CC8B">
+            <g id="Document-info" transform="translate(518.000000, 410.000000)">
+                <g id="Selected" transform="translate(42.000000, 230.000000)">
+                    <path d="M11.802,11.618 L7.693,15.798 C7.557,15.936 7.372,15.991 7.178,15.995 C7.16,15.998 7.142,16 7.124,16.001 C7.091,16 7.06,15.996 7.026,15.991 C6.841,15.981 6.664,15.927 6.533,15.794 L6.424,15.684 C6.422,15.681 6.419,15.68 6.416,15.678 C6.414,15.675 6.413,15.672 6.411,15.67 L4.208,13.437 C3.888,13.112 3.94,12.531 4.325,12.141 C4.71,11.75 5.282,11.697 5.603,12.023 L7.114,13.554 L10.407,10.204 C10.727,9.879 11.299,9.933 11.684,10.323 C12.069,10.714 12.122,11.293 11.802,11.618 M8,5 C3.582,5 0,8.582 0,13 C0,17.419 3.582,21 8,21 C12.418,21 16,17.419 16,13 C16,8.582 12.418,5 8,5" id="Check-Icon"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

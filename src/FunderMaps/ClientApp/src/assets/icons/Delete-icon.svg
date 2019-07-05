@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Delete Icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Upload-C" transform="translate(-1216.000000, -432.000000)" fill="#CED0DA">
+            <g id="Adres-uitgeklapt" transform="translate(520.000000, 410.000000)">
+                <path d="M705,34 L707,34 L707,29 L705,29 L705,34 Z M701,34 L703,34 L703,29 L701,29 L701,34 Z M699,36 L709,36 L709,27 L699,27 L699,36 Z M703,25 L705,25 L705,24 L703,24 L703,25 Z M711,27 L711,37 C711,37.552 710.552,38 710,38 L698,38 C697.448,38 697,37.552 697,37 L697,27 L696,27 L696,26 C696,25.448 696.448,25 697,25 L698,25 L699,25 L701,25 L701,23 C701,22.448 701.448,22 702,22 L706,22 C706.552,22 707,22.448 707,23 L707,25 L709,25 L710,25 L711,25 C711.552,25 712,25.448 712,26 L712,27 L711,27 Z" id="Delete-Icon"></path>
+            </g>
+        </g>
+    </g>
+</svg>

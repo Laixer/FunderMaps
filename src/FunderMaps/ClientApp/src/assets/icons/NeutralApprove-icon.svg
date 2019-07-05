@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Check Icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rapport-detail" transform="translate(-350.000000, -86.000000)">
+            <g id="Status-Bar" transform="translate(251.000000, 71.000000)">
+                <g id="Goedkeuren" transform="translate(99.000000, 15.000000)">
+                    <g id="Check-Icon">
+                        <rect id="Base" fill="#E8EAF1" x="0" y="0" width="30" height="30" rx="15"></rect>
+                        <path d="M13.122382,16.5370634 L17.3667589,12.2926865 C17.7563243,11.9031211 18.3859893,11.9011758 18.7792362,12.2944227 C19.1697605,12.684947 19.1707532,13.3171193 18.7809724,13.7069001 L13.8277526,18.66012 C13.6329921,18.8548804 13.3782205,18.952758 13.122982,18.9528065 C12.8671491,18.9524353 12.6117278,18.8548363 12.4154113,18.6585199 L10.2938187,16.5369273 C9.90336961,16.1464782 9.9007079,15.5160968 10.2939549,15.1228499 C10.6844791,14.7323256 11.3148167,14.7294981 11.7080323,15.1227137 L13.122382,16.5370634 Z" id="Check" fill="#7F8FA4"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

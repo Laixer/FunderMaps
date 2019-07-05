@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Laixer</Authors>
+    <Company>Laixer B.V.</Company>
+    <Copyright>Copyright Laixer 2019</Copyright>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/Zanhos/FunderMaps</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>ASP, ASP.NET Core, Event Bus, Eveting, Trigger</PackageTags>
+  </PropertyGroup>
+
+</Project>

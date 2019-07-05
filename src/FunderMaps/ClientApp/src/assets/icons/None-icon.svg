@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>None Icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Upload-D" transform="translate(-940.000000, -673.000000)" fill="#354052">
+            <g id="Document-info" transform="translate(518.000000, 410.000000)">
+                <g id="Selected" transform="translate(42.000000, 230.000000)">
+                    <path d="M384,40.0393066 L392,40.0393066 C392.552285,40.0393066 393,40.4870219 393,41.0393066 C393,41.5915914 392.552285,42.0393066 392,42.0393066 L384,42.0393066 C383.447715,42.0393066 383,41.5915914 383,41.0393066 C383,40.4870219 383.447715,40.0393066 384,40.0393066 Z M388,33 C383.582,33 380,36.582 380,41 C380,45.419 383.582,49 388,49 C392.418,49 396,45.419 396,41 C396,36.582 392.418,33 388,33" id="None-Icon"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

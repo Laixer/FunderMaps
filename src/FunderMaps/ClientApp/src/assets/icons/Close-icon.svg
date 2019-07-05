@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="10px" viewBox="0 0 10 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Close Button</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rapport-Fout" transform="translate(-1465.000000, -96.000000)" fill="#FFFFFF">
+            <g id="Status-Bar" transform="translate(251.000000, 71.000000)">
+                <g id="Buttons" transform="translate(1118.000000, 12.000000)">
+                    <g id="Sluiten" transform="translate(86.000000, 0.000000)">
+                        <path d="M14.0673828,17 L14.0673828,12 L16.0673828,12 L16.0673828,17 L21.0673828,17 L21.0673828,19 L16.0673828,19 L16.0673828,24 L14.0673828,24 L14.0673828,19 L9.06738281,19 L9.06738281,17 L14.0673828,17 Z" id="Close-Button" transform="translate(15.067383, 18.000000) rotate(-315.000000) translate(-15.067383, -18.000000) "></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

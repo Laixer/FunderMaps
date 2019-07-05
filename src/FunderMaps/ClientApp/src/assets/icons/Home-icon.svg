@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Home-icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Alle-rapporten" transform="translate(-30.000000, -138.000000)" fill="#7F8FA4">
+            <g id="Screen-Structure">
+                <g id="Left-Navigation-White" transform="translate(0.000000, 70.000000)">
+                    <g id="Menu" transform="translate(0.000000, 15.000000)">
+                        <g id="Menu-Items">
+                            <path d="M38,53.0635 L44,58.0365 C43.856,58.0365 44,58.3265 44,59.0365 L44,65.9995 C44,66.5517848 43.5522847,66.9995 43,66.9995 L40,66.9995 C39.4986547,66.8924918 39.1070083,66.5008453 39,65.9995 L39,63.0155 C39.16,62.0435 38.706,61.5955 38,62.0205 L36,62.0205 C35.276,61.5955 34.822,62.0435 35,63.0155 L35,65.9995 C34.8818951,66.4947285 34.4952285,66.8813952 34,66.9995 L31,66.9995 C30.4477153,66.9995 30,66.5517848 30,65.9995 L30,59.0365 C30,58.3315 30.144,58.0365 30,58.0365 L36,53.0635 C36.6640207,52.9794999 37.3359793,52.9794999 38,53.0635" id="Home-icon"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

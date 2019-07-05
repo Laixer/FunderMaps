@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="15px" viewBox="0 0 16 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Alarm-icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Alle-rapporten" transform="translate(-30.000000, -319.000000)">
+            <g id="Screen-Structure">
+                <g id="Left-Navigation-White" transform="translate(0.000000, 70.000000)">
+                    <g id="Menu" transform="translate(0.000000, 15.000000)">
+                        <g id="Menu-Items">
+                            <g id="Alarm-icon" transform="translate(30.500000, 234.000000)">
+                                <g id="Filled_Icons_1_" fill="#7F8FA4" fill-rule="nonzero">
+                                    <g id="Filled_Icons">
+                                        <g id="Group">
+                                            <path d="M14.6875,11.25 C13.82625,11.25 13.125,10.549375 13.125,9.6875 L13.125,6.875 C13.125,4.599375 11.725,2.530625 9.623125,1.671875 C9.38875,0.6925 8.523125,0 7.5,0 C6.4925,0 5.61,0.706875 5.375,1.671875 C3.274375,2.530625 1.875,4.59875 1.875,6.875 L1.875,9.6875 C1.875,10.549375 1.17375,11.25 0.3125,11.25 C0.14,11.25 0,11.39 0,11.5625 C0,11.735 0.14,11.875 0.3125,11.875 L14.6875,11.875 C14.86,11.875 15,11.735 15,11.5625 C15,11.39 14.86,11.25 14.6875,11.25 Z" id="Path"></path>
+                                            <path d="M9.375,12.5 L5.625,12.5 C5.4525,12.5 5.3125,12.64 5.3125,12.8125 C5.3125,14.01875 6.29375,15 7.5,15 C8.70625,15 9.6875,14.01875 9.6875,12.8125 C9.6875,12.64 9.5475,12.5 9.375,12.5 Z" id="Path"></path>
+                                        </g>
+                                    </g>
+                                </g>
+                                <g id="Invisible_Shape">
+                                    <rect id="Rectangle" x="0" y="0" width="15" height="15"></rect>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

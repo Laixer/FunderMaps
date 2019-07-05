@@ -1,0 +1,71 @@
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson Italic'), local('Gibson-Italic'),
+      url('~@/assets/fonts/Gibson-Italic.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-Italic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson SemiBold'), local('Gibson-SemiBold'),
+      url('~@/assets/fonts/Gibson-SemiBold.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson Light Italic'), local('Gibson-LightItalic'),
+      url('~@/assets/fonts/Gibson-LightItalic.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-LightItalic.woff') format('woff');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson Bold'), local('Gibson-Bold'),
+      url('~@/assets/fonts/Gibson-Bold.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson'),
+      url('~@/assets/fonts/Gibson.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson Light'), local('Gibson-Light'),
+      url('~@/assets/fonts/Gibson-Light.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson SemiBold Italic'), local('Gibson-SemiBoldItalic'),
+      url('~@/assets/fonts/Gibson-SemiBoldItalic.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-SemiBoldItalic.woff') format('woff');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gibson';
+  src: local('Gibson Bold Italic'), local('Gibson-BoldItalic'),
+      url('~@/assets/fonts/Gibson-BoldItalic.woff2') format('woff2'),
+      url('~@/assets/fonts/Gibson-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+}

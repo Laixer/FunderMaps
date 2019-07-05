@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="17px" viewBox="0 0 14 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>Report-icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="FunderMaps" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Dashboard" transform="translate(-30.000000, -195.000000)">
+            <g id="Screen-Structure">
+                <g id="Left-Navigation-White" transform="translate(0.000000, 70.000000)">
+                    <g id="Menu" transform="translate(0.000000, 15.000000)">
+                        <g id="Menu-Items">
+                            <g id="Report-icon" transform="translate(28.500000, 110.000000)">
+                                <g id="Filled_Icons" transform="translate(2.125000, 0.000000)" fill="#7F8FA4" fill-rule="nonzero">
+                                    <g id="Group">
+                                        <path d="M1.77083333,15.5833333 C1.57533333,15.5833333 1.41666667,15.4246667 1.41666667,15.2291667 L1.41666667,2.125 L0.354166667,2.125 C0.158666667,2.125 0,2.28366667 0,2.47916667 L0,16.6458333 C0,16.8413333 0.158666667,17 0.354166667,17 L10.2708333,17 C10.4663333,17 10.625,16.8413333 10.625,16.6458333 L10.625,15.5833333 L1.77083333,15.5833333 Z" id="Path"></path>
+                                        <path d="M12.75,4.60416667 C12.75,4.50995833 12.7124583,4.42 12.6465833,4.354125 L8.39658333,0.104125 C8.33,0.0375416667 8.23933333,0 8.14583333,0 L2.47916667,0 C2.28366667,0 2.125,0.158666667 2.125,0.354166667 L2.125,14.5208333 C2.125,14.7163333 2.28366667,14.875 2.47916667,14.875 L12.3958333,14.875 C12.5913333,14.875 12.75,14.7163333 12.75,14.5208333 L12.75,4.60416667 Z M7.79166667,4.95833333 L7.79166667,0.708333333 L12.0416667,4.95833333 L7.79166667,4.95833333 Z" id="Shape"></path>
+                                    </g>
+                                </g>
+                                <g id="Invisible_Shape">
+                                    <rect id="Rectangle" x="0" y="0" width="17" height="17"></rect>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

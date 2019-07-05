@@ -1,0 +1,12 @@
+
+/**
+* The Bootstrap file
+*/
+@import './config.scss';
+
+// The Bootstrap Framework + Vue plugin
+@import 'bootstrap/scss/bootstrap.scss';
+@import 'bootstrap-vue/src/index.scss';
+
+// Override Bootstrap to fit the design
+@import './override.scss'
