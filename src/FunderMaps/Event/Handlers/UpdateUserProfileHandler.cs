@@ -1,15 +1,17 @@
 ﻿using System.Threading.Tasks;
-using FunderMaps.Core.Event;
 using Microsoft.Extensions.Configuration;
 using Dapper;
 using Npgsql;
+using Laixer.EventBus;
+using Laixer.EventBus.Handler;
+using System.Threading;
 
 namespace FunderMaps.Event.Handlers
 {
     /// <summary>
     /// Handle user profile updates.
     /// </summary>
-    internal class UpdateUserProfileHandler : IEventTriggerHandler<IUpdateUserProfileEvent>
+    internal class UpdateUserProfileHandler : IEventHandler<IUpdateUserProfileEvent>
     {
         private readonly IConfiguration _configuration;
 
@@ -25,11 +27,11 @@ namespace FunderMaps.Event.Handlers
         /// <summary>
         /// Handle the event.
         /// </summary>
-        /// <param name="triggerEvent">Trigger event paramenters.</param>
-        /// <returns></returns>
-        public async Task HandleEventAsync(IUpdateUserProfileEvent triggerEvent)
+        /// <param name="context">Trigger event context.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task HandleEventAsync(EventHandlerContext<IUpdateUserProfileEvent> context, CancellationToken cancellationToken = default)
         {
-            var user = triggerEvent.User;
+            var user = context.Event.User;
 
             using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("FISConnection")))
             {

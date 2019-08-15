@@ -1,9 +1,9 @@
-﻿using FunderMaps.Core.Event;
-using FunderMaps.Models.Identity;
+﻿using FunderMaps.Models.Identity;
+using Laixer.EventBus;
 
 namespace FunderMaps.Event
 {
-    internal interface IUpdateUserProfileEvent : ITriggerEvent
+    internal interface IUpdateUserProfileEvent : IEvent
     {
         FunderMapsUser User { get; set; }
     }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 using FunderMaps.Event;
-using FunderMaps.Middleware;
+using Laixer.EventBus;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -18,16 +18,16 @@ namespace FunderMaps.Controllers.Api
     public class UserController : BaseApiController
     {
         private readonly UserManager<FunderMapsUser> _userManager;
-        private readonly IEventService _eventService;
+        private readonly EventBusService _eventBus;
 
         /// <summary>
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
-        public UserController(UserManager<FunderMapsUser> userManager, IEventService eventService)
+        public UserController(UserManager<FunderMapsUser> userManager, EventBusService eventBus)
         {
             _userManager = userManager;
-            _eventService = eventService;
+            _eventBus = eventBus;
         }
 
         // GET: api/user
@@ -79,7 +79,7 @@ namespace FunderMaps.Controllers.Api
             await _userManager.UpdateAsync(user);
 
             // Fire event for updated user profile
-            await _eventService.FireEventAsync(new UpdateUserProfileEvent
+            await _eventBus.FireEventAsync(new UpdateUserProfileEvent
             {
                 User = user
             });

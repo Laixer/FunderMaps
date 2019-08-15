@@ -4,7 +4,7 @@ using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Event
 {
-    public class UpdateUserProfileEvent : IUpdateUserProfileEvent
+    internal class UpdateUserProfileEvent : IUpdateUserProfileEvent
     {
         /// <summary>
         /// User account.
