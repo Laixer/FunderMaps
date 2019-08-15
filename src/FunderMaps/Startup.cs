@@ -24,6 +24,8 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Middleware;
 using FunderMaps.HealthChecks;
+using FunderMaps.Event;
+using FunderMaps.Event.Handlers;
 
 namespace FunderMaps
 {
@@ -103,8 +105,8 @@ namespace FunderMaps
             // Register the Swagger generator, defining an OpenAPI document.
             services.AddSwaggerDocumentation();
 
-            services.AddEventService()
-                .AddTransient<Core.Event.IEventTriggerHandler<Event.IUpdateUserProfileEvent>, Event.Handlers.UpdateUserProfileHandler>();
+            services.AddEventBus()
+                .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>(nameof(UpdateUserProfileHandler));
 
             // Configure local repositories
             ConfigureRepository(services);
