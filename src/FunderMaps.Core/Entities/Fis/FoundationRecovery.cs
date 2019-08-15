@@ -24,7 +24,7 @@ namespace FunderMaps.Core.Entities.Fis
         public FoundationRecoveryType Type { get; set; }
 
         [Required]
-        public short? Year { get; set; }
+        public short Year { get; set; }
 
         [Required]
         public Guid Address { get; set; }
