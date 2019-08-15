@@ -1,6 +1,7 @@
 ﻿namespace Laixer.EventBus
 {
-    public interface IEvent
-    {
-    }
+    /// <summary>
+    /// Event interface.
+    /// </summary>
+    public interface IEvent { }
 }

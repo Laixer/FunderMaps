@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using Laixer.EventBus;
+using Laixer.EventBus.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -21,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IEventBusBuilder AddEventBus(this IServiceCollection services)
         {
             services.TryAddSingleton<EventBusService, DefaultEventBusService>();
-            //services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EventBusPublisherHostedService>());
+
             return new EventBusBuilder(services);
         }
     }

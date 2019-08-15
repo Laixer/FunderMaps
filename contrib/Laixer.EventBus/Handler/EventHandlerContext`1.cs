@@ -1,4 +1,4 @@
-﻿namespace Laixer.EventBus
+﻿namespace Laixer.EventBus.Handler
 {
     public sealed class EventHandlerContext<TEvent> : EventHandlerContext
         where TEvent : IEvent

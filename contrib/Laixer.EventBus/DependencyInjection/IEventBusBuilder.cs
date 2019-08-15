@@ -1,4 +1,4 @@
-﻿using Laixer.EventBus;
+﻿using Laixer.EventBus.Internal;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

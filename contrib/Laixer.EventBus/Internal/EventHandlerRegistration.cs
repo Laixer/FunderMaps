@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Laixer.EventBus
+namespace Laixer.EventBus.Internal
 {
     /// <summary>
     /// Represent the registration information associated with an <see cref="IEventHandler{TEvent}"/> implementation.
@@ -31,7 +29,14 @@ namespace Laixer.EventBus
             set => _name = value ?? throw new ArgumentNullException(nameof(value));
         }
 
+        /// <summary>
+        /// Event interface.
+        /// </summary>
         public Type EventInterfaceType { get; set; }
+        
+        /// <summary>
+        /// Event handler implementation type
+        /// </summary>
         public Type ImplementationType { get; set; }
 
         public EventHandlerRegistration() { }

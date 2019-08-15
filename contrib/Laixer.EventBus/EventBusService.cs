@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Laixer.EventBus.Internal;
 
 namespace Laixer.EventBus
 {
@@ -41,6 +40,7 @@ namespace Laixer.EventBus
         /// <param name="predicate">
         /// A predicate that can be used to include health checks based on user-defined criteria.
         /// </param>
+        /// <param name="event">Event to fire.</param>
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> which can be used to cancel the health checks.</param>
         public abstract Task FireEventAsync(
             Func<EventHandlerRegistration, bool> predicate,

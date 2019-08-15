@@ -7,9 +7,13 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Laixer.EventBus.Handler;
 
-namespace Laixer.EventBus
+namespace Laixer.EventBus.Internal
 {
+    /// <summary>
+    /// Default implementation of the event bus service.
+    /// </summary>
     internal sealed class DefaultEventBusService : EventBusService
     {
         private readonly IServiceScopeFactory _scopeFactory;
@@ -37,9 +41,23 @@ namespace Laixer.EventBus
             .GetInterfaces()
             .Where(type => type != typeof(TInterface) && typeof(TInterface).IsAssignableFrom(type));
 
+        /// <summary>
+        /// Checks if the parameter of the given method contains the generic type.
+        /// </summary>
+        /// <param name="methodInfo">Method to test.</param>
+        /// <param name="type">Type to search for.</param>
+        /// <returns>True if found, false otherwise.</returns>
         private static bool ContainsEventHandlerContextGenericType(MethodInfo methodInfo, Type type) => methodInfo.GetParameters()
             .Any(s => s.ParameterType.GenericTypeArguments.Any(t => t == type));
 
+        /// <summary>
+        /// Runs the provided health checks and returns the aggregated status
+        /// </summary>
+        /// <param name="predicate">
+        /// A predicate that can be used to include health checks based on user-defined criteria.
+        /// </param>
+        /// <param name="event">Event to fire.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/> which can be used to cancel the health checks.</param>
         public override async Task FireEventAsync(Func<EventHandlerRegistration, bool> predicate, IEvent @event, CancellationToken cancellationToken = default)
         {
             var registrations = _options.Value.Registrations;
@@ -78,7 +96,8 @@ namespace Laixer.EventBus
                         {
                             throw new Exception($"{eventHandler.GetType().Name} does not implement IEventHandler<>");
                         }
-
+                        
+                        // Create the even handler context
                         Type handlerContextType = typeof(EventHandlerContext<>).MakeGenericType(type);
                         EventHandlerContext handlerContext = (EventHandlerContext)Activator.CreateInstance(handlerContextType);
                         handlerContext.Registration = handlerRegistration;

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Laixer.EventBus
+namespace Laixer.EventBus.Internal
 {
     /// <summary>
     /// Options for the default implementation of <see cref="EventBusService"/>

@@ -1,8 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Laixer.EventBus.Handler;
 
 namespace Laixer.EventBus
 {
+    /// <summary>
+    /// Event handler interface.
+    /// </summary>
+    /// <typeparam name="TEvent">Event to handle.</typeparam>
     public interface IEventHandler<TEvent> : IEventHandler
         where TEvent : IEvent
     {

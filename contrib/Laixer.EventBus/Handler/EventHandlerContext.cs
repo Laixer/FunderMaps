@@ -1,4 +1,6 @@
-﻿namespace Laixer.EventBus
+﻿using Laixer.EventBus.Internal;
+
+namespace Laixer.EventBus.Handler
 {
     public abstract class EventHandlerContext
     {
