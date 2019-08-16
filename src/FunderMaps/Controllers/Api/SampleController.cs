@@ -113,10 +113,21 @@ namespace FunderMaps.Controllers.Api
             // Administrator can query anything
             if (User.IsInRole(Constants.AdministratorRole))
             {
-                return Ok(new EntityStatsOutputModel
+                // TODO: Move into repo
+                var _sql = @"SELECT COUNT(*)
+                            FROM   report.sample AS samp
+                                    INNER JOIN report.address AS addr ON samp.address = addr.id
+                                    INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                                    INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                            WHERE  samp.delete_date IS NULL";
+
+                using (var connection = _dbProvider.ConnectionScope())
                 {
-                    Count = await _sampleRepository.CountAsync()
-                });
+                    return Ok(new EntityStatsOutputModel
+                    {
+                        Count = await connection.QuerySingleAsync<int>(_sql)
+                    });
+                }
             }
 
             if (attestationOrganizationId == null)
@@ -124,10 +135,23 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
-            return Ok(new EntityStatsOutputModel
+            // TODO: Move into repo
+            var sql = @"SELECT COUNT(*)
+                        FROM   report.sample AS samp
+                                INNER JOIN report.address AS addr ON samp.address = addr.id
+                                INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                                INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                                AND (attr.owner = @Owner
+                                        OR samp.access_policy = 'public')";
+
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId))
-            });
+                return Ok(new EntityStatsOutputModel
+                {
+                    Count = await connection.QuerySingleAsync<int>(sql, new { Owner = int.Parse(attestationOrganizationId) })
+                });
+            }
         }
 
         // POST: api/sample
