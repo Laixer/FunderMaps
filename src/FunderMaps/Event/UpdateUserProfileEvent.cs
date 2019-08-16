@@ -1,6 +1,4 @@
-﻿using System;
-using FunderMaps.Core.Event;
-using FunderMaps.Models.Identity;
+﻿using FunderMaps.Models.Identity;
 
 namespace FunderMaps.Event
 {
