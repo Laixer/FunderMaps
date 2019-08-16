@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
-using FunderMaps.Data;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Providers;
@@ -9,7 +8,6 @@ using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Npgsql;
 
 namespace FunderMaps.Controllers.Api
 {

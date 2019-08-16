@@ -70,24 +70,8 @@ namespace FunderMaps
                 configuration.RootPath = "ClientApp/dist";
             });
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CORSDeveloperPolicy",
-                builder =>
-                {
-                    builder.WithOrigins("https://localhost:8080",
-                                        "http://localhost:8080")
-                                        .AllowAnyHeader()
-                                        .AllowAnyMethod()
-                                        .AllowCredentials();
-
-                    var domain = _configuration.GetDomainHost();
-                    if (domain != null)
-                    {
-                        builder.WithOrigins($"https://{domain}");
-                    }
-                });
-            });
+            // Set CORS policy.
+            services.AddCorsPolicy(_configuration);
 
             // Enable response compression.
             services.AddResponseCompression(options =>
