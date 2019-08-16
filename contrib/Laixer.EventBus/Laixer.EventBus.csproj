@@ -10,6 +10,7 @@
     <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>ASP, ASP.NET Core, Event Bus, Eveting, Trigger</PackageTags>
+    <PackageLicenseExpression>MIT License</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
