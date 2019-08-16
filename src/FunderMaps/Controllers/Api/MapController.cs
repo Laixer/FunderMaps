@@ -4,6 +4,7 @@ using Dapper;
 using FunderMaps.Data;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
+using FunderMaps.Providers;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ namespace FunderMaps.Controllers.Api
     public class MapController : BaseApiController
     {
         private readonly IAuthorizationService _authorizationService;
-        private readonly FisDbContext _dbContext;
+        private readonly DbProvider _dbProvider;
         private readonly IConfiguration _configuration;
 
         /// <summary>
@@ -30,11 +31,11 @@ namespace FunderMaps.Controllers.Api
         public MapController(
             IAuthorizationService authorizationService,
             IConfiguration configuration,
-            FisDbContext dbContext)
+            DbProvider dbProvider)
         {
             _authorizationService = authorizationService;
             _configuration = configuration;
-            _dbContext = dbContext;
+            _dbProvider = dbProvider;
         }
 
         class FeatureModel
@@ -82,15 +83,18 @@ namespace FunderMaps.Controllers.Api
 
             var collection = new List<FeatureModel>();
 
-            using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("FISConnection")))
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                await connection.OpenAsync();
-                var resultSet = await connection.QueryAsync(
-                    " SELECT a.*, e.report, st_x(st_transform(a.geopoint, 4326)) as x, st_y(st_transform(a.geopoint, 4326)) as y" +
-                    " FROM report.sample AS e" +
-                    " JOIN report.address AS a ON e.address = a.id" +
-                    " WHERE a.geopoint is NOT NULL" +
-                    " ORDER BY e.create_date DESC");
+                var resultSet = await connection.QueryAsync(@"
+                    SELECT a.street_name,
+                           a.building_number,
+                           e.report,
+                           St_x(St_transform(a.geopoint, 4326)) AS x,
+                           St_y(St_transform(a.geopoint, 4326)) AS y
+                    FROM   report.sample AS e
+                           join report.address AS a ON e.address = a.id
+                    WHERE  a.geopoint IS NOT NULL
+                    ORDER  BY e.create_date DESC");
 
                 foreach (var item in resultSet)
                 {
