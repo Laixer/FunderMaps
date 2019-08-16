@@ -228,25 +228,80 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var sample = await _sampleRepository.GetByIdAsync(id);
-            if (sample == null)
+            var sql = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                               AND samp.id = @Id
+                        LIMIT  1";
+
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                return ResourceNotFound();
+                var result = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql, map: (sampleEntity, addressEntity) =>
+                {
+                    sampleEntity.Address = addressEntity;
+                    return sampleEntity;
+                }, param: new { Id = id });
+
+                if (result == null)
+                {
+                    return ResourceNotFound();
+                }
+
+                var sample = result.First();
+                if (sample.AccessPolicy == AccessPolicy.Public)
+                {
+                    return Ok(sample);
+                }
+
+                var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Read);
+                if (authorizationResult.Succeeded)
+                {
+                    return Ok(sample);
+                }
+
+                return ResourceForbid();
             }
 
-            // Public data is accessible to anyone
-            if (sample.IsPublic() && sample.ReportNavigation.IsPublic())
-            {
-                return Ok(sample);
-            }
+            //var sample = await _sampleRepository.GetByIdAsync(id);
+            //if (sample == null)
+            //{
+            //    return ResourceNotFound();
+            //}
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Read);
-            if (authorizationResult.Succeeded)
-            {
-                return Ok(sample);
-            }
+            //// Public data is accessible to anyone
+            //if (sample.IsPublic() && sample.ReportNavigation.IsPublic())
+            //{
+            //    return Ok(sample);
+            //}
 
-            return ResourceForbid();
+            //var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Read);
+            //if (authorizationResult.Succeeded)
+            //{
+            //    return Ok(sample);
+            //}
+
+            //return ResourceForbid();
         }
 
         // PUT: api/sample/{id}
