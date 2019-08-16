@@ -148,6 +148,8 @@ namespace FunderMaps
                 options.UseNpgsql(_configuration.GetConnectionString("FISConnection"));
             })
             .AddEntityFrameworkNpgsql();
+
+            services.AddDbProvider("FISConnection");
         }
 
         /// <summary>
