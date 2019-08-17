@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
@@ -18,7 +19,10 @@ namespace FunderMaps.Providers
         /// </summary>
         public IConfiguration Configuration { get; }
 
-        static DbProvider() => Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+        static DbProvider()
+        {
+            DefaultTypeMap.MatchNamesWithUnderscores = true;
+        }
 
         /// <summary>
         /// Create new instance.
