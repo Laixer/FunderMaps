@@ -243,6 +243,7 @@ namespace FunderMaps.Controllers.Api
                                samp.foundation_recovery_adviced,
                                samp.foundation_damage_cause,
                                samp.built_year,
+                               samp.foundation_quality,
                                samp.access_policy,
                                samp.enforcement_term,
                                samp.base_measurement_level,
@@ -263,13 +264,13 @@ namespace FunderMaps.Controllers.Api
                     return sampleEntity;
                 }, param: new { Id = id });
 
-                if (result == null)
+                if (result.Count() == 0)
                 {
                     return ResourceNotFound();
                 }
 
                 var sample = result.First();
-                if (sample.AccessPolicy == AccessPolicy.Public)
+                if (sample.AccessPolicy == AccessPolicy.Public) // sample.IsPublic() && sample.ReportNavigation.IsPublic()
                 {
                     return Ok(sample);
                 }
@@ -282,26 +283,20 @@ namespace FunderMaps.Controllers.Api
 
                 return ResourceForbid();
             }
+        }
 
-            //var sample = await _sampleRepository.GetByIdAsync(id);
-            //if (sample == null)
-            //{
-            //    return ResourceNotFound();
-            //}
+        class BaseLevelHandler : SqlMapper.TypeHandler<BaseLevel>
+        {
+            public override BaseLevel Parse(object value)
+            {
+                return BaseLevel.NAP;
+            }
 
-            //// Public data is accessible to anyone
-            //if (sample.IsPublic() && sample.ReportNavigation.IsPublic())
-            //{
-            //    return Ok(sample);
-            //}
-
-            //var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Read);
-            //if (authorizationResult.Succeeded)
-            //{
-            //    return Ok(sample);
-            //}
-
-            //return ResourceForbid();
+            public override void SetValue(IDbDataParameter parameter, BaseLevel value)
+            {
+                parameter.DbType = DbType.String;
+                parameter.Value = value.ToString().ToLower();
+            }
         }
 
         // PUT: api/sample/{id}
@@ -315,44 +310,87 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] SampleTest input)
         {
-            var sample = await _sampleRepository.GetByIdAsync(id);
-            if (sample == null)
-            {
-                return ResourceNotFound();
-            }
+            
+
+            var sql = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.foundation_quality,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                               AND samp.id = @Id
+                        LIMIT  1";
 
             if (id != input.Id)
             {
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Update);
-            if (authorizationResult.Succeeded)
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                sample.MonitoringWell = input.MonitoringWell;
-                sample.Cpt = input.Cpt;
-                sample.Note = input.Note;
-                sample.WoodLevel = input.WoodLevel;
-                sample.GroundLevel = input.GroundLevel;
-                sample.GroundwaterLevel = input.GroundwaterLevel;
-                sample.FoundationRecoveryAdviced = input.FoundationRecoveryAdviced;
-                sample.BuiltYear = input.BuiltYear;
-                sample.FoundationQuality = input.FoundationQuality;
-                sample.EnforcementTerm = input.EnforcementTerm;
-                sample.Substructure = input.Substructure;
-                sample.FoundationType = input.FoundationType;
-                sample.FoundationDamageCause = input.FoundationDamageCause;
-                sample.AccessPolicy = input.AccessPolicy;
-                sample.Address = await _addressRepository.GetOrAddAsync(input.Address);
+                var result = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql, map: (sampleEntity, addressEntity) =>
+                {
+                    sampleEntity.Address = addressEntity;
+                    return sampleEntity;
+                }, param: new { Id = id });
 
-                await _sampleRepository.UpdateAsync(sample);
+                if (result.Count() == 0)
+                {
+                    return ResourceNotFound();
+                }
 
-                return NoContent();
+                var sample = result.First();
+
+                var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Update);
+                if (authorizationResult.Succeeded)
+                {
+                    // TODO: Add address
+                    var _sql = @"UPDATE report.sample AS samp
+                                SET    monitoring_well = @MonitoringWell,
+                                       cpt = @Cpt,
+                                       note = @Note,
+                                       wood_level = @WoodLevel,
+                                       groundlevel = @GroundLevel,
+                                       groundwater_level = @GroundwaterLevel,
+                                       foundation_recovery_adviced = @FoundationRecoveryAdviced,
+                                       built_year = @BuiltYear,
+                                       foundation_quality = @FoundationQuality,
+                                       enforcement_term = @EnforcementTerm,
+                                       substructure = @Substructure
+                                       -- foundation_type = @FoundationType,
+                                       -- foundation_damage_cause = @FoundationDamageCause,
+                                       -- access_policy = @AccessPolicy
+                                WHERE  samp.delete_date IS NULL
+                                       AND samp.id = @Id";
+
+                    await connection.ExecuteAsync(_sql, input);
+
+                    return NoContent();
+                }
+
+                return ResourceForbid();
             }
-
-            return ResourceForbid();
         }
 
         // DELETE: api/sample/{id}
@@ -366,21 +404,64 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var sample = await _sampleRepository.GetByIdAsync(id);
-            if (sample == null)
+            var sql = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.foundation_quality,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                               AND samp.id = @Id
+                        LIMIT  1";
+
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                return ResourceNotFound();
+                var result = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql, map: (sampleEntity, addressEntity) =>
+                {
+                    sampleEntity.Address = addressEntity;
+                    return sampleEntity;
+                }, param: new { Id = id });
+
+                if (result.Count() == 0)
+                {
+                    return ResourceNotFound();
+                }
+
+                var sample = result.First();
+
+                var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Delete);
+                if (authorizationResult.Succeeded)
+                {
+                    var _sql = @"UPDATE report.sample AS samp
+                                SET    delete_date = CURRENT_TIMESTAMP
+                                WHERE  samp.delete_date IS NULL
+                                       AND samp.id = @Id";
+
+                    await connection.ExecuteAsync(_sql, new { Id = id });
+
+                    return NoContent();
+                }
+
+                return ResourceForbid();
             }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.ReportNavigation.Attribution._Owner, OperationsRequirement.Delete);
-            if (authorizationResult.Succeeded)
-            {
-                await _sampleRepository.DeleteAsync(sample);
-
-                return NoContent();
-            }
-
-            return ResourceForbid();
         }
     }
 }

@@ -45,6 +45,7 @@ namespace FunderMaps.Data.Repositories
         public virtual async Task<TEntry> AddAsync(TEntry entity)
         {
             _dbContext.Set<TEntry>().Add(entity);
+
             await _dbContext.SaveChangesAsync();
 
             return entity;
@@ -53,12 +54,14 @@ namespace FunderMaps.Data.Repositories
         public virtual Task UpdateAsync(TEntry entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
+
             return _dbContext.SaveChangesAsync();
         }
 
         public virtual Task DeleteAsync(TEntry entity)
         {
             _dbContext.Entry(entity).State = EntityState.Deleted;
+
             return _dbContext.SaveChangesAsync();
         }
 
