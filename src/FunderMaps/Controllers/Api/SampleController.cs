@@ -164,54 +164,129 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync([FromBody] Sample input)
+        public async Task<IActionResult> PostAsync([FromBody] SampleTest input)
         {
-            var report = await _reportRepository.GetByIdAsync(input.Report.Value);
-            if (report == null)
-            {
-                return ResourceNotFound();
-            }
+            var sql = @"SELECT reprt.id,
+                               reprt.document_id,
+                               reprt.inspection,
+                               reprt.joint_measurement, 
+                               reprt.floor_measurement,
+                               reprt.note,
+                               reprt.status,
+                               reprt.type,
+                               reprt.document_date,
+                               reprt.document_name,
+                               reprt.access_policy,
+                               attr.owner AS attribution
+                        FROM   report.report AS reprt
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  reprt.delete_date IS NULL
+                               AND reprt.id = @id
+                        LIMIT  1 ";
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
-            if (authorizationResult.Succeeded)
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                // Check if we can add new samples to the report
-                if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
+                var result = await connection.QueryAsync<ReportTest>(sql, new { Id = input.Report });
+
+                if (result.Count() == 0)
                 {
-                    return Forbid(0, "Resource modification forbidden with current status");
+                    return ResourceNotFound();
                 }
 
-                var sample = new Sample
+                var report = result.First();
+
+                var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Create);
+                if (authorizationResult.Succeeded)
                 {
-                    ReportNavigation = report,
-                    MonitoringWell = input.MonitoringWell,
-                    Cpt = input.Cpt,
-                    Note = input.Note,
-                    WoodLevel = input.WoodLevel,
-                    GroundLevel = input.GroundLevel,
-                    GroundwaterLevel = input.GroundwaterLevel,
-                    FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
-                    BuiltYear = input.BuiltYear,
-                    FoundationQuality = input.FoundationQuality,
-                    EnforcementTerm = input.EnforcementTerm,
-                    Substructure = input.Substructure,
-                    FoundationType = input.FoundationType,
-                    BaseMeasurementLevel = BaseLevel.NAP,
-                    FoundationDamageCause = input.FoundationDamageCause,
-                    AccessPolicy = input.AccessPolicy,
-                    Address = await _addressRepository.GetOrAddAsync(input.Address),
-                };
+                    // Check if we can add new samples to the report
+                    if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
+                    {
+                        return Forbid(0, "Resource modification forbidden with current status");
+                    }
 
-                // Set the report status to 'pending'
-                report.Status = ReportStatus.Pending;
+                    // TODO: Add address, foundation_type, foundation_damage_cause, access_policy, base_measurement_level
+                    var _sql = @"INSERT INTO report.sample AS samp 
+                                            (report,
+                                             monitoring_well, 
+                                             cpt, 
+                                             note, 
+                                             wood_level, 
+                                             groundlevel, 
+                                             groundwater_level, 
+                                             foundation_recovery_adviced, 
+                                             built_year, 
+                                             foundation_quality, 
+                                             enforcement_term, 
+                                             substructure,
+                                             base_measurement_level,
+                                             address) 
+                                VALUES      (@Report,
+                                             @MonitoringWell,
+                                             @Cpt, 
+                                             @Note, 
+                                             @WoodLevel, 
+                                             @GroundLevel, 
+                                             @GroundwaterLevel, 
+                                             @FoundationRecoveryAdviced, 
+                                             @BuiltYear, 
+                                             @FoundationQuality, 
+                                             @EnforcementTerm, 
+                                             @Substructure,
+                                             'nap',
+                                             @_Address)
+                                RETURNING id";
 
-                await _sampleRepository.AddAsync(sample);
-                await _reportRepository.UpdateAsync(report);
+                    var _sql2 = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
 
-                return Ok(sample);
+                    input._Address = input.Address.Id;
+
+                    input.Id = await connection.ExecuteScalarAsync<int>(_sql, input);
+                    await connection.ExecuteAsync(_sql2, input.Report);
+
+                    var sql3 = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.foundation_quality,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                               AND samp.id = @Id
+                        LIMIT  1";
+
+                    var result2 = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql3, map: (sampleEntity, addressEntity) =>
+                    {
+                        sampleEntity.Address = addressEntity;
+                        return sampleEntity;
+                    }, splitOn: "id", param: input);
+
+                    if (result2.Count() == 0)
+                    {
+                        return ResourceNotFound();
+                    }
+
+                    return Ok(result2.First());
+                }
+
+                return ResourceForbid();
             }
-
-            return ResourceForbid();
         }
 
         // GET: api/sample/{id}
@@ -365,7 +440,7 @@ namespace FunderMaps.Controllers.Api
                 var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Update);
                 if (authorizationResult.Succeeded)
                 {
-                    // TODO: Add address
+                    // TODO: Add address, foundation_type, foundation_damage_cause, access_policy
                     var _sql = @"UPDATE report.sample AS samp
                                 SET    monitoring_well = @MonitoringWell,
                                        cpt = @Cpt,
