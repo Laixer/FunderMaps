@@ -135,21 +135,11 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
-            // TODO: Move into repo
-            var sql = @"SELECT COUNT(*)
-                        FROM   report.sample AS samp
-                                INNER JOIN report.address AS addr ON samp.address = addr.id
-                                INNER JOIN report.report AS reprt ON samp.report = reprt.id
-                                INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                        WHERE  samp.delete_date IS NULL
-                                AND (attr.owner = @Owner
-                                        OR samp.access_policy = 'public')";
-
             using (var connection = _dbProvider.ConnectionScope())
             {
                 return Ok(new EntityStatsOutputModel
                 {
-                    Count = await connection.QuerySingleAsync<int>(sql, new { Owner = int.Parse(attestationOrganizationId) })
+                    Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId), connection)
                 });
             }
         }

@@ -69,11 +69,20 @@ namespace FunderMaps.Data.Repositories
                 .ToListAsync();
         }
 
-        public Task<int> CountAsync(int org_id)
+        public async Task<int> CountAsync(int org_id, IDbConnection connection = null)
         {
-            return DefaultQuery()
-                .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
-                .CountAsync();
+            var sql = @"SELECT COUNT(*)
+                        FROM   report.sample AS samp
+                                INNER JOIN report.address AS addr ON samp.address = addr.id
+                                INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                                INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                                AND (attr.owner = @Owner
+                                        OR samp.access_policy = 'public')";
+
+            return await RunSqlCommand(async cnn =>
+                await cnn.QuerySingleAsync<int>(sql, new { Owner = org_id }),
+                connection);
         }
     }
 }
