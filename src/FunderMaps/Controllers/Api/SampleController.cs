@@ -164,7 +164,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync([FromBody] SampleTest input)
+        public async Task<IActionResult> PostAsync([FromBody] Sample2 input)
         {
             var sql = @"SELECT reprt.id,
                                reprt.document_id,
@@ -186,7 +186,7 @@ namespace FunderMaps.Controllers.Api
 
             using (var connection = _dbProvider.ConnectionScope())
             {
-                var result = await connection.QueryAsync<ReportTest>(sql, new { Id = input.Report });
+                var result = await connection.QueryAsync<Report2>(sql, new { Id = input.Report });
 
                 if (result.Count() == 0)
                 {
@@ -204,35 +204,37 @@ namespace FunderMaps.Controllers.Api
                         return Forbid(0, "Resource modification forbidden with current status");
                     }
 
-                    // TODO: Add address, foundation_type, foundation_damage_cause, access_policy, base_measurement_level
-                    var _sql = @"INSERT INTO report.sample AS samp 
+                    // TODO: Add address, foundation_type, foundation_damage_cause
+                    var _sql = @"INSERT INTO report.sample AS samp
                                             (report,
-                                             monitoring_well, 
-                                             cpt, 
-                                             note, 
-                                             wood_level, 
-                                             groundlevel, 
-                                             groundwater_level, 
-                                             foundation_recovery_adviced, 
-                                             built_year, 
-                                             foundation_quality, 
-                                             enforcement_term, 
+                                             monitoring_well,
+                                             cpt,
+                                             note,
+                                             wood_level,
+                                             groundlevel,
+                                             groundwater_level,
+                                             foundation_recovery_adviced,
+                                             built_year,
+                                             foundation_quality,
+                                             enforcement_term,
                                              substructure,
                                              base_measurement_level,
-                                             address) 
+                                             access_policy,
+                                             address)
                                 VALUES      (@Report,
                                              @MonitoringWell,
-                                             @Cpt, 
-                                             @Note, 
-                                             @WoodLevel, 
-                                             @GroundLevel, 
-                                             @GroundwaterLevel, 
-                                             @FoundationRecoveryAdviced, 
-                                             @BuiltYear, 
-                                             @FoundationQuality, 
-                                             @EnforcementTerm, 
+                                             @Cpt,
+                                             @Note,
+                                             @WoodLevel,
+                                             @GroundLevel,
+                                             @GroundwaterLevel,
+                                             @FoundationRecoveryAdviced,
+                                             @BuiltYear,
+                                             @FoundationQuality,
+                                             @EnforcementTerm,
                                              @Substructure,
-                                             'nap',
+                                             (enum_range(NULL::report.base_measurement_level))[@BaseMeasurementLevel + 1],
+                                             (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1],
                                              @_Address)
                                 RETURNING id";
 
@@ -271,7 +273,7 @@ namespace FunderMaps.Controllers.Api
                                AND samp.id = @Id
                         LIMIT  1";
 
-                    var result2 = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql3, map: (sampleEntity, addressEntity) =>
+                    var result2 = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql3, map: (sampleEntity, addressEntity) =>
                     {
                         sampleEntity.Address = addressEntity;
                         return sampleEntity;
@@ -333,7 +335,7 @@ namespace FunderMaps.Controllers.Api
 
             using (var connection = _dbProvider.ConnectionScope())
             {
-                var result = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql, map: (sampleEntity, addressEntity) =>
+                var result = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql, map: (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -385,10 +387,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] SampleTest input)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] Sample2 input)
         {
-            
-
             var sql = @"SELECT samp.id,
                                samp.report,
                                samp.foundation_type,
@@ -424,7 +424,7 @@ namespace FunderMaps.Controllers.Api
 
             using (var connection = _dbProvider.ConnectionScope())
             {
-                var result = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql, map: (sampleEntity, addressEntity) =>
+                var result = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql, map: (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -509,7 +509,7 @@ namespace FunderMaps.Controllers.Api
 
             using (var connection = _dbProvider.ConnectionScope())
             {
-                var result = await connection.QueryAsync<SampleTest, AddressTest, SampleTest>(sql: sql, map: (sampleEntity, addressEntity) =>
+                var result = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql, map: (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
