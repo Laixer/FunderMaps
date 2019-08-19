@@ -61,12 +61,12 @@ namespace FunderMaps.Controllers.Api
                 return Ok(await _sampleRepository.ListAllAsync(new Navigation(offset, limit)));
             }
 
-            if (attestationOrganizationId == null)
+            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
             {
                 return ResourceForbid();
             }
 
-            return Ok(await _sampleRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
+            return Ok(await _sampleRepository.ListAllAsync(attOrgId, new Navigation(offset, limit)));
         }
 
         // GET: api/sample/report/{id}
@@ -90,12 +90,12 @@ namespace FunderMaps.Controllers.Api
                 return Ok(await _sampleRepository.ListAllReportAsync(id, new Navigation(offset, limit)));
             }
 
-            if (attestationOrganizationId == null)
+            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
             {
                 return ResourceForbid();
             }
 
-            return Ok(await _sampleRepository.ListAllReportAsync(id, int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
+            return Ok(await _sampleRepository.ListAllReportAsync(id, attOrgId, new Navigation(offset, limit)));
         }
 
         // GET: api/sample/stats
@@ -119,14 +119,14 @@ namespace FunderMaps.Controllers.Api
                 });
             }
 
-            if (attestationOrganizationId == null)
+            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
             {
                 return ResourceForbid();
             }
 
             return Ok(new EntityStatsOutputModel
             {
-                Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId))
+                Count = await _sampleRepository.CountAsync(attOrgId)
             });
         }
 
