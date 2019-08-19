@@ -184,29 +184,115 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
+        /// <summary>
+        /// Return all samples by report.
+        /// </summary>
+        /// <param name="report">Report identifier.</param>
+        /// <param name="navigation">Navigation options.</param>
+        /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Sample2>> ListAllReportAsync(int report, Navigation navigation)
         {
-            //return await DefaultQuery()
-            //    .Where(s => s.ReportNavigation.Id == report)
-            //    .OrderByDescending(s => s.CreateDate)
-            //    .Skip(navigation.Offset)
-            //    .Take(navigation.Limit)
-            //    .ToListAsync();
+            var sql = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.foundation_quality,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                                AND reprt.id = @Report
+                        ORDER BY create_date DESC
+                        OFFSET @Offset
+                        LIMIT @Limit";
 
-            return null;
+            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+                {
+                    sampleEntity.Address = addressEntity;
+                    return sampleEntity;
+                }, new { Report = report, navigation.Offset, navigation.Limit });
+
+            var result = await RunSqlCommand(map);
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.ToArray();
         }
 
+        /// <summary>
+        /// Return all samples by report and filter on access policy and organization.
+        /// </summary>
+        /// <param name="report">Report identifier.</param>
+        /// <param name="org_id"></param>
+        /// <param name="navigation">Navigation options.</param>
+        /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Sample2>> ListAllReportAsync(int report, int org_id, Navigation navigation)
         {
-            //return await DefaultQuery()
-            //    .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
-            //    .Where(s => s.ReportNavigation.Id == report)
-            //    .OrderByDescending(s => s.CreateDate)
-            //    .Skip(navigation.Offset)
-            //    .Take(navigation.Limit)
-            //    .ToListAsync();
+            var sql = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.foundation_quality,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                                AND reprt.id = @Report
+                                AND (attr.owner = @Owner
+                                        OR samp.access_policy = 'public')
+                        ORDER BY create_date DESC
+                        OFFSET @Offset
+                        LIMIT @Limit";
 
-            return null;
+            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+                {
+                    sampleEntity.Address = addressEntity;
+                    return sampleEntity;
+                }, new { Report = report, navigation.Offset, navigation.Limit });
+
+            var result = await RunSqlCommand(map);
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.ToArray();
         }
 
         /// <summary>
