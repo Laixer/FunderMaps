@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Data;
-using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using FunderMaps.Core.Entities.Fis;
@@ -303,6 +303,7 @@ namespace FunderMaps.Data.Repositories
         public override async Task<Sample2> AddAsync(Sample2 entity)
         {
             // TODO: Add address, foundation_type, foundation_damage_cause
+            // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
             var sql = @"INSERT INTO report.sample AS samp
                                     (report,
                                         monitoring_well,
@@ -349,6 +350,7 @@ namespace FunderMaps.Data.Repositories
         public override Task UpdateAsync(Sample2 entity)
         {
             // TODO: Add address, foundation_type, foundation_damage_cause
+            // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
             var sql = @"UPDATE report.sample AS samp
                         SET    monitoring_well = @MonitoringWell,
                                 cpt = @Cpt,

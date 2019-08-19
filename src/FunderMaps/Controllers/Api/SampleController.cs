@@ -142,52 +142,41 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample2 input)
         {
-            var sql = @"SELECT reprt.id,
-                               reprt.document_id,
-                               reprt.inspection,
-                               reprt.joint_measurement, 
-                               reprt.floor_measurement,
-                               reprt.note,
-                               reprt.status,
-                               reprt.type,
-                               reprt.document_date,
-                               reprt.document_name,
-                               reprt.access_policy,
-                               attr.owner AS attribution
-                        FROM   report.report AS reprt
-                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                        WHERE  reprt.delete_date IS NULL
-                               AND reprt.id = @id
-                        LIMIT  1 ";
-
-            using (var connection = _dbProvider.ConnectionScope())
+            // TODO: HACK
+            var report = await (_reportRepository as Data.Repositories.ReportRepository).GetByIdAsync2(input.Report.Value);
+            if (report == null)
             {
-                var result = await connection.QueryAsync<Report2>(sql, new { Id = input.Report });
-
-                if (result.Count() == 0)
-                {
-                    return ResourceNotFound();
-                }
-
-                var report = result.First();
-
-                var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Create);
-                if (authorizationResult.Succeeded)
-                {
-                    // Check if we can add new samples to the report
-                    if (report.Status != ReportStatus.Todo && report.Status != ReportStatus.Pending)
-                    {
-                        return Forbid(0, "Resource modification forbidden with current status");
-                    }
-
-                    var _sql2 = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
-                    await connection.ExecuteAsync(_sql2, input.Report);
-
-                    return Ok(await _sampleRepository.AddAsync(input));
-                }
-
-                return ResourceForbid();
+                return ResourceNotFound();
             }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Create);
+            if (authorizationResult.Succeeded)
+            {
+                switch (report.Status)
+                {
+                    case ReportStatus.Todo:
+                        {
+                            var sql = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
+                            using (var connection = _dbProvider.ConnectionScope())
+                            {
+                                await connection.ExecuteAsync(sql, input.Report);
+                            }
+                        }
+                        break;
+                    case ReportStatus.Pending:
+                        break;
+                    case ReportStatus.Done:
+                    case ReportStatus.Discarded:
+                    case ReportStatus.PendingReview:
+                    case ReportStatus.Rejected:
+                    default:
+                        return Forbid(0, "Resource modification forbidden with current status");
+                }
+
+                return Ok(await _sampleRepository.AddAsync(input));
+            }
+
+            return ResourceForbid();
         }
 
         // GET: api/sample/{id}
