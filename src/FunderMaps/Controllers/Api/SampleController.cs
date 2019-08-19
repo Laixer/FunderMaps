@@ -113,15 +113,7 @@ namespace FunderMaps.Controllers.Api
             // Administrator can query anything
             if (User.IsInRole(Constants.AdministratorRole))
             {
-                // TODO: Move into repo
-                var _sql = @"SELECT COUNT(*)
-                            FROM   report.sample AS samp
-                                    INNER JOIN report.address AS addr ON samp.address = addr.id
-                                    INNER JOIN report.report AS reprt ON samp.report = reprt.id
-                                    INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                            WHERE  samp.delete_date IS NULL";
-
-                using (var connection = _dbProvider.ConnectionScope())
+                return Ok(new EntityStatsOutputModel
                 {
                     Count = await _sampleRepository.CountAsync()
                 });
@@ -190,8 +182,6 @@ namespace FunderMaps.Controllers.Api
 
                     var _sql2 = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
                     await connection.ExecuteAsync(_sql2, input.Report);
-
-                    input._Address = input.Address.Id;
 
                     return Ok(await _sampleRepository.AddAsync(input));
                 }

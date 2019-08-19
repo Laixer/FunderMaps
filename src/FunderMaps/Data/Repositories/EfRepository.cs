@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using FunderMaps.Providers;
 
 namespace FunderMaps.Data.Repositories
 {
@@ -17,14 +19,39 @@ namespace FunderMaps.Data.Repositories
         where TEntry : BaseEntity
     {
         protected readonly TContext _dbContext;
+        protected readonly DbProvider _dbProvider;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         /// <param name="dbContext">Database context.</param>
-        public EfRepository(TContext dbContext)
+        /// <param name="dbProvider">Database provider.</param>
+        public EfRepository(TContext dbContext, DbProvider dbProvider = null) // TODO: Remove the default value
         {
             _dbContext = dbContext;
+            _dbProvider = dbProvider;
+        }
+
+        /// <summary>
+        /// Runs the SQL command and creates the connection if necessary.
+        /// </summary>
+        /// <typeparam name="TReturn">Query return type.</typeparam>
+        /// <param name="action">SQL query.</param>
+        /// <param name="_connection">Optional database connection</param>
+        /// <returns>Awaitable with return value.</returns>
+        protected async Task<TReturn> RunSqlCommand<TReturn>(Func<IDbConnection, Task<TReturn>> action, IDbConnection _connection = null)
+        {
+            // Run with existing connection.
+            if (_connection != null)
+            {
+                return await action(_connection);
+            }
+
+            // Run in new scope.
+            using (var connection = _dbProvider.ConnectionScope())
+            {
+                return await action(connection);
+            }
         }
 
         /// <summary>

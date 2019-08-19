@@ -1,47 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
+using Microsoft.EntityFrameworkCore;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
-using Microsoft.EntityFrameworkCore;
+using Dapper;
 
 namespace FunderMaps.Data.Repositories
 {
+    /// <summary>
+    /// Sample repository.
+    /// </summary>
     public class SampleRepository : EfRepository<FisDbContext, Sample2>, ISampleRepository
     {
-        private readonly DbProvider _dbProvider;
-
-        public SampleRepository(FisDbContext dbContext, DbProvider dbProvider)
-            : base(dbContext)
-        {
-            _dbProvider = dbProvider;
-        }
-
         /// <summary>
-        /// Runs the SQL command and creates the connection if necessary.
+        /// Create a new instance.
         /// </summary>
-        /// <typeparam name="TReturn">Query return type.</typeparam>
-        /// <param name="action">SQL query.</param>
-        /// <param name="_connection">Optional database connection</param>
-        /// <returns>Awaitable with return value.</returns>
-        private async Task<TReturn> RunSqlCommand<TReturn>(Func<IDbConnection, Task<TReturn>> action, IDbConnection _connection = null)
+        /// <param name="dbContext">Database context.</param>
+        /// <param name="dbProvider">Database provider.</param>
+        public SampleRepository(FisDbContext dbContext, DbProvider dbProvider)
+            : base(dbContext, dbProvider)
         {
-            // Run with existing connection.
-            if (_connection != null)
-            {
-                return await action(_connection);
-            }
-
-            // Run in new scope.
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                return await action(connection);
-            }
         }
 
         /// <summary>
@@ -183,6 +165,8 @@ namespace FunderMaps.Data.Repositories
                                         (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1],
                                         @_Address)
                          RETURNING id";
+
+            entity._Address = entity.Address.Id;
 
             var id = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
             return await GetByIdAsync(id);
