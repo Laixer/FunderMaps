@@ -24,7 +24,6 @@ namespace FunderMaps.Controllers.Api
         private readonly IAuthorizationService _authorizationService;
         private readonly ISampleRepository _sampleRepository;
         private readonly IReportRepository _reportRepository;
-        private readonly IAddressRepository _addressRepository;
 
         /// <summary>
         /// Create a new instance.
@@ -32,13 +31,11 @@ namespace FunderMaps.Controllers.Api
         public SampleController(
             IAuthorizationService authorizationService,
             ISampleRepository sampleRepository,
-            IReportRepository reportRepository,
-            IAddressRepository addressRepository)
+            IReportRepository reportRepository)
         {
             _authorizationService = authorizationService;
             _sampleRepository = sampleRepository;
             _reportRepository = reportRepository;
-            _addressRepository = addressRepository;
         }
 
         // GET: api/sample
@@ -142,7 +139,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample2 input)
         {
-            // TODO: HACK
+            // TODO: HACK. Should not cast to known type.
             var report = await (_reportRepository as Data.Repositories.ReportRepository).GetByIdAsync2(input.Report.Value);
             if (report == null)
             {
@@ -156,11 +153,8 @@ namespace FunderMaps.Controllers.Api
                 {
                     case ReportStatus.Todo:
                         {
-                            var sql = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
-                            using (var connection = _dbProvider.ConnectionScope())
-                            {
-                                await connection.ExecuteAsync(sql, input.Report);
-                            }
+                            // TODO: HACK. Should not cast to known type.
+                            await (_reportRepository as Data.Repositories.ReportRepository).UpdateStatusAsync(input.Report.Value, ReportStatus.Pending);
                         }
                         break;
                     case ReportStatus.Pending:

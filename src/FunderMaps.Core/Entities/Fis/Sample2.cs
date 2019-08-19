@@ -21,8 +21,19 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         public int? Report { get; set; }
 
+        /// <summary>
+        /// Foundation type.
+        /// </summary>
         public FoundationType? FoundationType { get; set; }
+
+        /// <summary>
+        /// Foundation quality.
+        /// </summary>
         public FoundationQuality? FoundationQuality { get; set; }
+
+        /// <summary>
+        /// Substructure.
+        /// </summary>
         public Substructure? Substructure { get; set; }
 
         [MaxLength(32)]
@@ -35,6 +46,9 @@ namespace FunderMaps.Core.Entities.Fis
         public decimal? GroundLevel { get; set; }
         public bool FoundationRecoveryAdviced { get; set; }
 
+        /// <summary>
+        /// Foundation damage cause.
+        /// </summary>
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
@@ -42,6 +56,9 @@ namespace FunderMaps.Core.Entities.Fis
         /// </summary>
         public short? BuiltYear { get; set; }
 
+        /// <summary>
+        /// Enforcement term.
+        /// </summary>
         public EnforcementTerm? EnforcementTerm { get; set; }
 
         /// <summary>
@@ -49,6 +66,9 @@ namespace FunderMaps.Core.Entities.Fis
         /// </summary>
         public BaseLevel BaseMeasurementLevel { get; set; }
 
+        /// <summary>
+        /// Address record identifier.
+        /// </summary>
         [IgnoreDataMember]
         public Guid _Address { get; set; }
 

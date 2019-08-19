@@ -104,6 +104,16 @@ namespace FunderMaps.Data.Repositories
                 .ToListAsync();
         }
 
+        public Task UpdateStatusAsync(int id, ReportStatus status)
+        {
+            var sql = @"
+                UPDATE report.report AS reprt 
+                SET    status = (enum_range(NULL::report.report_status))[@Status + 1]
+                WHERE  reprt.id = @Id ";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, new { Status = status, Id = id }));
+        }
+
         public Task<int> CountAsync(int org_id)
         {
             return DefaultQuery()
