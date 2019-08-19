@@ -251,5 +251,21 @@ namespace FunderMaps.Data.Repositories
                 await cnn.QuerySingleAsync<int>(sql, new { Owner = org_id }),
                 connection);
         }
+
+        /// <summary>
+        /// Count entities.
+        /// </summary>
+        /// <returns>Number of records.</returns>
+        public override Task<int> CountAsync()
+        {
+            var sql = @"SELECT COUNT(*)
+                        FROM   report.sample AS samp
+                                INNER JOIN report.address AS addr ON samp.address = addr.id
+                                INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                                INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL";
+
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<int>(sql));
+        }
     }
 }

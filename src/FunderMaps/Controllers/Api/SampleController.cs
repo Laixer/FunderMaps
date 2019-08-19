@@ -123,11 +123,8 @@ namespace FunderMaps.Controllers.Api
 
                 using (var connection = _dbProvider.ConnectionScope())
                 {
-                    return Ok(new EntityStatsOutputModel
-                    {
-                        Count = await connection.QuerySingleAsync<int>(_sql)
-                    });
-                }
+                    Count = await _sampleRepository.CountAsync()
+                });
             }
 
             if (attestationOrganizationId == null)
@@ -135,7 +132,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
-            using (var connection = _dbProvider.ConnectionScope())
+            return Ok(new EntityStatsOutputModel
             {
                 Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId))
             });
@@ -190,40 +187,6 @@ namespace FunderMaps.Controllers.Api
                     {
                         return Forbid(0, "Resource modification forbidden with current status");
                     }
-
-                    // TODO: Add address, foundation_type, foundation_damage_cause
-                    var _sql = @"INSERT INTO report.sample AS samp
-                                            (report,
-                                             monitoring_well,
-                                             cpt,
-                                             note,
-                                             wood_level,
-                                             groundlevel,
-                                             groundwater_level,
-                                             foundation_recovery_adviced,
-                                             built_year,
-                                             foundation_quality,
-                                             enforcement_term,
-                                             substructure,
-                                             base_measurement_level,
-                                             access_policy,
-                                             address)
-                                VALUES      (@Report,
-                                             @MonitoringWell,
-                                             @Cpt,
-                                             @Note,
-                                             @WoodLevel,
-                                             @GroundLevel,
-                                             @GroundwaterLevel,
-                                             @FoundationRecoveryAdviced,
-                                             @BuiltYear,
-                                             @FoundationQuality,
-                                             @EnforcementTerm,
-                                             @Substructure,
-                                             (enum_range(NULL::report.base_measurement_level))[@BaseMeasurementLevel + 1],
-                                             (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1],
-                                             @_Address)
-                                RETURNING id";
 
                     var _sql2 = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
                     await connection.ExecuteAsync(_sql2, input.Report);
