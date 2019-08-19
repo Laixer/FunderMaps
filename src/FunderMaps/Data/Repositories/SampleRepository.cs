@@ -1,75 +1,242 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
+using FunderMaps.Providers;
 using Microsoft.EntityFrameworkCore;
 
 namespace FunderMaps.Data.Repositories
 {
-    public class SampleRepository : EfRepository<FisDbContext, Sample>, ISampleRepository
+    public class SampleRepository : EfRepository<FisDbContext, Sample2>, ISampleRepository
     {
-        public SampleRepository(FisDbContext dbContext)
+        private readonly DbProvider _dbProvider;
+
+        public SampleRepository(FisDbContext dbContext, DbProvider dbProvider)
             : base(dbContext)
         {
+            _dbProvider = dbProvider;
         }
 
-        private IQueryable<Sample> DefaultQuery()
+        /// <summary>
+        /// Runs the SQL command and creates the connection if necessary.
+        /// </summary>
+        /// <typeparam name="TReturn">Query return type.</typeparam>
+        /// <param name="action">SQL query.</param>
+        /// <param name="_connection">Optional database connection</param>
+        /// <returns>Awaitable with return value.</returns>
+        private async Task<TReturn> RunSqlCommand<TReturn>(Func<IDbConnection, Task<TReturn>> action, IDbConnection _connection = null)
         {
-            return _dbContext.Sample
-                .Include(s => s.ReportNavigation)
-                    .ThenInclude(si => si.Attribution)
-                .Include(s => s.Address);
+            // Run with existing connection.
+            if (_connection != null)
+            {
+                return await action(_connection);
+            }
+
+            // Run in new scope.
+            using (var connection = _dbProvider.ConnectionScope())
+            {
+                return await action(connection);
+            }
         }
 
-        public override Task<Sample> GetByIdAsync(int id)
+        /// <summary>
+        /// Get entity by id.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <returns><see cref="Sample2"/> on success, null on error.</returns>
+        public override async Task<Sample2> GetByIdAsync(int id)
         {
-            return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id);
+            var sql = @"SELECT samp.id,
+                               samp.report,
+                               samp.foundation_type,
+                               attr.owner AS attribution,
+                               samp.monitoring_well,
+                               samp.cpt,
+                               samp.create_date, 
+                               samp.update_date,
+                               samp.note,
+                               samp.wood_level,
+                               samp.groundwater_level,
+                               samp.groundlevel,
+                               samp.foundation_recovery_adviced,
+                               samp.foundation_damage_cause,
+                               samp.built_year,
+                               samp.foundation_quality,
+                               samp.access_policy,
+                               samp.enforcement_term,
+                               samp.base_measurement_level,
+                               addr.*
+                        FROM   report.sample AS samp
+                               INNER JOIN report.address AS addr ON samp.address = addr.id
+                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
+                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        WHERE  samp.delete_date IS NULL
+                               AND samp.id = @Id
+                        LIMIT  1";
+
+            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+                {
+                    sampleEntity.Address = addressEntity;
+                    return sampleEntity;
+                }, new { Id = id });
+
+            var result = await RunSqlCommand(map);
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
         }
 
-        public async Task<IReadOnlyList<Sample>> ListAllAsync(Navigation navigation)
+        public async Task<IReadOnlyList<Sample2>> ListAllAsync(Navigation navigation)
         {
-            return await DefaultQuery()
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(navigation.Offset)
-                .Take(navigation.Limit)
-                .ToListAsync();
+            //return await DefaultQuery()
+            //    .OrderByDescending(s => s.CreateDate)
+            //    .Skip(navigation.Offset)
+            //    .Take(navigation.Limit)
+            //    .ToListAsync();
+
+            return null;
         }
 
-        public async Task<IReadOnlyList<Sample>> ListAllAsync(int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Sample2>> ListAllAsync(int org_id, Navigation navigation)
         {
-            return await DefaultQuery()
-                .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(navigation.Offset)
-                .Take(navigation.Limit)
-                .ToListAsync();
+            //return await DefaultQuery()
+            //    .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
+            //    .OrderByDescending(s => s.CreateDate)
+            //    .Skip(navigation.Offset)
+            //    .Take(navigation.Limit)
+            //    .ToListAsync();
+
+            return null;
         }
 
-        public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, Navigation navigation)
+        public async Task<IReadOnlyList<Sample2>> ListAllReportAsync(int report, Navigation navigation)
         {
-            return await DefaultQuery()
-                .Where(s => s.ReportNavigation.Id == report)
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(navigation.Offset)
-                .Take(navigation.Limit)
-                .ToListAsync();
+            //return await DefaultQuery()
+            //    .Where(s => s.ReportNavigation.Id == report)
+            //    .OrderByDescending(s => s.CreateDate)
+            //    .Skip(navigation.Offset)
+            //    .Take(navigation.Limit)
+            //    .ToListAsync();
+
+            return null;
         }
 
-        public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Sample2>> ListAllReportAsync(int report, int org_id, Navigation navigation)
         {
-            return await DefaultQuery()
-                .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
-                .Where(s => s.ReportNavigation.Id == report)
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(navigation.Offset)
-                .Take(navigation.Limit)
-                .ToListAsync();
+            //return await DefaultQuery()
+            //    .Where(s => s.ReportNavigation.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
+            //    .Where(s => s.ReportNavigation.Id == report)
+            //    .OrderByDescending(s => s.CreateDate)
+            //    .Skip(navigation.Offset)
+            //    .Take(navigation.Limit)
+            //    .ToListAsync();
+
+            return null;
         }
 
-        public async Task<int> CountAsync(int org_id, IDbConnection connection = null)
+        /// <summary>
+        /// Create new sample.
+        /// </summary>
+        /// <param name="entity">Entity to create.</param>
+        /// <returns>Created entity.</returns>
+        public override async Task<Sample2> AddAsync(Sample2 entity)
+        {
+            // TODO: Add address, foundation_type, foundation_damage_cause
+            var sql = @"INSERT INTO report.sample AS samp
+                                    (report,
+                                        monitoring_well,
+                                        cpt,
+                                        note,
+                                        wood_level,
+                                        groundlevel,
+                                        groundwater_level,
+                                        foundation_recovery_adviced,
+                                        built_year,
+                                        foundation_quality,
+                                        enforcement_term,
+                                        substructure,
+                                        base_measurement_level,
+                                        access_policy,
+                                        address)
+                         VALUES      (@Report,
+                                        @MonitoringWell,
+                                        @Cpt,
+                                        @Note,
+                                        @WoodLevel,
+                                        @GroundLevel,
+                                        @GroundwaterLevel,
+                                        @FoundationRecoveryAdviced,
+                                        @BuiltYear,
+                                        @FoundationQuality,
+                                        @EnforcementTerm,
+                                        @Substructure,
+                                        (enum_range(NULL::report.base_measurement_level))[@BaseMeasurementLevel + 1],
+                                        (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1],
+                                        @_Address)
+                         RETURNING id";
+
+            var id = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
+            return await GetByIdAsync(id);
+        }
+
+        /// <summary>
+        /// Update entity.
+        /// </summary>
+        /// <param name="entity">Entity to update.</param>
+        public override Task UpdateAsync(Sample2 entity)
+        {
+            // TODO: Add address, foundation_type, foundation_damage_cause, access_policy
+            var sql = @"UPDATE report.sample AS samp
+                        SET    monitoring_well = @MonitoringWell,
+                                cpt = @Cpt,
+                                note = @Note,
+                                wood_level = @WoodLevel,
+                                groundlevel = @GroundLevel,
+                                groundwater_level = @GroundwaterLevel,
+                                foundation_recovery_adviced = @FoundationRecoveryAdviced,
+                                built_year = @BuiltYear,
+                                foundation_quality = @FoundationQuality,
+                                enforcement_term = @EnforcementTerm,
+                                substructure = @Substructure
+                                -- foundation_type = @FoundationType,
+                                -- foundation_damage_cause = @FoundationDamageCause,
+                                -- access_policy = @AccessPolicy
+                        WHERE  samp.delete_date IS NULL
+                                AND samp.id = @Id";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
+        }
+
+        /// <summary>
+        /// Delete entity.
+        /// </summary>
+        /// <param name="entity">Entity to delete.</param>
+        public override Task DeleteAsync(Sample2 entity)
+        {
+            var sql = @"UPDATE report.sample AS samp
+                        SET    delete_date = CURRENT_TIMESTAMP
+                        WHERE  samp.delete_date IS NULL
+                               AND samp.id = @Id";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
+        }
+
+        /// <summary>
+        /// Count entities and filter on access policy and organization.
+        /// </summary>
+        /// <param name="org_id">Organization identifier.</param>
+        /// <param name="connection">Optional database connection.</param>
+        /// <returns>Number of records.</returns>
+        public Task<int> CountAsync(int org_id, IDbConnection connection = null)
         {
             var sql = @"SELECT COUNT(*)
                         FROM   report.sample AS samp
@@ -80,7 +247,7 @@ namespace FunderMaps.Data.Repositories
                                 AND (attr.owner = @Owner
                                         OR samp.access_policy = 'public')";
 
-            return await RunSqlCommand(async cnn =>
+            return RunSqlCommand(async cnn =>
                 await cnn.QuerySingleAsync<int>(sql, new { Owner = org_id }),
                 connection);
         }

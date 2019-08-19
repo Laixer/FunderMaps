@@ -137,11 +137,8 @@ namespace FunderMaps.Controllers.Api
 
             using (var connection = _dbProvider.ConnectionScope())
             {
-                return Ok(new EntityStatsOutputModel
-                {
-                    Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId), connection)
-                });
-            }
+                Count = await _sampleRepository.CountAsync(int.Parse(attestationOrganizationId))
+            });
         }
 
         // POST: api/sample
@@ -229,52 +226,11 @@ namespace FunderMaps.Controllers.Api
                                 RETURNING id";
 
                     var _sql2 = @"UPDATE report.report AS reprt SET status = 'pending' WHERE reprt.id = @id";
+                    await connection.ExecuteAsync(_sql2, input.Report);
 
                     input._Address = input.Address.Id;
 
-                    input.Id = await connection.ExecuteScalarAsync<int>(_sql, input);
-                    await connection.ExecuteAsync(_sql2, input.Report);
-
-                    var sql3 = @"SELECT samp.id,
-                               samp.report,
-                               samp.foundation_type,
-                               attr.owner AS attribution,
-                               samp.monitoring_well,
-                               samp.cpt,
-                               samp.create_date, 
-                               samp.update_date,
-                               samp.note,
-                               samp.wood_level,
-                               samp.groundwater_level,
-                               samp.groundlevel,
-                               samp.foundation_recovery_adviced,
-                               samp.foundation_damage_cause,
-                               samp.built_year,
-                               samp.foundation_quality,
-                               samp.access_policy,
-                               samp.enforcement_term,
-                               samp.base_measurement_level,
-                               addr.*
-                        FROM   report.sample AS samp
-                               INNER JOIN report.address AS addr ON samp.address = addr.id
-                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
-                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                        WHERE  samp.delete_date IS NULL
-                               AND samp.id = @Id
-                        LIMIT  1";
-
-                    var result2 = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql3, map: (sampleEntity, addressEntity) =>
-                    {
-                        sampleEntity.Address = addressEntity;
-                        return sampleEntity;
-                    }, splitOn: "id", param: input);
-
-                    if (result2.Count() == 0)
-                    {
-                        return ResourceNotFound();
-                    }
-
-                    return Ok(result2.First());
+                    return Ok(await _sampleRepository.AddAsync(input));
                 }
 
                 return ResourceForbid();
@@ -295,75 +251,24 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var sql = @"SELECT samp.id,
-                               samp.report,
-                               samp.foundation_type,
-                               attr.owner AS attribution,
-                               samp.monitoring_well,
-                               samp.cpt,
-                               samp.create_date, 
-                               samp.update_date,
-                               samp.note,
-                               samp.wood_level,
-                               samp.groundwater_level,
-                               samp.groundlevel,
-                               samp.foundation_recovery_adviced,
-                               samp.foundation_damage_cause,
-                               samp.built_year,
-                               samp.foundation_quality,
-                               samp.access_policy,
-                               samp.enforcement_term,
-                               samp.base_measurement_level,
-                               addr.*
-                        FROM   report.sample AS samp
-                               INNER JOIN report.address AS addr ON samp.address = addr.id
-                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
-                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                        WHERE  samp.delete_date IS NULL
-                               AND samp.id = @Id
-                        LIMIT  1";
-
-            using (var connection = _dbProvider.ConnectionScope())
+            var sample = await _sampleRepository.GetByIdAsync(id);
+            if (sample == null)
             {
-                var result = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql, map: (sampleEntity, addressEntity) =>
-                {
-                    sampleEntity.Address = addressEntity;
-                    return sampleEntity;
-                }, param: new { Id = id });
-
-                if (result.Count() == 0)
-                {
-                    return ResourceNotFound();
-                }
-
-                var sample = result.First();
-                if (sample.AccessPolicy == AccessPolicy.Public) // sample.IsPublic() && sample.ReportNavigation.IsPublic()
-                {
-                    return Ok(sample);
-                }
-
-                var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Read);
-                if (authorizationResult.Succeeded)
-                {
-                    return Ok(sample);
-                }
-
-                return ResourceForbid();
-            }
-        }
-
-        class BaseLevelHandler : SqlMapper.TypeHandler<BaseLevel>
-        {
-            public override BaseLevel Parse(object value)
-            {
-                return BaseLevel.NAP;
+                return ResourceNotFound();
             }
 
-            public override void SetValue(IDbDataParameter parameter, BaseLevel value)
+            if (sample.AccessPolicy == AccessPolicy.Public) // sample.IsPublic() && sample.ReportNavigation.IsPublic()
             {
-                parameter.DbType = DbType.String;
-                parameter.Value = value.ToString().ToLower();
+                return Ok(sample);
             }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Read);
+            if (authorizationResult.Succeeded)
+            {
+                return Ok(sample);
+            }
+
+            return ResourceForbid();
         }
 
         // PUT: api/sample/{id}
@@ -379,83 +284,26 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] Sample2 input)
         {
-            var sql = @"SELECT samp.id,
-                               samp.report,
-                               samp.foundation_type,
-                               attr.owner AS attribution,
-                               samp.monitoring_well,
-                               samp.cpt,
-                               samp.create_date, 
-                               samp.update_date,
-                               samp.note,
-                               samp.wood_level,
-                               samp.groundwater_level,
-                               samp.groundlevel,
-                               samp.foundation_recovery_adviced,
-                               samp.foundation_damage_cause,
-                               samp.built_year,
-                               samp.foundation_quality,
-                               samp.access_policy,
-                               samp.enforcement_term,
-                               samp.base_measurement_level,
-                               addr.*
-                        FROM   report.sample AS samp
-                               INNER JOIN report.address AS addr ON samp.address = addr.id
-                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
-                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                        WHERE  samp.delete_date IS NULL
-                               AND samp.id = @Id
-                        LIMIT  1";
-
             if (id != input.Id)
             {
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            using (var connection = _dbProvider.ConnectionScope())
+            var sample = await _sampleRepository.GetByIdAsync(id);
+            if (sample == null)
             {
-                var result = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql, map: (sampleEntity, addressEntity) =>
-                {
-                    sampleEntity.Address = addressEntity;
-                    return sampleEntity;
-                }, param: new { Id = id });
-
-                if (result.Count() == 0)
-                {
-                    return ResourceNotFound();
-                }
-
-                var sample = result.First();
-
-                var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Update);
-                if (authorizationResult.Succeeded)
-                {
-                    // TODO: Add address, foundation_type, foundation_damage_cause, access_policy
-                    var _sql = @"UPDATE report.sample AS samp
-                                SET    monitoring_well = @MonitoringWell,
-                                       cpt = @Cpt,
-                                       note = @Note,
-                                       wood_level = @WoodLevel,
-                                       groundlevel = @GroundLevel,
-                                       groundwater_level = @GroundwaterLevel,
-                                       foundation_recovery_adviced = @FoundationRecoveryAdviced,
-                                       built_year = @BuiltYear,
-                                       foundation_quality = @FoundationQuality,
-                                       enforcement_term = @EnforcementTerm,
-                                       substructure = @Substructure
-                                       -- foundation_type = @FoundationType,
-                                       -- foundation_damage_cause = @FoundationDamageCause,
-                                       -- access_policy = @AccessPolicy
-                                WHERE  samp.delete_date IS NULL
-                                       AND samp.id = @Id";
-
-                    await connection.ExecuteAsync(_sql, input);
-
-                    return NoContent();
-                }
-
-                return ResourceForbid();
+                return ResourceNotFound();
             }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Update);
+            if (authorizationResult.Succeeded)
+            {
+                await _sampleRepository.UpdateAsync(input);
+
+                return NoContent();
+            }
+
+            return ResourceForbid();
         }
 
         // DELETE: api/sample/{id}
@@ -469,64 +317,21 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var sql = @"SELECT samp.id,
-                               samp.report,
-                               samp.foundation_type,
-                               attr.owner AS attribution,
-                               samp.monitoring_well,
-                               samp.cpt,
-                               samp.create_date, 
-                               samp.update_date,
-                               samp.note,
-                               samp.wood_level,
-                               samp.groundwater_level,
-                               samp.groundlevel,
-                               samp.foundation_recovery_adviced,
-                               samp.foundation_damage_cause,
-                               samp.built_year,
-                               samp.foundation_quality,
-                               samp.access_policy,
-                               samp.enforcement_term,
-                               samp.base_measurement_level,
-                               addr.*
-                        FROM   report.sample AS samp
-                               INNER JOIN report.address AS addr ON samp.address = addr.id
-                               INNER JOIN report.report AS reprt ON samp.report = reprt.id
-                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
-                        WHERE  samp.delete_date IS NULL
-                               AND samp.id = @Id
-                        LIMIT  1";
-
-            using (var connection = _dbProvider.ConnectionScope())
+            var sample = await _sampleRepository.GetByIdAsync(id);
+            if (sample == null)
             {
-                var result = await connection.QueryAsync<Sample2, Address2, Sample2>(sql: sql, map: (sampleEntity, addressEntity) =>
-                {
-                    sampleEntity.Address = addressEntity;
-                    return sampleEntity;
-                }, param: new { Id = id });
-
-                if (result.Count() == 0)
-                {
-                    return ResourceNotFound();
-                }
-
-                var sample = result.First();
-
-                var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Delete);
-                if (authorizationResult.Succeeded)
-                {
-                    var _sql = @"UPDATE report.sample AS samp
-                                SET    delete_date = CURRENT_TIMESTAMP
-                                WHERE  samp.delete_date IS NULL
-                                       AND samp.id = @Id";
-
-                    await connection.ExecuteAsync(_sql, new { Id = id });
-
-                    return NoContent();
-                }
-
-                return ResourceForbid();
+                return ResourceNotFound();
             }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Delete);
+            if (authorizationResult.Succeeded)
+            {
+                await _sampleRepository.DeleteAsync(sample);
+
+                return NoContent();
+            }
+
+            return ResourceForbid();
         }
     }
 }
