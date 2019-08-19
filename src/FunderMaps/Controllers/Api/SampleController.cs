@@ -55,7 +55,7 @@ namespace FunderMaps.Controllers.Api
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // Administrator can query anything
+            // Administrator can query anything without organization filter
             if (User.IsInRole(Constants.AdministratorRole))
             {
                 return Ok(await _sampleRepository.ListAllAsync(new Navigation(offset, limit)));
@@ -84,7 +84,7 @@ namespace FunderMaps.Controllers.Api
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // Administrator can query anything
+            // Administrator can query anything without organization filter
             if (User.IsInRole(Constants.AdministratorRole))
             {
                 return Ok(await _sampleRepository.ListAllReportAsync(id, new Navigation(offset, limit)));
@@ -110,7 +110,7 @@ namespace FunderMaps.Controllers.Api
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // Administrator can query anything
+            // Administrator can query anything without organization filter
             if (User.IsInRole(Constants.AdministratorRole))
             {
                 return Ok(new EntityStatsOutputModel
