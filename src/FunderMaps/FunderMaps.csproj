@@ -20,6 +20,7 @@
     <PackageProjectUrl>https://github.com/Zanhos/FunderMaps</PackageProjectUrl>
     <ApplicationInsightsResourceId>/subscriptions/a04530e8-9b1b-42e0-a7e9-500d068c4785/resourcegroups/fundermaps/providers/microsoft.insights/components/fundermaps</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/a04530e8-9b1b-42e0-a7e9-500d068c4785/resourcegroups/fundermaps/providers/microsoft.insights/components/fundermaps</ApplicationInsightsAnnotationResourceId>
+    <PackageTags>Foundation, Research, Visualization, Registration</PackageTags>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU' or '$(Configuration)|$(Platform)'=='Debug|Any CPU'">

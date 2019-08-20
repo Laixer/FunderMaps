@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace FunderMaps.Middleware
 {
@@ -23,6 +23,34 @@ namespace FunderMaps.Middleware
             _policy = policy ?? throw new ArgumentNullException(nameof(policy));
         }
 
+        /// <summary>
+        /// Add additional HTTP headers to the response.
+        /// </summary>
+        /// <param name="headers">Header dictionary.</param>
+        private void HttpHeadersAdd(IHeaderDictionary headers)
+        {
+            foreach (var headerValuePair in _policy.SetHeaders)
+            {
+                headers.Add(headerValuePair.Key, headerValuePair.Value);
+            }
+        }
+
+        /// <summary>
+        /// Remove HTTP headers from the response.
+        /// </summary>
+        /// <param name="headers">Header dictionary.</param>
+        private void HttpHeadersRemove(IHeaderDictionary headers)
+        {
+            foreach (var header in _policy.RemoveHeaders)
+            {
+                headers.Remove(header);
+            }
+        }
+
+        /// <summary>
+        /// Invoke middleware.
+        /// </summary>
+        /// <param name="context">Http context.</param>
         public async Task Invoke(HttpContext context)
         {
             if (context == null)
@@ -36,17 +64,8 @@ namespace FunderMaps.Middleware
                 throw new ArgumentNullException(nameof(response));
             }
 
-            var headers = response.Headers;
-
-            foreach (var headerValuePair in _policy.SetHeaders)
-            {
-                headers[headerValuePair.Key] = headerValuePair.Value;
-            }
-
-            foreach (var header in _policy.RemoveHeaders)
-            {
-                headers.Remove(header);
-            }
+            HttpHeadersAdd(response.Headers);
+            HttpHeadersRemove(response.Headers);
 
             await _next(context);
         }
