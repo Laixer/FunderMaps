@@ -174,6 +174,69 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        /// Create new report.
+        /// </summary>
+        /// <param name="entity">Entity to create.</param>
+        /// <returns>Created entity.</returns>
+        public override async Task<Report2> AddAsync(Report2 entity)
+        {
+            // TODO: Add attribution
+            // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
+            var sql = @"
+                INSERT INTO report.report
+                        (document_id,
+                            inspection,
+                            joint_measurement,
+                            floor_measurement,
+                            note,
+                            status,
+                            type,
+                            document_date,
+                            document_name,
+                            access_policy)
+                VALUES      (@DocumentId,
+                            @Inspection,
+                            @JointMeasurement,
+                            @FloorMeasurement,
+                            @Note,
+                            @Status,
+                            @Type,
+                            @DocumentDate,
+                            @DocumentName,
+                            @EnforcementTerm
+                            (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1])
+                RETURNING id";
+
+            var id = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
+            return await GetByIdAsync(id);
+        }
+
+        /// <summary>
+        /// Update entity.
+        /// </summary>
+        /// <param name="entity">Entity to update.</param>
+        public override Task UpdateAsync(Report2 entity)
+        {
+            // TODO: Add address, foundation_type, foundation_damage_cause
+            // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
+            var sql = @"
+                UPDATE report.report AS reprt
+                SET    inspection = @Inspection,
+                        joint_measurement = @JointMeasurement,
+                        floor_measurement = @FloorMeasurement,
+                        note = @Note,
+                        status = @Status,
+                        type = @Type
+                        document_date = @DocumentDate,
+                        document_name = @DocumentName,
+                        access_policy = (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1]
+                WHERE  reprt.delete_date IS NULL
+                        AND reprt.id = @Id";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
+        }
+
+        /// <summary>
         /// Update report status.
         /// </summary>
         /// <param name="entity">Entity to update.</param>
@@ -186,6 +249,20 @@ namespace FunderMaps.Data.Repositories
                 WHERE  reprt.id = @Id ";
 
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, new { Status = status, entity.Id }));
+        }
+
+        /// <summary>
+        /// Delete entity.
+        /// </summary>
+        /// <param name="entity">Entity to delete.</param>
+        public override Task DeleteAsync(Report2 entity)
+        {
+            var sql = @"UPDATE report.report AS reprt
+                        SET    delete_date = CURRENT_TIMESTAMP
+                        WHERE  reprt.delete_date IS NULL
+                               AND reprt.id = @Id";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
         }
 
         /// <summary>
