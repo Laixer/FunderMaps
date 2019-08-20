@@ -8,8 +8,6 @@ namespace FunderMaps.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.EnsureExtension("uuid-ossp");
-
             migrationBuilder.EnsureSchema("application");
 
             migrationBuilder.CreateSequence(
@@ -181,8 +179,6 @@ namespace FunderMaps.Data.Migrations
             migrationBuilder.DropSequence("address_id_seq", "application");
 
             migrationBuilder.DropSchema("application");
-
-            migrationBuilder.DropExtension("uuid-ossp");
         }
     }
 }

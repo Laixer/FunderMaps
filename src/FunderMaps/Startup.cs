@@ -1,31 +1,31 @@
-﻿using System.IO.Compression;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.ResponseCompression;
+﻿using FunderMaps.Authorization.Handler;
+using FunderMaps.Authorization.Requirement;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
+using FunderMaps.Data;
+using FunderMaps.Data.Repositories;
+using FunderMaps.Event;
+using FunderMaps.Event.Handlers;
+using FunderMaps.Extensions;
+using FunderMaps.HealthChecks;
+using FunderMaps.Helpers;
+using FunderMaps.Interfaces;
+using FunderMaps.Middleware;
+using FunderMaps.Models.Identity;
+using FunderMaps.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
-using FunderMaps.Data;
-using FunderMaps.Data.Repositories;
-using FunderMaps.Models.Identity;
-using FunderMaps.Interfaces;
-using FunderMaps.Services;
-using FunderMaps.Helpers;
-using FunderMaps.Extensions;
-using FunderMaps.Authorization.Handler;
-using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Services;
-using FunderMaps.Middleware;
-using FunderMaps.HealthChecks;
-using FunderMaps.Event;
-using FunderMaps.Event.Handlers;
+using System.IO.Compression;
 
 namespace FunderMaps
 {
@@ -40,10 +40,7 @@ namespace FunderMaps
         /// Create a new instance.
         /// </summary>
         /// <param name="configuration"></param>
-        public Startup(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => _configuration = configuration;
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
