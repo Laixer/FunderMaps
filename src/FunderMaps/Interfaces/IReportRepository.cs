@@ -7,11 +7,11 @@ using FunderMaps.Core.Repositories;
 
 namespace FunderMaps.Interfaces
 {
-    public interface IReportRepository : IAsyncRepository<Report>
+    public interface IReportRepository : IAsyncRepository<Report2>
     {
-        Task<Report> GetByIdAsync(int id, string document);
-        Task<IReadOnlyList<Report>> ListAllAsync(Navigation navigation);
-        Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation);
+        Task<Report2> GetByIdAsync(int id, string document);
+        Task<IReadOnlyList<Report2>> ListAllAsync(Navigation navigation);
+        Task<IReadOnlyList<Report2>> ListAllAsync(int org_id, Navigation navigation);
         Task<int> CountAsync(int org_id);
     }
 }

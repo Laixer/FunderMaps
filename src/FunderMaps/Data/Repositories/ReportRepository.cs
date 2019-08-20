@@ -15,7 +15,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     /// Report repository.
     /// </summary>
-    public class ReportRepository : EfRepository<FisDbContext, Report>, IReportRepository
+    public class ReportRepository : EfRepository<FisDbContext, Report2>, IReportRepository
     {
         /// <summary>
         /// Create a new instance.
@@ -27,31 +27,12 @@ namespace FunderMaps.Data.Repositories
         {
         }
 
-        private IQueryable<Report> DefaultQuery()
-        {
-            return _dbContext.Report
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Reviewer)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Contractor)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Creator)
-                .Include(s => s.Attribution)
-                    .ThenInclude(si => si.Owner)
-                .Include(s => s.Norm);
-        }
-
-        public override Task<Report> GetByIdAsync(int id)
-        {
-            return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id);
-        }
-
         /// <summary>
         /// Get entity by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Sample2"/> on success, null on error.</returns>
-        public async Task<Report2> GetByIdAsync2(int id)
+        public override async Task<Report2> GetByIdAsync(int id)
         {
             var sql = @"SELECT reprt.id,
                                reprt.document_id,
@@ -68,7 +49,7 @@ namespace FunderMaps.Data.Repositories
                         FROM   report.report AS reprt
                                INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
                         WHERE  reprt.delete_date IS NULL
-                               AND reprt.id = @id
+                               AND reprt.id = @Id
                         LIMIT  1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, new { Id = id }));
@@ -80,30 +61,123 @@ namespace FunderMaps.Data.Repositories
             return result.First();
         }
 
-        public Task<Report> GetByIdAsync(int id, string document)
+        /// <summary>
+        /// Get entity by id.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <param name="document">Document identifier.</param>
+        /// <returns><see cref="Sample2"/> on success, null on error.</returns>
+        public async Task<Report2> GetByIdAsync(int id, string document)
         {
-            return DefaultQuery().FirstOrDefaultAsync(s => s.Id == id && s.DocumentId == document);
+            var sql = @"
+                SELECT reprt.id,
+                        reprt.document_id,
+                        reprt.inspection,
+                        reprt.joint_measurement, 
+                        reprt.floor_measurement,
+                        reprt.note,
+                        reprt.status,
+                        reprt.type,
+                        reprt.document_date,
+                        reprt.document_name,
+                        reprt.access_policy,
+                        attr.owner AS attribution
+                FROM   report.report AS reprt
+                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL
+                        AND reprt.id = @Id
+                        AND reprt.document_id = @DocumentId
+                LIMIT  1";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, new { Id = id, DocumentId = document }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
         }
 
-        public async Task<IReadOnlyList<Report>> ListAllAsync(Navigation navigation)
+        /// <summary>
+        /// Return all reports.
+        /// </summary>
+        /// <param name="navigation">Navigation options.</param>
+        /// <returns>List of records.</returns>
+        public async Task<IReadOnlyList<Report2>> ListAllAsync(Navigation navigation)
         {
-            return await DefaultQuery()
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(navigation.Offset)
-                .Take(navigation.Limit)
-                .ToListAsync();
+            var sql = @"
+                SELECT reprt.id,
+                        reprt.document_id,
+                        reprt.inspection,
+                        reprt.joint_measurement, 
+                        reprt.floor_measurement,
+                        reprt.note,
+                        reprt.status,
+                        reprt.type,
+                        reprt.document_date,
+                        reprt.document_name,
+                        reprt.access_policy,
+                        attr.owner AS attribution
+                FROM   report.report AS reprt
+                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL
+                ORDER BY create_date DESC
+                OFFSET @Offset
+                LIMIT @Limit";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, navigation));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.ToArray();
         }
 
-        public async Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation)
+        /// <summary>
+        /// Return all reports and filter on access policy and organization.
+        /// </summary>
+        /// <param name="org_id">Organization identifier.</param>
+        /// <param name="navigation">Navigation options.</param>
+        /// <returns>List of records.</returns>
+        public async Task<IReadOnlyList<Report2>> ListAllAsync(int org_id, Navigation navigation)
         {
-            return await DefaultQuery()
-                .Where(s => s.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
-                .OrderByDescending(s => s.CreateDate)
-                .Skip(navigation.Offset)
-                .Take(navigation.Limit)
-                .ToListAsync();
+            var sql = @"
+                SELECT reprt.id,
+                        reprt.document_id,
+                        reprt.inspection,
+                        reprt.joint_measurement, 
+                        reprt.floor_measurement,
+                        reprt.note,
+                        reprt.status,
+                        reprt.type,
+                        reprt.document_date,
+                        reprt.document_name,
+                        reprt.access_policy,
+                        attr.owner AS attribution
+                FROM   report.report AS reprt
+                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL
+                        AND (attr.owner = @Owner
+                                OR reprt.access_policy = 'public')
+                ORDER BY create_date DESC
+                OFFSET @Offset
+                LIMIT @Limit";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, new { Owner = org_id, navigation.Offset, navigation.Limit }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.ToArray();
         }
 
+        /// <summary>
+        /// Update report status.
+        /// </summary>
+        /// <param name="id">Report id.</param>
+        /// <param name="status">New status.</param>
         public Task UpdateStatusAsync(int id, ReportStatus status)
         {
             var sql = @"
@@ -114,11 +188,38 @@ namespace FunderMaps.Data.Repositories
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, new { Status = status, Id = id }));
         }
 
+        /// <summary>
+        /// Count entities and filter on access policy and organization.
+        /// </summary>
+        /// <param name="org_id">Organization identifier.</param>
+        /// <returns>Number of records.</returns>
         public Task<int> CountAsync(int org_id)
         {
-            return DefaultQuery()
-                .Where(s => s.Attribution._Owner == org_id || s.AccessPolicy == AccessPolicy.Public)
-                .CountAsync();
+            var sql = @"
+                SELECT COUNT(*)
+                FROM   report.report AS reprt
+                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL
+                        AND (attr.owner = @Owner
+                                OR reprt.access_policy = 'public')";
+
+            return RunSqlCommand(async cnn =>
+                await cnn.QuerySingleAsync<int>(sql, new { Owner = org_id }));
+        }
+
+        /// <summary>
+        /// Count entities.
+        /// </summary>
+        /// <returns>Number of records.</returns>
+        public override Task<int> CountAsync()
+        {
+            var sql = @"
+                SELECT COUNT(*)
+                FROM   report.report AS reprt
+                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL";
+
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<int>(sql));
         }
     }
 }
