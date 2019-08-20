@@ -18,8 +18,8 @@ namespace FunderMaps.Tests.Controllers
             // Arrange
             var options = DatabaseWrapper.GenerateDatabase<FunderMapsDbContext>(nameof(Get_ReturnsOrganizationProposal));
 
-            Guid token = Guid.NewGuid();
-            OrganizationProposal proposal = new OrganizationProposal("testcomp", "info@example.org")
+            var token = Guid.NewGuid();
+            var proposal = new OrganizationProposal("testcomp", "info@example.org")
             {
                 Token = token,
             };
@@ -52,8 +52,8 @@ namespace FunderMaps.Tests.Controllers
             // Arrange
             var options = DatabaseWrapper.GenerateDatabase<FunderMapsDbContext>(nameof(Get_ReturnsNotFound_GivenWrongId));
 
-            Guid token = Guid.NewGuid();
-            OrganizationProposal proposal = new OrganizationProposal("testcomp", "info@example.org")
+            var token = Guid.NewGuid();
+            var proposal = new OrganizationProposal("testcomp", "info@example.org")
             {
                 Token = token,
             };
@@ -85,8 +85,8 @@ namespace FunderMaps.Tests.Controllers
             // Arrange
             var options = DatabaseWrapper.GenerateDatabase<FunderMapsDbContext>(nameof(Post_ReturnsNewOrganizationProposal));
 
-            Guid token = Guid.NewGuid();
-            OrganizationProposal proposal = new OrganizationProposal("testcomp", "info@example.org")
+            var token = Guid.NewGuid();
+            var proposal = new OrganizationProposal("testcomp", "info@example.org")
             {
                 Token = token,
             };
@@ -113,8 +113,8 @@ namespace FunderMaps.Tests.Controllers
             var normalizer = new LookupNormalizer();
             var options = DatabaseWrapper.GenerateDatabase<FunderMapsDbContext>(nameof(Post_ReturnsConflict_GivenExistingName));
 
-            Guid token = Guid.NewGuid();
-            OrganizationProposal proposal = new OrganizationProposal("testcomp", "info@example.org")
+            var token = Guid.NewGuid();
+            var proposal = new OrganizationProposal("testcomp", "info@example.org")
             {
                 Token = token,
                 NormalizedName = normalizer.Normalize("testcomp"),
@@ -145,8 +145,8 @@ namespace FunderMaps.Tests.Controllers
             // Arrange
             var options = DatabaseWrapper.GenerateDatabase<FunderMapsDbContext>(nameof(Delete_ReturnsNothing));
 
-            Guid token = Guid.NewGuid();
-            OrganizationProposal proposal = new OrganizationProposal("testcomp", "info@example.org")
+            var token = Guid.NewGuid();
+            var proposal = new OrganizationProposal("testcomp", "info@example.org")
             {
                 Token = token,
             };
