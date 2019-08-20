@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities
+﻿namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Base for all entities.

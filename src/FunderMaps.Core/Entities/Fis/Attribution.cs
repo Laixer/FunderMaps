@@ -1,45 +1,75 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Attribution represents a entity partition for user and organizational
+    /// relations.
+    /// </summary>
     public class Attribution
     {
-        public Attribution()
-        {
-            FoundationRecovery = new HashSet<FoundationRecovery>();
-            Report = new HashSet<Report>();
-        }
-
+        /// <summary>
+        /// Unique identifier.
+        /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        /// Project relation identifier or null.
+        /// </summary>
+        [IgnoreDataMember]
         public int? Project { get; set; }
 
+        /// <summary>
+        /// Reviewer idenitfier.
+        /// </summary>
         [IgnoreDataMember]
-        public int? _Reviewer { get; set; }
+        public int? Reviewer { get; set; }
 
+        /// <summary>
+        /// Contractor identifier.
+        /// </summary>
         [IgnoreDataMember]
-        public int _Contractor { get; set; }
+        public int Contractor { get; set; }
 
+        /// <summary>
+        /// Creator identifier.
+        /// </summary>
         [IgnoreDataMember]
-        public int _Creator { get; set; }
+        public int Creator { get; set; }
 
+        /// <summary>
+        /// Owner identifier.
+        /// </summary>
         [IgnoreDataMember]
-        public int _Owner { get; set; }
+        public int Owner { get; set; }
 
-        public virtual Principal Reviewer { get; set; }
+        /// <summary>
+        /// Project relation or null.
+        /// </summary>
+        public Project ProjectNavigation { get; set; }
 
+        /// <summary>
+        /// Reviewer or null.
+        /// </summary>
+        public Principal ReviewerNavigation { get; set; }
+
+        /// <summary>
+        /// Contractor.
+        /// </summary>
         [Required]
-        public virtual Organization Contractor { get; set; }
+        public Organization ContractorNavigation { get; set; }
 
-        public virtual Principal Creator { get; set; }
-        public virtual Organization Owner { get; set; }
-        public virtual Project ProjectNavigation { get; set; }
+        /// <summary>
+        /// Creator.
+        /// </summary>
+        [Required]
+        public Principal CreatorNavigation { get; set; }
 
-        [IgnoreDataMember]
-        public virtual ICollection<FoundationRecovery> FoundationRecovery { get; set; }
-
-        [IgnoreDataMember]
-        public virtual ICollection<Report> Report { get; set; }
+        /// <summary>
+        /// Owner.
+        /// </summary>
+        [Required]
+        public Organization OwnerNavigation { get; set; }
     }
 }
