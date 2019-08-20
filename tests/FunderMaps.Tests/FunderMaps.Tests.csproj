@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunderMaps\FunderMaps.csproj" />
+    <ProjectReference Include="..\..\src\FunderMaps\FunderMaps.csproj" />
   </ItemGroup>
 
 </Project>

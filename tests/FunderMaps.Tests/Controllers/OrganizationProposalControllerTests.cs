@@ -1,12 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using Xunit;
-using FunderMaps.Controllers.Webservice;
-using Microsoft.AspNetCore.Mvc;
+﻿using FunderMaps.Controllers.Api;
 using FunderMaps.Data;
 using FunderMaps.Models;
 using FunderMaps.Tests.Helpers;
 using FunderMaps.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace FunderMaps.Tests.Controllers
 {

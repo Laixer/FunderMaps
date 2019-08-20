@@ -1,8 +1,8 @@
-﻿using System.Data;
+﻿using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using Dapper;
+using System.Data;
 
 namespace FunderMaps.Providers
 {

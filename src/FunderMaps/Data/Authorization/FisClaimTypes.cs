@@ -9,12 +9,12 @@
         /// FIS user identifier.
         /// </summary>
         public static readonly string UserAttestationIdentifier = "http://fundermaps.com/2019/identity/claims/fisuseridentifier";
-        
+
         /// <summary>
         /// FIS role.
         /// </summary>
         public static readonly string OrganizationUserRole = "http://fundermaps.com/2019/identity/claims/fisuserrole";
-        
+
         /// <summary>
         /// FIS organization identifier.
         /// </summary>
