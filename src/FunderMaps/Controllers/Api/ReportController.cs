@@ -61,12 +61,12 @@ namespace FunderMaps.Controllers.Api
                 return Ok(await _reportRepository.ListAllAsync(new Navigation(offset, limit)));
             }
 
-            if (attestationOrganizationId == null)
+            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
             {
                 return ResourceForbid();
             }
 
-            return Ok(await _reportRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
+            return Ok(await _reportRepository.ListAllAsync(attOrgId, new Navigation(offset, limit)));
         }
 
         // GET: api/report/stats
@@ -90,14 +90,14 @@ namespace FunderMaps.Controllers.Api
                 });
             }
 
-            if (attestationOrganizationId == null)
+            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
             {
                 return ResourceForbid();
             }
 
             return Ok(new EntityStatsOutputModel
             {
-                Count = await _reportRepository.CountAsync(int.Parse(attestationOrganizationId)),
+                Count = await _reportRepository.CountAsync(attOrgId),
             });
         }
 
@@ -119,12 +119,12 @@ namespace FunderMaps.Controllers.Api
             var attestationPrincipalId = User.GetClaim(FisClaimTypes.UserAttestationIdentifier);
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            if (attestationPrincipalId == null || attestationOrganizationId == null)
+            if (!int.TryParse(attestationPrincipalId, out int attPrinId) || !int.TryParse(attestationOrganizationId, out int attOrgId))
             {
                 return ResourceForbid();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, int.Parse(attestationOrganizationId), OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, attOrgId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 var report = new Report
@@ -144,8 +144,8 @@ namespace FunderMaps.Controllers.Api
                         Project = input.Attribution.Project,
                         Reviewer = await _principalRepository.GetOrAddAsync(input.Attribution.Reviewer),
                         Contractor = await _organizationRepository.GetOrAddAsync(input.Attribution.Contractor),
-                        _Creator = int.Parse(attestationPrincipalId),
-                        _Owner = int.Parse(attestationOrganizationId),
+                        _Creator = attPrinId,
+                        _Owner = attOrgId,
                     },
                 };
 
