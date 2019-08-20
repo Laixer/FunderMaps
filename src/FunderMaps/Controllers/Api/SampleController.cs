@@ -192,7 +192,8 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            if (sample.AccessPolicy == AccessPolicy.Public) // sample.IsPublic() && sample.ReportNavigation.IsPublic()
+            // TODO: sample.ReportNavigation.IsPublic()
+            if (sample.IsPublic())
             {
                 return Ok(sample);
             }

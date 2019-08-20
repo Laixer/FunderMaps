@@ -114,7 +114,7 @@ namespace FunderMaps.Controllers.Api
         [HttpPost]
         [ProducesResponseType(typeof(Report), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync([FromBody] Report input)
+        public async Task<IActionResult> PostAsync([FromBody] Report2 input)
         {
             var attestationPrincipalId = User.GetClaim(FisClaimTypes.UserAttestationIdentifier);
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
@@ -127,31 +127,11 @@ namespace FunderMaps.Controllers.Api
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, attOrgId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                var report = new Report
-                {
-                    DocumentId = input.DocumentId,
-                    Inspection = input.Inspection,
-                    JointMeasurement = input.JointMeasurement,
-                    FloorMeasurement = input.FloorMeasurement,
-                    Note = input.Note,
-                    Norm = input.Norm,
-                    Status = ReportStatus.Todo,
-                    Type = input.Type,
-                    DocumentDate = input.DocumentDate,
-                    AccessPolicy = input.AccessPolicy,
-                    Attribution = new Attribution
-                    {
-                        Project = input.Attribution.Project,
-                        Reviewer = await _principalRepository.GetOrAddAsync(input.Attribution.Reviewer),
-                        Contractor = await _organizationRepository.GetOrAddAsync(input.Attribution.Contractor),
-                        _Creator = attPrinId,
-                        _Owner = attOrgId,
-                    },
-                };
+                // TODO: Fix attribution
+                input.Status = ReportStatus.Todo;
 
-                await _reportRepository.AddAsync(report);
-
-                return Ok(report);
+                // TODO: AddAsync should not return new item
+                return Ok(await _reportRepository.AddAsync(input));
             }
 
             return ResourceForbid();
