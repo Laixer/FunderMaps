@@ -13,14 +13,11 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
-    // IMPORTANT -----------------------------------------------------  DO NOT COMMIT YET
-
-
-    //TODO:
-    // Make this stuff safer... add input validation checks. Do asserts on some of the stuff
+    // TODO:
+    // - Make this stuff safer... add input validation checks. Do asserts on some of the stuff
 
     /// <summary>
-    /// endpoint for recovery operations
+    /// Endpoint for recovery operations.
     /// </summary>
     [Authorize]
     [Route("api/foundationrecovery")]
@@ -147,11 +144,11 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecovery input)
         {
-            // check the user
+            // Check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // if its not able to convert it to an integer
-            // this also catches it if the attestationOrganizationId equals null
+            // NOTE: If it's not able to convert it to an integer
+            //       this also catches it if the attestationOrganizationId equals null
             if (!int.TryParse(attestationOrganizationId, out int organisationId))
             {
                 return ResourceForbid();
@@ -160,37 +157,6 @@ namespace FunderMaps.Controllers.Api
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organisationId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                //using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("FISConnection")))
-                using (var connection = _dbProvider.ConnectionScope())
-                {
-                    #region old code
-                    /*// This needs to be rewritten to accept a foundation recovery object
-
-                    // #TEST
-                    // Inserts a new record and retrieves the guid for the addres from the addres table
-                    var sql = @"
-                        INSERT INTO report.foundation_recovery (note , year, address, attribution)
-                        VALUES (@Note, @Year, @Address, @Attribution)";
-
-                    #region subqueries
-                    //sub query 1. selects the first GUID id from the addres where its name equals woeistraatx 
-                    var sub1 = @"(SELECT address.id FROM report.address WHERE address.street_name = @streetName LIMIT 1)";
-
-                    // sub query 1 parameter(s)
-                    var sub1Param = new { streetName = "woeistraatx" };
-
-                    // execute the query to retrieve a single value that is going to be used in the final query
-                    var sub1Result = await connection.ExecuteScalarAsync(sub1, sub1Param);
-                    #endregion
-
-                    // (^.^)/b the parameters for the main query. Attribution is the organizationid, but for testing this is hardcoded
-                    var paramaters = new { Note = "bobby did this again", Year = 2019, Address = sub1Result, Attribution = 18729 };
-
-                    // yeet it to the database in a non blocking way
-                    await connection.ExecuteAsync(sql, paramaters);*/
-                    #endregion 
-                }
-
                 var recovery = new FoundationRecovery
                 {
                     AccessPolicy = input.AccessPolicy,
