@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
+using FunderMaps.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Npgsql;
 
 namespace FunderMaps.HealthChecks
 {
@@ -12,15 +12,15 @@ namespace FunderMaps.HealthChecks
     /// </summary>
     public class DatabaseHealthCheck : IHealthCheck
     {
-        private readonly IConfiguration _configuration;
+        private readonly DbProvider _dbProvider;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         /// <param name="configuration">Application configuration.</param>
-        public DatabaseHealthCheck(IConfiguration configuration)
+        public DatabaseHealthCheck(DbProvider dbprovider)
         {
-            _configuration = configuration;
+            _dbProvider = dbprovider;
         }
 
         /// <summary>
@@ -31,24 +31,12 @@ namespace FunderMaps.HealthChecks
         /// <returns><see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            using (var connection = new NpgsqlConnection(_configuration.GetConnectionString("FunderMapsConnection")))
+            using (var connection = _dbProvider.ConnectionScope())
             {
-                await connection.OpenAsync();
-                switch (connection.State)
-                {
-                    case System.Data.ConnectionState.Broken:
-                    case System.Data.ConnectionState.Closed:
-                        return HealthCheckResult.Unhealthy();
-                    case System.Data.ConnectionState.Connecting:
-                        return HealthCheckResult.Degraded();
-                    case System.Data.ConnectionState.Executing:
-                    case System.Data.ConnectionState.Fetching:
-                    case System.Data.ConnectionState.Open:
-                        return HealthCheckResult.Healthy();
-                }
+                return await connection.ExecuteScalarAsync<int>("SELECT 1") == 1
+                    ? HealthCheckResult.Healthy()
+                    : HealthCheckResult.Unhealthy();
             }
-
-            return HealthCheckResult.Unhealthy();
         }
     }
 }
