@@ -114,7 +114,7 @@ namespace FunderMaps.Controllers.Api
         [HttpPost]
         [ProducesResponseType(typeof(Report), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync([FromBody] Report2 input)
+        public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
             var attestationPrincipalId = User.GetClaim(FisClaimTypes.UserAttestationIdentifier);
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);

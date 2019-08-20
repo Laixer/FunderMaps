@@ -13,7 +13,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     /// Report repository.
     /// </summary>
-    public class ReportRepository : RepositoryBase<Report2, int>, IReportRepository
+    public class ReportRepository : RepositoryBase<Report, int>, IReportRepository
     {
         /// <summary>
         /// Create a new instance.
@@ -28,8 +28,8 @@ namespace FunderMaps.Data.Repositories
         /// Get entity by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="Sample2"/> on success, null on error.</returns>
-        public override async Task<Report2> GetByIdAsync(int id)
+        /// <returns><see cref="Sample"/> on success, null on error.</returns>
+        public override async Task<Report> GetByIdAsync(int id)
         {
             var sql = @"SELECT reprt.id,
                                reprt.document_id,
@@ -49,7 +49,7 @@ namespace FunderMaps.Data.Repositories
                                AND reprt.id = @Id
                         LIMIT  1";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, new { Id = id }));
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report>(sql, new { Id = id }));
             if (result.Count() == 0)
             {
                 return null;
@@ -63,8 +63,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <param name="document">Document identifier.</param>
-        /// <returns><see cref="Sample2"/> on success, null on error.</returns>
-        public async Task<Report2> GetByIdAsync(int id, string document)
+        /// <returns><see cref="Sample"/> on success, null on error.</returns>
+        public async Task<Report> GetByIdAsync(int id, string document)
         {
             var sql = @"
                 SELECT reprt.id,
@@ -86,7 +86,7 @@ namespace FunderMaps.Data.Repositories
                         AND reprt.document_id = @DocumentId
                 LIMIT  1";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, new { Id = id, DocumentId = document }));
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report>(sql, new { Id = id, DocumentId = document }));
             if (result.Count() == 0)
             {
                 return null;
@@ -100,7 +100,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public override async Task<IReadOnlyList<Report2>> ListAllAsync(Navigation navigation)
+        public override async Task<IReadOnlyList<Report>> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT reprt.id,
@@ -122,7 +122,7 @@ namespace FunderMaps.Data.Repositories
                 OFFSET @Offset
                 LIMIT @Limit";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, navigation));
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report>(sql, navigation));
             if (result.Count() == 0)
             {
                 return null;
@@ -137,7 +137,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="org_id">Organization identifier.</param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Report2>> ListAllAsync(int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation)
         {
             var sql = @"
                 SELECT reprt.id,
@@ -161,7 +161,7 @@ namespace FunderMaps.Data.Repositories
                 OFFSET @Offset
                 LIMIT @Limit";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report2>(sql, new { Owner = org_id, navigation.Offset, navigation.Limit }));
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report>(sql, new { Owner = org_id, navigation.Offset, navigation.Limit }));
             if (result.Count() == 0)
             {
                 return null;
@@ -175,7 +175,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity to create.</param>
         /// <returns>Created entity.</returns>
-        public override async Task<Report2> AddAsync(Report2 entity)
+        public override async Task<Report> AddAsync(Report entity)
         {
             // TODO: Add attribution
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
@@ -212,7 +212,7 @@ namespace FunderMaps.Data.Repositories
         /// Update entity.
         /// </summary>
         /// <param name="entity">Entity to update.</param>
-        public override Task UpdateAsync(Report2 entity)
+        public override Task UpdateAsync(Report entity)
         {
             // TODO: Add address, foundation_type, foundation_damage_cause
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
@@ -238,7 +238,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity to update.</param>
         /// <param name="status">New status.</param>
-        public Task UpdateStatusAsync(Report2 entity, ReportStatus status)
+        public Task UpdateStatusAsync(Report entity, ReportStatus status)
         {
             var sql = @"
                 UPDATE report.report AS reprt 
@@ -252,7 +252,7 @@ namespace FunderMaps.Data.Repositories
         /// Delete entity.
         /// </summary>
         /// <param name="entity">Entity to delete.</param>
-        public override Task DeleteAsync(Report2 entity)
+        public override Task DeleteAsync(Report entity)
         {
             var sql = @"UPDATE report.report AS reprt
                         SET    delete_date = CURRENT_TIMESTAMP

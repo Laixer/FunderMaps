@@ -14,7 +14,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     /// Sample repository.
     /// </summary>
-    public class SampleRepository : RepositoryBase<Sample2, int>, ISampleRepository
+    public class SampleRepository : RepositoryBase<Sample, int>, ISampleRepository
     {
         /// <summary>
         /// Create a new instance.
@@ -29,8 +29,8 @@ namespace FunderMaps.Data.Repositories
         /// Get entity by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="Sample2"/> on success, null on error.</returns>
-        public override async Task<Sample2> GetByIdAsync(int id)
+        /// <returns><see cref="Sample"/> on success, null on error.</returns>
+        public override async Task<Sample> GetByIdAsync(int id)
         {
             var sql = @"SELECT samp.id,
                                samp.report,
@@ -60,8 +60,8 @@ namespace FunderMaps.Data.Repositories
                                AND samp.id = @Id
                         LIMIT  1";
 
-            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+            async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -81,7 +81,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public override async Task<IReadOnlyList<Sample2>> ListAllAsync(Navigation navigation)
+        public override async Task<IReadOnlyList<Sample>> ListAllAsync(Navigation navigation)
         {
             var sql = @"SELECT samp.id,
                                samp.report,
@@ -112,8 +112,8 @@ namespace FunderMaps.Data.Repositories
                         OFFSET @Offset
                         LIMIT @Limit";
 
-            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+            async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -134,7 +134,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="org_id">Organization identifier.</param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Sample2>> ListAllAsync(int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Sample>> ListAllAsync(int org_id, Navigation navigation)
         {
             var sql = @"SELECT samp.id,
                                samp.report,
@@ -167,8 +167,8 @@ namespace FunderMaps.Data.Repositories
                         OFFSET @Offset
                         LIMIT @Limit";
 
-            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+            async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -189,7 +189,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="report">Report identifier.</param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Sample2>> ListAllReportAsync(int report, Navigation navigation)
+        public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, Navigation navigation)
         {
             var sql = @"SELECT samp.id,
                                samp.report,
@@ -221,8 +221,8 @@ namespace FunderMaps.Data.Repositories
                         OFFSET @Offset
                         LIMIT @Limit";
 
-            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+            async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -244,7 +244,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="org_id"></param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Sample2>> ListAllReportAsync(int report, int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, int org_id, Navigation navigation)
         {
             var sql = @"SELECT samp.id,
                                samp.report,
@@ -278,8 +278,8 @@ namespace FunderMaps.Data.Repositories
                         OFFSET @Offset
                         LIMIT @Limit";
 
-            async Task<IEnumerable<Sample2>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample2, Address2, Sample2>(sql, (sampleEntity, addressEntity) =>
+            async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
+                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -299,7 +299,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity to create.</param>
         /// <returns>Created entity.</returns>
-        public override async Task<Sample2> AddAsync(Sample2 entity)
+        public override async Task<Sample> AddAsync(Sample entity)
         {
             // TODO: Add address, foundation_type, foundation_damage_cause
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
@@ -346,7 +346,7 @@ namespace FunderMaps.Data.Repositories
         /// Update entity.
         /// </summary>
         /// <param name="entity">Entity to update.</param>
-        public override Task UpdateAsync(Sample2 entity)
+        public override Task UpdateAsync(Sample entity)
         {
             // TODO: Add address, foundation_type, foundation_damage_cause
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
@@ -375,7 +375,7 @@ namespace FunderMaps.Data.Repositories
         /// Delete entity.
         /// </summary>
         /// <param name="entity">Entity to delete.</param>
-        public override Task DeleteAsync(Sample2 entity)
+        public override Task DeleteAsync(Sample entity)
         {
             var sql = @"UPDATE report.sample AS samp
                         SET    delete_date = CURRENT_TIMESTAMP

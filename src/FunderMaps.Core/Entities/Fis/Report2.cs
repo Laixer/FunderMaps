@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Entities.Fis
     /// <summary>
     /// Report entity.
     /// </summary>
-    public class Report2 : AccessControl
+    public class Report : AccessControl
     {
         // TODO: FOR NOW
         [IgnoreDataMember]

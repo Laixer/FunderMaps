@@ -9,7 +9,7 @@ namespace FunderMaps.Interfaces
     /// <summary>
     /// Operations for the report repository.
     /// </summary>
-    public interface IReportRepository : IAsyncRepository<Report2, int>
+    public interface IReportRepository : IAsyncRepository<Report, int>
     {
         /// <summary>
         /// Retrieve entity by id and document_id.
@@ -17,13 +17,13 @@ namespace FunderMaps.Interfaces
         /// <param name="id">Unique identifier.</param>
         /// <param name="document">Document identifier.</param>
         /// <returns>Entity.</returns>
-        Task<Report2> GetByIdAsync(int id, string document);
+        Task<Report> GetByIdAsync(int id, string document);
 
         /// <summary>
         /// Retrieve all entities and filter on organization id.
         /// </summary>
         /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<Report2>> ListAllAsync(int org_id, Navigation navigation);
+        Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation);
 
         /// <summary>
         /// Retrieve number of entities and filter on organization id.

@@ -137,7 +137,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync([FromBody] Sample2 input)
+        public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
             var report = await _reportRepository.GetByIdAsync(input.Report.Value);
             if (report == null)
@@ -218,7 +218,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] Sample2 input)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
         {
             if (id != input.Id)
             {
