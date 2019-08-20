@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Services
 {
+    // FUTURE: Can be removed?
     public class ReportService : IReportService
     {
         private readonly ILogger _logger;
