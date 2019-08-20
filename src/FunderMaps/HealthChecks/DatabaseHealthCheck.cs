@@ -1,9 +1,8 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using FunderMaps.Providers;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace FunderMaps.HealthChecks
 {
@@ -17,11 +16,8 @@ namespace FunderMaps.HealthChecks
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        /// <param name="configuration">Application configuration.</param>
-        public DatabaseHealthCheck(DbProvider dbprovider)
-        {
-            _dbProvider = dbprovider;
-        }
+        /// <param name="dbProvider">Database provider.</param>
+        public DatabaseHealthCheck(DbProvider dbProvider) => _dbProvider = dbProvider;
 
         /// <summary>
         /// Runs the health check, returning the status of the component being checked.
@@ -33,7 +29,7 @@ namespace FunderMaps.HealthChecks
         {
             using (var connection = _dbProvider.ConnectionScope())
             {
-                return await connection.ExecuteScalarAsync<int>("SELECT 1") == 1
+                return await connection.ExecuteScalarAsync<int>("SELECT pg_backend_pid()") > 1
                     ? HealthCheckResult.Healthy()
                     : HealthCheckResult.Unhealthy();
             }

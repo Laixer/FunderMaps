@@ -17,7 +17,7 @@ namespace FunderMaps.Data.Repositories
             //_dbContext.Principal.GetOrAddAsync(principal, s => s.Id == principal.Id ||
             //        s.NickName == principal.NickName ||
             //        s.Email == principal.Email);
-            return null
+            return null;
         }
     }
 }

@@ -5,7 +5,7 @@ using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Interfaces
 {
-    public interface IOrganizationRepository : IAsyncRepository<Organization>
+    public interface IOrganizationRepository : IAsyncRepository<Organization, int>
     {
         /// <summary>
         /// Get existing principal entity from data store or insert given

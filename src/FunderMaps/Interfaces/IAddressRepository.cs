@@ -5,7 +5,7 @@ using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Interfaces
 {
-    public interface IAddressRepository : IAsyncRepository<Address>
+    public interface IAddressRepository : IAsyncRepository<Address, Guid>
     {
         /// <summary>
         /// Get existing address entity from data store or insert given

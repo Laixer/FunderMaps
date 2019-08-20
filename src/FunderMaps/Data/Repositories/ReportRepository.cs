@@ -267,7 +267,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="org_id">Organization identifier.</param>
         /// <returns>Number of records.</returns>
-        public Task<int> CountAsync(int org_id)
+        public Task<uint> CountAsync(int org_id)
         {
             var sql = @"
                 SELECT COUNT(*)
@@ -277,8 +277,7 @@ namespace FunderMaps.Data.Repositories
                         AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-            return RunSqlCommand(async cnn =>
-                await cnn.QuerySingleAsync<int>(sql, new { Owner = org_id }));
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql, new { Owner = org_id }));
         }
 
         /// <summary>
