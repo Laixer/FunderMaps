@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using FunderMaps.Helpers;
+﻿using FunderMaps.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
+using System.Collections.Generic;
 
 namespace FunderMaps.Extensions
 {

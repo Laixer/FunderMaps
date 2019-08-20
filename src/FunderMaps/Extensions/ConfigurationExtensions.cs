@@ -1,6 +1,6 @@
-﻿using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FunderMaps.Extensions
 {
@@ -14,44 +14,34 @@ namespace FunderMaps.Extensions
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         public static SymmetricSecurityKey GetJwtSignKey(this IConfiguration configuration)
-        {
-            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SignatureKey"]));
-        }
+            => new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SignatureKey"]));
 
         /// <summary>
         /// Get the issuer from the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         public static string GetJwtIssuer(this IConfiguration configuration)
-        {
-            return configuration["Jwt:Issuer"];
-        }
+            => configuration["Jwt:Issuer"];
 
         /// <summary>
         /// Get the audience from the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         public static string GetJwtAudience(this IConfiguration configuration)
-        {
-            return configuration["Jwt:Audience"];
-        }
+            => configuration["Jwt:Audience"];
 
         /// <summary>
         /// Get the token expiration time in minutes from the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         public static int GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
-        {
-            return int.Parse(configuration["Jwt:TokenValidity"]);
-        }
+            => int.Parse(configuration["Jwt:TokenValidity"]);
 
         /// <summary>
         /// Get the HTTP_HOST setting if configured.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         public static string GetDomainHost(this IConfiguration configuration)
-        {
-            return configuration["HTTP_HOST"];
-        }
+            => configuration["HTTP_HOST"];
     }
 }

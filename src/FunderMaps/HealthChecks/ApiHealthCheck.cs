@@ -1,9 +1,9 @@
-﻿using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using FunderMaps.Helpers;
+﻿using FunderMaps.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
 using static FunderMaps.Controllers.Api.VersionController;
 
 namespace FunderMaps.HealthChecks

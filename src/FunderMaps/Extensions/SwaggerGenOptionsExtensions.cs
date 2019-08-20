@@ -1,6 +1,6 @@
-﻿using System.IO;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IO;
 
 namespace FunderMaps.Extensions
 {
