@@ -184,7 +184,7 @@ namespace FunderMaps.Controllers.Api
                 return Ok(report);
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Read);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Read);
             if (authorizationResult.Succeeded)
             {
                 return Ok(report);
@@ -218,7 +218,7 @@ namespace FunderMaps.Controllers.Api
                 return BadRequest(0, "Identifiers do not match entity");
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Update);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Update);
             if (authorizationResult.Succeeded)
             {
                 report.Inspection = input.Inspection;
@@ -273,7 +273,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 if (report.Status != ReportStatus.Pending)
@@ -316,7 +316,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Validate);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Validate);
             if (authorizationResult.Succeeded)
             {
                 if (report.Status != ReportStatus.PendingReview)
@@ -360,7 +360,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution._Owner, OperationsRequirement.Delete);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Delete);
             if (authorizationResult.Succeeded)
             {
                 // TODO: Remove only when empty

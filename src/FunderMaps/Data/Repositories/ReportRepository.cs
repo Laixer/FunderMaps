@@ -176,16 +176,16 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         /// Update report status.
         /// </summary>
-        /// <param name="id">Report id.</param>
+        /// <param name="entity">Entity to update.</param>
         /// <param name="status">New status.</param>
-        public Task UpdateStatusAsync(int id, ReportStatus status)
+        public Task UpdateStatusAsync(Report2 entity, ReportStatus status)
         {
             var sql = @"
                 UPDATE report.report AS reprt 
                 SET    status = (enum_range(NULL::report.report_status))[@Status + 1]
                 WHERE  reprt.id = @Id ";
 
-            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, new { Status = status, Id = id }));
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, new { Status = status, entity.Id }));
         }
 
         /// <summary>

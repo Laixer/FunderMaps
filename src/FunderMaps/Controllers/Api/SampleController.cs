@@ -139,8 +139,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample2 input)
         {
-            // TODO: HACK. Should not cast to known type.
-            var report = await (_reportRepository as Data.Repositories.ReportRepository).GetByIdAsync2(input.Report.Value);
+            var report = await _reportRepository.GetByIdAsync(input.Report.Value);
             if (report == null)
             {
                 return ResourceNotFound();
@@ -154,7 +153,7 @@ namespace FunderMaps.Controllers.Api
                     case ReportStatus.Todo:
                         {
                             // TODO: HACK. Should not cast to known type.
-                            await (_reportRepository as Data.Repositories.ReportRepository).UpdateStatusAsync(input.Report.Value, ReportStatus.Pending);
+                            await (_reportRepository as Data.Repositories.ReportRepository).UpdateStatusAsync(report, ReportStatus.Pending);
                         }
                         break;
                     case ReportStatus.Pending:
