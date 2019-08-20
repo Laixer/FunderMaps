@@ -5,16 +5,19 @@ using FunderMaps.Interfaces;
 
 namespace FunderMaps.Data.Repositories
 {
-    public class PrincipalRepository : EfRepository<FisDbContext, Principal>, IPrincipalRepository
+    public class PrincipalRepository //: RepositoryBase<FisDbContext, Principal>, IPrincipalRepository
     {
         public PrincipalRepository(FisDbContext dbContext)
-            : base(dbContext)
+            //: base(dbContext)
         {
         }
 
         public Task<Principal> GetOrAddAsync(Principal principal)
-            => _dbContext.Principal.GetOrAddAsync(principal, s => s.Id == principal.Id ||
-                    s.NickName == principal.NickName ||
-                    s.Email == principal.Email);
+        {
+            //_dbContext.Principal.GetOrAddAsync(principal, s => s.Id == principal.Id ||
+            //        s.NickName == principal.NickName ||
+            //        s.Email == principal.Email);
+            return null
+        }
     }
 }

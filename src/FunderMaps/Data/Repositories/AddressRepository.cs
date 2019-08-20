@@ -5,7 +5,7 @@ using FunderMaps.Interfaces;
 
 namespace FunderMaps.Data.Repositories
 {
-    public class AddressRepository : EfRepository<FisDbContext, Address>, IAddressRepository
+    public class AddressRepository : RepositoryBase<FisDbContext, Address>, IAddressRepository
     {
         public AddressRepository(FisDbContext dbContext)
             : base(dbContext)

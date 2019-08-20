@@ -1,27 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
-using Dapper;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
     /// Report repository.
     /// </summary>
-    public class ReportRepository : EfRepository<FisDbContext, Report2>, IReportRepository
+    public class ReportRepository : RepositoryBase<Report2, int>, IReportRepository
     {
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        /// <param name="dbContext">Database context.</param>
         /// <param name="dbProvider">Database provider.</param>
-        public ReportRepository(FisDbContext dbContext, DbProvider dbProvider)
-            : base(dbContext, dbProvider)
+        public ReportRepository(DbProvider dbProvider)
+            : base(dbProvider)
         {
         }
 
@@ -101,7 +100,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Report2>> ListAllAsync(Navigation navigation)
+        public override async Task<IReadOnlyList<Report2>> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT reprt.id,
@@ -286,7 +285,7 @@ namespace FunderMaps.Data.Repositories
         /// Count entities.
         /// </summary>
         /// <returns>Number of records.</returns>
-        public override Task<int> CountAsync()
+        public override Task<uint> CountAsync()
         {
             var sql = @"
                 SELECT COUNT(*)
@@ -294,7 +293,7 @@ namespace FunderMaps.Data.Repositories
                         INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL";
 
-            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<int>(sql));
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));
         }
     }
 }

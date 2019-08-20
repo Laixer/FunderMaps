@@ -1,28 +1,27 @@
-﻿using System.Linq;
-using System.Data;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
-using Dapper;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
     /// Sample repository.
     /// </summary>
-    public class SampleRepository : EfRepository<FisDbContext, Sample2>, ISampleRepository
+    public class SampleRepository : RepositoryBase<Sample2, int>, ISampleRepository
     {
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        /// <param name="dbContext">Database context.</param>
         /// <param name="dbProvider">Database provider.</param>
-        public SampleRepository(FisDbContext dbContext, DbProvider dbProvider)
-            : base(dbContext, dbProvider)
+        public SampleRepository(DbProvider dbProvider)
+            : base(dbProvider)
         {
         }
 
@@ -82,7 +81,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Sample2>> ListAllAsync(Navigation navigation)
+        public override async Task<IReadOnlyList<Sample2>> ListAllAsync(Navigation navigation)
         {
             var sql = @"SELECT samp.id,
                                samp.report,
@@ -390,9 +389,8 @@ namespace FunderMaps.Data.Repositories
         /// Count entities and filter on access policy and organization.
         /// </summary>
         /// <param name="org_id">Organization identifier.</param>
-        /// <param name="connection">Optional database connection.</param>
         /// <returns>Number of records.</returns>
-        public Task<int> CountAsync(int org_id, IDbConnection connection = null)
+        public Task<uint> CountAsync(int org_id)
         {
             var sql = @"SELECT COUNT(*)
                         FROM   report.sample AS samp
@@ -403,16 +401,14 @@ namespace FunderMaps.Data.Repositories
                                 AND (attr.owner = @Owner
                                         OR samp.access_policy = 'public')";
 
-            return RunSqlCommand(async cnn =>
-                await cnn.QuerySingleAsync<int>(sql, new { Owner = org_id }),
-                connection);
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql, new { Owner = org_id }));
         }
 
         /// <summary>
         /// Count entities.
         /// </summary>
         /// <returns>Number of records.</returns>
-        public override Task<int> CountAsync()
+        public override Task<uint> CountAsync()
         {
             var sql = @"SELECT COUNT(*)
                         FROM   report.sample AS samp
@@ -421,7 +417,7 @@ namespace FunderMaps.Data.Repositories
                                 INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
                         WHERE  samp.delete_date IS NULL";
 
-            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<int>(sql));
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));
         }
     }
 }
