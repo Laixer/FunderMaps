@@ -25,7 +25,6 @@ namespace FunderMaps.Controllers.Api
     public class OrganizationController : BaseApiController
     {
         private readonly FunderMapsDbContext _context;
-        private readonly FisDbContext _fisContext;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IAuthorizationService _authorizationService;
         private readonly ILookupNormalizer _keyNormalizer;
@@ -35,13 +34,11 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         public OrganizationController(
             FunderMapsDbContext context,
-            FisDbContext fisContext,
             UserManager<FunderMapsUser> userManager,
             IAuthorizationService authorizationService,
             ILookupNormalizer keyNormalizer)
         {
             _context = context;
-            _fisContext = fisContext;
             _userManager = userManager;
             _authorizationService = authorizationService;
             _keyNormalizer = keyNormalizer;
@@ -193,9 +190,7 @@ namespace FunderMaps.Controllers.Api
                             _Organization = organization.AttestationOrganizationId,
                         };
 
-                        // NOTE: This can fail because entity exists
-                        await _fisContext.Principal.AddAsync(attestationPrincipal);
-                        await _fisContext.SaveChangesAsync();
+                        // TODO: Create principal for user
 
                         // Prepare user account
                         var user = new FunderMapsUser(input.Email)

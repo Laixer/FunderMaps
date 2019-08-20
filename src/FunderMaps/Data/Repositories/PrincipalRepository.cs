@@ -7,7 +7,7 @@ namespace FunderMaps.Data.Repositories
 {
     public class PrincipalRepository //: RepositoryBase<FisDbContext, Principal>, IPrincipalRepository
     {
-        public PrincipalRepository(FisDbContext dbContext)
+        public PrincipalRepository()
             //: base(dbContext)
         {
         }

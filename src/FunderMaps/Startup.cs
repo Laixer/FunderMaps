@@ -106,11 +106,11 @@ namespace FunderMaps
         /// <param name="services">Service collection.</param>
         private void ConfigureRepository(IServiceCollection services)
         {
-            services.AddScoped<IPrincipalRepository, PrincipalRepository>();
+            //services.AddScoped<IPrincipalRepository, PrincipalRepository>();
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
-            services.AddScoped<IAddressRepository, AddressRepository>();
-            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            //services.AddScoped<IAddressRepository, AddressRepository>();
+            //services.AddScoped<IOrganizationRepository, OrganizationRepository>();
         }
 
         /// <summary>
@@ -123,13 +123,6 @@ namespace FunderMaps
             services.AddDbContextPool<FunderMapsDbContext>(options =>
             {
                 options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"));
-            })
-            .AddEntityFrameworkNpgsql();
-
-            // FIS database
-            services.AddDbContextPool<FisDbContext>(options =>
-            {
-                options.UseNpgsql(_configuration.GetConnectionString("FISConnection"));
             })
             .AddEntityFrameworkNpgsql();
 

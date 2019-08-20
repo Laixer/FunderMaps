@@ -22,7 +22,6 @@ namespace FunderMaps.Controllers.Api
     public class OrganizationRegistrationController : BaseApiController
     {
         private readonly FunderMapsDbContext _context;
-        private readonly FisDbContext _fisContext;
         private readonly UserManager<FunderMapsUser> _userManager;
 
         /// <summary>
@@ -30,11 +29,9 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         public OrganizationRegistrationController(
             FunderMapsDbContext context,
-            FisDbContext fisContext,
             UserManager<FunderMapsUser> userManager)
         {
             _context = context;
-            _fisContext = fisContext;
             _userManager = userManager;
         }
 
@@ -52,9 +49,7 @@ namespace FunderMaps.Controllers.Api
                 Name = proposal.Name
             };
 
-            // NOTE: This can fail because entity exists
-            await _fisContext.Organization.AddAsync(attestationOrganization);
-            await _fisContext.SaveChangesAsync();
+            // TODO: Add organization to attestation
 
             var attestationPrincipal = new Core.Entities.Fis.Principal
             {
@@ -63,9 +58,7 @@ namespace FunderMaps.Controllers.Api
                 Organization = attestationOrganization,
             };
 
-            // NOTE: This can fail because entity exists
-            await _fisContext.Principal.AddAsync(attestationPrincipal);
-            await _fisContext.SaveChangesAsync();
+            // TODO: Add principal to attestation
 
             // Prepare new user account
             var user = new FunderMapsUser(input.Email)

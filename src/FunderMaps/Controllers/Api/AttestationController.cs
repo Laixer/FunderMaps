@@ -42,9 +42,10 @@ namespace FunderMaps.Controllers.Api
         [HttpPost("organization")]
         [ProducesResponseType(typeof(List<Organization>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostOrganizationAsync()
+        public Task<IActionResult> PostOrganizationAsync()
         {
-            return Ok(await _organizationRepository.ListAllAsync());
+            return null;
+            //return Ok(await _organizationRepository.ListAllAsync());
         }
 
         // TODO: Match partial name against list.
@@ -56,9 +57,10 @@ namespace FunderMaps.Controllers.Api
         [HttpPost("principal")]
         [ProducesResponseType(typeof(List<Principal>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostPrincipalAsync()
+        public Task<IActionResult> PostPrincipalAsync()
         {
-            return Ok(await _principalRepository.ListAllAsync());
+            return null;
+            //return Ok(await _principalRepository.ListAllAsync());
         }
     }
 }
