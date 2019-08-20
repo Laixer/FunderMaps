@@ -36,14 +36,41 @@ namespace FunderMaps.Core.Entities.Fis
         /// </summary>
         public Substructure? Substructure { get; set; }
 
+        /// <summary>
+        /// Name of monitoring well.
+        /// </summary>
         [MaxLength(32)]
         public string MonitoringWell { get; set; }
+        
+        /// <summary>
+        /// Name of CPT measurement.
+        /// </summary>
         [MaxLength(32)]
         public string Cpt { get; set; }
+        
+        /// <summary>
+        /// Note.
+        /// </summary>
         public string Note { get; set; }
+        
+        /// <summary>
+        /// Wood measurement level.
+        /// </summary>
         public decimal? WoodLevel { get; set; }
+        
+        /// <summary>
+        /// Ground water level.
+        /// </summary>
         public decimal? GroundwaterLevel { get; set; }
+
+        /// <summary>
+        /// Ground level.
+        /// </summary>
         public decimal? GroundLevel { get; set; }
+        
+        /// <summary>
+        /// If foundation recovery was advised.
+        /// </summary>
         public bool FoundationRecoveryAdviced { get; set; }
 
         /// <summary>
