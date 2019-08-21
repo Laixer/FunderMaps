@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
+﻿using FunderMaps.Event;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
-using FunderMaps.Event;
 using Laixer.EventBus;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {

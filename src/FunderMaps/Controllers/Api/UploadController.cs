@@ -1,11 +1,11 @@
-﻿using System.Threading.Tasks;
-using FunderMaps.Core.Helpers;
+﻿using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Helpers;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {

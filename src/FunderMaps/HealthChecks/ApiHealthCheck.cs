@@ -30,7 +30,7 @@ namespace FunderMaps.HealthChecks
         /// <param name="context">A context object associated with the current execution.</param>
         /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
         /// <returns><see cref="HealthCheckResult"/>.</returns>
-        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
         {
             var request = _httpContextAccessor.HttpContext.Request;
 

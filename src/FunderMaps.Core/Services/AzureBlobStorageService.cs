@@ -1,10 +1,10 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using FunderMaps.Core.Helpers;
+using FunderMaps.Core.Interfaces;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
-using FunderMaps.Core.Helpers;
-using FunderMaps.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
 {
@@ -19,8 +19,7 @@ namespace FunderMaps.Core.Services
             _blobClient = _storageAccount.CreateCloudBlobClient();
         }
 
-        protected CloudBlobContainer SetContainer(string name) =>
-            _blobClient.GetContainerReference(name);
+        protected CloudBlobContainer SetContainer(string name) => _blobClient.GetContainerReference(name);
 
         protected CloudBlockBlob PrepareBlob(string container, string filename, BlobProperties properties)
         {
@@ -36,22 +35,41 @@ namespace FunderMaps.Core.Services
             return cloudBlockBlob;
         }
 
-        public async Task StoreFileAsync(string store, string name, byte[] content)
-        {
-            await PrepareBlob(store, name, new BlobProperties()).UploadFromByteArrayAsync(content, 0, 0);
-        }
+        /// <summary>
+        /// Retrieve account name for the storage service.
+        /// </summary>
+        /// <returns>Account name.</returns>
+        public Task<string> StorageAccountAsync()
+            => _blobClient.GetAccountPropertiesAsync().ContinueWith(t => t.Result.AccountKind);
 
-        public async Task StoreFileAsync(string store, string name, Stream stream)
-        {
-            await PrepareBlob(store, name, new BlobProperties()).UploadFromStreamAsync(stream);
-        }
+        /// <summary>
+        /// Store the file in the data store.
+        /// </summary>
+        /// <param name="store">Storage container.</param>
+        /// <param name="name">File name.</param>
+        /// <param name="content">Content array.</param>
+        public Task StoreFileAsync(string store, string name, byte[] content)
+            => PrepareBlob(store, name, new BlobProperties()).UploadFromByteArrayAsync(content, 0, 0);
 
-        public async Task StoreFileAsync(string store, ApplicationFile file, Stream stream)
-        {
-            await PrepareBlob(store, file.FileName, new BlobProperties
+        /// <summary>
+        /// Store the file in the data store.
+        /// </summary>
+        /// /// <param name="store">Storage container.</param>
+        /// <param name="name">File name.</param>
+        /// <param name="stream">Content stream.</param>
+        public Task StoreFileAsync(string store, string name, Stream stream)
+            => PrepareBlob(store, name, new BlobProperties()).UploadFromStreamAsync(stream);
+
+        /// <summary>
+        /// Store the file in the data store.
+        /// </summary>
+        /// /// <param name="store">Storage container.</param>
+        /// <param name="file">Application file.</param>
+        /// <param name="stream">Content stream.</param>
+        public Task StoreFileAsync(string store, ApplicationFile file, Stream stream)
+            => PrepareBlob(store, file.FileName, new BlobProperties
             {
                 ContentType = file.ContentType
             }).UploadFromStreamAsync(stream);
-        }
     }
 }

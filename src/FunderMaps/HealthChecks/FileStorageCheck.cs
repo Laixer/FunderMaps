@@ -1,5 +1,4 @@
-﻿using Dapper;
-using FunderMaps.Providers;
+﻿using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,17 +6,17 @@ using System.Threading.Tasks;
 namespace FunderMaps.HealthChecks
 {
     /// <summary>
-    /// Check if the database is alive.
+    /// Check if the file storage service is working.
     /// </summary>
-    public class DatabaseHealthCheck : IHealthCheck
+    public class FileStorageCheck : IHealthCheck
     {
-        private readonly DbProvider _dbProvider;
+        private readonly IFileStorageService _fileStorageService;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public DatabaseHealthCheck(DbProvider dbProvider) => _dbProvider = dbProvider;
+        /// <param name="fileStorageService">File storage service.</param>
+        public FileStorageCheck(IFileStorageService fileStorageService) => _fileStorageService = fileStorageService;
 
         /// <summary>
         /// Runs the health check, returning the status of the component being checked.
@@ -26,13 +25,9 @@ namespace FunderMaps.HealthChecks
         /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
         /// <returns><see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-        {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                return await connection.ExecuteScalarAsync<int>("SELECT pg_backend_pid()") > 1
-                    ? HealthCheckResult.Healthy()
-                    : HealthCheckResult.Unhealthy();
-            }
-        }
+            => (await _fileStorageService.StorageAccountAsync()).ToLower().Contains("storage")
+                ? HealthCheckResult.Healthy()
+                : HealthCheckResult.Unhealthy();
     }
 }
+
