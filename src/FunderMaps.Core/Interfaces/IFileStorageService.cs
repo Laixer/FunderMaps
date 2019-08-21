@@ -10,6 +10,12 @@ namespace FunderMaps.Core.Interfaces
     public interface IFileStorageService
     {
         /// <summary>
+        /// Retrieve account name for the storage service.
+        /// </summary>
+        /// <returns>Account name.</returns>
+        Task<string> StorageAccountAsync();
+
+        /// <summary>
         /// Store the file in the data store.
         /// </summary>
         /// <param name="store">Storage container.</param>
@@ -29,7 +35,7 @@ namespace FunderMaps.Core.Interfaces
         /// Store the file in the data store.
         /// </summary>
         /// /// <param name="store">Storage container.</param>
-        /// <param name="name">Application file.</param>
+        /// <param name="file">Application file.</param>
         /// <param name="stream">Content stream.</param>
         Task StoreFileAsync(string store, ApplicationFile file, Stream stream);
     }
