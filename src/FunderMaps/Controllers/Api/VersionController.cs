@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using FunderMaps.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using FunderMaps.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -42,13 +42,11 @@ namespace FunderMaps.Controllers.Api
         [ResponseCache(Duration = 86400)]
         [ProducesResponseType(typeof(VersionOutputModel), 200)]
         public IActionResult Get()
-        {
-            return Ok(new VersionOutputModel
+            => Ok(new VersionOutputModel
             {
                 Name = Constants.ApplicationName,
                 Version = Constants.ApplicationVersion,
                 VersionString = Constants.ApplicationVersion.ToString(),
             });
-        }
     }
 }

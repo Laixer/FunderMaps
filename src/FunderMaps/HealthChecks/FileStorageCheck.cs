@@ -10,7 +10,7 @@ namespace FunderMaps.HealthChecks
     /// </summary>
     public class FileStorageCheck : IHealthCheck
     {
-        private IFileStorageService _fileStorageService;
+        private readonly IFileStorageService _fileStorageService;
 
         /// <summary>
         /// Create a new instance.
