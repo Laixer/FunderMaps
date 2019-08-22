@@ -469,7 +469,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>A <see cref="Task{TResult}"/> that contains the claims granted to a user.</returns>
         public Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IList<Claim>>(new List<Claim>());
         }
 
         /// <summary>
@@ -493,7 +493,7 @@ namespace Laixer.Identity.Dapper.Store
         /// </returns>
         public Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IList<TUser>>(new List<TUser>());
         }
 
         /// <summary>
@@ -505,7 +505,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -518,7 +518,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
         #endregion
 
@@ -597,7 +597,23 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>A <see cref="Task{TResult}"/> that contains the roles the user is a member of.</returns>
         public Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                var sql = $@"
+                    SELECT application.role.name
+                    FROM application.user_role
+                    JOIN application.role ON application.role.id = application.user_role.role_id
+                    WHERE user_id=@Id";
+
+                return connection.QueryAsync<string>(sql, new { Id = user.Id });
+            }).ContinueWith<IList<string>>(t => t.Result.AsList());
         }
 
         /// <summary>
