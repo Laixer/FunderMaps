@@ -23,11 +23,24 @@ namespace FunderMaps.Data.Repositories
         {
         }
 
-        public override Task<FoundationRecovery> GetByIdAsync(int id)
+        /// <summary>
+        /// Return the foundation recovery report based on the provided id
+        /// </summary>
+        /// <param name="id">the id of the report </param>
+        /// <returns>The object which matches the id</returns>
+        public override async Task<FoundationRecovery> GetByIdAsync(int id)
         {
-            // TODO:
+            // The sql query for retrieving the foundation recovery input
+            var sql = @"
+                SELECT * 
+                FROM report.foundation_recovery 
+                WHERE id = @Id 
+                AND delete_date IS NULL";
 
-            throw new System.NotImplementedException();
+            var parameters = new { Id = id };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery>(sql, parameters));
+            return result.First();
         }
 
         /// <summary>
@@ -80,11 +93,32 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
-        public override Task<FoundationRecovery> AddAsync(FoundationRecovery entity)
+        // To insert a new report. only set the following values as everything else is handled by the server
+        //      Note, Year, Address, Attribution
+        /// <summary>
+        /// Add a new foundation recovery report to the database
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>The object that was added</returns>
+        public override async Task<FoundationRecovery> AddAsync(FoundationRecovery entity)
         {
-            // TODO:
+            var sql = @"
+                INSERT INTO report.foundation_recovery(  
+                        note,
+                        year,
+                        address,
+                        attribution)
+                VALUES(
+                        @Note,
+                        @Year,
+                        @Address,
+                        @Attribution)
+                RETURNING id";
 
-            throw new System.NotImplementedException();
+            var id = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
+
+            // return the just added object
+            return await GetByIdAsync(id);
         }
 
         /// <summary>
@@ -102,16 +136,36 @@ namespace FunderMaps.Data.Repositories
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
         }
 
+        /// <summary>
+        /// Update a foundation recovery report in the database
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns>nothing</returns>
         public override Task UpdateAsync(FoundationRecovery entity)
         {
-            throw new System.NotImplementedException();
+            var sql = @"
+                UPDATE report.foundation_recovery 
+                SET                         
+                    note = @Note,
+                    year = @Year,
+                    address = @Address,
+                    attribution = @Attribution";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
+
         }
 
+        /// <summary>
+        /// Count the amount of foundation recover reports
+        /// </summary>
+        /// <returns></returns>
         public override Task<uint> CountAsync()
         {
-            // TODO:
+            var sql = @"
+                SELECT COUNT(*)
+                FROM report.foundation_recovery";
 
-            throw new System.NotImplementedException();
+            return RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<uint>(sql));
         }
 
         /// <summary>

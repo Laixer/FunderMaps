@@ -24,20 +24,17 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class FoundationRecoveryController : BaseApiController
     {
-        private readonly DbProvider _dbProvider;
         private readonly IAuthorizationService _authorizationService;
         private readonly IFoundationRecoveryRepository _recoveryRepository;
 
         /// <summary>
-        /// Create a new instance.
+        /// Create a new instance of the foundation recovery controller.
         /// </summary>
         public FoundationRecoveryController(
-            DbProvider dbProvider,
             IAuthorizationService authorizationService,
             IFoundationRecoveryRepository recoveryRepository
             )
         {
-            _dbProvider = dbProvider;
             _authorizationService = authorizationService;
             _recoveryRepository = recoveryRepository;
         }
@@ -56,13 +53,17 @@ namespace FunderMaps.Controllers.Api
 
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
+            #region check user
             // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            if (attestationOrganizationId == null)
+            // if its not able to convert it to an integer
+            // this also catches it if the attestationOrganizationId equals null
+            if (!int.TryParse(attestationOrganizationId, out int organisationId))
             {
                 return ResourceForbid();
             }
+            #endregion
 
             // Hardcoded because every record has this attribution id
             attestationOrganizationId = "18729";
@@ -78,8 +79,12 @@ namespace FunderMaps.Controllers.Api
         }
 
 
-        // get all the data of an foundation recovery report based on the ID given in the get request
-        // functions as a read something method
+        // Functions as a read something method
+        /// <summary>
+        /// Get all the data of a foundation recovery report based on the ID given in the get request
+        /// </summary>
+        /// <param name="id">The id of the foundation recovery report</param>
+        /// <returns>The foundation recovery report</returns>
         // GET: api/foundationrecovery/{id}
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
@@ -90,8 +95,9 @@ namespace FunderMaps.Controllers.Api
             // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // Administrator can query anything
-            if (attestationOrganizationId == null)
+            // if its not able to convert it to an integer
+            // this also catches it if the attestationOrganizationId equals null
+            if (!int.TryParse(attestationOrganizationId, out int organisationId))
             {
                 return ResourceForbid();
             }
@@ -102,13 +108,14 @@ namespace FunderMaps.Controllers.Api
 
         // TODO: met of zonder de "deleted" reports
 
-        // hit this endpoint to retrieve the amount of foundation recovery reports
+        // Hit this endpoint to retrieve the amount of foundation recovery reports
         // GET: api/foundationrecovery/stats
         [HttpGet("stats")]
         [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
         {
+            #region check user
             // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
@@ -118,6 +125,7 @@ namespace FunderMaps.Controllers.Api
             {
                 return ResourceForbid();
             }
+            #endregion
 
             // Administrator can query anything
             if (User.IsInRole(Constants.AdministratorRole))
@@ -136,14 +144,15 @@ namespace FunderMaps.Controllers.Api
             });
         }
 
-        // this is like a create method. This pushes the foundation recovery info into the database
-        // create a new foundation recovery report.
+        // This is like a create method. This pushes the foundation recovery info into the database
+        // Create a new foundation recovery report.
         // POST: api/foundationrecovery
         [HttpPost]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecovery input)
         {
+            #region check user
             // Check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
@@ -153,27 +162,26 @@ namespace FunderMaps.Controllers.Api
             {
                 return ResourceForbid();
             }
+            #endregion
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, organisationId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 var recovery = new FoundationRecovery
                 {
-                    AccessPolicy = input.AccessPolicy,
-                    Address = input.Address,
-                    AddressNavigation = input.AddressNavigation,
-                    Attribution = input.Attribution,
-                    AttributionNavigation = input.AttributionNavigation,
-                    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence,
-                    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
-                    Id = input.Id,
                     Note = input.Note,
                     Type = input.Type,
-                    Year = input.Year
+                    Year = input.Year,
+                    Address = input.Address,
+                    Attribution = input.Attribution,
+                    AccessPolicy = input.AccessPolicy,
+                    AddressNavigation = input.AddressNavigation,
+                    AttributionNavigation = input.AttributionNavigation,
+                    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
+                    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence
                 };
-                await _recoveryRepository.AddAsync(recovery);
 
-                return Ok(recovery);
+                return Ok(await _recoveryRepository.AddAsync(recovery));
             }
             // Yeet the user if authorisation failed
             return ResourceForbid();
@@ -197,11 +205,13 @@ namespace FunderMaps.Controllers.Api
             }
             #endregion
 
+            // Check if the id of the url matches the id of the foundation recovery report
             if (id != input.Id)
             {
                 return BadRequest(0, "Identifiers do not match entity");
             }
-
+            
+            // Put all the info from the request body into a new foundation recovery object
             var recovery = new FoundationRecovery
             {
                 AccessPolicy = input.AccessPolicy,
@@ -217,8 +227,10 @@ namespace FunderMaps.Controllers.Api
                 Year = input.Year
             };
 
+            // Send the created recovery object to the repo
             await _recoveryRepository.UpdateAsync(recovery);
 
+            // return nothing 
             return NoContent();
         }
 
