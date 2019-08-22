@@ -24,10 +24,10 @@ namespace FunderMaps.Tests.Repositories
         public void NavigationCreationPassingTest()
         {
             // Arrange
-            int testOffset = 0;
-            int testLimit = 25;
-            int expectedValueOffset = 0;
-            int expectedValueLimit = 25;
+            uint testOffset = 0;
+            uint testLimit = 25;
+            uint expectedValueOffset = 0;
+            uint expectedValueLimit = 25;
 
             // Act
             // create new navigation
@@ -44,8 +44,8 @@ namespace FunderMaps.Tests.Repositories
         public void NavigationIsOfTypeNavigation()
         {
             // Arrange
-            int testOffset = 0;
-            int testLimit = 25;
+            uint testOffset = 0;
+            uint testLimit = 25;
 
             // Act
             // create new navigation
@@ -60,7 +60,7 @@ namespace FunderMaps.Tests.Repositories
         [InlineData(0,25)]
         [InlineData(4, 5)]
         [InlineData(5, 9)]
-        public void NavigationParamsEqualOrGreaterThenZero(int offset, int limit)
+        public void NavigationParamsEqualOrGreaterThenZero(uint offset, uint limit)
         {
             // Arrange
             // Nothing to arrange
@@ -75,6 +75,6 @@ namespace FunderMaps.Tests.Repositories
             Assert.True(IsEqualOrGreaterThenZero(nav.Offset));
         }
 
-        static bool IsEqualOrGreaterThenZero(int value) => value >= 0 ? true : false;
+        static bool IsEqualOrGreaterThenZero(uint value) => value >= 0 ? true : false;
     }
 }

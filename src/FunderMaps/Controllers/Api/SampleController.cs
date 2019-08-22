@@ -48,7 +48,7 @@ namespace FunderMaps.Controllers.Api
         [HttpGet]
         [ProducesResponseType(typeof(List<Sample>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        public async Task<IActionResult> GetAllAsync([FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
@@ -77,7 +77,7 @@ namespace FunderMaps.Controllers.Api
         [HttpGet("report/{id}")]
         [ProducesResponseType(typeof(List<Sample>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAllAsync(int id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        public async Task<IActionResult> GetAllAsync(int id, [FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
