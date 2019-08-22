@@ -15,13 +15,13 @@ namespace Laixer.Identity.Dapper.Store
     /// </summary>
     /// <typeparam name="TUser">The type representing a user.</typeparam>
     /// <typeparam name="TKey">The type of the primary key for a user.</typeparam>
-    internal class UserStore<TUser, TKey> : IUserStore<TUser>,
-        IUserEmailStore<TUser>,
-        IUserClaimStore<TUser>,
-        IUserLoginStore<TUser>,
-        IUserRoleStore<TUser>,
-        IUserPasswordStore<TUser>,
-        IUserSecurityStampStore<TUser>
+    internal class UserStore<TUser, TKey> : IUserStore<TUser> //,
+        //IUserEmailStore<TUser>,
+        //IUserClaimStore<TUser>,
+        //IUserLoginStore<TUser>,
+        //IUserRoleStore<TUser>,
+        //IUserPasswordStore<TUser>,
+        //IUserSecurityStampStore<TUser>
         where TUser : IdentityUser<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -31,11 +31,12 @@ namespace Laixer.Identity.Dapper.Store
         /// Creates a new instance of the store.
         /// </summary>
         /// <param name="context">The context used to access the store.</param>
-        public UserStore(IOptions<IdentityDapperOptions> options)
-        {
-            _options = options.Value;
-        }
+        public UserStore(IOptions<IdentityDapperOptions> options) => _options = options.Value;
 
+        /// <summary>
+        /// Run the databse statement inside scope.
+        /// </summary>
+        /// <param name="statement">Query method.</param>
         protected async Task RunDatabaseStatement(Func<IDbConnection, Task> statement)
         {
             using (var connection = _options.Database.GetDbConnection())
@@ -44,6 +45,12 @@ namespace Laixer.Identity.Dapper.Store
             }
         }
 
+        /// <summary>
+        /// Run the databse statement inside scope.
+        /// </summary>
+        /// <typeparam name="TReturn">Return value type.</typeparam>
+        /// <param name="statement">Query method.</param>
+        /// <returns>Value of type <typeparamref name="TReturn"/>.</returns>
         protected async Task<TReturn> RunDatabaseStatement<TReturn>(Func<IDbConnection, Task<TReturn>> statement)
         {
             using (var connection = _options.Database.GetDbConnection())
@@ -51,6 +58,217 @@ namespace Laixer.Identity.Dapper.Store
                 return await statement(connection);
             }
         }
+
+        #region IUserStore
+        /// <summary>
+        /// Creates the specified <paramref name="user"/> in the user store.
+        /// </summary>
+        /// <param name="user">The user to create.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the creation operation.</returns>
+        public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await RunDatabaseStatement(connection =>
+            {
+                var sql = $@"
+                    INSERT INTO {_options.Schema}.{_options.UserTable} (
+                    username, normalized_username, email, normalized_email, email_confirmed, password_hash, security_stamp, concurrency_stamp, phone_number, phone_number_confirmed, two_factor_enabled, lockout_end, lockout_enabled, access_failed_count, attestation_principal_id)
+                    VALUES(@UserName, @NormalizedUserName, @Email, @NormalizedEmail, @EmailConfirmed, @PasswordHash, @SecurityStamp, @ConcurrencyStamp, @PhoneNumber, @PhoneNumberConfirmed, @TwoFactorEnabled, @LockoutEnd, @LockoutEnabled, 0, 0)";
+                return connection.ExecuteAsync(sql, user);
+            });
+
+            return IdentityResult.Success;
+        }
+
+        /// <summary>
+        /// Deletes the specified <paramref name="user"/> from the user store.
+        /// </summary>
+        /// <param name="user">The user to delete.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
+        public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync($"DELETE FROM {_options.Schema}.{_options.UserTable} WHERE Id=@Id", user);
+            });
+
+            return IdentityResult.Success;
+        }
+
+        /// <summary>
+        /// Finds and returns a user, if any, who has the specified <paramref name="userId"/>.
+        /// </summary>
+        /// <param name="userId">The user ID to search for.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>
+        /// The <see cref="Task"/> that represents the asynchronous operation, containing the user matching the specified <paramref name="userId"/> if it exists.
+        /// </returns>
+        public Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryFirstOrDefaultAsync<TUser>($"SELECT * FROM {_options.Schema}.{_options.UserTable} WHERE Id=@Id LIMIT 1", new { Id = userId });
+            });
+        }
+
+        /// <summary>
+        /// Finds and returns a user, if any, who has the specified normalized user name.
+        /// </summary>
+        /// <param name="normalizedUserName">The normalized user name to search for.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>
+        /// The <see cref="Task"/> that represents the asynchronous operation, containing the user matching the specified <paramref name="normalizedUserName"/> if it exists.
+        /// </returns>
+        public Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (string.IsNullOrEmpty(normalizedUserName))
+            {
+                throw new ArgumentNullException(nameof(normalizedUserName));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryFirstOrDefaultAsync<TUser>($"SELECT * FROM {_options.Schema}.{_options.UserTable} WHERE normalized_username=@NormalizedUserName LIMIT 1", new { NormalizedUserName = normalizedUserName });
+            });
+        }
+
+        /// <summary>
+        /// Gets the normalized user name for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose normalized name should be retrieved.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the normalized user name for the specified user.</returns>
+        public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryFirstOrDefaultAsync<string>(
+                    $"SELECT normalized_username FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+            });
+        }
+
+        /// <summary>
+        /// Gets the user identifier for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose identifier should be retrieved.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the identifier for the specified user.</returns>
+        public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryFirstOrDefaultAsync<string>(
+                    $"SELECT id FROM {_options.Schema}.{_options.UserTable} WHERE normalized_username=@NormalizedUserName OR normalized_email=@NormalizedEmail LIMIT 1", user);
+            });
+        }
+
+        /// <summary>
+        /// Sets the given normalized name for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose name should be set.</param>
+        /// <param name="normalizedName">The normalized name to set.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET normalized_username=@NormalizedUserName WHERE id=@Id", user);
+            });
+        }
+
+        /// <summary>
+        /// Sets the given userName for the specified user.
+        /// </summary>
+        /// <param name="user">The user whose name should be set.</param>
+        /// <param name="userName">The user name to set.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET username=@UserName WHERE id=@Id", user);
+            });
+        }
+
+        /// <summary>
+        /// Updates the specified <paramref name="user"/> in the user store.
+        /// </summary>
+        /// <param name="user">The user to update.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
+        public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await RunDatabaseStatement(connection =>
+            {
+                var sql = $@"
+                    UPDATE {_options.Schema}.{_options.UserTable}
+                    SET username=@UserName, normalized_username=@NormalizedUserName, email=@Email, normalized_email=@NormalizedEmail, email_confirmed=@EmailConfirmed, password_hash=@PasswordHash, security_stamp=@SecurityStamp, concurrency_stamp=@ConcurrencyStamp, phone_number=@PhoneNumber, phone_number_confirmed=@PhoneNumberConfirmed, two_factor_enabled=@TwoFactorEnabled, lockout_end=@LockoutEnd, lockout_enabled=@LockoutEnabled, access_failed_count=@AccessFailedCount
+                    WHERE id=@Id";
+                return connection.ExecuteAsync(sql, user);
+            });
+
+            return IdentityResult.Success;
+        }
+        #endregion
 
         /// <summary>
         /// Adds the <paramref name="claims"/> given to the specified <paramref name="user"/>.
@@ -89,51 +307,6 @@ namespace Laixer.Identity.Dapper.Store
         }
 
         /// <summary>
-        /// Creates the specified <paramref name="user"/> in the user store.
-        /// </summary>
-        /// <param name="user">The user to create.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the creation operation.</returns>
-        public Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Deletes the specified <paramref name="user"/> from the user store.
-        /// </summary>
-        /// <param name="user">The user to delete.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
-        public Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Finds and returns a user, if any, who has the specified <paramref name="userId"/>.
-        /// </summary>
-        /// <param name="userId">The user ID to search for.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>
-        /// The <see cref="Task"/> that represents the asynchronous operation, containing the user matching the specified <paramref name="userId"/> if it exists.
-        /// </returns>
-        public async Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
-            return await RunDatabaseStatement(async connection =>
-            {
-                return await connection.QueryFirstOrDefaultAsync<TUser>($"SELECT * FROM {_options.Schema}.{_options.UserTable} WHERE Id=@Id LIMIT 1", new { Id = userId });
-            });
-        }
-
-        /// <summary>
         /// Retrieves the user associated with the specified login provider and login provider key.
         /// </summary>
         /// <param name="loginProvider">The login provider who provided the <paramref name="providerKey"/>.</param>
@@ -143,19 +316,6 @@ namespace Laixer.Identity.Dapper.Store
         /// The <see cref="Task"/> for the asynchronous operation, containing the user, if any which matched the specified login provider and key.
         /// </returns>
         public Task<TUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Finds and returns a user, if any, who has the specified normalized user name.
-        /// </summary>
-        /// <param name="normalizedUserName">The normalized user name to search for.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>
-        /// The <see cref="Task"/> that represents the asynchronous operation, containing the user matching the specified <paramref name="normalizedUserName"/> if it exists.
-        /// </returns>
-        public Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -184,10 +344,7 @@ namespace Laixer.Identity.Dapper.Store
             throw new NotImplementedException();
         }
 
-        public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
         {
@@ -210,10 +367,7 @@ namespace Laixer.Identity.Dapper.Store
             throw new NotImplementedException();
         }
 
-        public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
         {
@@ -314,10 +468,7 @@ namespace Laixer.Identity.Dapper.Store
             throw new NotImplementedException();
         }
 
-        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+
 
         public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
         {
@@ -325,22 +476,6 @@ namespace Laixer.Identity.Dapper.Store
         }
 
         public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Updates the specified <paramref name="user"/> in the user store.
-        /// </summary>
-        /// <param name="user">The user to update.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
-        public Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
