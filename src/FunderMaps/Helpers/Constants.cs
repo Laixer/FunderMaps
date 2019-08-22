@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Reflection;
-using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Helpers
 {
@@ -40,7 +40,7 @@ namespace FunderMaps.Helpers
         /// Application role for administrator
         /// </summary>
         public const string AdministratorRole = "Administrator";
-        
+
         /// <summary>
         /// Organization role for superuser
         /// </summary>
@@ -70,5 +70,20 @@ namespace FunderMaps.Helpers
         /// Retrieve application name.
         /// </summary>
         public static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
+
+        /// <summary>
+        /// Application database schema.
+        /// </summary>
+        public static string DefaultDatabaseSchema = "application";
+
+        /// <summary>
+        /// Identity user table.
+        /// </summary>
+        public static string UserTable = "user";
+
+        /// <summary>
+        /// Identity role table.
+        /// </summary>
+        public static string RoleTable = "role";
     }
 }
