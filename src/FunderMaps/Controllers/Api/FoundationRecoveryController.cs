@@ -5,7 +5,6 @@ using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
-using FunderMaps.Providers;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +12,6 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
-    // TODO:
-    // - Make this stuff safer... add input validation checks. Do asserts on some of the stuff
-
     /// <summary>
     /// Endpoint for recovery operations.
     /// </summary>
@@ -32,8 +28,7 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         public FoundationRecoveryController(
             IAuthorizationService authorizationService,
-            IFoundationRecoveryRepository recoveryRepository
-            )
+            IFoundationRecoveryRepository recoveryRepository)
         {
             _authorizationService = authorizationService;
             _recoveryRepository = recoveryRepository;
@@ -53,20 +48,14 @@ namespace FunderMaps.Controllers.Api
 
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
-            #region check user
-            // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // if its not able to convert it to an integer
+            // If its not able to convert it to an integer
             // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int organisationId))
+            if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
             }
-            #endregion
-
-            // Hardcoded because every record has this attribution id
-            attestationOrganizationId = "18729";
 
             // Administrator can query anything
             if (User.IsInRole(Constants.AdministratorRole))
@@ -74,8 +63,7 @@ namespace FunderMaps.Controllers.Api
                 return Ok(await _recoveryRepository.ListAllAsync(new Navigation(offset, limit)));
             }
 
-            // return EVERYTHING listed in de foundation_recovery table based on the id of the organisation
-            return Ok(await _recoveryRepository.ListAllAsync(int.Parse(attestationOrganizationId), new Navigation(offset, limit)));
+            return Ok(await _recoveryRepository.ListAllAsync(orgId, new Navigation(offset, limit)));
         }
 
 
@@ -89,19 +77,18 @@ namespace FunderMaps.Controllers.Api
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
-            #region check the user
-            // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // if its not able to convert it to an integer
+            // If its not able to convert it to an integer
             // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int organisationId))
+            if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
             }
-            #endregion
+
+            // TODO: Check permissions.
 
             return Ok(await _recoveryRepository.GetByIdAsync(id));
         }
@@ -115,17 +102,14 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
         {
-            #region check user
-            // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // if its not able to convert it to an integer
+            // If its not able to convert it to an integer
             // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int organisationId))
+            if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
             }
-            #endregion
 
             // Administrator can query anything
             if (User.IsInRole(Constants.AdministratorRole))
@@ -137,10 +121,11 @@ namespace FunderMaps.Controllers.Api
                 });
             }
 
-            // yeet back to the user based on the organization id
+            // TODO: Check permissions.
+
             return Ok(new EntityStatsOutputModel
             {
-                Count = await _recoveryRepository.CountAsync(organisationId)
+                Count = await _recoveryRepository.CountAsync(orgId)
             });
         }
 
@@ -152,19 +137,16 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecovery input)
         {
-            #region check user
-            // Check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
             // NOTE: If it's not able to convert it to an integer
             //       this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int organisationId))
+            if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
             }
-            #endregion
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organisationId, OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, orgId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 var recovery = new FoundationRecovery
@@ -183,34 +165,28 @@ namespace FunderMaps.Controllers.Api
 
                 return Ok(await _recoveryRepository.AddAsync(recovery));
             }
-            // Yeet the user if authorisation failed
+
             return ResourceForbid();
         }
-
 
         // Update info about the fundation recovery
         // PUT: api/foundationrecovery/id
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsync(int id, [FromBody] FoundationRecovery input)
         {
-            #region check the user
-            // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            // if its not able to convert it to an integer
-            // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int organisationId))
+            if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
             }
-            #endregion
 
             // Check if the id of the url matches the id of the foundation recovery report
             if (id != input.Id)
             {
                 return BadRequest(0, "Identifiers do not match entity");
             }
-            
+
             // Put all the info from the request body into a new foundation recovery object
             var recovery = new FoundationRecovery
             {
@@ -230,7 +206,6 @@ namespace FunderMaps.Controllers.Api
             // Send the created recovery object to the repo
             await _recoveryRepository.UpdateAsync(recovery);
 
-            // return nothing 
             return NoContent();
         }
 
@@ -239,17 +214,14 @@ namespace FunderMaps.Controllers.Api
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id, [FromBody] FoundationRecovery input)
         {
-            #region check the user
-            // check the user
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
-            if (!int.TryParse(attestationOrganizationId, out int organisationId))
+            if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
             }
-            #endregion
 
-            // check if the url id matches the input id
+            // Check if the url id matches the input id
             if (id != input.Id)
             {
                 return BadRequest(0, "Identifiers do not match entity");
@@ -262,7 +234,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organisationId, OperationsRequirement.Create);
+            var authorizationResult = await _authorizationService.AuthorizeAsync(User, orgId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
                 await _recoveryRepository.DeleteAsync(report);
