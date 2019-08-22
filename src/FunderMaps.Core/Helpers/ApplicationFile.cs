@@ -15,10 +15,7 @@ namespace FunderMaps.Core.Helpers
         /// Create new instance of application file.
         /// </summary>
         /// <param name="name">File name.</param>
-        public ApplicationFile(string name)
-        {
-            Name = name;
-        }
+        public ApplicationFile(string name) => Name = name;
 
         /// <summary>
         /// Create new instance of application file.
@@ -46,9 +43,10 @@ namespace FunderMaps.Core.Helpers
         {
             if (extension == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(extension));
             }
 
+            // Remove the dot from extension.
             if (extension[0] == '.')
             {
                 extension = extension.Substring(1);

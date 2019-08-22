@@ -8,7 +8,7 @@ namespace FunderMaps.Helpers
 {
     public class ApplicationFileWrapper
     {
-        private readonly IEnumerable<string> allowedFileTypes;
+        private readonly IEnumerable<string> _allowedFileTypes;
 
         /// <summary>
         /// Application file.
@@ -34,10 +34,10 @@ namespace FunderMaps.Helpers
         {
             if (formFile == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(formFile));
             }
 
-            this.allowedFileTypes = allowedFileTypes;
+            _allowedFileTypes = allowedFileTypes;
 
             File = new ApplicationFile(formFile.FileName)
             {
@@ -59,7 +59,7 @@ namespace FunderMaps.Helpers
             }
 
             // Check if content type is allowed
-            if (allowedFileTypes.Count() > 0 && !allowedFileTypes.Contains(File.ContentType))
+            if (_allowedFileTypes.Count() > 0 && !_allowedFileTypes.Contains(File.ContentType))
             {
                 Error = "file content type is not allowed";
             }
