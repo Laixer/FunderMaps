@@ -28,6 +28,11 @@ namespace Laixer.Identity.Dapper
         public string RoleTable { get; set; } = "AspNetUserRoles";
 
         /// <summary>
+        /// Lets Dapper map record using underscores.
+        /// </summary>
+        public bool MatchWithUnderscore { get; set; }
+
+        /// <summary>
         /// Database driver for the connection.
         /// </summary>
         public IDatabaseDriver Database { get; set; }

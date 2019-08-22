@@ -31,7 +31,12 @@ namespace Laixer.Identity.Dapper.Store
         /// Creates a new instance of the store.
         /// </summary>
         /// <param name="context">The context used to access the store.</param>
-        public UserStore(IOptions<IdentityDapperOptions> options) => _options = options.Value;
+        public UserStore(IOptions<IdentityDapperOptions> options)
+        {
+            _options = options.Value;
+
+            Helper.OrmMatchWithUnderscore(_options.MatchWithUnderscore);
+        }
 
         /// <summary>
         /// Run the databse statement inside scope.
