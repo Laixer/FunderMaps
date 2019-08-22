@@ -237,6 +237,11 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            if (string.IsNullOrEmpty(normalizedName))
+            {
+                throw new ArgumentNullException(nameof(normalizedName));
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET normalized_username=@NormalizedUserName WHERE id=@Id",
@@ -257,6 +262,11 @@ namespace Laixer.Identity.Dapper.Store
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(userName))
+            {
+                throw new ArgumentNullException(nameof(userName));
             }
 
             return RunDatabaseStatement(connection =>
@@ -407,6 +417,11 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET email=@Email WHERE id=@Id",
@@ -449,6 +464,11 @@ namespace Laixer.Identity.Dapper.Store
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(normalizedEmail))
+            {
+                throw new ArgumentNullException(nameof(normalizedEmail));
             }
 
             return RunDatabaseStatement(connection =>
@@ -658,17 +678,44 @@ namespace Laixer.Identity.Dapper.Store
         #region IUserPasswordStore
         public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryFirstOrDefaultAsync<string>(
+                    $"SELECT password_hash FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+            });
         }
 
         public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return GetPasswordHashAsync(user, cancellationToken).ContinueWith(t => !string.IsNullOrEmpty(t.Result));
         }
 
         public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(passwordHash))
+            {
+                throw new ArgumentNullException(nameof(passwordHash));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET password_hash=@PasswordHash WHERE id=@Id",
+                    new { user.Id, PasswordHash = passwordHash });
+            });
         }
         #endregion
 
@@ -681,7 +728,18 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the security stamp for the specified user..</returns>
         public Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryFirstOrDefaultAsync<string>(
+                    $"SELECT security_stamp FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+            });
         }
 
         /// <summary>
@@ -692,7 +750,23 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(stamp))
+            {
+                throw new ArgumentNullException(nameof(stamp));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET security_stamp=@SecurityStamp WHERE id=@Id",
+                    new { user.Id, SecurityStamp = stamp });
+            });
         }
         #endregion
 

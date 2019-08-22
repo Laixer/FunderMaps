@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 
 namespace Laixer.Identity.Dapper.Store
 {
+    /// <summary>
+    /// Represents a new instance of a persistence store for user roles.
+    /// </summary>
+    /// <typeparam name="TRole">The type representing a role.</typeparam>
+    /// <typeparam name="TKey">The type of the primary key for a user.</typeparam>
     internal class RoleStore<TRole, TKey> : IRoleStore<TRole>
         where TRole : IdentityRole<TKey>
         where TKey : IEquatable<TKey>
