@@ -16,14 +16,14 @@ namespace FunderMaps.Interfaces
         /// </summary>
         /// <param name="org_id">The id of the organization</param>
         /// <param name="navigation">The Navigation values</param>
-        /// <returns></returns>
+        /// <returns>list of all the foundation recovery reports based on the organization id</returns>
         Task<IReadOnlyList<FoundationRecovery>> ListAllAsync(int org_id, Navigation navigation);
 
         /// <summary>
         /// Return amount counted based on organization Id
         /// </summary>
         /// <param name="org_id">Id of the organization</param>
-        /// <returns></returns>
+        /// <returns>Amount of foundation reports that belong to the organization</returns>
         Task<uint> CountAsync(int org_id);
     }
 }
