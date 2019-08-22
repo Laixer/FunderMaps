@@ -1,20 +1,20 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using FunderMaps.Models.Identity;
-using FunderMaps.Identity;
+﻿using FunderMaps.Data;
+using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
-using FunderMaps.Data;
-using FunderMaps.Data.Authorization;
+using FunderMaps.Identity;
+using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -152,9 +152,11 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> SignInAsync([FromBody] UserInputModel input)
         {
-            // Find user for authnetication, if the user object cannot be found then return an
-            // authentication faillure since the client is not allowed to guess the credentials.
-            var user = await _userManager.Users.SingleOrDefaultAsync(s => s.Email == input.Email);
+            // NOTE: Find user for authentication, if the user object cannot be found then return an
+            //       authentication faillure since the client is not allowed to guess the credentials.
+            //       We look for the user first since the signinManager sets cookie authentication on 
+            //       the default login operation.
+            var user = await _userManager.FindByEmailAsync(input.Email);
             if (user == null)
             {
                 _logger.LogWarning("Authentication failed, unknown object {user}", input.Email);
