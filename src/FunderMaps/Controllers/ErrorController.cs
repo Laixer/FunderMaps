@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("FunderMaps.Tests")]
 
 namespace FunderMaps.Controllers
 {
@@ -38,13 +39,11 @@ namespace FunderMaps.Controllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(ServerErrorOutoutModel), 500)]
         public IActionResult Error()
-        {
-            return StatusCode(500, new ServerErrorOutoutModel
+            => StatusCode(500, new ServerErrorOutoutModel
             {
                 Title = "An error has occured on the remote side",
                 Status = 500,
-                TraceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+                TraceId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier
             });
-        }
     }
 }
