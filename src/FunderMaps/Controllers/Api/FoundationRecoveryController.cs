@@ -46,7 +46,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
 
-        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        public async Task<IActionResult> GetAllAsync([FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 

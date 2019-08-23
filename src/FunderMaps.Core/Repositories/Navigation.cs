@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace FunderMaps.Core.Repositories
+﻿namespace FunderMaps.Core.Repositories
 {
     public class Navigation
     {
-        public int Offset { get; set; }
-        public int Limit { get; set; }
+        public uint Offset { get; set; }
+        public uint Limit { get; set; }
 
-        public Navigation(int offset, int limit)
+        public Navigation(uint offset, uint limit)
         {
             Offset = offset;
             Limit = limit;
