@@ -52,9 +52,9 @@ namespace Laixer.Identity.Dapper.Database
             SetUserNameAsync = $"UPDATE {_options.Schema}.{_options.UserTable} SET username=@UserName WHERE id=@Id";
 
             UpdateAsync = $@"
-                    UPDATE {_options.Schema}.{_options.UserTable}
-                    SET username=@UserName, normalized_username=@NormalizedUserName, email=@Email, normalized_email=@NormalizedEmail, email_confirmed=@EmailConfirmed, password_hash=@PasswordHash, security_stamp=@SecurityStamp, concurrency_stamp=@ConcurrencyStamp, phone_number=@PhoneNumber, phone_number_confirmed=@PhoneNumberConfirmed, two_factor_enabled=@TwoFactorEnabled, lockout_end=@LockoutEnd, lockout_enabled=@LockoutEnabled, access_failed_count=@AccessFailedCount
-                    WHERE id=@Id";
+                UPDATE {_options.Schema}.{_options.UserTable}
+                SET username=@UserName, normalized_username=@NormalizedUserName, email=@Email, normalized_email=@NormalizedEmail, email_confirmed=@EmailConfirmed, password_hash=@PasswordHash, security_stamp=@SecurityStamp, concurrency_stamp=@ConcurrencyStamp, phone_number=@PhoneNumber, phone_number_confirmed=@PhoneNumberConfirmed, two_factor_enabled=@TwoFactorEnabled, lockout_end=@LockoutEnd, lockout_enabled=@LockoutEnabled, access_failed_count=@AccessFailedCount
+                WHERE id=@Id";
             #endregion
 
             #region IUserEmailStore
@@ -73,7 +73,13 @@ namespace Laixer.Identity.Dapper.Database
             SetNormalizedEmailAsync = $"UPDATE {_options.Schema}.{_options.UserTable} SET normalized_email=@NormalizedEmail WHERE id=@Id";
             #endregion
 
-
+            #region IUserRoleStore
+            GetRolesAsync = $@"
+                SELECT {_options.Schema}.role.name
+                FROM {_options.Schema}.user_role
+                JOIN {_options.Schema}.role ON {_options.Schema}.role.id = {_options.Schema}.user_role.role_id
+                WHERE user_id=@Id";
+            #endregion
 
             #region IUserPasswordStore
             GetPasswordHashAsync = $"SELECT password_hash FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1";

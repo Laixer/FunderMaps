@@ -36,6 +36,10 @@ namespace Laixer.Identity.Dapper.Database
         string SetNormalizedEmailAsync { get; }
         #endregion
 
+        #region IUserRoleStore
+        string GetRolesAsync { get; }
+        #endregion
+
         #region IUserPasswordStore
         string GetPasswordHashAsync { get; }
         string SetPasswordHashAsync { get; }

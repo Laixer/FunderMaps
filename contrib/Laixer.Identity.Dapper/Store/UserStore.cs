@@ -613,13 +613,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                var sql = $@"
-                    SELECT application.role.name
-                    FROM application.user_role
-                    JOIN application.role ON application.role.id = application.user_role.role_id
-                    WHERE user_id=@Id";
-
-                return connection.QueryAsync<string>(sql, new { Id = user.Id });
+                return connection.QueryAsync<string>(DatabaseDriver.GetRolesAsync, new { user.Id });
             }).ContinueWith<IList<string>>(t => t.Result.AsList());
         }
 
