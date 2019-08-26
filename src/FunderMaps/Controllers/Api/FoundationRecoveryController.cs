@@ -45,7 +45,6 @@ namespace FunderMaps.Controllers.Api
         [HttpGet]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-
         public async Task<IActionResult> GetAllAsync([FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
         {
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
@@ -121,8 +120,6 @@ namespace FunderMaps.Controllers.Api
                 });
             }
 
-            // TODO: Check permissions.
-
             return Ok(new EntityStatsOutputModel
             {
                 Count = await _recoveryRepository.CountAsync(orgId)
@@ -140,7 +137,7 @@ namespace FunderMaps.Controllers.Api
             var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
 
             // NOTE: If it's not able to convert it to an integer
-            //       this also catches it if the attestationOrganizationId equals null
+            //this also catches it if the attestationOrganizationId equals null
             if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
                 return ResourceForbid();
@@ -149,23 +146,22 @@ namespace FunderMaps.Controllers.Api
             var authorizationResult = await _authorizationService.AuthorizeAsync(User, orgId, OperationsRequirement.Create);
             if (authorizationResult.Succeeded)
             {
-                var recovery = new FoundationRecovery
-                {
-                    Note = input.Note,
-                    Type = input.Type,
-                    Year = input.Year,
-                    Address = input.Address,
-                    Attribution = input.Attribution,
-                    AccessPolicy = input.AccessPolicy,
-                    AddressNavigation = input.AddressNavigation,
-                    AttributionNavigation = input.AttributionNavigation,
-                    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
-                    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence
-                };
+                //var recovery = new FoundationRecovery
+                //{
+                //    Note = input.Note,
+                //    Type = input.Type,
+                //    Year = input.Year,
+                //    Address = input.Address,
+                //    Attribution = input.Attribution,
+                //    AccessPolicy = input.AccessPolicy,
+                //    AddressNavigation = input.AddressNavigation,
+                //    AttributionNavigation = input.AttributionNavigation,
+                //    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
+                //    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence                    
+                //};
 
-                return Ok(await _recoveryRepository.AddAsync(recovery));
+                return Ok(await _recoveryRepository.AddAsync(input));
             }
-
             return ResourceForbid();
         }
 
@@ -188,23 +184,23 @@ namespace FunderMaps.Controllers.Api
             }
 
             // Put all the info from the request body into a new foundation recovery object
-            var recovery = new FoundationRecovery
-            {
-                AccessPolicy = input.AccessPolicy,
-                Address = input.Address,
-                AddressNavigation = input.AddressNavigation,
-                Attribution = input.Attribution,
-                AttributionNavigation = input.AttributionNavigation,
-                FoundationRecoveryEvidence = input.FoundationRecoveryEvidence,
-                FoundationRecoveryRepair = input.FoundationRecoveryRepair,
-                Id = input.Id,
-                Note = input.Note,
-                Type = input.Type,
-                Year = input.Year
-            };
+            //var recovery = new FoundationRecovery
+            //{
+            //    AccessPolicy = input.AccessPolicy,
+            //    Address = input.Address,
+            //    AddressNavigation = input.AddressNavigation,
+            //    Attribution = input.Attribution,
+            //    AttributionNavigation = input.AttributionNavigation,
+            //    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence,
+            //    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
+            //    Id = input.Id,
+            //    Note = input.Note,
+            //    Type = input.Type,
+            //    Year = input.Year                
+            //};
 
             // Send the created recovery object to the repo
-            await _recoveryRepository.UpdateAsync(recovery);
+            await _recoveryRepository.UpdateAsync(input);
 
             return NoContent();
         }
