@@ -108,7 +108,7 @@ namespace Laixer.Identity.Dapper.Store
 
             await RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"DELETE FROM {_options.Schema}.{_options.UserTable} WHERE Id=@Id", user);
+                return connection.ExecuteAsync(DatabaseDriver.DeleteAsync, user);
             });
 
             return IdentityResult.Success;
@@ -133,7 +133,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<TUser>($"SELECT * FROM {_options.Schema}.{_options.UserTable} WHERE Id=@Id LIMIT 1", new { Id = userId });
+                return connection.QueryFirstOrDefaultAsync<TUser>(DatabaseDriver.FindByIdAsync, new { Id = userId });
             });
         }
 
@@ -156,7 +156,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<TUser>($"SELECT * FROM {_options.Schema}.{_options.UserTable} WHERE normalized_username=@NormalizedUserName LIMIT 1", new { NormalizedUserName = normalizedUserName });
+                return connection.QueryFirstOrDefaultAsync<TUser>(DatabaseDriver.FindByNameAsync, new { NormalizedUserName = normalizedUserName });
             });
         }
 
@@ -177,8 +177,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT normalized_username FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetNormalizedUserNameAsync, user);
             });
         }
 
@@ -199,8 +198,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT id FROM {_options.Schema}.{_options.UserTable} WHERE normalized_username=@NormalizedUserName OR normalized_email=@NormalizedEmail LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetUserIdAsync, user);
             });
         }
 
@@ -221,8 +219,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT username FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetUserNameAsync, user);
             });
         }
 
@@ -248,8 +245,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET normalized_username=@NormalizedUserName WHERE id=@Id",
-                    new { user.Id, NormalizedUserName = normalizedName });
+                return connection.ExecuteAsync(DatabaseDriver.SetNormalizedUserNameAsync, new { user.Id, NormalizedUserName = normalizedName });
             });
         }
 
@@ -275,8 +271,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET username=@UserName WHERE id=@Id",
-                    new { user.Id, UserName = userName });
+                return connection.ExecuteAsync(DatabaseDriver.SetUserNameAsync, new { user.Id, UserName = userName });
             });
         }
 
@@ -297,11 +292,7 @@ namespace Laixer.Identity.Dapper.Store
 
             await RunDatabaseStatement(connection =>
             {
-                var sql = $@"
-                    UPDATE {_options.Schema}.{_options.UserTable}
-                    SET username=@UserName, normalized_username=@NormalizedUserName, email=@Email, normalized_email=@NormalizedEmail, email_confirmed=@EmailConfirmed, password_hash=@PasswordHash, security_stamp=@SecurityStamp, concurrency_stamp=@ConcurrencyStamp, phone_number=@PhoneNumber, phone_number_confirmed=@PhoneNumberConfirmed, two_factor_enabled=@TwoFactorEnabled, lockout_end=@LockoutEnd, lockout_enabled=@LockoutEnabled, access_failed_count=@AccessFailedCount
-                    WHERE id=@Id";
-                return connection.ExecuteAsync(sql, user);
+                return connection.ExecuteAsync(DatabaseDriver.UpdateAsync, user);
             });
 
             return IdentityResult.Success;
@@ -351,8 +342,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT email FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetEmailAsync, user);
             });
         }
 
@@ -375,8 +365,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<bool>(
-                    $"SELECT email_confirmed FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<bool>(DatabaseDriver.GetEmailConfirmedAsync, user);
             });
         }
 
@@ -399,8 +388,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT normalized_email FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetNormalizedEmailAsync, user);
             });
         }
 
@@ -426,8 +414,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET email=@Email WHERE id=@Id",
-                    new { user.Id, Email = email });
+                return connection.ExecuteAsync(DatabaseDriver.SetEmailAsync, new { user.Id, Email = email });
             });
         }
 
@@ -448,8 +435,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET email_confirmed=@EmailConfirmed WHERE id=@Id",
-                    new { user.Id, EmailConfirmed = confirmed });
+                return connection.ExecuteAsync(DatabaseDriver.SetEmailConfirmedAsync, new { user.Id, EmailConfirmed = confirmed });
             });
         }
 
@@ -475,8 +461,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET normalized_email=@NormalizedEmail WHERE id=@Id",
-                    new { user.Id, NormalizedEmail = normalizedEmail });
+                return connection.ExecuteAsync(DatabaseDriver.SetNormalizedEmailAsync, new { user.Id, NormalizedEmail = normalizedEmail });
             });
         }
         #endregion
@@ -714,8 +699,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET password_hash=@PasswordHash WHERE id=@Id",
-                    new { user.Id, PasswordHash = passwordHash });
+                return connection.ExecuteAsync(DatabaseDriver.SetPasswordHashAsync, new { user.Id, PasswordHash = passwordHash });
             });
         }
         #endregion
@@ -738,8 +722,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT security_stamp FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetSecurityStampAsync, user);
             });
         }
 
@@ -765,8 +748,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.ExecuteAsync($"UPDATE {_options.Schema}.{_options.UserTable} SET security_stamp=@SecurityStamp WHERE id=@Id",
-                    new { user.Id, SecurityStamp = stamp });
+                return connection.ExecuteAsync(DatabaseDriver.SetSecurityStampAsync, new { user.Id, SecurityStamp = stamp });
             });
         }
         #endregion
