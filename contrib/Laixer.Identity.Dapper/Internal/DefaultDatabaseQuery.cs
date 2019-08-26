@@ -1,6 +1,9 @@
 ﻿namespace Laixer.Identity.Dapper.Internal
 {
-    internal class DefaultDatabaseQuery : IQueryRepository
+    /// <summary>
+    /// Standard query repository containing all the query properties.
+    /// </summary>
+    internal class DefaultQueryRepository : IQueryRepository
     {
         #region IUserStore
         public string CreateAsync { get; set; }

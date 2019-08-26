@@ -16,6 +16,6 @@ namespace Laixer.Identity.Dapper.Database
         /// <summary>
         /// Return the query repository.
         /// </summary>
-        IQueryRepository DatabaseQueryRepository { get; }
+        IQueryRepository QueryRepository { get; }
     }
 }

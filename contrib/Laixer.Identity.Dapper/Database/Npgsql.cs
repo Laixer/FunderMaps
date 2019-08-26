@@ -13,7 +13,7 @@ namespace Laixer.Identity.Dapper.Database
         /// <summary>
         /// Return the query repository.
         /// </summary>
-        public IQueryRepository DatabaseQueryRepository { get; }
+        public IQueryRepository QueryRepository { get; }
 
         /// <summary>
         /// Create new instance.
@@ -22,7 +22,7 @@ namespace Laixer.Identity.Dapper.Database
         public Npgsql(IdentityDapperOptions options, ICustomQueryRepository customQueryRepository = null, IQueryRepository queryRepository = null)
         {
             _options = options;
-            DatabaseQueryRepository = queryRepository ?? new Internal.DefaultDatabaseQuery();
+            QueryRepository = queryRepository ?? new Internal.DefaultQueryRepository();
 
             // Set the default schema for PostgreSQL
             if (string.IsNullOrEmpty(_options.Schema))
@@ -36,7 +36,7 @@ namespace Laixer.Identity.Dapper.Database
             // Let caller change query properties
             if (customQueryRepository != null)
             {
-                customQueryRepository.Configure(DatabaseQueryRepository);
+                customQueryRepository.Configure(QueryRepository);
             }
         }
 

@@ -28,7 +28,7 @@ namespace Laixer.Identity.Dapper.Store
     {
         protected IdentityDapperOptions _options;
 
-        protected IQueryRepository DatabaseDriver { get => _options.Database.DatabaseQueryRepository; }
+        protected IQueryRepository DatabaseDriver { get => _options.Database.QueryRepository; }
 
         /// <summary>
         /// Creates a new instance of the store.
