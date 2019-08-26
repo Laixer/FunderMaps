@@ -6,7 +6,7 @@ namespace Laixer.Identity.Dapper.Database
     /// <summary>
     /// Driver for PostgreSQL driver.
     /// </summary>
-    internal class Npgsql : DatabaseQeuryBase
+    internal class Npgsql : DatabaseQueryBase
     {
         private readonly IdentityDapperOptions _options;
 

@@ -2,7 +2,7 @@
 
 namespace Laixer.Identity.Dapper.Database
 {
-    internal abstract class DatabaseQeuryBase : IDatabaseDriver
+    internal abstract class DatabaseQueryBase : IDatabaseDriver
     {
         public abstract IDbConnection GetDbConnection();
 
