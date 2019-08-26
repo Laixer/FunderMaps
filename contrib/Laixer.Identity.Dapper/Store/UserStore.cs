@@ -28,7 +28,7 @@ namespace Laixer.Identity.Dapper.Store
     {
         protected IdentityDapperOptions _options;
 
-        protected IDatabaseDriver DatabaseDriver { get => _options.Database; }
+        protected IQueryRepository DatabaseDriver { get => _options.Database.DatabaseQueryRepository; }
 
         /// <summary>
         /// Creates a new instance of the store.
@@ -47,7 +47,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="statement">Query method.</param>
         protected async Task RunDatabaseStatement(Func<IDbConnection, Task> statement)
         {
-            using (var connection = DatabaseDriver.GetDbConnection())
+            using (var connection = _options.Database.GetDbConnection())
             {
                 await statement(connection);
             }
@@ -61,7 +61,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>Value of type <typeparamref name="TReturn"/>.</returns>
         protected async Task<TReturn> RunDatabaseStatement<TReturn>(Func<IDbConnection, Task<TReturn>> statement)
         {
-            using (var connection = DatabaseDriver.GetDbConnection())
+            using (var connection = _options.Database.GetDbConnection())
             {
                 return await statement(connection);
             }
