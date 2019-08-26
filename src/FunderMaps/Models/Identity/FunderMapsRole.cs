@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 
 namespace FunderMaps.Models.Identity
 {
@@ -11,9 +11,7 @@ namespace FunderMaps.Models.Identity
         /// <summary>
         /// Create new instance.
         /// </summary>
-        public FunderMapsRole()
-        {
-        }
+        public FunderMapsRole() { }
 
         /// <summary>
         /// Create new instance.

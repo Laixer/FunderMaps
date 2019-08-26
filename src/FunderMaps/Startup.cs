@@ -167,10 +167,10 @@ namespace FunderMaps
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("OrganizationMemberPolicy",
-                    policy => policy.AddRequirements(new OrganizationMemberRequirement()));
-                options.AddPolicy("OrganizationSuperuserPolicy",
-                    policy => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
+                options.AddPolicy("OrganizationMemberPolicy", policy
+                    => policy.AddRequirements(new OrganizationMemberRequirement()));
+                options.AddPolicy("OrganizationSuperuserPolicy", policy
+                    => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
             });
 
             services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();

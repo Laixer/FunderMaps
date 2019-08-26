@@ -13,12 +13,34 @@ namespace FunderMaps.Identity
     {
         private readonly JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
+        /// <summary>
+        /// List of identity claims.
+        /// </summary>
         public List<Claim> Claims { get; }
+
+        /// <summary>
+        /// Signing credentials.
+        /// </summary>
         public SigningCredentials SigningCredentials { get; }
 
+        /// <summary>
+        /// Token signature algorithm.
+        /// </summary>
         public string SignatureAlgorithm { get; set; } = SecurityAlgorithms.HmacSha256;
+
+        /// <summary>
+        /// Token issuer.
+        /// </summary>
         public string Issuer { get; set; }
+
+        /// <summary>
+        /// Token audience.
+        /// </summary>
         public string Audience { get; set; }
+
+        /// <summary>
+        /// Token validity (in minutes).
+        /// </summary>
         public int TokenValid { get; set; } = 30;
 
         /// <summary>
@@ -49,7 +71,7 @@ namespace FunderMaps.Identity
                 Claims.Add(new Claim(ClaimTypes.Role, role));
             }
         }
-        
+
         /// <summary>
         /// Add additional security claims.
         /// </summary>

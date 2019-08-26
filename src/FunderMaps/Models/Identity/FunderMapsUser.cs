@@ -12,9 +12,7 @@ namespace FunderMaps.Models.Identity
         /// <summary>
         /// Create new instance.
         /// </summary>
-        public FunderMapsUser()
-        {
-        }
+        public FunderMapsUser() { }
 
         /// <summary>
         /// Create new instance.
