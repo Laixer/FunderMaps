@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Laixer.Identity.Dapper.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -27,6 +28,8 @@ namespace Laixer.Identity.Dapper.Store
     {
         protected IdentityDapperOptions _options;
 
+        protected IDatabaseDriver DatabaseDriver { get => _options.Database; }
+
         /// <summary>
         /// Creates a new instance of the store.
         /// </summary>
@@ -44,7 +47,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="statement">Query method.</param>
         protected async Task RunDatabaseStatement(Func<IDbConnection, Task> statement)
         {
-            using (var connection = _options.Database.GetDbConnection())
+            using (var connection = DatabaseDriver.GetDbConnection())
             {
                 await statement(connection);
             }
@@ -58,7 +61,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>Value of type <typeparamref name="TReturn"/>.</returns>
         protected async Task<TReturn> RunDatabaseStatement<TReturn>(Func<IDbConnection, Task<TReturn>> statement)
         {
-            using (var connection = _options.Database.GetDbConnection())
+            using (var connection = DatabaseDriver.GetDbConnection())
             {
                 return await statement(connection);
             }
@@ -82,11 +85,7 @@ namespace Laixer.Identity.Dapper.Store
 
             await RunDatabaseStatement(connection =>
             {
-                var sql = $@"
-                    INSERT INTO {_options.Schema}.{_options.UserTable} (
-                    username, normalized_username, email, normalized_email, email_confirmed, password_hash, security_stamp, concurrency_stamp, phone_number, phone_number_confirmed, two_factor_enabled, lockout_end, lockout_enabled, access_failed_count, attestation_principal_id)
-                    VALUES(@UserName, @NormalizedUserName, @Email, @NormalizedEmail, @EmailConfirmed, @PasswordHash, @SecurityStamp, @ConcurrencyStamp, @PhoneNumber, @PhoneNumberConfirmed, @TwoFactorEnabled, @LockoutEnd, @LockoutEnabled, 0, 0)";
-                return connection.ExecuteAsync(sql, user);
+                return connection.ExecuteAsync(DatabaseDriver.CreateAsync, user);
             });
 
             return IdentityResult.Success;
@@ -329,9 +328,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<TUser>(
-                    $"SELECT * FROM {_options.Schema}.{_options.UserTable} WHERE normalized_email=@NormalizedEmail LIMIT 1",
-                    new { NormalizedEmail = normalizedEmail });
+                return connection.QueryFirstOrDefaultAsync<TUser>(DatabaseDriver.FindByEmailAsync, new { NormalizedEmail = normalizedEmail });
             });
         }
 
@@ -692,8 +689,7 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(
-                    $"SELECT password_hash FROM {_options.Schema}.{_options.UserTable} WHERE id=@Id LIMIT 1", user);
+                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetPasswordHashAsync, user);
             });
         }
 

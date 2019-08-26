@@ -12,5 +12,9 @@ namespace Laixer.Identity.Dapper.Database
         /// </summary>
         /// <returns>Instance of <see cref="IDbConnection"/>.</returns>
         IDbConnection GetDbConnection();
+
+        string CreateAsync { get; }
+        string FindByEmailAsync { get; }
+        string GetPasswordHashAsync { get; }
     }
 }
