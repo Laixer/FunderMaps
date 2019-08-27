@@ -29,7 +29,10 @@
         #endregion
 
         #region IUserRoleStore
+        public string AddToRoleAsync { get; set; }
         public string GetRolesAsync { get; set; }
+        public string GetUsersInRoleAsync { get; set; }
+        public string RemoveFromRoleAsync { get; set; }
         #endregion
 
         #region IUserPasswordStore

@@ -72,9 +72,9 @@
             ICustomQueryRepository customQueryRepository)
         {
             options.ConnectionString = connectionString;
-            options.Schema = schema;
-            options.UserTable = userTable;
-            options.RoleTable = roleTable;
+            options.Schema = schema ?? options.Schema;
+            options.UserTable = userTable ?? options.UserTable;
+            options.RoleTable = roleTable ?? options.RoleTable;
 
             options.Database = new Database.Npgsql(options, customQueryRepository);
 
