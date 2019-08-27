@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Laixer.Identity.Dapper.Database;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System;
@@ -593,7 +592,10 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task AddToRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync(DatabaseDriver.AddToRoleAsync, new { Role = roleName, user.Id });
+            });
         }
 
         /// <summary>
@@ -627,7 +629,17 @@ namespace Laixer.Identity.Dapper.Store
         /// </returns>
         public Task<IList<TUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (roleName == null)
+            {
+                throw new ArgumentNullException(nameof(roleName));
+            }
+
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.QueryAsync<TUser>(DatabaseDriver.GetUsersInRoleAsync, new { Role = roleName });
+            }).ContinueWith<IList<TUser>>(t => t.Result.AsList());
         }
 
         /// <summary>
@@ -638,9 +650,9 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>A <see cref="Task{TResult}"/> containing a flag indicating if the specified user is a member of the given group. If the
         /// user is a member of the group the returned value with be true, otherwise it will be false.</returns>
-        public Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
+        public async Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return (await GetRolesAsync(user, cancellationToken)).Contains(roleName);
         }
 
         /// <summary>
@@ -652,7 +664,10 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task RemoveFromRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync(DatabaseDriver.RemoveFromRoleAsync, user);
+            });
         }
         #endregion
 

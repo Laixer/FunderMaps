@@ -106,11 +106,20 @@
             #endregion
 
             #region IUserRoleStore
+            // TODO:
+            QueryRepository.AddToRoleAsync = $@"";
+
             QueryRepository.GetRolesAsync = $@"
                 SELECT {_options.Schema}.role.name
                 FROM {_options.Schema}.user_role
                 JOIN {_options.Schema}.role ON {_options.Schema}.role.id = {_options.Schema}.user_role.role_id
                 WHERE user_id=@Id";
+
+            // TODO:
+            QueryRepository.GetUsersInRoleAsync = $@"";
+
+            // TODO:
+            QueryRepository.RemoveFromRoleAsync = $@"";
             #endregion
 
             #region IUserPasswordStore
