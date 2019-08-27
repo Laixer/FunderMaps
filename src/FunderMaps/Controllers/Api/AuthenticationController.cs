@@ -110,8 +110,7 @@ namespace FunderMaps.Controllers.Api
                 TokenValid = _configuration.GetJwtTokenExpirationInMinutes(),
             };
 
-            token.AddRoleClaims(await _userManager.GetRolesAsync(user));
-            token.AddClaim(FisClaimTypes.UserAttestationIdentifier, user.AttestationPrincipalId);
+            var userRoles = await _userManager.GetRolesAsync(user);
 
             var organizationUser = await _context.OrganizationUsers
                 .AsNoTracking()
@@ -132,7 +131,7 @@ namespace FunderMaps.Controllers.Api
                 {
                     Id = user.Id,
                     Email = user.Email,
-                    Roles = await _userManager.GetRolesAsync(user),
+                    Roles = userRoles,
                     Claims = token.Claims,
                 },
                 Token = token.WriteToken(),
