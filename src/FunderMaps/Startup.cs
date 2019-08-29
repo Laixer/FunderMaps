@@ -13,6 +13,7 @@ using FunderMaps.Interfaces;
 using FunderMaps.Middleware;
 using FunderMaps.Models.Identity;
 using FunderMaps.Services;
+using Laixer.Identity.Dapper.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -48,7 +49,8 @@ namespace FunderMaps
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureDatastore(services);
+            services.AddDbProvider("FunderMapsConnection");
+
             ConfigureAuthentication(services);
             ConfigureAuthorization(services);
 
@@ -113,22 +115,6 @@ namespace FunderMaps
         }
 
         /// <summary>
-        /// Setup various data stores for entities.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
-        private void ConfigureDatastore(IServiceCollection services)
-        {
-            // Application database
-            services.AddDbContextPool<FunderMapsDbContext>(options =>
-            {
-                options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"));
-            })
-            .AddEntityFrameworkNpgsql();
-
-            services.AddDbProvider("FISConnection");
-        }
-
-        /// <summary>
         /// Configure the identity framework and the authentications methods.
         /// </summary>
         private void ConfigureAuthentication(IServiceCollection services)
@@ -139,7 +125,13 @@ namespace FunderMaps
                 options.Lockout = Constants.LockoutOptions;
                 options.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<FunderMapsDbContext>()
+            .AddDapperStores(options =>
+            {
+                options.UserTable = "user";
+                options.Schema = "application";
+                options.MatchWithUnderscore = true;
+                options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionString("FunderMapsConnection"));
+            })
             .AddDefaultTokenProviders();
 
             services.AddAuthentication(options =>
