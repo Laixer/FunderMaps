@@ -43,6 +43,9 @@ namespace Laixer.Identity.Dapper.Store
         /// <summary>
         /// Run the databse statement inside scope.
         /// </summary>
+        /// <remarks>
+        /// The statement *must* be awaited since the using block keeps the connection in scope.
+        /// </remarks>
         /// <param name="statement">Query method.</param>
         protected async Task RunDatabaseStatement(Func<IDbConnection, Task> statement)
         {
@@ -55,6 +58,9 @@ namespace Laixer.Identity.Dapper.Store
         /// <summary>
         /// Run the databse statement inside scope.
         /// </summary>
+        /// <remarks>
+        /// The statement *must* be awaited since the using block keeps the connection in scope.
+        /// </remarks>
         /// <typeparam name="TReturn">Return value type.</typeparam>
         /// <param name="statement">Query method.</param>
         /// <returns>Value of type <typeparamref name="TReturn"/>.</returns>
@@ -73,7 +79,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="user">The user to create.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the creation operation.</returns>
-        public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -82,12 +88,10 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            await RunDatabaseStatement(connection =>
+            return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.CreateAsync, user);
-            });
-
-            return IdentityResult.Success;
+            }).ContinueWith(_ => IdentityResult.Success);
         }
 
         /// <summary>
@@ -96,7 +100,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="user">The user to delete.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
-        public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -105,12 +109,10 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            await RunDatabaseStatement(connection =>
+            return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.DeleteAsync, user);
-            });
-
-            return IdentityResult.Success;
+            }).ContinueWith(_ => IdentityResult.Success);
         }
 
         /// <summary>
@@ -197,8 +199,8 @@ namespace Laixer.Identity.Dapper.Store
 
             return RunDatabaseStatement(connection =>
             {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetUserIdAsync, user);
-            });
+                return connection.QueryFirstOrDefaultAsync<TKey>(DatabaseDriver.GetUserIdAsync, user);
+            }).ContinueWith(t => t.Result.ToString());
         }
 
         /// <summary>
@@ -280,7 +282,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="user">The user to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
-        public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
+        public Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -289,12 +291,10 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            await RunDatabaseStatement(connection =>
+            return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.UpdateAsync, user);
-            });
-
-            return IdentityResult.Success;
+            }).ContinueWith(_ => IdentityResult.Success);
         }
         #endregion
 
