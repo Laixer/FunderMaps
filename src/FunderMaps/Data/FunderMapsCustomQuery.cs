@@ -74,10 +74,6 @@ namespace FunderMaps.Data
                 UPDATE application.user
                 SET role = 'user'
                 WHERE id=@Id";
-
-            queryRepository.GetSecurityStampAsync = $@"SELECT 1";
-
-            queryRepository.SetSecurityStampAsync = $@"";
         }
     }
 }
