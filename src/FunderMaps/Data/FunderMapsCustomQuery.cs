@@ -13,6 +13,48 @@ namespace FunderMaps.Data
         /// <param name="queryRepository">Exiting query repository.</param>
         public void Configure(IQueryRepository queryRepository)
         {
+            queryRepository.GetUserNameAsync = $@"
+                SELECT email
+                FROM application.user
+                WHERE id=@Id
+                LIMIT 1";
+
+            queryRepository.GetNormalizedUserNameAsync = $@"
+                SELECT normalized_email
+                FROM application.user
+                WHERE id=@Id
+                LIMIT 1";
+
+            queryRepository.SetNormalizedUserNameAsync = $@"
+                UPDATE application.user
+                SET normalized_email=@NormalizedUserName
+                WHERE id=@Id";
+
+            queryRepository.FindByNameAsync = @"
+                SELECT *
+                FROM application.user
+                WHERE normalized_email=@NormalizedUserName";
+
+            queryRepository.GetUserIdAsync = @"
+                SELECT id
+                FROM application.user
+                WHERE normalized_email=@NormalizedEmail
+                LIMIT 1";
+
+            queryRepository.UpdateAsync = @"
+                UPDATE application.user
+                SET    email = @Email,
+                       normalized_email = @NormalizedEmail,
+                       email_confirmed = @EmailConfirmed,
+                       password_hash = @PasswordHash,
+                       phone_number = @PhoneNumber,
+                       phone_number_confirmed = @PhoneNumberConfirmed,
+                       two_factor_enabled = @TwoFactorEnabled,
+                       lockout_end = @LockoutEnd,
+                       lockout_enabled = @LockoutEnabled,
+                       access_failed_count = @AccessFailedCount
+                WHERE  id = @Id";
+
             queryRepository.AddToRoleAsync = $@"
                 UPDATE application.user
                 SET role = @Role
@@ -32,6 +74,10 @@ namespace FunderMaps.Data
                 UPDATE application.user
                 SET role = 'user'
                 WHERE id=@Id";
+
+            queryRepository.GetSecurityStampAsync = $@"SELECT 1";
+
+            queryRepository.SetSecurityStampAsync = $@"";
         }
     }
 }
