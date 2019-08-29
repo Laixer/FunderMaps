@@ -1,6 +1,4 @@
-﻿using FunderMaps.Data;
-using FunderMaps.Data.Authorization;
-using FunderMaps.Extensions;
+﻿using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Identity;
 using FunderMaps.Models.Identity;
@@ -8,12 +6,10 @@ using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -26,7 +22,6 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class AuthenticationController : BaseApiController
     {
-        private readonly FunderMapsDbContext _context;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
         private readonly IConfiguration _configuration;
@@ -36,19 +31,18 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         public AuthenticationController(
-            FunderMapsDbContext context,
             UserManager<FunderMapsUser> userManager,
             SignInManager<FunderMapsUser> signInManager,
             IConfiguration configuration,
             ILogger<AuthenticationController> logger)
         {
-            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _configuration = configuration;
             _logger = logger;
         }
 
+        // TODO: Extension?
         /// <summary>
         /// Map identity errors to error output model.
         /// </summary>
@@ -74,7 +68,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(UserOutputModel), 200)]
         public async Task<IActionResult> GetAsync()
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            // TODO: Should use `_userManager.GetUserAsync(User)` but
+            // the NameIdentifier in User is set wrongly to email.
+
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
             {
                 return ResourceNotFound();
@@ -90,7 +87,6 @@ namespace FunderMaps.Controllers.Api
                 AccessFailedCount = user.AccessFailedCount,
                 LockoutEnd = user.LockoutEnd,
                 Email = user.Email,
-                AttestationPrincipalId = user.AttestationPrincipalId,
                 Roles = await _userManager.GetRolesAsync(user),
                 Claims = await _userManager.GetClaimsAsync(user),
             });
@@ -112,6 +108,12 @@ namespace FunderMaps.Controllers.Api
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
+            // Add application role as claim.
+            token.AddRoleClaims(userRoles);
+
+            // TODO: Check if user has organization and add orgrole claim to token
+
+#if _OLD
             var organizationUser = await _context.OrganizationUsers
                 .AsNoTracking()
                 .Include(s => s.Organization)
@@ -122,8 +124,8 @@ namespace FunderMaps.Controllers.Api
             if (organizationUser != null)
             {
                 token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.OrganizationRole.Name);
-                token.AddClaim(FisClaimTypes.OrganizationAttestationIdentifier, organizationUser.Organization.AttestationOrganizationId);
             }
+#endif
 
             return new AuthenticationOutputModel
             {
@@ -253,28 +255,18 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+            if (await _userManager.HasPasswordAsync(user))
             {
-                // Create everything at once, or nothing at all if an error occurs.
-                using (var transaction = await _context.Database.BeginTransactionAsync())
-                {
-                    if (await _userManager.HasPasswordAsync(user))
-                    {
-                        await _userManager.RemovePasswordAsync(user);
-                    }
+                await _userManager.RemovePasswordAsync(user);
+            }
 
-                    var addPasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
-                    if (!addPasswordResult.Succeeded)
-                    {
-                        transaction.Rollback();
-                        return BadRequest(IdentityErrorResponse(addPasswordResult.Errors));
-                    }
+            var addPasswordResult = await _userManager.AddPasswordAsync(user, input.Password);
+            if (!addPasswordResult.Succeeded)
+            {
+                return BadRequest(IdentityErrorResponse(addPasswordResult.Errors));
+            }
 
-                    transaction.Commit();
-
-                    return NoContent();
-                }
-            });
+            return NoContent();
         }
     }
 }
