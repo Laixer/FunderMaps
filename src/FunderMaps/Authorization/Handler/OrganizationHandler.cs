@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using FunderMaps.Data;
+﻿using FunderMaps.Data;
+using FunderMaps.Helpers;
 using FunderMaps.Models;
 using FunderMaps.Models.Identity;
-using FunderMaps.Helpers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Authorization.Handler
 {
