@@ -7,6 +7,11 @@ using System.Security.Claims;
 
 namespace FunderMaps.Identity
 {
+    /// <summary>
+    /// Generate JWT token for identity user.
+    /// </summary>
+    /// <typeparam name="TUser">Identity user.</typeparam>
+    /// <typeparam name="TKey">Primary key in user identity object.</typeparam>
     public class JwtTokenIdentityUser<TUser, TKey>
         where TUser : IdentityUser<TKey>
         where TKey : IEquatable<TKey>
@@ -68,7 +73,7 @@ namespace FunderMaps.Identity
         {
             foreach (var role in roles)
             {
-                Claims.Add(new Claim(ClaimTypes.Role, role));
+                AddClaim(ClaimTypes.Role, role);
             }
         }
 
@@ -80,7 +85,7 @@ namespace FunderMaps.Identity
         {
             foreach (var claim in claims)
             {
-                Claims.Add(new Claim(claim.Key, claim.Value));
+                AddClaim(claim.Key, claim.Value);
             }
         }
 
@@ -89,10 +94,7 @@ namespace FunderMaps.Identity
         /// </summary>
         /// <param name="key">Claim key.</param>
         /// <param name="value">Claim value.</param>
-        public void AddClaim(string key, object value)
-        {
-            Claims.Add(new Claim(key, value.ToString()));
-        }
+        public void AddClaim(string key, object value) => Claims.Add(new Claim(key, value.ToString()));
 
         /// <summary>
         /// Use symmetric key as token signature credentials.
@@ -100,9 +102,7 @@ namespace FunderMaps.Identity
         /// <param name="key">Symmetric key.</param>
         /// <returns>Signature credentials.</returns>
         protected SigningCredentials GetSigningKey(SymmetricSecurityKey key)
-        {
-            return new SigningCredentials(key, SignatureAlgorithm);
-        }
+            => new SigningCredentials(key, SignatureAlgorithm);
 
         /// <summary>
         /// Create the JWT token.
@@ -127,9 +127,6 @@ namespace FunderMaps.Identity
         /// Serialize jwt token into string.
         /// </summary>
         /// <returns>Token as string.</returns>
-        public string WriteToken()
-        {
-            return handler.WriteToken(ConstructJwtToken(Claims));
-        }
+        public string WriteToken() => handler.WriteToken(ConstructJwtToken(Claims));
     }
 }
