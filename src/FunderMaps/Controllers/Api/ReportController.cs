@@ -1,15 +1,15 @@
-﻿using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using FunderMaps.Interfaces;
+﻿using FunderMaps.Authorization.Requirement;
 using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Authorization.Requirement;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
-using FunderMaps.ViewModels;
 using FunderMaps.Helpers;
+using FunderMaps.Interfaces;
+using FunderMaps.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -23,7 +23,6 @@ namespace FunderMaps.Controllers.Api
     {
         private readonly IAuthorizationService _authorizationService;
         private readonly IReportRepository _reportRepository;
-        private readonly IPrincipalRepository _principalRepository;
         private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
@@ -32,12 +31,10 @@ namespace FunderMaps.Controllers.Api
         public ReportController(
             IAuthorizationService authorizationService,
             IReportRepository reportRepository,
-            IPrincipalRepository principalRepository,
             IOrganizationRepository organizationRepository)
         {
             _authorizationService = authorizationService;
             _reportRepository = reportRepository;
-            _principalRepository = principalRepository;
             _organizationRepository = organizationRepository;
         }
 

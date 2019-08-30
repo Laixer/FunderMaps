@@ -8,11 +8,18 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
 {
+    /// <summary>
+    /// Azure storage implementing file storage service.
+    /// </summary>
     public class AzureBlobStorageService : IFileStorageService
     {
         private readonly CloudStorageAccount _storageAccount;
         protected readonly CloudBlobClient _blobClient;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="config">Application configuration.</param>
         public AzureBlobStorageService(IConfiguration config)
         {
             _storageAccount = CloudStorageAccount.Parse(config.GetConnectionString("AzureStorageConnectionString"));
