@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.Entities.Fis
+﻿namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Foundation type.

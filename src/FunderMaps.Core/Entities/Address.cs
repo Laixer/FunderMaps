@@ -1,12 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Access entity.
     /// </summary>
-    public class Address2 : BaseEntity
+    public class Address : BaseEntity
     {
         /// <summary>
         /// Unique identifier.

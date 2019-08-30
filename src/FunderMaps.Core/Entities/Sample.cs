@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Sample entity.
@@ -18,6 +18,9 @@ namespace FunderMaps.Core.Entities.Fis
         /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// Link to report.
+        /// </summary>
         [Required]
         public int? Report { get; set; }
 
@@ -41,23 +44,23 @@ namespace FunderMaps.Core.Entities.Fis
         /// </summary>
         [MaxLength(32)]
         public string MonitoringWell { get; set; }
-        
+
         /// <summary>
         /// Name of CPT measurement.
         /// </summary>
         [MaxLength(32)]
         public string Cpt { get; set; }
-        
+
         /// <summary>
         /// Note.
         /// </summary>
         public string Note { get; set; }
-        
+
         /// <summary>
         /// Wood measurement level.
         /// </summary>
         public decimal? WoodLevel { get; set; }
-        
+
         /// <summary>
         /// Ground water level.
         /// </summary>
@@ -67,7 +70,7 @@ namespace FunderMaps.Core.Entities.Fis
         /// Ground level.
         /// </summary>
         public decimal? GroundLevel { get; set; }
-        
+
         /// <summary>
         /// If foundation recovery was advised.
         /// </summary>
@@ -103,6 +106,6 @@ namespace FunderMaps.Core.Entities.Fis
         /// Associated address.
         /// </summary>
         [Required]
-        public Address2 Address { get; set; }
+        public Address Address { get; set; }
     }
 }

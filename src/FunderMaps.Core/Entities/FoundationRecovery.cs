@@ -3,19 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     public class FoundationRecovery : RecordControl
     {
-        /// <summary>
-        /// Create new instance.
-        /// </summary>
-        public FoundationRecovery()
-        {
-            FoundationRecoveryEvidence = new HashSet<FoundationRecoveryEvidence>();
-            FoundationRecoveryRepair = new HashSet<FoundationRecoveryRepair>();
-        }
-
         public int Id { get; set; }
 
         public string Note { get; set; }
