@@ -10,15 +10,13 @@ using System.Threading.Tasks;
 namespace FunderMaps.Controllers.Api
 {
     /// <summary>
-    /// This endpoint deals with file uploads.
+    /// This endpoint deals with report file uploads.
     /// </summary>
     [Authorize]
     [Route("api/upload")]
     [ApiController]
-    public class UploadController : BaseApiController
+    public class ReportUploadController : UploadController
     {
-        private readonly IFileStorageService _fileStorageService;
-
         private static readonly string[] allowedReportFileTypes =
         {
             "application/pdf",
@@ -33,10 +31,12 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Create new instance.
         /// </summary>
-        /// <param name="fileStorageService"></param>
-        public UploadController(IFileStorageService fileStorageService) => _fileStorageService = fileStorageService;
+        /// <param name="fileStorageService">The file storage service.</param>
+        public ReportUploadController(IFileStorageService fileStorageService)
+            : base(fileStorageService, Constants.ReportStorage)
+        { }
 
-        // PUT: api/upload
+        // POST: api/upload
         /// <summary>
         /// Upload a file stream and store the contents.
         /// </summary>
@@ -47,28 +47,6 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync(IFormFile file)
-        {
-            // File must exist
-            if (file == null)
-            {
-                return BadRequest(0, "file object is empty");
-            }
-
-            var reportDocument = new ApplicationFileWrapper(file, allowedReportFileTypes);
-            if (!reportDocument.IsValid)
-            {
-                return BadRequest(0, reportDocument.Error);
-            }
-
-            try
-            {
-                // Store the report with the file service
-                await _fileStorageService.StoreFileAsync("report", reportDocument.File, file.OpenReadStream());
-
-                // Return the file meta data
-                return Ok(reportDocument.File);
-            }
-            catch { return ApplicationError(); }
-        }
+            => await Upload(file, allowedReportFileTypes);
     }
 }

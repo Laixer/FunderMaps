@@ -37,14 +37,11 @@ namespace FunderMaps.Controllers
         /// <returns></returns>
         [Produces("application/json")]
         [ProducesResponseType(typeof(ServerErrorOutoutModel), 500)]
-        public IActionResult Error()
+        public IActionResult Error() => StatusCode(500, new ServerErrorOutoutModel
         {
-            return StatusCode(500, new ServerErrorOutoutModel
-            {
-                Title = "An error has occured on the remote side",
-                Status = 500,
-                TraceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-            });
-        }
+            Title = "An error has occured on the remote side",
+            Status = 500,
+            TraceId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        });
     }
 }

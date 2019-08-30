@@ -70,5 +70,10 @@ namespace FunderMaps.Helpers
         /// Retrieve application name.
         /// </summary>
         public static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
+
+        /// <summary>
+        /// Report storage destination.
+        /// </summary>
+        public const string ReportStorage = "report";
     }
 }
