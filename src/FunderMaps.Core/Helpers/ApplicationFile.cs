@@ -3,12 +3,34 @@ using System.IO;
 
 namespace FunderMaps.Core.Helpers
 {
+    /// <summary>
+    /// Representation of a file.
+    /// </summary>
     public class ApplicationFile
     {
+        /// <summary>
+        /// File name on disk.
+        /// </summary>
         public string FileName { get; set; }
+
+        /// <summary>
+        /// File name.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// File content type.
+        /// </summary>
         public string ContentType { get; set; }
+
+        /// <summary>
+        /// File size.
+        /// </summary>
         public long Size { get; set; }
+
+        /// <summary>
+        /// File extension.
+        /// </summary>
         public string Extension { get => Path.GetExtension(Name); }
 
         /// <summary>
