@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Entities.Fis;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
 using System.Collections.Generic;

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Report entity.

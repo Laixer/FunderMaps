@@ -3,6 +3,9 @@ using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
+    /// <summary>
+    /// Organization entity.
+    /// </summary>
     public class Organization : BaseEntity
     {
         /// <summary>
@@ -26,13 +29,25 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        /// Phone number.
+        /// </summary>
         public string PhoneNumber { get; set; }
 
+        /// <summary>
+        /// Organizatoin registration number.
+        /// </summary>
         public string RegistrationNumber { get; set; }
 
+        /// <summary>
+        /// Is the default organization.
+        /// </summary>
         [IgnoreDataMember]
         public bool? IsDefault { get; set; }
 
+        /// <summary>
+        /// Is organization validated.
+        /// </summary>
         [IgnoreDataMember]
         public bool? IsValidated { get; set; }
 

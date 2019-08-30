@@ -1,5 +1,5 @@
 ﻿using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;

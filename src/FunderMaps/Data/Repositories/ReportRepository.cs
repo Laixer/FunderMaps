@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;

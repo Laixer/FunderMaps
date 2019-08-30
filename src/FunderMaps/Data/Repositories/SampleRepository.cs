@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
@@ -60,7 +60,7 @@ namespace FunderMaps.Data.Repositories
                         LIMIT  1";
 
             async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
+                await cnn.QueryAsync<Sample, Address, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -112,7 +112,7 @@ namespace FunderMaps.Data.Repositories
                         LIMIT @Limit";
 
             async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
+                await cnn.QueryAsync<Sample, Address, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -167,7 +167,7 @@ namespace FunderMaps.Data.Repositories
                         LIMIT @Limit";
 
             async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
+                await cnn.QueryAsync<Sample, Address, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -221,7 +221,7 @@ namespace FunderMaps.Data.Repositories
                         LIMIT @Limit";
 
             async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
+                await cnn.QueryAsync<Sample, Address, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;
@@ -278,7 +278,7 @@ namespace FunderMaps.Data.Repositories
                         LIMIT @Limit";
 
             async Task<IEnumerable<Sample>> map(IDbConnection cnn) =>
-                await cnn.QueryAsync<Sample, Address2, Sample>(sql, (sampleEntity, addressEntity) =>
+                await cnn.QueryAsync<Sample, Address, Sample>(sql, (sampleEntity, addressEntity) =>
                 {
                     sampleEntity.Address = addressEntity;
                     return sampleEntity;

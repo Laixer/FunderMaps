@@ -1,7 +1,6 @@
-﻿using FunderMaps.Core.Entities.Fis;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Models.Identity;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Interfaces
@@ -20,11 +19,11 @@ namespace FunderMaps.Interfaces
         Task<Organization> GetOrAddAsync(Organization organization);
 
         /// <summary>
-        /// Get all organizations this user is part of.
+        /// Get organization by user.
         /// </summary>
-        /// <param name="user">The user to get organizations by.</param>
-        /// <returns>List of organizations.</returns>
-        Task<IReadOnlyList<Organization>> GetAllOrganizationsAsync(FunderMapsUser user);
+        /// <param name="user">The user to get organization by.</param>
+        /// <returns>Organization or null.</returns>
+        Task<Organization> GetOrganizationAsync(FunderMapsUser user);
 
         /// <summary>
         /// Get user role in organization.

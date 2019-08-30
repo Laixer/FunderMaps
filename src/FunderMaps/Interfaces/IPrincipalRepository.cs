@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Interfaces

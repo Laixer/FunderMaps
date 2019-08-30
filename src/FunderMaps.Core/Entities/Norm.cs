@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     public class Norm
     {

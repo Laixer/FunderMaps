@@ -1,5 +1,5 @@
 ﻿using Dapper;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
@@ -54,13 +54,14 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="user">The user to get organizations by.</param>
         /// <returns>List of organizations.</returns>
-        public async Task<IReadOnlyList<Organization>> GetAllOrganizationsAsync(FunderMapsUser user)
+        public async Task<Organization> GetOrganizationAsync(FunderMapsUser user)
         {
             var sql = @"
                 SELECT org.*
                 FROM   application.organization_user AS orguser
                        JOIN application.organization AS org ON org.id = orguser.organization_id
-                WHERE  user_id = @UserId";
+                WHERE  user_id = @UserId
+                LIMIT  1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { UserId = user.Id }));
             if (result.Count() == 0)
@@ -68,7 +69,7 @@ namespace FunderMaps.Data.Repositories
                 return null;
             }
 
-            return result.ToArray();
+            return result.First();
         }
 
         // TODO: convert to role enum

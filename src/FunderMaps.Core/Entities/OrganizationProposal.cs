@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Organization proposal.
@@ -32,17 +32,6 @@ namespace FunderMaps.Core.Entities.Fis
         [Required]
         [EmailAddress]
         public string Email { get; set; }
-
-        /// <summary>
-        /// Create new instance.
-        /// </summary>
-        /// <param name="name">Organization name.</param>
-        /// <param name="email">Organization email.</param>
-        public OrganizationProposal(string name, string email)
-        {
-            Name = name;
-            Email = email;
-        }
 
         /// <summary>
         /// Organization as string.

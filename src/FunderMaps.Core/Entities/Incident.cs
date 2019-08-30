@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Indicent entity.
