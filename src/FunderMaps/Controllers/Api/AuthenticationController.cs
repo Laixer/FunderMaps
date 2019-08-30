@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
+    // FUTURE: Replace IOrganizationRepository by OrganizationManager
     /// <summary>
     /// Authentication endpoint.
     /// </summary>
@@ -167,6 +168,7 @@ namespace FunderMaps.Controllers.Api
                 return Unauthorized(103, "Invalid credentials provided");
             }
 
+            // Check the password for the found user.
             var result = await _signInManager.CheckPasswordSignInAsync(user, input.Password, true);
             if (result.IsLockedOut)
             {
