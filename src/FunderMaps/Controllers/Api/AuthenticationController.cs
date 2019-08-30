@@ -1,6 +1,8 @@
-﻿using FunderMaps.Extensions;
+﻿using FunderMaps.Data.Authorization;
+using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Identity;
+using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +26,7 @@ namespace FunderMaps.Controllers.Api
     {
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
+        private readonly IOrganizationRepository _organizationRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationController> _logger;
 
@@ -33,11 +36,13 @@ namespace FunderMaps.Controllers.Api
         public AuthenticationController(
             UserManager<FunderMapsUser> userManager,
             SignInManager<FunderMapsUser> signInManager,
+            IOrganizationRepository organizationRepository,
             IConfiguration configuration,
             ILogger<AuthenticationController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _organizationRepository = organizationRepository;
             _configuration = configuration;
             _logger = logger;
         }
@@ -111,21 +116,19 @@ namespace FunderMaps.Controllers.Api
             // Add application role as claim.
             token.AddRoleClaims(userRoles);
 
-            // TODO: Check if user has organization and add orgrole claim to token
+            var userOrganizations = await _organizationRepository.GetAllOrganizationsAsync(user);
 
-#if _OLD
-            var organizationUser = await _context.OrganizationUsers
-                .AsNoTracking()
-                .Include(s => s.Organization)
-                .Include(s => s.OrganizationRole)
-                .Select(s => new { s.UserId, s.Organization, s.OrganizationRole })
-                .SingleOrDefaultAsync(q => q.UserId == user.Id);
-
-            if (organizationUser != null)
+            // Add all organizations as claim and their corresponding role.
+            foreach (var organization in userOrganizations)
             {
-                token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.OrganizationRole.Name);
+                token.AddClaim(FisClaimTypes.UserOrganization, organization.Id);
+
+                var role = await _organizationRepository.GetRoleAsync(organization, user);
+                if (role != null)
+                {
+                    token.AddClaim(FisClaimTypes.OrganizationUserRole, role);
+                }
             }
-#endif
 
             return new AuthenticationOutputModel
             {

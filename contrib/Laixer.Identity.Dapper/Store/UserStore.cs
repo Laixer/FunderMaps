@@ -88,6 +88,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // NOTE: We'll always report success, an exception will take care of faults.
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.CreateAsync, user);
@@ -109,6 +110,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // NOTE: We'll always report success, an exception will take care of faults.
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.DeleteAsync, user);
@@ -291,6 +293,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // NOTE: We'll always report success, an exception will take care of faults.
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.UpdateAsync, user);
