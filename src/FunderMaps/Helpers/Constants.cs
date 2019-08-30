@@ -75,5 +75,10 @@ namespace FunderMaps.Helpers
         /// Report storage destination.
         /// </summary>
         public const string ReportStorage = "report";
+
+        /// <summary>
+        /// Evidence storage destination.
+        /// </summary>
+        public const string EvidenceStorage = "evidence";
     }
 }

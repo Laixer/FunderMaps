@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 namespace FunderMaps.Controllers.Api
 {
     /// <summary>
-    /// This endpoint deals with report file uploads.
+    /// This endpoint deals with evidence file uploads.
     /// </summary>
     [Authorize]
-    [Route("api/report/upload")]
+    [Route("api/evidence/upload")]
     [ApiController]
-    public class ReportUploadController : UploadController
+    public class EvidenceUploadController : UploadController
     {
-        private static readonly string[] allowedReportFileTypes =
+        private static readonly string[] allowedEvidenceFileTypes =
         {
             "application/pdf",
             "image/png",
@@ -32,8 +32,8 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         /// <param name="fileStorageService">The file storage service.</param>
-        public ReportUploadController(IFileStorageService fileStorageService)
-            : base(fileStorageService, Constants.ReportStorage)
+        public EvidenceUploadController(IFileStorageService fileStorageService)
+            : base(fileStorageService, Constants.EvidenceStorage)
         { }
 
         // POST: api/upload
@@ -47,6 +47,6 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync(IFormFile file)
-            => await Upload(file, allowedReportFileTypes);
+            => await Upload(file, allowedEvidenceFileTypes);
     }
 }
