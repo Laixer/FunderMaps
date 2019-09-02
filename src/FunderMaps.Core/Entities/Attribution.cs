@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
@@ -24,25 +25,25 @@ namespace FunderMaps.Core.Entities
         /// Reviewer idenitfier.
         /// </summary>
         [IgnoreDataMember]
-        public int? Reviewer { get; set; }
+        public Guid? Reviewer { get; set; }
 
         /// <summary>
         /// Contractor identifier.
         /// </summary>
         [IgnoreDataMember]
-        public int Contractor { get; set; }
+        public Guid Contractor { get; set; }
 
         /// <summary>
         /// Creator identifier.
         /// </summary>
         [IgnoreDataMember]
-        public int Creator { get; set; }
+        public Guid Creator { get; set; }
 
         /// <summary>
         /// Owner identifier.
         /// </summary>
         [IgnoreDataMember]
-        public int Owner { get; set; }
+        public Guid Owner { get; set; }
 
         /// <summary>
         /// Project relation or null.
@@ -63,13 +64,11 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Creator.
         /// </summary>
-        [Required]
         public Principal CreatorNavigation { get; set; }
 
         /// <summary>
         /// Owner.
         /// </summary>
-        [Required]
         public Organization OwnerNavigation { get; set; }
     }
 }

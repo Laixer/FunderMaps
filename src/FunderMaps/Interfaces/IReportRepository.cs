@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -23,12 +24,12 @@ namespace FunderMaps.Interfaces
         /// Retrieve all entities and filter on organization id.
         /// </summary>
         /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation);
+        Task<IReadOnlyList<Report>> ListAllAsync(Guid orgId, Navigation navigation);
 
         /// <summary>
         /// Retrieve number of entities and filter on organization id.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        Task<uint> CountAsync(int org_id);
+        Task<uint> CountAsync(Guid orgId);
     }
 }

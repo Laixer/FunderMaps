@@ -79,7 +79,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="organization">The organization to find the role by</param>
         /// <param name="user">The user to find the role by.</param>
         /// <returns>User role or null.</returns>
-        public async Task<string> GetRoleAsync(Organization organization, FunderMapsUser user)
+        public async Task<OrganizationRole> GetRoleAsync(Organization organization, FunderMapsUser user)
         {
             var sql = @"
                 SELECT role
@@ -87,13 +87,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE  user_id = @UserId
                        AND organization_id = @OrganizationId";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<string>(sql, new { UserId = user.Id, OrganizationId = organization.Id }));
-            if (result.Count() == 0)
-            {
-                return null;
-            }
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
 
-            return result.First();
+            return await RunSqlCommand(async cnn => await cnn.QueryFirstAsync<OrganizationRole>(sql, new { UserId = user.Id, OrganizationId = organization.Id }));
         }
 
         public override Task UpdateAsync(Organization entity)

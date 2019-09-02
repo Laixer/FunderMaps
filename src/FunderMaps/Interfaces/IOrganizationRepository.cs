@@ -31,6 +31,6 @@ namespace FunderMaps.Interfaces
         /// <param name="organization">The organization to find the role by</param>
         /// <param name="user">The user to find the role by.</param>
         /// <returns>User role or null.</returns>
-        Task<string> GetRoleAsync(Organization organization, FunderMapsUser user);
+        Task<OrganizationRole> GetRoleAsync(Organization organization, FunderMapsUser user);
     }
 }

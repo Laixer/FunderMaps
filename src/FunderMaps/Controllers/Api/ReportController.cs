@@ -1,9 +1,7 @@
 ﻿using FunderMaps.Authorization.Requirement;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
-using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +14,7 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint controller for report operations.
     /// </summary>
-    [Authorize]
+    [Authorize("OrganizationMember")]
     [Route("api/report")]
     [ApiController]
     public class ReportController : BaseApiController
@@ -49,22 +47,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(List<Report>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // Administrator can query anything
-            if (User.IsInRole(Constants.AdministratorRole))
-            {
-                return Ok(await _reportRepository.ListAllAsync(new Navigation(offset, limit)));
-            }
-
-            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
-            {
-                return ResourceForbid();
-            }
-
-            return Ok(await _reportRepository.ListAllAsync(attOrgId, new Navigation(offset, limit)));
-        }
+            => Ok(await _reportRepository.ListAllAsync(User.GetOrganizationId(), new Navigation(offset, limit)));
 
         // GET: api/report/stats
         /// <summary>
@@ -75,28 +58,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // Administrator can query anything
-            if (User.IsInRole(Constants.AdministratorRole))
+            => Ok(new EntityStatsOutputModel
             {
-                return Ok(new EntityStatsOutputModel
-                {
-                    Count = await _reportRepository.CountAsync()
-                });
-            }
-
-            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
-            {
-                return ResourceForbid();
-            }
-
-            return Ok(new EntityStatsOutputModel
-            {
-                Count = await _reportRepository.CountAsync(attOrgId),
+                Count = await _reportRepository.CountAsync(User.GetOrganizationId()),
             });
-        }
 
         // POST: api/report
         /// <summary>
@@ -109,29 +74,24 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Report data.</param>
         /// <returns>Report.</returns>
         [HttpPost]
+        [Authorize("OrganizationMember")]
         [ProducesResponseType(typeof(Report), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
-            var attestationPrincipalId = User.GetClaim(FisClaimTypes.UserAttestationIdentifier);
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            if (!int.TryParse(attestationPrincipalId, out int attPrinId) || !int.TryParse(attestationOrganizationId, out int attOrgId))
+            // TODO: Fix attribution
+            input.Status = ReportStatus.Todo;
+            input.Attribution = new Attribution
             {
-                return ResourceForbid();
-            }
+                Project = input.Attribution.Project,
+                Reviewer = input.Attribution.Reviewer,
+                Contractor = input.Attribution.Contractor,
+                Creator = System.Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value),
+                Owner = User.GetOrganizationId(),
+            };
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, attOrgId, OperationsRequirement.Create);
-            if (authorizationResult.Succeeded)
-            {
-                // TODO: Fix attribution
-                input.Status = ReportStatus.Todo;
-
-                // TODO: AddAsync should not return new item
-                return Ok(await _reportRepository.AddAsync(input));
-            }
-
-            return ResourceForbid();
+            // TODO: AddAsync should not return new item
+            return Ok(await _reportRepository.AddAsync(input));
         }
 
         // GET: api/report/{id}/{document}
@@ -207,14 +167,7 @@ namespace FunderMaps.Controllers.Api
 
                 if (input.Norm != null)
                 {
-                    if (report.Norm != null)
-                    {
-                        report.Norm.ConformF3o = input.Norm.ConformF3o;
-                    }
-                    else
-                    {
-                        report.Norm = input.Norm;
-                    }
+                    report.Norm = input.Norm;
                 }
 
                 await _reportRepository.UpdateAsync(report);

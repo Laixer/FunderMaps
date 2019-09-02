@@ -3,6 +3,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,8 +43,8 @@ namespace FunderMaps.Data.Repositories
                                reprt.document_name,
                                reprt.access_policy,
                                attr.owner AS attribution
-                        FROM   report.report AS reprt
-                               INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        FROM   application.report AS reprt
+                               INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                         WHERE  reprt.delete_date IS NULL
                                AND reprt.id = @Id
                         LIMIT  1";
@@ -78,8 +79,8 @@ namespace FunderMaps.Data.Repositories
                         reprt.document_name,
                         reprt.access_policy,
                         attr.owner AS attribution
-                FROM   report.report AS reprt
-                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                FROM   application.report AS reprt
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL
                         AND reprt.id = @Id
                         AND reprt.document_id = @DocumentId
@@ -114,8 +115,8 @@ namespace FunderMaps.Data.Repositories
                         reprt.document_name,
                         reprt.access_policy,
                         attr.owner AS attribution
-                FROM   report.report AS reprt
-                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                FROM   application.report AS reprt
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL
                 ORDER BY create_date DESC
                 OFFSET @Offset
@@ -133,10 +134,10 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         /// Return all reports and filter on access policy and organization.
         /// </summary>
-        /// <param name="org_id">Organization identifier.</param>
+        /// <param name="orgId">Organization identifier.</param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Report>> ListAllAsync(int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<Report>> ListAllAsync(Guid orgId, Navigation navigation)
         {
             var sql = @"
                 SELECT reprt.id,
@@ -150,9 +151,14 @@ namespace FunderMaps.Data.Repositories
                         reprt.document_date,
                         reprt.document_name,
                         reprt.access_policy,
-                        attr.owner AS attribution
-                FROM   report.report AS reprt
-                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                        attr.id,
+                        attr.project,
+						attr.reviewer,
+						attr.creator,
+						attr.owner,
+						attr.contractor
+                FROM   application.report AS reprt
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL
                         AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')
@@ -160,7 +166,22 @@ namespace FunderMaps.Data.Repositories
                 OFFSET @Offset
                 LIMIT @Limit";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report>(sql, new { Owner = org_id, navigation.Offset, navigation.Limit }));
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
+
+            Report map(Report reportEntity, Attribution attributionEntity)
+            {
+                reportEntity.Attribution = attributionEntity;
+                return reportEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report, Attribution, Report>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Owner = orgId, navigation.Offset, navigation.Limit }));
             if (result.Count() == 0)
             {
                 return null;
@@ -179,7 +200,7 @@ namespace FunderMaps.Data.Repositories
             // TODO: Add attribution
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
             var sql = @"
-                INSERT INTO report.report
+                INSERT INTO application.report
                         (document_id,
                             inspection,
                             joint_measurement,
@@ -216,7 +237,7 @@ namespace FunderMaps.Data.Repositories
             // TODO: Add address, foundation_type, foundation_damage_cause
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
             var sql = @"
-                UPDATE report.report AS reprt
+                UPDATE application.report AS reprt
                 SET    inspection = @Inspection,
                         joint_measurement = @JointMeasurement,
                         floor_measurement = @FloorMeasurement,
@@ -240,8 +261,8 @@ namespace FunderMaps.Data.Repositories
         public Task UpdateStatusAsync(Report entity, ReportStatus status)
         {
             var sql = @"
-                UPDATE report.report AS reprt 
-                SET    status = (enum_range(NULL::report.report_status))[@Status + 1]
+                UPDATE application.report AS reprt 
+                SET    status = (enum_range(NULL::application.report_status))[@Status + 1]
                 WHERE  reprt.id = @Id ";
 
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, new { Status = status, entity.Id }));
@@ -253,7 +274,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(Report entity)
         {
-            var sql = @"UPDATE report.report AS reprt
+            var sql = @"UPDATE application.report AS reprt
                         SET    delete_date = CURRENT_TIMESTAMP
                         WHERE  reprt.delete_date IS NULL
                                AND reprt.id = @Id";
@@ -264,19 +285,19 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         /// Count entities and filter on access policy and organization.
         /// </summary>
-        /// <param name="org_id">Organization identifier.</param>
+        /// <param name="orgId">Organization identifier.</param>
         /// <returns>Number of records.</returns>
-        public Task<uint> CountAsync(int org_id)
+        public Task<uint> CountAsync(Guid orgId)
         {
             var sql = @"
                 SELECT COUNT(*)
-                FROM   report.report AS reprt
-                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                FROM   application.report AS reprt
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL
                         AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql, new { Owner = org_id }));
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql, new { Owner = orgId }));
         }
 
         /// <summary>
@@ -287,8 +308,8 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 SELECT COUNT(*)
-                FROM   report.report AS reprt
-                        INNER JOIN report.attribution AS attr ON reprt.attribution = attr.id
+                FROM   application.report AS reprt
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL";
 
             return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));

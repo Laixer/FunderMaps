@@ -1,18 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Report entity.
     /// </summary>
-    public class Report : AccessControl
+    public class Report : AttributionControl
     {
-        // TODO: FOR NOW
-        [IgnoreDataMember]
-        public int Attribution { get; set; }
-
         /// <summary>
         /// Unique identifier.
         /// </summary>
@@ -67,12 +62,9 @@ namespace FunderMaps.Core.Entities
         [MaxLength(256)]
         public string DocumentName { get; set; }
 
-        [IgnoreDataMember]
-        public int _Attribution { get; set; }
-
-        //[Required]
-        //public Attribution Attribution { get; set; }
-
-        public Norm Norm { get; set; }
+        /// <summary>
+        /// List of norms.
+        /// </summary>
+        public Norm[] Norm { get; set; }
     }
 }
