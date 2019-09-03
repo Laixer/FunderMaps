@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>$(SolutionDir)FunderMaps.Core.xml</DocumentationFile>
+    <DocumentationFile>$(SolutionDir)DocumentationFunderMapsCore.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

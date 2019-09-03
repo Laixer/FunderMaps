@@ -80,7 +80,7 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
-        public override Task<FoundationRecovery> AddAsync(FoundationRecovery entity)
+        public override Task<int> AddAsync(FoundationRecovery entity)
         {
             // TODO:
 

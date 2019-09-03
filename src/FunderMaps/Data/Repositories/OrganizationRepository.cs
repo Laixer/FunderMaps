@@ -29,7 +29,7 @@ namespace FunderMaps.Data.Repositories
             throw new System.NotImplementedException();
         }
 
-        public override Task<Organization> AddAsync(Organization entity)
+        public override Task<int> AddAsync(Organization entity)
         {
             throw new System.NotImplementedException();
         }

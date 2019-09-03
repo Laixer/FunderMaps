@@ -18,57 +18,56 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Project relation identifier or null.
         /// </summary>
-        [IgnoreDataMember]
         public int? Project { get; set; }
 
         /// <summary>
         /// Reviewer idenitfier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid? Reviewer { get; set; }
 
         /// <summary>
         /// Contractor identifier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid Contractor { get; set; }
 
         /// <summary>
         /// Creator identifier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid Creator { get; set; }
 
         /// <summary>
         /// Owner identifier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid Owner { get; set; }
 
         /// <summary>
         /// Project relation or null.
         /// </summary>
+        [IgnoreDataMember]
         public Project ProjectNavigation { get; set; }
 
         /// <summary>
         /// Reviewer or null.
         /// </summary>
+        [IgnoreDataMember]
         public Principal ReviewerNavigation { get; set; }
 
         /// <summary>
         /// Contractor.
         /// </summary>
-        [Required]
+        [IgnoreDataMember]
         public Organization ContractorNavigation { get; set; }
 
         /// <summary>
         /// Creator.
         /// </summary>
+        [IgnoreDataMember]
         public Principal CreatorNavigation { get; set; }
 
         /// <summary>
         /// Owner.
         /// </summary>
+        [IgnoreDataMember]
         public Organization OwnerNavigation { get; set; }
     }
 }

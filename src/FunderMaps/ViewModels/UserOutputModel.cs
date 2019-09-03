@@ -36,10 +36,5 @@ namespace FunderMaps.ViewModels
         /// Locked-out till date, null if not locked-out
         /// </summary>
         public DateTimeOffset? LockoutEnd { get; set; }
-
-        /// <summary>
-        /// Attestation principal id for other datastores.
-        /// </summary>
-        public int? AttestationPrincipalId { get; set; }
     }
 }

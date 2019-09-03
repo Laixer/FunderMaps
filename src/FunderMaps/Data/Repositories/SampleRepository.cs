@@ -298,7 +298,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity to create.</param>
         /// <returns>Created entity.</returns>
-        public override async Task<Sample> AddAsync(Sample entity)
+        public override async Task<int> AddAsync(Sample entity)
         {
             // TODO: Add address, foundation_type, foundation_damage_cause
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
@@ -337,8 +337,7 @@ namespace FunderMaps.Data.Repositories
 
             entity._Address = entity.Address.Id;
 
-            var id = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
-            return await GetByIdAsync(id);
+            return await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
         }
 
         /// <summary>

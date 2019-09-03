@@ -29,7 +29,7 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <typeparamref name="TEntry"/>.</returns>
-        Task<TEntry> AddAsync(TEntry entity);
+        Task<TEntryPrimaryKey> AddAsync(TEntry entity);
 
         /// <summary>
         /// Update <typeparamref name="TEntry"/>.

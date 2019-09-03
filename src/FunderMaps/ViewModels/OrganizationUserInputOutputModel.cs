@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using FunderMaps.Models;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Models.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.ViewModels
 {
@@ -18,6 +18,7 @@ namespace FunderMaps.ViewModels
         /// <summary>
         /// Organization role.
         /// </summary>
+        [Required]
         public OrganizationRole Role { get; set; }
     }
 }
