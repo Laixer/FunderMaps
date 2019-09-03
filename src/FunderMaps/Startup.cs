@@ -158,10 +158,36 @@ namespace FunderMaps
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("OrganizationMemberPolicy", policy
-                    => policy.AddRequirements(new OrganizationMemberRequirement()));
-                options.AddPolicy("OrganizationSuperuserPolicy", policy
-                    => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
+                //options.AddPolicy("OrganizationMemberPolicy", policy
+                //    => policy.AddRequirements(new OrganizationMemberRequirement()));
+                //options.AddPolicy("OrganizationSuperuserPolicy", policy
+                //    => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
+
+                var organizationMemberPolicyBuilder = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUser);
+
+                options.AddPolicy("OrganizationMember", organizationMemberPolicyBuilder
+                    .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUserRole)
+                    .Build());
+
+                options.AddPolicy("OrganizationMemberWrite", organizationMemberPolicyBuilder
+                    .RequireAssertion(context => context.User.HasOrganization() &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer)
+                    .Build());
+
+                options.AddPolicy("OrganizationMemberVerify", organizationMemberPolicyBuilder
+                    .RequireAssertion(context => context.User.HasOrganization() &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier)
+                    .Build());
+
+                options.AddPolicy("OrganizationMemberSuper", organizationMemberPolicyBuilder
+                    .RequireAssertion(context => context.User.HasOrganization() &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser)
+                    .Build());
             });
 
             services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();

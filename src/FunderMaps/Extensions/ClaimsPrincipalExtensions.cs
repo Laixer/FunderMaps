@@ -28,6 +28,14 @@ namespace FunderMaps.Extensions
         }
 
         /// <summary>
+        /// Check if user has organization.
+        /// </summary>
+        /// <param name="principal">See <see cref="ClaimsPrincipal"/>.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        public static bool HasOrganization(this ClaimsPrincipal principal) =>
+            principal.FindFirst(FisClaimTypes.OrganizationUser) != null;
+
+        /// <summary>
         /// Get the organization identifier.
         /// </summary>
         /// <param name="principal">See <see cref="ClaimsPrincipal"/>.</param>
