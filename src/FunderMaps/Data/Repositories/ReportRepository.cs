@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
@@ -28,7 +29,7 @@ namespace FunderMaps.Data.Repositories
         /// Get entity by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="Sample"/> on success, null on error.</returns>
+        /// <returns><see cref="Report"/> on success, null on error.</returns>
         public override async Task<Report> GetByIdAsync(int id)
         {
             var sql = @"SELECT reprt.id,
@@ -83,7 +84,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <param name="document">Document identifier.</param>
-        /// <returns><see cref="Sample"/> on success, null on error.</returns>
+        /// <returns><see cref="Report"/> on success, null on error.</returns>
         public async Task<Report> GetByIdAsync(int id, string document)
         {
             var sql = @"
@@ -127,6 +128,125 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, DocumentId = document }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
+        /// <summary>
+        /// Retrieve entity by id and document_id and organization.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <param name="document">Document identifier.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns><see cref="Report"/> on success, null on error.</returns>
+        public async Task<Report> GetByIdAsync(int id, string document, Guid orgId)
+        {
+            var sql = @"
+                SELECT reprt.id,
+                       reprt.document_id,
+                       reprt.inspection,
+                       reprt.joint_measurement, 
+                       reprt.floor_measurement,
+                       reprt.note,
+                       reprt.status,
+                       reprt.type,
+                       reprt.document_date,
+                       reprt.document_name,
+                       reprt.access_policy,
+                       attr.id,
+                       attr.project,
+					   attr.reviewer,
+					   attr.creator,
+					   attr.owner,
+					   attr.contractor
+                FROM   application.report AS reprt
+                       INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL
+                       AND reprt.id = @Id
+                       AND reprt.document_id = @DocumentId
+                       AND attr.owner = @Owner
+                LIMIT  1";
+
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
+
+            Report map(Report reportEntity, Attribution attributionEntity)
+            {
+                reportEntity.Attribution = attributionEntity;
+                return reportEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report, Attribution, Report>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Id = id, DocumentId = document, Owner = orgId }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
+        /// <summary>
+        /// Retrieve entity by id and document_id and organization or public record.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <param name="document">Document identifier.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns><see cref="Report"/> on success, null on error.</returns>
+        public async Task<Report> GetPublicAndByIdAsync(int id, string document, Guid orgId)
+        {
+            var sql = @"
+                SELECT reprt.id,
+                       reprt.document_id,
+                       reprt.inspection,
+                       reprt.joint_measurement, 
+                       reprt.floor_measurement,
+                       reprt.note,
+                       reprt.status,
+                       reprt.type,
+                       reprt.document_date,
+                       reprt.document_name,
+                       reprt.access_policy,
+                       attr.id,
+                       attr.project,
+					   attr.reviewer,
+					   attr.creator,
+					   attr.owner,
+					   attr.contractor
+                FROM   application.report AS reprt
+                       INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                WHERE  reprt.delete_date IS NULL
+                       AND reprt.id = @Id
+                       AND reprt.document_id = @DocumentId
+                       AND (attr.owner = @Owner
+                            OR reprt.access_policy = 'public')
+                LIMIT  1";
+
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
+
+            Report map(Report reportEntity, Attribution attributionEntity)
+            {
+                reportEntity.Attribution = attributionEntity;
+                return reportEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report, Attribution, Report>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Id = id, DocumentId = document, Owner = orgId }));
             if (result.Count() == 0)
             {
                 return null;
@@ -273,9 +393,9 @@ namespace FunderMaps.Data.Repositories
                 RETURNING id";
 
             var dynamicParameters = new DynamicParameters(entity);
-            dynamicParameters.Add("ConvStatus", entity.Status.ToString().ToLower());
-            dynamicParameters.Add("ConvType", entity.Type.ToString().ToLower());
-            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToLower());
+            dynamicParameters.Add("ConvStatus", entity.Status.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvType", entity.Type.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
             dynamicParameters.Add("ConvAttribution", attributionId);
 
             return await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql2, dynamicParameters));
@@ -287,23 +407,27 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(Report entity)
         {
-            // TODO: Add address, foundation_type, foundation_damage_cause
             // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
             var sql = @"
                 UPDATE application.report AS reprt
                 SET    inspection = @Inspection,
-                        joint_measurement = @JointMeasurement,
-                        floor_measurement = @FloorMeasurement,
-                        note = @Note,
-                        status = @Status,
-                        type = @Type
-                        document_date = @DocumentDate,
-                        document_name = @DocumentName,
-                        access_policy = (enum_range(NULL::attestation.access_policy_type))[@AccessPolicy + 1]
+                       joint_measurement = @JointMeasurement,
+                       floor_measurement = @FloorMeasurement,
+                       note = @Note,
+                       status = @ConvStatus::application.report_status,
+                       type = @ConvType::application.report_type,
+                       document_date = @DocumentDate,
+                       document_name = @DocumentName,
+                       access_policy = @ConvAccessPolicy::application.access_policy
                 WHERE  reprt.delete_date IS NULL
-                        AND reprt.id = @Id";
+                       AND reprt.id = @Id";
 
-            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
+            var dynamicParameters = new DynamicParameters(entity);
+            dynamicParameters.Add("ConvStatus", entity.Status.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvType", entity.Type.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, dynamicParameters));
         }
 
         /// <summary>

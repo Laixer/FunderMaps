@@ -1,10 +1,11 @@
-﻿using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
 using FunderMaps.Interfaces;
+using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,26 +15,23 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint controller for report operations.
     /// </summary>
-    [Authorize("OrganizationMember")]
+    [Authorize(Policy = "OrganizationMember")]
     [Route("api/report")]
     [ApiController]
     public class ReportController : BaseApiController
     {
-        private readonly IAuthorizationService _authorizationService;
         private readonly IReportRepository _reportRepository;
-        private readonly IOrganizationRepository _organizationRepository;
+        private readonly UserManager<FunderMapsUser> _userManager;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         public ReportController(
-            IAuthorizationService authorizationService,
             IReportRepository reportRepository,
-            IOrganizationRepository organizationRepository)
+            UserManager<FunderMapsUser> userManager)
         {
-            _authorizationService = authorizationService;
             _reportRepository = reportRepository;
-            _organizationRepository = organizationRepository;
+            _userManager = userManager;
         }
 
         // GET: api/report
@@ -74,24 +72,31 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Report data.</param>
         /// <returns>Report.</returns>
         [HttpPost]
-        [Authorize("OrganizationMember")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(typeof(Report), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
-            // TODO: Fix attribution
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return ResourceNotFound();
+            }
+
+            // TODO: Check reviewer, contractor
+
             input.Status = ReportStatus.Todo;
             input.Attribution = new Attribution
             {
                 Project = input.Attribution.Project,
                 Reviewer = input.Attribution.Reviewer,
                 Contractor = input.Attribution.Contractor,
-                Creator = System.Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value),
+                Creator = user.Id,
                 Owner = User.GetOrganizationId(),
             };
 
-            // TODO: AddAsync should not return new item
-            return Ok(await _reportRepository.AddAsync(input));
+            var id = await _reportRepository.AddAsync(input);
+            return Ok(await _reportRepository.GetByIdAsync(id));
         }
 
         // GET: api/report/{id}/{document}
@@ -109,25 +114,13 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id, string document)
         {
-            var report = await _reportRepository.GetByIdAsync(id, document);
+            var report = await _reportRepository.GetPublicAndByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            // Public data is accessible to anyone
-            if (report.IsPublic())
-            {
-                return Ok(report);
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Read);
-            if (authorizationResult.Succeeded)
-            {
-                return Ok(report);
-            }
-
-            return ResourceForbid();
+            return Ok(report);
         }
 
         // PUT: api/report/{id}/{document}
@@ -138,44 +131,35 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Report data.</param>
         [HttpPut("{id}/{document}")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
-            var report = await _reportRepository.GetByIdAsync(id, document);
+            var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            if (id != input.Id || document != input.DocumentId)
-            {
-                return BadRequest(0, "Identifiers do not match entity");
-            }
+            report.DocumentDate = input.DocumentDate;
+            report.Type = input.Type;
+            report.Inspection = input.Inspection;
+            report.JointMeasurement = input.JointMeasurement;
+            report.FloorMeasurement = input.FloorMeasurement;
+            report.Note = input.Note;
+            report.AccessPolicy = input.AccessPolicy;
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Update);
-            if (authorizationResult.Succeeded)
+            if (input.Norm != null)
             {
-                report.Inspection = input.Inspection;
-                report.JointMeasurement = input.JointMeasurement;
-                report.FloorMeasurement = input.FloorMeasurement;
-                report.Note = input.Note;
                 report.Norm = input.Norm;
-                report.AccessPolicy = input.AccessPolicy;
-
-                if (input.Norm != null)
-                {
-                    report.Norm = input.Norm;
-                }
-
-                await _reportRepository.UpdateAsync(report);
-
-                return NoContent();
             }
 
-            return ResourceForbid();
+            await _reportRepository.UpdateAsync(report);
+
+            return NoContent();
         }
 
         // PUT: api/report/{id}/{document}/review
@@ -192,34 +176,28 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpPut("{id}/{document}/review")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutSignalStatusDoneAsync(int id, string document)
         {
-            var report = await _reportRepository.GetByIdAsync(id, document);
+            var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Create);
-            if (authorizationResult.Succeeded)
+            if (report.Status != ReportStatus.Pending)
             {
-                if (report.Status != ReportStatus.Pending)
-                {
-                    return Forbid(0, "Resource modification forbidden with current status");
-                }
-
-                // Report cannot be altered anymore
-                report.Status = ReportStatus.PendingReview;
-
-                await _reportRepository.UpdateAsync(report);
-
-                return NoContent();
+                return Forbid(0, "Resource modification forbidden with current status");
             }
 
-            return ResourceForbid();
+            report.Status = ReportStatus.PendingReview;
+
+            await _reportRepository.UpdateAsync(report);
+
+            return NoContent();
         }
 
         // PUT: api/report/{id}/{document}/validate
@@ -235,42 +213,37 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Verification status.</param>
         [HttpPut("{id}/{document}/validate")]
+        [Authorize(Policy = "OrganizationMemberVerify")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutValidateRequestAsync(int id, string document, [FromBody] VerificationInputModel input)
         {
-            var report = await _reportRepository.GetByIdAsync(id, document);
+            var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Validate);
-            if (authorizationResult.Succeeded)
+            if (report.Status != ReportStatus.PendingReview)
             {
-                if (report.Status != ReportStatus.PendingReview)
-                {
-                    return Forbid(0, "Resource modification forbidden with current status");
-                }
-
-                switch (input.Result)
-                {
-                    case VerificationInputModel.VerificationResult.Verified:
-                        report.Status = ReportStatus.Done;
-                        break;
-                    case VerificationInputModel.VerificationResult.Rejected:
-                        report.Status = ReportStatus.Rejected;
-                        // TODO: Notify user via input.Message
-                        break;
-                }
-
-                await _reportRepository.UpdateAsync(report);
-
-                return NoContent();
+                return Forbid(0, "Resource modification forbidden with current status");
             }
 
-            return ResourceForbid();
+            switch (input.Result)
+            {
+                case VerificationInputModel.VerificationResult.Verified:
+                    report.Status = ReportStatus.Done;
+                    break;
+                case VerificationInputModel.VerificationResult.Rejected:
+                    report.Status = ReportStatus.Rejected;
+                    // TODO: Notify user via input.Message
+                    break;
+            }
+
+            await _reportRepository.UpdateAsync(report);
+
+            return NoContent();
         }
 
         // DELETE: api/report/{id}/{document}
@@ -280,27 +253,22 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpDelete("{id}/{document}")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id, string document)
         {
-            var report = await _reportRepository.GetByIdAsync(id, document);
+            var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Delete);
-            if (authorizationResult.Succeeded)
-            {
-                // TODO: Remove only when empty
+            // TODO: Remove only when empty
 
-                await _reportRepository.DeleteAsync(report);
+            await _reportRepository.DeleteAsync(report);
 
-                return NoContent();
-            }
-
-            return ResourceForbid();
+            return NoContent();
         }
     }
 }
