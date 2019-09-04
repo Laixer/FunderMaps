@@ -1,6 +1,4 @@
-﻿using FunderMaps.Authorization.Handler;
-using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Data;
 using FunderMaps.Data.Repositories;
@@ -158,11 +156,6 @@ namespace FunderMaps
         {
             services.AddAuthorization(options =>
             {
-                //options.AddPolicy("OrganizationMemberPolicy", policy
-                //    => policy.AddRequirements(new OrganizationMemberRequirement()));
-                //options.AddPolicy("OrganizationSuperuserPolicy", policy
-                //    => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
-
                 var organizationMemberPolicyBuilder = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUser);
@@ -189,10 +182,6 @@ namespace FunderMaps
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser)
                     .Build());
             });
-
-            services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();
-            services.AddScoped<IAuthorizationHandler, OrganizationRoleHandler>();
-            services.AddSingleton<IAuthorizationHandler, FisOperationHandler>();
         }
 
         /// <summary>
