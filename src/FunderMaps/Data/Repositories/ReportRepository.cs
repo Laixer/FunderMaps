@@ -20,10 +20,7 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public ReportRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
+        public ReportRepository(DbProvider dbProvider) : base(dbProvider) { }
 
         /// <summary>
         /// Get entity by id.
@@ -318,9 +315,9 @@ namespace FunderMaps.Data.Repositories
 						attr.owner,
 						attr.contractor
                 FROM   application.report AS reprt
-                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL
-                        AND (attr.owner = @Owner
+                       AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')
                 ORDER BY create_date DESC
                 OFFSET @Offset
@@ -350,6 +347,7 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
+        // TODO: Wrap noth statements into transaction.
         /// <summary>
         /// Create new report.
         /// </summary>
@@ -368,17 +366,17 @@ namespace FunderMaps.Data.Repositories
 
             var sql2 = @"
                 INSERT INTO application.report
-                        (document_id,
-                            inspection,
-                            joint_measurement,
-                            floor_measurement,
-                            note,
-                            status,
-                            type,
-                            document_date,
-                            document_name,
-                            access_policy,
-                            attribution)
+                                (document_id,
+                                inspection,
+                                joint_measurement,
+                                floor_measurement,
+                                note,
+                                status,
+                                type,
+                                document_date,
+                                document_name,
+                                access_policy,
+                                attribution)
                 VALUES      (@DocumentId,
                             @Inspection,
                             @JointMeasurement,
@@ -407,7 +405,6 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(Report entity)
         {
-            // NOTE: The SQL casts the enums because Dapper.ITypeHandler is broken
             var sql = @"
                 UPDATE application.report AS reprt
                 SET    inspection = @Inspection,
@@ -451,10 +448,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(Report entity)
         {
-            var sql = @"UPDATE application.report AS reprt
-                        SET    delete_date = CURRENT_TIMESTAMP
-                        WHERE  reprt.delete_date IS NULL
-                               AND reprt.id = @Id";
+            var sql = @"
+                UPDATE  application.report AS reprt
+                SET     delete_date = CURRENT_TIMESTAMP
+                WHERE   reprt.delete_date IS NULL
+                        AND reprt.id = @Id";
 
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
         }
