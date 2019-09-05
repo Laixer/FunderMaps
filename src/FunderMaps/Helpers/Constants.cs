@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Reflection;
-using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Helpers
 {
@@ -40,26 +40,6 @@ namespace FunderMaps.Helpers
         /// Application role for administrator
         /// </summary>
         public const string AdministratorRole = "administrator";
-        
-        /// <summary>
-        /// Organization role for superuser
-        /// </summary>
-        public const string SuperuserRole = "Superuser";
-
-        /// <summary>
-        /// Organization role for verifier
-        /// </summary>
-        public const string VerifierRole = "Verifier";
-
-        /// <summary>
-        /// Organization role for writer
-        /// </summary>
-        public const string WriterRole = "Writer";
-
-        /// <summary>
-        /// Organization role for reader
-        /// </summary>
-        public const string ReaderRole = "Reader";
 
         /// <summary>
         /// Retrieve application version.
