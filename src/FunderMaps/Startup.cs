@@ -103,7 +103,7 @@ namespace FunderMaps
         /// <param name="services">Service collection.</param>
         private void ConfigureRepository(IServiceCollection services)
         {
-            //services.AddScoped<IPrincipalRepository, PrincipalRepository>();
+            services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             //services.AddScoped<IAddressRepository, AddressRepository>();

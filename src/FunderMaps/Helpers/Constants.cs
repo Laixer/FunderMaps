@@ -39,7 +39,7 @@ namespace FunderMaps.Helpers
         /// <summary>
         /// Application role for administrator
         /// </summary>
-        public const string AdministratorRole = "Administrator";
+        public const string AdministratorRole = "administrator";
         
         /// <summary>
         /// Organization role for superuser

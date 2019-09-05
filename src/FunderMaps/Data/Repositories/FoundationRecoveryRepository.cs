@@ -49,7 +49,7 @@ namespace FunderMaps.Data.Repositories
 						attr.creator,
 						attr.owner,
 						attr.contractor
-                FROM    application.foundation_recovery as reco
+                FROM    application.foundation_recovery AS reco
                             INNER JOIN application.address AS addr ON reco.address = addr.id
                             INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
                 WHERE   reco.delete_date IS NULL
@@ -109,7 +109,7 @@ namespace FunderMaps.Data.Repositories
 						attr.creator,
 						attr.owner,
 						attr.contractor
-                FROM    application.foundation_recovery as reco
+                FROM    application.foundation_recovery AS reco
                             INNER JOIN application.address AS addr ON reco.address = addr.id
                             INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
                 WHERE   reco.delete_date IS NULL
@@ -170,7 +170,7 @@ namespace FunderMaps.Data.Repositories
 						attr.creator,
 						attr.owner,
 						attr.contractor
-                FROM    application.foundation_recovery as reco
+                FROM    application.foundation_recovery AS reco
                             INNER JOIN application.address AS addr ON reco.address = addr.id
                             INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
                 WHERE   reco.delete_date IS NULL
@@ -231,7 +231,7 @@ namespace FunderMaps.Data.Repositories
 						attr.creator,
 						attr.owner,
 						attr.contractor
-                FROM    application.foundation_recovery as reco
+                FROM    application.foundation_recovery AS reco
                             INNER JOIN application.address AS addr ON reco.address = addr.id
                             INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
                 WHERE   reco.delete_date IS NULL
@@ -292,7 +292,7 @@ namespace FunderMaps.Data.Repositories
 						attr.creator,
 						attr.owner,
 						attr.contractor
-                FROM    application.foundation_recovery as reco
+                FROM    application.foundation_recovery AS reco
                             INNER JOIN application.address AS addr ON reco.address = addr.id
                             INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
                 WHERE   reco.delete_date IS NULL
