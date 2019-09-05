@@ -6,18 +6,13 @@
     public static class FisClaimTypes
     {
         /// <summary>
-        /// FIS user identifier.
+        /// Organization user.
         /// </summary>
-        public static readonly string UserAttestationIdentifier = "http://fundermaps.com/2019/identity/claims/fisuseridentifier";
+        public static readonly string OrganizationUser = "http://fundermaps.com/2019/identity/claims/orguser";
 
         /// <summary>
-        /// FIS role.
+        /// Organization role.
         /// </summary>
-        public static readonly string OrganizationUserRole = "http://fundermaps.com/2019/identity/claims/fisuserrole";
-
-        /// <summary>
-        /// FIS organization identifier.
-        /// </summary>
-        public static readonly string OrganizationAttestationIdentifier = "http://fundermaps.com/2019/identity/claims/fisorgidentifier";
+        public static readonly string OrganizationUserRole = "http://fundermaps.com/2019/identity/claims/orgrole";
     }
 }
