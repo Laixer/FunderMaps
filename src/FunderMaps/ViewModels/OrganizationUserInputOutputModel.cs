@@ -19,6 +19,6 @@ namespace FunderMaps.ViewModels
         /// Organization role.
         /// </summary>
         [Required]
-        public OrganizationRole Role { get; set; }
+        public OrganizationRole? Role { get; set; }
     }
 }

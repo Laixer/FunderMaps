@@ -5,14 +5,49 @@
     /// </summary>
     public enum EnforcementTerm
     {
+        /// <summary>
+        /// Between 0 - 5 years.
+        /// </summary>
         Term0_5,
+
+        /// <summary>
+        /// Between 5 - 10 years.
+        /// </summary>
         Term5_10,
+
+        /// <summary>
+        /// Between 10 - 20 years.
+        /// </summary>
         Term10_20,
+
+        /// <summary>
+        /// 5 years.
+        /// </summary>
         Term5,
+
+        /// <summary>
+        /// 10 years.
+        /// </summary>
         Term10,
+
+        /// <summary>
+        /// 15 years.
+        /// </summary>
         Term15,
+
+        /// <summary>
+        /// 20 years.
+        /// </summary>
         Term20,
+
+        /// <summary>
+        /// 25 years.
+        /// </summary>
         Term25,
+
+        /// <summary>
+        /// 30 years.
+        /// </summary>
         Term30,
     }
 }

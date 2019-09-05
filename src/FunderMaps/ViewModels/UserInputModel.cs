@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FunderMaps.Core.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.ViewModels
 {
@@ -27,6 +28,6 @@ namespace FunderMaps.ViewModels
         /// Optional user role.
         /// </summary>
         [MaxLength(256)]
-        public string Role { get; set; }
+        public OrganizationRole Role { get; set; } = OrganizationRole.Reader;
     }
 }

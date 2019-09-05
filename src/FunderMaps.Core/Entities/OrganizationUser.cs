@@ -1,34 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace FunderMaps.Core.Entities.Fis
 {
+    /// <summary>
+    /// Organizational user.
+    /// </summary>
     public class OrganizationUser : BaseEntity
     {
+        /// <summary>
+        /// User Identifier.
+        /// </summary>
         public Guid UserId { get; set; }
+
+        /// <summary>
+        /// Organization identifier.
+        /// </summary>
         public Guid OrganizationId { get; set; }
-        public Guid OrganizationRoleId { get; set; }
 
-        public object User { get; set; }
+        /// <summary>
+        /// Role per user in this organization.
+        /// </summary>
+        public OrganizationRole Role { get; set; }
+
+        /// <summary>
+        /// User.
+        /// </summary>
+        public object User { get; set; } // TODO: Should be FunderMapsUser
+
+        /// <summary>
+        /// Organization.
+        /// </summary>
         public Organization Organization { get; set; }
-        public OrganizationRole OrganizationRole { get; set; }
-
-        public OrganizationUser()
-        {
-        }
-
-        public OrganizationUser(object user, Organization organization)
-        {
-            User = user;
-            Organization = organization;
-        }
-
-        public OrganizationUser(object user, Organization organization, OrganizationRole role)
-        {
-            User = user;
-            Organization = organization;
-            OrganizationRole = role;
-        }
     }
 }

@@ -331,7 +331,7 @@ namespace FunderMaps.Data.Repositories
         /// Create new foundation recovery.
         /// </summary>
         /// <param name="entity">Entity to create.</param>
-        /// <returns>Created entity.</returns>
+        /// <returns>Created entity primary key.</returns>
         public override async Task<int> AddAsync(FoundationRecovery entity)
         {
             var sql = @"
