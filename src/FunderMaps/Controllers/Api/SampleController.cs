@@ -96,7 +96,7 @@ namespace FunderMaps.Controllers.Api
 
             var id = await _sampleRepository.AddAsync(input);
 
-            // TODO: Fire event and set ReportStatus=>ReportStatus.Pending
+            // TODO: Fire event and set ReportStatus => ReportStatus.Pending
 
             return Ok(await _sampleRepository.GetByIdAsync(id));
         }

@@ -5,36 +5,48 @@ using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
-    public class FoundationRecovery : RecordControl
+    /// <summary>
+    /// Foundation recovery entity.
+    /// </summary>
+    public class FoundationRecovery : AttributionControl
     {
+        /// <summary>
+        /// Unique identifier.
+        /// </summary>
         public int Id { get; set; }
 
+        /// <summary>
+        /// Note.
+        /// </summary>
         public string Note { get; set; }
 
+        /// <summary>
+        /// Foundation recovery type.
+        /// </summary>
         [Required]
         public FoundationRecoveryType Type { get; set; }
 
+        /// <summary>
+        /// Year.
+        /// </summary>
         [Required]
         public short Year { get; set; }
 
+        /// <summary>
+        /// Foundation recovery.
+        /// </summary>
+        public FoundationRecoveryLocation[] Recovery { get; set; }
+
+        /// <summary>
+        /// Address record identifier.
+        /// </summary>
+        [IgnoreDataMember]
+        public Guid _Address { get; set; }
+
+        /// <summary>
+        /// Associated address.
+        /// </summary>
         [Required]
-        public Guid Address { get; set; }
-
-        public AccessPolicy AccessPolicy { get; set; }
-
-        [Required]
-        public int Attribution { get; set; }
-
-        [IgnoreDataMember]
-        public virtual Address AddressNavigation { get; set; }
-
-        [IgnoreDataMember]
-        public virtual Attribution AttributionNavigation { get; set; }
-
-        [IgnoreDataMember]
-        public virtual ICollection<FoundationRecoveryEvidence> FoundationRecoveryEvidence { get; set; }
-
-        [IgnoreDataMember]
-        public virtual ICollection<FoundationRecoveryRepair> FoundationRecoveryRepair { get; set; }
+        public Address Address { get; set; }
     }
 }
