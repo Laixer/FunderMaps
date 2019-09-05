@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Dapper;
-using FunderMaps.Data.Authorization;
-using FunderMaps.Extensions;
+﻿using Dapper;
 using FunderMaps.Providers;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -66,21 +64,16 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJSON.
         /// </summary>
         [HttpGet]
+        [Authorize(Policy = "OrganizationMember")]
         [ProducesResponseType(typeof(FeatureCollection), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync()
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // TODO: Administrator can query anything
-
-            if (attestationOrganizationId == null)
-            {
-                return ResourceForbid();
-            }
+            // TODO: Select based on organization.
 
             var collection = new List<FeatureModel>();
 
+            // TODO: Move into repo
             using (var connection = _dbProvider.ConnectionScope())
             {
                 var resultSet = await connection.QueryAsync(@"
