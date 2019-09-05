@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
@@ -19,6 +20,8 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class OrganizationRegistrationController : BaseApiController
     {
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IOrganizationProposalRepository _organizationProposalRepository;
         private readonly UserManager<FunderMapsUser> _userManager;
 
@@ -26,9 +29,13 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         public OrganizationRegistrationController(
+            IOrganizationRepository organizationRepository,
+            IOrganizationUserRepository organizationUserRepository,
             IOrganizationProposalRepository organizationProposalRepository,
             UserManager<FunderMapsUser> userManager)
         {
+            _organizationRepository = organizationRepository;
+            _organizationUserRepository = organizationUserRepository;
             _organizationProposalRepository = organizationProposalRepository;
             _userManager = userManager;
         }
@@ -52,7 +59,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            // Prepare new user account
+            // Prepare new user account.
             var user = new FunderMapsUser(input.Email);
 
             // Set password on account.
@@ -70,13 +77,16 @@ namespace FunderMaps.Controllers.Api
                 Email = proposal.Email,
             };
 
-            // Create everything at once, or nothing at all if an error occurs.
-            //using (var transaction = await _context.Database.BeginTransactionAsync())
+            // FUTURE: Wrap inside transaction. Create everything at once, or nothing at all if an error occurs.
+
+            await _organizationRepository.AddAsync(organization);
+            await _organizationUserRepository.AddAsync(new OrganizationUser
             {
-                //await _organizationRepository.AddAsync(organization);
-                //await _organizationUserRepository.AddAsync(new OrganizationUser(user, organization, role));
-                await _organizationProposalRepository.DeleteAsync(proposal);
-            }
+                User = user,
+                Organization = organization,
+                Role = input.Role
+            });
+            await _organizationProposalRepository.DeleteAsync(proposal);
 
             return NoContent();
         }

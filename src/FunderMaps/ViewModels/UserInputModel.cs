@@ -27,7 +27,6 @@ namespace FunderMaps.ViewModels
         /// <summary>
         /// Optional user role.
         /// </summary>
-        [MaxLength(256)]
         public OrganizationRole Role { get; set; } = OrganizationRole.Reader;
     }
 }

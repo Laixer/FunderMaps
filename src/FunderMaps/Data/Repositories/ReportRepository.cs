@@ -484,7 +484,6 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 SELECT COUNT(*)
                 FROM   application.report AS reprt
-                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE  reprt.delete_date IS NULL";
 
             return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));

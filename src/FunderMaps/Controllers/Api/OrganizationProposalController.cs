@@ -96,7 +96,7 @@ namespace FunderMaps.Controllers.Api
                 return Conflict(input.Name);
             }
 
-            // FUTURE:
+            // TODO: Check if name exists in organization store.
             // Organization proposals cannot use an existing organization name.
             //if (await _organizationRepository.GetByNameAsync(input.NormalizedName) != null)
             //{

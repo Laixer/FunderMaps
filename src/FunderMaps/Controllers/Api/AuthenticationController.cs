@@ -117,13 +117,14 @@ namespace FunderMaps.Controllers.Api
             // Add application role as claim.
             token.AddRoleClaims(userRoles);
 
+            // TODO: FIX: HACK
             // Add organization as claim and corresponding organization role.
-            var userOrganization = await _organizationRepository.GetOrganizationAsync(user);
-            if (userOrganization != null)
-            {
-                token.AddClaim(FisClaimTypes.OrganizationUser, userOrganization.Id);
-                token.AddClaim(FisClaimTypes.OrganizationUserRole, await _organizationRepository.GetRoleAsync(userOrganization, user));
-            }
+            //var userOrganization = await _organizationRepository.GetOrganizationAsync(user);
+            //if (userOrganization != null)
+            //{
+            //    token.AddClaim(FisClaimTypes.OrganizationUser, userOrganization.Id);
+            //    token.AddClaim(FisClaimTypes.OrganizationUserRole, await _organizationRepository.GetRoleAsync(userOrganization, user));
+            //}
 
             return new AuthenticationOutputModel
             {

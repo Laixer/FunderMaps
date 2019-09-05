@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities.Fis
 {
@@ -25,11 +26,13 @@ namespace FunderMaps.Core.Entities.Fis
         /// <summary>
         /// User.
         /// </summary>
+        [IgnoreDataMember]
         public object User { get; set; } // TODO: Should be FunderMapsUser
 
         /// <summary>
         /// Organization.
         /// </summary>
+        [IgnoreDataMember]
         public Organization Organization { get; set; }
     }
 }

@@ -2,8 +2,8 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
-using FunderMaps.Models.Identity;
 using FunderMaps.Providers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,57 +13,148 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     /// Organization repository.
     /// </summary>
-    public class OrganizationRepository : RepositoryBase<Organization, int>, IOrganizationRepository
+    public class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
     {
         /// <summary>
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public OrganizationRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
+        public OrganizationRepository(DbProvider dbProvider) : base(dbProvider) { }
 
-        public override Task<Organization> GetByIdAsync(int id)
+        /// <summary>
+        /// Create new organization.
+        /// </summary>
+        /// <param name="entity">Entity object.</param>
+        /// <returns>Created entity primary key.</returns>
+        public override Task<Guid> AddAsync(Organization entity)
         {
-            throw new System.NotImplementedException();
-        }
+            var sql = @"
+                INSERT INTO application.organization
+                        (name,
+                        normalized_name,
+                        email,
+                        phone_number,
+                        registration_number,
+                        is_default,
+                        is_validated,
+                        branding_logo,
+                        invoice_name,
+                        invoice_po_number,
+                        invoice_email,
+                        home_address,
+                        home_address_number,
+                        home_address_number_postfix,
+                        home_city,
+                        home_postbox,
+                        home_zipcode,
+                        home_state,
+                        home_country,
+                        postal_address,
+                        postal_address_number,
+                        postal_address_number_postfix,
+                        postal_city,
+                        postal_postbox,
+                        postal_zipcode,
+                        postal_state,
+                        postal_country)
+                VALUES  (@Name,
+                        @NormalizedName,
+                        @Email,
+                        @PhoneNumber,
+                        @RegistrationNumber,
+                        @IsDefault,
+                        @IsValidated,
+                        @BrandingLogo,
+                        @InvoiceName,
+                        @InvoicePONumber,
+                        @InvoiceEmail
+                        @HomeStreet,
+                        @HomeAddressNumber,
+                        @HomeAddressNumberPostfix,
+                        @HomeCity,
+                        @HomePostbox,
+                        @HomeZipcode,
+                        @HomeState,
+                        @HomeCountry,
+                        @PostalStreet,
+                        @PostalAddressNumber,
+                        @PostalAddressNumberPostfix,
+                        @PostalCity,
+                        @PostalPostbox,
+                        @PostalZipcode,
+                        @PostalState,
+                        @PostalCountry)
+                RETURNING id";
 
-        public override Task<int> AddAsync(Organization entity)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Task<uint> CountAsync()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Task DeleteAsync(Organization entity)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Task<IReadOnlyList<Organization>> ListAllAsync(Navigation navigation)
-        {
-            throw new System.NotImplementedException();
+            return RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<Guid>(sql, entity));
         }
 
         /// <summary>
-        /// Get all organizations this user is part of.
+        /// Count entities.
         /// </summary>
-        /// <param name="user">The user to get organizations by.</param>
-        /// <returns>List of organizations.</returns>
-        public async Task<Organization> GetOrganizationAsync(FunderMapsUser user)
+        /// <returns>Number of records.</returns>
+        public override Task<uint> CountAsync()
         {
             var sql = @"
-                SELECT org.*
-                FROM   application.organization_user AS orguser
-                       JOIN application.organization AS org ON org.id = orguser.organization_id
-                WHERE  user_id = @UserId
-                LIMIT  1";
+                SELECT COUNT(*)
+                FROM   application.organization";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { UserId = user.Id }));
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));
+        }
+
+        /// <summary>
+        /// Delete entity.
+        /// </summary>
+        /// <param name="entity">Entity to delete.</param>
+        public override Task DeleteAsync(Organization entity)
+        {
+            var sql = @"
+                DELET FROM application.organization AS org
+                WHERE   org.id = @Id";
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
+        }
+
+        /// <summary>
+        /// Get entity by id.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <returns><see cref="Organization"/> on success, null on error.</returns>
+        public override async Task<Organization> GetByIdAsync(Guid id)
+        {
+            var sql = @"SELECT  id,
+                                name,
+                                normalized_name,
+                                email,
+                                phone_number,
+                                registration_number,
+                                is_default,
+                                is_validated,
+                                branding_logo,
+                                invoice_name,
+                                invoice_po_number,
+                                invoice_email,
+                                home_address,
+                                home_address_number,
+                                home_address_number_postfix,
+                                home_city,
+                                home_postbox,
+                                home_zipcode,
+                                home_state,
+                                home_country,
+                                postal_address,
+                                postal_address_number,
+                                postal_address_number_postfix,
+                                postal_city,
+                                postal_postbox,
+                                postal_zipcode,
+                                postal_state,
+                                postal_country
+                        FROM    application.organization AS org
+                        WHERE   org.id = @Id
+                        LIMIT  1";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { Id = id }));
             if (result.Count() == 0)
             {
                 return null;
@@ -72,35 +163,88 @@ namespace FunderMaps.Data.Repositories
             return result.First();
         }
 
-        // TODO: convert to role enum
         /// <summary>
-        /// Get user role in organization.
+        /// Return all reports.
         /// </summary>
-        /// <param name="organization">The organization to find the role by</param>
-        /// <param name="user">The user to find the role by.</param>
-        /// <returns>User role or null.</returns>
-        public async Task<OrganizationRole> GetRoleAsync(Organization organization, FunderMapsUser user)
+        /// <param name="navigation">Navigation options.</param>
+        /// <returns>List of records.</returns>
+        public override async Task<IReadOnlyList<Organization>> ListAllAsync(Navigation navigation)
         {
-            var sql = @"
-                SELECT role
-                FROM   application.organization_user
-                WHERE  user_id = @UserId
-                       AND organization_id = @OrganizationId";
+            var sql = @"SELECT  name,
+                                normalized_name,
+                                email,
+                                phone_number,
+                                registration_number,
+                                is_default,
+                                is_validated,
+                                branding_logo,
+                                invoice_name,
+                                invoice_po_number,
+                                invoice_email,
+                                home_address,
+                                home_address_number,
+                                home_address_number_postfix,
+                                home_city,
+                                home_postbox,
+                                home_zipcode,
+                                home_state,
+                                home_country,
+                                postal_address,
+                                postal_address_number,
+                                postal_address_number_postfix,
+                                postal_city,
+                                postal_postbox,
+                                postal_zipcode,
+                                postal_state,
+                                postal_country
+                        FROM    application.organization
+                        OFFSET  @Offset
+                        LIMIT   @Limit";
 
-            // TODO: Move!
-            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, navigation));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
 
-            return await RunSqlCommand(async cnn => await cnn.QueryFirstAsync<OrganizationRole>(sql, new { UserId = user.Id, OrganizationId = organization.Id }));
+            return result.ToArray();
         }
 
+        /// <summary>
+        /// Update entity.
+        /// </summary>
+        /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(Organization entity)
         {
-            throw new System.NotImplementedException();
-        }
+            var sql = @"
+                UPDATE application.organization AS org
+                SET    name = @Name,
+                       email = @Email,
+                       phone_number = @PhoneNumber,
+                       registration_number = @RegistrationNumber,
+                       is_default = @IsDefault,
+                       is_validated = @IsValidated,
+                       branding_logo = @BrandingLogo,
+                       invoice_name = @InvoiceName,
+                       invoice_po_number = @InvoicePONumber,
+                       invoice_email = @InvoiceEmail,
+                       home_address = @HomeStreet,
+                       home_address_number = @HomeAddressNumber,
+                       home_city = @HomeCity,
+                       home_postbox = @HomePostbox,
+                       home_zipcode = @HomeZipcode,
+                       home_state = @HomeState,
+                       home_country = @HomeCountry,
+                       postal_address = @PostalStreet,
+                       postal_address_number = @PostalAddressNumber,
+                       postal_city = @PostalCity,
+                       postal_postbox = @PostalPostbox,
+                       postal_zipcode = @PostalZipcode,
+                       postal_state = @PostalState,
+                       postal_country = @PostalCountry
+                WHERE  org.id = @Id";
 
-        public Task<Organization> GetOrAddAsync(Organization organization)
-        {
-            throw new System.NotImplementedException();
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
         }
     }
 }
