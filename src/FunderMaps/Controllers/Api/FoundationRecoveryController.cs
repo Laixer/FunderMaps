@@ -23,7 +23,7 @@ namespace FunderMaps.Controllers.Api
         private readonly UserManager<FunderMapsUser> _userManager;
 
         /// <summary>
-        /// Create a new instance.
+        /// Create a new instance of the foundation recovery controller.
         /// </summary>
         public FoundationRecoveryController(
             IFoundationRecoveryRepository recoveryRepository,

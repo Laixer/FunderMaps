@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.Interfaces
 {
     /// <summary>
-    /// Operations for the foundation recovery repository.
+    /// Interface for the foundation recovery repository.
     /// </summary>
     public interface IFoundationRecoveryRepository : IAsyncRepository<FoundationRecovery, int>
     {
