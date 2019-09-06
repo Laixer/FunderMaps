@@ -13,6 +13,25 @@ namespace FunderMaps.Data
         /// <param name="queryRepository">Exiting query repository.</param>
         public void Configure(IQueryRepository queryRepository)
         {
+            queryRepository.CreateAsync = $@"
+                INSERT INTO application.user
+                    (email,
+                    normalized_email,
+                    email_confirmed,
+                    password_hash,
+                    security_stamp,
+                    phone_number,
+                    lockout_end)
+                VALUES
+                    (@Email,
+                    @NormalizedEmail,
+                    @EmailConfirmed,
+                    @PasswordHash,
+                    @SecurityStamp,
+                    @PhoneNumber,
+                    @LockoutEnd)
+                RETURNING id";
+
             queryRepository.GetUserNameAsync = $@"
                 SELECT email
                 FROM application.user
