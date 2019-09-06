@@ -89,9 +89,9 @@ namespace Laixer.Identity.Dapper.Store
             }
 
             // NOTE: We'll always report success, an exception will take care of faults.
-            return RunDatabaseStatement(connection =>
+            return RunDatabaseStatement(async connection =>
             {
-                return connection.ExecuteAsync(DatabaseDriver.CreateAsync, user);
+                user.Id = await connection.ExecuteScalarAsync<TKey>(DatabaseDriver.CreateAsync, user);
             }).ContinueWith(_ => IdentityResult.Success);
         }
 
@@ -178,6 +178,12 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.NormalizedUserName);
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetNormalizedUserNameAsync, user);
@@ -199,6 +205,12 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(string.Empty);
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.QueryFirstOrDefaultAsync<TKey>(DatabaseDriver.GetUserIdAsync, user);
@@ -218,6 +230,12 @@ namespace Laixer.Identity.Dapper.Store
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
+            }
+
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.Email);
             }
 
             return RunDatabaseStatement(connection =>
@@ -246,6 +264,13 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(normalizedName));
             }
 
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.NormalizedEmail = normalizedName;
+                return Task.CompletedTask;
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.SetNormalizedUserNameAsync, new { user.Id, NormalizedUserName = normalizedName });
@@ -270,6 +295,13 @@ namespace Laixer.Identity.Dapper.Store
             if (string.IsNullOrEmpty(userName))
             {
                 throw new ArgumentNullException(nameof(userName));
+            }
+
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.UserName = userName;
+                return Task.CompletedTask;
             }
 
             return RunDatabaseStatement(connection =>
@@ -342,6 +374,12 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.Email);
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetEmailAsync, user);
@@ -365,6 +403,12 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.EmailConfirmed);
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.QueryFirstOrDefaultAsync<bool>(DatabaseDriver.GetEmailConfirmedAsync, user);
@@ -386,6 +430,12 @@ namespace Laixer.Identity.Dapper.Store
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
+            }
+
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.NormalizedEmail);
             }
 
             return RunDatabaseStatement(connection =>
@@ -414,6 +464,13 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(email));
             }
 
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.Email = email;
+                return Task.CompletedTask;
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.SetEmailAsync, new { user.Id, Email = email });
@@ -433,6 +490,13 @@ namespace Laixer.Identity.Dapper.Store
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
+            }
+
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.EmailConfirmed = confirmed;
+                return Task.CompletedTask;
             }
 
             return RunDatabaseStatement(connection =>
@@ -459,6 +523,13 @@ namespace Laixer.Identity.Dapper.Store
             if (string.IsNullOrEmpty(normalizedEmail))
             {
                 throw new ArgumentNullException(nameof(normalizedEmail));
+            }
+
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.NormalizedEmail = normalizedEmail;
+                return Task.CompletedTask;
             }
 
             return RunDatabaseStatement(connection =>
@@ -684,6 +755,12 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.PasswordHash);
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetPasswordHashAsync, user);
@@ -709,6 +786,13 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(passwordHash));
             }
 
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.PasswordHash = passwordHash;
+                return Task.CompletedTask;
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.SetPasswordHashAsync, new { user.Id, PasswordHash = passwordHash });
@@ -730,6 +814,12 @@ namespace Laixer.Identity.Dapper.Store
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
+            }
+
+            // Returning object from memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                return Task.FromResult(user.SecurityStamp);
             }
 
             return RunDatabaseStatement(connection =>
@@ -756,6 +846,13 @@ namespace Laixer.Identity.Dapper.Store
             if (string.IsNullOrEmpty(stamp))
             {
                 throw new ArgumentNullException(nameof(stamp));
+            }
+
+            // Building object in memory.
+            if (user.Id.Equals(Guid.Empty))
+            {
+                user.SecurityStamp = stamp;
+                return Task.CompletedTask;
             }
 
             return RunDatabaseStatement(connection =>
