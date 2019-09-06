@@ -27,7 +27,7 @@ namespace FunderMaps.Controllers.Api
     {
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly SignInManager<FunderMapsUser> _signInManager;
-        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationController> _logger;
 
@@ -37,13 +37,13 @@ namespace FunderMaps.Controllers.Api
         public AuthenticationController(
             UserManager<FunderMapsUser> userManager,
             SignInManager<FunderMapsUser> signInManager,
-            IOrganizationRepository organizationRepository,
+            IOrganizationUserRepository organizationUserRepository,
             IConfiguration configuration,
             ILogger<AuthenticationController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _organizationRepository = organizationRepository;
+            _organizationUserRepository = organizationUserRepository;
             _configuration = configuration;
             _logger = logger;
         }
@@ -117,14 +117,13 @@ namespace FunderMaps.Controllers.Api
             // Add application role as claim.
             token.AddRoleClaims(userRoles);
 
-            // TODO: FIX: HACK
             // Add organization as claim and corresponding organization role.
-            //var userOrganization = await _organizationRepository.GetOrganizationAsync(user);
-            //if (userOrganization != null)
-            //{
-            //    token.AddClaim(FisClaimTypes.OrganizationUser, userOrganization.Id);
-            //    token.AddClaim(FisClaimTypes.OrganizationUserRole, await _organizationRepository.GetRoleAsync(userOrganization, user));
-            //}
+            var organizationUser = await _organizationUserRepository.GetByUserIdAsync(user.Id);
+            if (organizationUser != null)
+            {
+                token.AddClaim(FisClaimTypes.OrganizationUser, organizationUser.OrganizationId);
+                token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.Role);
+            }
 
             return new AuthenticationOutputModel
             {

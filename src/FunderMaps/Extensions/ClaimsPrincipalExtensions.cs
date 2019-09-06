@@ -45,7 +45,7 @@ namespace FunderMaps.Extensions
             var claim = principal.FindFirst(FisClaimTypes.OrganizationUser);
             if (claim == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException(); // TODO: Usefull exception
             }
 
             return Guid.Parse(claim.Value);
@@ -61,7 +61,7 @@ namespace FunderMaps.Extensions
             var claim = principal.FindFirst(FisClaimTypes.OrganizationUserRole);
             if (claim == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException(); // TODO: Usefull exception
             }
 
             // TODO: Handle parse errors.

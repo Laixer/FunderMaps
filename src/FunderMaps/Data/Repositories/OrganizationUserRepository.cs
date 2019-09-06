@@ -100,6 +100,33 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        /// Retrieve entity by user id.
+        /// </summary>
+        /// <param name="userId">User identifier.</param>
+        /// <returns>List of entities.</returns>
+        public async Task<OrganizationUser> GetByUserIdAsync(Guid userId)
+        {
+            var sql = @"
+                SELECT  orguser.user_id,
+                        orguser.organization_id,
+                        orguser.role
+                FROM    application.organization_user AS orguser
+                WHERE   orguser.user_id = @UserId
+                LIMIT  1";
+
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, new { UserId = userId }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
+        /// <summary>
         /// Return all organization users.
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
@@ -157,7 +184,7 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 UPDATE  application.organization_user AS orguser
-                SET     inspection = @ConvRole::application.organization_role
+                SET     role = @ConvRole::application.organization_role
                 WHERE   orguser.user_id = @UserId
                         AND orguser.organization_id = @OrganizationId";
 
