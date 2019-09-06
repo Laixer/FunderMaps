@@ -5,7 +5,7 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
-    <SpaRoot>ClientApp\</SpaRoot>
+    <SpaRoot>..\ClientApp\</SpaRoot>
     <LangVersion>latest</LangVersion>
     <UserSecretsId>aspnet-FunderMaps-1BA92925-643A-4F0A-817C-62E1B7DBC479</UserSecretsId>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
