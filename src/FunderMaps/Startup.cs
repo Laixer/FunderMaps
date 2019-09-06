@@ -63,7 +63,7 @@ namespace FunderMaps
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                configuration.RootPath = "../ClientApp/dist";
             });
 
             // Set CORS policy.
@@ -237,10 +237,7 @@ namespace FunderMaps
                     defaults: new { controller = "Error", action = "Error" });
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-            });
+            app.UseSpa(spa => { });
         }
     }
 }
