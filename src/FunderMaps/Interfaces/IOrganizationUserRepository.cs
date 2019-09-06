@@ -18,5 +18,12 @@ namespace FunderMaps.Interfaces
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of entities.</returns>
         Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationIdAsync(Guid orgId, Navigation navigation);
+
+        /// <summary>
+        /// Retrieve entity by user id.
+        /// </summary>
+        /// <param name="userId">User identifier.</param>
+        /// <returns>List of entities.</returns>
+        Task<OrganizationUser> GetByUserIdAsync(Guid userId);
     }
 }

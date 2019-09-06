@@ -89,6 +89,8 @@ namespace FunderMaps.Controllers.Api
         /// Get organization user list.
         /// </summary>
         /// <param name="id">User identifier.</param>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
         /// <returns>List of users, see <see cref="FunderMapsUser"/>.</returns>
         [HttpGet("{id:guid}/user")]
         [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
@@ -162,10 +164,10 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Organization id.</param>
         /// <param name="userId">User id.</param>
         [HttpGet("{id:guid}/user/{userId:guid}")]
-        [ProducesResponseType(typeof(OrganizationUserInputOutputModel), 204)]
+        [ProducesResponseType(typeof(OrganizationUser), 204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId)
+        public async Task<IActionResult> GetUserAsync(Guid id, Guid userId)
         {
             if (User.IsInRole(Constants.AdministratorRole))
             {
@@ -192,47 +194,19 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUserInputOutputModel input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUser input)
         {
             if (User.IsInRole(Constants.AdministratorRole))
             {
-                var organization = await _organizationRepository.GetByIdAsync(id);
-                if (organization == null)
-                {
-                    return ResourceNotFound();
-                }
-
-                var user = await _userManager.FindByIdAsync(userId.ToString());  //TODO: Ugly
-                if (user == null)
-                {
-                    return ResourceNotFound();
-                }
-
-                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(user.Id, organization.Id));
+                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
                 if (organizationUser == null)
                 {
                     return ResourceForbid();
                 }
 
-                // Update user part.
-                if (input.User != null)
-                {
-                    user.PhoneNumber = input.User.PhoneNumber;
-                    user.GivenName = input.User.GivenName;
-                    user.LastName = input.User.LastName;
-                    user.Avatar = input.User.Avatar;
-                    user.JobTitle = input.User.JobTitle;
+                organizationUser.Role = input.Role;
 
-                    await _userManager.UpdateAsync(user);
-                }
-
-                // Update role part.
-                if (input.Role.HasValue)
-                {
-                    organizationUser.Role = input.Role.Value;
-
-                    await _organizationUserRepository.UpdateAsync(organizationUser);
-                }
+                await _organizationUserRepository.UpdateAsync(organizationUser);
 
                 return NoContent();
             }
@@ -254,19 +228,7 @@ namespace FunderMaps.Controllers.Api
         {
             if (User.IsInRole(Constants.AdministratorRole))
             {
-                var organization = await _organizationRepository.GetByIdAsync(id);
-                if (organization == null)
-                {
-                    return ResourceNotFound();
-                }
-
-                var user = await _userManager.FindByIdAsync(userId.ToString()); //TODO: Ugly
-                if (user == null)
-                {
-                    return ResourceNotFound();
-                }
-
-                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(user.Id, organization.Id));
+                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
                 if (organizationUser == null)
                 {
                     return ResourceForbid();
