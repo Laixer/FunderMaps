@@ -39,27 +39,7 @@ namespace FunderMaps.Helpers
         /// <summary>
         /// Application role for administrator
         /// </summary>
-        public const string AdministratorRole = "Administrator";
-
-        /// <summary>
-        /// Organization role for superuser
-        /// </summary>
-        public const string SuperuserRole = "Superuser";
-
-        /// <summary>
-        /// Organization role for verifier
-        /// </summary>
-        public const string VerifierRole = "Verifier";
-
-        /// <summary>
-        /// Organization role for writer
-        /// </summary>
-        public const string WriterRole = "Writer";
-
-        /// <summary>
-        /// Organization role for reader
-        /// </summary>
-        public const string ReaderRole = "Reader";
+        public const string AdministratorRole = "administrator";
 
         /// <summary>
         /// Retrieve application version.
@@ -72,18 +52,13 @@ namespace FunderMaps.Helpers
         public static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
 
         /// <summary>
-        /// Application database schema.
+        /// Report storage destination.
         /// </summary>
-        public static string DefaultDatabaseSchema = "application";
+        public const string ReportStorage = "report";
 
         /// <summary>
-        /// Identity user table.
+        /// Evidence storage destination.
         /// </summary>
-        public static string UserTable = "user";
-
-        /// <summary>
-        /// Identity role table.
-        /// </summary>
-        public static string RoleTable = "role";
+        public const string EvidenceStorage = "evidence";
     }
 }

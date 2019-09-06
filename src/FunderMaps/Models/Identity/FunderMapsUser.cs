@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Identity;
 
 namespace FunderMaps.Models.Identity
 {
@@ -12,9 +12,7 @@ namespace FunderMaps.Models.Identity
         /// <summary>
         /// Create new instance.
         /// </summary>
-        public FunderMapsUser()
-        {
-        }
+        public FunderMapsUser() { }
 
         /// <summary>
         /// Create new instance.
@@ -49,11 +47,6 @@ namespace FunderMaps.Models.Identity
         /// </summary>
         [PersonalData]
         public virtual string JobTitle { get; set; }
-
-        /// <summary>
-        /// Reference to the attestation principal.
-        /// </summary>
-        public virtual int? AttestationPrincipalId { get; set; }
 
         /// <summary>
         /// Gets or sets a flag indicating if two factor authentication is enabled for this

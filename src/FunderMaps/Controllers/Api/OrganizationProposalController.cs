@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Repositories;
+using FunderMaps.Helpers;
+using FunderMaps.Interfaces;
+using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using FunderMaps.Data;
-using FunderMaps.Models;
-using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -20,17 +20,17 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class OrganizationProposalController : BaseApiController
     {
-        private readonly FunderMapsDbContext _context;
+        private readonly IOrganizationProposalRepository _organizationProposalRepository;
         private readonly ILookupNormalizer _keyNormalizer;
 
         /// <summary>
         /// Create a new instance of the OrganizationProposalController.
         /// </summary>
         public OrganizationProposalController(
-            FunderMapsDbContext context,
+            IOrganizationProposalRepository organizationProposalRepository,
             ILookupNormalizer keyNormalizer)
         {
-            _context = context;
+            _organizationProposalRepository = organizationProposalRepository;
             _keyNormalizer = keyNormalizer;
         }
 
@@ -38,13 +38,25 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get all organization proposals.
         /// </summary>
-        [HttpGet()]
+        [HttpGet]
         [ProducesResponseType(typeof(List<OrganizationProposal>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        public async Task<IActionResult> GetAllAsync(Guid token)
-        {
-            return Ok(await _context.OrganizationProposals.ToListAsync());
-        }
+        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+            => Ok(await _organizationProposalRepository.ListAllAsync(new Navigation(offset, limit)));
+
+        // GET: api/organization_proposal/stats
+        /// <summary>
+        /// Return entity statistics.
+        /// </summary>
+        /// <returns>EntityStatsOutputModel.</returns>
+        [HttpGet("stats")]
+        [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetStatsAsync()
+            => Ok(new EntityStatsOutputModel
+            {
+                Count = await _organizationProposalRepository.CountAsync()
+            });
 
         // GET: api/organization_proposal/{token}
         /// <summary>
@@ -56,7 +68,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> GetAsync(Guid token)
         {
-            var proposal = await _context.OrganizationProposals.FindAsync(token);
+            var proposal = await _organizationProposalRepository.GetByIdAsync(token);
             if (proposal == null)
             {
                 return ResourceNotFound();
@@ -69,33 +81,34 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Submit new organization proposal.
         /// </summary>
-        /// <param name="proposal">See <see cref="OrganizationProposal"/>.</param>
+        /// <param name="input">See <see cref="OrganizationProposal"/>.</param>
         /// <returns>See <see cref="OrganizationProposal"/>.</returns>
         [HttpPost]
         [ProducesResponseType(typeof(OrganizationProposal), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
-        public async Task<IActionResult> PostAsync([FromBody] OrganizationProposal proposal)
+        public async Task<IActionResult> PostAsync([FromBody] OrganizationProposal input)
         {
-            proposal.NormalizedName = _keyNormalizer.Normalize(proposal.Name);
+            input.NormalizedName = _keyNormalizer.Normalize(input.Name);
 
             // Organization proposals must be unique.
-            if (await _context.OrganizationProposals.AnyAsync(s => s.NormalizedName == proposal.NormalizedName))
+            if (await _organizationProposalRepository.GetByNormalizedNameAsync(input.NormalizedName) != null)
             {
-                return Conflict(proposal.Name);
+                return Conflict(input.Name);
             }
 
+            // TODO: Check if name exists in organization store.
             // Organization proposals cannot use an existing organization name.
-            if (await _context.Organizations.AnyAsync(s => s.NormalizedName == proposal.NormalizedName))
-            {
-                return Conflict(proposal.Name);
-            }
+            //if (await _organizationRepository.GetByNameAsync(input.NormalizedName) != null)
+            //{
+            //    return Conflict(input.Name);
+            //}
 
-            await _context.OrganizationProposals.AddAsync(proposal);
-            await _context.SaveChangesAsync();
+            var id = await _organizationProposalRepository.AddAsync(input);
 
             // FUTURE: Send email with registration link
+            // FUTURE: Kick registration done event
 
-            return Ok(proposal);
+            return Ok(await _organizationProposalRepository.GetByIdAsync(id));
         }
 
         // DELETE: api/organization_proposal/{token}
@@ -109,14 +122,13 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> DeleteAsync(Guid token)
         {
-            var proposal = await _context.OrganizationProposals.FindAsync(token);
+            var proposal = await _organizationProposalRepository.GetByIdAsync(token);
             if (proposal == null)
             {
                 return ResourceNotFound();
             }
 
-            _context.OrganizationProposals.Remove(proposal);
-            await _context.SaveChangesAsync();
+            await _organizationProposalRepository.DeleteAsync(proposal);
 
             return NoContent();
         }

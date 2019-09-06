@@ -66,7 +66,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         /// <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.AddAsync"/>
         /// </summary>
-        public abstract Task<TEntry> AddAsync(TEntry entity);
+        public abstract Task<TEntryPrimaryKey> AddAsync(TEntry entity);
 
         /// <summary>
         /// <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.UpdateAsync"/>

@@ -8,19 +8,38 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
 {
+    /// <summary>
+    /// Azure storage implementing file storage service.
+    /// </summary>
     public class AzureBlobStorageService : IFileStorageService
     {
         private readonly CloudStorageAccount _storageAccount;
-        protected readonly CloudBlobClient _blobClient;
+        private readonly CloudBlobClient _blobClient;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="config">Application configuration.</param>
         public AzureBlobStorageService(IConfiguration config)
         {
             _storageAccount = CloudStorageAccount.Parse(config.GetConnectionString("AzureStorageConnectionString"));
             _blobClient = _storageAccount.CreateCloudBlobClient();
         }
 
+        /// <summary>
+        /// Set container name.
+        /// </summary>
+        /// <param name="name">Name of container.</param>
+        /// <returns>Blob container.</returns>
         protected CloudBlobContainer SetContainer(string name) => _blobClient.GetContainerReference(name);
 
+        /// <summary>
+        /// Prepare blob for storage.
+        /// </summary>
+        /// <param name="container">Where to store the file.</param>
+        /// <param name="filename">The actual file on disk.</param>
+        /// <param name="properties">Blob properties.</param>
+        /// <returns>The blob block.</returns>
         protected CloudBlockBlob PrepareBlob(string container, string filename, BlobProperties properties)
         {
             CloudBlockBlob cloudBlockBlob = SetContainer(container).GetBlockBlobReference(filename);

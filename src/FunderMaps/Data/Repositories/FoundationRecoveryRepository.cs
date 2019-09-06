@@ -1,8 +1,10 @@
 ﻿using Dapper;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,47 +20,242 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public FoundationRecoveryRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
+        public FoundationRecoveryRepository(DbProvider dbProvider) : base(dbProvider) { }
 
         /// <summary>
-        /// Return the foundation recovery report based on the provided id
+        /// Get entity by id.
         /// </summary>
-        /// <param name="id">the id of the report </param>
-        /// <returns>The object which matches the id</returns>
+        /// <param name="id">Unique identifier.</param>
+        /// <returns><see cref="FoundationRecovery"/> on success, null on error.</returns>
         public override async Task<FoundationRecovery> GetByIdAsync(int id)
         {
-            // The sql query for retrieving the foundation recovery input
             var sql = @"
-                SELECT * 
-                FROM report.foundation_recovery 
-                WHERE id = @Id 
-                AND delete_date IS NULL";
+                SELECT  reco.id,
+                        reco.note,
+                        reco.create_date,
+                        reco.update_date,
+                        reco.delete_date,
+                        reco.year,
+                        reco.type,
+                        reco.access_policy,
+                        reco.repair,
+	                    addr.id,
+	                    addr.street_name,
+	                    addr.building_number,
+	                    addr.building_number_suffix,
+                        attr.id,
+                        attr.project,
+						attr.reviewer,
+						attr.creator,
+						attr.owner,
+						attr.contractor
+                FROM    application.foundation_recovery AS reco
+                            INNER JOIN application.address AS addr ON reco.address = addr.id
+                            INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
+                WHERE   reco.delete_date IS NULL
+                        AND reco.id = @Id
+                LIMIT   1";
 
-            var parameters = new { Id = id };
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryLocation>("application.foundation_recovery_location");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery>(sql, parameters));
+            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            {
+                foundationRecoveryEntity.Address = addressEntity;
+                foundationRecoveryEntity.Attribution = attributionEntity;
+                return foundationRecoveryEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery, Address, Attribution, FoundationRecovery>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Id = id }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
             return result.First();
         }
 
         /// <summary>
-        /// Admin function. Returns ALL the records.
+        /// Retrieve entity by id and organization.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns><see cref="FoundationRecovery"/> on success, null on error.</returns>
+        public async Task<FoundationRecovery> GetByIdAsync(int id, Guid orgId)
+        {
+            var sql = @"
+                SELECT  reco.id,
+                        reco.note,
+                        reco.create_date,
+                        reco.update_date,
+                        reco.delete_date,
+                        reco.year,
+                        reco.type,
+                        reco.access_policy,
+                        reco.repair,
+	                    addr.id,
+	                    addr.street_name,
+	                    addr.building_number,
+	                    addr.building_number_suffix,
+                        attr.id,
+                        attr.project,
+						attr.reviewer,
+						attr.creator,
+						attr.owner,
+						attr.contractor
+                FROM    application.foundation_recovery AS reco
+                            INNER JOIN application.address AS addr ON reco.address = addr.id
+                            INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
+                WHERE   reco.delete_date IS NULL
+                        AND reco.id = @Id
+                        AND attr.owner = @Owner
+                LIMIT   1";
+
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryLocation>("application.foundation_recovery_location");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+
+            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            {
+                foundationRecoveryEntity.Address = addressEntity;
+                foundationRecoveryEntity.Attribution = attributionEntity;
+                return foundationRecoveryEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery, Address, Attribution, FoundationRecovery>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Id = id, Owner = orgId }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
+        /// <summary>
+        /// Retrieve entity by id and organization or public record.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns><see cref="FoundationRecovery"/> on success, null on error.</returns>
+        public async Task<FoundationRecovery> GetPublicAndByIdAsync(int id, Guid orgId)
+        {
+            var sql = @"
+                SELECT  reco.id,
+                        reco.note,
+                        reco.create_date,
+                        reco.update_date,
+                        reco.delete_date,
+                        reco.year,
+                        reco.type,
+                        reco.access_policy,
+                        reco.repair,
+	                    addr.id,
+	                    addr.street_name,
+	                    addr.building_number,
+	                    addr.building_number_suffix,
+                        attr.id,
+                        attr.project,
+						attr.reviewer,
+						attr.creator,
+						attr.owner,
+						attr.contractor
+                FROM    application.foundation_recovery AS reco
+                            INNER JOIN application.address AS addr ON reco.address = addr.id
+                            INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
+                WHERE   reco.delete_date IS NULL
+                        AND reco.id = @Id
+                        AND (attr.owner = @Owner
+                            OR reco.access_policy = 'public')
+                LIMIT   1";
+
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryLocation>("application.foundation_recovery_location");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+
+            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            {
+                foundationRecoveryEntity.Address = addressEntity;
+                foundationRecoveryEntity.Attribution = attributionEntity;
+                return foundationRecoveryEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery, Address, Attribution, FoundationRecovery>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Id = id, Owner = orgId }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
+        /// <summary>
+        /// Returns all the records.
         /// </summary>
         /// <param name="navigation">The navigation paramters for offsetting en limiting.</param>
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<FoundationRecovery>> ListAllAsync(Navigation navigation)
         {
             var sql = @"
-                SELECT * 
-                FROM report.foundation_recovery 
-                WHERE delete_date is NULL
-                ORDER BY create_date DESC
+                SELECT  reco.id,
+                        reco.note,
+                        reco.create_date,
+                        reco.update_date,
+                        reco.delete_date,
+                        reco.year,
+                        reco.type,
+                        reco.access_policy,
+                        reco.repair,
+	                    addr.id,
+	                    addr.street_name,
+	                    addr.building_number,
+	                    addr.building_number_suffix,
+                        attr.id,
+                        attr.project,
+						attr.reviewer,
+						attr.creator,
+						attr.owner,
+						attr.contractor
+                FROM    application.foundation_recovery AS reco
+                            INNER JOIN application.address AS addr ON reco.address = addr.id
+                            INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
+                WHERE   reco.delete_date IS NULL
+                ORDER BY reco.create_date DESC
                 OFFSET @Offset
                 LIMIT @Limit";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery>(sql, navigation));
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryLocation>("application.foundation_recovery_location");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+
+            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            {
+                foundationRecoveryEntity.Address = addressEntity;
+                foundationRecoveryEntity.Attribution = attributionEntity;
+                return foundationRecoveryEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery, Address, Attribution, FoundationRecovery>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: navigation));
             if (result.Count() == 0)
             {
                 return null;
@@ -70,21 +267,58 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         /// Admin function. Returns ALL the records.
         /// </summary>
-        /// <param name="org_id">The id of the organization.</param>
+        /// <param name="orgId">The id of the organization.</param>
         /// <param name="navigation">The navigation paramters for offsetting en limiting.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<FoundationRecovery>> ListAllAsync(int org_id, Navigation navigation)
+        public async Task<IReadOnlyList<FoundationRecovery>> ListAllAsync(Guid orgId, Navigation navigation)
         {
             var sql = @"
-                SELECT * 
-                FROM report.foundation_recovery 
-                WHERE attribution = @Owner 
-                AND delete_date is NULL
-                ORDER BY create_date DESC
+                SELECT  reco.id,
+                        reco.note,
+                        reco.create_date,
+                        reco.update_date,
+                        reco.delete_date,
+                        reco.year,
+                        reco.type,
+                        reco.access_policy,
+                        reco.repair,
+	                    addr.id,
+	                    addr.street_name,
+	                    addr.building_number,
+	                    addr.building_number_suffix,
+                        attr.id,
+                        attr.project,
+						attr.reviewer,
+						attr.creator,
+						attr.owner,
+						attr.contractor
+                FROM    application.foundation_recovery AS reco
+                            INNER JOIN application.address AS addr ON reco.address = addr.id
+                            INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
+                WHERE   reco.delete_date IS NULL
+                        AND (attr.owner = @Owner
+                            OR reco.access_policy = 'public')
+                ORDER BY reco.create_date DESC
                 OFFSET @Offset
                 LIMIT @Limit";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery>(sql, new { Owner = org_id, navigation.Offset, navigation.Limit }));
+            // TODO: Move!
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryLocation>("application.foundation_recovery_location");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
+            Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+
+            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            {
+                foundationRecoveryEntity.Address = addressEntity;
+                foundationRecoveryEntity.Attribution = attributionEntity;
+                return foundationRecoveryEntity;
+            };
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FoundationRecovery, Address, Attribution, FoundationRecovery>(
+                sql: sql,
+                map: map,
+                splitOn: "id",
+                param: new { Owner = orgId, navigation.Offset, navigation.Limit }));
             if (result.Count() == 0)
             {
                 return null;
@@ -93,94 +327,114 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
-        // To insert a new report. only set the following values as everything else is handled by the server
-        //      Note, Year, Address, Attribution
         /// <summary>
-        /// Add a new foundation recovery report to the database
+        /// Create new foundation recovery.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>The object that was added</returns>
-        public override async Task<FoundationRecovery> AddAsync(FoundationRecovery entity)
+        /// <param name="entity">Entity to create.</param>
+        /// <returns>Created entity primary key.</returns>
+        public override async Task<int> AddAsync(FoundationRecovery entity)
         {
             var sql = @"
-                INSERT INTO report.foundation_recovery(  
-                        note,
-                        year,
-                        address,
-                        attribution)
-                VALUES(
-                        @Note,
-                        @Year,
-                        @Address,
-                        @Attribution)
+                INSERT INTO application.attribution
+                    (project, reviewer, creator, owner, contractor)
+	            VALUES
+                    (@Project, @Reviewer, @Creator, @Owner, @Contractor)
                 RETURNING id";
 
-            var id = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity));
+            var attributionId = await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, entity.Attribution));
 
-            // return the just added object
-            return await GetByIdAsync(id);
+            var sql2 = @"
+                INSERT INTO application.foundation_recovery
+                                (year,
+                                note,
+                                type,
+                                access_policy,
+                                attribution,
+                                address)
+                VALUES      (@Year,
+                            @Note,
+                            @ConvType::application.foundation_recovery_type,
+                            @ConvAccessPolicy::application.access_policy,
+                            @ConvAttribution,
+                            @ConvAddress)
+                RETURNING id";
+
+            var dynamicParameters = new DynamicParameters(entity);
+            dynamicParameters.Add("ConvType", entity.Type.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvAttribution", attributionId);
+            dynamicParameters.Add("ConvAddress", entity.Address.Id);
+
+            return await RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql2, dynamicParameters));
         }
 
         /// <summary>
-        /// Updates the delete date of a record.
+        /// Update entity.
+        /// </summary>
+        /// <param name="entity">Entity to update.</param>
+        public override Task UpdateAsync(FoundationRecovery entity)
+        {
+            var sql = @"
+                UPDATE application.foundation_recovery AS reco
+                SET    year = @Year,
+                       note = @Note,
+                       type = @ConvType::application.foundation_recovery_type,
+                       access_policy = @ConvAccessPolicy::application.access_policy
+                WHERE  reco.delete_date IS NULL
+                       AND reco.id = @Id";
+
+            var dynamicParameters = new DynamicParameters(entity);
+            dynamicParameters.Add("ConvType", entity.Type.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
+
+            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, dynamicParameters));
+        }
+
+        /// <summary>
+        /// Delete entity.
         /// </summary>
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(FoundationRecovery entity)
         {
-            string sql = @"
-                UPDATE report.foundation_recovery
-                SET delete_date = CURRENT_TIMESTAMP
-                WHERE id = @Id
-                AND delete_date IS NULL";
+            var sql = @"
+                UPDATE  application.foundation_recovery AS reco
+                SET     delete_date = CURRENT_TIMESTAMP
+                WHERE   reco.delete_date IS NULL
+                        AND reco.id = @Id";
 
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
         }
 
         /// <summary>
-        /// Update a foundation recovery report in the database
+        /// Count entities and filter on access policy and organization.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <returns>nothing</returns>
-        public override Task UpdateAsync(FoundationRecovery entity)
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>Number of records.</returns>
+        public Task<uint> CountAsync(Guid orgId)
         {
             var sql = @"
-                UPDATE report.foundation_recovery 
-                SET                         
-                    note = @Note,
-                    year = @Year,
-                    address = @Address,
-                    attribution = @Attribution";
+                SELECT  COUNT(*)
+                FROM    application.foundation_recovery as reco
+                            INNER JOIN application.attribution AS attr ON reco.attribution = attr.id
+                WHERE   reco.delete_date IS NULL
+                        AND (attr.owner = @Owner
+                            OR reco.access_policy = 'public')";
 
-            return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, entity));
-
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql, new { Owner = orgId }));
         }
 
         /// <summary>
-        /// Count the amount of foundation recover reports
+        /// Count entities.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Number of records.</returns>
         public override Task<uint> CountAsync()
         {
             var sql = @"
-                SELECT COUNT(*)
-                FROM report.foundation_recovery";
+                SELECT  COUNT(*)
+                FROM    application.foundation_recovery as reco
+                WHERE   reco.delete_date IS NULL";
 
-            return RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<uint>(sql));
-        }
-
-        /// <summary>
-        /// Get the amount of recovery reports based on the organization id.
-        /// </summary>
-        /// <param name="org_id"></param>
-        /// <returns></returns>
-        public Task<uint> CountAsync(int org_id)
-        {
-            var sql = @"
-                SELECT COUNT(*)
-                FROM report.foundation_recovery
-                WHERE attribution = @Attribution";
-
-            return RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<uint>(sql, new { Attribution = org_id }));
+            return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));
         }
     }
 }

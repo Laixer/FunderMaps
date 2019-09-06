@@ -1,6 +1,4 @@
-﻿using FunderMaps.Authorization.Handler;
-using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Data;
 using FunderMaps.Data.Repositories;
@@ -13,6 +11,7 @@ using FunderMaps.Interfaces;
 using FunderMaps.Middleware;
 using FunderMaps.Models.Identity;
 using FunderMaps.Services;
+using Laixer.Identity.Dapper.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -20,7 +19,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -48,7 +46,8 @@ namespace FunderMaps
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureDatastore(services);
+            services.AddDbProvider("FunderMapsConnection");
+
             ConfigureAuthentication(services);
             ConfigureAuthorization(services);
 
@@ -64,7 +63,7 @@ namespace FunderMaps
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                configuration.RootPath = "../ClientApp/dist";
             });
 
             // Set CORS policy.
@@ -104,30 +103,15 @@ namespace FunderMaps
         /// <param name="services">Service collection.</param>
         private void ConfigureRepository(IServiceCollection services)
         {
-            //services.AddScoped<IPrincipalRepository, PrincipalRepository>();
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
             //services.AddScoped<IAddressRepository, AddressRepository>();
-            //services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
+            services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddScoped<IFoundationRecoveryRepository, FoundationRecoveryRepository>();
             services.AddScoped<IFoundationRecoveryEvidenceRepository,FoundationRecoveryEvidenceRepository>();
 
-        }
-
-        /// <summary>
-        /// Setup various data stores for entities.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
-        private void ConfigureDatastore(IServiceCollection services)
-        {
-            // Application database
-            services.AddDbContextPool<FunderMapsDbContext>(options =>
-            {
-                options.UseNpgsql(_configuration.GetConnectionString("FunderMapsConnection"));
-            })
-            .AddEntityFrameworkNpgsql();
-
-            services.AddDbProvider("FISConnection");
         }
 
         /// <summary>
@@ -141,7 +125,13 @@ namespace FunderMaps
                 options.Lockout = Constants.LockoutOptions;
                 options.User.RequireUniqueEmail = true;
             })
-            .AddEntityFrameworkStores<FunderMapsDbContext>()
+            .AddDapperStores(options =>
+            {
+                options.UserTable = "user";
+                options.Schema = "application";
+                options.MatchWithUnderscore = true;
+                options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionString("FunderMapsConnection"));
+            })
             .AddDefaultTokenProviders();
 
             services.AddAuthentication(options =>
@@ -169,15 +159,32 @@ namespace FunderMaps
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("OrganizationMemberPolicy",
-                    policy => policy.AddRequirements(new OrganizationMemberRequirement()));
-                options.AddPolicy("OrganizationSuperuserPolicy",
-                    policy => policy.AddRequirements(new OrganizationRoleRequirement(Constants.SuperuserRole)));
-            });
+                var organizationMemberPolicyBuilder = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUser);
 
-            services.AddScoped<IAuthorizationHandler, OrganizationMemberHandler>();
-            services.AddScoped<IAuthorizationHandler, OrganizationRoleHandler>();
-            services.AddSingleton<IAuthorizationHandler, FisOperationHandler>();
+                options.AddPolicy("OrganizationMember", organizationMemberPolicyBuilder
+                    .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUserRole)
+                    .Build());
+
+                options.AddPolicy("OrganizationMemberWrite", organizationMemberPolicyBuilder
+                    .RequireAssertion(context => context.User.HasOrganization() &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer)
+                    .Build());
+
+                options.AddPolicy("OrganizationMemberVerify", organizationMemberPolicyBuilder
+                    .RequireAssertion(context => context.User.HasOrganization() &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier)
+                    .Build());
+
+                options.AddPolicy("OrganizationMemberSuper", organizationMemberPolicyBuilder
+                    .RequireAssertion(context => context.User.HasOrganization() &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser)
+                    .Build());
+            });
         }
 
         /// <summary>
@@ -232,10 +239,7 @@ namespace FunderMaps
                     defaults: new { controller = "Error", action = "Error" });
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-            });
+            app.UseSpa(spa => { });
         }
     }
 }

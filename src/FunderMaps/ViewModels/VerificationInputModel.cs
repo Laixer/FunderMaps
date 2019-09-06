@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.ViewModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FunderMaps.ViewModels
 {
     /// <summary>
     /// Report verification input model.
@@ -24,7 +26,8 @@
         /// <summary>
         /// Verification result.
         /// </summary>
-        public VerificationResult Result { get; set; }
+        [Required]
+        public VerificationResult? Result { get; set; }
 
         /// <summary>
         /// Rejection or approval reason.

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Entities;
 using FunderMaps.Extensions;
 using FunderMaps.Interfaces;
 

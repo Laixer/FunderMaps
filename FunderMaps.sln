@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laixer.EventBus", "contrib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laixer.EventBus.Tests", "contrib\Laixer.EventBus.Tests\Laixer.EventBus.Tests.csproj", "{F9A6C960-D19D-4907-A183-009E243C38BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Laixer.Identity.Dapper", "contrib\Laixer.Identity.Dapper\Laixer.Identity.Dapper.csproj", "{C6F6EC1F-140A-4874-BCBC-A3CE6062D997}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{F9A6C960-D19D-4907-A183-009E243C38BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9A6C960-D19D-4907-A183-009E243C38BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9A6C960-D19D-4907-A183-009E243C38BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6F6EC1F-140A-4874-BCBC-A3CE6062D997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6F6EC1F-140A-4874-BCBC-A3CE6062D997}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6F6EC1F-140A-4874-BCBC-A3CE6062D997}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6F6EC1F-140A-4874-BCBC-A3CE6062D997}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

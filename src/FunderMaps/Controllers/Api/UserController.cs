@@ -1,5 +1,4 @@
-﻿using FunderMaps.Event;
-using FunderMaps.Models.Identity;
+﻿using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 using Laixer.EventBus;
 using Microsoft.AspNetCore.Authorization;
@@ -78,12 +77,6 @@ namespace FunderMaps.Controllers.Api
             user.PhoneNumber = input.PhoneNumber;
 
             await _userManager.UpdateAsync(user);
-
-            // Fire event for updated user profile
-            await _eventBus.FireEventAsync(new UpdateUserProfileEvent
-            {
-                User = user
-            });
 
             return NoContent();
         }

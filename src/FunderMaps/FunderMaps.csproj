@@ -5,7 +5,7 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
-    <SpaRoot>ClientApp\</SpaRoot>
+    <SpaRoot>..\ClientApp\</SpaRoot>
     <LangVersion>latest</LangVersion>
     <UserSecretsId>aspnet-FunderMaps-1BA92925-643A-4F0A-817C-62E1B7DBC479</UserSecretsId>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
@@ -15,7 +15,7 @@
     <RepositoryType>Git</RepositoryType>
     <AssemblyVersion>1.4.11.6</AssemblyVersion>
     <FileVersion>1.4.11.0</FileVersion>
-    <Version>1.4.11.6</Version>
+    <Version>1.4.972.8</Version>
     <Company>FunderMaps B.V.</Company>
     <PackageProjectUrl>https://github.com/Zanhos/FunderMaps</PackageProjectUrl>
     <ApplicationInsightsResourceId>/subscriptions/a04530e8-9b1b-42e0-a7e9-500d068c4785/resourcegroups/fundermaps/providers/microsoft.insights/components/fundermaps</ApplicationInsightsResourceId>
@@ -42,13 +42,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Dapper" Version="2.0.4" />
     <PackageReference Include="Laixer.EventBus" Version="1.0.2" />
+    <PackageReference Include="Laixer.Identity.Dapper" Version="0.9.8" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" PrivateAssets="All" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 
@@ -63,6 +63,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\contrib\Laixer.Identity.Dapper\Laixer.Identity.Dapper.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
   </ItemGroup>
 

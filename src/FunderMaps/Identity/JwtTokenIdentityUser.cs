@@ -1,24 +1,51 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FunderMaps.Identity
 {
+    /// <summary>
+    /// Generate JWT token for identity user.
+    /// </summary>
+    /// <typeparam name="TUser">Identity user.</typeparam>
+    /// <typeparam name="TKey">Primary key in user identity object.</typeparam>
     public class JwtTokenIdentityUser<TUser, TKey>
         where TUser : IdentityUser<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
+        /// <summary>
+        /// List of identity claims.
+        /// </summary>
         public List<Claim> Claims { get; }
+
+        /// <summary>
+        /// Signing credentials.
+        /// </summary>
         public SigningCredentials SigningCredentials { get; }
 
+        /// <summary>
+        /// Token signature algorithm.
+        /// </summary>
         public string SignatureAlgorithm { get; set; } = SecurityAlgorithms.HmacSha256;
+
+        /// <summary>
+        /// Token issuer.
+        /// </summary>
         public string Issuer { get; set; }
+
+        /// <summary>
+        /// Token audience.
+        /// </summary>
         public string Audience { get; set; }
+
+        /// <summary>
+        /// Token validity (in minutes).
+        /// </summary>
         public int TokenValid { get; set; } = 30;
 
         /// <summary>
@@ -33,7 +60,7 @@ namespace FunderMaps.Identity
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.Email)
             };
             SigningCredentials = GetSigningKey(key);
         }
@@ -46,10 +73,10 @@ namespace FunderMaps.Identity
         {
             foreach (var role in roles)
             {
-                Claims.Add(new Claim(ClaimTypes.Role, role));
+                AddClaim(ClaimTypes.Role, role);
             }
         }
-        
+
         /// <summary>
         /// Add additional security claims.
         /// </summary>
@@ -58,7 +85,7 @@ namespace FunderMaps.Identity
         {
             foreach (var claim in claims)
             {
-                Claims.Add(new Claim(claim.Key, claim.Value));
+                AddClaim(claim.Key, claim.Value);
             }
         }
 
@@ -67,10 +94,7 @@ namespace FunderMaps.Identity
         /// </summary>
         /// <param name="key">Claim key.</param>
         /// <param name="value">Claim value.</param>
-        public void AddClaim(string key, object value)
-        {
-            Claims.Add(new Claim(key, value.ToString()));
-        }
+        public void AddClaim(string key, object value) => Claims.Add(new Claim(key, value.ToString()));
 
         /// <summary>
         /// Use symmetric key as token signature credentials.
@@ -78,9 +102,7 @@ namespace FunderMaps.Identity
         /// <param name="key">Symmetric key.</param>
         /// <returns>Signature credentials.</returns>
         protected SigningCredentials GetSigningKey(SymmetricSecurityKey key)
-        {
-            return new SigningCredentials(key, SignatureAlgorithm);
-        }
+            => new SigningCredentials(key, SignatureAlgorithm);
 
         /// <summary>
         /// Create the JWT token.
@@ -105,9 +127,6 @@ namespace FunderMaps.Identity
         /// Serialize jwt token into string.
         /// </summary>
         /// <returns>Token as string.</returns>
-        public string WriteToken()
-        {
-            return handler.WriteToken(ConstructJwtToken(Claims));
-        }
+        public string WriteToken() => handler.WriteToken(ConstructJwtToken(Claims));
     }
 }

@@ -1,12 +1,11 @@
-﻿using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Entities.Fis;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
-using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
+using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -15,230 +14,159 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint for recovery operations.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = "OrganizationMember")]
     [Route("api/foundationrecovery")]
     [ApiController]
     public class FoundationRecoveryController : BaseApiController
     {
-        private readonly IAuthorizationService _authorizationService;
         private readonly IFoundationRecoveryRepository _recoveryRepository;
+        private readonly UserManager<FunderMapsUser> _userManager;
 
         /// <summary>
         /// Create a new instance of the foundation recovery controller.
         /// </summary>
         public FoundationRecoveryController(
-            IAuthorizationService authorizationService,
-            IFoundationRecoveryRepository recoveryRepository)
+            IFoundationRecoveryRepository recoveryRepository,
+            UserManager<FunderMapsUser> userManager)
         {
-            _authorizationService = authorizationService;
             _recoveryRepository = recoveryRepository;
+            _userManager = userManager;
         }
 
-        // functions as a read all method
+        // GET: api/foundationrecovery
         /// <summary>
         /// Get all the foundation recovery data based on the organisation id
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="limit"></param>
         /// <returns></returns>
-        // GET: api/foundationrecovery
         [HttpGet]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAllAsync([FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+            => Ok(await _recoveryRepository.ListAllAsync(User.GetOrganizationId(), new Navigation(offset, limit)));
 
-            // If its not able to convert it to an integer
-            // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int orgId))
-            {
-                return ResourceForbid();
-            }
-
-            // Administrator can query anything
-            if (User.IsInRole(Constants.AdministratorRole))
-            {
-                return Ok(await _recoveryRepository.ListAllAsync(new Navigation(offset, limit)));
-            }
-
-            return Ok(await _recoveryRepository.ListAllAsync(orgId, new Navigation(offset, limit)));
-        }
-
-
-        // Functions as a read something method
-        /// <summary>
-        /// Get all the data of a foundation recovery report based on the ID given in the get request
-        /// </summary>
-        /// <param name="id">The id of the foundation recovery report</param>
-        /// <returns>The foundation recovery report</returns>
-        // GET: api/foundationrecovery/{id}
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(FoundationRecovery), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAsync(int id)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // If its not able to convert it to an integer
-            // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int orgId))
-            {
-                return ResourceForbid();
-            }
-
-            // TODO: Check permissions.
-
-            return Ok(await _recoveryRepository.GetByIdAsync(id));
-        }
-
-        // TODO: met of zonder de "deleted" reports
-
-        // Hit this endpoint to retrieve the amount of foundation recovery reports
         // GET: api/foundationrecovery/stats
+        /// <summary>
+        /// Return entity statistics.
+        /// </summary>
+        /// <returns>EntityStatsOutputModel.</returns>
         [HttpGet("stats")]
         [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // If its not able to convert it to an integer
-            // this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int orgId))
+            => Ok(new EntityStatsOutputModel
             {
-                return ResourceForbid();
-            }
-
-            // Administrator can query anything
-            if (User.IsInRole(Constants.AdministratorRole))
-            {
-                //yeet back to the admin
-                return Ok(new EntityStatsOutputModel
-                {
-                    Count = await _recoveryRepository.CountAsync()
-                });
-            }
-
-            return Ok(new EntityStatsOutputModel
-            {
-                Count = await _recoveryRepository.CountAsync(orgId)
+                Count = await _recoveryRepository.CountAsync(User.GetOrganizationId())
             });
-        }
 
-        // This is like a create method. This pushes the foundation recovery info into the database
-        // Create a new foundation recovery report.
         // POST: api/foundationrecovery
+        /// <summary>
+        /// Create a new foundation recovery item.
+        /// </summary>
+        /// <param name="input">See <see cref="FoundationRecovery"/>.</param>
+        /// <returns>See <see cref="FoundationRecovery"/>.</returns>
         [HttpPost]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecovery input)
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // NOTE: If it's not able to convert it to an integer
-            //this also catches it if the attestationOrganizationId equals null
-            if (!int.TryParse(attestationOrganizationId, out int orgId))
-            {
-                return ResourceForbid();
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, orgId, OperationsRequirement.Create);
-            if (authorizationResult.Succeeded)
-            {
-                //var recovery = new FoundationRecovery
-                //{
-                //    Note = input.Note,
-                //    Type = input.Type,
-                //    Year = input.Year,
-                //    Address = input.Address,
-                //    Attribution = input.Attribution,
-                //    AccessPolicy = input.AccessPolicy,
-                //    AddressNavigation = input.AddressNavigation,
-                //    AttributionNavigation = input.AttributionNavigation,
-                //    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
-                //    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence                    
-                //};
-
-                return Ok(await _recoveryRepository.AddAsync(input));
-            }
-            return ResourceForbid();
-        }
-
-        // Update info about the fundation recovery
-        // PUT: api/foundationrecovery/id
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] FoundationRecovery input)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            if (!int.TryParse(attestationOrganizationId, out int orgId))
-            {
-                return ResourceForbid();
-            }
-
-            // Check if the id of the url matches the id of the foundation recovery report
-            if (id != input.Id)
-            {
-                return BadRequest(0, "Identifiers do not match entity");
-            }
-
-            // Put all the info from the request body into a new foundation recovery object
-            //var recovery = new FoundationRecovery
-            //{
-            //    AccessPolicy = input.AccessPolicy,
-            //    Address = input.Address,
-            //    AddressNavigation = input.AddressNavigation,
-            //    Attribution = input.Attribution,
-            //    AttributionNavigation = input.AttributionNavigation,
-            //    FoundationRecoveryEvidence = input.FoundationRecoveryEvidence,
-            //    FoundationRecoveryRepair = input.FoundationRecoveryRepair,
-            //    Id = input.Id,
-            //    Note = input.Note,
-            //    Type = input.Type,
-            //    Year = input.Year                
-            //};
-
-            // Send the created recovery object to the repo
-            await _recoveryRepository.UpdateAsync(input);
-
-            return NoContent();
-        }
-
-        // Set a report as deleted wehn hitting this endpoint
-        // DELETE: api/foundationrecovery/id
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id, [FromBody] FoundationRecovery input)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            if (!int.TryParse(attestationOrganizationId, out int orgId))
-            {
-                return ResourceForbid();
-            }
-
-            // Check if the url id matches the input id
-            if (id != input.Id)
-            {
-                return BadRequest(0, "Identifiers do not match entity");
-            }
-
-            // retrieve the report based on the id
-            var report = await _recoveryRepository.GetByIdAsync(id);
-            if (report == null)
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            if (user == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, orgId, OperationsRequirement.Create);
-            if (authorizationResult.Succeeded)
-            {
-                await _recoveryRepository.DeleteAsync(report);
+            // TODO: Check reviewer, contractor
 
-                return NoContent();
+            input.Attribution = new Attribution
+            {
+                Project = input.Attribution.Project,
+                Reviewer = input.Attribution.Reviewer,
+                Contractor = input.Attribution.Contractor,
+                Creator = user.Id,
+                Owner = User.GetOrganizationId(),
+            };
+
+            var id = await _recoveryRepository.AddAsync(input);
+            return Ok(await _recoveryRepository.GetByIdAsync(id));
+        }
+
+        // GET: api/foundationrecovery/{id}
+        /// <summary>
+        /// Get all the data of an foundation recovery report based on the ID given in the get request
+        /// functions as a read something method.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>List of recovery items.</returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(FoundationRecovery), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetByIdAsync(int id)
+        {
+            var recovery = await _recoveryRepository.GetPublicAndByIdAsync(id, User.GetOrganizationId());
+            if (recovery == null)
+            {
+                return ResourceNotFound();
             }
 
-            return ResourceForbid();
+            return Ok(recovery);
+        }
+
+        // PUT: api/foundationrecovery/id
+        /// <summary>
+        /// Update recovery.
+        /// </summary>
+        /// <param name="id">Recovery item identifier.</param>
+        /// <param name="input">See <see cref="FoundationRecovery"/>.</param>
+        [HttpPut("{id}")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> PutAsync(int id, [FromBody] FoundationRecovery input)
+        {
+            var recovery = await _recoveryRepository.GetByIdAsync(id, User.GetOrganizationId());
+            if (recovery == null)
+            {
+                return ResourceNotFound();
+            }
+
+            // TODO: FoundationRecoveryRepair
+
+            recovery.Year = input.Year;
+            recovery.Note = input.Note;
+            recovery.Type = input.Type;
+            recovery.AccessPolicy = input.AccessPolicy;
+
+            await _recoveryRepository.UpdateAsync(recovery);
+
+            return NoContent();
+        }
+
+        // DELETE: api/foundationrecovery/id
+        /// <summary>
+        /// Soft delete the recovery.
+        /// </summary>
+        /// <param name="id">Recovery item identifier.</param>
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var recovery = await _recoveryRepository.GetByIdAsync(id, User.GetOrganizationId());
+            if (recovery == null)
+            {
+                return ResourceNotFound();
+            }
+
+            await _recoveryRepository.DeleteAsync(recovery);
+
+            return NoContent();
         }
     }
 }

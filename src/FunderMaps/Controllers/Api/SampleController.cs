@@ -1,9 +1,6 @@
-﻿using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Entities.Fis;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
-using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -16,12 +13,11 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint controller for sample operations.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = "OrganizationMember")]
     [Route("api/sample")]
     [ApiController]
     public class SampleController : BaseApiController
     {
-        private readonly IAuthorizationService _authorizationService;
         private readonly ISampleRepository _sampleRepository;
         private readonly IReportRepository _reportRepository;
 
@@ -29,11 +25,9 @@ namespace FunderMaps.Controllers.Api
         /// Create a new instance.
         /// </summary>
         public SampleController(
-            IAuthorizationService authorizationService,
             ISampleRepository sampleRepository,
             IReportRepository reportRepository)
         {
-            _authorizationService = authorizationService;
             _sampleRepository = sampleRepository;
             _reportRepository = reportRepository;
         }
@@ -48,23 +42,8 @@ namespace FunderMaps.Controllers.Api
         [HttpGet]
         [ProducesResponseType(typeof(List<Sample>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAllAsync([FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // Administrator can query anything without organization filter
-            if (User.IsInRole(Constants.AdministratorRole))
-            {
-                return Ok(await _sampleRepository.ListAllAsync(new Navigation(offset, limit)));
-            }
-
-            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
-            {
-                return ResourceForbid();
-            }
-
-            return Ok(await _sampleRepository.ListAllAsync(attOrgId, new Navigation(offset, limit)));
-        }
+        public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+            => Ok(await _sampleRepository.ListAllAsync(User.GetOrganizationId(), new Navigation(offset, limit)));
 
         // GET: api/sample/report/{id}
         /// <summary>
@@ -77,23 +56,8 @@ namespace FunderMaps.Controllers.Api
         [HttpGet("report/{id}")]
         [ProducesResponseType(typeof(List<Sample>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAllAsync(int id, [FromQuery] uint offset = 0, [FromQuery] uint limit = 25)
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // Administrator can query anything without organization filter
-            if (User.IsInRole(Constants.AdministratorRole))
-            {
-                return Ok(await _sampleRepository.ListAllReportAsync(id, new Navigation(offset, limit)));
-            }
-
-            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
-            {
-                return ResourceForbid();
-            }
-
-            return Ok(await _sampleRepository.ListAllReportAsync(id, attOrgId, new Navigation(offset, limit)));
-        }
+        public async Task<IActionResult> GetAllAsync(int id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
+            => Ok(await _sampleRepository.ListAllReportAsync(id, User.GetOrganizationId(), new Navigation(offset, limit)));
 
         // GET: api/sample/stats
         /// <summary>
@@ -104,28 +68,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
-        {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // Administrator can query anything without organization filter
-            if (User.IsInRole(Constants.AdministratorRole))
+            => Ok(new EntityStatsOutputModel
             {
-                return Ok(new EntityStatsOutputModel
-                {
-                    Count = await _sampleRepository.CountAsync()
-                });
-            }
-
-            if (!int.TryParse(attestationOrganizationId, out int attOrgId))
-            {
-                return ResourceForbid();
-            }
-
-            return Ok(new EntityStatsOutputModel
-            {
-                Count = await _sampleRepository.CountAsync(attOrgId)
+                Count = await _sampleRepository.CountAsync(User.GetOrganizationId())
             });
-        }
 
         // POST: api/sample
         /// <summary>
@@ -134,6 +80,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">See <see cref="Sample"/>.</param>
         /// <returns>See <see cref="Sample"/>.</returns>
         [HttpPost]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -145,31 +92,13 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, report.Attribution, OperationsRequirement.Create);
-            if (authorizationResult.Succeeded)
-            {
-                switch (report.Status)
-                {
-                    case ReportStatus.Todo:
-                        {
-                            // TODO: HACK. Should not cast to known type.
-                            await (_reportRepository as Data.Repositories.ReportRepository).UpdateStatusAsync(report, ReportStatus.Pending);
-                        }
-                        break;
-                    case ReportStatus.Pending:
-                        break;
-                    case ReportStatus.Done:
-                    case ReportStatus.Discarded:
-                    case ReportStatus.PendingReview:
-                    case ReportStatus.Rejected:
-                    default:
-                        return Forbid(0, "Resource modification forbidden with current status");
-                }
+            // TODO: Check address, otherwise insert now.
 
-                return Ok(await _sampleRepository.AddAsync(input));
-            }
+            var id = await _sampleRepository.AddAsync(input);
 
-            return ResourceForbid();
+            // TODO: Fire event and set ReportStatus => ReportStatus.Pending
+
+            return Ok(await _sampleRepository.GetByIdAsync(id));
         }
 
         // GET: api/sample/{id}
@@ -186,25 +115,13 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var sample = await _sampleRepository.GetByIdAsync(id);
+            var sample = await _sampleRepository.GetPublicAndByIdAsync(id, User.GetOrganizationId());
             if (sample == null)
             {
                 return ResourceNotFound();
             }
 
-            // TODO: sample.ReportNavigation.IsPublic()
-            if (sample.IsPublic())
-            {
-                return Ok(sample);
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Read);
-            if (authorizationResult.Succeeded)
-            {
-                return Ok(sample);
-            }
-
-            return ResourceForbid();
+            return Ok(sample);
         }
 
         // PUT: api/sample/{id}
@@ -214,32 +131,36 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Sample identifier.</param>
         /// <param name="input">Sample data.</param>
         [HttpPut("{id}")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
         {
-            if (id != input.Id)
-            {
-                return BadRequest(0, "Identifiers do not match entity");
-            }
-
-            var sample = await _sampleRepository.GetByIdAsync(id);
+            var sample = await _sampleRepository.GetByIdAsync(id, User.GetOrganizationId());
             if (sample == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Update);
-            if (authorizationResult.Succeeded)
-            {
-                await _sampleRepository.UpdateAsync(input);
+            sample.FoundationType = input.FoundationType;
+            sample.MonitoringWell = input.MonitoringWell;
+            sample.Cpt = input.Cpt;
+            sample.WoodLevel = input.WoodLevel;
+            sample.GroundLevel = input.GroundLevel;
+            sample.GroundwaterLevel = input.GroundwaterLevel;
+            sample.FoundationRecoveryAdviced = input.FoundationRecoveryAdviced;
+            sample.FoundationDamageCause = input.FoundationDamageCause;
+            sample.BuiltYear = input.BuiltYear;
+            sample.FoundationQuality = input.FoundationQuality;
+            sample.EnforcementTerm = input.EnforcementTerm;
+            sample.Note = input.Note;
+            sample.AccessPolicy = input.AccessPolicy;
 
-                return NoContent();
-            }
+            await _sampleRepository.UpdateAsync(sample);
 
-            return ResourceForbid();
+            return NoContent();
         }
 
         // DELETE: api/sample/{id}
@@ -248,26 +169,21 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <param name="id">Sample identifier.</param>
         [HttpDelete("{id}")]
+        [Authorize(Policy = "OrganizationMemberWrite")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var sample = await _sampleRepository.GetByIdAsync(id);
+            var sample = await _sampleRepository.GetByIdAsync(id, User.GetOrganizationId());
             if (sample == null)
             {
                 return ResourceNotFound();
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, sample.Attribution, OperationsRequirement.Delete);
-            if (authorizationResult.Succeeded)
-            {
-                await _sampleRepository.DeleteAsync(sample);
+            await _sampleRepository.DeleteAsync(sample);
 
-                return NoContent();
-            }
-
-            return ResourceForbid();
+            return NoContent();
         }
     }
 }

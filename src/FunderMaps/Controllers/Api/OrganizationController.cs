@@ -1,18 +1,17 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using FunderMaps.Data;
-using FunderMaps.Models;
-using FunderMaps.Models.Identity;
-using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
+﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities.Fis;
+using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
-using FunderMaps.Data.Authorization;
+using FunderMaps.Helpers;
+using FunderMaps.Interfaces;
+using FunderMaps.Models.Identity;
+using FunderMaps.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
@@ -24,62 +23,40 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class OrganizationController : BaseApiController
     {
-        private readonly FunderMapsDbContext _context;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly UserManager<FunderMapsUser> _userManager;
-        private readonly IAuthorizationService _authorizationService;
-        private readonly ILookupNormalizer _keyNormalizer;
 
         /// <summary>
         /// Create new instance.
         /// </summary>
         public OrganizationController(
-            FunderMapsDbContext context,
-            UserManager<FunderMapsUser> userManager,
-            IAuthorizationService authorizationService,
-            ILookupNormalizer keyNormalizer)
+            IOrganizationRepository organizationRepository,
+            IOrganizationUserRepository organizationUserRepository,
+            UserManager<FunderMapsUser> userManager)
         {
-            _context = context;
+            _organizationRepository = organizationRepository;
+            _organizationUserRepository = organizationUserRepository;
             _userManager = userManager;
-            _authorizationService = authorizationService;
-            _keyNormalizer = keyNormalizer;
         }
 
         // GET: api/organization
         /// <summary>
-        /// Get all organizations of which the current authenticated user is a member of
-        /// or get all organizations as admin.
+        /// Get all organizations of which the current authenticated user is a member of.
         /// </summary>
         [HttpGet]
+        [Authorize(Policy = "OrganizationMember")]
         [ProducesResponseType(typeof(List<Organization>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync()
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
-
-            // Administrator can query anything
-            if (User.IsInRole(Constants.AdministratorRole))
-            {
-                return Ok(await _context.Organizations.AsNoTracking().ToListAsync());
-            }
-
-            if (attestationOrganizationId == null)
-            {
-                return ResourceForbid();
-            }
-
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            if (user == null)
+            var organization = await _organizationRepository.GetByIdAsync(User.GetOrganizationId());
+            if (organization == null)
             {
                 return ResourceNotFound();
             }
 
-            return Ok(await _context.OrganizationUsers
-                .AsNoTracking()
-                .Include(s => s.Organization)
-                .Include(s => s.OrganizationRole)
-                .Where(s => s.UserId == user.Id)
-                .Select(s => s.Organization)
-                .ToListAsync());
+            return Ok(organization);
         }
 
         // GET: api/organization/{id}
@@ -92,21 +69,19 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            var organization = await _context.Organizations
-                .AsNoTracking()
-                .SingleOrDefaultAsync(q => q.Id == id);
-            if (organization == null)
+            // TODO: Define policy
+            if (User.IsInRole(Constants.AdministratorRole) || (User.HasOrganization() && id == User.GetOrganizationId()))
             {
-                return ResourceNotFound();
-            }
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ResourceNotFound();
+                }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
-            if (authorizationResult.Succeeded)
-            {
                 return Ok(organization);
             }
 
-            return ResourceForbid();
+            return ResourceNotFound();
         }
 
         // GET: api/organization/{id}/user
@@ -114,30 +89,26 @@ namespace FunderMaps.Controllers.Api
         /// Get organization user list.
         /// </summary>
         /// <param name="id">User identifier.</param>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
         /// <returns>List of users, see <see cref="FunderMapsUser"/>.</returns>
         [HttpGet("{id:guid}/user")]
         [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetUsersAsync(Guid id)
+        public async Task<IActionResult> GetUsersAsync(Guid id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            if (User.IsInRole(Constants.AdministratorRole))
             {
-                return ResourceNotFound();
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ResourceNotFound();
+                }
+
+                return Ok(await _organizationUserRepository.ListAllByOrganizationIdAsync(organization.Id, new Navigation(offset, limit)));
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationMemberPolicy");
-            if (authorizationResult.Succeeded)
-            {
-                return Ok(await _context.OrganizationUsers
-                    .AsNoTracking()
-                    .Include(a => a.User)
-                    .Where(q => q.Organization == organization)
-                    .Select(s => new OrganizationUserInputOutputModel { User = s.User, Role = s.OrganizationRole })
-                    .ToListAsync());
-            }
-
-            return ResourceForbid();
+            return ResourceNotFound();
         }
 
         // POST: api/organization/{id}/user
@@ -154,68 +125,36 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            if (User.IsInRole(Constants.AdministratorRole))
             {
-                return ResourceNotFound();
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
-            if (authorizationResult.Succeeded)
-            {
-                return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
                 {
-                    // Create everything at once, or nothing at all if an error occurs.
-                    using (var transaction = await _context.Database.BeginTransactionAsync())
-                    {
-                        var role = await _context.OrganizationRoles
-                            .SingleAsync(s => s.NormalizedName == _keyNormalizer.Normalize(Constants.ReaderRole));
+                    return ResourceNotFound();
+                }
 
-                        // Check if role exists
-                        if (!string.IsNullOrEmpty(input.Role))
-                        {
-                            role = await _context.OrganizationRoles
-                                .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role));
+                // Prepare new user account.
+                var user = new FunderMapsUser(input.Email);
 
-                            if (role == null)
-                            {
-                                return BadRequest(0, "Role not found");
-                            }
-                        }
+                // Set password on account.
+                var result = await _userManager.CreateAsync(user, input.Password);
+                if (!result.Succeeded)
+                {
+                    return ApplicationError();
+                }
 
-                        var attestationPrincipal = new Core.Entities.Fis.Principal
-                        {
-                            NickName = input.Email,
-                            Email = input.Email,
-                            _Organization = organization.AttestationOrganizationId,
-                        };
-
-                        // TODO: Create principal for user
-
-                        // Prepare user account
-                        var user = new FunderMapsUser(input.Email)
-                        {
-                            AttestationPrincipalId = attestationPrincipal.Id
-                        };
-                        var result = await _userManager.CreateAsync(user, input.Password);
-                        if (!result.Succeeded)
-                        {
-                            transaction.Rollback();
-                            return ResourceExists();
-                        }
-
-                        // Attach user to organization
-                        await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
-                        await _context.SaveChangesAsync();
-
-                        transaction.Commit();
-
-                        return NoContent();
-                    }
+                // Attach user to organization.
+                await _organizationUserRepository.AddAsync(new OrganizationUser
+                {
+                    UserId = user.Id,
+                    OrganizationId = organization.Id,
+                    Role = input.Role
                 });
+
+                return NoContent();
             }
 
-            return ResourceForbid();
+            return ResourceNotFound();
         }
 
         // GET: api/organization/{id}/user/{user_id}
@@ -223,45 +162,25 @@ namespace FunderMaps.Controllers.Api
         /// Get organization user if this user has access to the record.
         /// </summary>
         /// <param name="id">Organization id.</param>
-        /// <param name="user_id">User id.</param>
-        [HttpGet("{id:guid}/user/{user_id:guid}")]
-        [ProducesResponseType(typeof(OrganizationUserInputOutputModel), 204)]
+        /// <param name="userId">User id.</param>
+        [HttpGet("{id:guid}/user/{userId:guid}")]
+        [ProducesResponseType(typeof(OrganizationUser), 204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id)
+        public async Task<IActionResult> GetUserAsync(Guid id, Guid userId)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            if (User.IsInRole(Constants.AdministratorRole))
             {
-                return ResourceNotFound();
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
-            if (authorizationResult.Succeeded)
-            {
-                var user = await _userManager.FindByIdAsync(user_id.ToString());
-                if (user == null)
-                {
-                    return ResourceNotFound();
-                }
-
-                // If the user exists, but not in this organization, forbid deletion
-                var organizationUser = await _context.OrganizationUsers
-                    .Include(s => s.OrganizationRole)
-                    .SingleAsync(s => s.User == user && s.Organization == organization);
+                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
                 if (organizationUser == null)
                 {
                     return ResourceForbid();
                 }
 
-                return Ok(new OrganizationUserInputOutputModel
-                {
-                    User = user,
-                    Role = organizationUser.OrganizationRole
-                });
+                return Ok(organizationUser);
             }
 
-            return NoContent();
+            return ResourceNotFound();
         }
 
         // PUT: api/organization/{id}/user/{user_id}
@@ -269,65 +188,30 @@ namespace FunderMaps.Controllers.Api
         /// Update organization user if this user has access to the record.
         /// </summary>
         /// <param name="id">Organization id.</param>
-        /// <param name="user_id">User id.</param>
+        /// <param name="userId">User id.</param>
         /// <param name="input">User object.</param>
-        [HttpPut("{id:guid}/user/{user_id:guid}")]
+        [HttpPut("{id:guid}/user/{userId:guid}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid user_id, OrganizationUserInputOutputModel input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUser input)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            if (User.IsInRole(Constants.AdministratorRole))
             {
-                return ResourceNotFound();
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
-            if (authorizationResult.Succeeded)
-            {
-                var user = await _userManager.FindByIdAsync(user_id.ToString());
-                if (user == null)
-                {
-                    return ResourceNotFound();
-                }
-
-                // If the user exists, but not in this organization, forbid alteration
-                var organizationUser = await _context.OrganizationUsers
-                    .SingleAsync(s => s.User == user && s.Organization == organization);
+                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
                 if (organizationUser == null)
                 {
                     return ResourceForbid();
                 }
 
-                if (input.User != null)
-                {
-                    user.PhoneNumber = input.User.PhoneNumber;
-                    user.GivenName = input.User.GivenName;
-                    user.LastName = input.User.LastName;
-                    user.Avatar = input.User.Avatar;
-                    user.JobTitle = input.User.JobTitle;
-                }
+                organizationUser.Role = input.Role;
 
-                if (input.Role != null)
-                {
-                    var role = await _context.OrganizationRoles
-                                .SingleOrDefaultAsync(s => s.NormalizedName == _keyNormalizer.Normalize(input.Role.Name));
-                    if (role == null)
-                    {
-                        return BadRequest(0, "Role not found");
-                    }
+                await _organizationUserRepository.UpdateAsync(organizationUser);
 
-                    // TODO: Wrap in transaction. If an error occurs after the delete then the user is left without a role.
-                    _context.OrganizationUsers.Remove(organizationUser);
-                    await _context.OrganizationUsers.AddAsync(new OrganizationUser(user, organization, role));
-                    await _context.SaveChangesAsync();
-                }
-
-                await _userManager.UpdateAsync(user);
+                return NoContent();
             }
 
-            return NoContent();
+            return ResourceNotFound();
         }
 
         // DELETE: api/organization/{id}/user/{user_id}
@@ -335,50 +219,24 @@ namespace FunderMaps.Controllers.Api
         /// Remove an user from the organization if this user has access to the record.
         /// </summary>
         /// <param name="id">Organization id.</param>
-        /// <param name="user_id">User id.</param>
-        [HttpDelete("{id:guid}/user/{user_id:guid}")]
+        /// <param name="userId">User id.</param>
+        [HttpDelete("{id:guid}/user/{userId:guid}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> RemoveUserAsync(Guid id, Guid user_id)
+        public async Task<IActionResult> RemoveUserAsync(Guid id, Guid userId)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            if (User.IsInRole(Constants.AdministratorRole))
             {
-                return ResourceNotFound();
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
-            if (authorizationResult.Succeeded)
-            {
-                return await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+                var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
+                if (organizationUser == null)
                 {
-                    // Create everything at once, or nothing at all if an error occurs.
-                    using (var transaction = await _context.Database.BeginTransactionAsync())
-                    {
-                        var user = await _userManager.FindByIdAsync(user_id.ToString());
-                        if (user == null)
-                        {
-                            return ResourceNotFound();
-                        }
+                    return ResourceForbid();
+                }
 
-                        // If the user exists, but not in this organization, forbid deletion
-                        var organizationUser = await _context.OrganizationUsers
-                            .SingleAsync(s => s.User == user && s.Organization == organization);
-                        if (organizationUser == null)
-                        {
-                            return ResourceForbid();
-                        }
+                await _organizationUserRepository.DeleteAsync(organizationUser);
 
-                        // Remove the user from the organization and then delete the user
-                        _context.OrganizationUsers.Remove(organizationUser);
-                        await _userManager.DeleteAsync(user);
-
-                        transaction.Commit();
-
-                        return NoContent();
-                    }
-                });
+                return NoContent();
             }
 
             return ResourceForbid();
@@ -395,21 +253,14 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
-            var organization = await _context.Organizations
-                .FirstOrDefaultAsync(s => s.Id == id);
-            if (organization == null)
+            if (User.IsInRole(Constants.AdministratorRole))
             {
-                return ResourceNotFound();
-            }
+                var organization = await _organizationRepository.GetByIdAsync(id);
+                if (organization == null)
+                {
+                    return ResourceNotFound();
+                }
 
-            if (id != input.Id)
-            {
-                return BadRequest(0, "Identifiers do not match entity");
-            }
-
-            var authorizationResult = await _authorizationService.AuthorizeAsync(User, organization, "OrganizationSuperuserPolicy");
-            if (authorizationResult.Succeeded)
-            {
                 organization.Email = input.Email;
                 organization.PhoneNumber = input.PhoneNumber;
                 organization.RegistrationNumber = input.RegistrationNumber;
@@ -436,8 +287,7 @@ namespace FunderMaps.Controllers.Api
                 organization.PostalState = input.PostalState;
                 organization.PostalCountry = input.PostalCountry;
 
-                _context.Organizations.Update(organization);
-                await _context.SaveChangesAsync();
+                await _organizationRepository.UpdateAsync(organization);
 
                 return NoContent();
             }

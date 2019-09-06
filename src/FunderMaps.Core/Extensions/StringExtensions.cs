@@ -1,18 +1,20 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Linq;
 
 namespace FunderMaps.Core.Extensions
 {
+    /// <summary>
+    /// String Extensions.
+    /// </summary>
     public static class StringExtensions
     {
-        public static string ToUnderscore(this string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                throw new ArgumentException("message", nameof(str));
-            }
-
-            return Regex.Replace(str, "(?<=[a-z])([A-Z0-9])", "_$0", RegexOptions.Compiled).ToLower();
-        }
+        /// <summary>
+        /// Convert camelCase into snake casing.
+        /// </summary>
+        /// <param name="str">Input string to extend.</param>
+        /// <returns>Converted string.</returns>
+        public static string ToSnakeCase(this string str)
+            => string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x)
+            ? "_" + x.ToString()
+            : x.ToString())).ToLower().Trim();
     }
 }
