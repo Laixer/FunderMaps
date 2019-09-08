@@ -1,6 +1,4 @@
-﻿using FunderMaps.Authorization.Requirement;
-using FunderMaps.Core.Entities.Fis;
-using FunderMaps.Core.Repositories;
+﻿using FunderMaps.Core.Repositories;
 using FunderMaps.Data.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
@@ -24,6 +22,7 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class FoundationRecoveryEvidenceController : BaseApiController
     {
+#if _DISABLED
         private readonly IAuthorizationService _authorizationService;
         private readonly IFoundationRecoveryEvidenceRepository _recoveryEvidenceRepository;
 
@@ -205,5 +204,6 @@ namespace FunderMaps.Controllers.Api
             }
             return ResourceForbid();
         }
+#endif
     }
 }
