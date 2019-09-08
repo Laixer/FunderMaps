@@ -122,39 +122,89 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Organization"/> on success, null on error.</returns>
         public override async Task<Organization> GetByIdAsync(Guid id)
         {
-            var sql = @"SELECT  id,
-                                name,
-                                normalized_name,
-                                email,
-                                phone_number,
-                                registration_number,
-                                is_default,
-                                is_validated,
-                                branding_logo,
-                                invoice_name,
-                                invoice_po_number,
-                                invoice_email,
-                                home_address,
-                                home_address_number,
-                                home_address_number_postfix,
-                                home_city,
-                                home_postbox,
-                                home_zipcode,
-                                home_state,
-                                home_country,
-                                postal_address,
-                                postal_address_number,
-                                postal_address_number_postfix,
-                                postal_city,
-                                postal_postbox,
-                                postal_zipcode,
-                                postal_state,
-                                postal_country
-                        FROM    application.organization AS org
-                        WHERE   org.id = @Id
-                        LIMIT  1";
+            var sql = @"
+                SELECT  id,
+                        name,
+                        normalized_name,
+                        email,
+                        phone_number,
+                        registration_number,
+                        is_default,
+                        is_validated,
+                        branding_logo,
+                        invoice_name,
+                        invoice_po_number,
+                        invoice_email,
+                        home_address,
+                        home_address_number,
+                        home_address_number_postfix,
+                        home_city,
+                        home_postbox,
+                        home_zipcode,
+                        home_state,
+                        home_country,
+                        postal_address,
+                        postal_address_number,
+                        postal_address_number_postfix,
+                        postal_city,
+                        postal_postbox,
+                        postal_zipcode,
+                        postal_state,
+                        postal_country
+                FROM    application.organization AS org
+                WHERE   org.id = @Id
+                LIMIT  1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { Id = id }));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.First();
+        }
+
+        /// <summary>
+        /// Retrieve entity by name.
+        /// </summary>
+        /// <param name="name">Organization name.</param>
+        /// <returns><see cref="Organization"/> on success, null on error.</returns>
+        public async Task<Organization> GetByNormalizedNameAsync(string name)
+        {
+            var sql = @"
+                SELECT  id,
+                        name,
+                        normalized_name,
+                        email,
+                        phone_number,
+                        registration_number,
+                        is_default,
+                        is_validated,
+                        branding_logo,
+                        invoice_name,
+                        invoice_po_number,
+                        invoice_email,
+                        home_address,
+                        home_address_number,
+                        home_address_number_postfix,
+                        home_city,
+                        home_postbox,
+                        home_zipcode,
+                        home_state,
+                        home_country,
+                        postal_address,
+                        postal_address_number,
+                        postal_address_number_postfix,
+                        postal_city,
+                        postal_postbox,
+                        postal_zipcode,
+                        postal_state,
+                        postal_country
+                FROM    application.organization AS org
+                WHERE   org.normalized_name = @NormalizedName
+                LIMIT  1";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { NormalizedName = name }));
             if (result.Count() == 0)
             {
                 return null;

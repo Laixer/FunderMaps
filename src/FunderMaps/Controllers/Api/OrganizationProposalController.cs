@@ -21,6 +21,7 @@ namespace FunderMaps.Controllers.Api
     public class OrganizationProposalController : BaseApiController
     {
         private readonly IOrganizationProposalRepository _organizationProposalRepository;
+        private readonly IOrganizationRepository _organizationRepository;
         private readonly ILookupNormalizer _keyNormalizer;
 
         /// <summary>
@@ -28,9 +29,11 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         public OrganizationProposalController(
             IOrganizationProposalRepository organizationProposalRepository,
+            IOrganizationRepository organizationRepository,
             ILookupNormalizer keyNormalizer)
         {
             _organizationProposalRepository = organizationProposalRepository;
+            _organizationRepository = organizationRepository;
             _keyNormalizer = keyNormalizer;
         }
 
@@ -93,15 +96,14 @@ namespace FunderMaps.Controllers.Api
             // Organization proposals must be unique.
             if (await _organizationProposalRepository.GetByNormalizedNameAsync(input.NormalizedName) != null)
             {
-                return Conflict(input.Name);
+                return Conflict();
             }
 
-            // TODO: Check if name exists in organization store.
             // Organization proposals cannot use an existing organization name.
-            //if (await _organizationRepository.GetByNameAsync(input.NormalizedName) != null)
-            //{
-            //    return Conflict(input.Name);
-            //}
+            if (await _organizationRepository.GetByNormalizedNameAsync(input.NormalizedName) != null)
+            {
+                return Conflict();
+            }
 
             var id = await _organizationProposalRepository.AddAsync(input);
 
