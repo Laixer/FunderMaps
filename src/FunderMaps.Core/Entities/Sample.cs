@@ -9,10 +9,6 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public class Sample : AccessControl
     {
-        // TODO: FOR NOW
-        [IgnoreDataMember]
-        public int Attribution { get; set; }
-
         /// <summary>
         /// Unique identifier.
         /// </summary>

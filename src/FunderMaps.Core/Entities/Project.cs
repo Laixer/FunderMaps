@@ -35,19 +35,37 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public DateTime? EndDate { get; set; }
 
+        /// <summary>
+        /// Adviser user identifier.
+        /// </summary>
         [IgnoreDataMember]
-        public int? Adviser { get; set; }
+        public Guid? Adviser { get; set; }
 
+        /// <summary>
+        /// Lead user identifier.
+        /// </summary>
         [IgnoreDataMember]
-        public int? Lead { get; set; }
+        public Guid? Lead { get; set; }
 
+        /// <summary>
+        /// Creator user identifier.
+        /// </summary>
         [IgnoreDataMember]
-        public int? Creator { get; set; }
+        public Guid? Creator { get; set; }
 
-        public Principal AdviserNavigation { get; set; }
+        /// <summary>
+        /// Adviser user.
+        /// </summary>
+        public object AdviserNavigation { get; set; }
 
-        public Principal CreatorNavigation { get; set; }
+        /// <summary>
+        /// Lead user.
+        /// </summary>
+        public object LeadNavigation { get; set; }
 
-        public Principal LeadNavigation { get; set; }
+        /// <summary>
+        /// Creator user.
+        /// </summary>
+        public object CreatorNavigation { get; set; }
     }
 }
