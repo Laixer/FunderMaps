@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
+using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint controller for sample operations.
     /// </summary>
-    [Authorize(Policy = "OrganizationMember")]
+    [Authorize(Policy = Constants.OrganizationMemberPolicy)]
     [Route("api/sample")]
     [ApiController]
     public class SampleController : BaseApiController
@@ -80,7 +81,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">See <see cref="Sample"/>.</param>
         /// <returns>See <see cref="Sample"/>.</returns>
         [HttpPost]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(typeof(Sample), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -131,7 +132,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Sample identifier.</param>
         /// <param name="input">Sample data.</param>
         [HttpPut("{id}")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
@@ -169,7 +170,7 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <param name="id">Sample identifier.</param>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]

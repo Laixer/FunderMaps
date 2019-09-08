@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
+using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
@@ -15,7 +16,7 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint controller for report operations.
     /// </summary>
-    [Authorize(Policy = "OrganizationMember")]
+    [Authorize(Policy = Constants.OrganizationMemberPolicy)]
     [Route("api/report")]
     [ApiController]
     public class ReportController : BaseApiController
@@ -72,7 +73,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Report data.</param>
         /// <returns>Report.</returns>
         [HttpPost]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(typeof(Report), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
@@ -131,7 +132,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Report data.</param>
         [HttpPut("{id}/{document}")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
@@ -176,7 +177,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpPut("{id}/{document}/review")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -213,7 +214,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier.</param>
         /// <param name="input">Verification status.</param>
         [HttpPut("{id}/{document}/validate")]
-        [Authorize(Policy = "OrganizationMemberVerify")]
+        [Authorize(Policy = Constants.OrganizationMemberVerifyPolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
@@ -253,7 +254,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Report identifier.</param>
         /// <param name="document">Report identifier.</param>
         [HttpDelete("{id}/{document}")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id, string document)

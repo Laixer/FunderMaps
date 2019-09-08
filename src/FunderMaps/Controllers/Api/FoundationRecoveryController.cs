@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
+using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
@@ -14,7 +15,7 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Endpoint for recovery operations.
     /// </summary>
-    [Authorize(Policy = "OrganizationMember")]
+    [Authorize(Policy = Constants.OrganizationMemberPolicy)]
     [Route("api/foundationrecovery")]
     [ApiController]
     public class FoundationRecoveryController : BaseApiController
@@ -67,7 +68,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">See <see cref="FoundationRecovery"/>.</param>
         /// <returns>See <see cref="FoundationRecovery"/>.</returns>
         [HttpPost]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(typeof(FoundationRecovery), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecovery input)
@@ -121,7 +122,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Recovery item identifier.</param>
         /// <param name="input">See <see cref="FoundationRecovery"/>.</param>
         [HttpPut("{id}")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
@@ -152,7 +153,7 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <param name="id">Recovery item identifier.</param>
         [HttpDelete("{id}")]
-        [Authorize(Policy = "OrganizationMemberWrite")]
+        [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
