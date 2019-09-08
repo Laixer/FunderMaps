@@ -1,11 +1,14 @@
-﻿using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using FunderMaps.Core.Helpers;
 using Microsoft.AspNetCore.Http;
-using FunderMaps.Core.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FunderMaps.Helpers
 {
+    /// <summary>
+    /// Application file wrapper.
+    /// </summary>
     public class ApplicationFileWrapper
     {
         private readonly IEnumerable<string> _allowedFileTypes;
@@ -50,6 +53,9 @@ namespace FunderMaps.Helpers
             CheckIfValid();
         }
 
+        /// <summary>
+        /// Check if submitted file is valid.
+        /// </summary>
         private void CheckIfValid()
         {
             // Mark empty document as invalid

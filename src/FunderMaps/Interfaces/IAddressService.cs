@@ -1,9 +1,11 @@
-﻿using System;
+﻿using FunderMaps.Core.Entities;
 using System.Threading.Tasks;
-using FunderMaps.Core.Entities;
 
 namespace FunderMaps.Interfaces
 {
+    /// <summary>
+    /// Address service.
+    /// </summary>
     public interface IAddressService
     {
         /// <summary>

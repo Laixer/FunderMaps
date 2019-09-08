@@ -16,6 +16,7 @@ namespace FunderMaps.Interfaces
         /// Retrieve entities by organization id.
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
+        /// <param name="navigation">Recordset navigation.</param>
         /// <returns>List of entities.</returns>
         Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationIdAsync(Guid orgId, Navigation navigation);
 

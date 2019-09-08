@@ -31,9 +31,7 @@ namespace FunderMaps.ViewModels
         /// <summary>
         /// Create new instance.
         /// </summary>
-        public ErrorOutputModel()
-        {
-        }
+        public ErrorOutputModel() { }
 
         /// <summary>
         /// Create new instance.

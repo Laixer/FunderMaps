@@ -3,6 +3,10 @@ using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO: can be removed.
+    /// <summary>
+    /// Principal entity.
+    /// </summary>
     public class Principal : BaseEntity
     {
         public int Id { get; set; }

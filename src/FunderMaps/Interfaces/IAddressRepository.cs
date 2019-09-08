@@ -1,10 +1,13 @@
-﻿using System;
-using System.Threading.Tasks;
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Interfaces
 {
+    /// <summary>
+    /// Address repository.
+    /// </summary>
     public interface IAddressRepository : IAsyncRepository<Address, Guid>
     {
         /// <summary>

@@ -1,25 +1,16 @@
-﻿using System.Threading.Tasks;
-using FunderMaps.Core.Entities;
-using FunderMaps.Extensions;
-using FunderMaps.Interfaces;
-
-namespace FunderMaps.Data.Repositories
+﻿namespace FunderMaps.Data.Repositories
 {
+    /// <summary>
+    /// Address repository.
+    /// </summary>
     public class AddressRepository // : RepositoryBase<FisDbContext, Address>, IAddressRepository
     {
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public AddressRepository()
-            //: base(dbContext)
+        //: base(dbContext)
         {
-        }
-
-        public Task<Address> GetOrAddAsync(Address address)
-        {
-            //=> _dbContext.Address.GetOrAddAsync(address, s => s.Id == address.Id ||
-            //        s.StreetName == address.StreetName &&
-            //        s.BuildingNumber == address.BuildingNumber &&
-            //        s.BuildingNumberSuffix == address.BuildingNumberSuffix);
-
-            return null;
         }
     }
 }

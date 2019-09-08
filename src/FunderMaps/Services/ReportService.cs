@@ -1,32 +1,44 @@
-﻿using System;
-using System.Threading.Tasks;
-using FunderMaps.Interfaces;
+﻿using FunderMaps.Interfaces;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Services
 {
-    // FUTURE: Can be removed?
+    /// <summary>
+    /// Report service.
+    /// </summary>
     public class ReportService : IReportService
     {
         private readonly ILogger _logger;
 
-        public const string FileContainer = "report";
-
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="logger"></param>
         public ReportService(ILogger<ReportService> logger)
         {
             _logger = logger;
         }
 
+        /// <summary>
+        /// Create new report.
+        /// </summary>
         public Task CreateAsync()
         {
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Delete report.
+        /// </summary>
         public Task DeleteAsync()
         {
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Validate report.
+        /// </summary>
         public Task ValidateAsync()
         {
             return Task.CompletedTask;
