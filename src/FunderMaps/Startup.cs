@@ -162,26 +162,61 @@ namespace FunderMaps
                     .RequireAuthenticatedUser()
                     .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUser);
 
-                options.AddPolicy("OrganizationMember", organizationMemberPolicyBuilder
+                options.AddPolicy(Constants.OrganizationMemberPolicy, organizationMemberPolicyBuilder
                     .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUserRole)
                     .Build());
 
-                options.AddPolicy("OrganizationMemberWrite", organizationMemberPolicyBuilder
+                options.AddPolicy(Constants.OrganizationMemberWritePolicy, organizationMemberPolicyBuilder
                     .RequireAssertion(context => context.User.HasOrganization() &&
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        (context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer)
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer))
                     .Build());
 
-                options.AddPolicy("OrganizationMemberVerify", organizationMemberPolicyBuilder
+                options.AddPolicy(Constants.OrganizationMemberVerifyPolicy, organizationMemberPolicyBuilder
                     .RequireAssertion(context => context.User.HasOrganization() &&
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier)
+                        (context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier))
                     .Build());
 
-                options.AddPolicy("OrganizationMemberSuper", organizationMemberPolicyBuilder
+                options.AddPolicy(Constants.OrganizationMemberSuperPolicy, organizationMemberPolicyBuilder
                     .RequireAssertion(context => context.User.HasOrganization() &&
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser)
+                    .Build());
+
+                options.AddPolicy(Constants.OrganizationMemberOrAdministratorPolicy, new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireAssertion(context => ((context.User.HasOrganization() &&
+                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUserRole) != null) ||
+                        context.User.IsInRole(Constants.AdministratorRole)))
+                    .Build());
+
+                options.AddPolicy(Constants.OrganizationMemberWriteOrAdministratorPolicy, new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireAssertion(context => ((context.User.HasOrganization() &&
+                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer) ||
+                        context.User.IsInRole(Constants.AdministratorRole)))
+                    .Build());
+
+                options.AddPolicy(Constants.OrganizationMemberVerifyOrAdministratorPolicy, new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireAssertion(context => ((context.User.HasOrganization() &&
+                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier) ||
+                        context.User.IsInRole(Constants.AdministratorRole)))
+                    .Build());
+
+                options.AddPolicy(Constants.OrganizationMemberSuperOrAdministratorPolicy, new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .RequireAssertion(context => ((context.User.HasOrganization() &&
+                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser) ||
+                        context.User.IsInRole(Constants.AdministratorRole)))
                     .Build());
             });
         }
