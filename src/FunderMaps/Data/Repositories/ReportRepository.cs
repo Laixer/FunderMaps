@@ -347,7 +347,7 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
-        // TODO: Wrap noth statements into transaction.
+        // TODO: Wrap both statements into transaction.
         /// <summary>
         /// Create new report.
         /// </summary>

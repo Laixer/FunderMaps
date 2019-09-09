@@ -1,4 +1,4 @@
-﻿using FunderMaps.Data.Authorization;
+﻿using FunderMaps.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Identity;
@@ -121,8 +121,8 @@ namespace FunderMaps.Controllers.Api
             var organizationUser = await _organizationUserRepository.GetByUserIdAsync(user.Id);
             if (organizationUser != null)
             {
-                token.AddClaim(FisClaimTypes.OrganizationUser, organizationUser.OrganizationId);
-                token.AddClaim(FisClaimTypes.OrganizationUserRole, organizationUser.Role);
+                token.AddClaim(ClaimTypes.OrganizationUser, organizationUser.OrganizationId);
+                token.AddClaim(ClaimTypes.OrganizationUserRole, organizationUser.Role);
             }
 
             return new AuthenticationOutputModel

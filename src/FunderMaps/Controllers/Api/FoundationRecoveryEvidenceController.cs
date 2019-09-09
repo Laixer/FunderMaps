@@ -1,5 +1,5 @@
 ﻿using FunderMaps.Core.Repositories;
-using FunderMaps.Data.Authorization;
+using FunderMaps.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
@@ -44,7 +44,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)] // resource forbidden
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(ClaimTypes.OrganizationAttestationIdentifier);
 
             // If its not able to convert it to an integer
             // This also catches it if the attestationOrganizationId equals null
@@ -71,7 +71,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)] // resource forbidden
         public async Task<IActionResult> GetAsync(string id)
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(ClaimTypes.OrganizationAttestationIdentifier);
 
             // If its not able to convert it to an integer
             // This also catches it if the attestationOrganizationId equals null
@@ -92,7 +92,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(ClaimTypes.OrganizationAttestationIdentifier);
 
             // If its not able to convert it to an integer
             // this also catches it if the attestationOrganizationId equals null
@@ -129,7 +129,7 @@ namespace FunderMaps.Controllers.Api
         [Authorize()]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecoveryEvidence input)
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(ClaimTypes.OrganizationAttestationIdentifier);
 
             // NOTE: If it's not able to convert it to an integer
             //this also catches it if the attestationOrganizationId equals null
@@ -152,7 +152,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)] // resource forbidden
         public async Task<IActionResult> PutAsync(string document, [FromBody] FoundationRecoveryEvidence input)
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(ClaimTypes.OrganizationAttestationIdentifier);
 
             if (!int.TryParse(attestationOrganizationId, out int orgId))
             {
@@ -176,7 +176,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)] // resource forbidden
         public async Task<IActionResult> Delete(string document, [FromBody] FoundationRecoveryEvidence input)
         {
-            var attestationOrganizationId = User.GetClaim(FisClaimTypes.OrganizationAttestationIdentifier);
+            var attestationOrganizationId = User.GetClaim(ClaimTypes.OrganizationAttestationIdentifier);
 
             if (!int.TryParse(attestationOrganizationId, out int orgId))
             {

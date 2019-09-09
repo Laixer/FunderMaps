@@ -1,8 +1,8 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Data.Authorization;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using ClaimTypes = FunderMaps.Authorization.ClaimTypes;
 
 namespace FunderMaps.Extensions
 {
@@ -33,7 +33,7 @@ namespace FunderMaps.Extensions
         /// <param name="principal">See <see cref="ClaimsPrincipal"/>.</param>
         /// <returns>True on success, false otherwise.</returns>
         public static bool HasOrganization(this ClaimsPrincipal principal) =>
-            principal.FindFirst(FisClaimTypes.OrganizationUser) != null;
+            principal.FindFirst(ClaimTypes.OrganizationUser) != null;
 
         /// <summary>
         /// Get the organization identifier.
@@ -42,7 +42,7 @@ namespace FunderMaps.Extensions
         /// <returns>Organization identifier.</returns>
         public static Guid GetOrganizationId(this ClaimsPrincipal principal)
         {
-            var claim = principal.FindFirst(FisClaimTypes.OrganizationUser);
+            var claim = principal.FindFirst(ClaimTypes.OrganizationUser);
             if (claim == null)
             {
                 throw new InvalidOperationException(); // TODO: Usefull exception
@@ -58,7 +58,7 @@ namespace FunderMaps.Extensions
         /// <returns>Organization role.</returns>
         public static OrganizationRole GetOrganizationRole(this ClaimsPrincipal principal)
         {
-            var claim = principal.FindFirst(FisClaimTypes.OrganizationUserRole);
+            var claim = principal.FindFirst(ClaimTypes.OrganizationUserRole);
             if (claim == null)
             {
                 throw new InvalidOperationException(); // TODO: Usefull exception

@@ -1,9 +1,9 @@
-﻿namespace FunderMaps.Data.Authorization
+﻿namespace FunderMaps.Authorization
 {
     /// <summary>
-    /// FIS attestation claims.
+    /// Authorization claims.
     /// </summary>
-    public static class FisClaimTypes
+    public class ClaimTypes
     {
         /// <summary>
         /// Organization user.

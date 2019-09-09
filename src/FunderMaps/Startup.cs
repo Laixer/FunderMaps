@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Authorization;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Data;
 using FunderMaps.Data.Repositories;
@@ -160,10 +161,10 @@ namespace FunderMaps
             {
                 var organizationMemberPolicyBuilder = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
-                    .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUser);
+                    .RequireClaim(ClaimTypes.OrganizationUser);
 
                 options.AddPolicy(Constants.OrganizationMemberPolicy, organizationMemberPolicyBuilder
-                    .RequireClaim(Data.Authorization.FisClaimTypes.OrganizationUserRole)
+                    .RequireClaim(ClaimTypes.OrganizationUserRole)
                     .Build());
 
                 options.AddPolicy(Constants.OrganizationMemberWritePolicy, organizationMemberPolicyBuilder
@@ -187,15 +188,15 @@ namespace FunderMaps
                 options.AddPolicy(Constants.OrganizationMemberOrAdministratorPolicy, new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
-                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
-                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUserRole) != null) ||
+                        context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
+                        context.User.FindFirst(ClaimTypes.OrganizationUserRole) != null) ||
                         context.User.IsInRole(Constants.AdministratorRole)))
                     .Build());
 
                 options.AddPolicy(Constants.OrganizationMemberWriteOrAdministratorPolicy, new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
-                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer) ||
@@ -205,7 +206,7 @@ namespace FunderMaps
                 options.AddPolicy(Constants.OrganizationMemberVerifyOrAdministratorPolicy, new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
-                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier) ||
                         context.User.IsInRole(Constants.AdministratorRole)))
@@ -214,7 +215,7 @@ namespace FunderMaps
                 options.AddPolicy(Constants.OrganizationMemberSuperOrAdministratorPolicy, new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
-                        context.User.FindFirst(Data.Authorization.FisClaimTypes.OrganizationUser) != null &&
+                        context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
                         context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser) ||
                         context.User.IsInRole(Constants.AdministratorRole)))
                     .Build());
