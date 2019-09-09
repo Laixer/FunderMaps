@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Authorization;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Data;
@@ -130,7 +131,7 @@ namespace FunderMaps
                 options.UserTable = "user";
                 options.Schema = "application";
                 options.MatchWithUnderscore = true;
-                options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionString("FunderMapsConnection"));
+                options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionStringFallback("FunderMapsConnection"));
             })
             .AddDefaultTokenProviders();
 
