@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Exceptions;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -11,7 +12,6 @@ namespace FunderMaps.Extensions
     /// </summary>
     public static class ClaimsPrincipalExtensions
     {
-
         /// <summary>
         /// Get the claim value by claim name.
         /// </summary>
@@ -45,7 +45,7 @@ namespace FunderMaps.Extensions
             var claim = principal.FindFirst(ClaimTypes.OrganizationUser);
             if (claim == null)
             {
-                throw new InvalidOperationException(); // TODO: Usefull exception
+                throw new ClaimNotFoundException(ClaimTypes.OrganizationUser);
             }
 
             return Guid.Parse(claim.Value);
@@ -61,7 +61,7 @@ namespace FunderMaps.Extensions
             var claim = principal.FindFirst(ClaimTypes.OrganizationUserRole);
             if (claim == null)
             {
-                throw new InvalidOperationException(); // TODO: Usefull exception
+                throw new ClaimNotFoundException(ClaimTypes.OrganizationUser);
             }
 
             // TODO: Handle parse errors.
