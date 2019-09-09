@@ -64,8 +64,12 @@ namespace FunderMaps.Extensions
                 throw new ClaimNotFoundException(ClaimTypes.OrganizationUser);
             }
 
-            // TODO: Handle parse errors.
-            return (OrganizationRole)Enum.Parse(typeof(OrganizationRole), claim.Value);
+            if (!Enum.TryParse(claim.Value, true, out OrganizationRole organizationRole))
+            {
+                throw new InvalidCastException($"Cannot cast value into {nameof(OrganizationRole)}");
+            }
+
+            return organizationRole;
         }
 
         /// <summary>
