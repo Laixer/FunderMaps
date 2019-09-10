@@ -40,15 +40,15 @@ namespace FunderMaps.Controllers.Api
             _userManager = userManager;
         }
 
-        // GET: api/organization
+        // GET: api/organization/current_user
         /// <summary>
-        /// Get all organizations of which the current authenticated user is a member of.
+        /// Get the user organization.
         /// </summary>
-        [HttpGet]
+        [HttpGet("current_user")]
         [Authorize(Policy = Constants.OrganizationMemberPolicy)]
         [ProducesResponseType(typeof(List<Organization>), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> GetCurrentUserOrganizationAsync()
         {
             var organization = await _organizationRepository.GetByIdAsync(User.GetOrganizationId());
             if (organization == null)
@@ -57,6 +57,43 @@ namespace FunderMaps.Controllers.Api
             }
 
             return Ok(organization);
+        }
+
+        // GET: api/organization
+        /// <summary>
+        /// Get all organizations of which the current user has access to.
+        /// </summary>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
+        [HttpGet]
+        [Authorize(Policy = Constants.OrganizationMemberOrAdministratorPolicy)]
+        [ProducesResponseType(typeof(List<Organization>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        {
+            var organizations = new List<Organization>();
+            if (User.IsInRole(Constants.AdministratorRole))
+            {
+                var organization = await _organizationRepository.ListAllAsync(new Navigation(offset, limit));
+                if (organization == null)
+                {
+                    return ResourceNotFound();
+                }
+
+                organizations.AddRange(organization);
+            }
+            else
+            {
+                var organization = await _organizationRepository.GetByIdAsync(User.GetOrganizationId());
+                if (organization == null)
+                {
+                    return ResourceNotFound();
+                }
+
+                organizations.Add(organization);
+            }
+
+            return Ok(organizations);
         }
 
         // GET: api/organization/{id}
