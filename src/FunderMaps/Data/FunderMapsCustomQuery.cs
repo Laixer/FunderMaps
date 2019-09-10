@@ -65,6 +65,10 @@ namespace FunderMaps.Data
                 SET    email = @Email,
                        normalized_email = @NormalizedEmail,
                        email_confirmed = @EmailConfirmed,
+                       given_name = @GivenName,
+                       last_name = @LastName,
+                       avatar = @Avatar,
+                       job_title = @JobTitle,
                        password_hash = @PasswordHash,
                        phone_number = @PhoneNumber,
                        phone_number_confirmed = @PhoneNumberConfirmed,
@@ -73,6 +77,12 @@ namespace FunderMaps.Data
                        lockout_enabled = @LockoutEnabled,
                        access_failed_count = @AccessFailedCount
                 WHERE  id = @Id";
+
+            queryRepository.FindByIdAsync = $@"
+                SELECT *
+                FROM application.user
+                WHERE Id=@Id::uuid
+                LIMIT 1";
 
             queryRepository.AddToRoleAsync = $@"
                 UPDATE application.user

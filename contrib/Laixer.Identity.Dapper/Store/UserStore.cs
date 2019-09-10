@@ -316,7 +316,7 @@ namespace Laixer.Identity.Dapper.Store
         /// <param name="user">The user to update.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
-        public Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -326,10 +326,12 @@ namespace Laixer.Identity.Dapper.Store
             }
 
             // NOTE: We'll always report success, an exception will take care of faults.
-            return RunDatabaseStatement(connection =>
+            await RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.UpdateAsync, user);
-            }).ContinueWith(_ => IdentityResult.Success);
+            });
+
+            return IdentityResult.Success;
         }
         #endregion
 
