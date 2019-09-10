@@ -284,6 +284,88 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
 
+        // GET: api/organization/{id}/user/{user_id}/profile
+        /// <summary>
+        /// Get organization user if this user has access to the record.
+        /// </summary>
+        /// <param name="id">Organization id.</param>
+        /// <param name="userId">User id.</param>
+        [HttpGet("{id:guid}/user/{userId:guid}/profile")]
+        [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
+        [ProducesResponseType(typeof(FunderMapsUser), 204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetUserProfileAsync(Guid id, Guid userId)
+        {
+            if (User.HasOrganization() && id != User.GetOrganizationId())
+            {
+                return ResourceForbid();
+            }
+
+            var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
+            if (organizationUser == null)
+            {
+                return ResourceForbid();
+            }
+
+            var user = await _userManager.FindByIdAsync(organizationUser.UserId.ToString()); // TODO: FindByIdAsync(Guid) extension
+            if (user == null)
+            {
+                return ResourceForbid();
+            }
+
+            return Ok(new ProfileInputOutputModel
+            {
+                GivenName = user.GivenName,
+                LastName = user.LastName,
+                Avatar = user.Avatar,
+                JobTitle = user.JobTitle,
+                PhoneNumber = user.PhoneNumber,
+            });
+        }
+
+        // PUT: api/organization/{id}/user/{user_id}/profile
+        /// <summary>
+        /// Update organization user if this user has access to the record.
+        /// </summary>
+        /// <param name="id">Organization id.</param>
+        /// <param name="userId">User id.</param>
+        /// <param name="input">User object.</param>
+        [HttpPut("{id:guid}/user/{userId:guid}/profile")]
+        [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> UpdateUserProfileAsync(Guid id, Guid userId, ProfileInputOutputModel input)
+        {
+            if (User.HasOrganization() && id != User.GetOrganizationId())
+            {
+                return ResourceForbid();
+            }
+
+            var organizationUser = await _organizationUserRepository.GetByIdAsync(new KeyValuePair<Guid, Guid>(id, userId));
+            if (organizationUser == null)
+            {
+                return ResourceForbid();
+            }
+
+            var user = await _userManager.FindByIdAsync(organizationUser.UserId.ToString()); // TODO: FindByIdAsync(Guid) extension
+            if (user == null)
+            {
+                return ResourceForbid();
+            }
+
+            user.GivenName = input.GivenName;
+            user.LastName = input.LastName;
+            user.Avatar = input.Avatar;
+            user.JobTitle = input.JobTitle;
+            user.PhoneNumber = input.PhoneNumber;
+
+            await _userManager.UpdateAsync(user);
+
+            return NoContent();
+        }
+
         // PUT: api/organization/{id}
         /// <summary>
         /// Update organization if the user has access to the record.
