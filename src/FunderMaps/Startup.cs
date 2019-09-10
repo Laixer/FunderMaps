@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Authorization;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Data;
@@ -107,7 +106,6 @@ namespace FunderMaps
         {
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
-            //services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
             services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();

@@ -220,7 +220,8 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<Organization>> ListAllAsync(Navigation navigation)
         {
-            var sql = @"SELECT  name,
+            var sql = @"SELECT  id,
+                                name,
                                 normalized_name,
                                 email,
                                 phone_number,

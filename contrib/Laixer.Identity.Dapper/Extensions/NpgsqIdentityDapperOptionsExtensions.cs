@@ -1,7 +1,12 @@
 ﻿namespace Laixer.Identity.Dapper.Extensions
 {
+    /// <summary>
+    /// NpgsqIdentityDapperOptions extensions.
+    /// </summary>
     public static class NpgsqIdentityDapperOptionsExtensions
     {
+        // FUTURE: Pass existing connection to the driver.
+
         /// <summary>
         /// Adds Npgsql as database driver.
         /// </summary>
