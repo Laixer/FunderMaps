@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -42,7 +43,7 @@ namespace FunderMaps.Core.Services
         /// <returns>The blob block.</returns>
         protected CloudBlockBlob PrepareBlob(string container, string filename, BlobProperties properties)
         {
-            CloudBlockBlob cloudBlockBlob = SetContainer(container).GetBlockBlobReference(filename);
+            var cloudBlockBlob = SetContainer(container).GetBlockBlobReference(filename);
 
             cloudBlockBlob.Properties.CacheControl = properties.CacheControl;
             cloudBlockBlob.Properties.ContentMD5 = properties.ContentMD5;
@@ -52,6 +53,27 @@ namespace FunderMaps.Core.Services
             cloudBlockBlob.Properties.ContentDisposition = properties.ContentDisposition;
 
             return cloudBlockBlob;
+        }
+
+        /// <summary>
+        /// Retrieve file access link.
+        /// </summary>
+        /// <param name="store">Storage container.</param>
+        /// <param name="name">File name.</param>
+        /// <param name="hoursValid">How long the link is valid in hours.</param>
+        /// <returns>The generated link.</returns>
+        public string GetAccessLink(string store, string name, double hoursValid = 1)
+        {
+            var cloudBlockBlob = SetContainer(store).GetBlockBlobReference(name);
+
+            // Generate the shared access signature on the blob, setting the constraints directly on the signature.
+            var sasBlobToken = cloudBlockBlob.GetSharedAccessSignature(new SharedAccessBlobPolicy()
+            {
+                SharedAccessExpiryTime = DateTime.UtcNow.AddHours(hoursValid),
+                Permissions = SharedAccessBlobPermissions.Read,
+            });
+
+            return cloudBlockBlob.Uri + sasBlobToken;
         }
 
         /// <summary>

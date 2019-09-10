@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
@@ -21,18 +22,23 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class ReportController : BaseApiController
     {
+        private const int hoursValid = 1;
+
         private readonly IReportRepository _reportRepository;
         private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly IFileStorageService _fileStorageService;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         public ReportController(
             IReportRepository reportRepository,
-            UserManager<FunderMapsUser> userManager)
+            UserManager<FunderMapsUser> userManager,
+            IFileStorageService fileStorageService)
         {
             _reportRepository = reportRepository;
             _userManager = userManager;
+            _fileStorageService = fileStorageService;
         }
 
         // GET: api/report
@@ -122,6 +128,39 @@ namespace FunderMaps.Controllers.Api
             }
 
             return Ok(report);
+        }
+
+        // GET: api/report/{id}/{document}/download
+        /// <summary>
+        /// Get link to the report file resource from the report.
+        /// </summary>
+        /// <param name="id">Report identifier, see <see cref="Report.Id"/>.</param>
+        /// <param name="document">Report identifier, <see cref="Report.DocumentId"/>.</param>
+        /// <returns>Report.</returns>
+        [HttpGet("{id}/{document}/download")]
+        [ProducesResponseType(typeof(FileDownloadOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetDownloadLinkAsync(int id, string document)
+        {
+            var report = await _reportRepository.GetPublicAndByIdAsync(id, document, User.GetOrganizationId());
+            if (report == null)
+            {
+                return ResourceNotFound();
+            }
+
+            // There is no document stored.
+            if (string.IsNullOrEmpty(report.DocumentName))
+            {
+                return ResourceNotFound();
+            }
+
+            // TODO: There is no error handling so far.
+            return Ok(new FileDownloadOutputModel
+            {
+                Url = _fileStorageService.GetAccessLink(Constants.ReportStorage, report.DocumentName, hoursValid),
+                UrlValid = hoursValid,
+            });
         }
 
         // PUT: api/report/{id}/{document}

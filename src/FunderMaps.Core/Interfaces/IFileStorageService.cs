@@ -16,6 +16,15 @@ namespace FunderMaps.Core.Interfaces
         Task<string> StorageAccountAsync();
 
         /// <summary>
+        /// Retrieve file access link.
+        /// </summary>
+        /// <param name="store">Storage container.</param>
+        /// <param name="name">File name.</param>
+        /// <param name="hoursValid">How long the link is valid in hours.</param>
+        /// <returns>The generated link.</returns>
+        string GetAccessLink(string store, string name, double hoursValid);
+
+        /// <summary>
         /// Store the file in the data store.
         /// </summary>
         /// <param name="store">Storage container.</param>
