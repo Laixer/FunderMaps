@@ -107,7 +107,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -135,7 +135,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUsersAsync(Guid id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -164,7 +164,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -209,7 +209,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUserAsync(Guid id, Guid userId)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -237,7 +237,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUser input)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -268,7 +268,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> RemoveUserAsync(Guid id, Guid userId)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -297,7 +297,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUserProfileAsync(Guid id, Guid userId)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -338,7 +338,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserProfileAsync(Guid id, Guid userId, ProfileInputOutputModel input)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
@@ -378,7 +378,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
-            if (User.HasOrganization() && id != User.GetOrganizationId())
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
             }
