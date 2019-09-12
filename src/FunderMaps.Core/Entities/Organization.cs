@@ -22,7 +22,7 @@ namespace FunderMaps.Core.Entities
         /// Gets or sets the normalized name for the organization.
         /// </summary>
         [IgnoreDataMember]
-        public virtual string NormalizedName { get; set; }
+        public string NormalizedName { get; set; }
 
         /// <summary>
         /// Gets or sets the email address for the organization.
