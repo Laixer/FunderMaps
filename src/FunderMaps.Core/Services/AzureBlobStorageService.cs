@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,15 +15,18 @@ namespace FunderMaps.Core.Services
     /// </summary>
     public class AzureBlobStorageService : IFileStorageService
     {
+        private readonly FileStorageOptions _options;
         private readonly CloudStorageAccount _storageAccount;
         private readonly CloudBlobClient _blobClient;
 
         /// <summary>
         /// Create new instance.
         /// </summary>
+        /// <param name="options">File service options.</param>
         /// <param name="config">Application configuration.</param>
-        public AzureBlobStorageService(IConfiguration config)
+        public AzureBlobStorageService(IOptions<FileStorageOptions> options, IConfiguration config)
         {
+            _options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _storageAccount = CloudStorageAccount.Parse(config.GetConnectionString("AzureStorageConnectionString"));
             _blobClient = _storageAccount.CreateCloudBlobClient();
         }
@@ -32,7 +36,8 @@ namespace FunderMaps.Core.Services
         /// </summary>
         /// <param name="name">Name of container.</param>
         /// <returns>Blob container.</returns>
-        protected CloudBlobContainer SetContainer(string name) => _blobClient.GetContainerReference(name);
+        protected CloudBlobContainer SetContainer(string name)
+            => _blobClient.GetContainerReference(_options.StorageContainers.TryGetValue(name, out string store) ? store : name);
 
         /// <summary>
         /// Prepare blob for storage.

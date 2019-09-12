@@ -1,6 +1,4 @@
 ﻿using FunderMaps.Authorization;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Services;
 using FunderMaps.Data;
 using FunderMaps.Data.Repositories;
 using FunderMaps.Event;
@@ -93,7 +91,9 @@ namespace FunderMaps
             // Configure local repositories
             ConfigureRepository(services);
 
-            services.AddTransient<IFileStorageService, AzureBlobStorageService>();
+            // Register services from application core.
+            services.AddCoreServices(_configuration);
+
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<IAddressService, AddressService>();
         }
