@@ -140,6 +140,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
+            // FUTURE: Why this call first?
             var organization = await _organizationRepository.GetByIdAsync(id);
             if (organization == null)
             {
@@ -147,6 +148,43 @@ namespace FunderMaps.Controllers.Api
             }
 
             return Ok(await _organizationUserRepository.ListAllByOrganizationIdAsync(organization.Id, new Navigation(offset, limit)));
+        }
+
+        // GET: api/organization/{id}/profile
+        /// <summary>
+        /// Get organization user list.
+        /// </summary>
+        /// <param name="id">User identifier.</param>
+        /// <param name="offset">Offset into the list.</param>
+        /// <param name="limit">Limit the output.</param>
+        /// <returns>List of users, see <see cref="FunderMapsUser"/>.</returns>
+        [HttpGet("{id:guid}/profile")]
+        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
+        [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetUserProfileAsync(Guid id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
+        {
+            if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
+            {
+                return ResourceForbid();
+            }
+
+            // FUTURE: Do not build an in-memory array.
+            var funderMapsUsers = new List<FunderMapsUser>();
+            var organizationUsers = await _organizationUserRepository.ListAllByOrganizationIdAsync(id, new Navigation(offset, limit));
+            foreach (var organizationUser in organizationUsers)
+            {
+                var user = await _userManager.FindByIdAsync(organizationUser.UserId.ToString()); // TODO: FindByIdAsync(Guid) extension
+                if (user == null)
+                {
+                    return ResourceForbid();
+                }
+
+                funderMapsUsers.Add(user);
+            }
+
+            // FUTURE: Fow now we just return the entire FunderMapsUser object.
+            return Ok(funderMapsUsers);
         }
 
         // POST: api/organization/{id}/user
