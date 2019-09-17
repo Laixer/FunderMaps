@@ -110,7 +110,7 @@ namespace FunderMaps
             services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
             services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddScoped<IFoundationRecoveryRepository, FoundationRecoveryRepository>();
-            //services.AddScoped<IFoundationRecoveryEvidenceRepository, FoundationRecoveryEvidenceRepository>();
+            services.AddScoped<IMapRepository, MapRepository>();
         }
 
         /// <summary>

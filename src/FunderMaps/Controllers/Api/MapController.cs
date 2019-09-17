@@ -1,9 +1,9 @@
-﻿using Dapper;
-using FunderMaps.Providers;
+﻿using FunderMaps.Extensions;
+using FunderMaps.Helpers;
+using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,21 +17,14 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class MapController : BaseApiController
     {
-        private readonly IAuthorizationService _authorizationService;
-        private readonly DbProvider _dbProvider;
-        private readonly IConfiguration _configuration;
+        private readonly IMapRepository _mapRepository;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        public MapController(
-            IAuthorizationService authorizationService,
-            IConfiguration configuration,
-            DbProvider dbProvider)
+        public MapController(IMapRepository mapRepository)
         {
-            _authorizationService = authorizationService;
-            _configuration = configuration;
-            _dbProvider = dbProvider;
+            _mapRepository = mapRepository;
         }
 
         class FeatureModel
@@ -45,7 +38,6 @@ namespace FunderMaps.Controllers.Api
             public class PropertyModel
             {
                 public string Name { get; set; }
-                public int Report { get; set; }
             }
 
             public string Type { get; set; } = "Feature";
@@ -61,49 +53,34 @@ namespace FunderMaps.Controllers.Api
 
         // GET: api/map
         /// <summary>
-        /// Get the samples as GeoJSON.
+        /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet]
-        [Authorize(Policy = "OrganizationMember")]
+        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
         [ProducesResponseType(typeof(FeatureCollection), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync()
         {
-            // TODO: Select based on organization.
+            var points = await _mapRepository.GetByOrganizationIdAsync(User.GetOrganizationId());
+            if (points == null)
+            {
+                return ResourceNotFound();
+            }
 
             var collection = new List<FeatureModel>();
-
-            // TODO: Move into repo
-            using (var connection = _dbProvider.ConnectionScope())
+            foreach (var item in points)
             {
-                var resultSet = await connection.QueryAsync(@"
-                    SELECT a.street_name,
-                           a.building_number,
-                           e.report,
-                           St_x(St_transform(a.geopoint, 4326)) AS x,
-                           St_y(St_transform(a.geopoint, 4326)) AS y
-                    FROM   report.sample AS e
-                           join report.address AS a ON e.address = a.id
-                    WHERE  a.geopoint IS NOT NULL
-                    ORDER  BY e.create_date DESC");
-
-                foreach (var item in resultSet)
+                collection.Add(new FeatureModel
                 {
-                    var sample = item as IDictionary<string, object>;
-
-                    collection.Add(new FeatureModel
+                    Geometry = new FeatureModel.GeometryModel
                     {
-                        Geometry = new FeatureModel.GeometryModel
-                        {
-                            Coordinates = new double[] { (double)sample["x"], (double)sample["y"] },
-                        },
-                        Properties = new FeatureModel.PropertyModel()
-                        {
-                            Name = $"{sample["street_name"]} {sample["building_number"]}",
-                            Report = (int)sample["report"],
-                        },
-                    });
-                }
+                        Coordinates = new double[] { item.X, item.Y, item.Z },
+                    },
+                    Properties = new FeatureModel.PropertyModel()
+                    {
+                        Name = $"{item.StreetName} {item.BuildingNumber}"
+                    },
+                });
             }
 
             return Ok(new FeatureCollection
