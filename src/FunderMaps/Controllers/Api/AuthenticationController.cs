@@ -139,14 +139,14 @@ namespace FunderMaps.Controllers.Api
             };
         }
 
-        // POST: api/authentication/authenticate
+        // POST: api/authentication/signin
         /// <summary>
         /// Authenticate user object.
         /// </summary>
         /// <param name="input">See <see cref="UserInputModel"/>.</param>
         /// <returns>See <see cref="AuthenticationOutputModel"/>.</returns>
         [AllowAnonymous]
-        [HttpPost("authenticate")]
+        [HttpPost("signin")]
         [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> SignInAsync([FromBody] UserInputModel input)
