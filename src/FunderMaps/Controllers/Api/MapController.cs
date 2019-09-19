@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
+    // FUTURE: Map query interfaces must accept single or multiple items.
+
     /// <summary>
     /// Map data endpoint.
     /// </summary>
@@ -24,16 +26,28 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        public MapController(IMapRepository mapRepository)
-        {
-            _mapRepository = mapRepository;
-        }
+        public MapController(IMapRepository mapRepository) => _mapRepository = mapRepository;
 
         class Layer
         {
+            /// <summary>
+            /// Unique layer identifier.
+            /// </summary>
             public Guid Id { get; set; }
+
+            /// <summary>
+            /// Visual layer name.
+            /// </summary>
             public string Name { get; set; }
+
+            /// <summary>
+            /// Source for layer.
+            /// </summary>
             public string Source { get; set; }
+
+            /// <summary>
+            /// Layer order.
+            /// </summary>
             public int Order { get; set; }
         }
 
@@ -59,7 +73,7 @@ namespace FunderMaps.Controllers.Api
                 {
                     Id = Guid.NewGuid(),
                     Name = "Alle metingen",
-                    Source = "api/map/all" // From db
+                    Source = "api/map/all"
                 },
                 new Layer
                 {
@@ -188,6 +202,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetFoundationTypeAsync([FromQuery] int? type)
         {
+            // NOTE: This is an temporary solution. The 'type' is nowhere to be defined and therefore bad design.
+
             switch (type)
             {
                 case 0:
