@@ -35,7 +35,7 @@ namespace FunderMaps.Controllers.Api
         /// Get the profile of the current authenticated user.
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(ProfileInputOutputModel), 200)]
+        [ProducesResponseType(typeof(FunderMapsUser), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> GetAsync()
         {
@@ -45,14 +45,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            return Ok(new ProfileInputOutputModel
-            {
-                GivenName = user.GivenName,
-                LastName = user.LastName,
-                Avatar = user.Avatar,
-                JobTitle = user.JobTitle,
-                PhoneNumber = user.PhoneNumber,
-            });
+            return Ok(user);
         }
 
         // PUT: api/user
@@ -62,7 +55,7 @@ namespace FunderMaps.Controllers.Api
         [HttpPut]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        public async Task<IActionResult> PutAsync([FromBody] ProfileInputOutputModel input)
+        public async Task<IActionResult> PutAsync([FromBody] FunderMapsUser input)
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)

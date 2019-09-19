@@ -2,6 +2,7 @@
 
 namespace FunderMaps.ViewModels
 {
+    // TODO: Can be removed?
     /// <summary>
     /// User profile model.
     /// </summary>
