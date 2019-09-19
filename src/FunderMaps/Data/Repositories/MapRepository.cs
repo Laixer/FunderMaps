@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
 using System;
@@ -14,7 +15,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     public class MapRepository : IMapRepository
     {
-        private DbProvider _dbProvider;
+        private readonly DbProvider _dbProvider;
 
         /// <summary>
         /// Create a new instance.
@@ -64,6 +65,41 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="orgId"></param>
         /// <returns></returns>
+        public async Task<IReadOnlyList<AddressPoint>> GetFounationRecoveryByOrganizationAsync(Guid orgId)
+        {
+            using (var connection = _dbProvider.ConnectionScope())
+            {
+                var sql = @"
+                    SELECT addr.street_name,
+                           addr.building_number,
+                           samp.report,
+                           st_x(addr.geopoint) AS x,
+                           st_y(addr.geopoint) AS y,
+                           st_z(addr.geopoint) AS z
+                    FROM   application.sample AS samp
+                           INNER JOIN application.address AS addr ON samp.address = addr.id
+                           INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                           INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                    WHERE  addr.geopoint IS NOT NULL
+                           AND EXISTS (SELECT 1 FROM application.foundation_recovery AS recv WHERE recv.address = addr.id)
+                           AND (attr.owner = @Owner
+                                OR reprt.access_policy = 'public')";
+
+                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+                if (result.Count() == 0)
+                {
+                    return null;
+                }
+
+                return result.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodByOrganizationAsync(Guid orgId)
         {
             using (var connection = _dbProvider.ConnectionScope())
@@ -83,6 +119,7 @@ namespace FunderMaps.Data.Repositories
 	                       AND (samp.foundation_type = 'wood'
 			                    OR samp.foundation_type = 'wood_amsterdam'
 			                    OR samp.foundation_type = 'wood_rotterdam')
+                           AND NOT EXISTS (SELECT 1 FROM application.foundation_recovery AS recv WHERE recv.address = addr.id)
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
@@ -118,6 +155,7 @@ namespace FunderMaps.Data.Repositories
                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                     WHERE  addr.geopoint IS NOT NULL
 	                       AND samp.foundation_type = 'concrete'
+                           AND NOT EXISTS (SELECT 1 FROM application.foundation_recovery AS recv WHERE recv.address = addr.id)
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
@@ -158,6 +196,7 @@ namespace FunderMaps.Data.Repositories
 							    OR samp.foundation_type = 'no_pile_bearing_floor'
 							    OR samp.foundation_type = 'no_pile_concrete_floor'
 							    OR samp.foundation_type = 'no_pile_slit')
+                           AND NOT EXISTS (SELECT 1 FROM application.foundation_recovery AS recv WHERE recv.address = addr.id)
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
@@ -193,6 +232,7 @@ namespace FunderMaps.Data.Repositories
                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                     WHERE  addr.geopoint IS NOT NULL
                            AND samp.foundation_type = 'wood_charger'
+                           AND NOT EXISTS (SELECT 1 FROM application.foundation_recovery AS recv WHERE recv.address = addr.id)
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
@@ -232,6 +272,7 @@ namespace FunderMaps.Data.Repositories
 							   OR samp.foundation_type = 'steel_pile'
 							   OR samp.foundation_type = 'other'
 							   OR samp.foundation_type = 'unknown')
+                           AND NOT EXISTS (SELECT 1 FROM application.foundation_recovery AS recv WHERE recv.address = addr.id)
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
@@ -274,6 +315,46 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
                 var result = await connection.QueryAsync<AddressPoint>(sql, new { Start = rangeStart, End = rangeEnd, Owner = orgId });
+                if (result.Count() == 0)
+                {
+                    return null;
+                }
+
+                return result.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId"></param>
+        /// <returns></returns>
+        public async Task<IReadOnlyList<AddressPoint>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId)
+        {
+            using (var connection = _dbProvider.ConnectionScope())
+            {
+                var sql = @"
+                    SELECT addr.street_name,
+                           addr.building_number,
+                           samp.report,
+                           st_x(addr.geopoint) AS x,
+                           st_y(addr.geopoint) AS y,
+                           st_z(addr.geopoint) AS z,
+						   age(application.add_enforcement_term(reprt.document_date, samp.enforcement_term), now()) as enforcement_date
+                    FROM   application.sample AS samp
+                           INNER JOIN application.address AS addr ON samp.address = addr.id
+                           INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                           INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                    WHERE  addr.geopoint IS NOT NULL
+                           AND samp.foundation_quality = @FoundationQuality::application.foundation_quality
+                           AND (attr.owner = @Owner
+                                OR reprt.access_policy = 'public')";
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("FoundationQuality", foundationQuality.ToString().ToSnakeCase());
+                dynamicParameters.Add("Owner", orgId);
+
+                var result = await connection.QueryAsync<AddressPoint>(sql, dynamicParameters);
                 if (result.Count() == 0)
                 {
                     return null;
