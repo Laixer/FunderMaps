@@ -75,7 +75,7 @@ namespace FunderMaps.Controllers.Api
         public async Task<IActionResult> GetAsync()
         {
             // TODO: Should use `_userManager.GetUserAsync(User)` but
-            // the NameIdentifier in User is set wrongly to email.
+            //       the NameIdentifier in User is set wrongly to email.
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
@@ -117,7 +117,7 @@ namespace FunderMaps.Controllers.Api
             // Add application role as claim.
             token.AddRoleClaims(userRoles);
 
-            // Add organization as claim and corresponding organization role.
+            // Add organization and corresponding organization role as claim.
             var organizationUser = await _organizationUserRepository.GetByUserIdAsync(user.Id);
             if (organizationUser != null)
             {
@@ -141,7 +141,7 @@ namespace FunderMaps.Controllers.Api
 
         // POST: api/authentication/signin
         /// <summary>
-        /// Authenticate user object.
+        /// Authenticate user object and return a authentication token.
         /// </summary>
         /// <param name="input">See <see cref="UserInputModel"/>.</param>
         /// <returns>See <see cref="AuthenticationOutputModel"/>.</returns>
@@ -159,6 +159,7 @@ namespace FunderMaps.Controllers.Api
             if (user == null)
             {
                 _logger.LogWarning("Authentication failed, unknown object {user}", input.Email);
+
                 return Unauthorized(103, "Invalid credentials provided");
             }
 
@@ -179,7 +180,7 @@ namespace FunderMaps.Controllers.Api
                 return Ok(await GenerateSecurityToken(user));
             }
 
-            // FUTURE: RequiresTwoFactor
+            // FUTURE: RequiresTwoFactor or any multifactor auth.
 
             return Unauthorized(103, "Invalid credentials provided");
         }
@@ -210,32 +211,6 @@ namespace FunderMaps.Controllers.Api
             return Unauthorized(102, "Principal is not allowed to login");
         }
 
-        // POST: api/authentication/change_password
-        /// <summary>
-        /// Change user password.
-        /// </summary>
-        /// <param name="input">Password input model.</param>
-        [HttpPost("change_password")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
-        {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
-            if (user == null)
-            {
-                return ResourceNotFound();
-            }
-
-            var changePasswordResult = await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword);
-            if (!changePasswordResult.Succeeded)
-            {
-                return BadRequest(IdentityErrorResponse(changePasswordResult.Errors));
-            }
-
-            return NoContent();
-        }
-
         // POST: api/authentication/set_password
         /// <summary>
         /// Set the password for a user. Only an administrator can do this.
@@ -254,6 +229,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
+            // NOTE: Password must be removed before it can be set.
             if (await _userManager.HasPasswordAsync(user))
             {
                 await _userManager.RemovePasswordAsync(user);

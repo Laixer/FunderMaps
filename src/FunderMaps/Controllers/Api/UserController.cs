@@ -80,5 +80,31 @@ namespace FunderMaps.Controllers.Api
 
             return NoContent();
         }
+
+        // POST: api/user/change_password
+        /// <summary>
+        /// Change user password.
+        /// </summary>
+        /// <param name="input">Password input model.</param>
+        [HttpPost("change_password")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
+        public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
+        {
+            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            if (user == null)
+            {
+                return ResourceNotFound();
+            }
+
+            var changePasswordResult = await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                return ApplicationError();
+            }
+
+            return NoContent();
+        }
     }
 }
