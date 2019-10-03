@@ -68,6 +68,18 @@ namespace FunderMaps.Controllers.Api
                 Count = await _reportRepository.CountAsync(User.GetOrganizationId()),
             });
 
+        // TODO: Send the cache headers for this one.
+        // GET: api/report/contractors
+        /// <summary>
+        /// Return list of contractors.
+        /// </summary>
+        /// <returns>EntityStatsOutputModel.</returns>
+        [HttpGet("contractors")]
+        [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetContractorsAsync()
+            => Ok(await _reportRepository.ListAllContractorsAsync());
+
         // POST: api/report
         /// <summary>
         /// Create a new report.
