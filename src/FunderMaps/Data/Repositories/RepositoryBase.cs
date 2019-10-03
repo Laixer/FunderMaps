@@ -47,10 +47,8 @@ namespace FunderMaps.Data.Repositories
             }
 
             // Run in new scope.
-            using (var connection = DataProvider.ConnectionScope())
-            {
-                return await action(connection);
-            }
+            using var connection = DataProvider.ConnectionScope();
+            return await action(connection);
         }
 
         /// <summary>

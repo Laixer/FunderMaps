@@ -77,7 +77,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
 
-            Report map(Report reportEntity, Attribution attributionEntity)
+            static Report map(Report reportEntity, Attribution attributionEntity)
             {
                 reportEntity.Attribution = attributionEntity;
                 return reportEntity;
@@ -134,7 +134,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
 
-            Report map(Report reportEntity, Attribution attributionEntity)
+            static Report map(Report reportEntity, Attribution attributionEntity)
             {
                 reportEntity.Attribution = attributionEntity;
                 return reportEntity;
@@ -193,7 +193,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
 
-            Report map(Report reportEntity, Attribution attributionEntity)
+            static Report map(Report reportEntity, Attribution attributionEntity)
             {
                 reportEntity.Attribution = attributionEntity;
                 return reportEntity;
@@ -253,7 +253,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
 
-            Report map(Report reportEntity, Attribution attributionEntity)
+            static Report map(Report reportEntity, Attribution attributionEntity)
             {
                 reportEntity.Attribution = attributionEntity;
                 return reportEntity;
@@ -348,7 +348,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportStatus>("application.report_status");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<ReportType>("application.report_type");
 
-            Report map(Report reportEntity, Attribution attributionEntity)
+            static Report map(Report reportEntity, Attribution attributionEntity)
             {
                 reportEntity.Attribution = attributionEntity;
                 return reportEntity;

@@ -69,7 +69,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;
@@ -137,7 +137,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;
@@ -206,7 +206,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;
@@ -273,7 +273,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;
@@ -343,7 +343,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;
@@ -412,7 +412,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;
@@ -484,7 +484,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("application.foundation_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            Sample map(Sample sampleEntity, Address addressEntity)
+            static Sample map(Sample sampleEntity, Address addressEntity)
             {
                 sampleEntity.Address = addressEntity;
                 return sampleEntity;

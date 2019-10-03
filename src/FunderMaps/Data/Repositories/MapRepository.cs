@@ -21,10 +21,7 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public MapRepository(DbProvider dbProvider)
-        {
-            _dbProvider = dbProvider;
-        }
+        public MapRepository(DbProvider dbProvider) => _dbProvider = dbProvider;
 
         /// <summary>
         /// 
@@ -33,9 +30,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByOrganizationIdAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -50,14 +47,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -67,9 +63,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetFounationRecoveryByOrganizationAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -85,14 +81,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -102,9 +97,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodByOrganizationAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -123,14 +118,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -140,9 +134,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeConcreteByOrganizationAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -159,14 +153,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -176,9 +169,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeNoPileByOrganizationAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -200,14 +193,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -217,9 +209,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodChargerByOrganizationAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -236,14 +228,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -253,9 +244,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeOtherByOrganizationAsync(Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -276,14 +267,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -293,9 +283,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByEnforcementTermByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -314,14 +304,13 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, new { Start = rangeStart, End = rangeEnd, Owner = orgId });
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, new { Start = rangeStart, End = rangeEnd, Owner = orgId });
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
 
         /// <summary>
@@ -331,9 +320,9 @@ namespace FunderMaps.Data.Repositories
         /// <returns></returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                var sql = @"
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
                     SELECT addr.street_name,
                            addr.building_number,
                            samp.report,
@@ -350,18 +339,17 @@ namespace FunderMaps.Data.Repositories
                            AND (attr.owner = @Owner
                                 OR reprt.access_policy = 'public')";
 
-                var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("FoundationQuality", foundationQuality.ToString().ToSnakeCase());
-                dynamicParameters.Add("Owner", orgId);
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("FoundationQuality", foundationQuality.ToString().ToSnakeCase());
+            dynamicParameters.Add("Owner", orgId);
 
-                var result = await connection.QueryAsync<AddressPoint>(sql, dynamicParameters);
-                if (result.Count() == 0)
-                {
-                    return null;
-                }
-
-                return result.ToArray();
+            var result = await connection.QueryAsync<AddressPoint>(sql, dynamicParameters);
+            if (result.Count() == 0)
+            {
+                return null;
             }
+
+            return result.ToArray();
         }
     }
 }

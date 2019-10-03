@@ -87,6 +87,7 @@ namespace FunderMaps.Controllers.Api
 
         // FUTURE: Check consistency
         // TODO: Should only return partial user object.
+        // TODO: Not only verifier but also all superuser.
         // GET: api/report/reviewers
         /// <summary>
         /// Return list of reviewers within the organization.

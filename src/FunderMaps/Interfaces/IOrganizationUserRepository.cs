@@ -23,6 +23,7 @@ namespace FunderMaps.Interfaces
         /// <summary>
         /// Retrieve entities by organization id and by role.
         /// </summary>
+        /// <param name="role">Role to select.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <param name="navigation">Recordset navigation.</param>
         /// <returns>List of entities.</returns>

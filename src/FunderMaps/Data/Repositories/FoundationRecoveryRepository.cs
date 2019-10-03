@@ -61,7 +61,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            static FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
             {
                 foundationRecoveryEntity.Address = addressEntity;
                 foundationRecoveryEntity.Attribution = attributionEntity;
@@ -122,7 +122,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            static FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
             {
                 foundationRecoveryEntity.Address = addressEntity;
                 foundationRecoveryEntity.Attribution = attributionEntity;
@@ -184,7 +184,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            static FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
             {
                 foundationRecoveryEntity.Address = addressEntity;
                 foundationRecoveryEntity.Attribution = attributionEntity;
@@ -244,7 +244,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            static FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
             {
                 foundationRecoveryEntity.Address = addressEntity;
                 foundationRecoveryEntity.Attribution = attributionEntity;
@@ -307,7 +307,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRecoveryType>("application.foundation_recovery_type");
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
 
-            FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
+            static FoundationRecovery map(FoundationRecovery foundationRecoveryEntity, Address addressEntity, Attribution attributionEntity)
             {
                 foundationRecoveryEntity.Address = addressEntity;
                 foundationRecoveryEntity.Attribution = attributionEntity;

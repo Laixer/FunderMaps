@@ -178,6 +178,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         /// Return all organization users by organization and role.
         /// </summary>
+        /// <param name="role">Role to select.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
