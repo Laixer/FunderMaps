@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.Entities.Fis
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Organizational user.
