@@ -31,7 +31,7 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 SELECT contrctr.id,
                         contrctr.name
-                FROM   application.contractors AS contrctr";
+                FROM   application.contractor AS contrctr";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Contractor>(sql));
             if (result.Count() == 0)

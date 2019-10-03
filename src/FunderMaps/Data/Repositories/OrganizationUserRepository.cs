@@ -176,6 +176,39 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        /// Return all organization users by organization and role.
+        /// </summary>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <param name="navigation">Navigation options.</param>
+        /// <returns>List of records.</returns>
+        public async Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, Navigation navigation)
+        {
+            var sql = @"
+                SELECT  orguser.user_id,
+                        orguser.organization_id,
+                        orguser.role
+                FROM    application.organization_user AS orguser
+                WHERE   orguser.organization_id = @OrganizatonId
+                        AND orguser.role = @ConvRole::application.organization_role
+                OFFSET @Offset
+                LIMIT @Limit";
+
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("ConvRole", role.ToString().ToSnakeCase());
+            dynamicParameters.Add("OrganizatonId", orgId);
+            dynamicParameters.Add("Offset", navigation.Offset);
+            dynamicParameters.Add("Limit", navigation.Limit);
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, dynamicParameters));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
         /// Update entity.
         /// </summary>
         /// <param name="entity">Entity to update.</param>
