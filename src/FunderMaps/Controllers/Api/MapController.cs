@@ -63,35 +63,38 @@ namespace FunderMaps.Controllers.Api
         {
             var collection = new List<Layer>
             {
-                new Layer
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Analysis",
-                    Source = "" // From BAG
-                },
-                new Layer
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Alle metingen",
-                    Source = "api/map/all"
-                },
+                //new Layer
+                //{
+                //    Id = Guid.NewGuid(),
+                //    Name = "Analysis",
+                //    Source = "", // From BAG
+                //},
+                //new Layer
+                //{
+                //    Id = Guid.NewGuid(),
+                //    Name = "Alle metingen",
+                //    Source = "api/map/all"
+                //},
                 new Layer
                 {
                     Id = Guid.NewGuid(),
                     Name = "Funderingstype",
-                    Source = "api/map/foundation_type"
+                    Source = "api/map/foundation_type",
+                    Order = 1
                 },
                 new Layer
                 {
                     Id = Guid.NewGuid(),
                     Name = "Handhavingstermijnen",
-                    Source = "api/map/enforcement_term"
+                    Source = "api/map/enforcement_term",
+                    Order = 2
                 },
                 new Layer
                 {
                     Id = Guid.NewGuid(),
                     Name = "Kwaliteit Funderingen",
-                    Source = "api/map/foundation_quality"
+                    Source = "api/map/foundation_quality",
+                    Order = 3
                 }
             };
 
