@@ -28,7 +28,7 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         public MapController(IMapRepository mapRepository) => _mapRepository = mapRepository;
 
-        class Layer
+        private class Layer
         {
             /// <summary>
             /// Unique layer identifier.
@@ -80,21 +80,21 @@ namespace FunderMaps.Controllers.Api
                     Id = Guid.NewGuid(),
                     Name = "Funderingstype",
                     Source = "api/map/foundation_type",
-                    Order = 1
+                    Order = 0
                 },
                 new Layer
                 {
                     Id = Guid.NewGuid(),
                     Name = "Handhavingstermijnen",
                     Source = "api/map/enforcement_term",
-                    Order = 2
+                    Order = 1
                 },
                 new Layer
                 {
                     Id = Guid.NewGuid(),
                     Name = "Kwaliteit Funderingen",
                     Source = "api/map/foundation_quality",
-                    Order = 3
+                    Order = 2
                 }
             };
 
@@ -103,7 +103,7 @@ namespace FunderMaps.Controllers.Api
             return Ok(collection);
         }
 
-        class FeatureModel
+        private class FeatureModel
         {
             public class GeometryModel
             {
@@ -111,20 +111,49 @@ namespace FunderMaps.Controllers.Api
                 public double[] Coordinates { get; set; }
             }
 
-            public class PropertyModel
-            {
-                public string Name { get; set; }
-            }
-
             public string Type { get; set; } = "Feature";
             public GeometryModel Geometry { get; set; }
-            public PropertyModel Properties { get; set; }
+            public object Properties { get; set; }
         }
 
-        class FeatureCollection
+        private class FeatureCollection
         {
             public string Type { get; set; } = "FeatureCollection";
             public ICollection<FeatureModel> Features { get; set; }
+        }
+
+        private FeatureCollection BuildGeoCollection(IEnumerable<AddressPoint> points, object properties = null, FeatureCollection featureCollection = null)
+        {
+            var collection = new List<FeatureModel>();
+
+            if (points != null)
+            {
+                foreach (var item in points)
+                {
+                    collection.Add(new FeatureModel
+                    {
+                        Geometry = new FeatureModel.GeometryModel
+                        {
+                            Coordinates = new double[] { item.X, item.Y, item.Z },
+                        },
+                        Properties = new
+                        {
+                            Name = $"{item.StreetName} {item.BuildingNumber}",
+                            AdditionalProperties = properties
+                        },
+                    });
+                }
+            }
+
+            if (featureCollection != null)
+            {
+                collection.AddRange(featureCollection.Features);
+            }
+
+            return new FeatureCollection
+            {
+                Features = collection,
+            };
         }
 
         // GET: api/map/all
@@ -137,62 +166,9 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllSamplesAsync()
         {
-            var points = await _mapRepository.GetByOrganizationIdAsync(User.GetOrganizationId());
-            if (points == null)
-            {
-                return ResourceNotFound();
-            }
+            var col1 = await _mapRepository.GetByOrganizationIdAsync(User.GetOrganizationId());
 
-            var collection = new List<FeatureModel>();
-            foreach (var item in points)
-            {
-                collection.Add(new FeatureModel
-                {
-                    Geometry = new FeatureModel.GeometryModel
-                    {
-                        Coordinates = new double[] { item.X, item.Y, item.Z },
-                    },
-                    Properties = new FeatureModel.PropertyModel()
-                    {
-                        Name = $"{item.StreetName} {item.BuildingNumber}"
-                    },
-                });
-            }
-
-            return Ok(new FeatureCollection
-            {
-                Features = collection,
-            });
-        }
-
-        private async Task<FeatureCollection> BuildCollection(Task<IReadOnlyList<Core.Entities.AddressPoint>> task)
-        {
-            var points = await task;
-            if (points == null)
-            {
-                return null;
-            }
-
-            var collection = new List<FeatureModel>();
-            foreach (var item in points)
-            {
-                collection.Add(new FeatureModel
-                {
-                    Geometry = new FeatureModel.GeometryModel
-                    {
-                        Coordinates = new double[] { item.X, item.Y, item.Z },
-                    },
-                    Properties = new FeatureModel.PropertyModel()
-                    {
-                        Name = $"{item.StreetName} {item.BuildingNumber}"
-                    },
-                });
-            }
-
-            return new FeatureCollection
-            {
-                Features = collection,
-            };
+            return Ok(BuildGeoCollection(col1));
         }
 
         // GET: api/map/foundation_type
@@ -203,53 +179,45 @@ namespace FunderMaps.Controllers.Api
         [Authorize(Policy = Constants.OrganizationMemberPolicy)]
         [ProducesResponseType(typeof(FeatureCollection), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetFoundationTypeAsync([FromQuery] int? type)
+        public async Task<IActionResult> GetFoundationTypeAsync()
         {
-            // NOTE: This is an temporary solution. The 'type' is nowhere to be defined and therefore bad design.
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
 
-            switch (type)
+            var col1 = await _mapRepository.GetByFounationTypeWoodByOrganizationAsync(User.GetOrganizationId());
+            var col2 = await _mapRepository.GetByFounationTypeConcreteByOrganizationAsync(User.GetOrganizationId());
+            var col3 = await _mapRepository.GetByFounationTypeNoPileByOrganizationAsync(User.GetOrganizationId());
+            var col4 = await _mapRepository.GetByFounationTypeWoodChargerByOrganizationAsync(User.GetOrganizationId());
+            var col5 = await _mapRepository.GetByFounationTypeOtherByOrganizationAsync(User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col5, new
             {
-                case 0:
-                    {
-                        var points = await BuildCollection(_mapRepository.GetFounationRecoveryByOrganizationAsync(User.GetOrganizationId()));
-                        if (points == null) { break; }
-                        return Ok(points);
-                    }
-                case 1:
-                    {
-                        var points = await BuildCollection(_mapRepository.GetByFounationTypeWoodByOrganizationAsync(User.GetOrganizationId()));
-                        if (points == null) { break; }
-                        return Ok(points);
-                    }
-                case 2:
-                    {
-                        var points = await BuildCollection(_mapRepository.GetByFounationTypeConcreteByOrganizationAsync(User.GetOrganizationId()));
-                        if (points == null) { break; }
-                        return Ok(points);
-                    }
-                case 3:
-                    {
-                        var points = await BuildCollection(_mapRepository.GetByFounationTypeNoPileByOrganizationAsync(User.GetOrganizationId()));
-                        if (points == null) { break; }
-                        return Ok(points);
-                    }
-                case 4:
-                    {
-                        var points = await BuildCollection(_mapRepository.GetByFounationTypeWoodChargerByOrganizationAsync(User.GetOrganizationId()));
-                        if (points == null) { break; }
-                        return Ok(points);
-                    }
-                case 5:
-                    {
-                        var points = await BuildCollection(_mapRepository.GetByFounationTypeOtherByOrganizationAsync(User.GetOrganizationId()));
-                        if (points == null) { break; }
-                        return Ok(points);
-                    }
-                default:
-                    break;
-            }
-
-            return ResourceNotFound();
+                SublayerId = 4,
+                Sublayer = "Overig",
+                Color = "yellow",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "Hout met oplanger",
+                Color = "light brown",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "Niet onderheid",
+                Color = "red",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "Beton paal",
+                Color = "gray",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "Houten paal",
+                Color = "brown",
+            }))))));
         }
 
         // GET: api/map/enforcement_term
@@ -260,15 +228,59 @@ namespace FunderMaps.Controllers.Api
         [Authorize(Policy = Constants.OrganizationMemberPolicy)]
         [ProducesResponseType(typeof(FeatureCollection), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetEnforcementTermAsync([FromQuery] int offsetStart, [FromQuery] int offsetEnd)
+        public async Task<IActionResult> GetEnforcementTermAsync()
         {
-            var points = await BuildCollection(_mapRepository.GetByEnforcementTermByOrganizationAsync(offsetStart, offsetEnd, User.GetOrganizationId()));
-            if (points == null)
-            {
-                return ResourceNotFound();
-            }
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
 
-            return Ok(points);
+            var col1 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(-100, -30, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(-30, -20, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(-20, -10, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(-10, 0, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(0, 10, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(10, 20, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(20, 30, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col7, new
+            {
+                SublayerId = 5,
+                Sublayer = "Over 20 tot 30 jaar over afgegeven handhavingstermijn",
+                Color = "dark green",
+            },
+            BuildGeoCollection(col6, new
+            {
+                SublayerId = 5,
+                Sublayer = "Over 10 tot 20 jaar over afgegeven handhavingstermijn",
+                Color = "green",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 4,
+                Sublayer = "Binnen 10 jaar over afgegeven handhavingstermijn",
+                Color = "light green",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "Tot 10 jaar over afgegeven handhavingstermijn",
+                Color = "yellow",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "10 tot 20 jaar over afgegeven handhavingstermijn",
+                Color = "orange",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "20 tot 30 jaar over afgegeven handhavingstermijn",
+                Color = "red",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "Meer dan 30 jaar over afgegeven handhavingstermijn",
+                Color = "dark red",
+            }))))))));
         }
 
         // GET: api/map/foundation_quality
@@ -279,15 +291,52 @@ namespace FunderMaps.Controllers.Api
         [Authorize(Policy = Constants.OrganizationMemberPolicy)]
         [ProducesResponseType(typeof(FeatureCollection), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetFoundationQualityAsync([FromQuery] FoundationQuality foundationQuality)
+        public async Task<IActionResult> GetFoundationQualityAsync()
         {
-            var points = await BuildCollection(_mapRepository.GetByFoundationQualityByOrganizationAsync(foundationQuality, User.GetOrganizationId()));
-            if (points == null)
-            {
-                return ResourceNotFound();
-            }
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
 
-            return Ok(points);
+            var col1 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.Bad, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.MediocreBad, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.Mediocre, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.Tolerable, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.MediocreGood, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.Good, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col6, new
+            {
+                SublayerId = 5,
+                Sublayer = "Goede staat",
+                Color = "dark green",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 4,
+                Sublayer = "Redelijke staat",
+                Color = "green",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "Acceptabele staat",
+                Color = "light green",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "Twijfelachtige staat",
+                Color = "yellow",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "Slechte staat",
+                Color = "red",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "Zeer slechte staat",
+                Color = "dark red",
+            })))))));
         }
     }
 }
