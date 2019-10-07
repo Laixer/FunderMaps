@@ -1,10 +1,11 @@
 ﻿using FunderMaps.Helpers;
+using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using static FunderMaps.Controllers.Api.VersionController;
 
 namespace FunderMaps.HealthChecks
 {
@@ -19,10 +20,7 @@ namespace FunderMaps.HealthChecks
         /// Create a new instance.
         /// </summary>
         /// <param name="httpContextAccessor">HttpContext container.</param>
-        public ApiHealthCheck(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
+        public ApiHealthCheck(IHttpContextAccessor httpContextAccessor) => _httpContextAccessor = httpContextAccessor;
 
         /// <summary>
         /// Runs the health check, returning the status of the component being checked.
@@ -34,20 +32,18 @@ namespace FunderMaps.HealthChecks
         {
             var request = _httpContextAccessor.HttpContext.Request;
 
-            string myUrl = request.Scheme + "://" + request.Host.ToString() + "/api/version";
-            using (var client = new HttpClient())
-            {
-                var response = await client.GetAsync(myUrl);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return HealthCheckResult.Unhealthy();
-                }
+            using var client = new HttpClient();
+            using var response = await client.GetAsync(new Uri($"https://{request.Host}/api/version"), cancellationToken);
 
-                var version = await response.Content.ReadAsAsync<VersionOutputModel>();
-                if (version.Name == Constants.ApplicationName && version.Version == Constants.ApplicationVersion)
-                {
-                    return HealthCheckResult.Healthy();
-                }
+            if (!response.IsSuccessStatusCode)
+            {
+                return HealthCheckResult.Unhealthy();
+            }
+
+            var version = await response.Content.ReadAsAsync<ApplicationVersionModel>();
+            if (version.Name == Constants.ApplicationName && version.Version == Constants.ApplicationVersion)
+            {
+                return HealthCheckResult.Healthy();
             }
 
             return HealthCheckResult.Unhealthy();
