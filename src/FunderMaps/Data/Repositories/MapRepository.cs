@@ -24,10 +24,10 @@ namespace FunderMaps.Data.Repositories
         public MapRepository(DbProvider dbProvider) => _dbProvider = dbProvider;
 
         /// <summary>
-        /// 
+        /// Get all address points by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByOrganizationIdAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -57,10 +57,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get all address points not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetFounationRecoveryByOrganizationAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -91,10 +91,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get wood address points not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodByOrganizationAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -128,10 +128,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get concrete address points not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeConcreteByOrganizationAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -163,10 +163,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get nopile address points not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeNoPileByOrganizationAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -203,10 +203,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get wood charger address points not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodChargerByOrganizationAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -238,10 +238,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get other address points not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFounationTypeOtherByOrganizationAsync(Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -277,10 +277,12 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get address points between build years not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="rangeStart">Start offset in years.</param>
+        /// <param name="rangeEnd">End limit in years.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByEnforcementTermByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
@@ -314,10 +316,11 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Get address points by foundation quality not in recovery and by organization filter.
         /// </summary>
-        /// <param name="orgId"></param>
-        /// <returns></returns>
+        /// <param name="foundationQuality">Foundation quality to filer on.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressPoint"/>.</returns>
         public async Task<IReadOnlyList<AddressPoint>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();

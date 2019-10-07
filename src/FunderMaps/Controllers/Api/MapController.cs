@@ -122,7 +122,7 @@ namespace FunderMaps.Controllers.Api
             public ICollection<FeatureModel> Features { get; set; }
         }
 
-        private FeatureCollection BuildGeoCollection(IEnumerable<AddressPoint> points, object properties = null, FeatureCollection featureCollection = null)
+        private static FeatureCollection BuildGeoCollection(IEnumerable<AddressPoint> points, object properties = null, FeatureCollection featureCollection = null)
         {
             var collection = new List<FeatureModel>();
 
@@ -136,11 +136,7 @@ namespace FunderMaps.Controllers.Api
                         {
                             Coordinates = new double[] { item.X, item.Y, item.Z },
                         },
-                        Properties = new
-                        {
-                            Name = $"{item.StreetName} {item.BuildingNumber}",
-                            AdditionalProperties = properties
-                        },
+                        Properties = properties,
                     });
                 }
             }
@@ -193,30 +189,30 @@ namespace FunderMaps.Controllers.Api
             {
                 SublayerId = 4,
                 Sublayer = "Overig",
-                Color = "yellow",
+                Color = "#E78932",
             },
             BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Hout met oplanger",
-                Color = "light brown",
+                Color = "#D36E2C",
             },
             BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "Niet onderheid",
-                Color = "red",
+                Color = "#C1301B",
             },
             BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "Beton paal",
-                Color = "gray",
+                Color = "#9F9E9E",
             }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
                 Sublayer = "Houten paal",
-                Color = "brown",
+                Color = "#9E511F",
             }))))));
         }
 
@@ -244,42 +240,42 @@ namespace FunderMaps.Controllers.Api
             {
                 SublayerId = 5,
                 Sublayer = "Over 20 tot 30 jaar over afgegeven handhavingstermijn",
-                Color = "dark green",
+                Color = "#28922A",
             },
             BuildGeoCollection(col6, new
             {
                 SublayerId = 5,
                 Sublayer = "Over 10 tot 20 jaar over afgegeven handhavingstermijn",
-                Color = "green",
+                Color = "#67B433",
             },
             BuildGeoCollection(col5, new
             {
                 SublayerId = 4,
                 Sublayer = "Binnen 10 jaar over afgegeven handhavingstermijn",
-                Color = "light green",
+                Color = "#C7BC3B",
             },
             BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Tot 10 jaar over afgegeven handhavingstermijn",
-                Color = "yellow",
+                Color = "#E78932",
             },
             BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "10 tot 20 jaar over afgegeven handhavingstermijn",
-                Color = "orange",
+                Color = "#D45925",
             },
             BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "20 tot 30 jaar over afgegeven handhavingstermijn",
-                Color = "red",
+                Color = "#C1301B",
             }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
                 Sublayer = "Meer dan 30 jaar over afgegeven handhavingstermijn",
-                Color = "dark red",
+                Color = "#B61F17",
             }))))))));
         }
 
@@ -306,36 +302,36 @@ namespace FunderMaps.Controllers.Api
             {
                 SublayerId = 5,
                 Sublayer = "Goede staat",
-                Color = "dark green",
+                Color = "#28922A",
             },
             BuildGeoCollection(col5, new
             {
                 SublayerId = 4,
                 Sublayer = "Redelijke staat",
-                Color = "green",
+                Color = "#67B433",
             },
             BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Acceptabele staat",
-                Color = "light green",
+                Color = "#C7BC3B",
             },
             BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "Twijfelachtige staat",
-                Color = "yellow",
+                Color = "#E78932",
             },
             BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "Slechte staat",
-                Color = "red",
+                Color = "#C1301B",
             }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
                 Sublayer = "Zeer slechte staat",
-                Color = "dark red",
+                Color = "#B61F17",
             })))))));
         }
     }
