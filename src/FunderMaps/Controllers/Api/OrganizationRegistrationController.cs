@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;

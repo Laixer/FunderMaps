@@ -1,15 +1,6 @@
-﻿using Dapper;
-using FunderMaps.Core.Entities.Fis;
-using FunderMaps.Core.Repositories;
-using FunderMaps.Interfaces;
-using FunderMaps.Providers;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Data.Repositories
+﻿namespace FunderMaps.Data.Repositories
 {
-    #if _DISABLED
+#if _DISABLED
     // TODO: Check the document url if it is an string or an integer.
     // For now the document string is converted to an integer so that it is possible to use the command for the repository.
     // There needs to be a better way to check for the document url.

@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Dapper;
-using Npgsql;
+﻿using Dapper;
 using Laixer.EventBus;
 using Laixer.EventBus.Handler;
+using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Event.Handlers
 {

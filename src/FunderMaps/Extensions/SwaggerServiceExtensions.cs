@@ -39,7 +39,7 @@ namespace FunderMaps.Extensions
 
                 options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 {
-                    {"Bearer", new string[] { }},
+                    {"Bearer", Array.Empty<string>()},
                 });
 
                 options.CustomSchemaIds((type) => type.FullName);

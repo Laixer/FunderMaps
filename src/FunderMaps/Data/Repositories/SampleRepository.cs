@@ -232,6 +232,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<Sample>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  samp.id,
                         samp.report,
@@ -300,6 +305,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Sample>> ListAllAsync(Guid orgId, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  samp.id,
                         samp.report,
@@ -370,6 +380,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  samp.id,
                         samp.report,
@@ -440,6 +455,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Sample>> ListAllReportAsync(int report, Guid orgId, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  samp.id,
                         samp.report,
@@ -510,6 +530,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created entity.</returns>
         public override Task<int> AddAsync(Sample entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"INSERT INTO application.sample AS samp
                                         (report,
                                         foundation_type,
@@ -566,6 +591,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(Sample entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE  application.sample AS samp
                 SET     monitoring_well = @MonitoringWell,
@@ -602,6 +632,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(Sample entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE  application.sample AS samp
                 SET     delete_date = CURRENT_TIMESTAMP
