@@ -55,6 +55,8 @@ namespace FunderMaps.Identity
         /// <param name="key">Symmetric key used for signatures.</param>
         public JwtTokenIdentityUser(TUser user, SymmetricSecurityKey key)
         {
+            if (user == null) { throw new ArgumentNullException(nameof(user)); }
+
             Claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),
@@ -71,6 +73,8 @@ namespace FunderMaps.Identity
         /// <param name="roles">List of user roles.</param>
         public void AddRoleClaims(IList<string> roles)
         {
+            if (roles == null) { throw new ArgumentNullException(nameof(roles)); }
+
             foreach (var role in roles)
             {
                 AddClaim(ClaimTypes.Role, role);
@@ -83,6 +87,8 @@ namespace FunderMaps.Identity
         /// <param name="claims">Additional security claims.</param>
         public void AddClaims(IDictionary<string, string> claims)
         {
+            if (claims == null) { throw new ArgumentNullException(nameof(claims)); }
+
             foreach (var claim in claims)
             {
                 AddClaim(claim.Key, claim.Value);
@@ -94,7 +100,12 @@ namespace FunderMaps.Identity
         /// </summary>
         /// <param name="key">Claim key.</param>
         /// <param name="value">Claim value.</param>
-        public void AddClaim(string key, object value) => Claims.Add(new Claim(key, value.ToString()));
+        public void AddClaim(string key, object value)
+        {
+            if (value == null) { throw new ArgumentNullException(nameof(value)); }
+
+            Claims.Add(new Claim(key, value.ToString()));
+        }
 
         /// <summary>
         /// Use symmetric key as token signature credentials.

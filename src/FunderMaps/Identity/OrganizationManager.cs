@@ -55,13 +55,11 @@ namespace FunderMaps.Identity
         /// <param name="optionsAccessor">The accessor used to access the <see cref="IdentityOptions"/>.</param>
         /// <param name="keyNormalizer">The <see cref="ILookupNormalizer"/> to use when generating index keys for organizations.</param>
         /// <param name="errors">The <see cref="IdentityErrorDescriber"/> used to provider error messages.</param>
-        /// <param name="services">The <see cref="IServiceProvider"/> used to resolve services.</param>
         /// <param name="logger">The logger used to log messages, warnings and errors.</param>
         public OrganizationManager(IOrganizationStore<TOrganization> store,
             IOptions<IdentityOptions> optionsAccessor,
             ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors,
-            IServiceProvider services,
             ILogger<OrganizationManager<TOrganization>> logger)
         {
             Store = store ?? throw new ArgumentNullException(nameof(store));

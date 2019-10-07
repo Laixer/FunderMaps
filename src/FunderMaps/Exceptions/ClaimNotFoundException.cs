@@ -14,5 +14,20 @@ namespace FunderMaps.Exceptions
         public ClaimNotFoundException(string claimType)
             : base($"Claim with type {claimType} was not found.")
         { }
+
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        public ClaimNotFoundException()
+        { }
+
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="message">Error message.</param>
+        /// <param name="innerException">Internal exception.</param>
+        public ClaimNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
     }
 }

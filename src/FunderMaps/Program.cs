@@ -7,7 +7,7 @@ namespace FunderMaps
     /// <summary>
     /// Application entry.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         /// Application entry point.
@@ -24,7 +24,6 @@ namespace FunderMaps
         public static IWebHost BuildWebHost(string[] args)
             => WebHost.CreateDefaultBuilder(args)
                 .UseKestrel(c => c.AddServerHeader = false)
-                .UseApplicationInsights()
                 .UseStartup<Startup>()
                 .Build();
     }

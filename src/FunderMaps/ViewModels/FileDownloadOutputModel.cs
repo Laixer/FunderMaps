@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.ViewModels
+﻿using System;
+
+namespace FunderMaps.ViewModels
 {
     /// <summary>
     /// File download result model.
@@ -8,7 +10,7 @@
         /// <summary>
         /// Downloading url.
         /// </summary>
-        public string Url { get; set; }
+        public Uri Url { get; set; }
 
         /// <summary>
         /// Url validity in hours.

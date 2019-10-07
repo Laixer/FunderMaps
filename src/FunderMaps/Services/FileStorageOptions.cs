@@ -10,6 +10,6 @@ namespace FunderMaps.Services
         /// <summary>
         /// Name per storage container.
         /// </summary>
-        public IDictionary<string, string> StorageContainers { get; set; }
+        public IDictionary<string, string> StorageContainers { get; }
     }
 }

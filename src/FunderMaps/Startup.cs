@@ -45,6 +45,8 @@ namespace FunderMaps
         /// <param name="services">Service collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry();
+
             services.AddDbProvider("FunderMapsConnection");
 
             ConfigureAuthentication(services);
@@ -102,7 +104,7 @@ namespace FunderMaps
         /// Setup local repositories and register them with the service collector.
         /// </summary>
         /// <param name="services">Service collection.</param>
-        private void ConfigureRepository(IServiceCollection services)
+        private static void ConfigureRepository(IServiceCollection services)
         {
             services.AddScoped<ISampleRepository, SampleRepository>();
             services.AddScoped<IReportRepository, ReportRepository>();
@@ -154,7 +156,7 @@ namespace FunderMaps
         /// <summary>
         /// Configure the authorization policies.
         /// </summary>
-        private void ConfigureAuthorization(IServiceCollection services)
+        private static void ConfigureAuthorization(IServiceCollection services)
         {
             services.AddAuthorization(options =>
             {
@@ -224,7 +226,7 @@ namespace FunderMaps
         /// <summary>
         /// This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
         /// </summary>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

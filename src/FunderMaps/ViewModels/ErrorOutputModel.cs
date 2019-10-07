@@ -26,7 +26,7 @@ namespace FunderMaps.ViewModels
         /// <summary>
         /// Collection of errors.
         /// </summary>
-        public IList<Error> Errors { get; set; }
+        public IList<Error> Errors { get; private set; }
 
         /// <summary>
         /// Create new instance.
@@ -62,9 +62,6 @@ namespace FunderMaps.ViewModels
         /// Add error by code.
         /// </summary>
         /// <param name="code">Error code.</param>
-        public void AddError(int code)
-        {
-            AddError(code, null);
-        }
+        public void AddError(int code) => AddError(code, null);
     }
 }
