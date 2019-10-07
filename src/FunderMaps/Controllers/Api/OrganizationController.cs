@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Entities.Fis;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
@@ -39,6 +38,34 @@ namespace FunderMaps.Controllers.Api
             _organizationUserRepository = organizationUserRepository;
             _userManager = userManager;
         }
+
+        // FUTURE: Check consistency
+        // TODO: Navigation
+        // GET: api/report/contractors
+        /// <summary>
+        /// Return list of contractors.
+        /// </summary>
+        /// <returns>List of <see cref="Contractor"/>.</returns>
+        [HttpGet("contractors")]
+        [ResponseCache(Duration = 24 * 60 * 60)]
+        [ProducesResponseType(typeof(List<Contractor>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetContractorsAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+            => Ok(await _organizationRepository.ListAllContractorsAsync(new Navigation(offset, limit)));
+
+        // FUTURE: Check consistency
+        // TODO: Should only return partial user object.
+        // TODO: Not only verifier but also all superuser.
+        // GET: api/report/reviewers
+        /// <summary>
+        /// Return list of reviewers within the organization.
+        /// </summary>
+        /// <returns>EntityStatsOutputModel.</returns>
+        [HttpGet("reviewers")]
+        [ProducesResponseType(typeof(List<OrganizationUser>), 200)]
+        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        public async Task<IActionResult> GetReviewersAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
+            => Ok(await _organizationUserRepository.ListAllByOrganizationByRoleIdAsync(OrganizationRole.Verifier, User.GetOrganizationId(), new Navigation(offset, limit)));
 
         // GET: api/organization/current_user
         /// <summary>
@@ -202,6 +229,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
@@ -275,6 +304,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUser input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
@@ -376,6 +407,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserProfileAsync(Guid id, Guid userId, ProfileInputOutputModel input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();
@@ -416,6 +449,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
                 return ResourceForbid();

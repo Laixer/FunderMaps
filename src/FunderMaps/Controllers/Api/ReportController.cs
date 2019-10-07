@@ -26,7 +26,6 @@ namespace FunderMaps.Controllers.Api
         private const int hoursValid = 1;
 
         private readonly IReportRepository _reportRepository;
-        private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly UserManager<FunderMapsUser> _userManager;
         private readonly IFileStorageService _fileStorageService;
 
@@ -40,7 +39,6 @@ namespace FunderMaps.Controllers.Api
             IFileStorageService fileStorageService)
         {
             _reportRepository = reportRepository;
-            _organizationUserRepository = organizationUserRepository;
             _userManager = userManager;
             _fileStorageService = fileStorageService;
         }
@@ -71,34 +69,6 @@ namespace FunderMaps.Controllers.Api
             {
                 Count = await _reportRepository.CountAsync(User.GetOrganizationId()),
             });
-
-        // FUTURE: Check consistency
-        // TODO: Send the cache headers for this one.
-        // TODO: Navigation
-        // GET: api/report/contractors
-        /// <summary>
-        /// Return list of contractors.
-        /// </summary>
-        /// <returns>List of <see cref="Contractor"/>.</returns>
-        [HttpGet("contractors")]
-        [ProducesResponseType(typeof(List<Contractor>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetContractorsAsync()
-            => Ok(await _reportRepository.ListAllContractorsAsync());
-
-        // FUTURE: Check consistency
-        // TODO: Should only return partial user object.
-        // TODO: Not only verifier but also all superuser.
-        // GET: api/report/reviewers
-        /// <summary>
-        /// Return list of reviewers within the organization.
-        /// </summary>
-        /// <returns>EntityStatsOutputModel.</returns>
-        [HttpGet("reviewers")]
-        [ProducesResponseType(typeof(List<OrganizationUser>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetReviewersAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
-            => Ok(await _organizationUserRepository.ListAllByOrganizationByRoleIdAsync(OrganizationRole.Verifier, User.GetOrganizationId(), new Navigation(offset, limit)));
 
         // POST: api/report
         /// <summary>

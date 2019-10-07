@@ -21,6 +21,29 @@ namespace FunderMaps.Data.Repositories
         /// <param name="dbProvider">Database provider.</param>
         public OrganizationRepository(DbProvider dbProvider) : base(dbProvider) { }
 
+        // TODO: Move to own repo?
+        /// <summary>
+        /// Return all contractors.
+        /// </summary>
+        /// <returns>List of records.</returns>
+        public async Task<IReadOnlyList<Contractor>> ListAllContractorsAsync(Navigation navigation)
+        {
+            var sql = @"
+                SELECT contrctr.id,
+                        contrctr.name
+                FROM   application.contractor AS contrctr
+                OFFSET @Offset
+                LIMIT @Limit";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Contractor>(sql, navigation));
+            if (result.Count() == 0)
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
+
         /// <summary>
         /// Create new organization.
         /// </summary>

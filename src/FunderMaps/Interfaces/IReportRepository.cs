@@ -13,12 +13,6 @@ namespace FunderMaps.Interfaces
     public interface IReportRepository : IAsyncRepository<Report, int>
     {
         /// <summary>
-        /// Retrieve all contractor.
-        /// </summary>
-        /// <returns>Entities.</returns>
-        Task<IReadOnlyList<Contractor>> ListAllContractorsAsync();
-
-        /// <summary>
         /// Retrieve entity by id and document_id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>

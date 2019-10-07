@@ -18,7 +18,7 @@ namespace FunderMaps.Controllers.Api
         /// Return application versioning information.
         /// </summary>
         [HttpGet]
-        [ResponseCache(Duration = 86400)]
+        [ResponseCache(Duration = 24 * 60 * 60)]
         [ProducesResponseType(typeof(ApplicationVersionModel), 200)]
         public IActionResult Get()
             => Ok(new ApplicationVersionModel

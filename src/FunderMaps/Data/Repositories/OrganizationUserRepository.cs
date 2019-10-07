@@ -3,6 +3,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Interfaces;
+using FunderMaps.Models.Identity;
 using FunderMaps.Providers;
 using System;
 using System.Collections.Generic;
@@ -182,13 +183,15 @@ namespace FunderMaps.Data.Repositories
         /// <param name="orgId">Organization identifier.</param>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, Navigation navigation)
+        public async Task<IReadOnlyList<FunderMapsUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, Navigation navigation)
         {
             var sql = @"
-                SELECT  orguser.user_id,
-                        orguser.organization_id,
-                        orguser.role
+                SELECT  usr.id,
+		                usr.given_name,
+		                usr.last_name,
+		                usr.email
                 FROM    application.organization_user AS orguser
+                        JOIN application.user AS usr on usr.id = orguser.user_id
                 WHERE   orguser.organization_id = @OrganizatonId
                         AND orguser.role = @ConvRole::application.organization_role
                 OFFSET @Offset
@@ -200,7 +203,7 @@ namespace FunderMaps.Data.Repositories
             dynamicParameters.Add("Offset", navigation.Offset);
             dynamicParameters.Add("Limit", navigation.Limit);
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, dynamicParameters));
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FunderMapsUser>(sql, dynamicParameters));
             if (result.Count() == 0)
             {
                 return null;

@@ -23,26 +23,6 @@ namespace FunderMaps.Data.Repositories
         public ReportRepository(DbProvider dbProvider) : base(dbProvider) { }
 
         /// <summary>
-        /// Return all contractors.
-        /// </summary>
-        /// <returns>List of records.</returns>
-        public async Task<IReadOnlyList<Contractor>> ListAllContractorsAsync()
-        {
-            var sql = @"
-                SELECT contrctr.id,
-                        contrctr.name
-                FROM   application.contractor AS contrctr";
-
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Contractor>(sql));
-            if (result.Count() == 0)
-            {
-                return null;
-            }
-
-            return result.ToArray();
-        }
-
-        /// <summary>
         /// Get entity by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
