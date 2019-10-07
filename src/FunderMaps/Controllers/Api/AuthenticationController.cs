@@ -153,6 +153,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> SignInAsync([FromBody] UserInputModel input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             // NOTE: Find user for authentication, if the user object cannot be found then return an
             //       authentication faillure since the client is not allowed to guess the credentials.
             //       We look for the user first since the signinManager sets cookie authentication on 
@@ -225,6 +227,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         public async Task<IActionResult> SetPasswordAsync([FromBody] UserInputModel input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             var user = await _userManager.FindByEmailAsync(input.Email);
             if (user == null)
             {

@@ -6,6 +6,7 @@ using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -87,6 +88,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             var report = await _reportRepository.GetByIdAsync(input.Report.Value);
             if (report == null)
             {
@@ -139,6 +142,8 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
         {
+            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+
             var sample = await _sampleRepository.GetByIdAsync(id, User.GetOrganizationId());
             if (sample == null)
             {
