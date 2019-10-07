@@ -1,4 +1,5 @@
 ﻿using Laixer.Identity.Dapper;
+using System;
 
 namespace FunderMaps.Data
 {
@@ -13,6 +14,11 @@ namespace FunderMaps.Data
         /// <param name="queryRepository">Exiting query repository.</param>
         public void Configure(IQueryRepository queryRepository)
         {
+            if (queryRepository == null)
+            {
+                throw new ArgumentNullException(nameof(queryRepository));
+            }
+
             queryRepository.CreateAsync = $@"
                 INSERT INTO application.user
                     (email,

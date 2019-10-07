@@ -59,13 +59,11 @@ namespace FunderMaps.Middleware
             }
 
             var response = context.Response;
-            if (response == null)
+            if (response != null)
             {
-                throw new ArgumentNullException(nameof(response));
+                HttpHeadersAdd(response.Headers);
+                HttpHeadersRemove(response.Headers);
             }
-
-            HttpHeadersAdd(response.Headers);
-            HttpHeadersRemove(response.Headers);
 
             await _next(context);
         }

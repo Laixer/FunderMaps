@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using System;
 
 namespace FunderMaps.Middleware
 {
@@ -20,6 +21,11 @@ namespace FunderMaps.Middleware
         /// </summary>
         public static IApplicationBuilder UseEnhancedSecurity(this IApplicationBuilder app, SecurityBuilder builder)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             return app.UseMiddleware<SecurityMiddleware>(builder.Build());
         }
     }

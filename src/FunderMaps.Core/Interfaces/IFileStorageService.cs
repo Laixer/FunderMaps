@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Helpers;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="name">File name.</param>
         /// <param name="hoursValid">How long the link is valid in hours.</param>
         /// <returns>The generated link.</returns>
-        string GetAccessLink(string store, string name, double hoursValid);
+        Uri GetAccessLink(string store, string name, double hoursValid);
 
         /// <summary>
         /// Store the file in the data store.

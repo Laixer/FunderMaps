@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace FunderMaps.Middleware.Constants
+﻿namespace FunderMaps.Middleware.Internal
 {
     /// <summary>
     /// X-Frame-Options-related constants.
     /// </summary>
-    public static class FrameOptionsConstants
+    public static class FrameOptions
     {
         /// <summary>
         /// The header value for X-Frame-Options

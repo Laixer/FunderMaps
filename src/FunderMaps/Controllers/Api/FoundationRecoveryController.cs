@@ -8,6 +8,7 @@ using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -73,6 +74,11 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody]FoundationRecovery input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
             {
@@ -129,6 +135,11 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] FoundationRecovery input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             var recovery = await _recoveryRepository.GetByIdAsync(id, User.GetOrganizationId());
             if (recovery == null)
             {

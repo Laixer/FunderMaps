@@ -1,5 +1,4 @@
-﻿using System;
-using FunderMaps.Middleware.Constants;
+﻿using FunderMaps.Middleware.Internal;
 
 namespace FunderMaps.Middleware
 {
@@ -28,7 +27,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddFrameOptionsDeny()
         {
-            _policy.SetHeaders[FrameOptionsConstants.Header] = FrameOptionsConstants.Deny;
+            _policy.SetHeaders[FrameOptions.Header] = FrameOptions.Deny;
             return this;
         }
 
@@ -38,7 +37,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddFrameOptionsSameOrigin()
         {
-            _policy.SetHeaders[FrameOptionsConstants.Header] = FrameOptionsConstants.SameOrigin;
+            _policy.SetHeaders[FrameOptions.Header] = FrameOptions.SameOrigin;
             return this;
         }
 
@@ -49,7 +48,7 @@ namespace FunderMaps.Middleware
         /// <param name="uri">The uri of the origin in which the page may be displayed in a frame.</param>
         public SecurityBuilder AddFrameOptionsSameOrigin(string uri)
         {
-            _policy.SetHeaders[FrameOptionsConstants.Header] = string.Format(FrameOptionsConstants.AllowFromUri, uri);
+            _policy.SetHeaders[FrameOptions.Header] = string.Format(FrameOptions.AllowFromUri, uri);
             return this;
         }
 
@@ -59,7 +58,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddXssProtectionEnabled()
         {
-            _policy.SetHeaders[XssProtectionConstants.Header] = XssProtectionConstants.Enabled;
+            _policy.SetHeaders[XssProtection.Header] = XssProtection.Enabled;
             return this;
         }
 
@@ -69,7 +68,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddXssProtectionDisabled()
         {
-            _policy.SetHeaders[XssProtectionConstants.Header] = XssProtectionConstants.Disabled;
+            _policy.SetHeaders[XssProtection.Header] = XssProtection.Disabled;
             return this;
         }
 
@@ -79,7 +78,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddXssProtectionBlock()
         {
-            _policy.SetHeaders[XssProtectionConstants.Header] = XssProtectionConstants.Block;
+            _policy.SetHeaders[XssProtection.Header] = XssProtection.Block;
             return this;
         }
 
@@ -89,7 +88,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddXssProtectionReport(string reportUrl)
         {
-            _policy.SetHeaders[XssProtectionConstants.Header] = string.Format(XssProtectionConstants.Report, reportUrl);
+            _policy.SetHeaders[XssProtection.Header] = string.Format(XssProtection.Report, reportUrl);
             return this;
         }
 
@@ -99,7 +98,7 @@ namespace FunderMaps.Middleware
         /// </summary>
         public SecurityBuilder AddContentTypeOptionsNoSniff()
         {
-            _policy.SetHeaders[ContentTypeOptionsConstants.Header] = ContentTypeOptionsConstants.NoSniff;
+            _policy.SetHeaders[ContentTypeOptions.Header] = ContentTypeOptions.NoSniff;
             return this;
         }
 

@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace FunderMaps.Middleware.Constants
+﻿namespace FunderMaps.Middleware.Internal
 {
     /// <summary>
     /// X-XSS-Protection-related constants.
     /// </summary>
-    public static class XssProtectionConstants
+    public static class XssProtection
     {
         /// <summary>
         /// Header value for X-XSS-Protection

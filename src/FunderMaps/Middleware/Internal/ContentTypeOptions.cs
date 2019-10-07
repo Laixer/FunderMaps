@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace FunderMaps.Middleware.Constants
+﻿namespace FunderMaps.Middleware.Internal
 {
     /// <summary>
     /// X-Content-Type-Options-related constants.
     /// </summary>
-    public static class ContentTypeOptionsConstants
+    public static class ContentTypeOptions
     {
         /// <summary>
         /// Header value for X-Content-Type-Options
@@ -16,6 +14,5 @@ namespace FunderMaps.Middleware.Constants
         /// Disables content sniffing
         /// </summary>
         public static readonly string NoSniff = "nosniff";
-
     }
 }

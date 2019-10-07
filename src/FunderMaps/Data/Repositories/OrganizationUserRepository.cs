@@ -185,6 +185,8 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<FunderMapsUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, Navigation navigation)
         {
+            // TODO: return the actual user and push the results in an SimpleUser object.
+
             var sql = @"
                 SELECT  usr.id,
 		                usr.given_name,

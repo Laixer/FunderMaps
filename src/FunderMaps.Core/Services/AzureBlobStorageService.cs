@@ -67,7 +67,7 @@ namespace FunderMaps.Core.Services
         /// <param name="name">File name.</param>
         /// <param name="hoursValid">How long the link is valid in hours.</param>
         /// <returns>The generated link.</returns>
-        public string GetAccessLink(string store, string name, double hoursValid = 1)
+        public Uri GetAccessLink(string store, string name, double hoursValid = 1)
         {
             var cloudBlockBlob = SetContainer(store).GetBlockBlobReference(name);
 
@@ -78,7 +78,7 @@ namespace FunderMaps.Core.Services
                 Permissions = SharedAccessBlobPermissions.Read,
             });
 
-            return cloudBlockBlob.Uri + sasBlobToken;
+            return new Uri(cloudBlockBlob.Uri, sasBlobToken);
         }
 
         /// <summary>

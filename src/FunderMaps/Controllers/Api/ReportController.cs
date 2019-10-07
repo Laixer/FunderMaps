@@ -34,7 +34,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         public ReportController(
             IReportRepository reportRepository,
-            IOrganizationUserRepository organizationUserRepository,
             UserManager<FunderMapsUser> userManager,
             IFileStorageService fileStorageService)
         {
@@ -86,7 +85,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
@@ -162,7 +164,7 @@ namespace FunderMaps.Controllers.Api
             // TODO: There is no error handling so far.
             return Ok(new FileDownloadOutputModel
             {
-                Url = new Uri(_fileStorageService.GetAccessLink(Constants.ReportStorage, report.DocumentName, hoursValid)),
+                Url = _fileStorageService.GetAccessLink(Constants.ReportStorage, report.DocumentName, hoursValid),
                 UrlValid = hoursValid,
             });
         }
@@ -182,7 +184,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
@@ -265,7 +270,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutValidateRequestAsync(int id, string document, [FromBody] VerificationInputModel input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
             if (report == null)
