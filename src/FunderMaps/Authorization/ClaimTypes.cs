@@ -3,7 +3,7 @@
     /// <summary>
     /// Authorization claims.
     /// </summary>
-    public class ClaimTypes
+    public static class ClaimTypes
     {
         /// <summary>
         /// Organization user.

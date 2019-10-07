@@ -54,8 +54,10 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <param name="errors">List of errors.</param>
         /// <returns>ErrorOutputModel.</returns>
-        protected ErrorOutputModel IdentityErrorResponse(IEnumerable<IdentityError> errors)
+        protected static ErrorOutputModel IdentityErrorResponse(IEnumerable<IdentityError> errors)
         {
+            if (errors == null) { throw new ArgumentNullException(nameof(errors)); }
+
             var errorModel = new ErrorOutputModel();
             foreach (var item in errors)
             {
