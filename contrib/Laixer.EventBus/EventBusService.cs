@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Laixer.EventBus.Internal;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Laixer.EventBus.Internal;
 
 namespace Laixer.EventBus
 {

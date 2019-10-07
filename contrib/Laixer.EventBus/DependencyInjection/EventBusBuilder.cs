@@ -1,5 +1,5 @@
-﻿using System;
-using Laixer.EventBus.Internal;
+﻿using Laixer.EventBus.Internal;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

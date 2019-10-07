@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     /// Record timestamps.
     /// </summary>
-    public abstract class RecordControl : BaseEntity 
+    public abstract class RecordControl : BaseEntity
     {
         /// <summary>
         /// Record create date.

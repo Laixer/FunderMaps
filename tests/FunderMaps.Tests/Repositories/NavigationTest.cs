@@ -1,7 +1,4 @@
 ﻿using FunderMaps.Core.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace FunderMaps.Tests.Repositories
@@ -57,7 +54,7 @@ namespace FunderMaps.Tests.Repositories
         }
 
         [Theory]
-        [InlineData(0,25)]
+        [InlineData(0, 25)]
         [InlineData(4, 5)]
         [InlineData(5, 9)]
         public void NavigationParamsEqualOrGreaterThenZero(uint offset, uint limit)
@@ -75,6 +72,6 @@ namespace FunderMaps.Tests.Repositories
             Assert.True(IsEqualOrGreaterThenZero(nav.Offset));
         }
 
-        static bool IsEqualOrGreaterThenZero(uint value) => value >= 0 ? true : false;
+        private static bool IsEqualOrGreaterThenZero(uint value) => value >= 0 ? true : false;
     }
 }

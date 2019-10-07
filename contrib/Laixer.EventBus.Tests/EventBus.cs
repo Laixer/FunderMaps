@@ -1,17 +1,18 @@
-using System.Threading;
-using System.Threading.Tasks;
 using Laixer.EventBus.Handler;
 using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Laixer.EventBus.Tests
 {
     public class EventBus
     {
-        interface IMyEvent : IEvent { }
-        class MyEvent : IMyEvent { }
+        private interface IMyEvent : IEvent { }
 
-        class MyEventHandler : IEventHandler<IMyEvent>
+        private class MyEvent : IMyEvent { }
+
+        private class MyEventHandler : IEventHandler<IMyEvent>
         {
             public Task HandleEventAsync(EventHandlerContext<IMyEvent> context, CancellationToken cancellationToken = default)
             {

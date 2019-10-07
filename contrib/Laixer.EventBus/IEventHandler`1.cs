@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using Laixer.EventBus.Handler;
+using System.Threading;
 using System.Threading.Tasks;
-using Laixer.EventBus.Handler;
 
 namespace Laixer.EventBus
 {

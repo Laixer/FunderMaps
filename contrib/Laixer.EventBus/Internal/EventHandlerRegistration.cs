@@ -33,7 +33,7 @@ namespace Laixer.EventBus.Internal
         /// Event interface.
         /// </summary>
         public Type EventInterfaceType { get; set; }
-        
+
         /// <summary>
         /// Event handler implementation type
         /// </summary>

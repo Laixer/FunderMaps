@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Controllers.Api;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
-using static FunderMaps.Controllers.Api.VersionController;
 
 namespace FunderMaps.Tests.Controllers
 {

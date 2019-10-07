@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Reflection;
-using System.Collections.Generic;
-using Microsoft.Extensions.Options;
+﻿using Laixer.EventBus.Handler;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Laixer.EventBus.Handler;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Laixer.EventBus.Internal
 {
@@ -96,7 +96,7 @@ namespace Laixer.EventBus.Internal
                         {
                             throw new Exception($"{eventHandler.GetType().Name} does not implement IEventHandler<>");
                         }
-                        
+
                         // Create the even handler context
                         Type handlerContextType = typeof(EventHandlerContext<>).MakeGenericType(type);
                         EventHandlerContext handlerContext = (EventHandlerContext)Activator.CreateInstance(handlerContextType);

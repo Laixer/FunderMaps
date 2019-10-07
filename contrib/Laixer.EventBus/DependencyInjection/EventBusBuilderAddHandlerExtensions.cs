@@ -1,6 +1,6 @@
-﻿using System;
-using Laixer.EventBus;
+﻿using Laixer.EventBus;
 using Laixer.EventBus.Internal;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
