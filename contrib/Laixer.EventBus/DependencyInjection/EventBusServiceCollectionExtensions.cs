@@ -21,6 +21,8 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IEventBusBuilder"/> from which events can be registered.</returns>
         public static IEventBusBuilder AddEventBus(this IServiceCollection services)
         {
+            services.AddOptions();
+
             services.TryAddSingleton<EventBusService, DefaultEventBusService>();
 
             return new EventBusBuilder(services);

@@ -2,6 +2,9 @@
 
 namespace Laixer.EventBus.Handler
 {
+    /// <summary>
+    /// Event handler context.
+    /// </summary>
     public abstract class EventHandlerContext
     {
         /// <summary>

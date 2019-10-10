@@ -1,6 +1,5 @@
 ﻿using Laixer.EventBus.Handler;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -24,12 +23,10 @@ namespace Laixer.EventBus.Internal
 
         public DefaultEventBusService(
             IServiceScopeFactory scopeFactory,
-            IOptions<EventBusServiceOptions> options,
-            ILogger<DefaultEventBusService> logger)
+            IOptions<EventBusServiceOptions> options)
         {
             _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
