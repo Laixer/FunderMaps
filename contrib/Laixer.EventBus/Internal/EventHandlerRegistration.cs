@@ -18,37 +18,32 @@ namespace Laixer.EventBus.Internal
     /// </remarks>
     public sealed class EventHandlerRegistration
     {
-        private string _name;
-
-        /// <summary>
-        /// Gets or sets the handler name.
-        /// </summary>
-        public string Name
-        {
-            get => _name;
-            set => _name = value ?? throw new ArgumentNullException(nameof(value));
-        }
-
         /// <summary>
         /// Event interface.
         /// </summary>
-        public Type EventInterfaceType { get; set; }
+        public Type EventInterfaceType { get; }
 
         /// <summary>
         /// Event handler implementation type
         /// </summary>
-        public Type ImplementationType { get; set; }
+        public Type ImplementationType { get; }
 
         /// <summary>
         /// Create new instance.
         /// </summary>
-        public EventHandlerRegistration() { }
+        public EventHandlerRegistration(Type eventInterfaceType, Type implementationType)
+        {
+            EventInterfaceType = eventInterfaceType;
+            ImplementationType = implementationType;
+        }
 
         /// <summary>
-        /// Create new instance.
+        /// Create a new <see cref="EventHandlerRegistration"/>.
         /// </summary>
-        /// <param name="name">Name of the event handler.</param>
-        public EventHandlerRegistration(string name)
-            => _name = name ?? throw new ArgumentNullException(nameof(name));
+        /// <typeparam name="TEventHandlerInterface">Event interface of the type <see cref="IEvent"/>.</typeparam>
+        /// <typeparam name="TImplementation">Handler for the event interface.</typeparam>
+        /// <returns>Instance of <see cref="EventHandlerRegistration"/>.</returns>
+        public static EventHandlerRegistration Register<TEventHandlerInterface, TImplementation>()
+            => new EventHandlerRegistration(typeof(TEventHandlerInterface), typeof(TImplementation));
     }
 }

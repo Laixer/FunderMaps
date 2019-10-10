@@ -19,7 +19,6 @@ namespace Laixer.EventBus.Internal
 
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IOptions<EventBusServiceOptions> _options;
-        private readonly ILogger<DefaultEventBusService> _logger;
 
         public DefaultEventBusService(
             IServiceScopeFactory scopeFactory,
@@ -51,7 +50,7 @@ namespace Laixer.EventBus.Internal
             .Any(s => s.ParameterType.GenericTypeArguments.Any(t => t == type));
 
         /// <summary>
-        /// Runs the provided health checks and returns the aggregated status
+        /// Runs the provided health checks and returns the aggregated status.
         /// </summary>
         /// <param name="predicate">
         /// A predicate that can be used to include health checks based on user-defined criteria.
@@ -60,14 +59,22 @@ namespace Laixer.EventBus.Internal
         /// <param name="cancellationToken">A <see cref="CancellationToken"/> which can be used to cancel the health checks.</param>
         public override async Task FireEventAsync(Func<EventHandlerRegistration, bool> predicate, IEvent @event, CancellationToken cancellationToken = default)
         {
-            var registrations = _options.Value.Registrations;
-            if (registrations.Count == 0) { return; }
+            cancellationToken.ThrowIfCancellationRequested();
 
-            // Filter the list (optional).
+            var registrations = _options.Value.Registrations;
+            if (registrations.Count == 0)
+            {
+                return;
+            }
+
+            // Filter the registrations list (optional).
             if (predicate != null)
             {
                 registrations = registrations.Where(predicate).ToArray();
             }
+
+            static IEventHandler InstanciateEventHandler(IServiceProvider serviceProvider, Type eventHandlerType)
+                => ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, eventHandlerType) as IEventHandler;
 
             int index = 0;
 
@@ -75,15 +82,20 @@ namespace Laixer.EventBus.Internal
             foreach (Type type in GetDerivedInterfaces<IEvent>(@event))
             {
                 var qualifiedHandlerRegistrations = registrations.Where(r => r.EventInterfaceType == type);
-                if (qualifiedHandlerRegistrations.Count() == 0) { continue; }
+                if (qualifiedHandlerRegistrations.Count() == 0)
+                {
+                    continue;
+                }
 
+                // Build an array of tasks which will run all at the same time. Event handlers should not be sequential by
+                // design and thus would benefit from concurrency.
                 var tasks = new Task[qualifiedHandlerRegistrations.Count()];
                 using (var scope = _scopeFactory.CreateScope())
                 {
                     foreach (EventHandlerRegistration handlerRegistration in qualifiedHandlerRegistrations)
                     {
-                        Type eventHandlerType = handlerRegistration.ImplementationType;
-                        IEventHandler eventHandler = (IEventHandler)ActivatorUtilities.GetServiceOrCreateInstance(scope.ServiceProvider, eventHandlerType);
+                        var eventHandlerType = handlerRegistration.ImplementationType;
+                        var eventHandler = InstanciateEventHandler(scope.ServiceProvider, eventHandlerType);
 
                         // Find the method witch accepts 'type' as argument
                         var handleEventAsyncMethod = eventHandler.GetType()
@@ -94,19 +106,16 @@ namespace Laixer.EventBus.Internal
 
                         if (handleEventAsyncMethod == null)
                         {
-                            throw new Exception($"{eventHandler.GetType().Name} does not implement IEventHandler<>");
+                            throw new InvalidOperationException($"{eventHandler.GetType().Name} does not implement IEventHandler<>");
                         }
 
                         // Create the even handler context
-                        Type handlerContextType = typeof(EventHandlerContext<>).MakeGenericType(type);
-                        EventHandlerContext handlerContext = (EventHandlerContext)Activator.CreateInstance(handlerContextType);
+                        var handlerContextType = typeof(EventHandlerContext<>).MakeGenericType(type);
+                        var handlerContext = (EventHandlerContext)Activator.CreateInstance(handlerContextType);
                         handlerContext.Registration = handlerRegistration;
 
-                        var eventProperty = handlerContext.GetType().GetProperty("Event");
-                        if (eventProperty != null)
-                        {
-                            eventProperty.SetValue(handlerContext, @event);
-                        }
+                        // Set the fired event in the context so the handler can access the event
+                        handlerContext.GetType().GetProperty("Event")?.SetValue(handlerContext, @event);
 
                         tasks[index++] = FireEventHandlerAsync(handleEventAsyncMethod, handlerContext, eventHandler, cancellationToken);
                     }
