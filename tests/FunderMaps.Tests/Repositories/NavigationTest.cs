@@ -68,10 +68,8 @@ namespace FunderMaps.Tests.Repositories
 
             // Assert
             // Check if the nav values are greater then 0
-            Assert.True(IsEqualOrGreaterThenZero(nav.Limit));
-            Assert.True(IsEqualOrGreaterThenZero(nav.Offset));
+            Assert.True(nav.Limit >= 0);
+            Assert.True(nav.Offset >= 0);
         }
-
-        private static bool IsEqualOrGreaterThenZero(uint value) => value >= 0 ? true : false;
     }
 }

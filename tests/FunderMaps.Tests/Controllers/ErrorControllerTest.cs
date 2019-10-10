@@ -9,7 +9,7 @@ namespace FunderMaps.Tests.Controllers
     public class ErrorControllerTest
     {
         [Fact]
-        public void Error_controller_returns_error500()
+        public void ErrorControllerReturnsError500()
         {
             // Arrange
             using (var controller = new ErrorController())
@@ -25,7 +25,7 @@ namespace FunderMaps.Tests.Controllers
         }
 
         [Fact]
-        public void Error_controller_error500_title_matches_error_title()
+        public void ErrorControllerError500TitleMatchesErrorTitle()
         {
             // Arrange
             using (var controller = new ErrorController())
