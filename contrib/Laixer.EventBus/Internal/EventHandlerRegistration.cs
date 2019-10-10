@@ -3,7 +3,7 @@
 namespace Laixer.EventBus.Internal
 {
     /// <summary>
-    /// Represent the registration information associated with an <see cref="IEventHandler{TEvent}"/> implementation.
+    /// Represents the registration information associated with an <see cref="IEventHandler{TEvent}"/> implementation.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -39,11 +39,16 @@ namespace Laixer.EventBus.Internal
         /// </summary>
         public Type ImplementationType { get; set; }
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public EventHandlerRegistration() { }
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="name">Name of the event handler.</param>
         public EventHandlerRegistration(string name)
-        {
-            _name = name ?? throw new ArgumentNullException(nameof(name));
-        }
+            => _name = name ?? throw new ArgumentNullException(nameof(name));
     }
 }

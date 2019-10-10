@@ -8,7 +8,7 @@ namespace Laixer.EventBus.Internal
     public sealed class EventBusServiceOptions
     {
         /// <summary>
-        /// Gets the event registrations.
+        /// List of regstered events.
         /// </summary>
         public ICollection<EventHandlerRegistration> Registrations { get; } = new List<EventHandlerRegistration>();
     }

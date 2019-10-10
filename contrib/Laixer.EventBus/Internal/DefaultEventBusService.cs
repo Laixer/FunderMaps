@@ -16,6 +16,8 @@ namespace Laixer.EventBus.Internal
     /// </summary>
     internal sealed class DefaultEventBusService : EventBusService
     {
+        private const string handlerMethodName = "HandleEventAsync";
+
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IOptions<EventBusServiceOptions> _options;
         private readonly ILogger<DefaultEventBusService> _logger;
@@ -28,7 +30,6 @@ namespace Laixer.EventBus.Internal
             _scopeFactory = scopeFactory ?? throw new ArgumentNullException(nameof(scopeFactory));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
         }
 
         /// <summary>
@@ -37,7 +38,8 @@ namespace Laixer.EventBus.Internal
         /// <typeparam name="TInterface">Interface to derive from.</typeparam>
         /// <param name="obj">Object to test interfaces.</param>
         /// <returns></returns>
-        private static IEnumerable<Type> GetDerivedInterfaces<TInterface>(object obj) => obj.GetType()
+        private static IEnumerable<Type> GetDerivedInterfaces<TInterface>(object obj)
+            => obj.GetType()
             .GetInterfaces()
             .Where(type => type != typeof(TInterface) && typeof(TInterface).IsAssignableFrom(type));
 
@@ -47,7 +49,8 @@ namespace Laixer.EventBus.Internal
         /// <param name="methodInfo">Method to test.</param>
         /// <param name="type">Type to search for.</param>
         /// <returns>True if found, false otherwise.</returns>
-        private static bool ContainsEventHandlerContextGenericType(MethodInfo methodInfo, Type type) => methodInfo.GetParameters()
+        private static bool ContainsEventHandlerContextGenericType(MethodInfo methodInfo, Type type)
+            => methodInfo.GetParameters()
             .Any(s => s.ParameterType.GenericTypeArguments.Any(t => t == type));
 
         /// <summary>
@@ -88,7 +91,7 @@ namespace Laixer.EventBus.Internal
                         // Find the method witch accepts 'type' as argument
                         var handleEventAsyncMethod = eventHandler.GetType()
                             .GetMethods()
-                            .Where(r => r.Name == "HandleEventAsync")
+                            .Where(r => r.Name == handlerMethodName)
                             .Where(r => ContainsEventHandlerContextGenericType(r, type))
                             .First();
 
@@ -116,6 +119,14 @@ namespace Laixer.EventBus.Internal
             }
         }
 
+        /// <summary>
+        /// Fire the event handler and return an awaitable task.
+        /// </summary>
+        /// <param name="methodInfo">Method to call handler on.</param>
+        /// <param name="context">Event handler context.</param>
+        /// <param name="handler">The event handler to call.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        /// <returns>Awaitable task.</returns>
         private async Task FireEventHandlerAsync(MethodInfo methodInfo, EventHandlerContext context, IEventHandler handler, CancellationToken cancellationToken)
         {
             await Task.Yield();
@@ -124,8 +135,10 @@ namespace Laixer.EventBus.Internal
 
             try
             {
-                await (Task)methodInfo.Invoke(handler, new object[] { context, cancellationToken });
+                var handlerTask = methodInfo.Invoke(handler, new object[] { context, cancellationToken }) as Task;
+                await handlerTask.ConfigureAwait(false);
             }
+            // Ignore any exceptions caused by cancelled operations.
             catch (Exception ex) when (ex as OperationCanceledException == null)
             {
                 throw;
