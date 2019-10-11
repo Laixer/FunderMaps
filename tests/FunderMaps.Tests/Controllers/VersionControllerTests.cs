@@ -7,7 +7,7 @@ namespace FunderMaps.Tests.Controllers
     public class VersionControllerTests
     {
         [Fact]
-        public void Get_ReturnsVersionOutputModel()
+        public void GetReturnsVersionOutputModel()
         {
             // Arrange
             var controller = new VersionController();
