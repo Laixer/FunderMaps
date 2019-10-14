@@ -1,29 +1,49 @@
-﻿namespace FunderMaps.Core.Repositories
+﻿using System;
+
+namespace FunderMaps.Core.Repositories
 {
     /// <summary>
     /// Navigation structure.
     /// </summary>
-    public class Navigation
+    public class NavigationImpl<TOffset, TLimit>
+        where TOffset : IComparable, IComparable<TOffset>
+        where TLimit : IComparable, IComparable<TLimit>
     {
         /// <summary>
         /// Offset in list.
         /// </summary>
-        public int Offset { get; set; }
+        public TOffset Offset { get; set; }
 
         /// <summary>
         /// Limit of items in list.
         /// </summary>
-        public int Limit { get; set; }
+        public TLimit Limit { get; set; }
 
         /// <summary>
         /// Create new instance.
         /// </summary>
         /// <param name="offset">Offset in list.</param>
         /// <param name="limit">Limit of items in list.</param>
-        public Navigation(int offset, int limit)
+        public NavigationImpl(TOffset offset, TLimit limit)
         {
             Offset = offset;
             Limit = limit;
+        }
+    }
+
+    /// <summary>
+    /// Navigation structure.
+    /// </summary>
+    public class Navigation : NavigationImpl<int, int>
+    {
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
+        /// <param name="offset">Offset in list.</param>
+        /// <param name="limit">Limit of items in list.</param>
+        public Navigation(int offset, int limit)
+            : base(offset, limit)
+        {
         }
     }
 }
