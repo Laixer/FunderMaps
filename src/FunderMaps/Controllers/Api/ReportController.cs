@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -27,6 +28,8 @@ namespace FunderMaps.Controllers.Api
 
         private readonly IReportRepository _reportRepository;
         private readonly UserManager<FunderMapsUser> _userManager;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IFileStorageService _fileStorageService;
 
         /// <summary>
@@ -35,10 +38,14 @@ namespace FunderMaps.Controllers.Api
         public ReportController(
             IReportRepository reportRepository,
             UserManager<FunderMapsUser> userManager,
+            IOrganizationRepository organizationRepository,
+            IOrganizationUserRepository organizationUserRepository,
             IFileStorageService fileStorageService)
         {
             _reportRepository = reportRepository;
             _userManager = userManager;
+            _organizationRepository = organizationRepository;
+            _organizationUserRepository = organizationUserRepository;
             _fileStorageService = fileStorageService;
         }
 
@@ -93,10 +100,25 @@ namespace FunderMaps.Controllers.Api
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
             {
+                // TODO: send error code.
                 return ResourceNotFound();
             }
 
-            // TODO: Check reviewer, contractor
+            // TODO: We should not match in memory, but let the datastore do the work.
+            var reviewers = await _organizationUserRepository.ListAllByOrganizationByRoleIdAsync(OrganizationRole.Verifier, User.GetOrganizationId(), new Navigation(0, 1000));
+            if (!reviewers.Any(s => s.Id == input.Attribution.Reviewer))
+            {
+                // TODO: send error code.
+                return ResourceNotFound();
+            }
+
+            // TODO: We should not match in memory, but let the datastore do the work.
+            var contractors = await _organizationRepository.ListAllContractorsAsync(new Navigation(0, 1000));
+            if (!contractors.Any(s => s.Id == input.Attribution.Contractor))
+            {
+                // TODO: send error code.
+                return ResourceNotFound();
+            }
 
             input.Status = ReportStatus.Todo;
             input.Attribution = new Attribution
@@ -108,8 +130,7 @@ namespace FunderMaps.Controllers.Api
                 Owner = User.GetOrganizationId(),
             };
 
-            var id = await _reportRepository.AddAsync(input);
-            return Ok(await _reportRepository.GetByIdAsync(id));
+            return Ok(await _reportRepository.GetByIdAsync(await _reportRepository.AddAsync(input)));
         }
 
         // GET: api/report/{id}/{document}
@@ -155,7 +176,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            // There is no document stored.
+            // There is no document stored in the backend.
             if (string.IsNullOrEmpty(report.DocumentName))
             {
                 return ResourceNotFound();
