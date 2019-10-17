@@ -88,7 +88,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Sample input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             var report = await _reportRepository.GetByIdAsync(input.Report.Value);
             if (report == null)

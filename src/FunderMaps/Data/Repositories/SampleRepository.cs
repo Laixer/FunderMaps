@@ -2,6 +2,7 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Repositories;
+using FunderMaps.Extensions;
 using FunderMaps.Interfaces;
 using FunderMaps.Providers;
 using System;
@@ -535,6 +536,8 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            // TODO: Check here all options in entity are set.
+
             var sql = @"INSERT INTO application.sample AS samp
                                         (report,
                                         foundation_type,
@@ -573,12 +576,12 @@ namespace FunderMaps.Data.Repositories
                          RETURNING id";
 
             var dynamicParameters = new DynamicParameters(entity);
-            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.HasValue.ToString().ToSnakeCase() : null);
+            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.ToString().ToSnakeCase() : null);
             dynamicParameters.Add("ConvFoundationDamageCause", entity.FoundationDamageCause.ToString().ToSnakeCase());
             dynamicParameters.Add("ConvFoundationQuality", entity.FoundationQuality.HasValue ? entity.FoundationQuality.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvEnforcementTerm", entity.EnforcementTerm.HasValue ? entity.EnforcementTerm.ToString().ToSnakeCase() : null);
+            dynamicParameters.Add("ConvEnforcementTerm", entity.EnforcementTerm.HasValue ? entity.EnforcementTerm.ToMemberName() : null);
             dynamicParameters.Add("ConvSubstructure", entity.Substructure.HasValue ? entity.Substructure.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvBaseMeasurementLevel", entity.BaseMeasurementLevel.ToString().ToLower()); // NOTE: No ToSnakeCase()
+            dynamicParameters.Add("ConvBaseMeasurementLevel", entity.BaseMeasurementLevel.ToMemberName());
             dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
             dynamicParameters.Add("ConvAddress", entity.Address.Id);
 
