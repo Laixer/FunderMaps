@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using NpgsqlTypes;
+using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
@@ -10,18 +11,21 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Normaal Amsterdams Peil.
         /// </summary>
+        [PgName("nap")]
         [EnumMember(Value = "nap")]
         NAP,
 
         /// <summary>
         /// Tweede Algemene Waterpassing.
         /// </summary>
+        [PgName("taw")]
         [EnumMember(Value = "taw")]
         TAW,
 
         /// <summary>
         /// Normalnull.
         /// </summary>
+        [PgName("nn")]
         [EnumMember(Value = "nn")]
         NN,
     }
