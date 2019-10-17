@@ -22,16 +22,19 @@ namespace FunderMaps.Controllers.Api
     {
         private readonly ISampleRepository _sampleRepository;
         private readonly IReportRepository _reportRepository;
+        private readonly IAddressRepository _addressRepository;
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
         public SampleController(
             ISampleRepository sampleRepository,
-            IReportRepository reportRepository)
+            IReportRepository reportRepository,
+            IAddressRepository addressRepository)
         {
             _sampleRepository = sampleRepository;
             _reportRepository = reportRepository;
+            _addressRepository = addressRepository;
         }
 
         // GET: api/sample
@@ -99,7 +102,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            // TODO: Check address, otherwise insert now.
+            input.Address = await _addressRepository.GetOrAddAsync(input.Address);
 
             var id = await _sampleRepository.AddAsync(input);
 
