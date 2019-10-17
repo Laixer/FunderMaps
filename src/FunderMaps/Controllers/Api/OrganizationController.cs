@@ -177,6 +177,13 @@ namespace FunderMaps.Controllers.Api
             return Ok(await _organizationUserRepository.ListAllByOrganizationIdAsync(organization.Id, new Navigation(offset, limit)));
         }
 
+        // TODO: This is a temporary solution.
+        private class OrgUserModel
+        {
+            public FunderMapsUser User { get; set; }
+            public OrganizationRole Role { get; set; }
+        }
+
         // GET: api/organization/{id}/profile
         /// <summary>
         /// Get organization user list.
@@ -196,8 +203,9 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
+            // TODO: This is a temporary solution.
             // FUTURE: Do not build an in-memory array.
-            var funderMapsUsers = new List<FunderMapsUser>();
+            var funderMapsUsers = new List<OrgUserModel>();
             var organizationUsers = await _organizationUserRepository.ListAllByOrganizationIdAsync(id, new Navigation(offset, limit));
             foreach (var organizationUser in organizationUsers)
             {
@@ -207,7 +215,11 @@ namespace FunderMaps.Controllers.Api
                     return ResourceForbid();
                 }
 
-                funderMapsUsers.Add(user);
+                funderMapsUsers.Add(new OrgUserModel
+                {
+                    User = user,
+                    Role = organizationUser.Role,
+                });
             }
 
             // FUTURE: Fow now we just return the entire FunderMapsUser object.
