@@ -156,6 +156,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
+
             sample.FoundationType = input.FoundationType;
             sample.MonitoringWell = input.MonitoringWell;
             sample.Cpt = input.Cpt;
@@ -169,6 +170,7 @@ namespace FunderMaps.Controllers.Api
             sample.EnforcementTerm = input.EnforcementTerm;
             sample.Note = input.Note;
             sample.AccessPolicy = input.AccessPolicy;
+            sample.Address = await _addressRepository.GetOrAddAsync(input.Address);
 
             await _sampleRepository.UpdateAsync(sample);
 
