@@ -54,10 +54,12 @@ namespace FunderMaps.Data.Repositories
                 SELECT * FROM insertornot
                 UNION
                 SELECT *
-                FROM application.address
-                WHERE street_name=@StreetName
-                    AND building_number=@BuildingNumber
-                    AND building_number_suffix=@BuildingNumberSuffix";
+			    FROM application.address
+			    WHERE street_name=@StreetName
+				    AND building_number=@BuildingNumber
+				    AND ((@BuildingNumberSuffix IS NOT NULL AND building_number_suffix=@BuildingNumberSuffix)
+				        OR
+                        (@BuildingNumberSuffix IS NULL AND building_number_suffix IS NULL))";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Address>(sql, address));
             if (result.Count() == 0)
