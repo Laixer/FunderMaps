@@ -619,7 +619,7 @@ namespace FunderMaps.Data.Repositories
                         AND samp.id = @Id";
 
             var dynamicParameters = new DynamicParameters(entity);
-            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.HasValue.ToString().ToSnakeCase() : null);
+            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.ToString().ToSnakeCase() : null);
             dynamicParameters.Add("ConvFoundationDamageCause", entity.FoundationDamageCause.ToString().ToSnakeCase());
             dynamicParameters.Add("ConvFoundationQuality", entity.FoundationQuality.HasValue ? entity.FoundationQuality.ToString().ToSnakeCase() : null);
             dynamicParameters.Add("ConvEnforcementTerm", entity.EnforcementTerm.HasValue ? entity.EnforcementTerm.ToString().ToSnakeCase() : null);
