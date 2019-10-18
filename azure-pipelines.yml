@@ -16,6 +16,8 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
+- checkout: self
+  submodules: true
 
 - task: NuGetCommand@2
   inputs:
@@ -28,7 +30,7 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+# - task: VSTest@2
+#   inputs:
+#     platform: '$(buildPlatform)'
+#     configuration: '$(buildConfiguration)'
