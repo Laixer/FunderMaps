@@ -241,7 +241,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
@@ -406,6 +409,7 @@ namespace FunderMaps.Controllers.Api
             {
                 Profile = new ProfileInputOutputModel
                 {
+                    Id = user.Id,
                     GivenName = user.GivenName,
                     LastName = user.LastName,
                     Avatar = user.Avatar,

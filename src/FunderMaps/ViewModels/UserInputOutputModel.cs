@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.ViewModels
 {
@@ -8,6 +9,11 @@ namespace FunderMaps.ViewModels
     /// </summary>
     public sealed class ProfileInputOutputModel
     {
+        /// <summary>
+        /// User Identifier.
+        /// </summary>
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Gets or sets the given name for the user.
         /// </summary>

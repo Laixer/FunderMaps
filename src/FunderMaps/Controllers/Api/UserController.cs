@@ -45,6 +45,7 @@ namespace FunderMaps.Controllers.Api
 
             return Ok(new ProfileInputOutputModel
             {
+                Id = user.Id,
                 GivenName = user.GivenName,
                 LastName = user.LastName,
                 Avatar = user.Avatar,
