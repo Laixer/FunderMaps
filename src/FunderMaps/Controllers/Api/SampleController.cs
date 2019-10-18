@@ -148,14 +148,16 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             var sample = await _sampleRepository.GetByIdAsync(id, User.GetOrganizationId());
             if (sample == null)
             {
                 return ResourceNotFound();
             }
-
 
             sample.FoundationType = input.FoundationType;
             sample.MonitoringWell = input.MonitoringWell;

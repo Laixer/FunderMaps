@@ -1,6 +1,5 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
 using FunderMaps.Interfaces;
@@ -576,13 +575,13 @@ namespace FunderMaps.Data.Repositories
                          RETURNING id";
 
             var dynamicParameters = new DynamicParameters(entity);
-            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvFoundationDamageCause", entity.FoundationDamageCause.ToString().ToSnakeCase());
-            dynamicParameters.Add("ConvFoundationQuality", entity.FoundationQuality.HasValue ? entity.FoundationQuality.ToString().ToSnakeCase() : null);
+            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.ToMemberName() : null);
+            dynamicParameters.Add("ConvFoundationDamageCause", entity.FoundationDamageCause.ToMemberName());
+            dynamicParameters.Add("ConvFoundationQuality", entity.FoundationQuality.HasValue ? entity.FoundationQuality.ToMemberName() : null);
             dynamicParameters.Add("ConvEnforcementTerm", entity.EnforcementTerm.HasValue ? entity.EnforcementTerm.ToMemberName() : null);
-            dynamicParameters.Add("ConvSubstructure", entity.Substructure.HasValue ? entity.Substructure.ToString().ToSnakeCase() : null);
+            dynamicParameters.Add("ConvSubstructure", entity.Substructure.HasValue ? entity.Substructure.ToMemberName() : null);
             dynamicParameters.Add("ConvBaseMeasurementLevel", entity.BaseMeasurementLevel.ToMemberName());
-            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToMemberName());
             dynamicParameters.Add("ConvAddress", entity.Address.Id);
 
             return RunSqlCommand(async cnn => await cnn.ExecuteScalarAsync<int>(sql, dynamicParameters));
@@ -614,17 +613,19 @@ namespace FunderMaps.Data.Repositories
                         substructure = @ConvSubstructure::application.substructure,
                         foundation_type = @ConvFoundationType::application.foundation_type,
                         foundation_damage_cause = @ConvFoundationDamageCause::application.foundation_damage_cause,
-                        access_policy = @ConvAccessPolicy::application.access_policy
+                        access_policy = @ConvAccessPolicy::application.access_policy,
+                        address = @ConvAddress
                 WHERE   samp.delete_date IS NULL
                         AND samp.id = @Id";
 
             var dynamicParameters = new DynamicParameters(entity);
-            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvFoundationDamageCause", entity.FoundationDamageCause.ToString().ToSnakeCase());
-            dynamicParameters.Add("ConvFoundationQuality", entity.FoundationQuality.HasValue ? entity.FoundationQuality.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvEnforcementTerm", entity.EnforcementTerm.HasValue ? entity.EnforcementTerm.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvSubstructure", entity.Substructure.HasValue ? entity.Substructure.ToString().ToSnakeCase() : null);
-            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToString().ToSnakeCase());
+            dynamicParameters.Add("ConvFoundationType", entity.FoundationType.HasValue ? entity.FoundationType.ToMemberName() : null);
+            dynamicParameters.Add("ConvFoundationDamageCause", entity.FoundationDamageCause.ToMemberName());
+            dynamicParameters.Add("ConvFoundationQuality", entity.FoundationQuality.HasValue ? entity.FoundationQuality.ToMemberName() : null);
+            dynamicParameters.Add("ConvEnforcementTerm", entity.EnforcementTerm.HasValue ? entity.EnforcementTerm.ToMemberName() : null);
+            dynamicParameters.Add("ConvSubstructure", entity.Substructure.HasValue ? entity.Substructure.ToMemberName() : null);
+            dynamicParameters.Add("ConvAccessPolicy", entity.AccessPolicy.ToMemberName());
+            dynamicParameters.Add("ConvAddress", entity.Address.Id);
 
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, dynamicParameters));
         }
