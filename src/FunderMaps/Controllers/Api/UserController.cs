@@ -1,9 +1,9 @@
 ﻿using FunderMaps.Models.Identity;
 using FunderMaps.ViewModels;
-using Laixer.EventBus;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -17,17 +17,15 @@ namespace FunderMaps.Controllers.Api
     public class UserController : BaseApiController
     {
         private readonly UserManager<FunderMapsUser> _userManager;
-        private readonly EventBusService _eventBus;
 
         /// <summary>
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
         /// <param name="eventBus">Event bus.</param>
-        public UserController(UserManager<FunderMapsUser> userManager, EventBusService eventBus)
+        public UserController(UserManager<FunderMapsUser> userManager)
         {
             _userManager = userManager;
-            _eventBus = eventBus;
         }
 
         // GET: api/user
@@ -45,7 +43,14 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            return Ok(user);
+            return Ok(new ProfileInputOutputModel
+            {
+                GivenName = user.GivenName,
+                LastName = user.LastName,
+                Avatar = user.Avatar,
+                JobTitle = user.JobTitle,
+                PhoneNumber = user.PhoneNumber
+            });
         }
 
         // PUT: api/user
@@ -55,8 +60,13 @@ namespace FunderMaps.Controllers.Api
         [HttpPut]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        public async Task<IActionResult> PutAsync([FromBody] FunderMapsUser input)
+        public async Task<IActionResult> PutAsync([FromBody] ProfileInputOutputModel input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)
             {
@@ -85,6 +95,11 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
             if (user == null)
             {
