@@ -9,6 +9,7 @@ using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,7 @@ namespace FunderMaps.Controllers.Api
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IFileStorageService _fileStorageService;
+        private readonly IStringLocalizer<ReportController> _localizer;
 
         /// <summary>
         /// Create a new instance.
@@ -40,13 +42,15 @@ namespace FunderMaps.Controllers.Api
             UserManager<FunderMapsUser> userManager,
             IOrganizationRepository organizationRepository,
             IOrganizationUserRepository organizationUserRepository,
-            IFileStorageService fileStorageService)
+            IFileStorageService fileStorageService,
+            IStringLocalizer<ReportController> localizer)
         {
             _reportRepository = reportRepository;
             _userManager = userManager;
             _organizationRepository = organizationRepository;
             _organizationUserRepository = organizationUserRepository;
             _fileStorageService = fileStorageService;
+            _localizer = localizer;
         }
 
         // GET: api/report
@@ -262,7 +266,7 @@ namespace FunderMaps.Controllers.Api
 
             if (report.Status != ReportStatus.Pending)
             {
-                return Forbid(0, "Resource modification forbidden with current status");
+                return Forbid(0, _localizer["Resource modification forbidden with current status"]);
             }
 
             report.Status = ReportStatus.PendingReview;
@@ -304,7 +308,7 @@ namespace FunderMaps.Controllers.Api
 
             if (report.Status != ReportStatus.PendingReview)
             {
-                return Forbid(0, "Resource modification forbidden with current status");
+                return Forbid(0, _localizer["Resource modification forbidden with current status"]);
             }
 
             switch (input.Result)

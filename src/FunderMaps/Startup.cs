@@ -52,6 +52,11 @@ namespace FunderMaps
             ConfigureAuthentication(services);
             ConfigureAuthorization(services);
 
+            services.AddLocalization(options =>
+            {
+                options.ResourcesPath = "Resources";
+            });
+
             services.AddMvc().AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver
