@@ -355,6 +355,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created entity.</returns>
         public override async Task<int> AddAsync(Report entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 INSERT INTO application.attribution
                     (project, reviewer, creator, owner, contractor)
@@ -405,6 +410,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(Report entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE application.report AS reprt
                 SET    inspection = @Inspection,

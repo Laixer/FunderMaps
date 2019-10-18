@@ -365,6 +365,13 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
 
+        // TODO: This is a temporary solution.
+        private class OrgProfileModel
+        {
+            public ProfileInputOutputModel Profile { get; set; }
+            public OrganizationRole Role { get; set; }
+        }
+
         // GET: api/organization/{id}/user/{user_id}/profile
         /// <summary>
         /// Get organization user if this user has access to the record.
@@ -395,13 +402,17 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
-            return Ok(new ProfileInputOutputModel
+            return Ok(new OrgProfileModel
             {
-                GivenName = user.GivenName,
-                LastName = user.LastName,
-                Avatar = user.Avatar,
-                JobTitle = user.JobTitle,
-                PhoneNumber = user.PhoneNumber,
+                Profile = new ProfileInputOutputModel
+                {
+                    GivenName = user.GivenName,
+                    LastName = user.LastName,
+                    Avatar = user.Avatar,
+                    JobTitle = user.JobTitle,
+                    PhoneNumber = user.PhoneNumber,
+                },
+                Role = organizationUser.Role
             });
         }
 
