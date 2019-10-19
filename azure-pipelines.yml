@@ -63,3 +63,4 @@ steps:
     appName: 'fundermaps'
     package: '$(Build.ArtifactStagingDirectory)/**/FunderMaps.zip'
     slotName: staging
+    deploymentMethod: zipDeploy
