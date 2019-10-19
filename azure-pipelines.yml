@@ -52,5 +52,6 @@ steps:
 - task: AzureWebApp@1
   inputs:
     azureSubscription: 'FunderMaps Staging - Azure Web Deploy'
-    appName: 'staging (fundermaps/staging)'
+    appName: 'fundermaps'
     package: $(Build.ArtifactsDirectory)/**/*.zip
+    slotName: staging
