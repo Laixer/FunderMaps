@@ -39,6 +39,11 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: pack
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
@@ -53,5 +58,4 @@ steps:
   inputs:
     azureSubscription: 'FunderMaps Staging - Azure Web Deploy'
     appName: 'fundermaps'
-    package: $(Build.ArtifactsDirectory)/**/*.zip
     slotName: staging
