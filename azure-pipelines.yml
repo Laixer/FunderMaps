@@ -33,6 +33,7 @@ steps:
 #     configuration: '$(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
+  displayName: Publish Web App
   inputs:
     command: publish
     publishWebProjects: True
@@ -40,6 +41,7 @@ steps:
     zipAfterPublish: True
 
 - task: DotNetCoreCLI@2
+  displayName: Create Packages
   inputs:
     command: pack
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
