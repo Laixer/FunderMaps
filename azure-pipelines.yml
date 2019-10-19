@@ -8,6 +8,7 @@ variables:
   solution: '**/*.sln'
   project: '**/FunderMaps.csproj'
   buildPlatform: 'Any CPU'
+  runtime: 'win-x64'
   buildConfiguration: 'Release'
 
 steps:
@@ -25,7 +26,7 @@ steps:
   inputs:
     command: build
     projects: '$(project)'
-    arguments: '--configuration $(buildConfiguration)' --runtime win-x64
+    arguments: '--configuration $(buildConfiguration) --runtime $(runtime)'
 
 # - task: VSTest@2
 #   inputs:
@@ -37,7 +38,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: True
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)' --runtime win-x64
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime $(runtime)'
     zipAfterPublish: True
 
 - task: DotNetCoreCLI@2
