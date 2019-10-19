@@ -10,12 +10,14 @@ variables:
   buildPlatform: 'Any CPU'
   runtime: 'win-x64'
   buildConfiguration: 'Release'
+  Vue.App_api_base_url: https://staging.fundermaps.com
 
 steps:
 - checkout: self
   submodules: true
 
 - task: PowerShell@2
+  displayName: Print Environment
   inputs:
     targetType: 'inline'
     script: |
@@ -24,6 +26,7 @@ steps:
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
+  displayName: Restore Packages
   inputs:
     restoreSolution: '$(solution)'
 
@@ -34,38 +37,31 @@ steps:
     projects: '$(project)'
     arguments: '--configuration $(buildConfiguration) --runtime $(runtime)'
 
-# - task: VSTest@2
-#   inputs:
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
+## TODO: Run testcases here
 
 - task: DotNetCoreCLI@2
   displayName: Publish Web App
   inputs:
     command: publish
     publishWebProjects: True
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory) --runtime $(runtime) --self-contained false'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/bin --runtime $(runtime) --self-contained false'
     zipAfterPublish: True
 
 - task: DotNetCoreCLI@2
   displayName: Create Packages
   inputs:
     command: pack
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/pkg'
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'FunderMapsBuildArtifacts'
-
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     pathtoPublish: '$(System.ArtifactsDirectory)' 
-#     artifactName: 'FunderMapsPublish'
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/pkg'
+    artifactName: PackageArtifacts
 
 - task: AzureWebApp@1
   displayName: Azure Web App Deploy
   inputs:
+    appType: webApp
     azureSubscription: 'FunderMaps Staging - Azure Web Deploy'
     appName: 'fundermaps'
     package: '$(Build.ArtifactStagingDirectory)/**/FunderMaps.zip'
