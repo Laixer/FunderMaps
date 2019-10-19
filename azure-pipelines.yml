@@ -47,7 +47,7 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'FunderMapsPublish'
+    artifactName: 'FunderMapsBuildArtifacts'
 
 # - task: PublishBuildArtifacts@1
 #   inputs:
@@ -58,4 +58,5 @@ steps:
   inputs:
     azureSubscription: 'FunderMaps Staging - Azure Web Deploy'
     appName: 'fundermaps'
+    package: '$(Build.ArtifactStagingDirectory)/FunderMapsBuildArtifacts/*.zip'
     slotName: staging
