@@ -47,11 +47,19 @@ steps:
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/bin --runtime $(runtime) --self-contained false'
     zipAfterPublish: True
 
-- task: DotNetCoreCLI@2
-  displayName: Create Packages
+# - task: DotNetCoreCLI@2
+#   displayName: Create Packages
+#   inputs:
+#     command: pack
+#     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/pkg'
+
+- task: NuGetCommand@2
   inputs:
-    command: pack
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/pkg'
+    command: 'pack'
+    packagesToPack: '**/*.csproj'
+    packDestination: '$(Build.ArtifactStagingDirectory)/pkg'
+    versioningScheme: 'off'
+    verbosityPack: 'Normal'
 
 - task: PublishBuildArtifacts@1
   inputs:
