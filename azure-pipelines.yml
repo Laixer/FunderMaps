@@ -54,14 +54,16 @@ steps:
 #     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/pkg'
 
 - task: NuGetCommand@2
+  displayName: Create Packages
   inputs:
     command: 'pack'
-    packagesToPack: '**/*.csproj'
+    packagesToPack: '**/Laixer.Identity.Dapper.csproj'
     packDestination: '$(Build.ArtifactStagingDirectory)/pkg'
     versioningScheme: 'off'
     verbosityPack: 'Normal'
 
 - task: PublishBuildArtifacts@1
+  displayName: Store Packages
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)/pkg'
     artifactName: PackageArtifacts
