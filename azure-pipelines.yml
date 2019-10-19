@@ -6,6 +6,7 @@ pool:
 
 variables:
   solution: '**/*.sln'
+  project: '**/FunderMaps.csproj'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -19,18 +20,11 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-# - task: VSBuild@1
-#   inputs:
-#     solution: '$(solution)'
-#     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-#     platform: '$(buildPlatform)'
-#     configuration: '$(buildConfiguration)'
-
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     command: build
-    projects: '**/FunderMaps.csproj'
+    projects: '$(project)'
     arguments: '--configuration $(buildConfiguration)'
 
 # - task: VSTest@2
@@ -48,4 +42,15 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'myWebsiteName'
+    artifactName: 'FunderMapsPublish'
+
+# - task: PublishBuildArtifacts@1
+#   inputs:
+#     pathtoPublish: '$(System.ArtifactsDirectory)' 
+#     artifactName: 'FunderMapsPublish'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'FunderMaps Staging - Azure Web Deploy'
+    appName: 'staging (fundermaps/staging)'
+    package: $(Build.ArtifactsDirectory)/**/*.zip
