@@ -1,7 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Interfaces
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     /// Address service.
@@ -13,6 +13,6 @@ namespace FunderMaps.Interfaces
         /// </summary>
         /// <param name="address">Input entity.</param>
         /// <returns>Address.</returns>
-        Task<Address> FindAddressAsync(Address address);
+        Task<Address> GetOrCreateAddressAsync(Address address);
     }
 }

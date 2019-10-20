@@ -52,7 +52,7 @@ namespace FunderMaps.Controllers.Api
             _localizer = localizer;
         }
 
-        // TODO: Extension?
+        // TODO: Extension? Replace with Problem()
         /// <summary>
         /// Map identity errors to error output model.
         /// </summary>
@@ -60,7 +60,10 @@ namespace FunderMaps.Controllers.Api
         /// <returns>ErrorOutputModel.</returns>
         protected static ErrorOutputModel IdentityErrorResponse(IEnumerable<IdentityError> errors)
         {
-            if (errors == null) { throw new ArgumentNullException(nameof(errors)); }
+            if (errors == null)
+            {
+                throw new ArgumentNullException(nameof(errors));
+            }
 
             var errorModel = new ErrorOutputModel();
             foreach (var item in errors)

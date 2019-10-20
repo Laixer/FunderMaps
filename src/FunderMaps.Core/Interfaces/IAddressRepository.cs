@@ -1,9 +1,8 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Interfaces
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     /// Address repository.

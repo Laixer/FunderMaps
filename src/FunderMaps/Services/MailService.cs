@@ -1,4 +1,4 @@
-﻿using FunderMaps.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Services

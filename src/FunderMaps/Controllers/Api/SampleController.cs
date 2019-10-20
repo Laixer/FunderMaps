@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
@@ -22,7 +23,7 @@ namespace FunderMaps.Controllers.Api
     {
         private readonly ISampleRepository _sampleRepository;
         private readonly IReportRepository _reportRepository;
-        private readonly IAddressRepository _addressRepository;
+        private readonly IAddressService _addressService;
 
         /// <summary>
         /// Create a new instance.
@@ -30,11 +31,11 @@ namespace FunderMaps.Controllers.Api
         public SampleController(
             ISampleRepository sampleRepository,
             IReportRepository reportRepository,
-            IAddressRepository addressRepository)
+            IAddressService addressService)
         {
             _sampleRepository = sampleRepository;
             _reportRepository = reportRepository;
-            _addressRepository = addressRepository;
+            _addressService = addressService;
         }
 
         // GET: api/sample
@@ -102,7 +103,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            input.Address = await _addressRepository.GetOrAddAsync(input.Address);
+            input.Address = await _addressService.GetOrCreateAddressAsync(input.Address);
 
             var id = await _sampleRepository.AddAsync(input);
 
@@ -172,7 +173,7 @@ namespace FunderMaps.Controllers.Api
             sample.EnforcementTerm = input.EnforcementTerm;
             sample.Note = input.Note;
             sample.AccessPolicy = input.AccessPolicy;
-            sample.Address = await _addressRepository.GetOrAddAsync(input.Address);
+            sample.Address = await _addressService.GetOrCreateAddressAsync(input.Address);
 
             await _sampleRepository.UpdateAsync(sample);
 

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace FunderMaps.Interfaces
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     /// Mail service.

@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Interfaces;
 using FunderMaps.Providers;
 using System;
 using System.Collections.Generic;

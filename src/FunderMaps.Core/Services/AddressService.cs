@@ -1,8 +1,8 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Interfaces;
+using FunderMaps.Core.Interfaces;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Services
+namespace FunderMaps.Core.Services
 {
     /// <summary>
     /// Address service.
@@ -22,6 +22,6 @@ namespace FunderMaps.Services
         /// </summary>
         /// <param name="address">Address object.</param>
         /// <returns><see cref="Address"/> or null.</returns>
-        public Task<Address> FindAddressAsync(Address address) => _addressRepository.GetOrAddAsync(address);
+        public Task<Address> GetOrCreateAddressAsync(Address address) => _addressRepository.GetOrAddAsync(address);
     }
 }

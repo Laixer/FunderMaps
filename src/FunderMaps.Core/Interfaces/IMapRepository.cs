@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Interfaces
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     /// Operations for the report repository.

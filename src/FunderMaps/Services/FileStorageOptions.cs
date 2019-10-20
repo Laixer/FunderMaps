@@ -2,6 +2,8 @@
 
 namespace FunderMaps.Services
 {
+    // TODO: Move into other namespace
+
     /// <summary>
     /// Options for the file storage service.
     /// </summary>
