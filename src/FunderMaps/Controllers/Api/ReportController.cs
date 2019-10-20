@@ -124,7 +124,12 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            input.Status = ReportStatus.Todo;
+            // FUTURE: This should be 'todo' and only when samples
+            //         are added to the report will the status be
+            //         set to 'pending'. However the frontend is not
+            //         yet prepared to deal with this flow.
+
+            input.Status = ReportStatus.Pending;
             input.Attribution = new Attribution
             {
                 Project = input.Attribution.Project,

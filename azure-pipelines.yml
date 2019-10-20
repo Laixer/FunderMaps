@@ -10,7 +10,7 @@ variables:
   buildPlatform: 'Any CPU'
   runtime: 'win-x64'
   buildConfiguration: 'Release'
-  Vue.App_api_base_url: https://staging.fundermaps.com
+  Vue.App_api_base_url: https://staging.fundermaps.com # TODO: This is for the time being. Frontend should be build independant of the environment.
 
 steps:
 - checkout: self
@@ -24,6 +24,7 @@ steps:
       Get-ChildItem env:
 
 - task: NuGetToolInstaller@1
+  displayName: Install NuGet
 
 - task: NuGetCommand@2
   displayName: Restore Packages
@@ -46,12 +47,6 @@ steps:
     publishWebProjects: True
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/bin --runtime $(runtime) --self-contained false'
     zipAfterPublish: True
-
-# - task: DotNetCoreCLI@2
-#   displayName: Create Packages
-#   inputs:
-#     command: pack
-#     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/pkg'
 
 - task: NuGetCommand@2
   displayName: Create Packages
