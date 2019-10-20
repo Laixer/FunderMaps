@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,8 @@ namespace FunderMaps.Controllers.Api
     /// Authentication endpoint.
     /// </summary>
     [Authorize]
-    [Route("api/authentication")]
     [ApiController]
+    [Route("api/authentication")]
     public class AuthenticationController : BaseApiController
     {
         private readonly UserManager<FunderMapsUser> _userManager;
@@ -30,6 +31,7 @@ namespace FunderMaps.Controllers.Api
         private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationController> _logger;
+        private readonly IStringLocalizer<ReportController> _localizer;
 
         /// <summary>
         /// Create new instance.
@@ -39,13 +41,15 @@ namespace FunderMaps.Controllers.Api
             SignInManager<FunderMapsUser> signInManager,
             IOrganizationUserRepository organizationUserRepository,
             IConfiguration configuration,
-            ILogger<AuthenticationController> logger)
+            ILogger<AuthenticationController> logger,
+            IStringLocalizer<ReportController> localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _organizationUserRepository = organizationUserRepository;
             _configuration = configuration;
             _logger = logger;
+            _localizer = localizer;
         }
 
         // TODO: Extension?
@@ -164,29 +168,29 @@ namespace FunderMaps.Controllers.Api
             {
                 _logger.LogWarning("Authentication failed, unknown object {user}", input.Email);
 
-                return Unauthorized(103, "Invalid credentials provided");
+                return Unauthorized(103, _localizer["Invalid credentials provided"]);
             }
 
             // Check the password for the found user.
             var result = await _signInManager.CheckPasswordSignInAsync(user, input.Password, true);
             if (result.IsLockedOut)
             {
-                return Unauthorized(101, "Principal is locked out, contact the administrator");
+                return Unauthorized(101, _localizer["Principal is locked out, contact the administrator"]);
             }
             else if (result.IsNotAllowed)
             {
-                return Unauthorized(102, "Principal is not allowed to login");
+                return Unauthorized(102, _localizer["Principal is not allowed to login"]);
             }
             else if (result.Succeeded)
             {
-                _logger.LogInformation("Authentication successful, returning security token");
+                _logger.LogInformation(_localizer["Authentication successful, returning security token"]);
 
                 return Ok(await GenerateSecurityToken(user));
             }
 
             // FUTURE: RequiresTwoFactor or any multifactor auth.
 
-            return Unauthorized(103, "Invalid credentials provided");
+            return Unauthorized(103, _localizer["Invalid credentials provided"]);
         }
 
         // GET: api/authentication/refresh
@@ -207,12 +211,12 @@ namespace FunderMaps.Controllers.Api
 
             if (await _signInManager.CanSignInAsync(user))
             {
-                _logger.LogInformation("Authentication refreshed, returning security token");
+                _logger.LogInformation(_localizer["Authentication refreshed, returning security token"]);
 
                 return Ok(await GenerateSecurityToken(user));
             }
 
-            return Unauthorized(102, "Principal is not allowed to login");
+            return Unauthorized(102, _localizer["Principal is not allowed to login"]);
         }
 
         // POST: api/authentication/set_password
