@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Extensions;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Interfaces;
 using FunderMaps.Providers;
 using System;
 using System.Collections.Generic;
@@ -259,6 +259,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<Report>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT reprt.id,
                         reprt.document_id,
@@ -296,6 +301,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Report>> ListAllAsync(Guid orgId, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT reprt.id,
                         reprt.document_id,
@@ -444,6 +454,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="status">New status.</param>
         public Task UpdateStatusAsync(Report entity, ReportStatus status)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE application.report AS reprt 
                 SET    status = (enum_range(NULL::application.report_status))[@Status + 1]
@@ -458,6 +473,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(Report entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE  application.report AS reprt
                 SET     delete_date = CURRENT_TIMESTAMP

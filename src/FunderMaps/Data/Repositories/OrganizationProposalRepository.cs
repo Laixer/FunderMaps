@@ -38,7 +38,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT   1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationProposal>(sql, new { Token = id }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -63,7 +63,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT   1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationProposal>(sql, new { NormalizedName = name }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -78,6 +78,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<OrganizationProposal>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  prop.token,
                         prop.name,
@@ -88,7 +93,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT   @Limit";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationProposal>(sql, navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -103,6 +108,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created entity.</returns>
         public override Task<Guid> AddAsync(OrganizationProposal entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 INSERT INTO application.organization_proposal
                     (name, normalized_name, email)
@@ -119,6 +129,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(OrganizationProposal entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE application.organization_proposal AS prop
                 SET    name = @Name,
@@ -135,6 +150,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(OrganizationProposal entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 DELETE FROM application.organization_proposal AS prop
                 WHERE  prop.token = @Token";

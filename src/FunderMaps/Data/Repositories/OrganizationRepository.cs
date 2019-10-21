@@ -28,6 +28,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<Contractor>> ListAllContractorsAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT contrctr.id,
                         contrctr.name
@@ -36,7 +41,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT @Limit";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Contractor>(sql, navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -51,6 +56,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created entity primary key.</returns>
         public override Task<Guid> AddAsync(Organization entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 INSERT INTO application.organization
                         (name,
@@ -131,6 +141,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(Organization entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 DELET FROM application.organization AS org
                 WHERE   org.id = @Id";
@@ -179,7 +194,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT  1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { Id = id }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -228,7 +243,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT  1";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, new { NormalizedName = name }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -243,6 +258,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<Organization>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"SELECT  id,
                                 name,
                                 normalized_name,
@@ -276,7 +296,7 @@ namespace FunderMaps.Data.Repositories
                         LIMIT   @Limit";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Organization>(sql, navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -290,6 +310,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(Organization entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE application.organization AS org
                 SET    name = @Name,

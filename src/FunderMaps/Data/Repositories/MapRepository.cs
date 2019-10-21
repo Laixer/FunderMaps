@@ -48,7 +48,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -82,7 +82,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -119,7 +119,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -154,7 +154,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -194,7 +194,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -229,7 +229,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -268,7 +268,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -307,7 +307,7 @@ namespace FunderMaps.Data.Repositories
                                 OR reprt.access_policy = 'public')";
 
             var result = await connection.QueryAsync<AddressPoint>(sql, new { Start = rangeStart, End = rangeEnd, Owner = orgId });
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -347,7 +347,7 @@ namespace FunderMaps.Data.Repositories
             dynamicParameters.Add("Owner", orgId);
 
             var result = await connection.QueryAsync<AddressPoint>(sql, dynamicParameters);
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }

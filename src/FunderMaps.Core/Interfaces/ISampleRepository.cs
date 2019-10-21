@@ -1,11 +1,10 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Interfaces
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     /// Operations for the sample repository.
