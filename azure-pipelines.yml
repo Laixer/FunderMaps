@@ -10,7 +10,7 @@ variables:
   buildPlatform: 'Any CPU'
   runtime: 'win-x64'
   buildConfiguration: 'Release'
-  buildNumber: 1.4.251.9
+  Version.MajorMinor: 1.4.51.12
   Vue.App_api_base_url: https://staging.fundermaps.com/ # TODO: This is for the time being. Frontend should be build independant of the environment.
   Vue.App_Mapbox_token: pk.eyJ1IjoieW9yaWNrMTciLCJhIjoiY2p3dGF5ZjBzMDh4NTQ3cGNuNHM4dnd4aCJ9.A97-an3utMhopzgJxcIjrw # TODO: This is for the time being. Frontend should be build independant of the environment.
   Vue.App_Mapbox_style: mapbox://styles/yorick17/cjwtd1zts0fjj1cpi00jzbhev # TODO: This is for the time being. Frontend should be build independant of the environment.
@@ -39,7 +39,7 @@ steps:
   inputs:
     command: build
     projects: '$(project)'
-    arguments: '--configuration $(buildConfiguration) --runtime $(runtime)'
+    arguments: '--configuration $(buildConfiguration) --runtime $(runtime) /p:Version=$(Version.MajorMinor) /p:AssemblyVersion=$(Version.MajorMinor)'
 
 ## TODO: Run testcases here
 
@@ -48,7 +48,7 @@ steps:
   inputs:
     command: publish
     publishWebProjects: True
-    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/bin --runtime $(runtime) --self-contained false'
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/bin --runtime $(runtime) --self-contained false /p:Version=$(Version.MajorMinor) /p:AssemblyVersion=$(Version.MajorMinor)'
     zipAfterPublish: True
 
 - task: NuGetCommand@2

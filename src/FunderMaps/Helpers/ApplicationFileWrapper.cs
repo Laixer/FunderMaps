@@ -65,7 +65,7 @@ namespace FunderMaps.Helpers
             }
 
             // Check if content type is allowed
-            if (_allowedFileTypes.Count() > 0 && !_allowedFileTypes.Contains(File.ContentType))
+            if (_allowedFileTypes.Any() && !_allowedFileTypes.Contains(File.ContentType))
             {
                 Error = "file content type is not allowed";
             }
