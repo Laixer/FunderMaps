@@ -185,8 +185,14 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            // There is no document stored in the backend.
+            // There is no document stored.
             if (string.IsNullOrEmpty(report.DocumentName))
+            {
+                return ResourceNotFound();
+            }
+
+            // There is no document stored.
+            if (!await _fileStorageService.FileExists(Constants.ReportStorage, report.DocumentName))
             {
                 return ResourceNotFound();
             }

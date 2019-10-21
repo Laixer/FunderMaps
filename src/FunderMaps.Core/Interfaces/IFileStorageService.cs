@@ -14,10 +14,18 @@ namespace FunderMaps.Core.Interfaces
         /// Retrieve account name for the storage service.
         /// </summary>
         /// <returns>Account name.</returns>
-        Task<string> StorageAccountAsync();
+        Task<string> GetStorageNameAsync();
 
         /// <summary>
-        /// Retrieve file access link.
+        /// Check if a file exist in storage.
+        /// </summary>
+        /// <param name="store">Storage container.</param>
+        /// <param name="name">File name.</param>
+        /// <returns>True if file exist, false otherwise.</returns>
+        Task<bool> FileExists(string store, string name);
+
+        /// <summary>
+        /// Retrieve file access link as uri.
         /// </summary>
         /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>

@@ -61,6 +61,15 @@ namespace FunderMaps.Core.Services
         }
 
         /// <summary>
+        /// Check if a file exist in storage.
+        /// </summary>
+        /// <param name="store">Storage container.</param>
+        /// <param name="name">File name.</param>
+        /// <returns>True if file exist, false otherwise.</returns>
+        public Task<bool> FileExists(string store, string name)
+            => SetContainer(store).GetBlockBlobReference(name).ExistsAsync();
+
+        /// <summary>
         /// Retrieve file access link.
         /// </summary>
         /// <param name="store">Storage container.</param>
@@ -85,7 +94,7 @@ namespace FunderMaps.Core.Services
         /// Retrieve account name for the storage service.
         /// </summary>
         /// <returns>Account name.</returns>
-        public Task<string> StorageAccountAsync()
+        public Task<string> GetStorageNameAsync()
             => _blobClient.GetAccountPropertiesAsync().ContinueWith(t => t.Result.AccountKind);
 
         /// <summary>

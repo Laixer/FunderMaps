@@ -80,7 +80,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -148,7 +148,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, Owner = orgId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -217,7 +217,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, Owner = orgId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -289,7 +289,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -364,7 +364,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Owner = orgId, navigation.Offset, navigation.Limit }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -438,7 +438,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Report = report, navigation.Offset, navigation.Limit }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -515,7 +515,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Report = report, Owner = orgId, navigation.Offset, navigation.Limit }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }

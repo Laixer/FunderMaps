@@ -68,7 +68,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -125,7 +125,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, DocumentId = document }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -184,7 +184,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, DocumentId = document, Owner = orgId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -244,7 +244,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, DocumentId = document, Owner = orgId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -280,7 +280,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT @Limit";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Report>(sql, navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -339,7 +339,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Owner = orgId, navigation.Offset, navigation.Limit }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }

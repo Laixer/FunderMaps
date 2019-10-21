@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Helpers;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace FunderMaps.HealthChecks
         /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
         /// <returns><see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-            => (await _fileStorageService.StorageAccountAsync()).ToLower().Contains("storage")
+            => (await _fileStorageService.GetStorageNameAsync()).ToLower().Contains(Constants.ReportStorage)
                 ? HealthCheckResult.Healthy()
                 : HealthCheckResult.Unhealthy();
     }

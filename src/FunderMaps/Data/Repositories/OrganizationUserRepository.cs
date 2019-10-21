@@ -30,6 +30,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created entity primary key.</returns>
         public override async Task<KeyValuePair<Guid, Guid>> AddAsync(OrganizationUser entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 INSERT INTO application.organization_user
                     (user_id, organization_id, role)
@@ -63,6 +68,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(OrganizationUser entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 DELETE FROM application.organization_user AS orguser
                 WHERE   orguser.user_id = @UserId
@@ -91,7 +101,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, new { OrganizationId = id.Key, UserId = id.Value }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -118,7 +128,7 @@ namespace FunderMaps.Data.Repositories
             Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, new { UserId = userId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -133,6 +143,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<OrganizationUser>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  orguser.user_id,
                         orguser.organization_id,
@@ -142,7 +157,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT @Limit";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -158,6 +173,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationIdAsync(Guid orgId, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  orguser.user_id,
                         orguser.organization_id,
@@ -168,7 +188,7 @@ namespace FunderMaps.Data.Repositories
                 LIMIT @Limit";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<OrganizationUser>(sql, new { organizatonId = orgId, navigation.Offset, navigation.Limit }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -185,6 +205,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<FunderMapsUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             // TODO: return the actual user and push the results in an SimpleUser object.
 
             var sql = @"
@@ -206,7 +231,7 @@ namespace FunderMaps.Data.Repositories
             dynamicParameters.Add("Limit", navigation.Limit);
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<FunderMapsUser>(sql, dynamicParameters));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -220,6 +245,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(OrganizationUser entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE  application.organization_user AS orguser
                 SET     role = @ConvRole::application.organization_role
