@@ -2,7 +2,7 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Extensions;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Providers;
 using System;
 using System.Collections.Generic;
