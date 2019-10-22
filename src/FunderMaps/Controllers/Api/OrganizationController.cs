@@ -319,7 +319,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUser input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
@@ -369,7 +372,7 @@ namespace FunderMaps.Controllers.Api
         }
 
         // TODO: This is a temporary solution.
-        private class OrgProfileModel
+        public class OrgProfileModel
         {
             public ProfileInputOutputModel Profile { get; set; }
             public OrganizationRole Role { get; set; }
@@ -432,9 +435,12 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> UpdateUserProfileAsync(Guid id, Guid userId, ProfileInputOutputModel input)
+        public async Task<IActionResult> UpdateUserProfileAsync(Guid id, Guid userId, OrgProfileModel input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
@@ -453,13 +459,16 @@ namespace FunderMaps.Controllers.Api
                 return ResourceForbid();
             }
 
-            user.GivenName = input.GivenName;
-            user.LastName = input.LastName;
-            user.Avatar = input.Avatar;
-            user.JobTitle = input.JobTitle;
-            user.PhoneNumber = input.PhoneNumber;
+            user.GivenName = input.Profile.GivenName;
+            user.LastName = input.Profile.LastName;
+            user.Avatar = input.Profile.Avatar;
+            user.JobTitle = input.Profile.JobTitle;
+            user.PhoneNumber = input.Profile.PhoneNumber;
+
+            organizationUser.Role = input.Role;
 
             await _userManager.UpdateAsync(user);
+            await _organizationUserRepository.UpdateAsync(organizationUser);
 
             return NoContent();
         }
