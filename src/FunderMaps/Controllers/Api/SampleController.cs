@@ -171,6 +171,7 @@ namespace FunderMaps.Controllers.Api
             sample.BuiltYear = input.BuiltYear;
             sample.FoundationQuality = input.FoundationQuality;
             sample.EnforcementTerm = input.EnforcementTerm;
+            sample.Substructure = input.Substructure;
             sample.Note = input.Note;
             sample.AccessPolicy = input.AccessPolicy;
             sample.Address = await _addressService.GetOrCreateAddressAsync(input.Address);
