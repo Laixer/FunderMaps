@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.9.8</Version>
+    <Authors>Laixer</Authors>
+    <Company>Laixer B.V.</Company>
+    <Copyright>Copyright Laixer 2019</Copyright>
+    <PackageProjectUrl>https://github.com/Zanhos/FunderMaps</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>ASP, ASP.NET Core, Dapper, Identity, Npgsql</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Identity framework stores using Dapper for database communication. Npgsql as database driver supported by default</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
+    <PackageReference Include="Npgsql" Version="4.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Identity.Core">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.identity.core\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Identity.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -260,6 +260,9 @@ paket-files/
 __pycache__/
 *.pyc
 
-# Ignore cloud profiles
+# Cloud profiles
 */Properties/PublishProfiles/*Azure*
 **/Documentation*.xml
+
+# Application settings for local environments
+**/appsettings.*.json

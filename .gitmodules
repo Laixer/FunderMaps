@@ -1,0 +1,3 @@
+[submodule "src/FunderMaps/ClientApp"]
+	path = src/FunderMaps/ClientApp
+	url = https://github.com/Zanhos/FunderMapsClientApp.git
