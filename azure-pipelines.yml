@@ -1,4 +1,5 @@
 trigger:
+- master
 - develop
 
 pool:
@@ -67,7 +68,8 @@ steps:
     artifactName: PackageArtifacts
 
 - task: AzureWebApp@1
-  displayName: Azure Web App Deploy
+  displayName: Azure Web App Deploy - Staging
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
   inputs:
     appType: webApp
     azureSubscription: 'FunderMaps Staging - Azure Web Deploy'
