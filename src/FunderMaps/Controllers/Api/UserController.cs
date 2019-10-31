@@ -107,10 +107,11 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
+            // TODO: There is something wrong why the password is changed but not updated.
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
-                return ApplicationError();
+                return BadRequest(1, "Authentication with current password failed");
             }
 
             return NoContent();
