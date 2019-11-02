@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Controllers.Api;
+using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -17,7 +18,7 @@ namespace FunderMaps.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnValue = Assert.IsType<VersionOutputModel>(okResult.Value);
+            var returnValue = Assert.IsType<ApplicationVersionModel>(okResult.Value);
             Assert.NotNull(returnValue.Name);
             Assert.NotNull(returnValue.VersionString);
             Assert.Equal(returnValue.VersionString, returnValue.Version.ToString());
