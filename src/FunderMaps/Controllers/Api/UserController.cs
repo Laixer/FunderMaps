@@ -22,7 +22,6 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
-        /// <param name="eventBus">Event bus.</param>
         public UserController(UserManager<FunderMapsUser> userManager)
         {
             _userManager = userManager;
