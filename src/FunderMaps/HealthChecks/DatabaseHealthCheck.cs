@@ -27,12 +27,10 @@ namespace FunderMaps.HealthChecks
         /// <returns><see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
         {
-            using (var connection = _dbProvider.ConnectionScope())
-            {
-                return await connection.ExecuteScalarAsync<int>("SELECT pg_backend_pid()") > 1
-                    ? HealthCheckResult.Healthy()
-                    : HealthCheckResult.Unhealthy();
-            }
+            using var connection = _dbProvider.ConnectionScope();
+            return await connection.ExecuteScalarAsync<int>("SELECT pg_backend_pid()") > 1
+                ? HealthCheckResult.Healthy()
+                : HealthCheckResult.Unhealthy();
         }
     }
 }
