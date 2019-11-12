@@ -52,23 +52,29 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> FromProposalAsync([FromRoute] Guid token, [FromBody] UserInputModel input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            // FUTURE: Wrap inside transaction. Create everything at once, or nothing at all if an error occurs.
+
             var proposal = await _organizationProposalRepository.GetByIdAsync(token);
             if (proposal == null)
             {
                 return ResourceNotFound();
             }
 
-            // Prepare new user account.
             var user = new FunderMapsUser(input.Email);
 
-            // Set password on account.
             var result = await _userManager.CreateAsync(user, input.Password);
             if (!result.Succeeded)
             {
                 return ApplicationError();
             }
 
-            // Create new organization
+            // FUTURE: This should be handled in a single call.
+
             var organization = new Organization
             {
                 Name = proposal.Name,
@@ -76,13 +82,11 @@ namespace FunderMaps.Controllers.Api
                 Email = proposal.Email,
             };
 
-            // FUTURE: Wrap inside transaction. Create everything at once, or nothing at all if an error occurs.
-
-            await _organizationRepository.AddAsync(organization);
+            organization.Id = await _organizationRepository.AddAsync(organization);
             await _organizationUserRepository.AddAsync(new OrganizationUser
             {
-                User = user,
-                Organization = organization,
+                UserId = user.Id,
+                OrganizationId = organization.Id,
                 Role = input.Role
             });
             await _organizationProposalRepository.DeleteAsync(proposal);
