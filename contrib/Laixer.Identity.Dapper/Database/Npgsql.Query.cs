@@ -29,35 +29,6 @@
                 WHERE normalized_username=@NormalizedUserName
                 LIMIT 1";
 
-            QueryRepository.GetNormalizedUserNameAsync = $@"
-                SELECT normalized_username
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.GetUserIdAsync = $@"
-                SELECT id
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE normalized_username=@NormalizedUserName
-                    OR normalized_email=@NormalizedEmail
-                LIMIT 1";
-
-            QueryRepository.GetUserNameAsync = $@"
-                SELECT username
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.SetNormalizedUserNameAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET normalized_username=@NormalizedUserName
-                WHERE id=@Id";
-
-            QueryRepository.SetUserNameAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET username=@UserName
-                WHERE id=@Id";
-
             QueryRepository.UpdateAsync = $@"
                 UPDATE {_options.Schema}.{_options.UserTable}
                 SET username=@UserName, normalized_username=@NormalizedUserName, email=@Email, normalized_email=@NormalizedEmail, email_confirmed=@EmailConfirmed, password_hash=@PasswordHash, security_stamp=@SecurityStamp, concurrency_stamp=@ConcurrencyStamp, phone_number=@PhoneNumber, phone_number_confirmed=@PhoneNumberConfirmed, two_factor_enabled=@TwoFactorEnabled, lockout_end=@LockoutEnd, lockout_enabled=@LockoutEnabled, access_failed_count=@AccessFailedCount
@@ -70,39 +41,6 @@
                 FROM {_options.Schema}.{_options.UserTable}
                 WHERE normalized_email=@NormalizedEmail
                 LIMIT 1";
-
-            QueryRepository.GetEmailAsync = $@"
-                SELECT email
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.GetEmailConfirmedAsync = $@"
-                SELECT email_confirmed
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.GetNormalizedEmailAsync = $@"
-                SELECT normalized_email
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.SetEmailAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET email=@Email
-                WHERE id=@Id";
-
-            QueryRepository.SetEmailConfirmedAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET email_confirmed=@EmailConfirmed
-                WHERE id=@Id";
-
-            QueryRepository.SetNormalizedEmailAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET normalized_email=@NormalizedEmail
-                WHERE id=@Id";
             #endregion
 
             #region IUserRoleStore
@@ -120,32 +58,6 @@
 
             // TODO:
             QueryRepository.RemoveFromRoleAsync = $@"";
-            #endregion
-
-            #region IUserPasswordStore
-            QueryRepository.GetPasswordHashAsync = $@"
-                SELECT password_hash
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.SetPasswordHashAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET password_hash=@PasswordHash
-                WHERE id=@Id";
-            #endregion
-
-            #region IUserSecurityStampStore
-            QueryRepository.GetSecurityStampAsync = $@"
-                SELECT security_stamp
-                FROM {_options.Schema}.{_options.UserTable}
-                WHERE id=@Id
-                LIMIT 1";
-
-            QueryRepository.SetSecurityStampAsync = $@"
-                UPDATE {_options.Schema}.{_options.UserTable}
-                SET security_stamp=@SecurityStamp
-                WHERE id=@Id";
             #endregion
         }
     }
