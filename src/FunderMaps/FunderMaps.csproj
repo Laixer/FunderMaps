@@ -69,6 +69,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\contrib\Laixer.Identity.Dapper\Laixer.Identity.Dapper.csproj" />
+    <ProjectReference Include="..\FunderMaps.Cloud\FunderMaps.Cloud.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
   </ItemGroup>
 

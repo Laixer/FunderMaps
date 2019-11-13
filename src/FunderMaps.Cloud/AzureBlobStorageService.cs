@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.Services
+namespace FunderMaps.Cloud
 {
     /// <summary>
     /// Azure storage implementing file storage service.

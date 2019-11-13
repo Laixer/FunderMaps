@@ -99,9 +99,11 @@ namespace FunderMaps
             // Configure local repositories
             ConfigureRepository(services);
 
-            // Register services from application core.
+            // Register services from application modules.
             services.AddApplicationCoreServices(_configuration);
+            services.AddApplicationCloudServices(_configuration);
 
+            // Register services from local application module.
             services.AddTransient<IMailService, MailService>();
         }
 
