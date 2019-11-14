@@ -23,6 +23,11 @@ namespace FunderMaps.Data.Repositories
 
         public override Task<Guid> AddAsync(Address entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             throw new NotImplementedException();
         }
 
@@ -33,6 +38,11 @@ namespace FunderMaps.Data.Repositories
 
         public override Task DeleteAsync(Address entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             throw new NotImplementedException();
         }
 
@@ -41,8 +51,13 @@ namespace FunderMaps.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<Address> GetOrAddAsync(Address address)
+        public async Task<Address> GetOrAddAsync(Address entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 WITH insertornot AS (
                 INSERT INTO application.address(
@@ -61,8 +76,8 @@ namespace FunderMaps.Data.Repositories
 				        OR
                         (@BuildingNumberSuffix IS NULL AND building_number_suffix IS NULL))";
 
-            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Address>(sql, address));
-            if (result.Count() == 0)
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Address>(sql, entity));
+            if (!result.Any())
             {
                 return null;
             }
@@ -72,11 +87,21 @@ namespace FunderMaps.Data.Repositories
 
         public override Task<IReadOnlyList<Address>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             throw new NotImplementedException();
         }
 
         public override Task UpdateAsync(Address entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             throw new NotImplementedException();
         }
     }

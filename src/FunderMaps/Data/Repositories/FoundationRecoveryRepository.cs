@@ -73,7 +73,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -134,7 +134,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, Owner = orgId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -196,7 +196,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Id = id, Owner = orgId }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -211,6 +211,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public override async Task<IReadOnlyList<FoundationRecovery>> ListAllAsync(Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  reco.id,
                         reco.note,
@@ -256,7 +261,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: navigation));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -272,6 +277,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of records.</returns>
         public async Task<IReadOnlyList<FoundationRecovery>> ListAllAsync(Guid orgId, Navigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             var sql = @"
                 SELECT  reco.id,
                         reco.note,
@@ -319,7 +329,7 @@ namespace FunderMaps.Data.Repositories
                 map: map,
                 splitOn: "id",
                 param: new { Owner = orgId, navigation.Offset, navigation.Limit }));
-            if (result.Count() == 0)
+            if (!result.Any())
             {
                 return null;
             }
@@ -334,6 +344,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created entity primary key.</returns>
         public override async Task<int> AddAsync(FoundationRecovery entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 INSERT INTO application.attribution
                     (project, reviewer, creator, owner, contractor)
@@ -374,6 +389,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to update.</param>
         public override Task UpdateAsync(FoundationRecovery entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE application.foundation_recovery AS reco
                 SET    year = @Year,
@@ -396,6 +416,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity to delete.</param>
         public override Task DeleteAsync(FoundationRecovery entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             var sql = @"
                 UPDATE  application.foundation_recovery AS reco
                 SET     delete_date = CURRENT_TIMESTAMP

@@ -40,6 +40,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Return value.</returns>
         public async Task<TReturn> RunSqlCommand<TReturn>(Func<IDbConnection, Task<TReturn>> action, IDbConnection _connection = null)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             // Run with existing connection.
             if (_connection != null)
             {
