@@ -26,34 +26,31 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public RepositoryBase(DbProvider dbProvider)
-        {
-            DataProvider = dbProvider;
-        }
+        protected RepositoryBase(DbProvider dbProvider) => DataProvider = dbProvider;
 
         /// <summary>
         /// Runs the SQL command and creates the connection if necessary.
         /// </summary>
         /// <typeparam name="TReturn">Query return type.</typeparam>
         /// <param name="action">SQL query.</param>
-        /// <param name="_connection">Optional database connection.</param>
+        /// <param name="connection">Optional database connection.</param>
         /// <returns>Return value.</returns>
-        public async Task<TReturn> RunSqlCommand<TReturn>(Func<IDbConnection, Task<TReturn>> action, IDbConnection _connection = null)
+        public async Task<TReturn> RunSqlCommand<TReturn>(Func<IDbConnection, Task<TReturn>> action, IDbConnection connection = null)
         {
-            if (action == null)
+            if (action is null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
 
             // Run with existing connection.
-            if (_connection != null)
+            if (!(connection is null))
             {
-                return await action(_connection);
+                return await action(connection);
             }
 
             // Run in new scope.
-            using var connection = DataProvider.ConnectionScope();
-            return await action(connection);
+            using var connectionScope = DataProvider.ConnectionScope();
+            return await action(connectionScope);
         }
 
         /// <summary>
