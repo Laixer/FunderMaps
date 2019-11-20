@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,6 +10,10 @@
     <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>Foundation, Research, Visualization, Registration</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>$(SolutionDir)DocumentationFunderMapsCloud.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
