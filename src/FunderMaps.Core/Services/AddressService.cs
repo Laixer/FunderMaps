@@ -48,5 +48,14 @@ namespace FunderMaps.Core.Services
         /// <param name="address">Address object.</param>
         /// <returns><see cref="Address"/> or null.</returns>
         public Task<Address> GetOrCreateAddressAsync(Address address) => _addressRepository.GetOrAddAsync(address);
+
+        /// <summary>
+        /// Add address if it does not exist yet.
+        /// </summary>
+        /// <param name="address">See <see cref="Address2"/>.</param>
+        public Task AddAddressIfNotExist(Address2 address)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

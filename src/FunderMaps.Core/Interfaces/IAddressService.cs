@@ -22,5 +22,11 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="streetName">Street name suggestion.</param>
         /// <returns>Id of first record.</returns>
         Task<IEnumerable<Address2>> GetAddressByStreetNameAsync(string streetName);
+
+        /// <summary>
+        /// Add address if it does not exist yet.
+        /// </summary>
+        /// <param name="address">See <see cref="Address2"/>.</param>
+        Task AddAddressIfNotExist(Address2 address);
     }
 }
