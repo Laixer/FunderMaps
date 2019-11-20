@@ -7,7 +7,7 @@ namespace FunderMaps.Helpers
     /// <summary>
     /// Application constants.
     /// </summary>
-    public static class Constants
+    internal static class Constants
     {
         /// <summary>
         /// Default password policy.
