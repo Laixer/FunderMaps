@@ -260,14 +260,18 @@ namespace FunderMaps
             app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseStaticFiles(new StaticFileOptions
+
+            var staticFileOptions = new StaticFileOptions
             {
                 OnPrepareResponse = context =>
                 {
+                    // Static files can be heavily cached since they can be large and do not change often.
                     context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
                 }
-            });
-            app.UseSpaStaticFiles();
+            };
+
+            app.UseStaticFiles(staticFileOptions);
+            app.UseSpaStaticFiles(staticFileOptions);
 
             app.UseHealthChecks("/health");
 

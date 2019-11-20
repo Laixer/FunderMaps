@@ -34,7 +34,7 @@ namespace FunderMaps.Helpers
         /// <summary>
         /// Static file cache retention.
         /// </summary>
-        public const int StaticFileCacheRetention = 60;
+        public const int StaticFileCacheRetention = 60 * 60 * 24 * 30;
 
         /// <summary>
         /// Application role for administrator
