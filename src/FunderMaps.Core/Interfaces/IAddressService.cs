@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces
@@ -14,5 +15,12 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="address">Input entity.</param>
         /// <returns>Address.</returns>
         Task<Address> GetOrCreateAddressAsync(Address address);
+
+        /// <summary>
+        /// Find all addresses matching on streetname.
+        /// </summary>
+        /// <param name="streetName">Street name suggestion.</param>
+        /// <returns>Id of first record.</returns>
+        Task<IEnumerable<Address2>> GetAddressByStreetNameAsync(string streetName);
     }
 }

@@ -51,9 +51,36 @@ namespace FunderMaps.Data.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<IReadOnlyList<Address2>> GetByStreetNameAsync(string streetName, uint limit = 100)
+        {
+            if (string.IsNullOrEmpty(streetName))
+            {
+                throw new ArgumentNullException(nameof(streetName));
+            }
+
+            var sql = @"
+                SELECT street, city
+                FROM geospatial.address
+                WHERE street LIKE LOWER(@Query)
+                GROUP BY city, street
+                LIMIT @Limit";
+
+            var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Address2>(sql, new
+            {
+                Query = streetName + "%",
+                Limit = (int)limit,
+            }));
+            if (!result.Any())
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
+
         public async Task<Address> GetOrAddAsync(Address entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
