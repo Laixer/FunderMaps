@@ -64,33 +64,33 @@ namespace FunderMaps.Controllers.Api
             {
                 //new Layer
                 //{
-                //    Id = Guid.NewGuid(),
+                //    Id = Guid.Parse("24318b03-e7af-4519-a4e1-d12c485e1493"),
                 //    Name = "Analysis",
                 //    Source = "", // From BAG
                 //},
                 //new Layer
                 //{
-                //    Id = Guid.NewGuid(),
+                //    Id = Guid.Parse("e696373c-d1a7-4f1b-ab7d-853d1e5d370a"),
                 //    Name = "Alle metingen",
                 //    Source = "api/map/all"
                 //},
                 new Layer
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("9319cd4f-9387-4401-8641-0e982780c133"),
                     Name = "Funderingstype",
                     Source = "api/map/foundation_type",
                     Order = 0
                 },
                 new Layer
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("8a8fbafc-6975-487b-824d-332ecd2c44af"),
                     Name = "Handhavingstermijnen",
                     Source = "api/map/enforcement_term",
                     Order = 1
                 },
                 new Layer
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("eca38907-95f0-46c7-9226-e0abe1ff3e91"),
                     Name = "Kwaliteit Funderingen",
                     Source = "api/map/foundation_quality",
                     Order = 2
