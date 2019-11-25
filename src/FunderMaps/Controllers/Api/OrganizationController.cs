@@ -485,7 +485,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {
