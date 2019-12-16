@@ -45,6 +45,14 @@ namespace FunderMaps.Core.Interfaces
         /// Store the file in the data store.
         /// </summary>
         /// /// <param name="store">Storage container.</param>
+        /// <param name="file">Application file.</param>
+        /// <param name="content">Content array.</param>
+        Task StoreFileAsync(string store, ApplicationFile file, byte[] content);
+
+        /// <summary>
+        /// Store the file in the data store.
+        /// </summary>
+        /// /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <param name="stream">Content stream.</param>
         Task StoreFileAsync(string store, string name, Stream stream);

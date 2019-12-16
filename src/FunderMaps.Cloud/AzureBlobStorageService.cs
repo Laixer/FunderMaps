@@ -110,6 +110,18 @@ namespace FunderMaps.Cloud
         /// Store the file in the data store.
         /// </summary>
         /// /// <param name="store">Storage container.</param>
+        /// <param name="file">Application file.</param>
+        /// <param name="content">Content array.</param>
+        public Task StoreFileAsync(string store, ApplicationFile file, byte[] content)
+            => PrepareBlob(store, file.FileName, new BlobProperties
+            {
+                ContentType = file.ContentType
+            }).UploadFromByteArrayAsync(content, 0, content.Length);
+
+        /// <summary>
+        /// Store the file in the data store.
+        /// </summary>
+        /// /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <param name="stream">Content stream.</param>
         public Task StoreFileAsync(string store, string name, Stream stream)
