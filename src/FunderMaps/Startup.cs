@@ -90,9 +90,6 @@ namespace FunderMaps
                 .AddCheck<DatabaseHealthCheck>("db_health_check")
                 .AddCheck<FileStorageCheck>("file_health_check");
 
-            // Register the Swagger generator, defining an OpenAPI document.
-            services.AddSwaggerDocumentation();
-
             services.AddEventBus()
                 .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>(nameof(UpdateUserProfileHandler));
 
@@ -241,12 +238,10 @@ namespace FunderMaps
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
 
-                app.UseSwaggerDocumentation();
                 app.UseCors("CORSDeveloperPolicy");
             }
             if (env.IsStaging())
             {
-                app.UseSwaggerDocumentation();
                 app.UseCors("CORSDeveloperPolicy");
                 app.UseHsts();
             }
