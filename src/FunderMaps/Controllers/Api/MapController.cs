@@ -102,28 +102,28 @@ namespace FunderMaps.Controllers.Api
             return Ok(collection);
         }
 
-        private class FeatureModel2
+        private class FeatureModel
         {
             public string Type { get; set; } = "Feature";
             public object Geometry { get; set; }
             public object Properties { get; set; }
         }
 
-        private class FeatureCollection2
+        private class FeatureCollection
         {
             public string Type { get; set; } = "FeatureCollection";
-            public ICollection<FeatureModel2> Features { get; set; }
+            public ICollection<FeatureModel> Features { get; set; }
         }
 
-        private static FeatureCollection2 BuildGeoCollection(IEnumerable<AddressGeoJson> points, object properties = null, FeatureCollection2 featureCollection = null)
+        private static FeatureCollection BuildGeoCollection(IEnumerable<AddressGeoJson> points, object properties = null, FeatureCollection featureCollection = null)
         {
-            var collection = new List<FeatureModel2>();
+            var collection = new List<FeatureModel>();
 
             if (points != null)
             {
                 foreach (var item in points)
                 {
-                    collection.Add(new FeatureModel2
+                    collection.Add(new FeatureModel
                     {
                         Geometry = JsonConvert.DeserializeObject(item.GeoJson),
                         Properties = properties,
@@ -136,24 +136,25 @@ namespace FunderMaps.Controllers.Api
                 collection.AddRange(featureCollection.Features);
             }
 
-            return new FeatureCollection2
+            return new FeatureCollection
             {
                 Features = collection,
             };
         }
 
-        // TODO: Maybe remove?
+#if _ALL_SAMPLES
         // GET: api/map/all
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        //[HttpGet("all")]
-        //public async Task<IActionResult> GetAllSamplesAsync()
-        //{
-        //    var col1 = await _mapRepository.GetByOrganizationIdAsync(User.GetOrganizationId());
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllSamplesAsync()
+        {
+            var col1 = await _mapRepository.GetByOrganizationIdAsync(User.GetOrganizationId());
 
-        //    return Ok(BuildGeoCollection(col1));
-        //}
+            return Ok(BuildGeoCollection(col1));
+        }
+#endif
 
         // GET: api/map/foundation_type
         /// <summary>
@@ -170,30 +171,30 @@ namespace FunderMaps.Controllers.Api
             var col4 = await _mapRepository.GetByFounationTypeWoodChargerByOrganizationAsync(User.GetOrganizationId());
             var col5 = await _mapRepository.GetByFounationTypeOtherByOrganizationAsync(User.GetOrganizationId());
 
-            return Ok(BuildGeoCollection2(col5, new
+            return Ok(BuildGeoCollection(col5, new
             {
                 SublayerId = 4,
                 Sublayer = "Overig",
                 Color = "#E78932",
             },
-            BuildGeoCollection2(col4, new
+            BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Hout met oplanger",
                 Color = "#D36E2C",
             },
-            BuildGeoCollection2(col3, new
+            BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "Niet onderheid",
                 Color = "#C1301B",
             },
-            BuildGeoCollection2(col2, new
+            BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "Beton paal",
                 Color = "#9F9E9E",
-            }, BuildGeoCollection2(col1, new
+            }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
                 Sublayer = "Houten paal",
@@ -218,42 +219,42 @@ namespace FunderMaps.Controllers.Api
             var col6 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(10, 20, User.GetOrganizationId());
             var col7 = await _mapRepository.GetByEnforcementTermByOrganizationAsync(20, 30, User.GetOrganizationId());
 
-            return Ok(BuildGeoCollection2(col7, new
+            return Ok(BuildGeoCollection(col7, new
             {
                 SublayerId = 5,
                 Sublayer = "Over 20 tot 30 jaar over afgegeven handhavingstermijn",
                 Color = "#28922A",
             },
-            BuildGeoCollection2(col6, new
+            BuildGeoCollection(col6, new
             {
                 SublayerId = 5,
                 Sublayer = "Over 10 tot 20 jaar over afgegeven handhavingstermijn",
                 Color = "#67B433",
             },
-            BuildGeoCollection2(col5, new
+            BuildGeoCollection(col5, new
             {
                 SublayerId = 4,
                 Sublayer = "Binnen 10 jaar over afgegeven handhavingstermijn",
                 Color = "#C7BC3B",
             },
-            BuildGeoCollection2(col4, new
+            BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Tot 10 jaar over afgegeven handhavingstermijn",
                 Color = "#E78932",
             },
-            BuildGeoCollection2(col3, new
+            BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "10 tot 20 jaar over afgegeven handhavingstermijn",
                 Color = "#D45925",
             },
-            BuildGeoCollection2(col2, new
+            BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "20 tot 30 jaar over afgegeven handhavingstermijn",
                 Color = "#C1301B",
-            }, BuildGeoCollection2(col1, new
+            }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
                 Sublayer = "Meer dan 30 jaar over afgegeven handhavingstermijn",
@@ -277,36 +278,36 @@ namespace FunderMaps.Controllers.Api
             var col5 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.MediocreGood, User.GetOrganizationId());
             var col6 = await _mapRepository.GetByFoundationQualityByOrganizationAsync(FoundationQuality.Good, User.GetOrganizationId());
 
-            return Ok(BuildGeoCollection2(col6, new
+            return Ok(BuildGeoCollection(col6, new
             {
                 SublayerId = 5,
                 Sublayer = "Goede staat",
                 Color = "#28922A",
             },
-            BuildGeoCollection2(col5, new
+            BuildGeoCollection(col5, new
             {
                 SublayerId = 4,
                 Sublayer = "Redelijke staat",
                 Color = "#67B433",
             },
-            BuildGeoCollection2(col4, new
+            BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Acceptabele staat",
                 Color = "#C7BC3B",
             },
-            BuildGeoCollection2(col3, new
+            BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "Twijfelachtige staat",
                 Color = "#E78932",
             },
-            BuildGeoCollection2(col2, new
+            BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "Slechte staat",
                 Color = "#C1301B",
-            }, BuildGeoCollection2(col1, new
+            }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
                 Sublayer = "Zeer slechte staat",
