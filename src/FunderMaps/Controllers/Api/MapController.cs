@@ -313,5 +313,67 @@ namespace FunderMaps.Controllers.Api
                 Color = "#B61F17",
             })))))));
         }
+
+#if _TILESET
+        // GET: api/map/foundation_quality2
+        /// <summary>
+        /// Get the samples as Tileset.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("vector/{z}/{x}/{y}/foundation_quality2.pbf")]
+        public async Task<IActionResult> GetFoundationQuality2Async(int z, int x, int y)
+        {
+            static double[] TileToGPSPos(double tile_x, double tile_y, int zoom)
+            {
+                double n = Math.PI - ((2.0 * Math.PI * tile_y) / Math.Pow(2.0, zoom));
+
+                var X = (float)((tile_x / Math.Pow(2.0, zoom) * 360.0) - 180.0);
+                var Y = (float)(180.0 / Math.PI * Math.Atan(Math.Sinh(n)));
+
+                return new double[] { X, Y };
+            }
+
+            var min = TileToGPSPos(x, y, z);
+            var max = TileToGPSPos(x + 1, y + 1, z);
+
+            var fileRef = _blobClient.GetContainerReference("tileset").GetBlockBlobReference($"{z}.{x}.{y}.pbf");
+            if (await fileRef.ExistsAsync())
+            {
+                var memstream = new System.IO.MemoryStream();
+                await fileRef.DownloadToStreamAsync(memstream).ConfigureAwait(false);
+                memstream.Seek(0, System.IO.SeekOrigin.Begin);
+                return new FileStreamResult(memstream, "application/x-protobuf");
+            }
+
+            using var cnn = _dbProvider.ConnectionScope();
+            var sql = $@"
+                SELECT ST_AsMVT(tile)
+                FROM (
+                    SELECT addr.street_name,
+                      addr.building_number,
+                      samp.report,
+                      st_asmvtgeom(prem.geom,
+                                         ST_MakeEnvelope({min[0]}, {min[1]}, {max[0]}, {max[1]}, 4326),
+                          4096, 256, false) AS geom
+                    FROM   application.sample AS samp
+                      INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                      INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                      INNER JOIN application.address AS addr ON samp.address = addr.id
+                      INNER JOIN geospatial.residential_object AS reso ON addr.bag = reso.designation
+                      INNER JOIN geospatial.premise AS prem ON reso.id = prem.residential_object
+                    WHERE   addr.bag IS NOT NULL
+                    AND ST_Contains (
+                      ST_MakeEnvelope({min[0]}, {min[1]}, {max[0]}, {max[1]}, 4326),
+                      prem.geom)
+                ) AS tile";
+
+            var rs = cnn.Query<byte[]>(sql).FirstOrDefault();
+
+            fileRef.Properties.ContentType = "application/x-protobuf";
+            await fileRef.UploadFromByteArrayAsync(rs, 0, rs.Length);
+
+            return File(rs, "application/x-protobuf");
+        }
+#endif
     }
 }
