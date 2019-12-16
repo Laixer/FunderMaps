@@ -102,19 +102,6 @@ namespace FunderMaps.Controllers.Api
             return Ok(collection);
         }
 
-        //private class FeatureModel
-        //{
-        //    public class GeometryModel
-        //    {
-        //        public string Type { get; set; } = "Point";
-        //        public double[] Coordinates { get; set; }
-        //    }
-
-        //    public string Type { get; set; } = "Feature";
-        //    public GeometryModel Geometry { get; set; }
-        //    public object Properties { get; set; }
-        //}
-
         private class FeatureModel2
         {
             public string Type { get; set; } = "Feature";
@@ -122,49 +109,13 @@ namespace FunderMaps.Controllers.Api
             public object Properties { get; set; }
         }
 
-        //private class FeatureCollection
-        //{
-        //    public string Type { get; set; } = "FeatureCollection";
-        //    public ICollection<FeatureModel> Features { get; set; }
-        //}
-
         private class FeatureCollection2
         {
             public string Type { get; set; } = "FeatureCollection";
             public ICollection<FeatureModel2> Features { get; set; }
         }
 
-        //private static FeatureCollection BuildGeoCollection(IEnumerable<AddressPoint> points, object properties = null, FeatureCollection featureCollection = null)
-        //{
-        //    var collection = new List<FeatureModel>();
-
-        //    if (points != null)
-        //    {
-        //        foreach (var item in points)
-        //        {
-        //            collection.Add(new FeatureModel
-        //            {
-        //                Geometry = new FeatureModel.GeometryModel
-        //                {
-        //                    Coordinates = new double[] { item.X, item.Y, item.Z },
-        //                },
-        //                Properties = properties,
-        //            });
-        //        }
-        //    }
-
-        //    if (featureCollection != null)
-        //    {
-        //        collection.AddRange(featureCollection.Features);
-        //    }
-
-        //    return new FeatureCollection
-        //    {
-        //        Features = collection,
-        //    };
-        //}
-
-        private static FeatureCollection2 BuildGeoCollection2(IEnumerable<AddressGeoJson> points, object properties = null, FeatureCollection2 featureCollection = null)
+        private static FeatureCollection2 BuildGeoCollection(IEnumerable<AddressGeoJson> points, object properties = null, FeatureCollection2 featureCollection = null)
         {
             var collection = new List<FeatureModel2>();
 
