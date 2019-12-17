@@ -70,5 +70,12 @@ namespace FunderMaps.Core.Entities
         [PgName("term_30")]
         [EnumMember(Value = "term_30")]
         Term30,
+
+        /// <summary>
+        /// 40 years.
+        /// </summary>
+        [PgName("term_40")]
+        [EnumMember(Value = "term_40")]
+        Term40,
     }
 }
