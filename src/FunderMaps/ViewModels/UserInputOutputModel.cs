@@ -27,6 +27,14 @@ namespace FunderMaps.ViewModels
         public string LastName { get; set; }
 
         /// <summary>
+        /// Gets or sets the email for the user.
+        /// </summary>
+        [EmailAddress]
+        [DataType(DataType.EmailAddress)]
+        [MaxLength(256)]
+        public string Email { get; set; }
+
+        /// <summary>
         /// Gets or sets a user avatar.
         /// </summary>
         [MaxLength(256)]
