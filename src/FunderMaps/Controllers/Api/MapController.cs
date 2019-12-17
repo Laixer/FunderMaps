@@ -2,9 +2,9 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace FunderMaps.Controllers.Api
     /// <summary>
     /// Map data endpoint.
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = Constants.OrganizationMemberPolicy)]
     [Route("api/map")]
     [ApiController]
     public class MapController : BaseApiController
@@ -26,6 +26,7 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Create a new instance.
         /// </summary>
+        /// <param name="mapRepository">See <see cref="IMapRepository"/>.</param>
         public MapController(IMapRepository mapRepository) => _mapRepository = mapRepository;
 
         private class Layer
@@ -56,42 +57,40 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJSON.
         /// </summary>
         [HttpGet("layer")]
-        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(IList<Layer>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
+        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetLayersAsync()
         {
             var collection = new List<Layer>
             {
                 //new Layer
                 //{
-                //    Id = Guid.NewGuid(),
+                //    Id = Guid.Parse("24318b03-e7af-4519-a4e1-d12c485e1493"),
                 //    Name = "Analysis",
                 //    Source = "", // From BAG
                 //},
                 //new Layer
                 //{
-                //    Id = Guid.NewGuid(),
+                //    Id = Guid.Parse("e696373c-d1a7-4f1b-ab7d-853d1e5d370a"),
                 //    Name = "Alle metingen",
                 //    Source = "api/map/all"
                 //},
                 new Layer
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("9319cd4f-9387-4401-8641-0e982780c133"),
                     Name = "Funderingstype",
                     Source = "api/map/foundation_type",
                     Order = 0
                 },
                 new Layer
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("8a8fbafc-6975-487b-824d-332ecd2c44af"),
                     Name = "Handhavingstermijnen",
                     Source = "api/map/enforcement_term",
                     Order = 1
                 },
                 new Layer
                 {
-                    Id = Guid.NewGuid(),
+                    Id = Guid.Parse("eca38907-95f0-46c7-9226-e0abe1ff3e91"),
                     Name = "Kwaliteit Funderingen",
                     Source = "api/map/foundation_quality",
                     Order = 2
@@ -105,14 +104,8 @@ namespace FunderMaps.Controllers.Api
 
         private class FeatureModel
         {
-            public class GeometryModel
-            {
-                public string Type { get; set; } = "Point";
-                public double[] Coordinates { get; set; }
-            }
-
             public string Type { get; set; } = "Feature";
-            public GeometryModel Geometry { get; set; }
+            public object Geometry { get; set; }
             public object Properties { get; set; }
         }
 
@@ -122,7 +115,7 @@ namespace FunderMaps.Controllers.Api
             public ICollection<FeatureModel> Features { get; set; }
         }
 
-        private static FeatureCollection BuildGeoCollection(IEnumerable<AddressPoint> points, object properties = null, FeatureCollection featureCollection = null)
+        private static FeatureCollection BuildGeoCollection(IEnumerable<AddressGeoJson> points, object properties = null, FeatureCollection featureCollection = null)
         {
             var collection = new List<FeatureModel>();
 
@@ -132,10 +125,7 @@ namespace FunderMaps.Controllers.Api
                 {
                     collection.Add(new FeatureModel
                     {
-                        Geometry = new FeatureModel.GeometryModel
-                        {
-                            Coordinates = new double[] { item.X, item.Y, item.Z },
-                        },
+                        Geometry = JsonConvert.DeserializeObject(item.GeoJson),
                         Properties = properties,
                     });
                 }
@@ -152,29 +142,25 @@ namespace FunderMaps.Controllers.Api
             };
         }
 
+#if _ALL_SAMPLES
         // GET: api/map/all
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("all")]
-        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(FeatureCollection), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllSamplesAsync()
         {
             var col1 = await _mapRepository.GetByOrganizationIdAsync(User.GetOrganizationId());
 
             return Ok(BuildGeoCollection(col1));
         }
+#endif
 
         // GET: api/map/foundation_type
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("foundation_type")]
-        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(FeatureCollection), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetFoundationTypeAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -221,9 +207,6 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("enforcement_term")]
-        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(FeatureCollection), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetEnforcementTermAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -284,9 +267,6 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("foundation_quality")]
-        [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(FeatureCollection), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetFoundationQualityAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -334,5 +314,67 @@ namespace FunderMaps.Controllers.Api
                 Color = "#B61F17",
             })))))));
         }
+
+#if _TILESET
+        // GET: api/map/foundation_quality2
+        /// <summary>
+        /// Get the samples as Tileset.
+        /// </summary>
+        [AllowAnonymous]
+        [HttpGet("vector/{z}/{x}/{y}/foundation_quality2.pbf")]
+        public async Task<IActionResult> GetFoundationQuality2Async(int z, int x, int y)
+        {
+            static double[] TileToGPSPos(double tile_x, double tile_y, int zoom)
+            {
+                double n = Math.PI - ((2.0 * Math.PI * tile_y) / Math.Pow(2.0, zoom));
+
+                var X = (float)((tile_x / Math.Pow(2.0, zoom) * 360.0) - 180.0);
+                var Y = (float)(180.0 / Math.PI * Math.Atan(Math.Sinh(n)));
+
+                return new double[] { X, Y };
+            }
+
+            var min = TileToGPSPos(x, y, z);
+            var max = TileToGPSPos(x + 1, y + 1, z);
+
+            var fileRef = _blobClient.GetContainerReference("tileset").GetBlockBlobReference($"{z}.{x}.{y}.pbf");
+            if (await fileRef.ExistsAsync())
+            {
+                var memstream = new System.IO.MemoryStream();
+                await fileRef.DownloadToStreamAsync(memstream).ConfigureAwait(false);
+                memstream.Seek(0, System.IO.SeekOrigin.Begin);
+                return new FileStreamResult(memstream, "application/x-protobuf");
+            }
+
+            using var cnn = _dbProvider.ConnectionScope();
+            var sql = $@"
+                SELECT ST_AsMVT(tile)
+                FROM (
+                    SELECT addr.street_name,
+                      addr.building_number,
+                      samp.report,
+                      st_asmvtgeom(prem.geom,
+                                         ST_MakeEnvelope({min[0]}, {min[1]}, {max[0]}, {max[1]}, 4326),
+                          4096, 256, false) AS geom
+                    FROM   application.sample AS samp
+                      INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                      INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                      INNER JOIN application.address AS addr ON samp.address = addr.id
+                      INNER JOIN geospatial.residential_object AS reso ON addr.bag = reso.designation
+                      INNER JOIN geospatial.premise AS prem ON reso.id = prem.residential_object
+                    WHERE   addr.bag IS NOT NULL
+                    AND ST_Contains (
+                      ST_MakeEnvelope({min[0]}, {min[1]}, {max[0]}, {max[1]}, 4326),
+                      prem.geom)
+                ) AS tile";
+
+            var rs = cnn.Query<byte[]>(sql).FirstOrDefault();
+
+            fileRef.Properties.ContentType = "application/x-protobuf";
+            await fileRef.UploadFromByteArrayAsync(rs, 0, rs.Length);
+
+            return File(rs, "application/x-protobuf");
+        }
+#endif
     }
 }

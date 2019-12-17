@@ -6,7 +6,7 @@
     public enum ReportStatus
     {
         /// <summary>
-        /// Todo.
+        /// Needs to be done.
         /// </summary>
         Todo,
 

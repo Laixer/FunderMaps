@@ -2,31 +2,33 @@
 
 namespace FunderMaps.ViewModels
 {
+    // FUTURE: MVC should not handle any errors
+
+    /// <summary>
+    /// Error structure.
+    /// </summary>
+    public class ErrorDetail
+    {
+        /// <summary>
+        /// Error code.
+        /// </summary>
+        public int Code { get; set; }
+
+        /// <summary>
+        /// Error message.
+        /// </summary>
+        public string Message { get; set; }
+    }
+
     /// <summary>
     /// Display error to the client.
     /// </summary>
     public class ErrorOutputModel
     {
         /// <summary>
-        /// Error structure.
-        /// </summary>
-        public class Error
-        {
-            /// <summary>
-            /// Error code.
-            /// </summary>
-            public int Code { get; set; }
-
-            /// <summary>
-            /// Error message.
-            /// </summary>
-            public string Message { get; set; }
-        }
-
-        /// <summary>
         /// Collection of errors.
         /// </summary>
-        public IList<Error> Errors { get; private set; }
+        public IList<ErrorDetail> Errors { get; private set; }
 
         /// <summary>
         /// Create new instance.
@@ -52,10 +54,10 @@ namespace FunderMaps.ViewModels
         {
             if (Errors == null)
             {
-                Errors = new List<Error>();
+                Errors = new List<ErrorDetail>();
             }
 
-            Errors.Add(new Error { Code = code, Message = message });
+            Errors.Add(new ErrorDetail { Code = code, Message = message });
         }
 
         /// <summary>

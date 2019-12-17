@@ -29,35 +29,35 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodByOrganizationAsync(Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypeWoodByOrganizationAsync(Guid orgId);
 
         /// <summary>
         /// Retrieve sample addresses by foundation type 'concrete' and by organization.
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByFounationTypeConcreteByOrganizationAsync(Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypeConcreteByOrganizationAsync(Guid orgId);
 
         /// <summary>
         /// Retrieve sample addresses by foundation type 'no pile' and by organization.
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByFounationTypeNoPileByOrganizationAsync(Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypeNoPileByOrganizationAsync(Guid orgId);
 
         /// <summary>
         /// Retrieve sample addresses by foundation type 'wood charger' and by organization.
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByFounationTypeWoodChargerByOrganizationAsync(Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypeWoodChargerByOrganizationAsync(Guid orgId);
 
         /// <summary>
         /// Retrieve sample addresses by foundation type 'other' and by organization.
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByFounationTypeOtherByOrganizationAsync(Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypeOtherByOrganizationAsync(Guid orgId);
 
         /// <summary>
         /// Retrieve sample addresses by enforcement term range and by organization.
@@ -66,7 +66,7 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="rangeEnd">End of enforcemen term range.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByEnforcementTermByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByEnforcementTermByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
 
         /// <summary>
         /// Retrieve sample addresses by foundation quality and by organization.
@@ -74,6 +74,6 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="foundationQuality">Foundation quality selector.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
-        Task<IReadOnlyList<AddressPoint>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId);
+        Task<IReadOnlyList<AddressGeoJson>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId);
     }
 }

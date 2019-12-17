@@ -7,7 +7,7 @@ namespace FunderMaps.Helpers
     /// <summary>
     /// Application constants.
     /// </summary>
-    public static class Constants
+    internal static class Constants
     {
         /// <summary>
         /// Default password policy.
@@ -34,7 +34,7 @@ namespace FunderMaps.Helpers
         /// <summary>
         /// Static file cache retention.
         /// </summary>
-        public const int StaticFileCacheRetention = 60;
+        public const int StaticFileCacheRetention = 60 * 60 * 24 * 30;
 
         /// <summary>
         /// Application role for administrator

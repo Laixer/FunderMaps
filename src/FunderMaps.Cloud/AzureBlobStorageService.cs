@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.Services
+namespace FunderMaps.Cloud
 {
     /// <summary>
     /// Azure storage implementing file storage service.
@@ -104,7 +104,19 @@ namespace FunderMaps.Core.Services
         /// <param name="name">File name.</param>
         /// <param name="content">Content array.</param>
         public Task StoreFileAsync(string store, string name, byte[] content)
-            => PrepareBlob(store, name, new BlobProperties()).UploadFromByteArrayAsync(content, 0, 0);
+            => PrepareBlob(store, name, new BlobProperties()).UploadFromByteArrayAsync(content, 0, content.Length);
+
+        /// <summary>
+        /// Store the file in the data store.
+        /// </summary>
+        /// /// <param name="store">Storage container.</param>
+        /// <param name="file">Application file.</param>
+        /// <param name="content">Content array.</param>
+        public Task StoreFileAsync(string store, ApplicationFile file, byte[] content)
+            => PrepareBlob(store, file.FileName, new BlobProperties
+            {
+                ContentType = file.ContentType
+            }).UploadFromByteArrayAsync(content, 0, content.Length);
 
         /// <summary>
         /// Store the file in the data store.

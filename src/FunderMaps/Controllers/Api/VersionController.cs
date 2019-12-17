@@ -20,7 +20,7 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <remarks>Cache response for 24 hours.</remarks>
         [HttpGet]
-        [ResponseCache(Duration = 24 * 60 * 60)]
+        [ResponseCache(Duration = 60 * 60 * 24)]
         [ProducesResponseType(typeof(ApplicationVersionModel), StatusCodes.Status200OK)]
         public IActionResult Get()
             => Ok(new ApplicationVersionModel

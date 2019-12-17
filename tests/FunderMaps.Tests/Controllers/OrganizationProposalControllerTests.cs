@@ -10,6 +10,7 @@ namespace FunderMaps.Tests.Controllers
 {
     public class OrganizationProposalControllerTests
     {
+#if DIS_TEST
         [Fact]
         public async Task Get_ReturnsOrganizationProposal()
         {
@@ -166,5 +167,6 @@ namespace FunderMaps.Tests.Controllers
                 var okResult = Assert.IsType<NoContentResult>(result);
             }
         }
+#endif
     }
 }

@@ -96,6 +96,30 @@ namespace Laixer.Identity.Dapper.Store
         }
 
         /// <summary>
+        /// Updates the specified <paramref name="user"/> in the user store.
+        /// </summary>
+        /// <param name="user">The user to update.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
+        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
+        public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            // NOTE: We'll always report success, an exception will take care of faults.
+            await RunDatabaseStatement(connection =>
+            {
+                return connection.ExecuteAsync(DatabaseDriver.UpdateAsync, user);
+            });
+
+            return IdentityResult.Success;
+        }
+
+        /// <summary>
         /// Deletes the specified <paramref name="user"/> from the user store.
         /// </summary>
         /// <param name="user">The user to delete.</param>
@@ -178,16 +202,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.NormalizedUserName);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetNormalizedUserNameAsync, user);
-            });
+            return Task.FromResult(user.NormalizedUserName);
         }
 
         /// <summary>
@@ -205,16 +220,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(string.Empty);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<TKey>(DatabaseDriver.GetUserIdAsync, user);
-            }).ContinueWith(t => t.Result.ToString());
+            return Task.FromResult(user.Id.ToString());
         }
 
         /// <summary>
@@ -232,16 +238,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.Email);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetUserNameAsync, user);
-            });
+            return Task.FromResult(user.Email);
         }
 
         /// <summary>
@@ -264,17 +261,9 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(normalizedName));
             }
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.NormalizedEmail = normalizedName;
-                return Task.CompletedTask;
-            }
+            user.NormalizedEmail = normalizedName;
 
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetNormalizedUserNameAsync, new { user.Id, NormalizedUserName = normalizedName });
-            });
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -297,41 +286,9 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(userName));
             }
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.UserName = userName;
-                return Task.CompletedTask;
-            }
+            user.UserName = userName;
 
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetUserNameAsync, new { user.Id, UserName = userName });
-            });
-        }
-
-        /// <summary>
-        /// Updates the specified <paramref name="user"/> in the user store.
-        /// </summary>
-        /// <param name="user">The user to update.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> used to propagate notifications that the operation should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that represents the asynchronous operation, containing the <see cref="IdentityResult"/> of the update operation.</returns>
-        public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (user == null)
-            {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            // NOTE: We'll always report success, an exception will take care of faults.
-            await RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.UpdateAsync, user);
-            });
-
-            return IdentityResult.Success;
+            return Task.CompletedTask;
         }
         #endregion
 
@@ -376,16 +333,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.Email);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetEmailAsync, user);
-            });
+            return Task.FromResult(user.Email);
         }
 
         /// <summary>
@@ -405,16 +353,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.EmailConfirmed);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<bool>(DatabaseDriver.GetEmailConfirmedAsync, user);
-            });
+            return Task.FromResult(user.EmailConfirmed);
         }
 
         /// <summary>
@@ -434,16 +373,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.NormalizedEmail);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetNormalizedEmailAsync, user);
-            });
+            return Task.FromResult(user.NormalizedEmail);
         }
 
         /// <summary>
@@ -466,17 +396,9 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(email));
             }
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.Email = email;
-                return Task.CompletedTask;
-            }
+            user.Email = email;
 
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetEmailAsync, new { user.Id, Email = email });
-            });
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -494,17 +416,9 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.EmailConfirmed = confirmed;
-                return Task.CompletedTask;
-            }
+            user.EmailConfirmed = confirmed;
 
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetEmailConfirmedAsync, new { user.Id, EmailConfirmed = confirmed });
-            });
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -527,17 +441,9 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(normalizedEmail));
             }
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.NormalizedEmail = normalizedEmail;
-                return Task.CompletedTask;
-            }
+            user.NormalizedEmail = normalizedEmail;
 
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetNormalizedEmailAsync, new { user.Id, NormalizedEmail = normalizedEmail });
-            });
+            return Task.CompletedTask;
         }
         #endregion
 
@@ -728,6 +634,13 @@ namespace Laixer.Identity.Dapper.Store
         /// user is a member of the group the returned value with be true, otherwise it will be false.</returns>
         public async Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             return (await GetRolesAsync(user, cancellationToken)).Contains(roleName);
         }
 
@@ -740,6 +653,13 @@ namespace Laixer.Identity.Dapper.Store
         /// <returns>The <see cref="Task"/> that represents the asynchronous operation.</returns>
         public Task RemoveFromRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             return RunDatabaseStatement(connection =>
             {
                 return connection.ExecuteAsync(DatabaseDriver.RemoveFromRoleAsync, user);
@@ -757,21 +677,19 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.PasswordHash);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetPasswordHashAsync, user);
-            });
+            return Task.FromResult(user.PasswordHash);
         }
 
         public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
         {
-            return GetPasswordHashAsync(user, cancellationToken).ContinueWith(t => !string.IsNullOrEmpty(t.Result));
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
         }
 
         public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
@@ -783,22 +701,10 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (string.IsNullOrEmpty(passwordHash))
-            {
-                throw new ArgumentNullException(nameof(passwordHash));
-            }
+            // NOTE: Password can be null
+            user.PasswordHash = passwordHash;
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.PasswordHash = passwordHash;
-                return Task.CompletedTask;
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetPasswordHashAsync, new { user.Id, PasswordHash = passwordHash });
-            });
+            return Task.CompletedTask;
         }
         #endregion
 
@@ -818,16 +724,7 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(user));
             }
 
-            // Returning object from memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                return Task.FromResult(user.SecurityStamp);
-            }
-
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.QueryFirstOrDefaultAsync<string>(DatabaseDriver.GetSecurityStampAsync, user);
-            });
+            return Task.FromResult(user.SecurityStamp);
         }
 
         /// <summary>
@@ -850,17 +747,9 @@ namespace Laixer.Identity.Dapper.Store
                 throw new ArgumentNullException(nameof(stamp));
             }
 
-            // Building object in memory.
-            if (user.Id.Equals(Guid.Empty))
-            {
-                user.SecurityStamp = stamp;
-                return Task.CompletedTask;
-            }
+            user.SecurityStamp = stamp;
 
-            return RunDatabaseStatement(connection =>
-            {
-                return connection.ExecuteAsync(DatabaseDriver.SetSecurityStampAsync, new { user.Id, SecurityStamp = stamp });
-            });
+            return Task.CompletedTask;
         }
         #endregion
 

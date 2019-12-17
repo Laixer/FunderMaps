@@ -386,9 +386,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="userId">User id.</param>
         [HttpGet("{id:guid}/user/{userId:guid}/profile")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(typeof(FunderMapsUser), 204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUserProfileAsync(Guid id, Guid userId)
         {
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
@@ -415,6 +412,7 @@ namespace FunderMaps.Controllers.Api
                     Id = user.Id,
                     GivenName = user.GivenName,
                     LastName = user.LastName,
+                    Email = user.Email,
                     Avatar = user.Avatar,
                     JobTitle = user.JobTitle,
                     PhoneNumber = user.PhoneNumber,
@@ -485,7 +483,10 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
-            if (input == null) { throw new ArgumentNullException(nameof(input)); }
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
 
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
             {

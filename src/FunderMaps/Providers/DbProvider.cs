@@ -23,10 +23,7 @@ namespace FunderMaps.Providers
         /// <summary>
         /// Static initializer.
         /// </summary>
-        static DbProvider()
-        {
-            DefaultTypeMap.MatchNamesWithUnderscores = true;
-        }
+        static DbProvider() => DefaultTypeMap.MatchNamesWithUnderscores = true;
 
         /// <summary>
         /// Create new instance.

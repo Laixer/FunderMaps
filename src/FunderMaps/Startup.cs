@@ -90,18 +90,17 @@ namespace FunderMaps
                 .AddCheck<DatabaseHealthCheck>("db_health_check")
                 .AddCheck<FileStorageCheck>("file_health_check");
 
-            // Register the Swagger generator, defining an OpenAPI document.
-            services.AddSwaggerDocumentation();
-
             services.AddEventBus()
                 .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>(nameof(UpdateUserProfileHandler));
 
             // Configure local repositories
             ConfigureRepository(services);
 
-            // Register services from application core.
+            // Register services from application modules.
             services.AddApplicationCoreServices(_configuration);
+            services.AddApplicationCloudServices(_configuration);
 
+            // Register services from local application module.
             services.AddTransient<IMailService, MailService>();
         }
 
@@ -239,12 +238,10 @@ namespace FunderMaps
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
 
-                app.UseSwaggerDocumentation();
                 app.UseCors("CORSDeveloperPolicy");
             }
             if (env.IsStaging())
             {
-                app.UseSwaggerDocumentation();
                 app.UseCors("CORSDeveloperPolicy");
                 app.UseHsts();
             }
@@ -258,14 +255,18 @@ namespace FunderMaps
             app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseAuthentication();
-            app.UseStaticFiles(new StaticFileOptions
+
+            var staticFileOptions = new StaticFileOptions
             {
                 OnPrepareResponse = context =>
                 {
+                    // Static files can be heavily cached since they can be large and do not change often.
                     context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
                 }
-            });
-            app.UseSpaStaticFiles();
+            };
+
+            app.UseStaticFiles(staticFileOptions);
+            app.UseSpaStaticFiles(staticFileOptions);
 
             app.UseHealthChecks("/health");
 

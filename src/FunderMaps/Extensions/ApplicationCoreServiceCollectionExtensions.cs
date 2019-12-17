@@ -2,7 +2,6 @@
 using FunderMaps.Core.Services;
 using Microsoft.Extensions.Configuration;
 using System;
-using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -31,30 +30,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            services.AddTransient<IFileStorageService, AzureBlobStorageService>();
             services.AddScoped<IAddressService, AddressService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<IGeoService, GeoService>();
-
-            services.Configure<FileStorageOptions>(options =>
-            {
-                if (options.StorageContainers == null)
-                {
-                    options.StorageContainers = new Dictionary<string, string>();
-                }
-
-                var rootKey = configuration.GetSection("FileStorageContainers");
-                if (rootKey == null)
-                {
-                    return; // TODO: This can never be oke.
-                }
-
-                // FUTURE: This can drastically be improved.
-                foreach (var item in rootKey.GetChildren())
-                {
-                    options.StorageContainers.Add(item.Key, item.Value);
-                }
-            });
 
             return services;
         }

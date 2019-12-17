@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
 using FunderMaps.Extensions;
 using FunderMaps.Helpers;
-using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

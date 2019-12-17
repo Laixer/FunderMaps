@@ -38,33 +38,10 @@ namespace FunderMaps.Data
                     @LockoutEnd)
                 RETURNING id";
 
-            queryRepository.GetUserNameAsync = $@"
-                SELECT email
-                FROM application.user
-                WHERE id=@Id
-                LIMIT 1";
-
-            queryRepository.GetNormalizedUserNameAsync = $@"
-                SELECT normalized_email
-                FROM application.user
-                WHERE id=@Id
-                LIMIT 1";
-
-            queryRepository.SetNormalizedUserNameAsync = $@"
-                UPDATE application.user
-                SET normalized_email=@NormalizedUserName
-                WHERE id=@Id";
-
             queryRepository.FindByNameAsync = @"
                 SELECT *
                 FROM application.user
                 WHERE normalized_email=@NormalizedUserName";
-
-            queryRepository.GetUserIdAsync = @"
-                SELECT id
-                FROM application.user
-                WHERE normalized_email=@NormalizedEmail
-                LIMIT 1";
 
             queryRepository.UpdateAsync = @"
                 UPDATE application.user

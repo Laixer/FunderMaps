@@ -7,5 +7,6 @@ namespace FunderMaps.Core.Services
     /// </summary>
     public class GeoService : IGeoService
     {
+        // FUTURE ...
     }
 }
