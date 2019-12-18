@@ -13,7 +13,7 @@ jobs:
     buildPlatform: 'Any CPU'
     runtime: 'win-x64'
     buildConfiguration: 'Release'
-    Version.MajorMinor: 1.5.$(Build.BuildID).38
+    Version.MajorMinor: 1.6.$(Build.BuildID).38
     Vue.App_api_base_url: https://staging.fundermaps.com/ # TODO: This is for the time being. Frontend should be build independant of the environment.
     Vue.App_Mapbox_token: pk.eyJ1IjoieW9yaWNrMTciLCJhIjoiY2p3dGF5ZjBzMDh4NTQ3cGNuNHM4dnd4aCJ9.A97-an3utMhopzgJxcIjrw # TODO: This is for the time being. Frontend should be build independant of the environment.
     Vue.App_Mapbox_style: mapbox://styles/yorick17/cjwtd1zts0fjj1cpi00jzbhev # TODO: This is for the time being. Frontend should be build independant of the environment.

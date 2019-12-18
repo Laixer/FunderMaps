@@ -7,7 +7,6 @@ using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -45,8 +44,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of samples.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Sample>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
             => Ok(await _sampleRepository.ListAllAsync(User.GetOrganizationId(), new Navigation(offset, limit)));
 
@@ -59,8 +56,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of samples, see <see cref="Report"/>.</returns>
         [HttpGet("report/{id}")]
-        [ProducesResponseType(typeof(List<Sample>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllAsync(int id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
             => Ok(await _sampleRepository.ListAllReportAsync(id, User.GetOrganizationId(), new Navigation(offset, limit)));
 
@@ -159,10 +154,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Sample data.</param>
         [HttpPut("{id}")]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, [FromBody] SampleInputOutputModel input)
         {
             if (input == null)
@@ -208,9 +199,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Sample identifier.</param>
         [HttpDelete("{id}")]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var sample = await _sampleRepository.GetByIdAsync(id, User.GetOrganizationId());
