@@ -86,10 +86,7 @@ namespace FunderMaps.Controllers.Api
         /// <returns>See <see cref="Sample"/>.</returns>
         [HttpPost]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(typeof(Sample), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync([FromBody] Sample input)
+        public async Task<IActionResult> PostAsync([FromBody] SampleInputOutputModel input)
         {
             if (input == null)
             {
@@ -102,9 +99,32 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            input.Address = await _addressService.GetOrCreateAddressAsync(input.Address);
+            var sample = new Sample
+            {
+                Report = report.Id,
+                FoundationType = input.FoundationType,
+                MonitoringWell = input.MonitoringWell,
+                Cpt = input.Cpt,
+                WoodLevel = input.WoodLevel,
+                GroundLevel = input.GroundLevel,
+                GroundwaterLevel = input.GroundwaterLevel,
+                FoundationRecoveryAdviced = input.FoundationRecoveryAdviced,
+                FoundationDamageCause = input.FoundationDamageCause,
+                BuiltYear = input.BuiltYear,
+                FoundationQuality = input.FoundationQuality,
+                EnforcementTerm = input.EnforcementTerm,
+                Substructure = input.Substructure,
+                Note = input.Note,
+                BaseMeasurementLevel = input.BaseMeasurementLevel,
+                Address = await _addressService.GetOrCreateAddressAsync(new Address
+                {
+                    StreetName = input.Address.StreetName,
+                    BuildingNumber = (short)input.Address.BuildingNumber,
+                    Bag = input.Address.Bag,
+                })
+            };
 
-            var id = await _sampleRepository.AddAsync(input);
+            var id = await _sampleRepository.AddAsync(sample);
 
             // TODO: Fire event and set ReportStatus => ReportStatus.Pending
 
@@ -120,9 +140,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id">Sample identifier.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Sample), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id)
         {
             var sample = await _sampleRepository.GetPublicAndByIdAsync(id, User.GetOrganizationId());
@@ -146,7 +163,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] Sample input)
+        public async Task<IActionResult> PutAsync(int id, [FromBody] SampleInputOutputModel input)
         {
             if (input == null)
             {
@@ -172,8 +189,12 @@ namespace FunderMaps.Controllers.Api
             sample.EnforcementTerm = input.EnforcementTerm;
             sample.Substructure = input.Substructure;
             sample.Note = input.Note;
-            sample.AccessPolicy = input.AccessPolicy;
-            sample.Address = await _addressService.GetOrCreateAddressAsync(input.Address);
+            sample.Address = await _addressService.GetOrCreateAddressAsync(new Address
+            {
+                StreetName = input.Address.StreetName,
+                BuildingNumber = (short)input.Address.BuildingNumber,
+                Bag = input.Address.Bag,
+            });
 
             await _sampleRepository.UpdateAsync(sample);
 

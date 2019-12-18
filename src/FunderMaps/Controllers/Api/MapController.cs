@@ -29,6 +29,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="mapRepository">See <see cref="IMapRepository"/>.</param>
         public MapController(IMapRepository mapRepository) => _mapRepository = mapRepository;
 
+        // TODO: Add more options such as styling
         private class Layer
         {
             /// <summary>
