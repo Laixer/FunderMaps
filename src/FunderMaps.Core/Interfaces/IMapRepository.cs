@@ -75,5 +75,7 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
         Task<IReadOnlyList<AddressGeoJson>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetByFoundationSubsidenceByOrganizationAsync(double rangeStart, double rangeEnd, Guid orgId);
     }
 }
