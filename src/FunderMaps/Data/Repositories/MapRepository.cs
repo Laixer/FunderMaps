@@ -360,9 +360,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Get address points by foundation quality not in recovery and by organization filter.
+        /// Get premise foundation subsidence.
         /// </summary>
-        /// <param name="foundationQuality">Foundation quality to filer on.</param>
+        /// <param name="rangeStart">Start offset in milimeters.</param>
+        /// <param name="rangeEnd">End limit in milimeters.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
         public async Task<IReadOnlyList<AddressGeoJson>> GetByFoundationSubsidenceByOrganizationAsync(double rangeStart, double rangeEnd, Guid orgId)

@@ -152,6 +152,16 @@ namespace FunderMaps.Core.Entities
         public string PostalCountry { get; set; }
 
         /// <summary>
+        /// Center of fence X.
+        /// </summary>
+        public double CenterX { get; set; }
+
+        /// <summary>
+        /// Center of fence Y.
+        /// </summary>
+        public double CenterY { get; set; }
+
+        /// <summary>
         /// Print object as name.
         /// </summary>
         /// <returns>String representing organization name.</returns>

@@ -184,7 +184,9 @@ namespace FunderMaps.Data.Repositories
                         postal_postbox,
                         postal_zipcode,
                         postal_state,
-                        postal_country
+                        postal_country,
+                        ST_X(ST_Centroid(fence)) AS center_x,
+                        ST_Y(ST_Centroid(fence)) AS center_y
                 FROM    application.organization AS org
                 WHERE   org.id = @Id
                 LIMIT  1";
@@ -233,7 +235,9 @@ namespace FunderMaps.Data.Repositories
                         postal_postbox,
                         postal_zipcode,
                         postal_state,
-                        postal_country
+                        postal_country,
+                        ST_X(ST_Centroid(fence)) AS center_x,
+                        ST_Y(ST_Centroid(fence)) AS center_y
                 FROM    application.organization AS org
                 WHERE   org.normalized_name = @NormalizedName
                 LIMIT  1";
@@ -286,7 +290,9 @@ namespace FunderMaps.Data.Repositories
                                 postal_postbox,
                                 postal_zipcode,
                                 postal_state,
-                                postal_country
+                                postal_country,
+                                ST_X(ST_Centroid(fence)) AS center_x,
+                                ST_Y(ST_Centroid(fence)) AS center_y
                         FROM    application.organization
                         OFFSET  @Offset
                         LIMIT   @Limit";
