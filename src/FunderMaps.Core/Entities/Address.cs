@@ -31,5 +31,15 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         [MaxLength(8)]
         public string BuildingNumberSuffix { get; set; }
+
+        /// <summary>
+        /// Bag Id.
+        /// </summary>
+        public string Bag { get; set; }
+
+        /// <summary>
+        /// Additional data.
+        /// </summary>
+        public string AdditionalData { get; set; }
     }
 }

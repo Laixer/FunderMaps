@@ -87,9 +87,8 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                 WITH insertornot AS (
-                INSERT INTO application.address(
-	                street_name, building_number, building_number_suffix)
-	                VALUES (@StreetName, @BuildingNumber, @BuildingNumberSuffix)
+                    INSERT INTO application.address(street_name, building_number, building_number_suffix, bag)
+	                VALUES (@StreetName, @BuildingNumber, @BuildingNumberSuffix, @Bag)
 	                ON CONFLICT DO NOTHING
 	                RETURNING *
                 )
@@ -97,11 +96,12 @@ namespace FunderMaps.Data.Repositories
                 UNION
                 SELECT *
 			    FROM application.address
-			    WHERE street_name=@StreetName
+			    WHERE (street_name=@StreetName
 				    AND building_number=@BuildingNumber
 				    AND ((@BuildingNumberSuffix IS NOT NULL AND building_number_suffix=@BuildingNumberSuffix)
 				        OR
-                        (@BuildingNumberSuffix IS NULL AND building_number_suffix IS NULL))";
+                        (@BuildingNumberSuffix IS NULL AND building_number_suffix IS NULL)))
+                    OR bag=@Bag";
 
             var result = await RunSqlCommand(async cnn => await cnn.QueryAsync<Address>(sql, entity));
             if (!result.Any())
@@ -109,7 +109,15 @@ namespace FunderMaps.Data.Repositories
                 return null;
             }
 
-            return result.First();
+            var address = result.First();
+
+            if (string.IsNullOrEmpty(address.Bag) && !string.IsNullOrEmpty(entity.Bag))
+            {
+                await RunSqlCommand(async cnn => await cnn.ExecuteAsync(@"UPDATE application.address SET bag=@Bag WHERE id=@Id",
+                    new { entity.Bag, address.Id }));
+            }
+
+            return address;
         }
 
         public override Task<IReadOnlyList<Address>> ListAllAsync(Navigation navigation)

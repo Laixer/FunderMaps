@@ -29,6 +29,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="mapRepository">See <see cref="IMapRepository"/>.</param>
         public MapController(IMapRepository mapRepository) => _mapRepository = mapRepository;
 
+        // TODO: Add more options such as styling
         private class Layer
         {
             /// <summary>
@@ -94,6 +95,13 @@ namespace FunderMaps.Controllers.Api
                     Name = "Kwaliteit Funderingen",
                     Source = "api/map/foundation_quality",
                     Order = 2
+                },
+                new Layer
+                {
+                    Id = Guid.Parse("b47ab81d-14af-4b45-9ba8-2425a56e5f71"),
+                    Name = "Pandzakking",
+                    Source = "api/map/premise_subsidence",
+                    Order = 3
                 }
             };
 
@@ -313,6 +321,88 @@ namespace FunderMaps.Controllers.Api
                 Sublayer = "Zeer slechte staat",
                 Color = "#B61F17",
             })))))));
+        }
+
+        // GET: api/map/premise_subsidence
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        [HttpGet("premise_subsidence")]
+        public async Task<IActionResult> GetPremiseSubsidenceAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(9, 100, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(8, 9, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(7, 8, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(6, 7, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(5, 6, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(4, 5, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(3, 4, User.GetOrganizationId());
+            var col8 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(2, 3, User.GetOrganizationId());
+            var col9 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(1, 2, User.GetOrganizationId());
+            var col10 = await _mapRepository.GetByFoundationSubsidenceByOrganizationAsync(0, 1, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col10, new
+            {
+                SublayerId = 5,
+                Sublayer = "Minder dan 1mm/jaar of rijzing",
+                Color = "#293575",
+            },
+            BuildGeoCollection(col9, new
+            {
+                SublayerId = 5,
+                Sublayer = "1 tot 2 mm/jaar",
+                Color = "#1261A3",
+            },
+            BuildGeoCollection(col8, new
+            {
+                SublayerId = 4,
+                Sublayer = "2 tot 3 mm/jaar",
+                Color = "#69A8DE",
+            },
+            BuildGeoCollection(col7, new
+            {
+                SublayerId = 4,
+                Sublayer = "3 tot 4 mm/jaar",
+                Color = "#99C1E9",
+            },
+            BuildGeoCollection(col6, new
+            {
+                SublayerId = 3,
+                Sublayer = "4 tot 5 mm/jaar",
+                Color = "#B378B1",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 2,
+                Sublayer = "5 tot 6 mm/jaar",
+                Color = "#A860A6",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 1,
+                Sublayer = "6 tot 7 mm/jaar",
+                Color = "#8F3C8D",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 0,
+                Sublayer = "7 tot 8 mm/jaar",
+                Color = "#641C68",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 0,
+                Sublayer = "8 tot 9 mm/jaar",
+                Color = "#E15601",
+            },
+            BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "9 mm/jaar of meer",
+                Color = "#A30500",
+            })))))))))));
         }
 
 #if _TILESET

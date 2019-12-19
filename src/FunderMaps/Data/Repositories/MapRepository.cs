@@ -321,23 +321,73 @@ namespace FunderMaps.Data.Repositories
             using var connection = _dbProvider.ConnectionScope();
 
             var sql = @"
+                WITH org AS (
+	                SELECT id, fence
+	                FROM application.organization AS org
+	                WHERE id=@Owner
+                    LIMIT 1
+                )
                 SELECT addr.street_name,
                         addr.building_number,
                         samp.report,
-                        st_asgeojson(prem.geom) AS geojson
+                        ST_AsGeoJSON(prem.geom) AS geojson
                 FROM   application.sample AS samp
                         INNER JOIN application.report AS reprt ON samp.report = reprt.id
                         INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                         INNER JOIN application.address AS addr ON samp.address = addr.id
                         INNER JOIN geospatial.residential_object AS reso ON addr.bag = reso.designation
-                        INNER JOIN geospatial.premise AS prem ON reso.id = prem.residential_object
+                        INNER JOIN geospatial.premise AS prem ON reso.id = prem.residential_object,
+                        org
                 WHERE   addr.bag IS NOT NULL
                         AND samp.foundation_quality = @FoundationQuality::application.foundation_quality
                         AND (attr.owner = @Owner
-                            OR reprt.access_policy = 'public')";
+                            OR reprt.access_policy = 'public')
+                        AND (org.fence IS NULL
+                            OR
+                            ST_Contains(org.fence, prem.geom))";
 
             var dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("FoundationQuality", foundationQuality.ToString().ToSnakeCase());
+            dynamicParameters.Add("Owner", orgId);
+
+            var result = await connection.QueryAsync<AddressGeoJson>(sql, dynamicParameters);
+            if (!result.Any())
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// Get address points by foundation quality not in recovery and by organization filter.
+        /// </summary>
+        /// <param name="foundationQuality">Foundation quality to filer on.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
+        public async Task<IReadOnlyList<AddressGeoJson>> GetByFoundationSubsidenceByOrganizationAsync(double rangeStart, double rangeEnd, Guid orgId)
+        {
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
+                WITH org AS (
+	                SELECT id, fence
+	                FROM application.organization AS org
+	                WHERE id=@Owner
+	                LIMIT 1
+                )
+                SELECT ST_AsGeoJSON(prem.geom) AS geojson
+                FROM   geospatial.premise AS prem
+		               INNER JOIN public.subsidence AS sub ON sub.identifica = prem.id,
+		               org
+                WHERE  ABS(sub.velocity) BETWEEN @Start AND @End
+		               AND (org.fence IS NULL
+			                OR
+			                ST_Contains(org.fence, prem.geom))";
+
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("Start", rangeStart);
+            dynamicParameters.Add("End", rangeEnd);
             dynamicParameters.Add("Owner", orgId);
 
             var result = await connection.QueryAsync<AddressGeoJson>(sql, dynamicParameters);
