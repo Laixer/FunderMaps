@@ -183,25 +183,25 @@ namespace FunderMaps.Controllers.Api
             {
                 SublayerId = 4,
                 Sublayer = "Overig",
-                Color = "#E78932",
+                Color = "#FFCD17",
             },
             BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Hout met oplanger",
-                Color = "#D36E2C",
+                Color = "#641C68",
             },
             BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "Niet onderheid",
-                Color = "#C1301B",
+                Color = "#A30500",
             },
             BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "Beton paal",
-                Color = "#9F9E9E",
+                Color = "#7A7A7A",
             }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
