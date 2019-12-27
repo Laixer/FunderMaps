@@ -37,7 +37,7 @@ jobs:
     inputs:
       command: build
       projects: '$(project)'
-      arguments: '--configuration $(buildConfiguration) --runtime $(runtime) --self-contained true /p:Version=$(Version.MajorMinor) /p:AssemblyVersion=$(Version.MajorMinor)'
+      arguments: '--configuration $(buildConfiguration) --runtime $(runtime) /p:Version=$(Version.MajorMinor) /p:AssemblyVersion=$(Version.MajorMinor)'
 ## TODO: Run testcases here
   - task: DotNetCoreCLI@2
     displayName: Publish Web App Release Package
