@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Cloud
 {
+    // FUTURE: Use Azure SDK Storage v12
+
     /// <summary>
     /// Azure storage implementing file storage service.
     /// </summary>

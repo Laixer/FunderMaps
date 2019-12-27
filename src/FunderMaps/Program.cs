@@ -13,8 +13,8 @@ namespace FunderMaps
         /// Application entry point.
         /// </summary>
         /// <param name="args">Commandline arguments.</param>
-        public static async Task Main(string[] args)
-            => await CreateHostBuilder(args).Build().RunAsync();
+        public static Task Main(string[] args)
+            => CreateHostBuilder(args).Build().RunAsync();
 
         /// <summary>
         /// Build a webhost and run the application.
@@ -29,7 +29,6 @@ namespace FunderMaps
             => Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                //webBuilder.UseKestrel(c => c.AddServerHeader = false);
                 webBuilder.UseStartup<Startup>();
             });
     }

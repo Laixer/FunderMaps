@@ -74,8 +74,9 @@ namespace FunderMaps
                 options.EnableForHttps = true;
             });
 
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
-            services.Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+            // Enable compression where possible.
+            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
+                .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
             services.AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("api_health_check")
@@ -85,7 +86,7 @@ namespace FunderMaps
             services.AddEventBus()
                 .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>();
 
-            // Configure local repositories
+            // Configure local repositories.
             ConfigureRepository(services);
 
             // Register services from application modules.
