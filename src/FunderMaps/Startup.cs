@@ -17,12 +17,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Serialization;
 using System.IO.Compression;
 
 namespace FunderMaps
@@ -58,14 +57,7 @@ namespace FunderMaps
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddMvc().AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new SnakeCaseNamingStrategy()
-                };
-            })
-            .SetCompatibilityVersion(CompatibilityVersion.Latest);
+            services.AddControllers();
 
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
@@ -91,7 +83,7 @@ namespace FunderMaps
                 .AddCheck<FileStorageCheck>("file_health_check");
 
             services.AddEventBus()
-                .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>(nameof(UpdateUserProfileHandler));
+                .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>();
 
             // Configure local repositories
             ConfigureRepository(services);
@@ -140,6 +132,7 @@ namespace FunderMaps
             })
             .AddDefaultTokenProviders();
 
+            // FUTURE: Replace with AddIdentityServer
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -231,12 +224,11 @@ namespace FunderMaps
         /// <summary>
         /// This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
         /// </summary>
-        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
 
                 app.UseCors("CORSDeveloperPolicy");
             }
@@ -254,7 +246,6 @@ namespace FunderMaps
 
             app.UseResponseCompression();
             app.UseHttpsRedirection();
-            app.UseAuthentication();
 
             var staticFileOptions = new StaticFileOptions
             {
@@ -268,21 +259,21 @@ namespace FunderMaps
             app.UseStaticFiles(staticFileOptions);
             app.UseSpaStaticFiles(staticFileOptions);
 
-            app.UseHealthChecks("/health");
+            app.UseRouting();
 
-            app.UseMvc(routes =>
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller}/{action}/{id?}");
-
-                routes.MapRoute(
-                    name: "oops",
-                    template: "oops",
-                    defaults: new { controller = "Error", action = "Error" });
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
             });
 
-            app.UseSpa(spa => { });
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+            });
         }
     }
 }

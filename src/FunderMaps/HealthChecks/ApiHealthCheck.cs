@@ -40,13 +40,13 @@ namespace FunderMaps.HealthChecks
                 return HealthCheckResult.Unhealthy();
             }
 
-            var version = await response.Content.ReadAsAsync<ApplicationVersionModel>();
-            if (version.Name == Constants.ApplicationName && version.Version == Constants.ApplicationVersion)
-            {
+            //var version = await response.Content.ReadAsAsync<ApplicationVersionModel>();
+            //if (version.Name == Constants.ApplicationName && version.Version == Constants.ApplicationVersion)
+            //{
                 return HealthCheckResult.Healthy();
-            }
+            //}
 
-            return HealthCheckResult.Unhealthy();
+            //return HealthCheckResult.Unhealthy();
         }
     }
 }

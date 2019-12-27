@@ -91,7 +91,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> PostAsync([FromBody] OrganizationProposal input)
         {
-            input.NormalizedName = _keyNormalizer.Normalize(input.Name);
+            input.NormalizedName = _keyNormalizer.NormalizeName(input.Name);
 
             // Organization proposals must be unique.
             if (await _organizationProposalRepository.GetByNormalizedNameAsync(input.NormalizedName) != null)
