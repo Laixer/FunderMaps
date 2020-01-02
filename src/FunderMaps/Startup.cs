@@ -57,7 +57,8 @@ namespace FunderMaps
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
 
             // In production, the frontend framework files will be served from this directory.
             services.AddSpaStaticFiles(configuration =>
