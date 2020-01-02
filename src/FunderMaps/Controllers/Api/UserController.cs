@@ -22,18 +22,13 @@ namespace FunderMaps.Controllers.Api
         /// Create new instance.
         /// </summary>
         /// <param name="userManager">See <see cref="UserManager{TUser}"/>.</param>
-        public UserController(UserManager<FunderMapsUser> userManager)
-        {
-            _userManager = userManager;
-        }
+        public UserController(UserManager<FunderMapsUser> userManager) => _userManager = userManager;
 
         // GET: api/user
         /// <summary>
         /// Get the profile of the current authenticated user.
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(FunderMapsUser), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> GetAsync()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
@@ -58,8 +53,6 @@ namespace FunderMaps.Controllers.Api
         /// Update profile of the current authenticated user.
         /// </summary>
         [HttpPut]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync([FromBody] ProfileInputOutputModel input)
         {
             if (input == null)
@@ -90,9 +83,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <param name="input">Password input model.</param>
         [HttpPost("change_password")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordInputModel input)
         {
             if (input == null)

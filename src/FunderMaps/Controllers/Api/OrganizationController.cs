@@ -48,8 +48,6 @@ namespace FunderMaps.Controllers.Api
         /// <returns>List of <see cref="Contractor"/>.</returns>
         [HttpGet("contractors")]
         [ResponseCache(Duration = 24 * 60 * 60)]
-        [ProducesResponseType(typeof(List<Contractor>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetContractorsAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
             => Ok(await _organizationRepository.ListAllContractorsAsync(new Navigation(offset, limit)));
 
@@ -62,8 +60,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <returns>EntityStatsOutputModel.</returns>
         [HttpGet("reviewers")]
-        [ProducesResponseType(typeof(List<OrganizationUser>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetReviewersAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
             => Ok(await _organizationUserRepository.ListAllByOrganizationByRoleIdAsync(OrganizationRole.Verifier, User.GetOrganizationId(), new Navigation(offset, limit)));
 
@@ -73,8 +69,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         [HttpGet("current_user")]
         [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(List<Organization>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetCurrentUserOrganizationAsync()
         {
             var organization = await _organizationRepository.GetByIdAsync(User.GetOrganizationId());
@@ -94,8 +88,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="limit">Limit the output.</param>
         [HttpGet]
         [Authorize(Policy = Constants.OrganizationMemberOrAdministratorPolicy)]
-        [ProducesResponseType(typeof(List<Organization>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
             var organizations = new List<Organization>();
@@ -130,8 +122,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="id"></param>
         [HttpGet("{id:guid}")]
         [Authorize(Policy = Constants.OrganizationMemberOrAdministratorPolicy)]
-        [ProducesResponseType(typeof(Organization), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetByIdAsync(Guid id)
         {
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
@@ -158,8 +148,6 @@ namespace FunderMaps.Controllers.Api
         /// <returns>List of users, see <see cref="FunderMapsUser"/>.</returns>
         [HttpGet("{id:guid}/user")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUsersAsync(Guid id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
@@ -194,8 +182,6 @@ namespace FunderMaps.Controllers.Api
         /// <returns>List of users, see <see cref="FunderMapsUser"/>.</returns>
         [HttpGet("{id:guid}/profile")]
         [Authorize(Policy = Constants.OrganizationMemberPolicy)]
-        [ProducesResponseType(typeof(List<FunderMapsUser>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUserProfileAsync(Guid id, [FromQuery] int offset = 0, [FromQuery] int limit = 25)
         {
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
@@ -234,11 +220,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">See <see cref="UserInputModel"/>.</param>
         [HttpPost("{id:guid}/user")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 409)]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserInputModel input)
         {
             if (input == null)
@@ -286,9 +267,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="userId">User id.</param>
         [HttpGet("{id:guid}/user/{userId:guid}")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(typeof(OrganizationUser), 204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetUserAsync(Guid id, Guid userId)
         {
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
@@ -314,9 +292,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">User object.</param>
         [HttpPut("{id:guid}/user/{userId:guid}")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, OrganizationUser input)
         {
             if (input == null)
@@ -350,9 +325,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="userId">User id.</param>
         [HttpDelete("{id:guid}/user/{userId:guid}")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> RemoveUserAsync(Guid id, Guid userId)
         {
             if (!User.IsInRole(Constants.AdministratorRole) && id != User.GetOrganizationId())
@@ -430,9 +402,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">User object.</param>
         [HttpPut("{id:guid}/user/{userId:guid}/profile")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> UpdateUserProfileAsync(Guid id, Guid userId, OrgProfileModel input)
         {
             if (input == null)
@@ -477,10 +446,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         [HttpPut("{id:guid}")]
         [Authorize(Policy = Constants.OrganizationMemberSuperOrAdministratorPolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
         public async Task<IActionResult> PutAsync(Guid id, [FromBody] Organization input)
         {
             if (input == null)
