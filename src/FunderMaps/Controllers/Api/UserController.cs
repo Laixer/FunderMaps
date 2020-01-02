@@ -42,6 +42,7 @@ namespace FunderMaps.Controllers.Api
                 Id = user.Id,
                 GivenName = user.GivenName,
                 LastName = user.LastName,
+                Email = user.Email,
                 Avatar = user.Avatar,
                 JobTitle = user.JobTitle,
                 PhoneNumber = user.PhoneNumber
