@@ -80,7 +80,6 @@ namespace FunderMaps.Controllers.Api
         /// the current authenticated object.
         /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(UserOutputModel), 200)]
         public async Task<IActionResult> GetAsync()
         {
             // TODO: Should use `_userManager.GetUserAsync(User)` but
@@ -111,7 +110,7 @@ namespace FunderMaps.Controllers.Api
         /// Generate authentication token for user.
         /// </summary>
         /// <param name="user">See <see cref="FunderMapsUser"/>.</param>
-        /// <returns>AuthenticationOutputModel.</returns>
+        /// <returns><see cref="AuthenticationOutputModel"/>.</returns>
         private async Task<AuthenticationOutputModel> GenerateSecurityToken(FunderMapsUser user)
         {
             var token = new JwtTokenIdentityUser<FunderMapsUser, Guid>(user, _configuration.GetJwtSignKey())
@@ -156,8 +155,6 @@ namespace FunderMaps.Controllers.Api
         /// <returns>See <see cref="AuthenticationOutputModel"/>.</returns>
         [AllowAnonymous]
         [HttpPost("signin")]
-        [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> SignInAsync([FromBody] UserInputModel input)
         {
             if (input == null) { throw new ArgumentNullException(nameof(input)); }
@@ -201,9 +198,6 @@ namespace FunderMaps.Controllers.Api
         /// Refresh authentication token.
         /// </summary>
         [HttpGet("refresh")]
-        [ProducesResponseType(typeof(AuthenticationOutputModel), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> RefreshSignInAsync()
         {
             var user = await _userManager.FindByEmailAsync(User.Identity.Name);
@@ -229,9 +223,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">User password input model.</param>
         [Authorize(Roles = Constants.AdministratorRole)]
         [HttpPost("set_password")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         public async Task<IActionResult> SetPasswordAsync([FromBody] UserInputModel input)
         {
             if (input == null) { throw new ArgumentNullException(nameof(input)); }

@@ -65,8 +65,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <returns>EntityStatsOutputModel.</returns>
         [HttpGet("stats")]
-        [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
             => Ok(new EntityStatsOutputModel
             {
