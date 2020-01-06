@@ -95,5 +95,9 @@ namespace FunderMaps.Core.Interfaces
         Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypendicativeByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
 
         Task<IReadOnlyList<AddressGeoJson>> GetPremiseYearByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetReportTypeByOrganizationAsync(ReportType type, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetDocumentYearByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
     }
 }

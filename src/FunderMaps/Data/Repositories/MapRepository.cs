@@ -64,6 +64,7 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
+        // TODO: Not used?
         /// <summary>
         /// Get all address points not in recovery and by organization filter.
         /// </summary>
@@ -469,7 +470,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Get premise foundation subsidence.
+        /// 
         /// </summary>
         /// <param name="rangeStart">Start offset in years.</param>
         /// <param name="rangeEnd">End limit in years.</param>
@@ -519,9 +520,8 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
 
-
         /// <summary>
-        /// Get premise foundation subsidence.
+        /// 
         /// </summary>
         /// <param name="rangeStart">Start offset in years.</param>
         /// <param name="rangeEnd">End limit in years.</param>
@@ -544,6 +544,97 @@ namespace FunderMaps.Data.Repositories
                 WHERE  prem.built_year BETWEEN @Start AND @End
                        AND org.fence IS NOT NULL
 		               AND ST_Contains(org.fence, prem.geom)";
+
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("Start", rangeStart);
+            dynamicParameters.Add("End", rangeEnd);
+            dynamicParameters.Add("Owner", orgId);
+
+            var result = await connection.QueryAsync<AddressGeoJson>(sql, dynamicParameters);
+            if (!result.Any())
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
+        public async Task<IReadOnlyList<AddressGeoJson>> GetReportTypeByOrganizationAsync(ReportType type, Guid orgId)
+        {
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
+                WITH org AS (
+	                SELECT id, fence
+	                FROM application.organization AS org
+	                WHERE id=@Owner
+                    LIMIT 1
+                )
+                SELECT  ST_AsGeoJSON(prem.geom) AS geojson
+                FROM    application.sample AS samp
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN geospatial.residential_object AS reso ON addr.bag = reso.designation
+                        INNER JOIN geospatial.premise AS prem ON reso.id = prem.residential_object,
+                        org
+                WHERE   addr.bag IS NOT NULL
+                        AND reprt.type = @ReportType::application.report_type
+                        AND (attr.owner = @Owner
+                            OR reprt.access_policy = 'public')
+                        AND org.fence IS NOT NULL
+		                AND ST_Contains(org.fence, prem.geom)";
+
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("ReportType", type.ToString().ToSnakeCase());
+            dynamicParameters.Add("Owner", orgId);
+
+            var result = await connection.QueryAsync<AddressGeoJson>(sql, dynamicParameters);
+            if (!result.Any())
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rangeStart">Start offset in years.</param>
+        /// <param name="rangeEnd">End limit in years.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
+        public async Task<IReadOnlyList<AddressGeoJson>> GetDocumentYearByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId)
+        {
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
+                WITH org AS (
+	                SELECT id, fence
+	                FROM application.organization AS org
+	                WHERE id=@Owner
+                    LIMIT 1
+                )
+                SELECT  ST_AsGeoJSON(prem.geom) AS geojson
+                FROM    application.sample AS samp
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN geospatial.residential_object AS reso ON addr.bag = reso.designation
+                        INNER JOIN geospatial.premise AS prem ON reso.id = prem.residential_object,
+                        org
+                WHERE   addr.bag IS NOT NULL
+                        AND reprt.document_date BETWEEN to_date(@Start::text, 'YYYY') AND to_date(@End::text, 'YYYY')
+                        AND (attr.owner = @Owner
+                            OR reprt.access_policy = 'public')
+                        AND org.fence IS NOT NULL
+		                AND ST_Contains(org.fence, prem.geom)";
 
             var dynamicParameters = new DynamicParameters();
             dynamicParameters.Add("Start", rangeStart);
