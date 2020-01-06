@@ -109,6 +109,13 @@ namespace FunderMaps.Controllers.Api
                     Name = "Pandzakking",
                     Source = "api/map/premise_subsidence",
                     Order = 4
+                },
+                new Layer
+                {
+                    Id = Guid.Parse("74770654-f1eb-4f04-bee8-978fe75cc51a"),
+                    Name = "Bouwjaar",
+                    Source = "api/map/built_year",
+                    Order = 5
                 }
             };
 
@@ -442,6 +449,66 @@ namespace FunderMaps.Controllers.Api
                 Sublayer = "9 mm/jaar of meer",
                 Color = "#A30500",
             })))))))))));
+        }
+
+        // GET: api/map/foundation_quality
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        [HttpGet("built_year")]
+        public async Task<IActionResult> GetBuiltYearAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetPremiseYearByOrganizationAsync(0, 1900, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetPremiseYearByOrganizationAsync(1900, 1930, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetPremiseYearByOrganizationAsync(1930, 1945, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetPremiseYearByOrganizationAsync(1945, 1960, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetPremiseYearByOrganizationAsync(1960, 1970, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetPremiseYearByOrganizationAsync(1970, 1980, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetPremiseYearByOrganizationAsync(1980, 2100, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col7, new
+            {
+                SublayerId = 6,
+                Sublayer = "1980",
+                Color = "#8F3C8D",
+            },
+            BuildGeoCollection(col6, new
+            {
+                SublayerId = 5,
+                Sublayer = "1970-1980",
+                Color = "#A860A6",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 4,
+                Sublayer = "1960-1970",
+                Color = "#B378B1",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "1945-1960",
+                Color = "#99C1E9",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "1930-1945",
+                Color = "#69A8DE",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "1900-1930",
+                Color = "#1261A3",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "<1900",
+                Color = "#293575",
+            }))))))));
         }
 
 #if _TILESET

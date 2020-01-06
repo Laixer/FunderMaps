@@ -93,5 +93,7 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
         Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypendicativeByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetPremiseYearByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
     }
 }
