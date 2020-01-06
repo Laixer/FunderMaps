@@ -84,24 +84,31 @@ namespace FunderMaps.Controllers.Api
                 },
                 new Layer
                 {
+                    Id = Guid.Parse("c575fa26-69b4-4526-9b57-91d3754d5594"),
+                    Name = "Funderingstype Indicatief",
+                    Source = "api/map/foundation_type2",
+                    Order = 1
+                },
+                new Layer
+                {
                     Id = Guid.Parse("8a8fbafc-6975-487b-824d-332ecd2c44af"),
                     Name = "Handhavingstermijnen",
                     Source = "api/map/enforcement_term",
-                    Order = 1
+                    Order = 2
                 },
                 new Layer
                 {
                     Id = Guid.Parse("eca38907-95f0-46c7-9226-e0abe1ff3e91"),
                     Name = "Kwaliteit Funderingen",
                     Source = "api/map/foundation_quality",
-                    Order = 2
+                    Order = 3
                 },
                 new Layer
                 {
                     Id = Guid.Parse("b47ab81d-14af-4b45-9ba8-2425a56e5f71"),
                     Name = "Pandzakking",
                     Source = "api/map/premise_subsidence",
-                    Order = 3
+                    Order = 4
                 }
             };
 
@@ -208,6 +215,38 @@ namespace FunderMaps.Controllers.Api
                 Sublayer = "Houten paal",
                 Color = "#9E511F",
             }))))));
+        }
+
+        // GET: api/map/foundation_type2
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        [HttpGet("foundation_type2")]
+        public async Task<IActionResult> GetFoundationTypeIndicativeAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetByFounationTypendicativeByOrganizationAsync(0, 1970, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetByFounationTypendicativeByOrganizationAsync(1970, 1980, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetByFounationTypendicativeByOrganizationAsync(1980, 2100, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "Kans op houten paal en betonpaal",
+                Color = "#A860A6",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "Zeer hoge kans op beton paal",
+                Color = "#7A7A7A",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "Hoge kans op houten paal",
+                Color = "#9E511f",
+            }))));
         }
 
         // GET: api/map/enforcement_term
