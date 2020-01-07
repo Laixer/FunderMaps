@@ -94,6 +94,12 @@ namespace FunderMaps.Controllers.Api
                 throw new ArgumentNullException(nameof(input));
             }
 
+            // TODO: Can be done in the incoming model itself.
+            if (input.DocumentDate.Year < 1000 || input.DocumentDate.Year > 2100)
+            {
+                return BadRequest(0, "DoucmentDate is invalid");
+            }
+
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
             if (user == null)
             {
