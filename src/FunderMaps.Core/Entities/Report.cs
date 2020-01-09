@@ -38,6 +38,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Note.
         /// </summary>
+        [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
@@ -54,11 +55,14 @@ namespace FunderMaps.Core.Entities
         /// Original document creation.
         /// </summary>
         [Required]
+        [DataType(DataType.DateTime)]
+        [Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
         public DateTime DocumentDate { get; set; }
 
         /// <summary>
         /// Document URL.
         /// </summary>
+        [Required]
         [MaxLength(256)]
         public string DocumentName { get; set; }
 
