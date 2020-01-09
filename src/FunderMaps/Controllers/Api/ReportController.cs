@@ -100,7 +100,7 @@ namespace FunderMaps.Controllers.Api
                 return BadRequest(0, "DoucmentDate is invalid");
             }
 
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 // TODO: send error code.

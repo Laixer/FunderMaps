@@ -82,10 +82,7 @@ namespace FunderMaps.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            // TODO: Should use `_userManager.GetUserAsync(User)` but
-            //       the NameIdentifier in User is set wrongly to email.
-
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return ResourceNotFound();
@@ -200,7 +197,7 @@ namespace FunderMaps.Controllers.Api
         [HttpGet("refresh")]
         public async Task<IActionResult> RefreshSignInAsync()
         {
-            var user = await _userManager.FindByEmailAsync(User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return ResourceNotFound();
