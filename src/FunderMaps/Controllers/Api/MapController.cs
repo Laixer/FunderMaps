@@ -58,7 +58,7 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJSON.
         /// </summary>
         [HttpGet("layer")]
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetLayersAsync()
         {
             var collection = new List<Layer>
@@ -196,8 +196,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("foundation_type")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetFoundationTypeAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -243,8 +243,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("foundation_type2")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetFoundationTypeIndicativeAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -276,8 +276,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("enforcement_term")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetEnforcementTermAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -337,8 +337,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("foundation_quality")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetFoundationQualityAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -391,8 +391,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("premise_subsidence")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetPremiseSubsidenceAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -474,8 +474,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("built_year")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetBuiltYearAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -535,7 +535,7 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("report_type")]
         public async Task<IActionResult> GetReportTypeAsync()
         {
@@ -603,7 +603,7 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         [HttpGet("document_year")]
         public async Task<IActionResult> GetDocumentYearAsync()
         {
