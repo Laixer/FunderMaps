@@ -94,6 +94,7 @@ namespace FunderMaps.Controllers.Api
                 throw new ArgumentNullException(nameof(input));
             }
 
+            // TODO: Moved to model, tests required.
             // TODO: Can be done in the incoming model itself.
             if (input.DocumentDate.Year < 1000 || input.DocumentDate.Year > 2100)
             {
