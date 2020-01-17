@@ -18,7 +18,7 @@ namespace FunderMaps.Extensions
         public static IServiceCollection AddCorsPolicy(this IServiceCollection services, IConfiguration configuration)
         {
             var policy = new CorsPolicyBuilder()
-                .WithOrigins("https://localhost:8080", "http://localhost:8080")
+                .WithOrigins("https://localhost:8080", "http://localhost:8080", "https://loket.kcaf.nl")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials();
