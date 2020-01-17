@@ -112,6 +112,7 @@ namespace FunderMaps
             services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddScoped<IFoundationRecoveryRepository, FoundationRecoveryRepository>();
             services.AddScoped<IMapRepository, MapRepository>();
+            services.AddScoped<IIncidentRepository, IncidentRepository>();
         }
 
         /// <summary>
