@@ -256,14 +256,14 @@ namespace FunderMaps.Controllers.Api
             return Ok(BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
-                Sublayer = "Kans op houten paal en betonpaal",
-                Color = "#A860A6",
+                Sublayer = "Zeer hoge kans op beton paal",
+                Color = "#7A7A7A",
             },
             BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
-                Sublayer = "Zeer hoge kans op beton paal",
-                Color = "#7A7A7A",
+                Sublayer = "Kans op houten paal en betonpaal",
+                Color = "#A860A6",
             }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
