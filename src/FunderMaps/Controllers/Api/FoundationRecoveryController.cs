@@ -79,7 +79,7 @@ namespace FunderMaps.Controllers.Api
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return ResourceNotFound();

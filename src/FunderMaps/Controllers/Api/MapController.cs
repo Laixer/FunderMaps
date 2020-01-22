@@ -58,7 +58,7 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJSON.
         /// </summary>
         [HttpGet("layer")]
-        [ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetLayersAsync()
         {
             var collection = new List<Layer>
@@ -84,24 +84,52 @@ namespace FunderMaps.Controllers.Api
                 },
                 new Layer
                 {
+                    Id = Guid.Parse("c575fa26-69b4-4526-9b57-91d3754d5594"),
+                    Name = "Funderingstype Indicatief",
+                    Source = "api/map/foundation_type2",
+                    Order = 1
+                },
+                new Layer
+                {
                     Id = Guid.Parse("8a8fbafc-6975-487b-824d-332ecd2c44af"),
                     Name = "Handhavingstermijnen",
                     Source = "api/map/enforcement_term",
-                    Order = 1
+                    Order = 2
                 },
                 new Layer
                 {
                     Id = Guid.Parse("eca38907-95f0-46c7-9226-e0abe1ff3e91"),
                     Name = "Kwaliteit Funderingen",
                     Source = "api/map/foundation_quality",
-                    Order = 2
+                    Order = 3
                 },
                 new Layer
                 {
                     Id = Guid.Parse("b47ab81d-14af-4b45-9ba8-2425a56e5f71"),
                     Name = "Pandzakking",
                     Source = "api/map/premise_subsidence",
-                    Order = 3
+                    Order = 4
+                },
+                new Layer
+                {
+                    Id = Guid.Parse("74770654-f1eb-4f04-bee8-978fe75cc51a"),
+                    Name = "Bouwjaar",
+                    Source = "api/map/built_year",
+                    Order = 5
+                },
+                new Layer
+                {
+                    Id = Guid.Parse("c9874fff-fc43-4597-9128-92f551c96a2a"),
+                    Name = "Type Rapport",
+                    Source = "api/map/report_type",
+                    Order = 6
+                },
+                new Layer
+                {
+                    Id = Guid.Parse("92b38a0f-8fc4-4c74-bbd0-2d6a145bd185"),
+                    Name = "Jaar Uitvoering Onderzoek",
+                    Source = "api/map/document_year",
+                    Order = 7
                 }
             };
 
@@ -169,6 +197,7 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("foundation_type")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetFoundationTypeAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -183,25 +212,25 @@ namespace FunderMaps.Controllers.Api
             {
                 SublayerId = 4,
                 Sublayer = "Overig",
-                Color = "#E78932",
+                Color = "#FFCD17",
             },
             BuildGeoCollection(col4, new
             {
                 SublayerId = 3,
                 Sublayer = "Hout met oplanger",
-                Color = "#D36E2C",
+                Color = "#641C68",
             },
             BuildGeoCollection(col3, new
             {
                 SublayerId = 2,
                 Sublayer = "Niet onderheid",
-                Color = "#C1301B",
+                Color = "#A30500",
             },
             BuildGeoCollection(col2, new
             {
                 SublayerId = 1,
                 Sublayer = "Beton paal",
-                Color = "#9F9E9E",
+                Color = "#7A7A7A",
             }, BuildGeoCollection(col1, new
             {
                 SublayerId = 0,
@@ -210,11 +239,45 @@ namespace FunderMaps.Controllers.Api
             }))))));
         }
 
+        // GET: api/map/foundation_type2
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        [HttpGet("foundation_type2")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        public async Task<IActionResult> GetFoundationTypeIndicativeAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetByFounationTypendicativeByOrganizationAsync(0, 1970, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetByFounationTypendicativeByOrganizationAsync(1970, 1980, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetByFounationTypendicativeByOrganizationAsync(1980, 2100, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "Zeer hoge kans op beton paal",
+                Color = "#7A7A7A",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "Kans op houten paal en betonpaal",
+                Color = "#A860A6",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "Hoge kans op houten paal",
+                Color = "#9E511f",
+            }))));
+        }
+
         // GET: api/map/enforcement_term
         /// <summary>
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("enforcement_term")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetEnforcementTermAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -275,6 +338,7 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("foundation_quality")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetFoundationQualityAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -328,6 +392,7 @@ namespace FunderMaps.Controllers.Api
         /// Get the samples as GeoJson.
         /// </summary>
         [HttpGet("premise_subsidence")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetPremiseSubsidenceAsync()
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
@@ -403,6 +468,196 @@ namespace FunderMaps.Controllers.Api
                 Sublayer = "9 mm/jaar of meer",
                 Color = "#A30500",
             })))))))))));
+        }
+
+        // GET: api/map/built_year
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        [HttpGet("built_year")]
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        public async Task<IActionResult> GetBuiltYearAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetPremiseYearByOrganizationAsync(0, 1900, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetPremiseYearByOrganizationAsync(1900, 1930, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetPremiseYearByOrganizationAsync(1930, 1945, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetPremiseYearByOrganizationAsync(1945, 1960, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetPremiseYearByOrganizationAsync(1960, 1970, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetPremiseYearByOrganizationAsync(1970, 1980, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetPremiseYearByOrganizationAsync(1980, 2100, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col7, new
+            {
+                SublayerId = 6,
+                Sublayer = "1980>",
+                Color = "#8F3C8D",
+            },
+            BuildGeoCollection(col6, new
+            {
+                SublayerId = 5,
+                Sublayer = "1970-1980",
+                Color = "#A860A6",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 4,
+                Sublayer = "1960-1970",
+                Color = "#B378B1",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "1945-1960",
+                Color = "#99C1E9",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "1930-1945",
+                Color = "#69A8DE",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "1900-1930",
+                Color = "#1261A3",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "<1900",
+                Color = "#293575",
+            }))))))));
+        }
+
+        // GET: api/map/report_type
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        [HttpGet("report_type")]
+        public async Task<IActionResult> GetReportTypeAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.FoundationResearch, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.Quickscan, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.ArchitecturalResearch, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.ArchieveResearch, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.DemolitionResearch, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.Monitoring, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.FoundationAdvice, User.GetOrganizationId());
+            var col8 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.Unknown, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col8, new
+            {
+                SublayerId = 7,
+                Sublayer = "Overig",
+                Color = "#641C68",
+            },
+            BuildGeoCollection(col7, new
+            {
+                SublayerId = 6,
+                Sublayer = "Funderingsadvies",
+                Color = "#8F3C8D",
+            },
+            BuildGeoCollection(col6, new
+            {
+                SublayerId = 5,
+                Sublayer = "Monitoring",
+                Color = "#A860A6",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 4,
+                Sublayer = "Sloopgrensonderzoek",
+                Color = "#B378B1",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "Archiefonderzoek",
+                Color = "#99C1E9",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "Bouwkundigonderzoek",
+                Color = "#69A8DE",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "Quickscan",
+                Color = "#1261A3",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "Funderingsonderzoek",
+                Color = "#293575",
+            })))))))));
+        }
+
+        // GET: api/map/document_year
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        [HttpGet("document_year")]
+        public async Task<IActionResult> GetDocumentYearAsync()
+        {
+            // FUTURE: This is super inefficient. We can query everything together and build a local collection.
+
+            var col1 = await _mapRepository.GetDocumentYearByOrganizationAsync(1960, 1970, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetDocumentYearByOrganizationAsync(1970, 1980, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetDocumentYearByOrganizationAsync(1980, 1990, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetDocumentYearByOrganizationAsync(1990, 2000, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetDocumentYearByOrganizationAsync(2000, 2010, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetDocumentYearByOrganizationAsync(2010, 2020, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetDocumentYearByOrganizationAsync(2020, 2100, User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col7, new
+            {
+                SublayerId = 6,
+                Sublayer = "2020>",
+                Color = "#8F3C8D",
+            },
+            BuildGeoCollection(col6, new
+            {
+                SublayerId = 5,
+                Sublayer = "2010-2020",
+                Color = "#A860A6",
+            },
+            BuildGeoCollection(col5, new
+            {
+                SublayerId = 4,
+                Sublayer = "2000-2010",
+                Color = "#B378B1",
+            },
+            BuildGeoCollection(col4, new
+            {
+                SublayerId = 3,
+                Sublayer = "1990-2000",
+                Color = "#99C1E9",
+            },
+            BuildGeoCollection(col3, new
+            {
+                SublayerId = 2,
+                Sublayer = "1980-1990",
+                Color = "#69A8DE",
+            },
+            BuildGeoCollection(col2, new
+            {
+                SublayerId = 1,
+                Sublayer = "1970-1980",
+                Color = "#1261A3",
+            }, BuildGeoCollection(col1, new
+            {
+                SublayerId = 0,
+                Sublayer = "1960-1970",
+                Color = "#293575",
+            }))))))));
         }
 
 #if _TILESET

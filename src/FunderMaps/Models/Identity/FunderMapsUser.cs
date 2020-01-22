@@ -49,30 +49,6 @@ namespace FunderMaps.Models.Identity
         public virtual string JobTitle { get; set; }
 
         /// <summary>
-        /// Gets or sets a flag indicating if two factor authentication is enabled for this
-        /// user.
-        /// </summary>
-        [PersonalData]
-        public new virtual bool? TwoFactorEnabled { get; set; }
-
-        /// <summary>
-        /// Gets or sets a flag indicating if a user has confirmed their telephone address.
-        /// </summary>
-        [PersonalData]
-        public new virtual bool? PhoneNumberConfirmed { get; set; }
-
-        /// <summary>
-        /// Gets or sets a flag indicating if a user has confirmed their email address.
-        /// </summary>
-        [PersonalData]
-        public new virtual bool? EmailConfirmed { get; set; }
-
-        /// <summary>
-        /// Gets or sets the lockout policy for this user.
-        /// </summary>
-        public new virtual bool? LockoutEnabled { get; set; }
-
-        /// <summary>
         /// Gets or sets the normalized user name for this user.
         /// </summary>
         [IgnoreDataMember]

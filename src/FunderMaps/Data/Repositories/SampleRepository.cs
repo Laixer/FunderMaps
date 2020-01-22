@@ -1,8 +1,8 @@
 ﻿using Dapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Repositories;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Providers;
 using System;
 using System.Collections.Generic;
@@ -52,11 +52,12 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL
                         AND samp.id = @Id
                 LIMIT   1";
@@ -120,11 +121,12 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL
                         AND samp.id = @Id
                         AND attr.owner = @Owner
@@ -189,11 +191,12 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL
                         AND samp.id = @Id
                         AND (attr.owner = @Owner
@@ -263,7 +266,8 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
                             INNER JOIN application.address AS addr ON samp.address = addr.id
                             INNER JOIN application.report AS reprt ON samp.report = reprt.id
@@ -337,11 +341,12 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL
                         AND (attr.owner = @Owner
                             OR samp.access_policy = 'public')
@@ -413,11 +418,12 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL
                         AND reprt.id = @Report
                 ORDER BY create_date DESC
@@ -489,11 +495,12 @@ namespace FunderMaps.Data.Repositories
 	                    addr.id,
 	                    addr.street_name,
 	                    addr.building_number,
-	                    addr.building_number_suffix
+	                    addr.building_number_suffix,
+                        addr.bag
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL
                         AND reprt.id = @Report
                         AND (attr.owner = @Owner
@@ -686,9 +693,9 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.sample AS samp
-                            INNER JOIN application.address AS addr ON samp.address = addr.id
-                            INNER JOIN application.report AS reprt ON samp.report = reprt.id
-                            INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
+                        INNER JOIN application.address AS addr ON samp.address = addr.id
+                        INNER JOIN application.report AS reprt ON samp.report = reprt.id
+                        INNER JOIN application.attribution AS attr ON reprt.attribution = attr.id
                 WHERE   samp.delete_date IS NULL";
 
             return RunSqlCommand(async cnn => await cnn.QuerySingleAsync<uint>(sql));

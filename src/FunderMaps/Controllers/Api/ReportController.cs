@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -61,8 +60,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="limit">Limit the output.</param>
         /// <returns>List of <see cref="Report"/>.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Report>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
             => Ok(await _reportRepository.ListAllAsync(User.GetOrganizationId(), new Navigation(offset, limit)));
 
@@ -72,8 +69,6 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <returns>EntityStatsOutputModel.</returns>
         [HttpGet("stats")]
-        [ProducesResponseType(typeof(EntityStatsOutputModel), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetStatsAsync()
             => Ok(new EntityStatsOutputModel
             {
@@ -92,8 +87,6 @@ namespace FunderMaps.Controllers.Api
         /// <returns>Report.</returns>
         [HttpPost]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(typeof(Report), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PostAsync([FromBody] Report input)
         {
             if (input == null)
@@ -101,7 +94,14 @@ namespace FunderMaps.Controllers.Api
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+            // TODO: Moved to model, tests required.
+            // TODO: Can be done in the incoming model itself.
+            if (input.DocumentDate.Year < 1000 || input.DocumentDate.Year > 2100)
+            {
+                return BadRequest(0, "DoucmentDate is invalid");
+            }
+
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 // TODO: send error code.
@@ -152,9 +152,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier, <see cref="Report.DocumentId"/>.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{document}")]
-        [ProducesResponseType(typeof(Report), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetAsync(int id, string document)
         {
             var report = await _reportRepository.GetPublicAndByIdAsync(id, document, User.GetOrganizationId());
@@ -174,9 +171,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier, <see cref="Report.DocumentId"/>.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{document}/download")]
-        [ProducesResponseType(typeof(FileDownloadOutputModel), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> GetDownloadLinkAsync(int id, string document)
         {
             var report = await _reportRepository.GetPublicAndByIdAsync(id, document, User.GetOrganizationId());
@@ -214,10 +208,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Report data.</param>
         [HttpPut("{id}/{document}")]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
         {
             if (input == null)
@@ -264,9 +254,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier.</param>
         [HttpPut("{id}/{document}/review")]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutSignalStatusDoneAsync(int id, string document)
         {
             var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());
@@ -301,9 +288,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Verification status.</param>
         [HttpPut("{id}/{document}/validate")]
         [Authorize(Policy = Constants.OrganizationMemberVerifyPolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 404)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> PutValidateRequestAsync(int id, string document, [FromBody] VerificationInputModel input)
         {
             if (input == null)
@@ -346,8 +330,6 @@ namespace FunderMaps.Controllers.Api
         /// <param name="document">Report identifier.</param>
         [HttpDelete("{id}/{document}")]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
         public async Task<IActionResult> DeleteAsync(int id, string document)
         {
             var report = await _reportRepository.GetByIdAsync(id, document, User.GetOrganizationId());

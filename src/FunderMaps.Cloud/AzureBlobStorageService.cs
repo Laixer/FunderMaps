@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Cloud
 {
+    // FUTURE: Use Azure SDK Storage v12
+
     /// <summary>
     /// Azure storage implementing file storage service.
     /// </summary>
@@ -26,6 +28,11 @@ namespace FunderMaps.Cloud
         /// <param name="config">Application configuration.</param>
         public AzureBlobStorageService(IOptions<FileStorageOptions> options, IConfiguration config)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException(nameof(options));
+            }
+
             _options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _storageAccount = CloudStorageAccount.Parse(config.GetConnectionString("AzureStorageConnectionString"));
             _blobClient = _storageAccount.CreateCloudBlobClient();
@@ -48,6 +55,11 @@ namespace FunderMaps.Cloud
         /// <returns>The blob block.</returns>
         protected CloudBlockBlob PrepareBlob(string container, string filename, BlobProperties properties)
         {
+            if (properties == null)
+            {
+                throw new ArgumentNullException(nameof(properties));
+            }
+
             var cloudBlockBlob = SetContainer(container).GetBlockBlobReference(filename);
 
             cloudBlockBlob.Properties.CacheControl = properties.CacheControl;

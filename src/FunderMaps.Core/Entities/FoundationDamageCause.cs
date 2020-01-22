@@ -49,5 +49,45 @@
         /// Fungus infection.
         /// </summary>
         FungusInfection,
+
+        /// <summary>
+        /// Bio and fungus infection.
+        /// </summary>
+        BioFungusInfection,
+
+        /// <summary>
+        /// Foundation flaw.
+        /// </summary>
+        FoundationFaw,
+
+        /// <summary>
+        /// Construnction heave.
+        /// </summary>
+        ConstructionHeave,
+
+        /// <summary>
+        /// Subsidence.
+        /// </summary>
+        Subsidence,
+
+        /// <summary>
+        /// Vegetation.
+        /// </summary>
+        Vegetation,
+
+        /// <summary>
+        /// Gas.
+        /// </summary>
+        Gas,
+
+        /// <summary>
+        /// Vibrations.
+        /// </summary>
+        Vibrations,
+
+        /// <summary>
+        /// Foundation was partially recovered.
+        /// </summary>
+        PartialFoundationRecovery,
     }
 }

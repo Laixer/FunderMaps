@@ -76,6 +76,28 @@ namespace FunderMaps.Core.Interfaces
         /// <returns>List of <see cref="AddressPoint"/>.</returns>
         Task<IReadOnlyList<AddressGeoJson>> GetByFoundationQualityByOrganizationAsync(FoundationQuality foundationQuality, Guid orgId);
 
+        /// <summary>
+        /// Get premise foundation subsidence.
+        /// </summary>
+        /// <param name="rangeStart">Start offset in milimeters.</param>
+        /// <param name="rangeEnd">End limit in milimeters.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
         Task<IReadOnlyList<AddressGeoJson>> GetByFoundationSubsidenceByOrganizationAsync(double rangeStart, double rangeEnd, Guid orgId);
+
+        /// <summary>
+        /// Get premise foundation subsidence.
+        /// </summary>
+        /// <param name="rangeStart">Start offset in years.</param>
+        /// <param name="rangeEnd">End limit in years.</param>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
+        Task<IReadOnlyList<AddressGeoJson>> GetByFounationTypendicativeByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetPremiseYearByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetReportTypeByOrganizationAsync(ReportType type, Guid orgId);
+
+        Task<IReadOnlyList<AddressGeoJson>> GetDocumentYearByOrganizationAsync(int rangeStart, int rangeEnd, Guid orgId);
     }
 }
