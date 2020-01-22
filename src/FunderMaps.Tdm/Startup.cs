@@ -3,6 +3,8 @@ using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
+[assembly: WebJobsStartup(typeof(FunderMaps.Tdm.Startup))]
+
 namespace FunderMaps.Tdm
 {
     /// <summary>
