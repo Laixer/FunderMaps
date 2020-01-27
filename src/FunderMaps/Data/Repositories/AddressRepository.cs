@@ -111,6 +111,12 @@ namespace FunderMaps.Data.Repositories
 
             var address = result.First();
 
+            if (!string.IsNullOrEmpty(entity.StreetName) && !string.IsNullOrEmpty(entity.Bag))
+            {
+                await RunSqlCommand(async cnn => await cnn.ExecuteAsync(@"UPDATE application.address SET street_name=@StreetName WHERE id=@Id",
+                    new { entity.StreetName, address.Id }));
+            }
+
             if (string.IsNullOrEmpty(address.Bag) && !string.IsNullOrEmpty(entity.Bag))
             {
                 await RunSqlCommand(async cnn => await cnn.ExecuteAsync(@"UPDATE application.address SET bag=@Bag WHERE id=@Id",
