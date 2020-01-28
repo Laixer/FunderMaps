@@ -649,5 +649,41 @@ namespace FunderMaps.Data.Repositories
 
             return result.ToArray();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="orgId">Organization identifier.</param>
+        /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
+        public async Task<IReadOnlyList<AddressGeoJson>> GetPremiseByOrganizationAsync(Guid orgId)
+        {
+            using var connection = _dbProvider.ConnectionScope();
+
+            var sql = @"
+                WITH org AS (
+	                SELECT id, name, fence
+	                FROM application.organization AS org
+	                WHERE id=@Owner
+	                LIMIT 1
+                )
+                SELECT ST_AsGeoJSON(prem.geom) AS geojson
+                FROM   geospatial.premise AS prem
+	                   INNER JOIN public.bag_vlak_eig_rdam AS eig ON eig.bag_id = prem.id,
+	                   org
+                WHERE  eig.eigendom LIKE '%' || org.name || '%'
+	                   AND org.fence IS NOT NULL
+	                   AND ST_Contains(org.fence, prem.geom)";
+
+            var dynamicParameters = new DynamicParameters();
+            dynamicParameters.Add("Owner", orgId);
+
+            var result = await connection.QueryAsync<AddressGeoJson>(sql, dynamicParameters);
+            if (!result.Any())
+            {
+                return null;
+            }
+
+            return result.ToArray();
+        }
     }
 }
