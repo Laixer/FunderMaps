@@ -20,14 +20,14 @@ namespace FunderMaps.Controllers.Api
             _addressService = addressService;
         }
 
-        // POST: api/Incident
+        // POST: api/incident
         [HttpPost]
-        public async Task Post([FromBody] IncidentInputViewModel input)
+        public async Task PostAsync([FromBody] IncidentInputViewModel input)
         {
             input.Address = await _addressService.GetOrCreateAddressAsync(new Address
             {
                 StreetName = input.Address.StreetName,
-                BuildingNumber = (short)input.Address.BuildingNumber,
+                BuildingNumber = input.Address.BuildingNumber,
                 Bag = input.Address.Bag,
             });
 
