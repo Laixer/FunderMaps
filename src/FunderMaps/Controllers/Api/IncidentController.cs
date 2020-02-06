@@ -33,5 +33,15 @@ namespace FunderMaps.Controllers.Api
 
             await _incidentRepository.SaveIncidentAsync(input);
         }
+
+        // NOTE: Should use authentication
+        // GET: api/incident/csv
+        [HttpGet("csv")]
+        public async Task<IActionResult> GetAsync()
+        {
+            var csvFile = await _incidentRepository.ListAllIncidentsAsync();
+
+            return File(System.Text.Encoding.UTF8.GetBytes(csvFile), "text/csv", "incident.csv");
+        }
     }
 }

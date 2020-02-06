@@ -72,5 +72,25 @@ namespace FunderMaps.Data.Repositories
 
             await connection.ExecuteScalarAsync<int>(sql, dynamicParameters);
         }
+
+        public async Task<string> ListAllIncidentsAsync()
+        {
+            using var connection = _dbProvider.ConnectionScope() as Npgsql.NpgsqlConnection;
+
+            string buf = "";
+
+            await connection.OpenAsync();
+            using (var reader = connection.BeginTextExport(@"COPY (SELECT * FROM application.incident) TO STDOUT WITH CSV HEADER DELIMITER ';'"))
+            {
+                using var r2 = reader as Npgsql.NpgsqlCopyTextReader;
+                while (!r2.EndOfStream)
+                {
+                    buf += await r2.ReadLineAsync();
+                    buf += '\n';
+                }
+            }
+
+            return buf;
+        }
     }
 }
