@@ -10,5 +10,6 @@ namespace FunderMaps.Interfaces
     public interface IIncidentRepository
     {
         Task SaveIncidentAsync(IncidentInputViewModel model);
+        Task<string> ListAllIncidentsAsync();
     }
 }

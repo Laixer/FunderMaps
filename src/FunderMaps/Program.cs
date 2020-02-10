@@ -17,14 +17,14 @@ namespace FunderMaps
             => CreateHostBuilder(args).Build().RunAsync();
 
         /// <summary>
-        /// Build a webhost and run the application.
+        /// Build a host and run the application.
         /// </summary>
         /// <remarks>
         /// The signature of this method cannot be changed since it's
         /// expected by external tooling using this assembly.
         /// </remarks>
         /// <param name="args">Commandline arguments.</param>
-        /// <returns><see cref="IWebHostBuilder"/></returns>
+        /// <returns><see cref="IHostBuilder"/>.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args)
             => Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>

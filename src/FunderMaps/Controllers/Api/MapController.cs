@@ -130,6 +130,13 @@ namespace FunderMaps.Controllers.Api
                     Name = "Jaar Uitvoering Onderzoek",
                     Source = "api/map/document_year",
                     Order = 7
+                },
+                new Layer
+                {
+                    Id = Guid.Parse("f25773fd-ee72-4cb5-b7a3-f8b2b1a8482c"),
+                    Name = "Eigendomskaart",
+                    Source = "api/map/ownership",
+                    Order = 8
                 }
             };
 
@@ -658,6 +665,24 @@ namespace FunderMaps.Controllers.Api
                 Sublayer = "1960-1970",
                 Color = "#293575",
             }))))))));
+        }
+
+        // GET: api/map/ownership
+        /// <summary>
+        /// Get the samples as GeoJson.
+        /// </summary>
+        //[ResponseCache(Duration = 60 * 60 * 2, Location = ResponseCacheLocation.Client)]
+        [HttpGet("ownership")]
+        public async Task<IActionResult> GetOwnershipAsync()
+        {
+            var col1 = await _mapRepository.GetPremiseByOrganizationAsync(User.GetOrganizationId());
+
+            return Ok(BuildGeoCollection(col1, new
+            {
+                SublayerId = 6,
+                Sublayer = "Eigendom",
+                Color = "#8F3C8D",
+            }));
         }
 
 #if _TILESET
