@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using NETCore.MailKit.Core;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -13,11 +14,13 @@ namespace FunderMaps.Controllers.Api
     {
         private readonly IIncidentRepository _incidentRepository;
         private readonly IAddressService _addressService;
+        private readonly IEmailService _emailService;
 
-        public IncidentController(IIncidentRepository incidentRepository, IAddressService addressService)
+        public IncidentController(IIncidentRepository incidentRepository, IAddressService addressService, IEmailService emailService)
         {
             _incidentRepository = incidentRepository;
             _addressService = addressService;
+            _emailService = emailService;
         }
 
         // POST: api/incident
@@ -32,16 +35,64 @@ namespace FunderMaps.Controllers.Api
             });
 
             await _incidentRepository.SaveIncidentAsync(input);
-        }
 
-        // NOTE: Should use authentication
-        // GET: api/incident/csv
-        [HttpGet("csv")]
-        public async Task<IActionResult> GetAsync()
-        {
-            var csvFile = await _incidentRepository.ListAllIncidentsAsync();
+            var body = @$"Reported new incident: <br />
+            <table>
+                <thead>
+                    <tr>
+                        <th>Onderdeel</th>
+                        <th>Gegeven waarden</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>address</td>
+                        <td>{input.Address.StreetName}</td>
+                    </tr>
+                    <tr>
+                        <td>foundation_type</td>
+                        <td>{input.FoundationType}</td>
+                    </tr>
+                    <tr>
+                        <td>chained_building</td>
+                        <td>{input.ChainedBuilding}</td>
+                    </tr>
+                    <tr>
+                        <td>owner</td>
+                        <td>{input.Owner}</td>
+                    </tr>
+                    <tr>
+                        <td>foundation_recovery</td>
+                        <td>{input.FoundationRecovery}</td>
+                    </tr>
+                    <tr>
+                        <td>foundation_damage_cause</td>
+                        <td>{input.FoundationDamageCause}</td>
+                    </tr>
+                    <tr>
+                        <td>contact_name</td>
+                        <td>{input.Name}</td>
+                    </tr>
+                    <tr>
+                        <td>contact_email</td>
+                        <td>{input.Email}</td>
+                    </tr>
+                    <tr>
+                        <td>contact_phonenumber</td>
+                        <td>{input.Phonenumber}</td>
+                    </tr>
+                    <tr>
+                        <td>foundation_damage_characteristics</td>
+                        <td>{string.Join(",", input.FoundationDamageCharacteristics)}</td>
+                    </tr>
+                    <tr>
+                        <td>environment</td>
+                        <td>{string.Join(",", input.EnvironmentDamageCharacteristics)}</td>
+                    </tr>
+                </tbody>
+            </table>";
 
-            return File(System.Text.Encoding.UTF8.GetBytes(csvFile), "text/csv", "incident.csv");
+            await _emailService.SendAsync(mailTo: "info@kcaf.nl", mailCc: "info@laixer.com", null, "Incident reported", body, isHtml: true);
         }
     }
 }

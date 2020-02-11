@@ -22,6 +22,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using NETCore.MailKit.Extensions;
+using NETCore.MailKit.Infrastructure.Internal;
 using System.IO.Compression;
 
 namespace FunderMaps
@@ -73,6 +75,21 @@ namespace FunderMaps
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
+            });
+
+            services.AddMailKit(builder =>
+            {
+                var config = _configuration.GetSection("Email");
+                builder.UseMailKit(new MailKitOptions()
+                {
+                    Server = config.GetValue<string>("Server"),
+                    Port = config.GetValue<int>("Port"),
+                    SenderName = config.GetValue<string>("SenderName"),
+                    SenderEmail = config.GetValue<string>("SenderEmail"),
+                    Account = config.GetValue<string>("Account"),
+                    Password = config.GetValue<string>("Password"),
+                    Security = true,
+                });
             });
 
             // Enable compression where possible.
