@@ -58,7 +58,7 @@
         /// <summary>
         /// Foundation flaw.
         /// </summary>
-        FoundationFaw,
+        FoundationFlaw,
 
         /// <summary>
         /// Construnction heave.
