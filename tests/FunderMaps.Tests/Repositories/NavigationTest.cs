@@ -33,7 +33,7 @@ namespace FunderMaps.Tests.Repositories
             var nav = new Navigation(testOffset, testLimit);
 
             // Assert
-            Assert.IsType<NavigationImpl<int, int>>(nav);
+            Assert.IsAssignableFrom<NavigationImpl<int, int>>(nav);
         }
 
         [Theory]

@@ -20,7 +20,7 @@ namespace FunderMaps.IntegrationTests
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync("/api/version");
+            var response = await client.GetAsync("/api/version").ConfigureAwait(false);
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
