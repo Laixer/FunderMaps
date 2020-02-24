@@ -63,10 +63,10 @@ namespace FunderMaps
                 .AddNewtonsoftJson();
 
             // In production, the frontend framework files will be served from this directory.
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/dist";
-            });
+            //services.AddSpaStaticFiles(configuration =>
+            //{
+            //    configuration.RootPath = "ClientApp/dist";
+            //});
 
             // Set CORS policy.
             services.AddCorsPolicy(_configuration);
@@ -249,10 +249,9 @@ namespace FunderMaps
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
                 app.UseCors("CORSDeveloperPolicy");
             }
-            if (env.IsStaging())
+            else if (env.IsStaging())
             {
                 app.UseCors("CORSDeveloperPolicy");
                 app.UseHsts();
@@ -267,17 +266,17 @@ namespace FunderMaps
             app.UseResponseCompression();
             app.UseHttpsRedirection();
 
-            var staticFileOptions = new StaticFileOptions
-            {
-                OnPrepareResponse = context =>
-                {
-                    // Static files can be heavily cached since they can be large and do not change often.
-                    context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
-                }
-            };
+            //var staticFileOptions = new StaticFileOptions
+            //{
+            //    OnPrepareResponse = context =>
+            //    {
+            //        // Static files can be heavily cached since they can be large and do not change often.
+            //        context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
+            //    }
+            //};
 
-            app.UseStaticFiles(staticFileOptions);
-            app.UseSpaStaticFiles(staticFileOptions);
+            //app.UseStaticFiles(staticFileOptions);
+            //app.UseSpaStaticFiles(staticFileOptions);
 
             app.UseRouting();
 
@@ -290,10 +289,10 @@ namespace FunderMaps
                 endpoints.MapHealthChecks("/health");
             });
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-            });
+            //app.UseSpa(spa =>
+            //{
+            //    spa.Options.SourcePath = "ClientApp";
+            //});
         }
     }
 }
