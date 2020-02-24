@@ -18,19 +18,16 @@ namespace FunderMaps.Extensions
         /// Adds the application cloud services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
-        /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
-        public static IServiceCollection AddApplicationCloudServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApplicationCloudServices(this IServiceCollection services)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+            using var serviceProviderScope = services.BuildServiceProvider().CreateScope();
+            var configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
 
             services.AddTransient<IFileStorageService, AzureBlobStorageService>();
 

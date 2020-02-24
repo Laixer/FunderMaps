@@ -8,7 +8,6 @@ using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
 using FunderMaps.Helpers;
 using FunderMaps.Interfaces;
-using FunderMaps.Middleware;
 using FunderMaps.Models.Identity;
 using FunderMaps.Services;
 using Laixer.Identity.Dapper.Extensions;
@@ -62,12 +61,6 @@ namespace FunderMaps
             services.AddControllers()
                 .AddNewtonsoftJson();
 
-            // In production, the frontend framework files will be served from this directory.
-            //services.AddSpaStaticFiles(configuration =>
-            //{
-            //    configuration.RootPath = "ClientApp/dist";
-            //});
-
             // Set CORS policy.
             services.AddCorsPolicy(_configuration);
 
@@ -104,15 +97,15 @@ namespace FunderMaps
             services.AddEventBus()
                 .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>();
 
-            // Configure local repositories.
+            // Register repositories from local application module.
             ConfigureRepository(services);
-
-            // Register services from application modules.
-            services.AddApplicationCoreServices(_configuration);
-            services.AddApplicationCloudServices(_configuration);
 
             // Register services from local application module.
             services.AddTransient<IMailService, MailService>();
+
+            // Register services from application modules.
+            services.AddApplicationCoreServices();
+            services.AddApplicationCloudServices();
         }
 
         /// <summary>
@@ -244,16 +237,17 @@ namespace FunderMaps
         /// <summary>
         /// This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
         /// </summary>
+        /// <remarks>This is a pipeline, order is of importance!</remarks>
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors("CORSDeveloperPolicy");
+                app.UseCors("CORSDeveloperPolicy"); // TODO:
             }
             else if (env.IsStaging())
             {
-                app.UseCors("CORSDeveloperPolicy");
+                app.UseCors("CORSDeveloperPolicy"); // TODO:
                 app.UseHsts();
             }
             else
@@ -265,18 +259,6 @@ namespace FunderMaps
             app.UseResponseCompression();
             app.UseHttpsRedirection();
 
-            //var staticFileOptions = new StaticFileOptions
-            //{
-            //    OnPrepareResponse = context =>
-            //    {
-            //        // Static files can be heavily cached since they can be large and do not change often.
-            //        context.Context.Response.Headers.Add("Cache-Control", $"public, max-age={Constants.StaticFileCacheRetention}");
-            //    }
-            //};
-
-            //app.UseStaticFiles(staticFileOptions);
-            //app.UseSpaStaticFiles(staticFileOptions);
-
             app.UseRouting();
 
             app.UseAuthentication();
@@ -287,11 +269,6 @@ namespace FunderMaps
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });
-
-            //app.UseSpa(spa =>
-            //{
-            //    spa.Options.SourcePath = "ClientApp";
-            //});
         }
     }
 }
