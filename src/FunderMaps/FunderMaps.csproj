@@ -2,13 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
-    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
-    <IsPackable>false</IsPackable>
-    <SpaRoot>ClientApp\</SpaRoot>
     <LangVersion>latest</LangVersion>
     <UserSecretsId>aspnet-FunderMaps-1BA92925-643A-4F0A-817C-62E1B7DBC479</UserSecretsId>
-    <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <Authors>Laixer</Authors>
     <Copyright>Copyright Laixer 2020</Copyright>
     <RepositoryUrl>https://github.com/Zanhos/FunderMaps</RepositoryUrl>
@@ -25,10 +20,6 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
