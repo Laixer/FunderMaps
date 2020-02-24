@@ -260,7 +260,6 @@ namespace FunderMaps
             {
                 app.UseExceptionHandler("/oops");
                 app.UseHsts();
-                app.UseEnhancedSecurity();
             }
 
             app.UseResponseCompression();
