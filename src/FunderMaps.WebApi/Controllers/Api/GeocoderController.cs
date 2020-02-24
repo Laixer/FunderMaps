@@ -1,9 +1,6 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -16,34 +13,22 @@ namespace FunderMaps.Controllers.Api
     [ApiController]
     public class GeocoderController : BaseApiController
     {
-        private readonly IAddressService _addressService;
-
+        // GET: api/geocoder/suggest
         /// <summary>
-        /// Create new instance.
+        /// Return addresses by suggestion query.
         /// </summary>
-        /// <param name="addressService">See <see cref="IAddressService"/>.</param>
-        public GeocoderController(IAddressService addressService) => _addressService = addressService;
-
-        // GET: api/geocoder/address
-
-        [HttpGet("address")]
-        [ProducesResponseType(typeof(IEnumerable<Address2>), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> GetByAddressAsync(string streetName)
+        /// <param name="query">Search query.</param>
+        [HttpGet("suggest")]
+        public async Task<IActionResult> GetSuggestionsAsync(string query)
         {
-            if (string.IsNullOrEmpty(streetName))
+            if (string.IsNullOrEmpty(query))
             {
-                return NoContent();
+                return BadRequest();
             }
 
-            // Not providing suggestions on too many matches. The search needs
-            // to be narrow so the request remains to be fast.
-            if (streetName.Length < 4)
-            {
-                return NoContent();
-            }
+            await Task.CompletedTask;
 
-            return Ok(await _addressService.GetAddressByStreetNameAsync(streetName));
+            throw new NotImplementedException();
         }
     }
 }

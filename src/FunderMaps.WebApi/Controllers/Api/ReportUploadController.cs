@@ -34,7 +34,8 @@ namespace FunderMaps.Controllers.Api
         /// <param name="fileStorageService">The file storage service.</param>
         public ReportUploadController(IFileStorageService fileStorageService)
             : base(fileStorageService, Constants.ReportStorage)
-        { }
+        {
+        }
 
         // POST: api/upload
         /// <summary>
@@ -46,7 +47,7 @@ namespace FunderMaps.Controllers.Api
         [ProducesResponseType(typeof(ApplicationFile), 200)]
         [ProducesResponseType(typeof(ErrorOutputModel), 400)]
         [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync(IFormFile file)
-            => await Upload(file, allowedReportFileTypes);
+        public async Task<IActionResult> PostAsync(IFormFile file) =>
+            await Upload(file, allowedReportFileTypes);
     }
 }

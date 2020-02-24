@@ -4,6 +4,7 @@ using FunderMaps.Interfaces;
 using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using NETCore.MailKit.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
@@ -16,6 +17,9 @@ namespace FunderMaps.Controllers.Api
         private readonly IAddressService _addressService;
         private readonly IEmailService _emailService;
 
+        /// <summary>
+        /// Create new instance.
+        /// </summary>
         public IncidentController(IIncidentRepository incidentRepository, IAddressService addressService, IEmailService emailService)
         {
             _incidentRepository = incidentRepository;
@@ -27,6 +31,11 @@ namespace FunderMaps.Controllers.Api
         [HttpPost]
         public async Task PostAsync([FromBody] IncidentInputViewModel input)
         {
+            if (input == null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             input.Address = await _addressService.GetOrCreateAddressAsync(new Address
             {
                 StreetName = input.Address.StreetName,

@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +33,8 @@ namespace FunderMaps.Controllers.Api
         /// <param name="fileStorageService">The file storage service.</param>
         public EvidenceUploadController(IFileStorageService fileStorageService)
             : base(fileStorageService, Constants.EvidenceStorage)
-        { }
+        {
+        }
 
         // POST: api/upload
         /// <summary>
@@ -43,10 +43,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="file">See <see cref="IFormFile"/>.</param>
         /// <returns>See <see cref="ApplicationFile"/>.</returns>
         [HttpPost]
-        [ProducesResponseType(typeof(ApplicationFile), 200)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 400)]
-        [ProducesResponseType(typeof(ErrorOutputModel), 401)]
-        public async Task<IActionResult> PostAsync(IFormFile file)
-            => await Upload(file, allowedEvidenceFileTypes);
+        public async Task<IActionResult> PostAsync(IFormFile file) =>
+            await Upload(file, allowedEvidenceFileTypes);
     }
 }

@@ -31,7 +31,7 @@ namespace FunderMaps.Controllers.Api
         private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthenticationController> _logger;
-        private readonly IStringLocalizer<ReportController> _localizer;
+        private readonly IStringLocalizer<ReportController> _localizer; // TODO:
 
         /// <summary>
         /// Create new instance.
