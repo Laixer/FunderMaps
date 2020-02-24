@@ -51,13 +51,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <WCFMetadata Include="Connected Services" />
+    <ProjectReference Include="..\FunderMaps.Cloud\FunderMaps.Cloud.csproj" />
+    <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\contrib\Laixer.Identity.Dapper\Laixer.Identity.Dapper.csproj" />
-    <ProjectReference Include="..\FunderMaps.Cloud\FunderMaps.Cloud.csproj" />
-    <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
   <ItemGroup>
