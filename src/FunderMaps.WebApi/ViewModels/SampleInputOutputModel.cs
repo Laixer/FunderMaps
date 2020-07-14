@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
     /// Geocoder.
@@ -112,7 +112,7 @@ namespace FunderMaps.ViewModels
         /// <summary>
         /// Level of base measurement.
         /// </summary>
-        public BaseLevel BaseMeasurementLevel { get; set; }
+        public BaseMeasurementLevel BaseMeasurementLevel { get; set; }
 
         /// <summary>
         /// Associated address.

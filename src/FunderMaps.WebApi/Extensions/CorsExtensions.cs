@@ -1,9 +1,6 @@
-﻿using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace FunderMaps.Extensions
+﻿namespace FunderMaps.Extensions
 {
+#if DISABLED
     /// <summary>
     /// CORS extensions.
     /// </summary>
@@ -34,4 +31,5 @@ namespace FunderMaps.Extensions
             return services;
         }
     }
+#endif
 }

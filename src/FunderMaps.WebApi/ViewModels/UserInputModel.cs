@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
     /// User input model.

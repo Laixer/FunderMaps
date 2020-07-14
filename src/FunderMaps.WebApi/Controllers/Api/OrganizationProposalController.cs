@@ -1,17 +1,6 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Repositories;
-using FunderMaps.Helpers;
-using FunderMaps.Interfaces;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Controllers.Api
+﻿namespace FunderMaps.Controllers.Api
 {
+#if DISABLED
     /// <summary>
     /// Process organization proposals.
     /// </summary>
@@ -135,4 +124,5 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
     }
+#endif
 }

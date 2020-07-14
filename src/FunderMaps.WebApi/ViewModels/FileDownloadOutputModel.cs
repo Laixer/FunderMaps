@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
     /// File download result model.

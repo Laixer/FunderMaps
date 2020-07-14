@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,6 +24,6 @@ namespace FunderMaps.Interfaces
         /// Retrieve all contractor.
         /// </summary>
         /// <returns>Entities.</returns>
-        Task<IReadOnlyList<Contractor>> ListAllContractorsAsync(Navigation navigation);
+        Task<IReadOnlyList<Organization>> ListAllContractorsAsync(INavigation navigation);
     }
 }

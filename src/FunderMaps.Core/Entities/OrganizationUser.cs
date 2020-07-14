@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Core.Types;
+using System;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities

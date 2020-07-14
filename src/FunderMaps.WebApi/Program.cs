@@ -24,7 +24,7 @@ namespace FunderMaps
         /// expected by external tooling using this assembly.
         /// </remarks>
         /// <param name="args">Commandline arguments.</param>
-        /// <returns><see cref="IHostBuilder"/>.</returns>
+        /// <returns>See <see cref="IHostBuilder"/>.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>

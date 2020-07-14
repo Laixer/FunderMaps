@@ -1,21 +1,6 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Repositories;
-using FunderMaps.Extensions;
-using FunderMaps.Helpers;
-using FunderMaps.Interfaces;
-using FunderMaps.Models.Identity;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Controllers.Api
+﻿namespace FunderMaps.Controllers.Api
 {
+#if DISABLED
     /// <summary>
     /// Endpoint controller for report operations.
     /// </summary>
@@ -58,7 +43,7 @@ namespace FunderMaps.Controllers.Api
         /// </summary>
         /// <param name="offset">Offset into the list.</param>
         /// <param name="limit">Limit the output.</param>
-        /// <returns>List of <see cref="Report"/>.</returns>
+        /// <returns>List of <see cref="Inquiry"/>.</returns>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] int offset = 0, [FromQuery] int limit = 25)
             => Ok(await _reportRepository.ListAllAsync(User.GetOrganizationId(), new Navigation(offset, limit)));
@@ -87,7 +72,7 @@ namespace FunderMaps.Controllers.Api
         /// <returns>Report.</returns>
         [HttpPost]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        public async Task<IActionResult> PostAsync([FromBody] Report input)
+        public async Task<IActionResult> PostAsync([FromBody] Inquiry input)
         {
             if (input == null)
             {
@@ -129,7 +114,7 @@ namespace FunderMaps.Controllers.Api
             //         set to 'pending'. However the frontend is not
             //         yet prepared to deal with this flow.
 
-            input.Status = ReportStatus.Pending;
+            input.Status = InquiryStatus.Pending;
             input.Attribution = new Attribution
             {
                 Project = input.Attribution.Project,
@@ -148,8 +133,8 @@ namespace FunderMaps.Controllers.Api
         /// if the the record is public or if the organization user has
         /// access to the record.
         /// </summary>
-        /// <param name="id">Report identifier, see <see cref="Report.Id"/>.</param>
-        /// <param name="document">Report identifier, <see cref="Report.DocumentId"/>.</param>
+        /// <param name="id">Report identifier, see <see cref="Inquiry.Id"/>.</param>
+        /// <param name="document">Report identifier, <see cref="Inquiry.DocumentId"/>.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{document}")]
         public async Task<IActionResult> GetAsync(int id, string document)
@@ -167,8 +152,8 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Get link to the report file resource from the report.
         /// </summary>
-        /// <param name="id">Report identifier, see <see cref="Report.Id"/>.</param>
-        /// <param name="document">Report identifier, <see cref="Report.DocumentId"/>.</param>
+        /// <param name="id">Report identifier, see <see cref="Inquiry.Id"/>.</param>
+        /// <param name="document">Report identifier, <see cref="Inquiry.DocumentId"/>.</param>
         /// <returns>Report.</returns>
         [HttpGet("{id}/{document}/download")]
         public async Task<IActionResult> GetDownloadLinkAsync(int id, string document)
@@ -208,7 +193,7 @@ namespace FunderMaps.Controllers.Api
         /// <param name="input">Report data.</param>
         [HttpPut("{id}/{document}")]
         [Authorize(Policy = Constants.OrganizationMemberWritePolicy)]
-        public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Report input)
+        public async Task<IActionResult> PutAsync(int id, string document, [FromBody] Inquiry input)
         {
             if (input == null)
             {
@@ -262,12 +247,12 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            if (report.Status != ReportStatus.Pending)
+            if (report.Status != InquiryStatus.Pending)
             {
                 return Forbid(0, _localizer["Resource modification forbidden with current status"]);
             }
 
-            report.Status = ReportStatus.PendingReview;
+            report.Status = InquiryStatus.PendingReview;
 
             await _reportRepository.UpdateAsync(report);
 
@@ -301,7 +286,7 @@ namespace FunderMaps.Controllers.Api
                 return ResourceNotFound();
             }
 
-            if (report.Status != ReportStatus.PendingReview)
+            if (report.Status != InquiryStatus.PendingReview)
             {
                 return Forbid(0, _localizer["Resource modification forbidden with current status"]);
             }
@@ -309,10 +294,10 @@ namespace FunderMaps.Controllers.Api
             switch (input.Result)
             {
                 case VerificationInputModel.VerificationResult.Verified:
-                    report.Status = ReportStatus.Done;
+                    report.Status = InquiryStatus.Done;
                     break;
                 case VerificationInputModel.VerificationResult.Rejected:
-                    report.Status = ReportStatus.Rejected;
+                    report.Status = InquiryStatus.Rejected;
                     // TODO: Notify user via input.Message
                     break;
             }
@@ -345,4 +330,5 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
     }
+#endif
 }

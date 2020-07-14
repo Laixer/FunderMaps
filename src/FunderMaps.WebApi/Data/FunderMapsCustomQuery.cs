@@ -1,8 +1,6 @@
-﻿using Laixer.Identity.Dapper;
-using System;
-
-namespace FunderMaps.Data
+﻿namespace FunderMaps.Data
 {
+#if DISABLED
     /// <summary>
     /// Set the custom queries for FunderMapsUser and FunderMapsRole.
     /// </summary>
@@ -88,4 +86,5 @@ namespace FunderMaps.Data
                 WHERE id=@Id";
         }
     }
+#endif
 }

@@ -26,7 +26,7 @@ namespace FunderMaps.HealthChecks
         /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
         /// <returns><see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-            => (await _fileStorageService.GetStorageNameAsync()).ToLower().Contains(Constants.ReportStorage)
+            => (await _fileStorageService.GetStorageNameAsync()).ToLowerInvariant().Contains(Constants.ReportStorage)
                 ? HealthCheckResult.Healthy()
                 : HealthCheckResult.Unhealthy();
     }

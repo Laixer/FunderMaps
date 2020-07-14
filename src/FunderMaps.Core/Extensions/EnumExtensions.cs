@@ -7,8 +7,10 @@ namespace FunderMaps.Core.Extensions
     /// <summary>
     /// Enum extensions.
     /// </summary>
+    [Obsolete("Should not be used")]
     public static class EnumExtensions
     {
+        // TODO: Obsolete
         /// <summary>
         /// Convert enum option to member name based on defined attributes.
         /// </summary>

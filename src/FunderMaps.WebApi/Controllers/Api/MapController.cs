@@ -1,18 +1,8 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Extensions;
-using FunderMaps.Helpers;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Controllers.Api
+﻿namespace FunderMaps.Controllers.Api
 {
+    // TODO: Remove
     // FUTURE: Map query interfaces must accept single or multiple items.
-
+#if DISABLED
     /// <summary>
     /// Map data endpoint.
     /// </summary>
@@ -548,14 +538,14 @@ namespace FunderMaps.Controllers.Api
         {
             // FUTURE: This is super inefficient. We can query everything together and build a local collection.
 
-            var col1 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.FoundationResearch, User.GetOrganizationId());
-            var col2 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.Quickscan, User.GetOrganizationId());
-            var col3 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.ArchitecturalResearch, User.GetOrganizationId());
-            var col4 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.ArchieveResearch, User.GetOrganizationId());
-            var col5 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.DemolitionResearch, User.GetOrganizationId());
-            var col6 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.Monitoring, User.GetOrganizationId());
-            var col7 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.FoundationAdvice, User.GetOrganizationId());
-            var col8 = await _mapRepository.GetReportTypeByOrganizationAsync(ReportType.Unknown, User.GetOrganizationId());
+            var col1 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.FoundationResearch, User.GetOrganizationId());
+            var col2 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.Quickscan, User.GetOrganizationId());
+            var col3 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.ArchitecturalResearch, User.GetOrganizationId());
+            var col4 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.ArchieveResearch, User.GetOrganizationId());
+            var col5 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.DemolitionResearch, User.GetOrganizationId());
+            var col6 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.Monitoring, User.GetOrganizationId());
+            var col7 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.FoundationAdvice, User.GetOrganizationId());
+            var col8 = await _mapRepository.GetReportTypeByOrganizationAsync(InquiryType.Unknown, User.GetOrganizationId());
 
             return Ok(BuildGeoCollection(col8, new
             {
@@ -747,4 +737,5 @@ namespace FunderMaps.Controllers.Api
         }
 #endif
     }
+#endif
 }

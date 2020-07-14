@@ -1,11 +1,12 @@
-﻿using NpgsqlTypes;
+﻿using System;
 using System.Runtime.Serialization;
-
+#if KAAS
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Base measurement level.
     /// </summary>
+    [Obsolete]
     public enum BaseLevel
     {
         /// <summary>
@@ -30,3 +31,4 @@ namespace FunderMaps.Core.Entities
         NN,
     }
 }
+#endif

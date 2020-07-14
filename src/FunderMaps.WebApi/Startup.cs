@@ -1,16 +1,8 @@
-﻿using FunderMaps.Authorization;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Data;
-using FunderMaps.Data.Repositories;
-using FunderMaps.Event;
-using FunderMaps.Event.Handlers;
+﻿using AutoMapper;
+using FunderMaps.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
-using FunderMaps.Helpers;
-using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
-using FunderMaps.Services;
-using Laixer.Identity.Dapper.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -21,8 +13,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using NETCore.MailKit.Extensions;
-using NETCore.MailKit.Infrastructure.Internal;
 using System.IO.Compression;
 
 namespace FunderMaps
@@ -32,97 +22,80 @@ namespace FunderMaps
     /// </summary>
     public class Startup
     {
-        private readonly IConfiguration _configuration;
+        /// <summary>
+        /// Configuration.
+        /// </summary>
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         /// Create a new instance.
         /// </summary>
-        /// <param name="configuration"></param>
-        public Startup(IConfiguration configuration) => _configuration = configuration;
+        /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
-        /// <param name="services">Service collection.</param>
+        /// <remarks>
+        /// Order is undetermined when configuring services.
+        /// </remarks>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry();
 
-            services.AddDbProvider("FunderMapsConnection");
+            services.AddAutoMapper(typeof(Startup));
 
-            ConfigureAuthentication(services);
-            ConfigureAuthorization(services);
+            //ConfigureAuthentication(services);
+            //ConfigureAuthorization(services);
 
             services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers()
-                .AddNewtonsoftJson();
+            services.AddControllers();
 
-            // Set CORS policy.
-            services.AddCorsPolicy(_configuration);
-
-            // Enable response compression.
             services.AddResponseCompression(options =>
             {
                 options.EnableForHttps = true;
             });
 
-            services.AddMailKit(builder =>
-            {
-                var config = _configuration.GetSection("Email");
-                builder.UseMailKit(new MailKitOptions()
-                {
-                    Server = config.GetValue<string>("Server"),
-                    Port = config.GetValue<int>("Port"),
-                    SenderName = config.GetValue<string>("SenderName"),
-                    SenderEmail = config.GetValue<string>("SenderEmail"),
-                    Account = config.GetValue<string>("Account"),
-                    Password = config.GetValue<string>("Password"),
-                    Security = true,
-                });
-            });
+            // TODO: Move
+            //services.AddMailKit(builder =>
+            //{
+            //    var config = _configuration.GetSection("Email");
+            //    builder.UseMailKit(new MailKitOptions()
+            //    {
+            //        Server = config.GetValue<string>("Server"),
+            //        Port = config.GetValue<int>("Port"),
+            //        SenderName = config.GetValue<string>("SenderName"),
+            //        SenderEmail = config.GetValue<string>("SenderEmail"),
+            //        Account = config.GetValue<string>("Account"),
+            //        Password = config.GetValue<string>("Password"),
+            //        Security = true,
+            //    });
+            //});
 
-            // Enable compression where possible.
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
+            // Configure compression providers.
+            services
+                .Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
                 .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
             services.AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("api_health_check")
-                .AddCheck<DatabaseHealthCheck>("db_health_check")
+                //.AddCheck<DatabaseHealthCheck>("db_health_check")
                 .AddCheck<FileStorageCheck>("file_health_check");
 
-            services.AddEventBus()
-                .AddHandler<IUpdateUserProfileEvent, UpdateUserProfileHandler>();
+            // Register components from local assemly.
+            //services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            //services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
+            //services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
 
-            // Register repositories from local application module.
-            ConfigureRepository(services);
-
-            // Register services from local application module.
-            services.AddTransient<IMailService, MailService>();
-
-            // Register services from application modules.
-            services.AddApplicationCoreServices();
-            services.AddApplicationCloudServices();
-        }
-
-        /// <summary>
-        /// Setup local repositories and register them with the service collector.
-        /// </summary>
-        /// <param name="services">Service collection.</param>
-        private static void ConfigureRepository(IServiceCollection services)
-        {
-            services.AddScoped<IAddressRepository, AddressRepository>();
-            services.AddScoped<ISampleRepository, SampleRepository>();
-            services.AddScoped<IReportRepository, ReportRepository>();
-            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-            services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
-            services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
-            services.AddScoped<IFoundationRecoveryRepository, FoundationRecoveryRepository>();
-            services.AddScoped<IMapRepository, MapRepository>();
-            services.AddScoped<IIncidentRepository, IncidentRepository>();
+            // Register components from reference assemblies.
+            services.AddFunderMapsCoreServices();
+            services.AddFunderMapsCloudServices();
+            services.AddFunderMapsDataServices("FunderMapsConnection");
         }
 
         /// <summary>
@@ -136,13 +109,13 @@ namespace FunderMaps
                 options.Lockout = Constants.LockoutOptions;
                 options.User.RequireUniqueEmail = true;
             })
-            .AddDapperStores(options =>
-            {
-                options.UserTable = "user";
-                options.Schema = "application";
-                options.MatchWithUnderscore = true;
-                options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionStringFallback("FunderMapsConnection"));
-            })
+            //.AddDapperStores(options =>
+            //{
+            //    options.UserTable = "user";
+            //    options.Schema = "application";
+            //    options.MatchWithUnderscore = true;
+            //    options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionStringFallback("FunderMapsConnection"));
+            //})
             .AddDefaultTokenProviders();
 
             // FUTURE: Replace with AddIdentityServer
@@ -157,9 +130,9 @@ namespace FunderMaps
                 options.SaveToken = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = _configuration.GetJwtIssuer(),
-                    ValidAudience = _configuration.GetJwtAudience(),
-                    IssuerSigningKey = _configuration.GetJwtSignKey(),
+                    ValidIssuer = Configuration.GetJwtIssuer(),
+                    ValidAudience = Configuration.GetJwtAudience(),
+                    IssuerSigningKey = Configuration.GetJwtSignKey(),
                 };
             });
         }
@@ -181,20 +154,20 @@ namespace FunderMaps
 
                 options.AddPolicy(Constants.OrganizationMemberWritePolicy, organizationMemberPolicyBuilder
                     .RequireAssertion(context => context.User.HasOrganization() &&
-                        (context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer))
+                        (context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Verifier ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Writer))
                     .Build());
 
                 options.AddPolicy(Constants.OrganizationMemberVerifyPolicy, organizationMemberPolicyBuilder
                     .RequireAssertion(context => context.User.HasOrganization() &&
-                        (context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier))
+                        (context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Verifier))
                     .Build());
 
                 options.AddPolicy(Constants.OrganizationMemberSuperPolicy, organizationMemberPolicyBuilder
                     .RequireAssertion(context => context.User.HasOrganization() &&
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser)
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Superuser)
                     .Build());
 
                 options.AddPolicy(Constants.OrganizationMemberOrAdministratorPolicy, new AuthorizationPolicyBuilder()
@@ -209,9 +182,9 @@ namespace FunderMaps
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
                         context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Writer) ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Verifier ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Writer) ||
                         context.User.IsInRole(Constants.AdministratorRole)))
                     .Build());
 
@@ -219,8 +192,8 @@ namespace FunderMaps
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
                         context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser ||
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Verifier) ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Superuser ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Verifier) ||
                         context.User.IsInRole(Constants.AdministratorRole)))
                     .Build());
 
@@ -228,7 +201,7 @@ namespace FunderMaps
                     .RequireAuthenticatedUser()
                     .RequireAssertion(context => ((context.User.HasOrganization() &&
                         context.User.FindFirst(ClaimTypes.OrganizationUser) != null &&
-                        context.User.GetOrganizationRole() == Core.Entities.OrganizationRole.Superuser) ||
+                        context.User.GetOrganizationRole() == Core.Types.OrganizationRole.Superuser) ||
                         context.User.IsInRole(Constants.AdministratorRole)))
                     .Build());
             });
@@ -237,18 +210,15 @@ namespace FunderMaps
         /// <summary>
         /// This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
         /// </summary>
-        /// <remarks>This is a pipeline, order is of importance!</remarks>
+        /// <remarks>
+        /// The order in which the pipeline handles request is of importance.
+        /// </remarks>
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseCors("CORSDeveloperPolicy"); // TODO:
-            }
-            else if (env.IsStaging())
-            {
-                app.UseCors("CORSDeveloperPolicy"); // TODO:
-                app.UseHsts();
+                //app.UseCors("CORSDeveloperPolicy"); // TODO:
             }
             else
             {

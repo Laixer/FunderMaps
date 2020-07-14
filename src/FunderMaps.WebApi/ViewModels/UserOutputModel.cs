@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
     /// User output mode.

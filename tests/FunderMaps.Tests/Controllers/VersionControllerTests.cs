@@ -1,10 +1,6 @@
-﻿using FunderMaps.Controllers.Api;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Xunit;
-
-namespace FunderMaps.Tests.Controllers
+﻿namespace FunderMaps.Tests.Controllers
 {
+#if DISABLED
     public class VersionControllerTests
     {
         [Fact]
@@ -24,4 +20,5 @@ namespace FunderMaps.Tests.Controllers
             Assert.Equal(returnValue.VersionString, returnValue.Version.ToString());
         }
     }
+#endif
 }

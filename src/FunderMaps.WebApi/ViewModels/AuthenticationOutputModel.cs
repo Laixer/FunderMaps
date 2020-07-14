@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.ViewModels
+﻿namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
     /// Authentication result model.

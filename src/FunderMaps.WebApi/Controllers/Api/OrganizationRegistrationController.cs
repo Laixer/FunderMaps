@@ -1,7 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Interfaces;
 using FunderMaps.Models.Identity;
-using FunderMaps.ViewModels;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Controllers.Api
 {
+#if DISABLED
     /// <summary>
     /// Endpoint for new organizations. This turns an organization proposal
     /// into an actual organization.
@@ -94,4 +95,5 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
     }
+#endif
 }

@@ -1,11 +1,6 @@
-﻿using Dapper;
-using FunderMaps.Providers;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace FunderMaps.HealthChecks
+﻿namespace FunderMaps.HealthChecks
 {
+#if DISABLED
     /// <summary>
     /// Check if the database is alive.
     /// </summary>
@@ -33,4 +28,5 @@ namespace FunderMaps.HealthChecks
                 : HealthCheckResult.Unhealthy();
         }
     }
+#endif
 }

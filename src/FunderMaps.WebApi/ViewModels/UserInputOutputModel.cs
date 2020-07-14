@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     // TODO: Can be removed?
     /// <summary>

@@ -1,11 +1,12 @@
 ﻿using System;
-
+#if KAAS
 namespace FunderMaps.Core.Entities
 {
     // FUTURE: can be removed.
     /// <summary>
     /// Report norm.
     /// </summary>
+    [Obsolete]
     public class Contractor
     {
         /// <summary>
@@ -19,3 +20,4 @@ namespace FunderMaps.Core.Entities
         public string Name { get; set; }
     }
 }
+#endif

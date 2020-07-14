@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
@@ -11,35 +10,38 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Unique identifier.
         /// </summary>
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// Street name.
-        /// </summary>
-        [Required]
-        [MaxLength(128)]
-        public string StreetName { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Building number.
         /// </summary>
+        public string BuildingNumber { get; set; }
+
+        /// <summary>
+        /// Postcode.
+        /// </summary>
+        public string PostalCode { get; set; }
+
+        /// <summary>
+        /// Street name.
+        /// </summary>
+        public string Street { get; set; }
+
+        /// <summary>
+        /// Address is active or not.
+        /// </summary>
+        public bool IsActive { get; set; }
+
+        /// <summary>
+        /// External data source id.
+        /// </summary>
         [Required]
-        public short BuildingNumber { get; set; }
+        public string ExternalId { get; set; }
 
         /// <summary>
-        /// Building number suffix.
+        /// External data source.
         /// </summary>
-        [MaxLength(8)]
-        public string BuildingNumberSuffix { get; set; }
-
-        /// <summary>
-        /// Bag Id.
-        /// </summary>
-        public string Bag { get; set; }
-
-        /// <summary>
-        /// Additional data.
-        /// </summary>
-        public string AdditionalData { get; set; }
+        [Required]
+        public string ExternalSource { get; set; }
     }
 }

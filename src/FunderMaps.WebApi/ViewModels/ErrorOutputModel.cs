@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     // FUTURE: MVC should not handle any errors
 

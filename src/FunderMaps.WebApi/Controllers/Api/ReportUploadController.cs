@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace FunderMaps.Core.Extensions
 {
     /// <summary>
     /// String Extensions.
     /// </summary>
+    [Obsolete("Should not be required anywhere")]
     public static class StringExtensions
     {
         /// <summary>

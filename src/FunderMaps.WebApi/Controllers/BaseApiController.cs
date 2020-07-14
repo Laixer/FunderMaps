@@ -1,4 +1,4 @@
-﻿using FunderMaps.ViewModels;
+﻿using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Controllers
