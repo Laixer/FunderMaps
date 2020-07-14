@@ -135,7 +135,7 @@ namespace FunderMaps.Core.UseCases
         #region Inquiry Sample
 
         /// <summary>
-        /// Get inquiry sample.
+        ///     Get inquiry sample.
         /// </summary>
         /// <param name="id">Entity sample id.</param>
         public virtual async ValueTask<InquirySample> GetSampleAsync(int id)
@@ -154,7 +154,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Create new inquiry sample.
+        ///     Create new inquiry sample.
         /// </summary>
         /// <param name="inquirySample">Entity object.</param>
         public virtual async ValueTask<InquirySample> CreateSampleAsync(InquirySample inquirySample)
@@ -186,7 +186,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Retrieve all inquiry samples.
+        ///     Retrieve all inquiry samples.
         /// </summary>
         /// <param name="navigation">Recordset nagivation.</param>
         public virtual async IAsyncEnumerable<InquirySample> GetAllSampleAsync(INavigation navigation)
@@ -200,7 +200,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Delete inquiry sample.
+        ///     Delete inquiry sample.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask DeleteSampleAsync(int id)
@@ -219,7 +219,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Update inquiry sample.
+        ///     Update inquiry sample.
         /// </summary>
         /// <param name="inquirySample">Entity object.</param>
         public virtual async ValueTask UpdateSampleAsync(InquirySample inquirySample)
