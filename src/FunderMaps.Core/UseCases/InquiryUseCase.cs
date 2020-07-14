@@ -140,15 +140,17 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity sample id.</param>
         public virtual async ValueTask<InquirySample> GetSampleAsync(int id)
         {
-            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-            if (inquirySample == null)
+            try
             {
+                var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+                inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+                return inquirySample;
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
                 throw new EntityNotFoundException();
             }
-
-            inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
-            //inquirySample.AddressNavigation = await _addressRepository.GetByIdAsync(inquirySample.Address).ConfigureAwait(false);
-            return inquirySample;
         }
 
         /// <summary>
@@ -163,11 +165,24 @@ namespace FunderMaps.Core.UseCases
             }
 
             // TODO: Set Inquiry.Status = InquiryStatus.Pending
-
+            inquirySample.Id = 0;
             inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+            inquirySample.CreateDate = DateTime.MinValue;
+            inquirySample.UpdateDate = null;
+            inquirySample.DeleteDate = null;
 
-            var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
-            return await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+
+            try
+            {
+                var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
+                return await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
         }
 
         /// <summary>
@@ -192,25 +207,43 @@ namespace FunderMaps.Core.UseCases
         {
             // TODO: Set Inquiry.Status = InquiryStatus.Todo ?
 
-            await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
+            try
+            {
+                await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
         }
 
         /// <summary>
         /// Update inquiry sample.
         /// </summary>
         /// <param name="inquirySample">Entity object.</param>
-        public virtual ValueTask UpdateSampleAsync(InquirySample inquirySample)
+        public virtual async ValueTask UpdateSampleAsync(InquirySample inquirySample)
         {
             if (inquirySample == null)
             {
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-
             // TODO: Set Inquiry.Status = InquiryStatus.Pending
 
-            return _inquirySampleRepository.UpdateAsync(inquirySample);
+            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+
+            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+
+            try
+            {
+                await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
         }
 
         #endregion

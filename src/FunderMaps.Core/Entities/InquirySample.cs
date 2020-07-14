@@ -1,38 +1,41 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Inquiry sample entity.
+    ///     Inquiry sample entity.
     /// </summary>
     public class InquirySample : RecordControl
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Inquiry identifier.
+        ///     Inquiry identifier.
         /// </summary>
         public int Inquiry { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
+        [Required, Address]
         public string Address { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
-        /// Base measurement level.
+        ///     Base measurement level.
         /// </summary>
+        [Required]
         public BaseMeasurementLevel BaseMeasurementLevel { get; set; } = BaseMeasurementLevel.NAP;
 
         /// <summary>

@@ -6,6 +6,7 @@ using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -19,7 +20,9 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public InquirySampleRepository(DbProvider dbProvider) : base(dbProvider) { }
+        public InquirySampleRepository(DbProvider dbProvider)
+            : base(dbProvider)
+        { }
 
         /// <summary>
         /// Create new <see cref="InquirySample"/>.
@@ -53,14 +56,10 @@ namespace FunderMaps.Data.Repositories
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("inquiry", entity.Inquiry);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
-            cmd.AddParameterWithValue("built_year", entity.BuiltYear);
-            cmd.AddParameterWithValue("substructure", entity.Substructure);
 
-            return await cmd.ExecuteScalarIntAsync().ConfigureAwait(false);
+            MapToWriter(cmd, entity);
+
+            return await cmd.ExecuteScalarIntAsync().ConfigureAwait(false); // TODO: Ensure
         }
 
         /// <summary>
@@ -73,7 +72,7 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    report.inquiry_sample";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            return ExecuteScalarUnsignedLongCommandAsync(sql); // TODO: Ensure
         }
 
         public Task<uint> CountAsync(Guid orgId)
@@ -82,7 +81,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Delete <see cref="InquirySample"/>.
+        ///     Delete <see cref="InquirySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
@@ -95,11 +94,36 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
         }
 
+        private static void MapToWriter(DbCommand cmd, InquirySample entity)
+        {
+            cmd.AddParameterWithValue("inquiry", entity.Inquiry);
+            cmd.AddParameterWithValue("address", entity.Address);
+            cmd.AddParameterWithValue("note", entity.Note);
+            cmd.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
+            cmd.AddParameterWithValue("built_year", entity.BuiltYear);
+            cmd.AddParameterWithValue("substructure", entity.Substructure);
+        }
+
+        private static InquirySample MapFromReader(DbDataReader reader)
+            => new InquirySample
+            {
+                Id = reader.GetInt(0),
+                Inquiry = reader.GetInt(1),
+                Address = reader.SafeGetString(2),
+                Note = reader.SafeGetString(3),
+                CreateDate = reader.GetDateTime(4),
+                UpdateDate = reader.GetSafeDateTime(5),
+                DeleteDate = reader.GetSafeDateTime(6),
+                BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(7),
+                BuiltYear = reader.GetDateTime(8),
+                Substructure = reader.GetFieldValue<Substructure>(9),
+            };
+
         /// <summary>
-        /// Retrieve <see cref="InquirySample"/> by id.
+        ///     Retrieve <see cref="InquirySample"/> by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="InquirySample"/>.</returns>
@@ -124,22 +148,10 @@ namespace FunderMaps.Data.Repositories
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
             await reader.ReadAsync().ConfigureAwait(false);
 
-            return new InquirySample
-            {
-                Id = reader.GetInt(0),
-                Inquiry = reader.GetInt(1),
-                Address = reader.SafeGetString(2),
-                Note = reader.SafeGetString(3),
-                CreateDate = reader.GetDateTime(4),
-                UpdateDate = reader.GetSafeDateTime(5),
-                DeleteDate = reader.GetSafeDateTime(6),
-                BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(7),
-                BuiltYear = reader.GetDateTime(8),
-                Substructure = reader.GetFieldValue<Substructure>(9),
-            };
+            return MapFromReader(reader);
         }
 
         public Task<InquirySample> GetByIdAsync(int id, Guid orgId)
@@ -181,22 +193,10 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                yield return new InquirySample
-                {
-                    Id = reader.GetInt(0),
-                    Inquiry = reader.GetInt(1),
-                    Address = reader.SafeGetString(2),
-                    Note = reader.SafeGetString(3),
-                    CreateDate = reader.GetDateTime(4),
-                    UpdateDate = reader.GetSafeDateTime(5),
-                    DeleteDate = reader.GetSafeDateTime(6),
-                    BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(7),
-                    BuiltYear = reader.GetDateTime(8),
-                    Substructure = reader.GetFieldValue<Substructure>(9),
-                };
+                yield return MapFromReader(reader);
             }
         }
 
@@ -229,19 +229,16 @@ namespace FunderMaps.Data.Repositories
                             note = @note,
                             base_measurement_level = @base_measurement_level,
                             built_year = @built_year,
-                            substructure = @substructure,
+                            substructure = @substructure
                     WHERE   id = @id";
 
             using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("inquiry", entity.Inquiry);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
-            cmd.AddParameterWithValue("built_year", entity.BuiltYear);
-            cmd.AddParameterWithValue("substructure", entity.Substructure);
             cmd.AddParameterWithValue("id", entity.Id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+            MapToWriter(cmd, entity);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
         }
     }
 }
