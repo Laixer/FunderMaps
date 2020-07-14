@@ -17,7 +17,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         /// Client document identifier.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string DocumentName { get; set; }
 
         /// <summary>
@@ -44,22 +44,21 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         /// Original document creation.
         /// </summary>
-        [Required]
         [DataType(DataType.DateTime)]
-        [Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
+        [Required, Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
         public DateTime DocumentDate { get; set; }
 
         // TODO: Check if starts with https://
         /// <summary>
         /// Document file name.
         /// </summary>
-        [Required]
+        [Required, Url]
         public string DocumentFile { get; set; }
 
         /// <summary>
-        /// Report status.
+        ///     Report status.
         /// </summary>
-        public InquiryStatus Status { get; set; }
+        public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
         /// Report type.

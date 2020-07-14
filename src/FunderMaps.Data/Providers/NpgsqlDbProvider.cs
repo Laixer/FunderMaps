@@ -40,7 +40,6 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationQuality>("report.foundation_quality");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("report.foundation_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<IncidentQuestionType>("report.incident_question_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<InquiryStatus>("report.inquiry_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<InquiryType>("report.inquiry_type");
             //NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("report.inquiry_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<PileType>("report.pile_type");

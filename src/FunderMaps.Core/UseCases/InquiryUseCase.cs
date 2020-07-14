@@ -5,6 +5,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.UseCases
@@ -16,7 +17,7 @@ namespace FunderMaps.Core.UseCases
     //      -> creator receives notification + message
 
     /// <summary>
-    /// Inquiry use case.
+    ///     Inquiry use case.
     /// </summary>
     public class InquiryUseCase
     {
@@ -35,25 +36,26 @@ namespace FunderMaps.Core.UseCases
         #region Inquiry
 
         /// <summary>
-        /// Get inquiry.
+        ///     Get inquiry.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask<Inquiry> GetAsync(int id)
         {
-            var inquiry = await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
-            if (inquiry == null)
+            try
             {
+                // TODO:
+                //inquiry.AttributionNavigation = ...
+                return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
                 throw new EntityNotFoundException();
             }
-
-            // TODO:
-            //inquiry.AttributionNavigation = ...
-
-            return inquiry;
         }
 
         /// <summary>
-        /// Create new inquiry.
+        ///     Create new inquiry.
         /// </summary>
         /// <param name="inquiry">Entity object.</param>
         public virtual async ValueTask<Inquiry> CreateAsync(Inquiry inquiry)
@@ -63,34 +65,69 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquiry));
             }
 
-            inquiry.Status = InquiryStatus.Todo;
+            inquiry.Id = 0;
+            inquiry.AuditStatus = AuditStatus.Todo;
             inquiry.Attribution = 1; // TODO: Remove
+            inquiry.CreateDate = DateTime.MinValue;
+            inquiry.UpdateDate = null;
+            inquiry.DeleteDate = null;
+            inquiry.AttributionNavigation = null;
 
-            var id = await _inquiryRepository.AddAsync(inquiry).ConfigureAwait(false);
-            return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+
+            try
+            {
+                var id = await _inquiryRepository.AddAsync(inquiry).ConfigureAwait(false);
+                return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
         }
 
         /// <summary>
-        /// Retrieve all inquiries.
+        ///     Retrieve all inquiries.
         /// </summary>
         /// <param name="navigation">Recordset nagivation.</param>
         public virtual IAsyncEnumerable<Inquiry> GetAllAsync(INavigation navigation)
             => _inquiryRepository.ListAllAsync(navigation);
 
         /// <summary>
-        /// Update inquiry.
+        ///     Update inquiry.
         /// </summary>
         /// <param name="inquiry">Entity object.</param>
-        public virtual ValueTask UpdateAsync(Inquiry inquiry)
-            => _inquiryRepository.UpdateAsync(inquiry);
+        public virtual async ValueTask UpdateAsync(Inquiry inquiry)
+        {
+            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+
+            try
+            {
+                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
+        }
 
         /// <summary>
-        /// Delete inquiry.
+        ///     Delete inquiry.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask DeleteAsync(int id)
         {
-            await _inquiryRepository.DeleteAsync(id).ConfigureAwait(false);
+            try
+            {
+                await _inquiryRepository.DeleteAsync(id).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
         }
 
         #endregion

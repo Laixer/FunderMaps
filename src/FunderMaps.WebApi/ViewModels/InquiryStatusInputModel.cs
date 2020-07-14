@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
-    /// Inquiry status input model.
+    ///     Inquiry status input model.
     /// </summary>
     public sealed class InquiryStatusInputModel
     {
         /// <summary>
-        /// Verification result.
+        ///     Verification result.
         /// </summary>
         [Required]
-        public InquiryStatus Status { get; set; }
+        public AuditStatus Status { get; set; }
 
         /// <summary>
-        /// New status reason.
+        ///     New status reason.
         /// </summary>
         public string Message { get; set; }
     }

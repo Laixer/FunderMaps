@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities
 {
     // TODO: Move validation on properties.
     /// <summary>
-    /// Indicent entity.
+    ///     Indicent entity.
     /// </summary>
     public class Incident : RecordControl
     {
@@ -59,7 +59,7 @@ namespace FunderMaps.Core.Entities
         public string[] DocumentFile { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         public string Note { get; set; }
 

@@ -6,12 +6,13 @@ using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
-    /// Inquiry repository.
+    ///     Inquiry repository.
     /// </summary>
     internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryRepository
     {
@@ -19,10 +20,12 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public InquiryRepository(DbProvider dbProvider) : base(dbProvider) { }
+        public InquiryRepository(DbProvider dbProvider)
+            : base(dbProvider)
+        { }
 
         /// <summary>
-        /// Create new <see cref="Inquiry"/>.
+        ///     Create new <see cref="Inquiry"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Inquiry"/>.</returns>
@@ -44,7 +47,7 @@ namespace FunderMaps.Data.Repositories
                     document_file,
                     attribution,
                     access_policy,
-                    status,
+                    audit_status,
                     type,
                     standard_f3o)
                 VALUES (
@@ -57,7 +60,7 @@ namespace FunderMaps.Data.Repositories
                     @document_file,
                     @attribution,
                     @access_policy,
-                    @status,
+                    @audit_status,
                     @type,
                     @standard_f3o)
                 RETURNING id;
@@ -65,19 +68,10 @@ namespace FunderMaps.Data.Repositories
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("document_name", entity.DocumentName);
-            cmd.AddParameterWithValue("inspection", entity.Inspection);
-            cmd.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
-            cmd.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("attribution", entity.Attribution);
-            cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            cmd.AddParameterWithValue("status", entity.Status);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("standard_f3o", entity.StandardF3o);
-            return await cmd.ExecuteScalarIntAsync().ConfigureAwait(false);
+
+            MapToWriter(cmd, entity);
+
+            return await cmd.ExecuteScalarIntAsync().ConfigureAwait(false); // TODO: Ensure
         }
 
         public Task<uint> CountAsync(Guid orgId)
@@ -86,7 +80,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Retrieve number of entities.
+        ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
         public override ValueTask<ulong> CountAsync()
@@ -95,11 +89,11 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    report.inquiry";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            return ExecuteScalarUnsignedLongCommandAsync(sql); // TODO: Ensure
         }
 
         /// <summary>
-        /// Delete <see cref="Inquiry"/>.
+        ///     Delete <see cref="Inquiry"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
@@ -112,8 +106,45 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
         }
+
+        private static void MapToWriter(DbCommand cmd, Inquiry entity)
+        {
+            cmd.AddParameterWithValue("document_name", entity.DocumentName);
+            cmd.AddParameterWithValue("inspection", entity.Inspection);
+            cmd.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
+            cmd.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
+            cmd.AddParameterWithValue("note", entity.Note);
+            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
+            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
+            cmd.AddParameterWithValue("attribution", entity.Attribution);
+            cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
+            cmd.AddParameterWithValue("audit_status", entity.AuditStatus);
+            cmd.AddParameterWithValue("type", entity.Type);
+            cmd.AddParameterWithValue("standard_f3o", entity.StandardF3o);
+        }
+
+        private static Inquiry MapFromReader(DbDataReader reader)
+            => new Inquiry
+            {
+                Id = reader.GetInt(0),
+                DocumentName = reader.SafeGetString(1),
+                Inspection = reader.GetBoolean(2),
+                JointMeasurement = reader.GetBoolean(3),
+                FloorMeasurement = reader.GetBoolean(4),
+                CreateDate = reader.GetDateTime(5),
+                UpdateDate = reader.GetSafeDateTime(6),
+                DeleteDate = reader.GetSafeDateTime(7),
+                Note = reader.SafeGetString(8),
+                DocumentDate = reader.GetDateTime(9),
+                DocumentFile = reader.SafeGetString(10),
+                Attribution = reader.GetInt(11),
+                AccessPolicy = reader.GetFieldValue<AccessPolicy>(12),
+                AuditStatus = reader.GetFieldValue<AuditStatus>(13),
+                Type = reader.GetFieldValue<InquiryType>(14),
+                StandardF3o = reader.GetBoolean(15),
+            };
 
         public Task<Inquiry> GetByIdAsync(int id, Guid orgId)
         {
@@ -121,7 +152,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Retrieve <see cref="Inquiry"/> by id.
+        ///     Retrieve <see cref="Inquiry"/> by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Inquiry"/>.</returns>
@@ -141,7 +172,7 @@ namespace FunderMaps.Data.Repositories
                         document_file,
                         attribution,
                         access_policy,
-                        status,
+                        audit_status,
                         type,
                         standard_f3o
                 FROM    report.inquiry
@@ -152,28 +183,10 @@ namespace FunderMaps.Data.Repositories
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
             await reader.ReadAsync().ConfigureAwait(false);
 
-            return new Inquiry
-            {
-                Id = reader.GetInt(0),
-                DocumentName = reader.SafeGetString(1),
-                Inspection = reader.GetBoolean(2),
-                JointMeasurement = reader.GetBoolean(3),
-                FloorMeasurement = reader.GetBoolean(4),
-                CreateDate = reader.GetDateTime(5),
-                UpdateDate = reader.GetSafeDateTime(6),
-                DeleteDate = reader.GetSafeDateTime(7),
-                Note = reader.SafeGetString(8),
-                DocumentDate = reader.GetDateTime(9),
-                DocumentFile = reader.SafeGetString(10),
-                Attribution = reader.GetInt(11),
-                AccessPolicy = reader.GetFieldValue<AccessPolicy>(12),
-                Status = reader.GetFieldValue<InquiryStatus>(13),
-                Type = reader.GetFieldValue<InquiryType>(14),
-                StandardF3o = reader.GetBoolean(15),
-            };
+            return MapFromReader(reader);
         }
 
         public Task<Inquiry> GetPublicAndByIdAsync(int id, Guid orgId)
@@ -187,7 +200,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Retrieve all <see cref="Inquiry"/>.
+        ///     Retrieve all <see cref="Inquiry"/>.
         /// </summary>
         /// <returns>List of <see cref="Inquiry"/>.</returns>
         public override async IAsyncEnumerable<Inquiry> ListAllAsync(INavigation navigation)
@@ -211,7 +224,7 @@ namespace FunderMaps.Data.Repositories
                         document_file,
                         attribution,
                         access_policy,
-                        status,
+                        audit_status,
                         type,
                         standard_f3o
                 FROM    report.inquiry";
@@ -221,33 +234,15 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
-                yield return new Inquiry
-                {
-                    Id = reader.GetInt(0),
-                    DocumentName = reader.SafeGetString(1),
-                    Inspection = reader.GetBoolean(2),
-                    JointMeasurement = reader.GetBoolean(3),
-                    FloorMeasurement = reader.GetBoolean(4),
-                    CreateDate = reader.GetDateTime(5),
-                    UpdateDate = reader.GetSafeDateTime(6),
-                    DeleteDate = reader.GetSafeDateTime(7),
-                    Note = reader.SafeGetString(8),
-                    DocumentDate = reader.GetDateTime(9),
-                    DocumentFile = reader.SafeGetString(10),
-                    Attribution = reader.GetInt(11),
-                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(12),
-                    Status = reader.GetFieldValue<InquiryStatus>(13),
-                    Type = reader.GetFieldValue<InquiryType>(14),
-                    StandardF3o = reader.GetBoolean(15),
-                };
+                yield return MapFromReader(reader);
             }
         }
 
         /// <summary>
-        /// Update <see cref="Inquiry"/>.
+        ///     Update <see cref="Inquiry"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(Inquiry entity)
@@ -268,27 +263,18 @@ namespace FunderMaps.Data.Repositories
                             document_file = @document_file,
                             attribution = @attribution,
                             access_policy = @access_policy,
-                            status = @status,
+                            audit_status = @audit_status,
                             type = @type,
                             standard_f3o = @standard_f3o
                     WHERE   id = @id";
 
             using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("document_name", entity.DocumentName);
-            cmd.AddParameterWithValue("inspection", entity.Inspection);
-            cmd.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
-            cmd.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("attribution", entity.Attribution);
-            cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            cmd.AddParameterWithValue("status", entity.Status);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("standard_f3o", entity.StandardF3o);
             cmd.AddParameterWithValue("id", entity.Id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+
+            MapToWriter(cmd, entity);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
         }
     }
 }

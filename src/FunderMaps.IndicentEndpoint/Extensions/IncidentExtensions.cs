@@ -5,12 +5,12 @@ using System;
 namespace FunderMaps.IndicentEndpoint.Extensions
 {
     /// <summary>
-    /// Extend incident.
+    ///     Extend incident.
     /// </summary>
     internal static class IncidentExtensions
     {
         /// <summary>
-        /// Map input viewmodel to incident entity.
+        ///     Map input viewmodel to incident entity.
         /// </summary>
         /// <param name="incident">Instance to extend.</param>
         /// <param name="input">Input from <see cref="IncidentInputViewModel"/>.</param>

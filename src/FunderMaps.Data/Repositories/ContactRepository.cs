@@ -51,7 +51,8 @@ namespace FunderMaps.Data.Repositories
 
             MapToWriter(cmd, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+            // Cannot ensure affect, row can already exist.
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
 
             return entity.Email;
         }

@@ -5,68 +5,67 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Inquiry entity.
+    ///     Inquiry entity.
     /// </summary>
     public class Inquiry : AttributionControl
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Client document identifier.
+        ///     Client document identifier.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string DocumentName { get; set; }
 
         /// <summary>
-        /// Inspection.
+        ///     Inspection.
         /// </summary>
         public bool Inspection { get; set; }
 
         /// <summary>
-        /// Joint measurement.
+        ///     Joint measurement.
         /// </summary>
         public bool JointMeasurement { get; set; }
 
         /// <summary>
-        /// Floor measurement.
+        ///     Floor measurement.
         /// </summary>
         public bool FloorMeasurement { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
-        /// Original document creation.
+        ///     Original document creation.
         /// </summary>
-        [Required]
         [DataType(DataType.DateTime)]
-        [Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
+        [Required, Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
         public DateTime DocumentDate { get; set; }
 
         /// <summary>
-        /// Document file name.
+        ///     Document file name.
         /// </summary>
-        [Required]
+        [Required, Url]
         public string DocumentFile { get; set; }
 
         /// <summary>
-        /// Report status.
+        ///     Report status.
         /// </summary>
-        public InquiryStatus Status { get; set; }
+        public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
-        /// Report type.
+        ///     Report type.
         /// </summary>
         public InquiryType Type { get; set; }
 
         /// <summary>
-        /// Coforms the F3O standaard.
+        ///     Coforms the F3O standaard.
         /// </summary>
         public bool StandardF3o { get; set; }
     }

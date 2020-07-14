@@ -117,10 +117,20 @@ namespace FunderMaps.Core.UseCases
             yield return await func(e.Current).ConfigureAwait(false);
             goto MoveToNext;
 
-            //await foreach (var incident in _incidentRepository.ListAllAsync(navigation))
-            //{
-            //    yield return await func(incident).ConfigureAwait(false);
-            //}
+#if _FUTURE_YIELD_BUG_RESOLVED
+            try
+            {
+                await foreach (var incident in _incidentRepository.ListAllAsync(navigation))
+                {
+                    yield return await func(incident).ConfigureAwait(false);
+                }
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
+#endif
         }
 
         /// <summary>
