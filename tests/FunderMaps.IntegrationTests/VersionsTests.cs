@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -24,7 +25,8 @@ namespace FunderMaps.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
-            Assert.Equal("text/html; charset=utf-8", response.Content.Headers.ContentType.ToString());
+            Assert.True(response.Content.Headers.ContentType.ToString().Contains("json", StringComparison.InvariantCultureIgnoreCase));
+            Assert.True(response.Content.Headers.ContentType.ToString().Contains("utf-8", StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

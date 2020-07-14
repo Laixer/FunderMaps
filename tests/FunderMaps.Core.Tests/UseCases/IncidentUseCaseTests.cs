@@ -18,7 +18,7 @@ namespace FunderMaps.Core.Tests.UseCases
             var useCase = new IncidentUseCase(contactRepository.Object, incidentRepository.Object);
 
             // Act
-            var incident = await useCase.GetAsync(It.IsAny<string>());
+            var incident = await useCase.GetAsync("FIR012020-12345");
 
             // Assert
             Assert.NotNull(incident);
