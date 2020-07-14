@@ -1,22 +1,6 @@
-﻿using FunderMaps.Authorization;
-using FunderMaps.Extensions;
-using FunderMaps.Helpers;
-using FunderMaps.Identity;
-using FunderMaps.Interfaces;
-using FunderMaps.Models.Identity;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Controllers.Api
+﻿namespace FunderMaps.Controllers.Api
 {
+#if DISABLED
     // FUTURE: Replace IOrganizationRepository by OrganizationManager
     /// <summary>
     /// Authentication endpoint.
@@ -245,4 +229,5 @@ namespace FunderMaps.Controllers.Api
             return NoContent();
         }
     }
+#endif
 }

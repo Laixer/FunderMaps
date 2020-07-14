@@ -1,8 +1,11 @@
-﻿namespace FunderMaps.Core.Entities
+﻿using System;
+#if KAAS
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Geometric point.
     /// </summary>
+    [Obsolete]
     public class AddressPoint : Address
     {
         /// <summary>
@@ -26,3 +29,4 @@
         public object Color { get; set; }
     }
 }
+#endif

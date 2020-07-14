@@ -1,17 +1,6 @@
-﻿using Dapper;
-using FunderMaps.Core.Entities;
-using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Repositories;
-using FunderMaps.Interfaces;
-using FunderMaps.Models.Identity;
-using FunderMaps.Providers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Data.Repositories
+﻿namespace FunderMaps.Data.Repositories
 {
+#if DISABLED
     /// <summary>
     /// Organization user repository.
     /// </summary>
@@ -262,4 +251,5 @@ namespace FunderMaps.Data.Repositories
             return RunSqlCommand(async cnn => await cnn.ExecuteAsync(sql, dynamicParameters));
         }
     }
+#endif
 }

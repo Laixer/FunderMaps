@@ -1,5 +1,5 @@
 ﻿using FunderMaps.Models.Identity;
-using FunderMaps.ViewModels;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

@@ -17,12 +17,12 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Dossier name.
         /// </summary>
-        [MaxLength(256)]
         public string Dossier { get; set; }
 
         /// <summary>
         /// Note.
         /// </summary>
+        [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>

@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿using FunderMaps.Core.Types;
+using System.ComponentModel.DataAnnotations;
+#if KAAS
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
@@ -37,6 +38,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         /// Recovery navigation.
         /// </summary>
-        public FoundationRecovery RecoveryNavigation { get; set; }
+        public Recovery RecoveryNavigation { get; set; }
     }
 }
+#endif

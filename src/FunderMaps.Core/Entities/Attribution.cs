@@ -4,8 +4,7 @@ using System.Runtime.Serialization;
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Attribution represents a entity partition for user and organizational
-    /// relations.
+    /// Attribution represents a entity partition for user and organizational relations.
     /// </summary>
     public class Attribution
     {

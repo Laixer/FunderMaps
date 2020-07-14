@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using FunderMaps.Models.Identity;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace FunderMaps.Interfaces
         /// <param name="orgId">Organization identifier.</param>
         /// <param name="navigation">Recordset navigation.</param>
         /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationIdAsync(Guid orgId, Navigation navigation);
+        Task<IReadOnlyList<OrganizationUser>> ListAllByOrganizationIdAsync(Guid orgId, INavigation navigation);
 
         /// <summary>
         /// Retrieve entities by organization id and by role.
@@ -28,7 +29,7 @@ namespace FunderMaps.Interfaces
         /// <param name="orgId">Organization identifier.</param>
         /// <param name="navigation">Recordset navigation.</param>
         /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<FunderMapsUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, Navigation navigation);
+        Task<IReadOnlyList<FunderMapsUser>> ListAllByOrganizationByRoleIdAsync(OrganizationRole role, Guid orgId, INavigation navigation);
 
         /// <summary>
         /// Retrieve entity by user id.

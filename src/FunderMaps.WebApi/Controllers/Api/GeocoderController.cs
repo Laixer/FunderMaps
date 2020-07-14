@@ -26,7 +26,9 @@ namespace FunderMaps.Controllers.Api
                 return BadRequest();
             }
 
-            await Task.CompletedTask;
+            await Task.CompletedTask.ConfigureAwait(false);
+
+            // FUTURE
 
             throw new NotImplementedException();
         }

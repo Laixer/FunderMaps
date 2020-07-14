@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-
+﻿using System;
+#if AKAS
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Geometric polygon.
     /// </summary>
+    [Obsolete]
     public class AddressGeoJson : Address2
     {
         /// <summary>
@@ -18,3 +19,4 @@ namespace FunderMaps.Core.Entities
         public object Color { get; set; }
     }
 }
+#endif

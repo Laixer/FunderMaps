@@ -1,6 +1,4 @@
-﻿using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Net.Http;
@@ -43,7 +41,7 @@ namespace FunderMaps.HealthChecks
             //var version = await response.Content.ReadAsAsync<ApplicationVersionModel>();
             //if (version.Name == Constants.ApplicationName && version.Version == Constants.ApplicationVersion)
             //{
-                return HealthCheckResult.Healthy();
+            return HealthCheckResult.Healthy();
             //}
 
             //return HealthCheckResult.Unhealthy();

@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Types;
 using FunderMaps.Exceptions;
 using System;
 using System.Security.Claims;

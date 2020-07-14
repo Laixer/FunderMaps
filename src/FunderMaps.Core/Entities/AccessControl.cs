@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Core.Entities
+﻿using FunderMaps.Core.Types;
+
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Record control.

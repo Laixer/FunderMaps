@@ -1,15 +1,6 @@
-﻿using Dapper;
-using FunderMaps.Core.Entities;
-using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Providers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Data.Repositories
+﻿namespace FunderMaps.Data.Repositories
 {
+#if DISABLED
     /// <summary>
     /// Sample repository.
     /// </summary>
@@ -564,7 +555,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>List of <see cref="AddressGeoJson"/>.</returns>
-        public async Task<IReadOnlyList<AddressGeoJson>> GetReportTypeByOrganizationAsync(ReportType type, Guid orgId)
+        public async Task<IReadOnlyList<AddressGeoJson>> GetReportTypeByOrganizationAsync(InquiryType type, Guid orgId)
         {
             using var connection = _dbProvider.ConnectionScope();
 
@@ -686,4 +677,5 @@ namespace FunderMaps.Data.Repositories
             return result.ToArray();
         }
     }
+#endif
 }

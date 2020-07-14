@@ -7,6 +7,7 @@ namespace FunderMaps.Core.Utils
     /// <summary>
     /// Utilities for enums.
     /// </summary>
+    [Obsolete]
     internal static class EnumHelper
     {
         /// <summary>

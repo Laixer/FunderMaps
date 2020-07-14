@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.ViewModels
+namespace FunderMaps.WebApi.ViewModels
 {
     /// <summary>
     /// Version output model.

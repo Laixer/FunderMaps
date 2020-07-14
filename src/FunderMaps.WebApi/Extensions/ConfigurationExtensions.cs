@@ -11,48 +11,6 @@ namespace FunderMaps.Extensions
     public static class ConfigurationExtensions
     {
         /// <summary>
-        /// Wrapper around GetConnectionString.
-        /// </summary>
-        /// <param name="configuration">The configuration to extend.</param>
-        /// <param name="name">Connection name.</param>
-        /// <returns>Connection string or null.</returns>
-        public static string GetConnectionStringFallback(this IConfiguration configuration, string name)
-        {
-            if (configuration == null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            var connectionString = configuration.GetConnectionString(name);
-
-            // FUTURE: There is no support for PostgreSQL in the configuration as of yet.
-            //         Solution is at Microsoft.Extensions.Configuration.EnvironmentVariables.EnvironmentVariablesConfigurationProvider.cs
-            //         Proposal: https://github.com/aspnet/Extensions/pull/1695
-
-            if (connectionString != null) { return connectionString; }
-            connectionString = configuration.GetValue<string>($"POSTGRESQLCONNSTR_{name}");
-
-            if (connectionString != null) { return connectionString; }
-            connectionString = configuration.GetValue<string>($"MYSQLCONNSTR_{name}");
-
-            if (connectionString != null) { return connectionString; }
-            connectionString = configuration.GetValue<string>($"SQLAZURECONNSTR_{name}");
-
-            if (connectionString != null) { return connectionString; }
-            connectionString = configuration.GetValue<string>($"SQLCONNSTR_{name}");
-
-            if (connectionString != null) { return connectionString; }
-            connectionString = configuration.GetValue<string>($"CUSTOMCONNSTR_{name}");
-
-            return connectionString;
-        }
-
-        /// <summary>
         /// Get signature key from configuration and convert into security key.
         /// </summary>
         /// <param name="configuration">The configuration.</param>

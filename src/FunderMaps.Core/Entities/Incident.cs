@@ -1,17 +1,26 @@
-﻿using System;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO: Move validation on properties.
     /// <summary>
     /// Indicent entity.
     /// </summary>
-    public class Incident : BaseEntity
+    public class Incident : RecordControl
     {
         /// <summary>
         /// Unique identifier.
         /// </summary>
-        public int Id { get; set; }
+        [Incident]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Client identifier.
+        /// </summary>
+        [Required, Range(1, 99)]
+        public int ClientId { get; set; }
 
         /// <summary>
         /// Foundation type.
@@ -19,19 +28,24 @@ namespace FunderMaps.Core.Entities
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
-        /// Foundation quality.
+        /// Building chained to another building.
         /// </summary>
-        public FoundationQuality? FoundationQuality { get; set; }
+        public bool ChainedBuilding { get; set; }
 
         /// <summary>
-        /// Substructure.
+        /// Whether the contact is an owner of the building.
         /// </summary>
-        public Substructure Substructure { get; set; }
+        public bool Owner { get; set; }
 
         /// <summary>
-        /// Note.
+        /// Whether foundation was recovered or not.
         /// </summary>
-        public string Note { get; set; }
+        public bool FoundationRecovery { get; set; }
+
+        /// <summary>
+        /// Whether neighbor foundation was recovered or not.
+        /// </summary>
+        public bool NeightborRecovery { get; set; }
 
         /// <summary>
         /// Foundation damage cause.
@@ -39,30 +53,66 @@ namespace FunderMaps.Core.Entities
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
-        /// Address identifier.
-        /// </summary>
-        public Guid Address { get; set; }
-
-        /// <summary>
-        /// Owner user identifier.
-        /// </summary>
-        public Guid Owner { get; set; }
-
-        /// <summary>
         /// Document name.
         /// </summary>
-        [MaxLength(256)]
-        public string DocumentName { get; set; }
+        //[Url]
+        public string[] DocumentFile { get; set; }
+
+        /// <summary>
+        /// Note.
+        /// </summary>
+        public string Note { get; set; }
+
+        /// <summary>
+        /// Internal note.
+        /// </summary>
+        public string InternalNote { get; set; }
+
+        /// <summary>
+        /// Fouindational damage.
+        /// </summary>
+        public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
+
+        /// <summary>
+        /// Environmental damage.
+        /// </summary>
+        public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
+
+        /// <summary>
+        /// Contact email.
+        /// </summary>
+        [EmailAddress]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Address identifier.
+        /// </summary>
+        [Required, Address]
+        public string Address { get; set; }
+
+        /// <summary>
+        /// Audit status.
+        /// </summary>
+        public AuditStatus AuditStatus { get; set; }
+
+        /// <summary>
+        /// Question type.
+        /// </summary>
+        public IncidentQuestionType QuestionType { get; set; }
+
+        /// <summary>
+        /// Meta data.
+        /// </summary>
+        public object Meta { get; set; }
+
+        /// <summary>
+        /// Contact object.
+        /// </summary>
+        public Contact ContactNavigation { get; set; }
 
         /// <summary>
         /// Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
-
-        // TODO: Replace by user object.
-        /// <summary>
-        /// Owner object.
-        /// </summary>
-        public object OwnerNavigation { get; set; }
     }
 }

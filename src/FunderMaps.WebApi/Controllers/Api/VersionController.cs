@@ -1,5 +1,4 @@
-﻿using FunderMaps.Helpers;
-using FunderMaps.ViewModels;
+﻿using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +16,9 @@ namespace FunderMaps.Controllers.Api
         /// <summary>
         /// Return application versioning information.
         /// </summary>
-        /// <remarks>Cache response for 24 hours.</remarks>
+        /// <remarks>
+        /// Cache response for 24 hours.
+        /// </remarks>
         [HttpGet]
         [ResponseCache(Duration = 60 * 60 * 24)]
         public IActionResult Get()

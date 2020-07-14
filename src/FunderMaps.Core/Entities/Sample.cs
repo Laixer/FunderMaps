@@ -1,12 +1,14 @@
-﻿using System;
+﻿using FunderMaps.Core.Types;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-
+#if KAAS
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Sample entity.
     /// </summary>
+    [Obsolete]
     public class Sample : AccessControl
     {
         /// <summary>
@@ -105,3 +107,4 @@ namespace FunderMaps.Core.Entities
         public Address Address { get; set; }
     }
 }
+#endif

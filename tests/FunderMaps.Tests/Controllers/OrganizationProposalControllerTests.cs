@@ -1,12 +1,4 @@
-﻿using FunderMaps.Controllers.Api;
-using FunderMaps.Tests.Helpers;
-using FunderMaps.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-using Xunit;
-
-namespace FunderMaps.Tests.Controllers
+﻿namespace FunderMaps.Tests.Controllers
 {
     public class OrganizationProposalControllerTests
     {

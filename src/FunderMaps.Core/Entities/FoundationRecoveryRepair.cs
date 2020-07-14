@@ -1,4 +1,5 @@
-﻿namespace FunderMaps.Core.Entities
+﻿#if KAASS
+namespace FunderMaps.Core.Entities
 {
     /// <summary>
     /// Foundation recovery repair.
@@ -18,6 +19,7 @@
         /// <summary>
         /// Foundation recovery object.
         /// </summary>
-        public FoundationRecovery RecoveryNavigation { get; set; }
+        public Recovery RecoveryNavigation { get; set; }
     }
 }
+#endif

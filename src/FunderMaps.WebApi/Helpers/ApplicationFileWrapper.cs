@@ -44,7 +44,7 @@ namespace FunderMaps.Helpers
 
             File = new ApplicationFile(formFile.FileName)
             {
-                ContentType = formFile.ContentType.ToLower().Trim(),
+                ContentType = formFile.ContentType.ToLowerInvariant().Trim(),
                 Size = formFile.Length,
             };
 
