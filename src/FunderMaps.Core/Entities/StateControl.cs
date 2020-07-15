@@ -23,7 +23,8 @@ namespace FunderMaps.Core.Entities
         ///     Move to next state.
         /// </summary>
         /// <remarks>
-        ///     Not ever state can move to another without intervention.
+        ///     Not every state can transition from one state to
+        ///     another without intervention.
         /// </remarks>
         public void MoveNext()
         {
@@ -39,13 +40,38 @@ namespace FunderMaps.Core.Entities
         }
 
         /// <summary>
+        ///     Move state to todo.
+        /// </summary>
+        /// <remarks>
+        ///     Can move to this state from:
+        ///     <list type="bullet">
+        ///         <item>Pending</item>
+        ///     </list>
+        /// </remarks>
+        public void TransitionToTodo()
+        {
+            if (AuditStatus != AuditStatus.Pending)
+            {
+                throw new StateTransitionException(AuditStatus, AuditStatus.Todo);
+            }
+            AuditStatus = AuditStatus.Todo;
+        }
+
+        /// <summary>
         ///     Move state to pending.
         /// </summary>
+        /// <remarks>
+        ///     Can move to this state from:
+        ///     <list type="bullet">
+        ///         <item>Todo</item>
+        ///         <item>Rejected</item>
+        ///     </list>
+        /// </remarks>
         public void TransitionToPending()
         {
             if (AuditStatus != AuditStatus.Todo || AuditStatus != AuditStatus.Rejected)
             {
-                throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                throw new StateTransitionException(AuditStatus, AuditStatus.Pending);
             }
             AuditStatus = AuditStatus.Pending;
         }
@@ -53,11 +79,17 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Move state to review.
         /// </summary>
+        /// <remarks>
+        ///     Can move to this state from:
+        ///     <list type="bullet">
+        ///         <item>Pending</item>
+        ///     </list>
+        /// </remarks>
         public void TransitionToReview()
         {
             if (AuditStatus != AuditStatus.Pending)
             {
-                throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                throw new StateTransitionException(AuditStatus, AuditStatus.PendingReview);
             }
             AuditStatus = AuditStatus.PendingReview;
         }
@@ -65,11 +97,17 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Move state to done.
         /// </summary>
+        /// <remarks>
+        ///     Can move to this state from:
+        ///     <list type="bullet">
+        ///         <item>PendingReview</item>
+        ///     </list>
+        /// </remarks>
         public void TransitionToDone()
         {
             if (AuditStatus != AuditStatus.PendingReview)
             {
-                throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                throw new StateTransitionException(AuditStatus, AuditStatus.Done);
             }
             AuditStatus = AuditStatus.Done;
         }
@@ -77,11 +115,17 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Move state to rejected.
         /// </summary>
+        /// <remarks>
+        ///     Can move to this state from:
+        ///     <list type="bullet">
+        ///         <item>PendingReview</item>
+        ///     </list>
+        /// </remarks>
         public void TransitionToRejected()
         {
             if (AuditStatus != AuditStatus.PendingReview)
             {
-                throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                throw new StateTransitionException(AuditStatus, AuditStatus.Rejected);
             }
             AuditStatus = AuditStatus.Rejected;
         }
@@ -89,11 +133,21 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Move state to discarded.
         /// </summary>
+        /// <remarks>
+        ///     Can move to this state from:
+        ///     <list type="bullet">
+        ///         <item>Todo</item>
+        ///         <item>Pending</item>
+        ///         <item>PendingReview</item>
+        ///         <item>Done</item>
+        ///         <item>Rejected</item>
+        ///     </list>
+        /// </remarks>
         public void TransitionToDiscarded()
         {
             if (AuditStatus == AuditStatus.Done)
             {
-                throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                throw new StateTransitionException(AuditStatus, AuditStatus.Discarded);
             }
             AuditStatus = AuditStatus.Discarded;
         }

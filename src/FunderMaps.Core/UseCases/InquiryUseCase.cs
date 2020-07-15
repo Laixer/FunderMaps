@@ -104,7 +104,7 @@ namespace FunderMaps.Core.UseCases
 
                 if (!inquiry.AllowWrite)
                 {
-                    throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
                 }
 
                 await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
@@ -128,6 +128,8 @@ namespace FunderMaps.Core.UseCases
                 // FUTURE: Abstract this away.
                 var inquiry = await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
 
+                Func<ValueTask> postUpdateEvent = () => new ValueTask();
+
                 switch (status)
                 {
                     case AuditStatus.Pending:
@@ -142,22 +144,22 @@ namespace FunderMaps.Core.UseCases
                     case AuditStatus.PendingReview:
                         inquiry.TransitionToReview();
 
-                        // TODO: After update
                         // TODO: Reviewer receives notification
-                        await _notificationService.NotifyByEmailAsync(new string[] { "info@something.com" }).ConfigureAwait(false);
+                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
                         break;
                     case AuditStatus.Rejected:
                         inquiry.TransitionToRejected();
 
-                        // TODO: After update
                         // TODO: Creator receives notification + message
-                        await _notificationService.NotifyByEmailAsync(new string[] { "info@something.com" }).ConfigureAwait(false);
+                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
                         break;
                     default:
-                        throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                        throw new StateTransitionException(inquiry.AuditStatus, status);
                 }
 
                 await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+
+                await postUpdateEvent().ConfigureAwait(false);
             }
             catch (RepositoryException)
             {
@@ -217,23 +219,29 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            inquirySample.Id = 0;
-            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-            inquirySample.CreateDate = DateTime.MinValue;
-            inquirySample.UpdateDate = null;
-            inquirySample.DeleteDate = null;
-
-            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
-
             try
             {
+                inquirySample.Id = 0;
+                inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+                inquirySample.CreateDate = DateTime.MinValue;
+                inquirySample.UpdateDate = null;
+                inquirySample.DeleteDate = null;
+
+                Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+
                 // FUTURE: Too much logic
                 var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+
+                if (!inquiry.AllowWrite)
+                {
+                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                }
+
                 var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
                 inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
                 if (inquiry.AuditStatus != AuditStatus.Pending)
                 {
-                    inquiry.AuditStatus = AuditStatus.Pending;
+                    inquiry.TransitionToPending();
                     await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
                 }
                 inquirySample.InquiryNavigation = inquiry;
@@ -270,12 +278,18 @@ namespace FunderMaps.Core.UseCases
             {
                 // FUTURE: Too much logic
                 var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+                var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+
+                if (!inquiry.AllowWrite)
+                {
+                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                }
+
                 await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
                 var itemCount = await _inquiryRepository.CountAsync().ConfigureAwait(false); // TODO: Should only select inquiry
                 if (itemCount == 0)
                 {
-                    var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
-                    inquiry.AuditStatus = AuditStatus.Todo;
+                    inquiry.TransitionToTodo();
                     await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
                 }
             }
@@ -297,18 +311,24 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-
-            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
-
             try
             {
+                inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+
+                Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+
                 // FUTURE: Too much logic
                 var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+
+                if (!inquiry.AllowWrite)
+                {
+                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                }
+
                 await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
                 if (inquiry.AuditStatus != AuditStatus.Pending)
                 {
-                    inquiry.AuditStatus = AuditStatus.Pending;
+                    inquiry.TransitionToPending();
                     await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
                 }
             }
