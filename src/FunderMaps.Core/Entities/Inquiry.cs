@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Inquiry entity.
     /// </summary>
-    public class Inquiry : AttributionControl
+    public class Inquiry : StateControl
     {
         /// <summary>
         ///     Unique identifier.
@@ -55,11 +55,6 @@ namespace FunderMaps.Core.Entities
         public string DocumentFile { get; set; }
 
         /// <summary>
-        ///     Report status.
-        /// </summary>
-        public AuditStatus AuditStatus { get; set; }
-
-        /// <summary>
         ///     Report type.
         /// </summary>
         public InquiryType Type { get; set; }
@@ -68,5 +63,25 @@ namespace FunderMaps.Core.Entities
         ///     Coforms the F3O standaard.
         /// </summary>
         public bool StandardF3o { get; set; }
+
+        public void InstantiateDefaults()
+        {
+            Id = 0;
+            AuditStatus = AuditStatus.Todo;
+            CreateDate = DateTime.MinValue;
+            UpdateDate = null;
+            DeleteDate = null;
+            AttributionNavigation = null;
+        }
+
+        public void InstantiateDefaults(Inquiry other)
+        {
+            Id = other.Id;
+            AuditStatus = other.AuditStatus;
+            Attribution = other.Attribution;
+            CreateDate = other.CreateDate;
+            UpdateDate = other.UpdateDate;
+            DeleteDate = other.DeleteDate;
+        }
     }
 }

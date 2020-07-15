@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
@@ -119,18 +120,26 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
-        [HttpPut("{id:int}/status")]
-        public async Task<IActionResult> SetStatusAsync(int id, [FromBody] InquiryDTO input)
+        [HttpPut("{id:int}/status_review")]
+        public async Task<IActionResult> SetStatusReviewAsync(int id) //, [FromBody] InquiryDTO input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview).ConfigureAwait(false);
 
-            var inquiry = _mapper.Map<Inquiry>(input);
-            inquiry.Id = id;
+            return NoContent();
+        }
 
-            // FUTURE
+        [HttpPut("{id:int}/status_rejected")]
+        public async Task<IActionResult> SetStatusRejectedAsync(int id) //, [FromBody] InquiryDTO input)
+        {
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected).ConfigureAwait(false);
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}/status_approved")]
+        public async Task<IActionResult> SetStatusApprovedAsync(int id) //, [FromBody] InquiryDTO input)
+        {
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done).ConfigureAwait(false);
 
             return NoContent();
         }

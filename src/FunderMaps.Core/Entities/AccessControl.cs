@@ -3,25 +3,26 @@
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Record control.
+    ///     Record control.
     /// </summary>
     public abstract class AccessControl : RecordControl
     {
         /// <summary>
-        /// Record access policy.
+        ///     Record access policy.
         /// </summary>
+        /// <remarks>Default to <see cref="AccessPolicy.Private"/>.</remarks>
         public AccessPolicy AccessPolicy { get; set; } = AccessPolicy.Private;
 
         /// <summary>
-        /// Is record public.
+        ///     Is record public.
         /// </summary>
-        /// <returns>True if public.</returns>
-        public bool IsPublic() => AccessPolicy == AccessPolicy.Public;
+        /// <returns><c>True</c> if public.</returns>
+        public bool IsPublic => AccessPolicy == AccessPolicy.Public;
 
         /// <summary>
-        /// Is record private.
+        ///     Is record private.
         /// </summary>
-        /// <returns>True if private.</returns>
-        public bool IsPrivate() => AccessPolicy == AccessPolicy.Private;
+        /// <returns><c>True</c> if private.</returns>
+        public bool IsPrivate => AccessPolicy == AccessPolicy.Private;
     }
 }

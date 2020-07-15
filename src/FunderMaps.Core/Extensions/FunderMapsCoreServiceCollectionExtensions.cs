@@ -22,8 +22,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
+            // Register core services in DI container.
             services.AddScoped<IGeocoderService, GeoService>();
+            services.AddScoped<INotificationService, NotificationService>();
 
+            // Register core use cases in DI container.
             services.AddScoped<IncidentUseCase>();
             services.AddScoped<InquiryUseCase>();
             services.AddScoped<ProjectUseCase>();

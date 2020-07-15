@@ -10,25 +10,21 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.UseCases
 {
-    // TODO: 
-    // - INotify when status pending -> pending_review
-    //      -> reviewer receives notification
-    // - INotify when status pending_review -> rejected
-    //      -> creator receives notification + message
-
     /// <summary>
     ///     Inquiry use case.
     /// </summary>
     public class InquiryUseCase
     {
+        private readonly INotificationService _notificationService;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IInquirySampleRepository _inquirySampleRepository;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
-        public InquiryUseCase(IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository)
+        public InquiryUseCase(INotificationService notificationService, IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository)
         {
+            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
@@ -65,18 +61,13 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquiry));
             }
 
-            inquiry.Id = 0;
-            inquiry.AuditStatus = AuditStatus.Todo;
-            inquiry.Attribution = 1; // TODO: Remove
-            inquiry.CreateDate = DateTime.MinValue;
-            inquiry.UpdateDate = null;
-            inquiry.DeleteDate = null;
-            inquiry.AttributionNavigation = null;
-
-            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
-
             try
             {
+                inquiry.InstantiateDefaults();
+                inquiry.Attribution = 1; // TODO: Remove
+
+                Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+
                 var id = await _inquiryRepository.AddAsync(inquiry).ConfigureAwait(false);
                 return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
             }
@@ -100,10 +91,72 @@ namespace FunderMaps.Core.UseCases
         /// <param name="inquiry">Entity object.</param>
         public virtual async ValueTask UpdateAsync(Inquiry inquiry)
         {
-            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+            if (inquiry == null)
+            {
+                throw new ArgumentNullException(nameof(inquiry));
+            }
 
             try
             {
+                inquiry.InstantiateDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
+
+                Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+
+                if (!inquiry.AllowWrite)
+                {
+                    throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                }
+
+                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+            }
+            catch (RepositoryException)
+            {
+                // FUTURE: We *assume* repository exceptions are non existing entities.
+                throw new EntityNotFoundException();
+            }
+        }
+
+        /// <summary>
+        ///     Update inquiry.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        /// <param name="status">New entity status.</param>
+        public virtual async ValueTask UpdateStatusAsync(int id, AuditStatus status)
+        {
+            try
+            {
+                // FUTURE: Abstract this away.
+                var inquiry = await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+                switch (status)
+                {
+                    case AuditStatus.Pending:
+                        inquiry.TransitionToPending();
+                        break;
+                    case AuditStatus.Done:
+                        inquiry.TransitionToDone();
+                        break;
+                    case AuditStatus.Discarded:
+                        inquiry.TransitionToDiscarded();
+                        break;
+                    case AuditStatus.PendingReview:
+                        inquiry.TransitionToReview();
+
+                        // TODO: After update
+                        // TODO: Reviewer receives notification
+                        await _notificationService.NotifyByEmailAsync(new string[] { "info@something.com" }).ConfigureAwait(false);
+                        break;
+                    case AuditStatus.Rejected:
+                        inquiry.TransitionToRejected();
+
+                        // TODO: After update
+                        // TODO: Creator receives notification + message
+                        await _notificationService.NotifyByEmailAsync(new string[] { "info@something.com" }).ConfigureAwait(false);
+                        break;
+                    default:
+                        throw new FunderMapsCoreException("Cannot set status from current state"); // TODO: state exception
+                }
+
                 await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
             }
             catch (RepositoryException)
@@ -164,7 +217,6 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            // TODO: Set Inquiry.Status = InquiryStatus.Pending
             inquirySample.Id = 0;
             inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
             inquirySample.CreateDate = DateTime.MinValue;
@@ -175,8 +227,17 @@ namespace FunderMaps.Core.UseCases
 
             try
             {
+                // FUTURE: Too much logic
+                var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
                 var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
-                return await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+                inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+                if (inquiry.AuditStatus != AuditStatus.Pending)
+                {
+                    inquiry.AuditStatus = AuditStatus.Pending;
+                    await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+                }
+                inquirySample.InquiryNavigation = inquiry;
+                return inquirySample;
             }
             catch (RepositoryException)
             {
@@ -205,11 +266,18 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask DeleteSampleAsync(int id)
         {
-            // TODO: Set Inquiry.Status = InquiryStatus.Todo ?
-
             try
             {
+                // FUTURE: Too much logic
+                var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
                 await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
+                var itemCount = await _inquiryRepository.CountAsync().ConfigureAwait(false); // TODO: Should only select inquiry
+                if (itemCount == 0)
+                {
+                    var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+                    inquiry.AuditStatus = AuditStatus.Todo;
+                    await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+                }
             }
             catch (RepositoryException)
             {
@@ -229,15 +297,20 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            // TODO: Set Inquiry.Status = InquiryStatus.Pending
-
             inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
 
             Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
 
             try
             {
+                // FUTURE: Too much logic
+                var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
                 await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
+                if (inquiry.AuditStatus != AuditStatus.Pending)
+                {
+                    inquiry.AuditStatus = AuditStatus.Pending;
+                    await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+                }
             }
             catch (RepositoryException)
             {

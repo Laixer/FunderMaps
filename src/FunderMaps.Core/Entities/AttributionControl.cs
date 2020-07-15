@@ -1,17 +1,17 @@
 ﻿namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Attribution control.
+    ///     Attribution control.
     /// </summary>
     public abstract class AttributionControl : AccessControl
     {
         /// <summary>
-        /// Attribution key.
+        ///     Attribution key.
         /// </summary>
         public int Attribution { get; set; }
 
         /// <summary>
-        /// Attribution object.
+        ///     Attribution object.
         /// </summary>
         public Attribution AttributionNavigation { get; set; }
     }

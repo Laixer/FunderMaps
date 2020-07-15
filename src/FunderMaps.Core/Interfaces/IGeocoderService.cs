@@ -1,7 +1,7 @@
 ﻿namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
-    /// Geospatial service.
+    ///     Geospatial service.
     /// </summary>
     public interface IGeocoderService
     {
