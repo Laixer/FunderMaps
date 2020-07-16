@@ -6,12 +6,12 @@ using System;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// Provides extension methods for services from this assembly.
+    ///     Provides extension methods for services from this assembly.
     /// </summary>
     public static class FunderMapsCoreServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the core services to the container.
+        ///     Adds the core services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
@@ -22,9 +22,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            // Register core services in DI container.
-            services.AddScoped<IGeocoderService, GeoService>();
-            services.AddScoped<INotificationService, NotificationService>();
+            // Register core service fillers in DI container.
+            services.AddScoped<IFileStorageService, NullFileStorageService>();
+            services.AddScoped<IGeocoderService, NullGeocoderService>();
+            services.AddScoped<INotificationService, NullNotificationService>();
 
             // Register core use cases in DI container.
             services.AddScoped<IncidentUseCase>();

@@ -94,7 +94,7 @@ namespace FunderMaps
 
             // Register components from reference assemblies.
             services.AddFunderMapsCoreServices();
-            services.AddFunderMapsCloudServices();
+            //services.AddFunderMapsCloudServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
         }
 

@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Services
     /// <summary>
     ///     Notification service.
     /// </summary>
-    public class NotificationService : INotificationService
+    internal class NullNotificationService : INotificationService
     {
         /// <summary>
         ///     Notify by email.
