@@ -8,14 +8,14 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Cloud
+namespace FunderMaps.Cloud.Storage
 {
     // FUTURE: Use Azure SDK Storage v12
 
     /// <summary>
     /// Azure storage implementing file storage service.
     /// </summary>
-    public class AzureBlobStorageService : IFileStorageService
+    internal class AzureBlobStorageService : IFileStorageService
     {
         private readonly FileStorageOptions _options;
         private readonly CloudStorageAccount _storageAccount;

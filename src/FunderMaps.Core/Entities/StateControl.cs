@@ -11,7 +11,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Enitity status.
         /// </summary>
-        public AuditStatus AuditStatus { get; set; }
+        public AuditStatus AuditStatus { get; set; } = AuditStatus.Todo;
 
         /// <summary>
         ///     Is write allowed in entry state.
@@ -69,7 +69,7 @@ namespace FunderMaps.Core.Entities
         /// </remarks>
         public void TransitionToPending()
         {
-            if (AuditStatus != AuditStatus.Todo || AuditStatus != AuditStatus.Rejected)
+            if (AuditStatus != AuditStatus.Todo && AuditStatus != AuditStatus.Rejected)
             {
                 throw new StateTransitionException(AuditStatus, AuditStatus.Pending);
             }

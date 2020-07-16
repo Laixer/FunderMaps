@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FunderMaps.Cloud
+namespace FunderMaps.Cloud.Storage
 {
     /// <summary>
     /// Options for the file storage service.

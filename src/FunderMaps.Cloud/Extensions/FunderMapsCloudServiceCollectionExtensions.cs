@@ -1,4 +1,4 @@
-﻿using FunderMaps.Cloud;
+﻿using FunderMaps.Cloud.Storage;
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;

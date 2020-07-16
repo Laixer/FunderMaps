@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.IndicentEndpoint
 {
     /// <summary>
-    /// Portal endpoint.
+    ///     Portal endpoint.
     /// </summary>
     public class HttpPortalEndpoint
     {
@@ -26,7 +26,7 @@ namespace FunderMaps.IndicentEndpoint
         private readonly IAddressRepository _addressRepository;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public HttpPortalEndpoint(IncidentUseCase incidentUseCase, IAddressRepository addressRepository)
         {
@@ -35,7 +35,7 @@ namespace FunderMaps.IndicentEndpoint
         }
 
         /// <summary>
-        /// Generate error result.
+        ///     Generate error result.
         /// </summary>
         /// <param name="message">Error message.</param>
         /// <returns>See <see cref="ActionResult"/>.</returns>
@@ -46,7 +46,7 @@ namespace FunderMaps.IndicentEndpoint
             };
 
         /// <summary>
-        /// Generate not found result.
+        ///     Generate not found result.
         /// </summary>
         /// <param name="message">Not found message.</param>
         /// <returns>See <see cref="ActionResult"/>.</returns>
@@ -57,7 +57,7 @@ namespace FunderMaps.IndicentEndpoint
             };
 
         /// <summary>
-        /// Post an incident.
+        ///     Process an incident.
         /// </summary>
         /// <param name="input">See <see cref="IncidentInputViewModel"/>.</param>
         /// <returns>204 on success.</returns>
@@ -66,12 +66,12 @@ namespace FunderMaps.IndicentEndpoint
         {
             if (request == null)
             {
-                return ErrorResult("Input is empty");
+                return ErrorResult("Input is empty"); // TODO:
             }
 
             if (input == null)
             {
-                return ErrorResult("Input is empty");
+                return ErrorResult("Input is empty"); // TODO:
             }
 
             var results = new List<ValidationResult>();
@@ -95,7 +95,7 @@ namespace FunderMaps.IndicentEndpoint
         }
 
         /// <summary>
-        /// Get address identifier based on input.
+        ///     Get address identifier based on input.
         /// </summary>
         /// <param name="request">See <see cref="AddressOutputViewModel"/>.</param>
         /// <returns>See <see cref="AddressOutputViewModel"/>.</returns>
@@ -104,7 +104,7 @@ namespace FunderMaps.IndicentEndpoint
         {
             if (request == null)
             {
-                return ErrorResult("Input is empty");
+                return ErrorResult("Input is empty"); // TODO:
             }
 
             string postcode = request.Query["postcode"];
@@ -112,7 +112,7 @@ namespace FunderMaps.IndicentEndpoint
 
             if (string.IsNullOrEmpty(postcode) || string.IsNullOrEmpty(buildingNumber))
             {
-                return ErrorResult("Input is empty");
+                return ErrorResult("Input is empty"); // TODO:
             }
 
             // TODO: Should yield single item
@@ -124,7 +124,7 @@ namespace FunderMaps.IndicentEndpoint
                 });
             }
 
-            return NotFoundResult("Not found");
+            return NotFoundResult("Not found"); // TODO:
         }
     }
 }

@@ -5,23 +5,23 @@ using System.Threading.Tasks;
 namespace FunderMaps
 {
     /// <summary>
-    /// Application entry.
+    ///     Application entry.
     /// </summary>
     public static class Program
     {
         /// <summary>
-        /// Application entry point.
+        ///     Application entry point.
         /// </summary>
         /// <param name="args">Commandline arguments.</param>
         public static Task Main(string[] args)
             => CreateHostBuilder(args).Build().RunAsync();
 
         /// <summary>
-        /// Build a host and run the application.
+        ///     Build a host and run the application.
         /// </summary>
         /// <remarks>
-        /// The signature of this method cannot be changed since it's
-        /// expected by external tooling using this assembly.
+        ///     The signature of this method should not be changed.
+        ///     External tooling expects this function be present.
         /// </remarks>
         /// <param name="args">Commandline arguments.</param>
         /// <returns>See <see cref="IHostBuilder"/>.</returns>
