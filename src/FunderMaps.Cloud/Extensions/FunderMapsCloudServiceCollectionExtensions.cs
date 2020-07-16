@@ -1,8 +1,9 @@
-﻿//using FunderMaps.Cloud;
-//using FunderMaps.Core.Interfaces;
-//using Microsoft.Extensions.Configuration;
+﻿using FunderMaps.Cloud;
+using FunderMaps.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -23,11 +24,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-#if TODO
             using var serviceProviderScope = services.BuildServiceProvider().CreateScope();
             var configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-            services.AddTransient<IFileStorageService, AzureBlobStorageService>();
+            services.RemoveAll<IFileStorageService>();
+            services.AddScoped<IFileStorageService, AzureBlobStorageService>();
 
             // FUTURE: Bind
             services.Configure<FileStorageOptions>(options =>
@@ -49,7 +50,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.StorageContainers.Add(item.Key, item.Value);
                 }
             });
-#endif // TODO
+
             return services;
         }
     }

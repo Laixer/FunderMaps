@@ -4,60 +4,61 @@ using System.IO;
 namespace FunderMaps.Core.Helpers
 {
     /// <summary>
-    /// Representation of a file.
+    ///     File operations.
     /// </summary>
-    public class ApplicationFile
+    public class FileWrapper
     {
         /// <summary>
-        /// File name on disk.
+        ///     File name in storage.
         /// </summary>
         public string FileName { get; set; }
 
         /// <summary>
-        /// File name.
+        ///     File name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// File content type.
+        ///     File content type.
         /// </summary>
         public string ContentType { get; set; }
 
         /// <summary>
-        /// File size.
+        ///     File size.
         /// </summary>
-        public long Size { get; set; }
+        public ulong Size { get; set; }
 
         /// <summary>
-        /// File extension.
+        ///     File extension.
         /// </summary>
-        public string Extension { get => Path.GetExtension(Name); }
+        public string Extension => Path.GetExtension(Name);
 
         /// <summary>
-        /// Create new instance of application file.
+        ///     Check if file is empty
+        /// </summary>
+        /// <returns><c>True</c> if the file is empty.</returns>
+        public bool IsEmpty => Size == 0;
+
+        /// <summary>
+        ///     Create new instance.
         /// </summary>
         /// <param name="name">File name.</param>
-        public ApplicationFile(string name) => Name = name;
+        public FileWrapper(string name)
+            => Name = name;
 
         /// <summary>
-        /// Create new instance of application file.
+        ///     Create new instance.
         /// </summary>
         /// <param name="name">File name.</param>
         /// <param name="newName">New file name.</param>
-        public ApplicationFile(string name, string newName)
+        public FileWrapper(string name, string newName)
         {
             FileName = newName;
             Name = name;
         }
 
         /// <summary>
-        /// Check if file is empty
-        /// </summary>
-        /// <returns></returns>
-        public bool Empty() => Size == 0;
-
-        /// <summary>
-        /// Generate a unique name for the file.
+        ///     Generate a unique file name.
         /// </summary>
         /// <param name="extension">File extension.</param>
         /// <returns>Unique filename.</returns>

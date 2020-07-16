@@ -1,11 +1,13 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.UseCases
@@ -16,15 +18,21 @@ namespace FunderMaps.Core.UseCases
     public class InquiryUseCase
     {
         private readonly INotificationService _notificationService;
+        private readonly IFileStorageService _fileStorageService;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IInquirySampleRepository _inquirySampleRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public InquiryUseCase(INotificationService notificationService, IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository)
+        public InquiryUseCase(
+            INotificationService notificationService,
+            IFileStorageService fileStorageService,
+            IInquiryRepository inquiryRepository,
+            IInquirySampleRepository inquirySampleRepository)
         {
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
@@ -50,6 +58,17 @@ namespace FunderMaps.Core.UseCases
             }
         }
 
+        // TODO: Remove stream.
+        public async ValueTask StoreDocumentAsync(FileWrapper file, Stream stream)
+        {
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            await _fileStorageService.StoreFileAsync("somestore", file, stream).ConfigureAwait(false);
+        }
+
         /// <summary>
         ///     Create new inquiry.
         /// </summary>
@@ -63,7 +82,7 @@ namespace FunderMaps.Core.UseCases
 
             try
             {
-                inquiry.InstantiateDefaults();
+                inquiry.InitializeDefaults();
                 inquiry.Attribution = 1; // TODO: Remove
 
                 Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
@@ -98,7 +117,7 @@ namespace FunderMaps.Core.UseCases
 
             try
             {
-                inquiry.InstantiateDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
+                inquiry.InitializeDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
 
                 Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
 
@@ -239,11 +258,10 @@ namespace FunderMaps.Core.UseCases
 
                 var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
                 inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-                if (inquiry.AuditStatus != AuditStatus.Pending)
-                {
-                    inquiry.TransitionToPending();
-                    await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
-                }
+
+                inquiry.TransitionToPending();
+                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+
                 inquirySample.InquiryNavigation = inquiry;
                 return inquirySample;
             }
@@ -326,11 +344,9 @@ namespace FunderMaps.Core.UseCases
                 }
 
                 await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
-                if (inquiry.AuditStatus != AuditStatus.Pending)
-                {
-                    inquiry.TransitionToPending();
-                    await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
-                }
+
+                inquiry.TransitionToPending();
+                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
             }
             catch (RepositoryException)
             {

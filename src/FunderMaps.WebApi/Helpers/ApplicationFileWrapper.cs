@@ -16,7 +16,7 @@ namespace FunderMaps.Helpers
         /// <summary>
         /// Application file.
         /// </summary>
-        public ApplicationFile File { get; }
+        public FileWrapper File { get; }
 
         /// <summary>
         /// Indicates the file is either valid or not.
@@ -42,13 +42,13 @@ namespace FunderMaps.Helpers
 
             _allowedFileTypes = allowedFileTypes;
 
-            File = new ApplicationFile(formFile.FileName)
+            File = new FileWrapper(formFile.FileName)
             {
                 ContentType = formFile.ContentType.ToLowerInvariant().Trim(),
-                Size = formFile.Length,
+                Size = (ulong)formFile.Length,
             };
 
-            File.FileName = ApplicationFile.GenerateUniqueFileName(File.Extension);
+            File.FileName = FileWrapper.GenerateUniqueFileName(File.Extension);
 
             CheckIfValid();
         }
@@ -59,7 +59,7 @@ namespace FunderMaps.Helpers
         private void CheckIfValid()
         {
             // Mark empty document as invalid
-            if (File.Empty())
+            if (File.IsEmpty)
             {
                 Error = "file content is empty";
             }

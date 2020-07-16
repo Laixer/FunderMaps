@@ -78,8 +78,13 @@ namespace FunderMaps.Cloud
         /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <returns>True if file exist, false otherwise.</returns>
-        public Task<bool> FileExists(string store, string name)
-            => SetContainer(store).GetBlockBlobReference(name).ExistsAsync();
+        public async ValueTask<bool> FileExists(string store, string name)
+        {
+            return await SetContainer(store)
+                .GetBlockBlobReference(name)
+                .ExistsAsync()
+                .ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Retrieve file access link.
@@ -106,8 +111,11 @@ namespace FunderMaps.Cloud
         /// Retrieve account name for the storage service.
         /// </summary>
         /// <returns>Account name.</returns>
-        public Task<string> GetStorageNameAsync()
-            => _blobClient.GetAccountPropertiesAsync().ContinueWith(t => t.Result.AccountKind);
+        public async ValueTask<string> GetStorageNameAsync()
+        {
+            var properties = await _blobClient.GetAccountPropertiesAsync().ConfigureAwait(false);
+            return properties.AccountKind;
+        }
 
         /// <summary>
         /// Store the file in the data store.
@@ -115,8 +123,17 @@ namespace FunderMaps.Cloud
         /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <param name="content">Content array.</param>
-        public Task StoreFileAsync(string store, string name, byte[] content)
-            => PrepareBlob(store, name, new BlobProperties()).UploadFromByteArrayAsync(content, 0, content.Length);
+        public async ValueTask StoreFileAsync(string store, string name, byte[] content)
+        {
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            await PrepareBlob(store, name, new BlobProperties())
+                .UploadFromByteArrayAsync(content, 0, content.Length)
+                .ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Store the file in the data store.
@@ -124,11 +141,24 @@ namespace FunderMaps.Cloud
         /// /// <param name="store">Storage container.</param>
         /// <param name="file">Application file.</param>
         /// <param name="content">Content array.</param>
-        public Task StoreFileAsync(string store, ApplicationFile file, byte[] content)
-            => PrepareBlob(store, file.FileName, new BlobProperties
+        public async ValueTask StoreFileAsync(string store, FileWrapper file, byte[] content)
+        {
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
+            await PrepareBlob(store, file.FileName, new BlobProperties
             {
                 ContentType = file.ContentType
-            }).UploadFromByteArrayAsync(content, 0, content.Length);
+            })
+                .UploadFromByteArrayAsync(content, 0, content.Length)
+                .ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Store the file in the data store.
@@ -136,8 +166,12 @@ namespace FunderMaps.Cloud
         /// /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <param name="stream">Content stream.</param>
-        public Task StoreFileAsync(string store, string name, Stream stream)
-            => PrepareBlob(store, name, new BlobProperties()).UploadFromStreamAsync(stream);
+        public async ValueTask StoreFileAsync(string store, string name, Stream stream)
+        {
+            await PrepareBlob(store, name, new BlobProperties())
+                .UploadFromStreamAsync(stream)
+                .ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Store the file in the data store.
@@ -145,10 +179,19 @@ namespace FunderMaps.Cloud
         /// /// <param name="store">Storage container.</param>
         /// <param name="file">Application file.</param>
         /// <param name="stream">Content stream.</param>
-        public Task StoreFileAsync(string store, ApplicationFile file, Stream stream)
-            => PrepareBlob(store, file.FileName, new BlobProperties
+        public async ValueTask StoreFileAsync(string store, FileWrapper file, Stream stream)
+        {
+            if (file == null)
+            {
+                throw new ArgumentNullException(nameof(file));
+            }
+
+            await PrepareBlob(store, file.FileName, new BlobProperties
             {
                 ContentType = file.ContentType
-            }).UploadFromStreamAsync(stream);
+            })
+                .UploadFromStreamAsync(stream)
+                .ConfigureAwait(false);
+        }
     }
 }

@@ -5,14 +5,14 @@ using System.Reflection;
 namespace FunderMaps
 {
     /// <summary>
-    /// Application constants.
+    ///     Application constants.
     /// </summary>
     internal static class Constants
     {
         /// <summary>
-        /// Default password policy.
+        ///     Default password policy.
         /// </summary>
-        public static readonly PasswordOptions PasswordPolicy = new PasswordOptions
+        internal static readonly PasswordOptions PasswordPolicy = new PasswordOptions
         {
             RequireDigit = false,
             RequireLowercase = false,
@@ -23,82 +23,107 @@ namespace FunderMaps
         };
 
         /// <summary>
-        /// Default lockout policy.
+        ///     Default lockout policy.
         /// </summary>
-        public static readonly LockoutOptions LockoutOptions = new LockoutOptions
+        internal static readonly LockoutOptions LockoutOptions = new LockoutOptions
         {
             DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30),
             MaxFailedAccessAttempts = 10,
         };
 
         /// <summary>
-        /// Static file cache retention.
+        ///     Allowed file mime types in the application.
         /// </summary>
-        public const int StaticFileCacheRetention = 60 * 60 * 24 * 30;
+        /// <remarks>
+        ///     These mime types are whitelisted. Every other
+        ///     file type is not allowed in the application.
+        ///     <para>
+        ///         Controllers can take a subset of this list
+        ///         for specific methods.
+        ///     </para>
+        /// </remarks>
+        internal static readonly string[] AllowedFileMimes =
+        {
+            "application/pdf",
+
+            "image/png",
+            "image/jpeg",
+            "image/gif",
+            "image/bmp",
+            "image/tiff",
+            "image/webp",
+
+            "text/plain",
+        };
 
         /// <summary>
-        /// Application role for administrator
+        ///     Static file cache retention.
         /// </summary>
-        public const string AdministratorRole = "administrator";
+        internal const int StaticFileCacheRetention = 60 * 60 * 24 * 30;
 
         /// <summary>
-        /// Retrieve application version.
+        ///     Application role for administrator
         /// </summary>
-        public static Version ApplicationVersion => Assembly.GetEntryAssembly().GetName().Version;
+        internal const string AdministratorRole = "administrator";
 
         /// <summary>
-        /// Retrieve application name.
+        ///     Retrieve application version.
         /// </summary>
-        public static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
+        internal static Version ApplicationVersion => Assembly.GetEntryAssembly().GetName().Version;
 
         /// <summary>
-        /// Report storage destination.
+        ///     Retrieve application name.
         /// </summary>
-        public const string ReportStorage = "report";
+        internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
 
         /// <summary>
-        /// Evidence storage destination.
+        ///     Report storage destination.
         /// </summary>
-        public const string EvidenceStorage = "evidence";
+        internal const string ReportStorage = "report";
 
         /// <summary>
-        /// Organization with member policy.
+        ///     Evidence storage destination.
         /// </summary>
-        public const string OrganizationMemberPolicy = "OrganizationMember";
+        internal const string EvidenceStorage = "evidence";
 
         /// <summary>
-        /// Organization member with write organization role.
+        ///     Organization with member policy.
         /// </summary>
-        public const string OrganizationMemberWritePolicy = "OrganizationMemberWrite";
+        internal const string OrganizationMemberPolicy = "OrganizationMember";
 
         /// <summary>
-        /// Organization member with verify organization role.
+        ///     Organization member with write organization role.
         /// </summary>
-        public const string OrganizationMemberVerifyPolicy = "OrganizationMemberVerify";
+        internal const string OrganizationMemberWritePolicy = "OrganizationMemberWrite";
 
         /// <summary>
-        /// Organization member with superuser organization role.
+        ///     Organization member with verify organization role.
         /// </summary>
-        public const string OrganizationMemberSuperPolicy = "OrganizationMemberSuper";
+        internal const string OrganizationMemberVerifyPolicy = "OrganizationMemberVerify";
 
         /// <summary>
-        /// Organization with member or administrator policy.
+        ///     Organization member with superuser organization role.
         /// </summary>
-        public const string OrganizationMemberOrAdministratorPolicy = "OrganizationMemberOrAdministrator";
+        internal const string OrganizationMemberSuperPolicy = "OrganizationMemberSuper";
 
         /// <summary>
-        /// Organization member with write organization role or administrator policy.
+        ///     Organization with member or administrator policy.
         /// </summary>
-        public const string OrganizationMemberWriteOrAdministratorPolicy = "OrganizationMemberWriteOrAdministrator";
+        internal const string OrganizationMemberOrAdministratorPolicy = "OrganizationMemberOrAdministrator";
 
         /// <summary>
-        /// Organization member with verify organization role or administrator policy.
+        ///     Organization member with write organization role or administrator policy.
         /// </summary>
-        public const string OrganizationMemberVerifyOrAdministratorPolicy = "OrganizationMemberVerifyOrAdministrator";
+        internal const string OrganizationMemberWriteOrAdministratorPolicy = "OrganizationMemberWriteOrAdministrator";
 
         /// <summary>
-        /// Organization member with superuser organization role or administrator policy.
+        ///     Organization member with verify organization role or administrator policy.
         /// </summary>
-        public const string OrganizationMemberSuperOrAdministratorPolicy = "OrganizationMemberSuperOrAdministrator";
+        internal const string OrganizationMemberVerifyOrAdministratorPolicy = "OrganizationMemberVerifyOrAdministrator";
+
+        /// <summary>
+        ///     Organization member with superuser organization role or administrator policy.
+        /// </summary>
+        internal const string OrganizationMemberSuperOrAdministratorPolicy = "OrganizationMemberSuperOrAdministrator";
     }
 }

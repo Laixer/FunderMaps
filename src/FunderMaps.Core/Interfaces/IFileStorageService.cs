@@ -14,7 +14,7 @@ namespace FunderMaps.Core.Interfaces
         /// Retrieve account name for the storage service.
         /// </summary>
         /// <returns>Account name.</returns>
-        Task<string> GetStorageNameAsync();
+        ValueTask<string> GetStorageNameAsync();
 
         /// <summary>
         /// Check if a file exist in storage.
@@ -22,8 +22,9 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <returns>True if file exist, false otherwise.</returns>
-        Task<bool> FileExists(string store, string name);
+        ValueTask<bool> FileExists(string store, string name);
 
+        // TODO: Remove?
         /// <summary>
         /// Retrieve file access link as uri.
         /// </summary>
@@ -39,30 +40,30 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <param name="content">Content array.</param>
-        Task StoreFileAsync(string store, string name, byte[] content);
+        ValueTask StoreFileAsync(string store, string name, byte[] content);
 
         /// <summary>
         /// Store the file in the data store.
         /// </summary>
-        /// /// <param name="store">Storage container.</param>
+        /// <param name="store">Storage container.</param>
         /// <param name="file">Application file.</param>
         /// <param name="content">Content array.</param>
-        Task StoreFileAsync(string store, ApplicationFile file, byte[] content);
+        ValueTask StoreFileAsync(string store, FileWrapper file, byte[] content);
 
         /// <summary>
         /// Store the file in the data store.
         /// </summary>
-        /// /// <param name="store">Storage container.</param>
+        /// <param name="store">Storage container.</param>
         /// <param name="name">File name.</param>
         /// <param name="stream">Content stream.</param>
-        Task StoreFileAsync(string store, string name, Stream stream);
+        ValueTask StoreFileAsync(string store, string name, Stream stream);
 
         /// <summary>
         /// Store the file in the data store.
         /// </summary>
-        /// /// <param name="store">Storage container.</param>
+        /// <param name="store">Storage container.</param>
         /// <param name="file">Application file.</param>
         /// <param name="stream">Content stream.</param>
-        Task StoreFileAsync(string store, ApplicationFile file, Stream stream);
+        ValueTask StoreFileAsync(string store, FileWrapper file, Stream stream);
     }
 }

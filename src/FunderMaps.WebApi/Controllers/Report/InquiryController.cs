@@ -3,6 +3,7 @@ using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.UseCases;
+using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Http;
@@ -99,9 +100,16 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(input));
             }
 
-            // FUTURE
+            // TODO: Replace with validator?
+            var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
+            if (!virtualFile.IsValid)
+            {
+                throw new ArgumentException();
+            }
 
-            return NoContent();
+            await _inquiryUseCase.StoreDocumentAsync(virtualFile.File, input.OpenReadStream()).ConfigureAwait(false);
+
+            return Ok(virtualFile.File);
         }
 
         [HttpPut("{id:int}")]
@@ -121,7 +129,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpPut("{id:int}/status_review")]
-        public async Task<IActionResult> SetStatusReviewAsync(int id) //, [FromBody] InquiryDTO input)
+        public async Task<IActionResult> SetStatusReviewAsync(int id)
         {
             await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview).ConfigureAwait(false);
 
@@ -129,7 +137,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpPut("{id:int}/status_rejected")]
-        public async Task<IActionResult> SetStatusRejectedAsync(int id) //, [FromBody] InquiryDTO input)
+        public async Task<IActionResult> SetStatusRejectedAsync(int id)
         {
             await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected).ConfigureAwait(false);
 
@@ -137,7 +145,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpPut("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id) //, [FromBody] InquiryDTO input)
+        public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done).ConfigureAwait(false);
 

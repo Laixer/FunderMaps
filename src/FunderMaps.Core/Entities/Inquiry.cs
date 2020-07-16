@@ -64,7 +64,10 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public bool StandardF3o { get; set; }
 
-        public void InstantiateDefaults()
+        /// <summary>
+        ///     Initialize property defaults.
+        /// </summary>
+        public void InitializeDefaults()
         {
             Id = 0;
             AuditStatus = AuditStatus.Todo;
@@ -74,8 +77,16 @@ namespace FunderMaps.Core.Entities
             AttributionNavigation = null;
         }
 
-        public void InstantiateDefaults(Inquiry other)
+        /// <summary>
+        ///     Initialize properties from another entity.
+        /// </summary>
+        public void InitializeDefaults(Inquiry other)
         {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             Id = other.Id;
             AuditStatus = other.AuditStatus;
             Attribution = other.Attribution;

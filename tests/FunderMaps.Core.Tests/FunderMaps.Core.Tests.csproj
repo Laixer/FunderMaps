@@ -24,4 +24,8 @@
     <ProjectReference Include="..\..\src\FunderMaps.Core\FunderMaps.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>
