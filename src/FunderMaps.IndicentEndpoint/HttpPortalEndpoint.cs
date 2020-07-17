@@ -23,15 +23,15 @@ namespace FunderMaps.IndicentEndpoint
         private const string gatewayName = "FunderMaps.IndicentEndpoint";
 
         private readonly IncidentUseCase _incidentUseCase;
-        private readonly IAddressRepository _addressRepository;
+        private readonly GeocoderUseCase _geocoderUseCase;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public HttpPortalEndpoint(IncidentUseCase incidentUseCase, IAddressRepository addressRepository)
+        public HttpPortalEndpoint(IncidentUseCase incidentUseCase, GeocoderUseCase geocoderUseCase)
         {
             _incidentUseCase = incidentUseCase ?? throw new ArgumentNullException(nameof(incidentUseCase));
-            _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
+            _geocoderUseCase = geocoderUseCase ?? throw new ArgumentNullException(nameof(geocoderUseCase));
         }
 
         /// <summary>
@@ -107,16 +107,15 @@ namespace FunderMaps.IndicentEndpoint
                 return ErrorResult("Input is empty"); // TODO:
             }
 
-            string postcode = request.Query["postcode"];
-            string buildingNumber = request.Query["BuildingNumber"];
+            string query = request.Query["query"];
 
-            if (string.IsNullOrEmpty(postcode) || string.IsNullOrEmpty(buildingNumber))
+            if (string.IsNullOrEmpty(query))
             {
                 return ErrorResult("Input is empty"); // TODO:
             }
 
             // TODO: Should yield single item
-            await foreach (var address in _addressRepository.GetByPostalCodeAsync(postcode, buildingNumber, Navigation.SingleRow))
+            await foreach (var address in _geocoderUseCase.GetAllBySuggestionAsync(query, Navigation.SingleRow))
             {
                 return new OkObjectResult(new AddressOutputViewModel
                 {
