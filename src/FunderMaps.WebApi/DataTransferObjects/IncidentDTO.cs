@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.WebApi.DataTransferObjects
 {
     /// <summary>
-    /// Incident DTO.
+    ///     Incident DTO.
     /// </summary>
     public class IncidentDTO
     {

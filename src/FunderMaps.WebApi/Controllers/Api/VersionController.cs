@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FunderMaps.Controllers.Api
 {
     /// <summary>
-    /// Return application versioning information.
+    ///     Return application versioning information.
     /// </summary>
     [AllowAnonymous]
     [Route("api/version")]
@@ -14,10 +14,12 @@ namespace FunderMaps.Controllers.Api
     {
         // GET: api/version
         /// <summary>
-        /// Return application versioning information.
+        ///     Return application versioning information.
         /// </summary>
         /// <remarks>
-        /// Cache response for 24 hours.
+        ///     Cache response for 24 hours. Version will not change
+        ///     often and this call is primarily used to check if the
+        ///     API is responding.
         /// </remarks>
         [HttpGet]
         [ResponseCache(Duration = 60 * 60 * 24)]

@@ -6,6 +6,9 @@ namespace FunderMaps.WebApi.ViewModels
     /// <summary>
     ///     Pagination model.
     /// </summary>
+    /// <remarks>
+    ///     Used to paginate datasets.
+    /// </remarks>
     public class PaginationModel
     {
         /// <summary>
@@ -16,7 +19,7 @@ namespace FunderMaps.WebApi.ViewModels
         /// <summary>
         ///     Recordset limit.
         /// </summary>
-        public int Limit { get; set; }
+        public int Limit { get; set; } = 25;
 
         /// <summary>
         ///     Sort onto field.
