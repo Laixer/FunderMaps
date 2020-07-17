@@ -66,4 +66,8 @@
     <Content Update="web.Release.config" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Application\" />
+  </ItemGroup>
+
 </Project>
