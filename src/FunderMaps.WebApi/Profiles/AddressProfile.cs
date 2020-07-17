@@ -1,15 +1,18 @@
 ﻿using AutoMapper;
+using FunderMaps.Core.Entities;
+using FunderMaps.WebApi.DataTransferObjects;
 
 namespace FunderMaps.WebApi.Profiles
 {
     /// <summary>
-    /// Mapping profile.
+    ///     Mapping profile.
     /// </summary>
     public class AddressProfile : Profile
     {
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
-        public AddressProfile() { }
+        public AddressProfile()
+            => CreateMap<Address, AddressDto>().ReverseMap();
     }
 }

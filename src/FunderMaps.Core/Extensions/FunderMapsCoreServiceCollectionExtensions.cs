@@ -28,6 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<INotificationService, NullNotificationService>();
 
             // Register core use cases in DI container.
+            services.AddScoped<GeocoderUseCase>();
             services.AddScoped<IncidentUseCase>();
             services.AddScoped<InquiryUseCase>();
             services.AddScoped<ProjectUseCase>();

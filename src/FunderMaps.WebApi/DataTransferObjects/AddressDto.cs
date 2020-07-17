@@ -1,12 +1,12 @@
 ﻿using FunderMaps.Core.DataAnnotations;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Core.Entities
+namespace FunderMaps.WebApi.DataTransferObjects
 {
     /// <summary>
-    ///     Access entity.
+    ///     Address DTO.
     /// </summary>
-    public class Address : BaseEntity
+    public class AddressDto
     {
         /// <summary>
         ///     Unique identifier.
