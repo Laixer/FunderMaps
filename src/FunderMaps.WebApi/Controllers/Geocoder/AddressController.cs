@@ -49,14 +49,9 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
                 throw new ArgumentNullException(nameof(input));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<AddressDto>();
-            await foreach (var item in _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation))
-            {
-                result.Add(_mapper.Map<AddressDto>(item));
-            }
-
-            //var result = _mapper.Map<IAsyncEnumerable<Inquiry>, List<InquiryDTO>>(_inquiryUseCase.GetAllInquiryAsync(pagination.Navigation));
+            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(
+                _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }

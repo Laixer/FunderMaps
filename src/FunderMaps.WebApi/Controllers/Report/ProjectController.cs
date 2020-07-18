@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
-    /// Endpoint controller for project operations.
+    ///     Endpoint controller for project operations.
     /// </summary>
     [ApiController]
     [Route("api/project")]
@@ -24,7 +24,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly ProjectUseCase _projectUseCase;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public ProjectController(IMapper mapper, ProjectUseCase projectUseCase)
         {
@@ -48,12 +48,8 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<ProjectDTO>();
-            await foreach (var item in _projectUseCase.GetAllAsync(pagination.Navigation))
-            {
-                result.Add(_mapper.Map<ProjectDTO>(item));
-            }
+            var result = await _mapper.MapAsync<IList<ProjectDTO>, Project>(_projectUseCase.GetAllAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }

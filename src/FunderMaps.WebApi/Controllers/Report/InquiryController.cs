@@ -49,14 +49,8 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<InquiryDTO>();
-            await foreach (var item in _inquiryUseCase.GetAllAsync(pagination.Navigation))
-            {
-                result.Add(_mapper.Map<InquiryDTO>(item));
-            }
-
-            //var result = _mapper.Map<IAsyncEnumerable<Inquiry>, List<InquiryDTO>>(_inquiryUseCase.GetAllInquiryAsync(pagination.Navigation));
+            var result = await _mapper.MapAsync<IList<InquiryDTO>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }
@@ -69,12 +63,8 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<InquiryDTO>();
-            await foreach (var item in _inquiryUseCase.GetAllAsync(pagination.Navigation))
-            {
-                result.Add(_mapper.Map<InquiryDTO>(item));
-            }
+            var result = await _mapper.MapAsync<IList<InquiryDTO>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }

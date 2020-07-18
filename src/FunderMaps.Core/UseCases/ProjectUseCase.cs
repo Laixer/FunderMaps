@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.Core.UseCases
 {
     /// <summary>
-    /// Project use case.
+    ///     Project use case.
     /// </summary>
     public class ProjectUseCase
     {
@@ -17,7 +17,7 @@ namespace FunderMaps.Core.UseCases
         private readonly IProjectSampleRepository _projectSampleRepository;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public ProjectUseCase(IProjectRepository projectRepository, IProjectSampleRepository projectSampleRepository)
         {
@@ -26,7 +26,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Get project.
+        ///     Get project.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public async ValueTask<Project> GetAsync(int id)
@@ -46,7 +46,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Create new project.
+        ///     Create new project.
         /// </summary>
         /// <param name="project">Entity object.</param>
         public async ValueTask<Project> CreateAsync(Project project)
@@ -61,21 +61,21 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Retrieve all projects.
+        ///     Retrieve all projects.
         /// </summary>
         /// <param name="navigation">Recordset nagivation.</param>
         public IAsyncEnumerable<Project> GetAllAsync(INavigation navigation)
             => _projectRepository.ListAllAsync(navigation);
 
         /// <summary>
-        /// Update project.
+        ///     Update project.
         /// </summary>
         /// <param name="project">Entity object.</param>
         public ValueTask UpdateAsync(Project project)
             => _projectRepository.UpdateAsync(project);
 
         /// <summary>
-        /// Delete project.
+        ///     Delete project.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public async ValueTask DeleteAsync(int id)

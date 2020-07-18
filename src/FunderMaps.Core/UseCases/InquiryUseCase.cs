@@ -45,17 +45,9 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask<Inquiry> GetAsync(int id)
         {
-            try
-            {
-                // TODO:
-                //inquiry.AttributionNavigation = ...
-                return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            // TODO:
+            //inquiry.AttributionNavigation = ...
+            return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         // TODO: Remove stream.
@@ -80,21 +72,13 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquiry));
             }
 
-            try
-            {
-                inquiry.InitializeDefaults();
-                inquiry.Attribution = 1; // TODO: Remove
+            inquiry.InitializeDefaults();
+            inquiry.Attribution = 1; // TODO: Remove
 
-                Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
 
-                var id = await _inquiryRepository.AddAsync(inquiry).ConfigureAwait(false);
-                return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            var id = await _inquiryRepository.AddAsync(inquiry).ConfigureAwait(false);
+            return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -115,24 +99,16 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquiry));
             }
 
-            try
+            inquiry.InitializeDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
+
+            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+
+            if (!inquiry.AllowWrite)
             {
-                inquiry.InitializeDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
-
-                Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
-
-                if (!inquiry.AllowWrite)
-                {
-                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
-                }
-
-                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
             }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+
+            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -142,49 +118,40 @@ namespace FunderMaps.Core.UseCases
         /// <param name="status">New entity status.</param>
         public virtual async ValueTask UpdateStatusAsync(int id, AuditStatus status)
         {
-            try
+            // FUTURE: Abstract this away.
+            var inquiry = await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            Func<ValueTask> postUpdateEvent = () => new ValueTask();
+
+            switch (status)
             {
-                // FUTURE: Abstract this away.
-                var inquiry = await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+                case AuditStatus.Pending:
+                    inquiry.TransitionToPending();
+                    break;
+                case AuditStatus.Done:
+                    inquiry.TransitionToDone();
+                    break;
+                case AuditStatus.Discarded:
+                    inquiry.TransitionToDiscarded();
+                    break;
+                case AuditStatus.PendingReview:
+                    inquiry.TransitionToReview();
 
-                Func<ValueTask> postUpdateEvent = () => new ValueTask();
+                    // TODO: Reviewer receives notification
+                    postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
+                    break;
+                case AuditStatus.Rejected:
+                    inquiry.TransitionToRejected();
 
-                switch (status)
-                {
-                    case AuditStatus.Pending:
-                        inquiry.TransitionToPending();
-                        break;
-                    case AuditStatus.Done:
-                        inquiry.TransitionToDone();
-                        break;
-                    case AuditStatus.Discarded:
-                        inquiry.TransitionToDiscarded();
-                        break;
-                    case AuditStatus.PendingReview:
-                        inquiry.TransitionToReview();
-
-                        // TODO: Reviewer receives notification
-                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
-                        break;
-                    case AuditStatus.Rejected:
-                        inquiry.TransitionToRejected();
-
-                        // TODO: Creator receives notification + message
-                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
-                        break;
-                    default:
-                        throw new StateTransitionException(inquiry.AuditStatus, status);
-                }
-
-                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
-
-                await postUpdateEvent().ConfigureAwait(false);
+                    // TODO: Creator receives notification + message
+                    postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
+                    break;
+                default:
+                    throw new StateTransitionException(inquiry.AuditStatus, status);
             }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+
+            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+            await postUpdateEvent().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,15 +160,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask DeleteAsync(int id)
         {
-            try
-            {
-                await _inquiryRepository.DeleteAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            await _inquiryRepository.DeleteAsync(id).ConfigureAwait(false);
         }
 
         #endregion
@@ -214,17 +173,9 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity sample id.</param>
         public virtual async ValueTask<InquirySample> GetSampleAsync(int id)
         {
-            try
-            {
-                var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-                inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
-                return inquirySample;
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+            return inquirySample;
         }
 
         /// <summary>
@@ -238,38 +189,30 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            try
+            inquirySample.Id = 0;
+            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+            inquirySample.CreateDate = DateTime.MinValue;
+            inquirySample.UpdateDate = null;
+            inquirySample.DeleteDate = null;
+
+            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+
+            // FUTURE: Too much logic
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+
+            if (!inquiry.AllowWrite)
             {
-                inquirySample.Id = 0;
-                inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-                inquirySample.CreateDate = DateTime.MinValue;
-                inquirySample.UpdateDate = null;
-                inquirySample.DeleteDate = null;
-
-                Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
-
-                // FUTURE: Too much logic
-                var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
-
-                if (!inquiry.AllowWrite)
-                {
-                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
-                }
-
-                var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
-                inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-
-                inquiry.TransitionToPending();
-                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
-
-                inquirySample.InquiryNavigation = inquiry;
-                return inquirySample;
+                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
             }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+
+            var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
+            inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            inquiry.TransitionToPending();
+            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+
+            inquirySample.InquiryNavigation = inquiry;
+            return inquirySample;
         }
 
         /// <summary>
@@ -292,29 +235,21 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask DeleteSampleAsync(int id)
         {
-            try
+            // FUTURE: Too much logic
+            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+
+            if (!inquiry.AllowWrite)
             {
-                // FUTURE: Too much logic
-                var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-                var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
-
-                if (!inquiry.AllowWrite)
-                {
-                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
-                }
-
-                await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
-                var itemCount = await _inquiryRepository.CountAsync().ConfigureAwait(false); // TODO: Should only select inquiry
-                if (itemCount == 0)
-                {
-                    inquiry.TransitionToTodo();
-                    await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
-                }
+                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
             }
-            catch (RepositoryException)
+
+            await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
+            var itemCount = await _inquiryRepository.CountAsync().ConfigureAwait(false); // TODO: Should only select inquiry
+            if (itemCount == 0)
             {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
+                inquiry.TransitionToTodo();
+                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
             }
         }
 
@@ -329,30 +264,22 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            try
+            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+
+            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+
+            // FUTURE: Too much logic
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+
+            if (!inquiry.AllowWrite)
             {
-                inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-
-                Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
-
-                // FUTURE: Too much logic
-                var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
-
-                if (!inquiry.AllowWrite)
-                {
-                    throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
-                }
-
-                await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
-
-                inquiry.TransitionToPending();
-                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
             }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+
+            await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
+
+            inquiry.TransitionToPending();
+            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
         }
 
         #endregion

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace FunderMaps.WebApi.Controllers
 {
@@ -26,13 +27,11 @@ namespace FunderMaps.WebApi.Controllers
             }
 
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
-            var exception = context?.Error;
+            Exception exception = context?.Error;
 
             if (exception is RepositoryException) // TODO: Should be removed.
             {
-                return Problem(
-                    statusCode: 404,
-                    title: "Entity was not found.");
+                throw new InvalidOperationException();
             }
             else if (exception is EntityNotFoundException)
             {

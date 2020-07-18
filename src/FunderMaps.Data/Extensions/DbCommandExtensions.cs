@@ -1,4 +1,4 @@
-﻿using FunderMaps.Data.Exceptions;
+﻿using FunderMaps.Core.Exceptions;
 using System;
 using System.Data.Common;
 using System.Globalization;
@@ -53,6 +53,11 @@ namespace FunderMaps.Data.Extensions
             return parameter;
         }
 
+        /// <summary>
+        ///     Executes the query and returns the first column of the first row as integer.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
+        /// <returns>Integer.</returns>
         public static async ValueTask<int> ExecuteScalarIntAsync(this DbCommand command)
         {
             if (command == null)
@@ -60,9 +65,14 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToInt32(await command.ExecuteScalarAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToInt32(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        ///     Executes the query and returns the first column of the first row as unsigned integer.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
+        /// <returns>Unsigned integer.</returns>
         public static async ValueTask<uint> ExecuteScalarUnsignedIntAsync(this DbCommand command)
         {
             if (command == null)
@@ -70,9 +80,14 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToUInt32(await command.ExecuteScalarAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToUInt32(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        ///     Executes the query and returns the first column of the first row as long integer.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
+        /// <returns>Long integer.</returns>
         public static async ValueTask<long> ExecuteScalarLongAsync(this DbCommand command)
         {
             if (command == null)
@@ -80,9 +95,14 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToInt64(await command.ExecuteScalarAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToInt64(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        ///     Executes the query and returns the first column of the first row as unsigned long integer.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
+        /// <returns>Unsigned long integer.</returns>
         public static async ValueTask<ulong> ExecuteScalarUnsignedLongAsync(this DbCommand command)
         {
             if (command == null)
@@ -90,25 +110,49 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToUInt64(await command.ExecuteScalarAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToUInt64(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        ///     Execute command and ensure success.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
+        /// <returns>Scalar result.</returns>
+        public static async ValueTask<object> ExecuteScalarEnsureRowAsync(this DbCommand command)
+        {
+            var result = await command.ExecuteScalarAsync().ConfigureAwait(false);
+            if (result == null)
+            {
+                throw new EntityNotFoundException();
+            }
+            return result;
+        }
+
+        /// <summary>
+        ///     Execute command and ensure success.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
+        /// <returns><see cref="DbDataReader"/>.</returns>
         public static async ValueTask<DbDataReader> ExecuteReaderAsyncEnsureRowAsync(this DbCommand command)
         {
-            var reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+            DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
             if (!reader.HasRows)
             {
-                throw new NullRowException();
+                throw new EntityNotFoundException();
             }
             return reader;
         }
 
+        /// <summary>
+        ///     Execute command and ensure success.
+        /// </summary>
+        /// <param name="command">The command to extend.</param>
         public static async ValueTask ExecuteNonQueryEnsureAffectedAsync(this DbCommand command)
         {
             int affected = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
             if (affected <= 0)
             {
-                throw new NullAffectedException();
+                throw new EntityNotFoundException();
             }
         }
     }

@@ -63,15 +63,7 @@ namespace FunderMaps.Core.UseCases
         {
             Validator.ValidateValue(id, new ValidationContext(id), new List<IncidentAttribute> { new IncidentAttribute() });
 
-            try
-            {
-                return await GetAndBuildAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            return await GetAndBuildAsync(id).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -80,57 +72,10 @@ namespace FunderMaps.Core.UseCases
         /// <param name="navigation">Recordset nagivation.</param>
         public virtual async IAsyncEnumerable<Incident> GetAllAsync(INavigation navigation)
         {
-            // HACK: Cannot yield within a try/catch block as of C# 8.0 2020.
-            ValueTask<Incident> func(Incident incident)
+            await foreach (var incident in _incidentRepository.ListAllAsync(navigation))
             {
-                try
-                {
-                    return BuildAsync(incident);
-                }
-                catch (RepositoryException)
-                {
-                    // FUTURE: We *assume* repository exceptions are non existing entities.
-                    throw new EntityNotFoundException();
-                }
+                yield return await BuildAsync(incident).ConfigureAwait(false);
             }
-
-            IAsyncEnumerable<Incident> asyncEnumerable = _incidentRepository.ListAllAsync(navigation);
-            IAsyncEnumerator<Incident> e = asyncEnumerable.GetAsyncEnumerator();
-
-        // TODO: Workaround for yield within a try/catch
-        // HACK: This is a C# compiler/language bug, see https://github.com/dotnet/roslyn/issues/39583
-        MoveToNext:
-            try
-            {
-                bool hasResult = await e.MoveNextAsync().ConfigureAwait(false);
-                if (!hasResult)
-                {
-                    yield break;
-                }
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
-
-            yield return await func(e.Current).ConfigureAwait(false);
-            goto MoveToNext;
-
-#if _FUTURE_YIELD_BUG_RESOLVED
-            try
-            {
-                await foreach (var incident in _incidentRepository.ListAllAsync(navigation))
-                {
-                    yield return await func(incident).ConfigureAwait(false);
-                }
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
-#endif
         }
 
         /// <summary>
@@ -160,22 +105,14 @@ namespace FunderMaps.Core.UseCases
 
             Validator.ValidateObject(incident, new ValidationContext(incident), true);
 
-            try
+            // There does not have to be a contact, but if it exists we'll save it.
+            if (incident.ContactNavigation != null)
             {
-                // There does not have to be a contact, but if it exists we'll save it.
-                if (incident.ContactNavigation != null)
-                {
-                    await _contactRepository.AddAsync(incident.ContactNavigation).ConfigureAwait(false);
-                }
+                await _contactRepository.AddAsync(incident.ContactNavigation).ConfigureAwait(false);
+            }
 
-                var id = await _incidentRepository.AddAsync(incident).ConfigureAwait(false);
-                return await GetAndBuildAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            var id = await _incidentRepository.AddAsync(incident).ConfigureAwait(false);
+            return await GetAndBuildAsync(id).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -188,15 +125,7 @@ namespace FunderMaps.Core.UseCases
         {
             Validator.ValidateObject(incident, new ValidationContext(incident), true);
 
-            try
-            {
-                await _incidentRepository.UpdateAsync(incident).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            await _incidentRepository.UpdateAsync(incident).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -209,15 +138,7 @@ namespace FunderMaps.Core.UseCases
         {
             Validator.ValidateValue(id, new ValidationContext(id), new List<IncidentAttribute> { new IncidentAttribute() });
 
-            try
-            {
-                await _incidentRepository.DeleteAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            await _incidentRepository.DeleteAsync(id).ConfigureAwait(false);
         }
     }
 }

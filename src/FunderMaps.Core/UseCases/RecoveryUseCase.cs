@@ -15,7 +15,7 @@ namespace FunderMaps.Core.UseCases
     //      -> creator receives notification + message
 
     /// <summary>
-    /// Recovery use case.
+    ///     Recovery use case.
     /// </summary>
     public class RecoveryUseCase
     {
@@ -23,7 +23,7 @@ namespace FunderMaps.Core.UseCases
         private readonly IRecoverySampleRepository _recoverySampleRepository;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public RecoveryUseCase(IRecoveryRepository recoveryRepository, IRecoverySampleRepository recoverySampleRepository)
         {
@@ -32,7 +32,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Get recovery.
+        ///     Get recovery.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public async ValueTask<Recovery> GetAsync(int id)
@@ -50,7 +50,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Create new recovery.
+        ///     Create new recovery.
         /// </summary>
         /// <param name="recovery">Entity object.</param>
         public async ValueTask<Recovery> CreateAsync(Recovery recovery)
@@ -68,21 +68,21 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Retrieve all recoveries.
+        ///     Retrieve all recoveries.
         /// </summary>
         /// <param name="navigation">Recordset nagivation.</param>
         public IAsyncEnumerable<Recovery> GetAllAsync(INavigation navigation)
             => _recoveryRepository.ListAllAsync(navigation);
 
         /// <summary>
-        /// Update recoveries.
+        ///     Update recoveries.
         /// </summary>
         /// <param name="recovery">Entity object.</param>
         public ValueTask UpdateAsync(Recovery recovery)
             => _recoveryRepository.UpdateAsync(recovery);
 
         /// <summary>
-        /// Delete recoveries.
+        ///     Delete recoveries.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public async ValueTask DeleteAsync(int id)
@@ -91,7 +91,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Get recovery sample.
+        ///     Get recovery sample.
         /// </summary>
         /// <param name="id">Entity sample id.</param>
         public async ValueTask<RecoverySample> GetSampleAsync(int id)
@@ -108,7 +108,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Create new recovery sample.
+        ///     Create new recovery sample.
         /// </summary>
         /// <param name="recoverySample">Entity object.</param>
         public async ValueTask<RecoverySample> CreateSampleAsync(RecoverySample recoverySample)
@@ -131,7 +131,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Retrieve all recovery samples.
+        ///     Retrieve all recovery samples.
         /// </summary>
         /// <param name="navigation">Recordset nagivation.</param>
         public async IAsyncEnumerable<RecoverySample> GetAllSampleAsync(INavigation navigation)
@@ -145,7 +145,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Delete recovery sample.
+        ///     Delete recovery sample.
         /// </summary>
         /// <param name="id">Entity id.</param>
         public async ValueTask DeleteSampleAsync(int id)
@@ -156,7 +156,7 @@ namespace FunderMaps.Core.UseCases
         }
 
         /// <summary>
-        /// Update recovery sample.
+        ///     Update recovery sample.
         /// </summary>
         /// <param name="recoverySample">Entity object.</param>
         public ValueTask UpdateSampleAsync(RecoverySample recoverySample)

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
-    /// Endpoint controller for recovery sample operations.
+    ///     Endpoint controller for recovery sample operations.
     /// </summary>
     [ApiController]
     [Route("api/recovery/{recoveryId}/sample")]
@@ -22,7 +22,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly RecoveryUseCase _recoveryUseCase;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public RecoverySampleController(IMapper mapper, RecoveryUseCase recoveryUseCase)
         {
@@ -46,12 +46,8 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<RecoverySampleDTO>();
-            await foreach (var item in _recoveryUseCase.GetAllSampleAsync(pagination.Navigation))
-            {
-                result.Add(_mapper.Map<RecoverySampleDTO>(item));
-            }
+            var result = await _mapper.MapAsync<IList<RecoverySampleDTO>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }

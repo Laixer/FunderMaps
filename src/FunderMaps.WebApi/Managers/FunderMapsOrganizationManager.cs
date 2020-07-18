@@ -7,19 +7,19 @@ using System.Collections.Generic;
 
 namespace FunderMaps.WebApi.Managers
 {
-    public class FunderMapsUserManager : UserManager<FunderMapsUser>
+    public class FunderMapsOrganizationManager
     {
-        public FunderMapsUserManager(
+        public FunderMapsOrganizationManager(
             IUserStore<FunderMapsUser> store,
             IOptions<IdentityOptions> optionsAccessor,
-            IPasswordHasher<FunderMapsUser> passwordHasher,
+            UserManager<FunderMapsUser> userManager,
             IEnumerable<IUserValidator<FunderMapsUser>> userValidators,
             IEnumerable<IPasswordValidator<FunderMapsUser>> passwordValidators,
             ILookupNormalizer keyNormalizer,
             IdentityErrorDescriber errors,
             IServiceProvider services,
-            ILogger<FunderMapsUserManager> logger)
-            : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
+            ILogger<FunderMapsOrganizationManager> logger)
+            //: base(store, optionsAccessor, userValidators, passwordValidators, keyNormalizer, errors, services, logger)
         {
         }
     }

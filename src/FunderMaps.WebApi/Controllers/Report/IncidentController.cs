@@ -51,14 +51,10 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<Incident>();
-            await foreach (var item in _incidentUseCase.GetAllAsync(pagination.Navigation))
-            {
-                result.Add(item);
-            }
+            var result = await _mapper.MapAsync<IList<IncidentDTO>, Incident>(_incidentUseCase.GetAllAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
-            return Ok(_mapper.Map<List<IncidentDTO>>(result));
+            return Ok(result);
         }
 
         [HttpPost]

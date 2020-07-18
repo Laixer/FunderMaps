@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
-    /// Endpoint controller for recovery operations.
+    ///     Endpoint controller for recovery operations.
     /// </summary>
     [ApiController]
     [Route("api/recovery")]
@@ -23,7 +23,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly RecoveryUseCase _recoveryUseCase;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public RecoveryController(IMapper mapper, RecoveryUseCase recoveryUseCase)
         {
@@ -47,12 +47,8 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<RecoveryDTO>();
-            await foreach (var item in _recoveryUseCase.GetAllAsync(pagination.Navigation))
-            {
-                result.Add(_mapper.Map<RecoveryDTO>(item));
-            }
+            var result = await _mapper.MapAsync<IList<RecoveryDTO>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }
@@ -65,12 +61,8 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            // FUTURE: Missing IAsyncEnum map()
-            var result = new List<RecoveryDTO>();
-            await foreach (var item in _recoveryUseCase.GetAllAsync(pagination.Navigation))
-            {
-                result.Add(_mapper.Map<RecoveryDTO>(item));
-            }
+            var result = await _mapper.MapAsync<IList<RecoveryDTO>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
+                .ConfigureAwait(false);
 
             return Ok(result);
         }

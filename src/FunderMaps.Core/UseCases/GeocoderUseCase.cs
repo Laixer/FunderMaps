@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
@@ -33,15 +32,7 @@ namespace FunderMaps.Core.UseCases
         {
             Validator.ValidateValue(id, new ValidationContext(id), new List<AddressAttribute> { new AddressAttribute() });
 
-            try
-            {
-                return await _addressRepository.GetByIdAsync(id).ConfigureAwait(false);
-            }
-            catch (RepositoryException)
-            {
-                // FUTURE: We *assume* repository exceptions are non existing entities.
-                throw new EntityNotFoundException();
-            }
+            return await _addressRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         // TODO: Add cache
