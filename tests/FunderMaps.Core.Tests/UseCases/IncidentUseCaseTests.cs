@@ -22,7 +22,7 @@ namespace FunderMaps.Core.Tests.UseCases
 
             // Assert
             Assert.NotNull(incident);
-            Assert.IsAssignableFrom<Incident>(incident);
+            Assert.IsType<Incident>(incident);
         }
     }
 }

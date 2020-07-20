@@ -1,17 +1,17 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Wood type.
+    ///     Wood type.
     /// </summary>
     public enum WoodType
     {
         /// <summary>
-        /// Pine.
+        ///     Pine.
         /// </summary>
         Pine,
 
         /// <summary>
-        /// Spruce.
+        ///     Spruce.
         /// </summary>
         Spruce,
     }

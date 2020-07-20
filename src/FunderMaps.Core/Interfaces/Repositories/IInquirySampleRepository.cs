@@ -23,7 +23,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <param name="orgId">Organization identifier.</param>
-        /// <returns><see cref="Sample"/> on success, null on error.</returns>
+        /// <returns><see cref="InquirySample"/> on success, null on error.</returns>
         Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId);
 
         /// <summary>

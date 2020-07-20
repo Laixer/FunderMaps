@@ -1,37 +1,37 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Audit status.
+    ///     Audit status.
     /// </summary>
     public enum AuditStatus
     {
         /// <summary>
-        /// Needs to be done.
+        ///     Needs to be done.
         /// </summary>
         Todo,
 
         /// <summary>
-        /// Pending.
+        ///     Pending.
         /// </summary>
         Pending,
 
         /// <summary>
-        /// Done.
+        ///     Done.
         /// </summary>
         Done,
 
         /// <summary>
-        /// Discarded.
+        ///     Discarded.
         /// </summary>
         Discarded,
 
         /// <summary>
-        /// Pending review.
+        ///     Pending review.
         /// </summary>
         PendingReview,
 
         /// <summary>
-        /// Rejected.
+        ///     Rejected.
         /// </summary>
         Rejected,
     }

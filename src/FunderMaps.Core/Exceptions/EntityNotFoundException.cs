@@ -17,14 +17,16 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public EntityNotFoundException(string message) : base(message)
+        public EntityNotFoundException(string message)
+            : base(message)
         {
         }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public EntityNotFoundException(string message, Exception innerException) : base(message, innerException)
+        public EntityNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }
