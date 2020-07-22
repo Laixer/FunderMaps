@@ -94,7 +94,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
             if (!virtualFile.IsValid)
             {
-                throw new ArgumentException();
+                throw new ArgumentException(); // TODO
             }
 
             await _inquiryUseCase.StoreDocumentAsync(virtualFile.File, input.OpenReadStream()).ConfigureAwait(false);

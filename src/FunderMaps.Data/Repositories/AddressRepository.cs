@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
@@ -21,7 +22,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="dbProvider">Database provider.</param>
         public AddressRepository(DbProvider dbProvider)
             : base(dbProvider)
-        { }
+        {
+        }
 
         /// <summary>
         ///     Create new <see cref="Address"/>.
@@ -160,7 +162,7 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        // TODO: Combination should be unique
+        // TODO: Combination should be unique, cannot return enumerable
         /// <summary>
         ///     Retrieve <see cref="Address"/> by search query.
         /// </summary>
@@ -260,3 +262,4 @@ namespace FunderMaps.Data.Repositories
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

@@ -6,12 +6,12 @@ using System;
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// Provides extension methods for services from this assembly.
+    ///     Provides extension methods for services from this assembly.
     /// </summary>
     public static class FunderMapsDataServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the data services to the container.
+        ///     Adds the data services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
@@ -32,12 +32,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IProjectSampleRepository, ProjectSampleRepository>();
             services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
         }
 
         /// <summary>
-        /// Adds the data services to the container.
+        ///     Adds the data services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <param name="dbConfigName">Database connection string.</param>
