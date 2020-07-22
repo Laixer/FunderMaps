@@ -19,6 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     [Route("api/incident")]
     public class IncidentController : BaseApiController
     {
+        // TODO: Move to Constants
         private const string gatewayName = "FunderMaps.WebApi";
 
         private readonly IMapper _mapper;

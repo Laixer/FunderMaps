@@ -22,7 +22,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="dbProvider">Database provider.</param>
         public IncidentRepository(DbProvider dbProvider)
             : base(dbProvider)
-        { }
+        {
+        }
 
         /// <summary>
         ///     Create new <see cref="Incident"/>.

@@ -17,12 +17,13 @@ namespace FunderMaps.Data.Repositories
     internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryRepository
     {
         /// <summary>
-        /// Create a new instance.
+        ///     Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
         public InquiryRepository(DbProvider dbProvider)
             : base(dbProvider)
-        { }
+        {
+        }
 
         /// <summary>
         ///     Create new <see cref="Inquiry"/>.

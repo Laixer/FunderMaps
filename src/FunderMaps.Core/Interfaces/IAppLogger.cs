@@ -1,5 +1,7 @@
 ﻿namespace FunderMaps.Core.Interfaces
 {
+    // TODO: Replace by logger abstractions
+
     /// <summary>
     ///     Core application logger.
     /// </summary>

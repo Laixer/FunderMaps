@@ -21,7 +21,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="dbProvider">Database provider.</param>
         public ContactRepository(DbProvider dbProvider)
             : base(dbProvider)
-        { }
+        {
+        }
 
         /// <summary>
         ///     Create new <see cref="Contact"/>.

@@ -5,15 +5,17 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 
+// TODO: Rename assemly to FunderMaps.Infrastructure
+
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    /// Provides extension methods for services from this assembly.
+    ///     Provides extension methods for services from this assembly.
     /// </summary>
     public static class FunderMapsCloudServiceCollectionExtensions
     {
         /// <summary>
-        /// Adds the cloud services to the container.
+        ///     Adds the cloud services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
