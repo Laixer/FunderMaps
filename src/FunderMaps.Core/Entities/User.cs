@@ -4,8 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
-    // TODO: Incomplete
-
     /// <summary>
     ///     User entity.
     /// </summary>

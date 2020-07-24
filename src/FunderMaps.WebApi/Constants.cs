@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FunderMaps.Core.Authentication;
 using System;
 using System.Reflection;
 
