@@ -26,6 +26,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IFileStorageService, NullFileStorageService>();
             services.AddScoped<IGeocoderService, NullGeocoderService>();
             services.AddScoped<INotificationService, NullNotificationService>();
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
             // Register core use cases in DI container.
             services.AddScoped<GeocoderUseCase>();
