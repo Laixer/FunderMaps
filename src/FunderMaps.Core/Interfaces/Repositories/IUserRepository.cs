@@ -8,8 +8,14 @@ namespace FunderMaps.Core.Interfaces.Repositories
     {
         ValueTask<User> GetByIdAndPasswordHashAsync(Guid id, string passwordHash);
 
+        ValueTask<User> GetByEmailAsync(string email);
+
         ValueTask<User> GetByEmailAndPasswordHashAsync(string email, string passwordHash);
 
         ValueTask SetPasswordHashAsync(User entity, string passwordHash);
+
+        ValueTask BumpAccessFailed(User entity);
+
+        ValueTask RegisterAccess(User entity);
     }
 }

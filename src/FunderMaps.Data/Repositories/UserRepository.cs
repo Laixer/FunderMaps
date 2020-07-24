@@ -196,6 +196,36 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="User"/>.</returns>
+        public async ValueTask<User> GetByEmailAsync(string email)
+        {
+            var sql = @"
+                SELECT  id,
+                        given_name,
+                        last_name,
+                        email,
+                        avatar,
+                        job_title,
+                        phone_number,
+                        role
+                FROM    application.user
+                WHERE   normalized_email = application.normalize(@email)
+                LIMIT   1";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("email", email);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await reader.ReadAsync().ConfigureAwait(false);
+
+            return MapFromReader(reader);
+        }
+
+        /// <summary>
+        ///     Retrieve <see cref="User"/> by email and password hash.
+        /// </summary>
+        /// <param name="id">Unique identifier.</param>
+        /// <returns><see cref="User"/>.</returns>
         public async ValueTask<User> GetByEmailAndPasswordHashAsync(string email, string passwordHash)
         {
             var sql = @"
@@ -309,6 +339,44 @@ namespace FunderMaps.Data.Repositories
             using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", entity.Id);
             cmd.AddParameterWithValue("password_hash", passwordHash);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///     Update <see cref="User"/> access failed count.
+        /// </summary>
+        /// <returns><see cref="User"/>.</returns>
+        public async ValueTask BumpAccessFailed(User entity)
+        {
+            var sql = @"
+                UPDATE  application.user
+                SET     access_failed_count = access_failed_count + 1
+                WHERE   id = @id";
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///     Update <see cref="User"/> access.
+        /// </summary>
+        /// <returns><see cref="User"/>.</returns>
+        public async ValueTask RegisterAccess(User entity)
+        {
+            // TODO: db trigger to update last_login
+            var sql = @"
+                UPDATE  application.user
+                SET     login_count = login_count + 1,
+                        last_login = CURRENT_TIMESTAMP
+                WHERE   id = @id";
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
 
             await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
         }
