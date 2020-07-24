@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Inquiry entity.
     /// </summary>
-    public class Inquiry : StateControl
+    public sealed class Inquiry : StateControl
     {
         /// <summary>
         ///     Unique identifier.
@@ -63,6 +63,12 @@ namespace FunderMaps.Core.Entities
         ///     Coforms the F3O standaard.
         /// </summary>
         public bool StandardF3o { get; set; }
+
+        /// <summary>
+        ///     Print object as name.
+        /// </summary>
+        /// <returns>String representing inquiry.</returns>
+        public override string ToString() => DocumentName;
 
         /// <summary>
         ///     Initialize property defaults.

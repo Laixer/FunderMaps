@@ -53,6 +53,12 @@ namespace FunderMaps.Core.Entities
         public ApplicationRole Role { get; set; } = ApplicationRole.User;
 
         /// <summary>
+        ///     Print object as name.
+        /// </summary>
+        /// <returns>String representing user.</returns>
+        public override string ToString() => Email;
+
+        /// <summary>
         ///     Initialize property defaults.
         /// </summary>
         public void InitializeDefaults()

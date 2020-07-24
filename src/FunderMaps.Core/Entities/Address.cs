@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Access entity.
     /// </summary>
-    public class Address : BaseEntity
+    public sealed class Address : BaseEntity
     {
         /// <summary>
         ///     Unique identifier.
