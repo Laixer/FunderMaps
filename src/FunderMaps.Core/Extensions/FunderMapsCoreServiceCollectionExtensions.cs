@@ -24,13 +24,15 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            // TODO: AddScoped -> Transient?
+            // Register core objects in DI container.
+            services.AddSingleton<IRandom, RandomGenerator>();
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
+            // TODO: AddScoped -> Transient?
             // Register core service fillers in DI container.
             services.AddScoped<IFileStorageService, NullFileStorageService>();
             services.AddScoped<IGeocoderService, NullGeocoderService>();
             services.AddScoped<INotificationService, NullNotificationService>();
-            services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
             // Register core use cases in DI container.
             services.AddScoped<GeocoderUseCase>();
@@ -41,7 +43,6 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<UserManager>();
             services.AddScoped<OrganizationManager>();
-
 
             return services;
         }

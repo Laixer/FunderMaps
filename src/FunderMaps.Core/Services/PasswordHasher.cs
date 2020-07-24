@@ -13,6 +13,7 @@ namespace FunderMaps.Core.Services
         private const int saltSize = 128 / 8; // 128 bits
         private const byte formatMarker = 0x01;
 
+        // TODO: Replace with IRandom
         private readonly RandomNumberGenerator _rng = new RNGCryptoServiceProvider();
 
         // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
