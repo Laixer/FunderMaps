@@ -12,6 +12,7 @@ namespace FunderMaps.Identity
     /// </summary>
     /// <typeparam name="TUser">Identity user.</typeparam>
     /// <typeparam name="TKey">Primary key in user identity object.</typeparam>
+    [Obsolete("Replaced by JwtBearerTokenProvider")]
     public class JwtTokenIdentityUser<TUser, TKey>
         where TUser : IdentityUser<TKey>
         where TKey : IEquatable<TKey>

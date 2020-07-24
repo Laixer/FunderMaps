@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
@@ -7,6 +8,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     /// Principal entity.
     /// </summary>
+    [Obsolete]
     public class Principal : BaseEntity
     {
         /// <summary>
