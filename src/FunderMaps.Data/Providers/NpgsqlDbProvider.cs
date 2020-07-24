@@ -28,6 +28,7 @@ namespace FunderMaps.Data.Providers
         static NpgsqlDbProvider()
         {
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ApplicationRole>("application.role");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AuditStatus>("report.audit_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BaseMeasurementLevel>("report.base_measurement_level");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ConstructionPile>("report.construction_pile");
