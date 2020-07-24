@@ -15,10 +15,6 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     User repository.
     /// </summary>
-    /// <remarks>
-    ///     Under no condition should the password_hash be
-    ///     returned by this repository.
-    /// </remarks>
     internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     {
         /// <summary>
@@ -160,38 +156,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Retrieve <see cref="User"/> by id and password hash.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask<User> GetByIdAndPasswordHashAsync(Guid id, string passwordHash)
-        {
-            var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user
-                WHERE   id = @id
-                AND     password_hash = @password_hash
-                LIMIT   1";
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            cmd.AddParameterWithValue("password_hash", passwordHash);
-
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
-
-            return MapFromReader(reader);
-        }
-
-        /// <summary>
         ///     Retrieve <see cref="User"/> by email and password hash.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
@@ -221,36 +185,76 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        /// <summary>
-        ///     Retrieve <see cref="User"/> by email and password hash.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask<User> GetByEmailAndPasswordHashAsync(string email, string passwordHash)
+        public async ValueTask<uint> GetAccessFailedCountAsync(User entity)
         {
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
+                SELECT  access_failed_count
                 FROM    application.user
-                WHERE   normalized_email = application.normalize(@email)
-                AND     password_hash = @password_hash
+                WHERE   id = @id
                 LIMIT   1";
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
-            cmd.AddParameterWithValue("password_hash", passwordHash);
+            cmd.AddParameterWithValue("id", entity.Id);
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
             await reader.ReadAsync().ConfigureAwait(false);
 
-            return MapFromReader(reader);
+            return reader.GetUInt(0);
+        }
+
+        public async ValueTask<uint?> GetLoginCountAsync(User entity)
+        {
+            var sql = @"
+                SELECT  login_count
+                FROM    application.user
+                WHERE   id = @id
+                LIMIT   1";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await reader.ReadAsync().ConfigureAwait(false);
+
+            return reader.GetUInt(0);
+        }
+
+        public async ValueTask<DateTime?> GetLastLoginAsync(User entity)
+        {
+            var sql = @"
+                SELECT  last_login
+                FROM    application.user
+                WHERE   id = @id
+                LIMIT   1";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await reader.ReadAsync().ConfigureAwait(false);
+
+            return reader.GetSafeDateTime(0);
+        }
+
+        public async ValueTask<string> GetPasswordHashAsync(User entity)
+        {
+            var sql = @"
+                SELECT  password_hash
+                FROM    application.user
+                WHERE   id = @id
+                LIMIT   1";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await reader.ReadAsync().ConfigureAwait(false);
+
+            return reader.SafeGetString(0);
         }
 
         /// <summary>

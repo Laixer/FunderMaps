@@ -25,26 +25,14 @@ namespace FunderMaps.Core.Managers
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }
 
-        public virtual async ValueTask<User> GetAsync(Guid id, string plainPassword = null)
+        public virtual async ValueTask<User> GetAsync(Guid id)
         {
-            if (!string.IsNullOrEmpty(plainPassword))
-            {
-                var password = _passwordHasher.HashPassword(plainPassword);
-                return await _userRepository.GetByIdAndPasswordHashAsync(id, password).ConfigureAwait(false);
-            }
-
             return await _userRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
-        public virtual async ValueTask<User> GetByEmailAsync(string email, string plainPassword = null)
+        public virtual async ValueTask<User> GetByEmailAsync(string email)
         {
             Validator.ValidateValue(email, new ValidationContext(email), new List<EmailAddressAttribute> { new EmailAddressAttribute() });
-
-            if (!string.IsNullOrEmpty(plainPassword))
-            {
-                var password = _passwordHasher.HashPassword(plainPassword);
-                return await _userRepository.GetByEmailAndPasswordHashAsync(email, password).ConfigureAwait(false);
-            }
 
             return await _userRepository.GetByEmailAsync(email).ConfigureAwait(false);
         }
@@ -99,11 +87,25 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var oldPasswordHash = _passwordHasher.HashPassword(currentPassword);
+            if (string.IsNullOrEmpty(currentPassword))
+            {
+                throw new ArgumentNullException(nameof(currentPassword));
+            }
+
+            if (string.IsNullOrEmpty(newPassword))
+            {
+                throw new ArgumentNullException(nameof(newPassword));
+            }
+
+            user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id).ConfigureAwait(false));
+
+            var currentPasswordHash = await _userRepository.GetPasswordHashAsync(user).ConfigureAwait(false);
+            if (!_passwordHasher.IsPasswordValid(currentPasswordHash, currentPassword))
+            {
+                throw new Exception(); // TODO: Auth invalid ex.
+            }
+
             var newPasswordHash = _passwordHasher.HashPassword(newPassword);
-
-            user.InitializeDefaults(await _userRepository.GetByIdAndPasswordHashAsync(user.Id, oldPasswordHash).ConfigureAwait(false));
-
             await _userRepository.SetPasswordHashAsync(user, newPasswordHash).ConfigureAwait(false);
         }
 
