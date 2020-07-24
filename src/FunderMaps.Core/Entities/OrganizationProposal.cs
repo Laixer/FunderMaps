@@ -1,42 +1,42 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Organization proposal.
+    ///     Organization proposal.
     /// </summary>
-    public class OrganizationProposal : BaseEntity
+    public sealed class OrganizationProposal : BaseEntity
     {
         /// <summary>
-        /// Unique token.
+        ///     Organization identifier.
         /// </summary>
-        public Guid Token { get; set; }
+        public Guid Id { get; set; }
 
         /// <summary>
-        /// Proposed organization name.
+        ///     Proposed organization name.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the normalized name for the organization proposal.
+        ///     Proposed organization email.
         /// </summary>
-        [IgnoreDataMember]
-        public virtual string NormalizedName { get; set; }
-
-        /// <summary>
-        /// Proposed organization email.
-        /// </summary>
-        [Required]
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
-        /// Organization as string.
+        ///     Print object as name.
         /// </summary>
-        /// <returns>String.</returns>
+        /// <returns>String representing organization.</returns>
         public override string ToString() => Name;
+
+        /// <summary>
+        ///     Initialize property defaults.
+        /// </summary>
+        public void InitializeDefaults()
+        {
+            Id = Guid.Empty;
+        }
     }
 }

@@ -27,7 +27,27 @@ namespace FunderMaps.Core.Managers
 
         #region Organization Proposal
 
-        public virtual async ValueTask<Organization> CreateProposalAsync(Organization organization)
+        public virtual async ValueTask<OrganizationProposal> GetProposalAsync(Guid id)
+        {
+            return await _organizationRepository.GetProposalByIdAsync(id).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask<OrganizationProposal> GetProposalByNameAsync(string name)
+        {
+            // TODO:
+            //Validator.ValidateValue(name, new ValidationContext(name), new List<RequiredAttribute> { new RequiredAttribute() });
+
+            return await _organizationRepository.GetProposalByNameAsync(name).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask<OrganizationProposal> GetProposalByEmailAsync(string email)
+        {
+            Validator.ValidateValue(email, new ValidationContext(email), new List<EmailAddressAttribute> { new EmailAddressAttribute() });
+
+            return await _organizationRepository.GetProposalByEmailAsync(email).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask<OrganizationProposal> CreateProposalAsync(OrganizationProposal organization)
         {
             if (organization == null)
             {
@@ -38,8 +58,18 @@ namespace FunderMaps.Core.Managers
 
             Validator.ValidateObject(organization, new ValidationContext(organization), true);
 
-            var id = await _organizationRepository.AddAsync(organization).ConfigureAwait(false);
-            return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var id = await _organizationRepository.AddProposalAsync(organization).ConfigureAwait(false);
+            return await _organizationRepository.GetProposalByIdAsync(id).ConfigureAwait(false);
+        }
+
+        public virtual IAsyncEnumerable<OrganizationProposal> GetAllProposalAsync(INavigation navigation)
+        {
+            return _organizationRepository.ListAllProposalAsync(navigation);
+        }
+
+        public virtual async ValueTask DeleteProposalAsync(Guid id)
+        {
+            await _organizationRepository.DeleteProposalAsync(id).ConfigureAwait(false);
         }
 
         #endregion // Organization Proposal

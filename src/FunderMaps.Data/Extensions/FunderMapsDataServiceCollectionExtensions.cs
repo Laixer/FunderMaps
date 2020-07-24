@@ -22,12 +22,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
+            // Keep the order in which they are directory listed
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IBuildingRepository, BuildingRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IIncidentRepository, IncidentRepository>();
             services.AddScoped<IInquiryRepository, InquiryRepository>();
             services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
+            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IProjectSampleRepository, ProjectSampleRepository>();
             services.AddScoped<IRecoveryRepository, RecoveryRepository>();
