@@ -44,7 +44,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] User input)
+        public async Task<IActionResult> UpdateAsync([FromBody] UserDto input)
         {
             if (input == null)
             {
@@ -54,7 +54,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             var user = _mapper.Map<User>(input);
             user.Id = testUserId;
 
-            await _userManager.UpdateAsync(input).ConfigureAwait(false);
+            await _userManager.UpdateAsync(user).ConfigureAwait(false);
 
             return NoContent();
         }

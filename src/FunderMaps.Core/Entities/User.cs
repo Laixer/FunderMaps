@@ -81,5 +81,12 @@ namespace FunderMaps.Core.Entities
             Email = other.Email;
             Role = other.Role;
         }
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
     }
 }

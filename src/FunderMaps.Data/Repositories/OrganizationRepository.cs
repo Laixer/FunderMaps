@@ -71,6 +71,40 @@ namespace FunderMaps.Data.Repositories
             return reader.GetGuid(0);
         }
 
+        public async ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
+        {
+            // TODO: Check id
+
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
+            if (string.IsNullOrEmpty(passwordHash))
+            {
+                throw new ArgumentNullException(nameof(passwordHash));
+            }
+
+            // TODO: normalized_email should be db trigger function
+            var sql = @"
+	            SELECT application.create_organization(
+                    @id,
+                    @email,
+                    @passwordHash)";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            cmd.AddParameterWithValue("id", id);
+            cmd.AddParameterWithValue("email", email);
+            cmd.AddParameterWithValue("passwordHash", passwordHash);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await reader.ReadAsync().ConfigureAwait(false);
+
+            return reader.GetGuid(0);
+        }
+
         /// <summary>
         ///     Retrieve number of entities.
         /// </summary>

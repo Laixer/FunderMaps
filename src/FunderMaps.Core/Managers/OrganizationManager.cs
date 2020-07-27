@@ -16,6 +16,7 @@ namespace FunderMaps.Core.Managers
         private readonly UserManager _userManager;
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IOrganizationProposalRepository _organizationProposalRepository;
+        private readonly IPasswordHasher _passwordHasher;
 
         /// <summary>
         ///     Create new instance.
@@ -23,11 +24,13 @@ namespace FunderMaps.Core.Managers
         public OrganizationManager(
             UserManager userManager,
             IOrganizationRepository organizationRepository,
-            IOrganizationProposalRepository organizationProposalRepository)
+            IOrganizationProposalRepository organizationProposalRepository,
+            IPasswordHasher passwordHasher)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             _organizationProposalRepository = organizationProposalRepository ?? throw new ArgumentNullException(nameof(organizationProposalRepository));
+            _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }
 
         #region Organization Proposal
@@ -113,6 +116,31 @@ namespace FunderMaps.Core.Managers
             Validator.ValidateObject(organization, new ValidationContext(organization), true);
 
             var id = await _organizationRepository.AddAsync(organization).ConfigureAwait(false);
+            return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask<Organization> CreateFromProposalAsync(Guid proposalId, User user, string plainPassword)
+        {
+            if (proposalId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(proposalId));
+            }
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(plainPassword))
+            {
+                throw new ArgumentNullException(nameof(plainPassword));
+            }
+
+            user.InitializeDefaults();
+            user.Validate();
+
+            var passwordHash = _passwordHasher.HashPassword(plainPassword);
+            var id = await _organizationRepository.AddFromProposalAsync(proposalId, user.Email, passwordHash).ConfigureAwait(false);
             return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 

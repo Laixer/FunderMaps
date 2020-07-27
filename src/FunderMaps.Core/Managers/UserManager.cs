@@ -45,8 +45,7 @@ namespace FunderMaps.Core.Managers
             }
 
             user.InitializeDefaults();
-
-            Validator.ValidateObject(user, new ValidationContext(user), true);
+            user.Validate();
 
             var id = await _userRepository.AddAsync(user).ConfigureAwait(false);
             user.InitializeDefaults(await _userRepository.GetByIdAsync(id).ConfigureAwait(false));
@@ -74,8 +73,7 @@ namespace FunderMaps.Core.Managers
             }
 
             user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id).ConfigureAwait(false));
-
-            Validator.ValidateObject(user, new ValidationContext(user), true);
+            user.Validate();
 
             await _userRepository.UpdateAsync(user).ConfigureAwait(false);
         }
@@ -98,6 +96,7 @@ namespace FunderMaps.Core.Managers
             }
 
             user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id).ConfigureAwait(false));
+            user.Validate();
 
             var currentPasswordHash = await _userRepository.GetPasswordHashAsync(user).ConfigureAwait(false);
             if (!_passwordHasher.IsPasswordValid(currentPasswordHash, currentPassword))
