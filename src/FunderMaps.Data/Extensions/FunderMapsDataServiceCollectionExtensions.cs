@@ -29,6 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IIncidentRepository, IncidentRepository>();
             services.AddScoped<IInquiryRepository, InquiryRepository>();
             services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
+            services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IProjectSampleRepository, ProjectSampleRepository>();

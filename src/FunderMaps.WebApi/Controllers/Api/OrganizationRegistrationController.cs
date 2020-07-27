@@ -1,14 +1,4 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Interfaces;
-using FunderMaps.Models.Identity;
-using FunderMaps.WebApi.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Controllers.Api
+﻿namespace FunderMaps.Controllers.Api
 {
 #if DISABLED
     /// <summary>

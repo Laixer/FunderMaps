@@ -72,35 +72,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Create new <see cref="OrganizationProposal"/>.
-        /// </summary>
-        /// <param name="entity">Entity object.</param>
-        /// <returns>Created <see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<Guid> AddProposalAsync(OrganizationProposal entity)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
-            // TODO: Call SP directly
-            var sql = @"
-                SELECT application.create_organization_proposal(
-                    @name,
-                    @email)";
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("email", entity.Email);
-
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
-
-            return reader.GetGuid(0);
-        }
-
-        /// <summary>
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
@@ -122,23 +93,6 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 DELETE
                 FROM    application.organization
-                WHERE   id = @id";
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
-        }
-
-        /// <summary>
-        ///     Delete <see cref="OrganizationProposal"/>.
-        /// </summary>
-        /// <param name="entity">Entity object.</param>
-        public async ValueTask DeleteProposalAsync(Guid id)
-        {
-            var sql = @"
-                DELETE
-                FROM    application.organization_proposal
                 WHERE   id = @id";
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
@@ -199,96 +153,6 @@ namespace FunderMaps.Data.Repositories
             await reader.ReadAsync().ConfigureAwait(false);
 
             return MapFromReader(reader);
-        }
-
-        /// <summary>
-        ///     Retrieve <see cref="OrganizationProposal"/> by id.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetProposalByIdAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
-
-            return new OrganizationProposal
-            {
-                Id = reader.GetGuid(0),
-                Name = reader.SafeGetString(1),
-                Email = reader.SafeGetString(2),
-            };
-        }
-
-        /// <summary>
-        ///     Retrieve <see cref="OrganizationProposal"/> by id.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetProposalByNameAsync(string name)
-        {
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   normalized_name = application.normalize(@name)
-                LIMIT   1";
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("@name", name);
-
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
-
-            return new OrganizationProposal
-            {
-                Id = reader.GetGuid(0),
-                Name = reader.SafeGetString(1),
-                Email = reader.SafeGetString(2),
-            };
-        }
-
-        /// <summary>
-        ///     Retrieve <see cref="OrganizationProposal"/> by id.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetProposalByEmailAsync(string email)
-        {
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   normalized_email = application.normalize(@email)
-                LIMIT   1";
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
-
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
-
-            return new OrganizationProposal
-            {
-                Id = reader.GetGuid(0),
-                Name = reader.SafeGetString(1),
-                Email = reader.SafeGetString(2),
-            };
         }
 
         /// <summary>
@@ -400,40 +264,6 @@ namespace FunderMaps.Data.Repositories
             while (await reader.ReadAsync().ConfigureAwait(false))
             {
                 yield return MapFromReader(reader);
-            }
-        }
-
-        /// <summary>
-        ///     Retrieve all <see cref="OrganizationProposal"/>.
-        /// </summary>
-        /// <returns>List of <see cref="OrganizationProposal"/>.</returns>
-        public async IAsyncEnumerable<OrganizationProposal> ListAllProposalAsync(INavigation navigation)
-        {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal";
-
-            ConstructNavigation(ref sql, navigation);
-
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            while (await reader.ReadAsync().ConfigureAwait(false))
-            {
-                yield return new OrganizationProposal
-                {
-                    Id = reader.GetGuid(0),
-                    Name = reader.SafeGetString(1),
-                    Email = reader.SafeGetString(2),
-                };
             }
         }
 
