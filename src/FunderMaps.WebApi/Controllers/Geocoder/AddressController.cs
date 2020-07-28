@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Geocoder
 {
     /// <summary>
@@ -32,27 +33,28 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([Address] string id)
         {
+            // Assign.
             Address address = await _geocoderUseCase.GetAsync(id).ConfigureAwait(false);
 
+            // Map.
             var output = _mapper.Map<AddressDto>(address);
 
+            // Return.
             return Ok(output);
         }
 
-        [HttpGet]
-        [Route("suggest")]
+        [HttpGet("suggest")]
         public async Task<IActionResult> GetAllSuggestionAsync([FromQuery] AddressSearchDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            // Assign.
+            IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation);
 
-            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(
-                _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation))
-                .ConfigureAwait(false);
+            // Map.
+            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList).ConfigureAwait(false);
 
+            // Return.
             return Ok(result);
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

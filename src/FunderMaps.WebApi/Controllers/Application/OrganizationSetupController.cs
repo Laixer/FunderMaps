@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Application
 {
     /// <summary>
@@ -37,11 +38,16 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync()
         {
             var user = new User { GivenName = "kaas", Email = "owiie@kaaas.comz" };
+
+            // Act.
             Organization organization = await _organizationManager.CreateFromProposalAsync(testOrgId, user, "ABC@123").ConfigureAwait(false);
 
+            // Map.
             var output = _mapper.Map<OrganizationDto>(organization);
 
+            // Return.
             return Ok(output);
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

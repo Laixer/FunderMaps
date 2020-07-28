@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Application
 {
     /// <summary>
@@ -36,41 +37,43 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
+            // Assign.
             User user = await _userManager.GetAsync(testUserId).ConfigureAwait(false);
 
+            // Map.
             var output = _mapper.Map<UserDto>(user);
 
+            // Return.
             return Ok(output);
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateAsync([FromBody] UserDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var user = _mapper.Map<User>(input);
             user.Id = testUserId;
 
+            // Act.
             await _userManager.UpdateAsync(user).ConfigureAwait(false);
 
+            // Return.
             return NoContent();
         }
 
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Assign.
             User user = await _userManager.GetAsync(testUserId).ConfigureAwait(false);
+
+            // Act.
             await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword).ConfigureAwait(false);
 
+            // Return.
             return NoContent();
         }
+
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods
