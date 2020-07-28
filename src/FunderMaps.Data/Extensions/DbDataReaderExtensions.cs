@@ -40,6 +40,27 @@ namespace FunderMaps.Data.Extensions
             return (uint)reader.GetInt(ordinal);
         }
 
+        /// <summary>
+        ///     Return value as nullable integer.
+        /// </summary>
+        /// <param name="reader">Input reader to extend.</param>
+        /// <param name="ordinal">Column ordinal.</param>
+        /// <returns>Value as nullable integer.</returns>
+        public static int? GetSafeInt(this DbDataReader reader, int ordinal)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            if (reader.IsDBNull(ordinal))
+            {
+                return null;
+            }
+
+            return reader.GetInt(ordinal);
+        }
+
         //TODO: Rename SafeGetString -> GetSafeString
         /// <summary>
         /// Return value as nullable string.
