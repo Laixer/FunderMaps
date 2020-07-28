@@ -2,6 +2,7 @@
 using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
+using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -38,10 +39,9 @@ namespace FunderMaps.WebApi.Controllers.Application
             var user = new User { GivenName = "kaas", Email = "owiie@kaaas.comz" };
             Organization organization = await _organizationManager.CreateFromProposalAsync(testOrgId, user, "ABC@123").ConfigureAwait(false);
 
-            //var output = _mapper.Map<UserDto>(user);
+            var output = _mapper.Map<OrganizationDto>(organization);
 
-            //return Ok(output);
-            return NoContent();
+            return Ok(output);
         }
     }
 }

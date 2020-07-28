@@ -166,5 +166,12 @@ namespace FunderMaps.Core.Entities
             Name = other.Name;
             Email = other.Email;
         }
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
     }
 }

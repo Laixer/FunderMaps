@@ -37,19 +37,31 @@ namespace FunderMaps.Core.Managers
 
         public virtual async ValueTask<OrganizationProposal> GetProposalAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             return await _organizationProposalRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         public virtual async ValueTask<OrganizationProposal> GetProposalByNameAsync(string name)
         {
-            // TODO:
-            //Validator.ValidateValue(name, new ValidationContext(name), new List<RequiredAttribute> { new RequiredAttribute() });
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
             return await _organizationProposalRepository.GetByNameAsync(name).ConfigureAwait(false);
         }
 
         public virtual async ValueTask<OrganizationProposal> GetProposalByEmailAsync(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
             Validator.ValidateValue(email, new ValidationContext(email), new List<EmailAddressAttribute> { new EmailAddressAttribute() });
 
             return await _organizationProposalRepository.GetByEmailAsync(email).ConfigureAwait(false);
@@ -63,8 +75,7 @@ namespace FunderMaps.Core.Managers
             }
 
             organization.InitializeDefaults();
-
-            Validator.ValidateObject(organization, new ValidationContext(organization), true);
+            organization.Validate();
 
             var id = await _organizationProposalRepository.AddAsync(organization).ConfigureAwait(false);
             return await _organizationProposalRepository.GetByIdAsync(id).ConfigureAwait(false);
@@ -72,6 +83,11 @@ namespace FunderMaps.Core.Managers
 
         public virtual IAsyncEnumerable<OrganizationProposal> GetAllProposalAsync(INavigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             return _organizationProposalRepository.ListAllAsync(navigation);
         }
 
@@ -86,19 +102,31 @@ namespace FunderMaps.Core.Managers
 
         public virtual async ValueTask<Organization> GetAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         public virtual async ValueTask<Organization> GetByNameAsync(string name)
         {
-            // TODO:
-            //Validator.ValidateValue(name, new ValidationContext(name), new List<RequiredAttribute> { new RequiredAttribute() });
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
 
             return await _organizationRepository.GetByNameAsync(name).ConfigureAwait(false);
         }
 
         public virtual async ValueTask<Organization> GetByEmailAsync(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
             Validator.ValidateValue(email, new ValidationContext(email), new List<EmailAddressAttribute> { new EmailAddressAttribute() });
 
             return await _organizationRepository.GetByEmailAsync(email).ConfigureAwait(false);
@@ -112,8 +140,7 @@ namespace FunderMaps.Core.Managers
             }
 
             organization.InitializeDefaults();
-
-            Validator.ValidateObject(organization, new ValidationContext(organization), true);
+            organization.Validate();
 
             var id = await _organizationRepository.AddAsync(organization).ConfigureAwait(false);
             return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
@@ -157,14 +184,18 @@ namespace FunderMaps.Core.Managers
             }
 
             organization.InitializeDefaults(await _organizationRepository.GetByIdAsync(organization.Id).ConfigureAwait(false));
-
-            Validator.ValidateObject(organization, new ValidationContext(organization), true);
+            organization.Validate();
 
             await _organizationRepository.UpdateAsync(organization).ConfigureAwait(false);
         }
 
         public virtual async ValueTask DeleteAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             await _organizationRepository.DeleteAsync(id).ConfigureAwait(false);
         }
 

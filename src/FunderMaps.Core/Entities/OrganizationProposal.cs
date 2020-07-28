@@ -38,5 +38,12 @@ namespace FunderMaps.Core.Entities
         {
             Id = Guid.Empty;
         }
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
     }
 }

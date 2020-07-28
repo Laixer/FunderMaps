@@ -27,11 +27,21 @@ namespace FunderMaps.Core.Managers
 
         public virtual async ValueTask<User> GetAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             return await _userRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
         public virtual async ValueTask<User> GetByEmailAsync(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+
             Validator.ValidateValue(email, new ValidationContext(email), new List<EmailAddressAttribute> { new EmailAddressAttribute() });
 
             return await _userRepository.GetByEmailAsync(email).ConfigureAwait(false);
@@ -62,6 +72,11 @@ namespace FunderMaps.Core.Managers
 
         public virtual IAsyncEnumerable<User> GetAllAsync(INavigation navigation)
         {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
             return _userRepository.ListAllAsync(navigation);
         }
 
@@ -110,6 +125,11 @@ namespace FunderMaps.Core.Managers
 
         public virtual async ValueTask DeleteAsync(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             await _userRepository.DeleteAsync(id).ConfigureAwait(false);
         }
     }

@@ -30,7 +30,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Organization"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(Organization entity)
+        public override ValueTask<Guid> AddAsync(Organization entity)
         {
             throw new InvalidOperationException(); // TODO: Org should never be created this way.
         }
