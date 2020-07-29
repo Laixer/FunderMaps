@@ -13,6 +13,9 @@ namespace FunderMaps.WebApi.Profiles
         ///     Create new instance.
         /// </summary>
         public OrganizationProfile()
-            => CreateMap<Organization, OrganizationDto>().ReverseMap();
+        {
+            CreateMap<Organization, OrganizationDto>().ReverseMap();
+            CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
+        }
     }
 }

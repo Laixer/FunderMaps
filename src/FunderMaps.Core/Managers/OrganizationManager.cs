@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +16,7 @@ namespace FunderMaps.Core.Managers
     {
         private readonly UserManager _userManager;
         private readonly IOrganizationRepository _organizationRepository;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
         private readonly IOrganizationProposalRepository _organizationProposalRepository;
         private readonly IPasswordHasher _passwordHasher;
 
@@ -24,11 +26,13 @@ namespace FunderMaps.Core.Managers
         public OrganizationManager(
             UserManager userManager,
             IOrganizationRepository organizationRepository,
+            IOrganizationUserRepository organizationUserRepository,
             IOrganizationProposalRepository organizationProposalRepository,
             IPasswordHasher passwordHasher)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+            _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
             _organizationProposalRepository = organizationProposalRepository ?? throw new ArgumentNullException(nameof(organizationProposalRepository));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }
@@ -96,7 +100,7 @@ namespace FunderMaps.Core.Managers
             await _organizationProposalRepository.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        #endregion // Organization Proposal
+        #endregion Organization Proposal
 
         #region Organization
 
@@ -146,11 +150,11 @@ namespace FunderMaps.Core.Managers
             return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
-        public virtual async ValueTask<Organization> CreateFromProposalAsync(Guid proposalId, User user, string plainPassword)
+        public virtual async ValueTask<Organization> CreateFromProposalAsync(Guid id, User user, string plainPassword)
         {
-            if (proposalId == Guid.Empty)
+            if (id == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(proposalId));
+                throw new ArgumentNullException(nameof(id));
             }
 
             if (user == null)
@@ -167,7 +171,7 @@ namespace FunderMaps.Core.Managers
             user.Validate();
 
             var passwordHash = _passwordHasher.HashPassword(plainPassword);
-            var id = await _organizationRepository.AddFromProposalAsync(proposalId, user.Email, passwordHash).ConfigureAwait(false);
+            await _organizationRepository.AddFromProposalAsync(id, user.Email, passwordHash).ConfigureAwait(false);
             return await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
@@ -199,10 +203,51 @@ namespace FunderMaps.Core.Managers
             await _organizationRepository.DeleteAsync(id).ConfigureAwait(false);
         }
 
-        #endregion // Organization
+        #endregion Organization
 
         #region Organization User
 
-        #endregion // Organization User
+        public virtual async ValueTask<User> AddUserAsync(Guid id, User user, OrganizationRole role = OrganizationRole.Reader, string plainPassword = null)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            user.InitializeDefaults();
+            user.Validate();
+
+            // Make sure organization exists.
+            await _organizationRepository.GetByIdAsync(id).ConfigureAwait(false);
+
+            // TODO: Do in 1 call.
+            user = await _userManager.CreateAsync(user, plainPassword).ConfigureAwait(false);
+            await _organizationUserRepository.AddAsync(id, user.Id, role).ConfigureAwait(false);
+            return user;
+        }
+
+        public virtual async ValueTask DeleteUserAsync(Guid id, Guid userId)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            if (userId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            // Make sure organization and user exist.
+            await _organizationUserRepository.IsUserInOrganization(id, userId).ConfigureAwait(false);
+            await _userManager.DeleteAsync(userId).ConfigureAwait(false);
+        }
+
+        #endregion Organization User
     }
 }

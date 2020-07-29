@@ -105,8 +105,6 @@ namespace FunderMaps.Data.Repositories
 
         private static void MapToWriter(DbCommand cmd, Organization entity)
         {
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("email", entity.Email);
             cmd.AddParameterWithValue("phone_number", entity.PhoneNumber);
             cmd.AddParameterWithValue("registration_number", entity.RegistrationNumber);
             cmd.AddParameterWithValue("branding_logo", entity.BrandingLogo);
@@ -382,11 +380,11 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            // TODO: Name change, email chane own function call
+
             var sql = @"
                 UPDATE  application.organization
-                SET     name = @name,
-                        email = @email,
-                        phone_number = @phone_number,
+                SET     phone_number = @phone_number,
                         registration_number = @registration_number,
                         branding_logo = @branding_logo,
                         invoice_name = @invoice_name,
