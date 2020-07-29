@@ -20,8 +20,6 @@ namespace FunderMaps.WebApi.Controllers.Application
     [ApiController]
     public class OrganizationSetupController : BaseApiController
     {
-        private static readonly Guid testOrgId = Guid.Parse("2bd4569a-0e25-4312-b3a6-7f9f7546ffd9"); // TODO: Get from context
-
         private readonly IMapper _mapper;
         private readonly OrganizationManager _organizationManager;
 
@@ -34,13 +32,15 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
-        [HttpPost("api/organization/setup")]
-        public async Task<IActionResult> GetAsync()
+        // TODO: This is anon, maybe return nothing?
+        [HttpPost("api/organization/{id:guid}/setup")]
+        public async Task<IActionResult> GetAsync(Guid id, [FromBody] OrganizationSetupDto input)
         {
-            var user = new User { GivenName = "kaas", Email = "owiie@kaaas.comz" };
+            // Map.
+            var user = new User { Email = input.Email };
 
             // Act.
-            Organization organization = await _organizationManager.CreateFromProposalAsync(testOrgId, user, "ABC@123").ConfigureAwait(false);
+            Organization organization = await _organizationManager.CreateFromProposalAsync(id, user, input.Password).ConfigureAwait(false);
 
             // Map.
             var output = _mapper.Map<OrganizationDto>(organization);

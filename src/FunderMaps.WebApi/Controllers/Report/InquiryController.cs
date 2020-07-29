@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
@@ -25,7 +26,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly InquiryUseCase _inquiryUseCase;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public InquiryController(IMapper mapper, InquiryUseCase inquiryUseCase)
         {
@@ -44,11 +45,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
-            if (pagination == null)
-            {
-                throw new ArgumentNullException(nameof(pagination));
-            }
-
             var result = await _mapper.MapAsync<IList<InquiryDTO>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
@@ -58,11 +54,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
         {
-            if (pagination == null)
-            {
-                throw new ArgumentNullException(nameof(pagination));
-            }
-
             var result = await _mapper.MapAsync<IList<InquiryDTO>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
@@ -72,11 +63,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] InquiryDTO input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
             var inquiry = await _inquiryUseCase.CreateAsync(_mapper.Map<Inquiry>(input)).ConfigureAwait(false);
 
             return Ok(_mapper.Map<InquiryDTO>(inquiry));
@@ -85,11 +71,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
             // TODO: Replace with validator?
             var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
             if (!virtualFile.IsValid)
@@ -105,11 +86,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDTO input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
             var inquiry = _mapper.Map<Inquiry>(input);
             inquiry.Id = id;
 
@@ -151,3 +127,4 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

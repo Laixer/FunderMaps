@@ -10,13 +10,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
     ///     Endpoint controller for incident operations.
     /// </summary>
-    [ApiController]
-    [Route("api/incident")]
+    [ApiController, Route("api/incident")]
     public class IncidentController : BaseApiController
     {
         // TODO: Move to Constants
@@ -47,11 +47,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
-            if (pagination == null)
-            {
-                throw new ArgumentNullException(nameof(pagination));
-            }
-
             var result = await _mapper.MapAsync<IList<IncidentDTO>, Incident>(_incidentUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
@@ -61,11 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] IncidentDTO input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var incident = _mapper.Map<Incident>(input);
             incident.Meta = new
             {
@@ -73,22 +64,24 @@ namespace FunderMaps.WebApi.Controllers.Report
                 Gateway = gatewayName,
             };
 
+            // Act.
             incident = await _incidentUseCase.CreateAsync(incident).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<IncidentDTO>(incident));
+            // Map.
+            var output = _mapper.Map<IncidentDTO>(incident);
+
+            // Return.
+            return Ok(output);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([Incident] string id, [FromBody] IncidentDTO input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var incident = _mapper.Map<Incident>(input);
             incident.Id = id;
 
+            // Act.
             await _incidentUseCase.UpdateAsync(incident).ConfigureAwait(false);
 
             return NoContent();
@@ -97,9 +90,11 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([Incident] string id)
         {
+            // Act.
             await _incidentUseCase.DeleteAsync(id).ConfigureAwait(false);
 
             return NoContent();
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

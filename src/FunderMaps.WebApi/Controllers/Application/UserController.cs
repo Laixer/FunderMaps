@@ -37,7 +37,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            // Assign.
+            // Act.
             User user = await _userManager.GetAsync(testUserId).ConfigureAwait(false);
 
             // Map.
@@ -64,7 +64,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
-            // Assign.
+            // Act.
             User user = await _userManager.GetAsync(testUserId).ConfigureAwait(false);
 
             // Act.
