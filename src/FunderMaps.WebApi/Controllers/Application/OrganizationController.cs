@@ -3,8 +3,10 @@ using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -81,6 +83,33 @@ namespace FunderMaps.WebApi.Controllers.Application
 
             // Return.
             return Ok(output);
+        }
+
+        [HttpGet("user")]
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        {
+            // Assign.
+            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(testOrgId, pagination.Navigation);
+
+            // Map.
+            var result = await _mapper.MapAsync<IList<UserDto>, User>(userList).ConfigureAwait(false);
+
+            // Return.
+            return Ok(result);
+        }
+
+        [HttpPut("user/{id:guid}")]
+        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto input)
+        {
+            // Map.
+            var user = _mapper.Map<User>(input);
+            user.Id = id;
+
+            // Act.
+            await _organizationManager.UpdateUserAsync(testOrgId, user).ConfigureAwait(false);
+
+            // Return.
+            return NoContent();
         }
 
         [HttpDelete("user/{id:guid}")]

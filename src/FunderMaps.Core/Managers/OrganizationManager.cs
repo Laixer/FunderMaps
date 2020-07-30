@@ -231,6 +231,40 @@ namespace FunderMaps.Core.Managers
             return user;
         }
 
+        /// <summary>
+        ///     Retrieve all users by organization.
+        /// </summary>
+        /// <param name="id">Organization id.</param>
+        /// <param name="navigation">Recordset nagivation.</param>
+        public virtual async IAsyncEnumerable<User> GetAllUserAsync(Guid id, INavigation navigation)
+        {
+            await foreach (var user in _organizationUserRepository.ListAllAsync(id))
+            {
+                yield return await _userManager.GetAsync(user).ConfigureAwait(false);
+            }
+        }
+
+        public virtual async ValueTask UpdateUserAsync(Guid id, User user)
+        {
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            // Make sure organization and user exist.
+            await _organizationUserRepository.IsUserInOrganization(id, user.Id).ConfigureAwait(false);
+
+            user.InitializeDefaults(await _userManager.GetAsync(user.Id).ConfigureAwait(false));
+            user.Validate();
+
+            await _userManager.UpdateAsync(user).ConfigureAwait(false);
+        }
+
         public virtual async ValueTask DeleteUserAsync(Guid id, Guid userId)
         {
             if (id == Guid.Empty)

@@ -3,6 +3,7 @@ using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -51,6 +52,29 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("role", role);
 
             await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
+        ///     Retrieve all <see cref="Incident"/>.
+        /// </summary>
+        /// <returns>List of <see cref="Incident"/>.</returns>
+        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
+        public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId)
+        {
+            var sql = @"
+                SELECT  user_id
+                FROM    application.organization_user
+                WHERE   organization_id = @organization_id";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("organization_id", organizationId);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            while (await reader.ReadAsync().ConfigureAwait(false))
+            {
+                yield return reader.GetGuid(0);
+            }
         }
 
         public async ValueTask IsUserInOrganization(Guid organizationId, Guid userId)
