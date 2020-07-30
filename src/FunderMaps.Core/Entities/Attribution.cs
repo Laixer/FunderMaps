@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    ///     Attribution represents a entity partition for user and organizational relations.
+    ///     Attribution represents a entity partition for user and
+    ///     organizational relations.
     /// </summary>
     public abstract class Attribution
     {
@@ -41,31 +41,26 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Project relation or null.
         /// </summary>
-        [IgnoreDataMember]
         public Project ProjectNavigation { get; set; }
 
         /// <summary>
         ///     Reviewer or null.
         /// </summary>
-        [IgnoreDataMember]
-        public Principal ReviewerNavigation { get; set; }
+        public User ReviewerNavigation { get; set; }
 
         /// <summary>
         ///     Contractor.
         /// </summary>
-        [IgnoreDataMember]
         public Organization ContractorNavigation { get; set; }
 
         /// <summary>
         ///     Creator.
         /// </summary>
-        [IgnoreDataMember]
-        public Principal CreatorNavigation { get; set; }
+        public User CreatorNavigation { get; set; }
 
         /// <summary>
         ///     Owner.
         /// </summary>
-        [IgnoreDataMember]
         public Organization OwnerNavigation { get; set; }
     }
 }
