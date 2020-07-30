@@ -5,36 +5,43 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Foundation recovery entity.
+    ///     Foundation recovery entity.
     /// </summary>
-    public class Recovery : AttributionControl
+    public sealed class Recovery : AttributionControl
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         public string Note { get; set; }
 
         /// <summary>
-        /// Foundation recovery type.
+        ///     Foundation recovery type.
         /// </summary>
         [Required]
         public RecoveryDocumentType Type { get; set; }
 
         /// <summary>
-        /// Document file name.
+        ///     Document file name.
         /// </summary>
         [Required]
         public string DocumentFile { get; set; }
 
         /// <summary>
-        /// Document date.
+        ///     Document date.
         /// </summary>
         [Required]
         public DateTime DocumentDate { get; set; }
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
     }
 }

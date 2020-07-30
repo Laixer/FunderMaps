@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Inquiry sample entity.
     /// </summary>
-    public class InquirySample : RecordControl
+    public sealed class InquirySample : RecordControl
     {
         /// <summary>
         ///     Unique identifier.

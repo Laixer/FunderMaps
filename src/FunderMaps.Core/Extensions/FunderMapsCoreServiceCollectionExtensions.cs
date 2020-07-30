@@ -41,6 +41,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ProjectUseCase>();
             services.AddScoped<RecoveryUseCase>();
 
+            // Register core managers in DI container.
             services.AddScoped<UserManager>();
             services.AddScoped<OrganizationManager>();
 

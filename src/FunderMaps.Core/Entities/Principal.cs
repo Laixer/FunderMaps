@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Entities
     /// Principal entity.
     /// </summary>
     [Obsolete]
-    public class Principal : BaseEntity
+    public sealed class Principal : BaseEntity
     {
         /// <summary>
         /// Unique identifier.

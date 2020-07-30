@@ -1,54 +1,56 @@
 ﻿using FunderMaps.Core.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Project sample entity.
+    ///     Project sample entity.
     /// </summary>
-    public class ProjectSample : RecordControl
+    public sealed class ProjectSample : RecordControl
     {
         /// <summary>
-        /// Project sample identifier.
+        ///     Project sample identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Project identifier.
+        ///     Project identifier.
         /// </summary>
         public int Project { get; set; }
 
         /// <summary>
-        /// Status.
+        ///     Status.
         /// </summary>
         public ProjectSampleStatus Status { get; set; }
 
         /// <summary>
-        /// Contact email.
+        ///     Contact email.
         /// </summary>
+        [EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         public string Note { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         public string Address { get; set; }
 
         /// <summary>
-        /// Project object.
+        ///     Project object.
         /// </summary>
         public Project ProjectNavigation { get; set; }
 
         /// <summary>
-        /// Contact object.
+        ///     Contact object.
         /// </summary>
         public Contact ContactNavigation { get; set; }
 
         /// <summary>
-        /// Address object.
+        ///     Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
     }

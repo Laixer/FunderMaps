@@ -4,45 +4,46 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Building entity.
+    ///     Building entity.
     /// </summary>
-    public class Building : BaseEntity
+    public sealed class Building : BaseEntity
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public string Id { get; set; }
 
         /// <summary>
-        /// Built year.
+        ///     Built year.
         /// </summary>
         public DateTime BuiltYear { get; set; }
 
         /// <summary>
-        /// Building is active or not.
+        ///     Building is active or not.
         /// </summary>
         public bool IsActive { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         [Required]
         public string Address { get; set; }
 
+        // TODO: Type
         /// <summary>
-        /// External data source id.
+        ///     External data source id.
         /// </summary>
         [Required]
         public string ExternalId { get; set; }
 
         /// <summary>
-        /// External data source.
+        ///     External data source.
         /// </summary>
         [Required]
         public string ExternalSource { get; set; }
 
         /// <summary>
-        /// Address object.
+        ///     Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
     }

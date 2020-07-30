@@ -8,52 +8,52 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Indicent entity.
     /// </summary>
-    public class Incident : RecordControl
+    public sealed class Incident : RecordControl
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         [Incident]
         public string Id { get; set; }
 
         /// <summary>
-        /// Client identifier.
+        ///     Client identifier.
         /// </summary>
         [Required, Range(1, 99)]
         public int ClientId { get; set; }
 
         /// <summary>
-        /// Foundation type.
+        ///     Foundation type.
         /// </summary>
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
-        /// Building chained to another building.
+        ///     Building chained to another building.
         /// </summary>
         public bool ChainedBuilding { get; set; }
 
         /// <summary>
-        /// Whether the contact is an owner of the building.
+        ///     Whether the contact is an owner of the building.
         /// </summary>
         public bool Owner { get; set; }
 
         /// <summary>
-        /// Whether foundation was recovered or not.
+        ///     Whether foundation was recovered or not.
         /// </summary>
         public bool FoundationRecovery { get; set; }
 
         /// <summary>
-        /// Whether neighbor foundation was recovered or not.
+        ///     Whether neighbor foundation was recovered or not.
         /// </summary>
         public bool NeightborRecovery { get; set; }
 
         /// <summary>
-        /// Foundation damage cause.
+        ///     Foundation damage cause.
         /// </summary>
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
-        /// Document name.
+        ///     Document name.
         /// </summary>
         //[Url]
         public string[] DocumentFile { get; set; }
@@ -64,54 +64,54 @@ namespace FunderMaps.Core.Entities
         public string Note { get; set; }
 
         /// <summary>
-        /// Internal note.
+        ///     Internal note.
         /// </summary>
         public string InternalNote { get; set; }
 
         /// <summary>
-        /// Fouindational damage.
+        ///     Fouindational damage.
         /// </summary>
         public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
 
         /// <summary>
-        /// Environmental damage.
+        ///     Environmental damage.
         /// </summary>
         public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
 
         /// <summary>
-        /// Contact email.
+        ///     Contact email.
         /// </summary>
         [EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         [Required, Address]
         public string Address { get; set; }
 
         /// <summary>
-        /// Audit status.
+        ///     Audit status.
         /// </summary>
         public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
-        /// Question type.
+        ///     Question type.
         /// </summary>
         public IncidentQuestionType QuestionType { get; set; }
 
         /// <summary>
-        /// Meta data.
+        ///     Meta data.
         /// </summary>
         public object Meta { get; set; }
 
         /// <summary>
-        /// Contact object.
+        ///     Contact object.
         /// </summary>
         public Contact ContactNavigation { get; set; }
 
         /// <summary>
-        /// Address object.
+        ///     Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
     }

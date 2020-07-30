@@ -3,23 +3,23 @@
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Contact information.
+    ///     Contact information.
     /// </summary>
-    public class Contact : BaseEntity
+    public sealed class Contact : BaseEntity
     {
         /// <summary>
-        /// Contact email.
+        ///     Contact email.
         /// </summary>
         [EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
-        /// Contact name.
+        ///     Contact name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Contact phone number.
+        ///     Contact phone number.
         /// </summary>
         [Phone]
         public string PhoneNumber { get; set; }

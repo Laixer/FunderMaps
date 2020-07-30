@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {
+    /// <summary>
+    ///     Organization user repository.
+    /// </summary>
     public interface IOrganizationUserRepository
     {
         ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role);

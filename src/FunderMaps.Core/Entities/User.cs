@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     User entity.
     /// </summary>
-    public class User : BaseEntity
+    public sealed class User : BaseEntity
     {
         /// <summary>
         ///     Unique identifier.

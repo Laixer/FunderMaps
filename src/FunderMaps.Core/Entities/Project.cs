@@ -1,71 +1,67 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Project entity.
+    ///     Project entity.
     /// </summary>
-    public class Project : RecordControl
+    public sealed class Project : RecordControl
     {
         /// <summary>
-        /// Project identifier.
+        ///     Project identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Dossier name.
+        ///     Dossier name.
         /// </summary>
         public string Dossier { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
-        /// Start date.
+        ///     Start date.
         /// </summary>
         public DateTime StartDate { get; set; }
 
         /// <summary>
-        /// End date.
+        ///     End date.
         /// </summary>
         public DateTime? EndDate { get; set; }
 
         /// <summary>
-        /// Adviser user identifier.
+        ///     Adviser user identifier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid? Adviser { get; set; }
 
         /// <summary>
-        /// Lead user identifier.
+        ///     Lead user identifier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid? Lead { get; set; }
 
         /// <summary>
-        /// Creator user identifier.
+        ///     Creator user identifier.
         /// </summary>
-        [IgnoreDataMember]
         public Guid? Creator { get; set; }
 
         /// <summary>
-        /// Adviser user.
+        ///     Adviser user.
         /// </summary>
-        public object AdviserNavigation { get; set; }
+        public User AdviserNavigation { get; set; }
 
         /// <summary>
-        /// Lead user.
+        ///     Lead user.
         /// </summary>
-        public object LeadNavigation { get; set; }
+        public User LeadNavigation { get; set; }
 
         /// <summary>
-        /// Creator user.
+        ///     Creator user.
         /// </summary>
-        public object CreatorNavigation { get; set; }
+        public User CreatorNavigation { get; set; }
     }
 }
