@@ -3,8 +3,10 @@ using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -80,6 +82,59 @@ namespace FunderMaps.WebApi.Controllers.Application
         #endregion Organization
 
         #region Organization User
+
+        [HttpPost("{id:guid}/user")]
+        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserDto input)
+        {
+            // Map.
+            var user = _mapper.Map<User>(input);
+
+            // Act.
+            user = await _organizationManager.AddUserAsync(id, user).ConfigureAwait(false);
+
+            // Map.
+            var output = _mapper.Map<UserDto>(user);
+
+            // Return.
+            return Ok(output);
+        }
+
+        [HttpGet("{id:guid}/user")]
+        public async Task<IActionResult> GetAllAsync(Guid id, [FromQuery] PaginationModel pagination)
+        {
+            // Assign.
+            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(id, pagination.Navigation);
+
+            // Map.
+            var result = await _mapper.MapAsync<IList<UserDto>, User>(userList).ConfigureAwait(false);
+
+            // Return.
+            return Ok(result);
+        }
+
+        [HttpPut("{id:guid}/user/{userId:guid}")]
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] UserDto input)
+        {
+            // Map.
+            var user = _mapper.Map<User>(input);
+            user.Id = userId;
+
+            // Act.
+            await _organizationManager.UpdateUserAsync(id, user).ConfigureAwait(false);
+
+            // Return.
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}/user/{userId:guid}")]
+        public async Task<IActionResult> DeleteUserAsync(Guid id, Guid userId)
+        {
+            // Act.
+            await _organizationManager.DeleteUserAsync(id, userId).ConfigureAwait(false);
+
+            // Return.
+            return NoContent();
+        }
 
         #endregion Organization User
     }
