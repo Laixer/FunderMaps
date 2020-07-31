@@ -102,10 +102,10 @@ namespace FunderMaps
         {
             services.AddFunderMapsCoreAuthentication(options =>
             {
-                options.Password = Constants.PasswordPolicy;
-                options.Lockout = Constants.LockoutOptions;
-                options.SignIn.RequireConfirmedEmail = false;
-                options.SignIn.RequireConfirmedPhoneNumber = false;
+                //options.Password = Constants.PasswordPolicy;
+                //options.Lockout = Constants.LockoutOptions;
+                //options.SignIn.RequireConfirmedEmail = false;
+                //options.SignIn.RequireConfirmedPhoneNumber = false;
             });
 
             //services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>

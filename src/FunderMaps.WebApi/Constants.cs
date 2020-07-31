@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Authentication;
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace FunderMaps
@@ -9,28 +8,6 @@ namespace FunderMaps
     /// </summary>
     internal static class Constants
     {
-        /// <summary>
-        ///     Default password policy.
-        /// </summary>
-        internal static readonly PasswordOptions PasswordPolicy = new PasswordOptions
-        {
-            RequireDigit = false,
-            RequireLowercase = false,
-            RequireNonAlphanumeric = false,
-            RequireUppercase = false,
-            RequiredLength = 6,
-            RequiredUniqueChars = 1,
-        };
-
-        /// <summary>
-        ///     Default lockout policy.
-        /// </summary>
-        internal static readonly LockoutOptions LockoutOptions = new LockoutOptions
-        {
-            DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30),
-            MaxFailedAccessAttempts = 10,
-        };
-
         /// <summary>
         ///     Allowed file mime types in the application.
         /// </summary>

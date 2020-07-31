@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {
+    /// <summary>
+    ///     User repository.
+    /// </summary>
     public interface IUserRepository : IAsyncRepository<User, Guid>
     {
         ValueTask<User> GetByEmailAsync(string email);
