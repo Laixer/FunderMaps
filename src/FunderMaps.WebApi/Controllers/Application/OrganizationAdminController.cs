@@ -35,7 +35,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         #region Organization
-
+        // TODO: Move to another controller
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] OrganizationProposalDto input)
         {
@@ -100,7 +100,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpGet("{id:guid}/user")]
-        public async Task<IActionResult> GetAllAsync(Guid id, [FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationModel pagination)
         {
             // Assign.
             IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(id, pagination.Navigation);

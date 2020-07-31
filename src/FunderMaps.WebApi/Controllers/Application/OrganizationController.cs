@@ -86,7 +86,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
         {
             // Assign.
             IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(testOrgId, pagination.Navigation);

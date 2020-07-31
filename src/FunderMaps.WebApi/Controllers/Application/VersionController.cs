@@ -1,15 +1,15 @@
-﻿using FunderMaps.WebApi.ViewModels;
+﻿using FunderMaps.Controllers;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.Controllers.Api
+#pragma warning disable CA1062 // Validate arguments of public methods
+namespace FunderMaps.WebApi.Controllers.Application
 {
     /// <summary>
     ///     Return application versioning information.
     /// </summary>
-    [AllowAnonymous]
-    [Route("api/version")]
-    [ApiController]
+    [AllowAnonymous, ApiController, Route("api/version")]
     public class VersionController : BaseApiController
     {
         // GET: api/version
@@ -21,8 +21,7 @@ namespace FunderMaps.Controllers.Api
         ///     often and this call is primarily used to check if the
         ///     API is responding.
         /// </remarks>
-        [HttpGet]
-        [ResponseCache(Duration = 60 * 60 * 24)]
+        [HttpGet, ResponseCache(Duration = 60 * 60 * 24)]
         public IActionResult Get()
             => Ok(new ApplicationVersionModel
             {
@@ -32,3 +31,4 @@ namespace FunderMaps.Controllers.Api
             });
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

@@ -61,6 +61,9 @@ namespace FunderMaps.Core.Authentication
                 identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
             }
 
+            //token.AddClaim(ClaimTypes.OrganizationUser, organizationUser.OrganizationId);
+            //token.AddClaim(ClaimTypes.OrganizationUserRole, organizationUser.Role);
+
             if (additionalClaims != null)
             {
                 foreach (var claim in additionalClaims)

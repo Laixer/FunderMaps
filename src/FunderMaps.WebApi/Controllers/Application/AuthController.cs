@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Controllers;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -17,17 +16,14 @@ namespace FunderMaps.WebApi.Controllers.Application
     [ApiController, Route("api/auth")]
     public class AuthController : BaseApiController
     {
-        private readonly UserManager _userManager;
         private readonly AuthManager _authManager;
         private readonly ISecurityTokenProvider _tokenProvider;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(UserManager userManager, AuthManager authManager, ISecurityTokenProvider tokenProvider)
+        public AuthController(AuthManager authManager, ISecurityTokenProvider tokenProvider)
         {
-            // TODO: Why do we need a user manager in auth?
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
