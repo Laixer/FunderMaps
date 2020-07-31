@@ -122,6 +122,7 @@ namespace FunderMaps.WebApi.Authentication
         {
             SecurityToken token = await GetToken(principal).ConfigureAwait(false);
 
+            // TODO: Move to method.
             SecurityTokenHandler handler = (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);
             if (handler == null)
             {

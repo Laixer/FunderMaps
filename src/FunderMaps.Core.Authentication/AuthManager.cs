@@ -20,6 +20,11 @@ namespace FunderMaps.Core.Authentication
         public UserManager UserManager { get; set; }
 
         /// <summary>
+        ///     The <see cref="OrganizationManager"/> used.
+        /// </summary>
+        public OrganizationManager OrganizationManager { get; set; }
+
+        /// <summary>
         ///     The <see cref="AuthenticationOptions"/> used.
         /// </summary>
         public AuthenticationOptions Options { get; set; }
@@ -30,6 +35,7 @@ namespace FunderMaps.Core.Authentication
         public AuthManager(UserManager userManager, OrganizationManager organizationManager, IOptions<AuthenticationOptions> optionsAccessor) //, ILogger<AuthManager> logger)
         {
             UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            OrganizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
             Options = optionsAccessor?.Value ?? new AuthenticationOptions();
         }
 
@@ -42,7 +48,7 @@ namespace FunderMaps.Core.Authentication
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
         /// <returns><see cref="ClaimsPrincipal"/>.</returns>
-        public ClaimsPrincipal CreateUserPrincipal(User user, string authenticationType, IEnumerable<Claim> additionalClaims = null)
+        public static ClaimsPrincipal CreateUserPrincipal(User user, string authenticationType, IEnumerable<Claim> additionalClaims = null)
         {
             if (user == null)
             {
@@ -77,6 +83,11 @@ namespace FunderMaps.Core.Authentication
 
         public async Task<User> GetUserAsync(ClaimsPrincipal principal)
         {
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
+            }
+
             var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (claim != null)
             {
@@ -176,7 +187,7 @@ namespace FunderMaps.Core.Authentication
                 return SignInContext.Failed;
             }
 
-            return await SignInAsync(user, authenticationType);
+            return await SignInAsync(user, authenticationType).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -191,7 +202,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (!await CanSignInAsync(user))
+            if (!await CanSignInAsync(user).ConfigureAwait(false))
             {
                 return SignInContext.NotAllowed;
             }
@@ -213,7 +224,7 @@ namespace FunderMaps.Core.Authentication
                 return SignInContext.Failed;
             }
 
-            return await PasswordSignInAsync(user, password, authenticationType);
+            return await PasswordSignInAsync(user, password, authenticationType).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -229,7 +240,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (!await CanSignInAsync(user))
+            if (!await CanSignInAsync(user).ConfigureAwait(false))
             {
                 return SignInContext.NotAllowed;
             }

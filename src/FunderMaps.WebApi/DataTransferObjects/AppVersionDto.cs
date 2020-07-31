@@ -1,24 +1,24 @@
 ﻿using System;
 
-namespace FunderMaps.WebApi.ViewModels
+namespace FunderMaps.WebApi.DataTransferObjects
 {
     /// <summary>
-    /// Version output model.
+    ///     Application version DTO.
     /// </summary>
-    public sealed class ApplicationVersionModel
+    public class AppVersionDto
     {
         /// <summary>
-        /// Application name.
+        ///     Application name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Application version structure.
+        ///     Application version structure.
         /// </summary>
         public Version Version { get; set; }
 
         /// <summary>
-        /// Application version as string.
+        ///     Application version as string.
         /// </summary>
         public string VersionString { get; set; }
     }
