@@ -78,6 +78,8 @@ namespace FunderMaps.Core.Authentication
                 identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
             }
 
+            identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
+
             //token.AddClaim(ClaimTypes.OrganizationUser, organizationUser.OrganizationId);
             //token.AddClaim(ClaimTypes.OrganizationUserRole, organizationUser.Role);
 
