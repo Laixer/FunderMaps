@@ -384,6 +384,24 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Update <see cref="User"/> access failed count.
+        /// </summary>
+        /// <returns><see cref="User"/>.</returns>
+        public async ValueTask ResetAccessFailed(User entity)
+        {
+            var sql = @"
+                UPDATE  application.user
+                SET     access_failed_count = 0
+                WHERE   id = @id";
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+        }
+
+        /// <summary>
         ///     Update <see cref="User"/> access.
         /// </summary>
         /// <returns><see cref="User"/>.</returns>

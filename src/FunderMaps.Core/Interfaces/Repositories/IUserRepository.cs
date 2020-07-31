@@ -25,6 +25,8 @@ namespace FunderMaps.Core.Interfaces.Repositories
 
         ValueTask BumpAccessFailed(User entity);
 
+        ValueTask ResetAccessFailed(User entity);
+
         ValueTask RegisterAccess(User entity);
     }
 }

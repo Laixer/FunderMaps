@@ -158,6 +158,26 @@ namespace FunderMaps.Core.Managers
             await _userRepository.BumpAccessFailed(user).ConfigureAwait(false);
         }
 
+        public virtual async ValueTask ResetAccessFailedCountAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await _userRepository.ResetAccessFailed(user).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask IncreaseAccessCountAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await _userRepository.RegisterAccess(user).ConfigureAwait(false);
+        }
+
         public virtual async ValueTask<bool> IsLockedOutAsync(User user)
         {
             if (user == null)

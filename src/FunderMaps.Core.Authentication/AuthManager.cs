@@ -203,6 +203,8 @@ namespace FunderMaps.Core.Authentication
                 return result;
             }
 
+            Logger.LogInformation(1, $"User {user} sign in was successful.");
+
             return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
         }
 
@@ -244,7 +246,10 @@ namespace FunderMaps.Core.Authentication
 
             if (await UserManager.CheckPasswordAsync(user, password).ConfigureAwait(false))
             {
-                //await UserManager.ResetAccessFailedCountAsync(user);
+                await UserManager.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
+                await UserManager.IncreaseAccessCountAsync(user).ConfigureAwait(false);
+
+                Logger.LogInformation(1, $"User {user} password sign in was successful.");
 
                 return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
             }
