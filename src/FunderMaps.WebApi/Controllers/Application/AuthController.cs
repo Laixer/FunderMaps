@@ -28,8 +28,33 @@ namespace FunderMaps.WebApi.Controllers.Application
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
 
+        [HttpGet("signin")]
+        public async Task<IActionResult> SignInViaGetAsync([FromQuery] SignInDto input)
+        {
+            var result = await _authManager.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
+            switch (result.Result)
+            {
+                case AuthResult.Success:
+                    {
+                        if (result.Principal == null)
+                        {
+                            throw new InvalidOperationException(); // TODO:
+                        }
+                        var token = await _tokenProvider.GetTokenAsStringAsync(result.Principal).ConfigureAwait(false);
+                        return Ok(new { Token = token });
+                    }
+                case AuthResult.Failed:
+                case AuthResult.LockedOut:
+                case AuthResult.NotAllowed:
+                    return Unauthorized();
+            }
+
+            // If we got this far, something failed
+            throw new InvalidOperationException();
+        }
+
         [HttpPost("signin")]
-        public async Task<IActionResult> SignInAsync([FromBody] SignInDto input)
+        public async Task<IActionResult> SignInViaPostAsync([FromBody] SignInDto input)
         {
             var result = await _authManager.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
             switch (result.Result)

@@ -157,8 +157,8 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="principal">The principal to sign in.</param>
         /// <param name="checkIfAuthenticated">Check if the current principal is authenticated.</param>
-        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
-        public virtual async Task<AuthContext> SignInAsync(ClaimsPrincipal principal, bool checkIfAuthenticated, string authenticationType)
+        /// <returns>Instance of <see cref="SignInContext"/>.</returns>
+        public virtual async Task<SignInContext> SignInAsync(ClaimsPrincipal principal, bool checkIfAuthenticated, string authenticationType)
         {
             if (principal == null)
             {
@@ -167,13 +167,13 @@ namespace FunderMaps.Core.Authentication
 
             if (!IsSignedIn(principal) && checkIfAuthenticated)
             {
-                return AuthContext.NotAllowed;
+                return SignInContext.NotAllowed;
             }
 
             User user = await GetUserAsync(principal).ConfigureAwait(false);
             if (user == null)
             {
-                return AuthContext.Failed;
+                return SignInContext.Failed;
             }
 
             return await SignInAsync(user, authenticationType);
@@ -183,8 +183,8 @@ namespace FunderMaps.Core.Authentication
         ///     Attempts to sign in the specified <paramref name="userName"/> and <paramref name="password"/> combination.
         /// </summary>
         /// <param name="user">The user to sign in.</param>
-        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
-        public virtual async Task<AuthContext> SignInAsync(User user, string authenticationType)
+        /// <returns>Instance of <see cref="SignInContext"/>.</returns>
+        public virtual async Task<SignInContext> SignInAsync(User user, string authenticationType)
         {
             if (user == null)
             {
@@ -193,10 +193,10 @@ namespace FunderMaps.Core.Authentication
 
             if (!await CanSignInAsync(user))
             {
-                return AuthContext.NotAllowed;
+                return SignInContext.NotAllowed;
             }
 
-            return new AuthContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
+            return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
         }
 
         /// <summary>
@@ -204,13 +204,13 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="email">The user email to sign in.</param>
         /// <param name="password">The password to attempt to sign in with.</param>
-        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
-        public virtual async Task<AuthContext> PasswordSignInAsync(string email, string password, string authenticationType)
+        /// <returns>Instance of <see cref="SignInContext"/>.</returns>
+        public virtual async Task<SignInContext> PasswordSignInAsync(string email, string password, string authenticationType)
         {
             User user = await UserManager.GetByEmailAsync(email);
             if (user == null)
             {
-                return AuthContext.Failed;
+                return SignInContext.Failed;
             }
 
             return await PasswordSignInAsync(user, password, authenticationType);
@@ -221,8 +221,8 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="user">The user to sign in.</param>
         /// <param name="password">The password to attempt to sign in with.</param>
-        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
-        public virtual async Task<AuthContext> PasswordSignInAsync(User user, string password, string authenticationType)
+        /// <returns>Instance of <see cref="SignInContext"/>.</returns>
+        public virtual async Task<SignInContext> PasswordSignInAsync(User user, string password, string authenticationType)
         {
             if (user == null)
             {
@@ -231,7 +231,7 @@ namespace FunderMaps.Core.Authentication
 
             if (!await CanSignInAsync(user))
             {
-                return AuthContext.NotAllowed;
+                return SignInContext.NotAllowed;
             }
 
             if (await UserManager.CheckPasswordAsync(user, password))
@@ -242,14 +242,14 @@ namespace FunderMaps.Core.Authentication
                 //return await UserManager.ResetAccessFailedCountAsync(user);
                 //}
 
-                return new AuthContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
+                return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
             }
 
             //Logger.LogWarning(2, "User {userId} failed to provide the correct password.", await UserManager.GetAsync(user.Id)); // TODO: Should be UserManager.GetAsync(user)'
 
             //await UserManager.IncreaseAccessFailedCountAsync(user);
 
-            return AuthContext.Failed;
+            return SignInContext.Failed;
         }
     }
 }
