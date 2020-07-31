@@ -37,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core.Tests", "te
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Data.Tests", "tests\FunderMaps.Data.Tests\FunderMaps.Data.Tests.csproj", "{B9284992-DA13-471D-9DB9-1907A8246679}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Core.Authentication", "src\FunderMaps.Core.Authentication\FunderMaps.Core.Authentication.csproj", "{604F9414-3E2F-4DC7-9420-366441FFA31D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core.Authentication", "src\FunderMaps.Core.Authentication\FunderMaps.Core.Authentication.csproj", "{604F9414-3E2F-4DC7-9420-366441FFA31D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Webservice", "src\FunderMaps.Webservice\FunderMaps.Webservice.csproj", "{278702CF-559B-4ED5-8C57-FD0E23DC4014}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,10 @@ Global
 		{604F9414-3E2F-4DC7-9420-366441FFA31D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{604F9414-3E2F-4DC7-9420-366441FFA31D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{604F9414-3E2F-4DC7-9420-366441FFA31D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{278702CF-559B-4ED5-8C57-FD0E23DC4014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{278702CF-559B-4ED5-8C57-FD0E23DC4014}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{278702CF-559B-4ED5-8C57-FD0E23DC4014}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{278702CF-559B-4ED5-8C57-FD0E23DC4014}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +121,7 @@ Global
 		{3206FABE-295E-401D-A43A-41174E2DEA61} = {0219D434-DD4F-4187-ADED-8CD4A62E90F1}
 		{B9284992-DA13-471D-9DB9-1907A8246679} = {0219D434-DD4F-4187-ADED-8CD4A62E90F1}
 		{604F9414-3E2F-4DC7-9420-366441FFA31D} = {3CCE5914-CD6D-4DFD-9FF5-E872044553DD}
+		{278702CF-559B-4ED5-8C57-FD0E23DC4014} = {54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDA50611-E011-4C1E-8823-7A6943652DCE}
