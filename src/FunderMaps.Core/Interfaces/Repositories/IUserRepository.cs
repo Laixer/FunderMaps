@@ -19,6 +19,8 @@ namespace FunderMaps.Core.Interfaces.Repositories
 
         ValueTask<string> GetPasswordHashAsync(User entity);
 
+        ValueTask<bool> IsLockedOutAsync(User entity);
+
         ValueTask SetPasswordHashAsync(User entity, string passwordHash);
 
         ValueTask BumpAccessFailed(User entity);

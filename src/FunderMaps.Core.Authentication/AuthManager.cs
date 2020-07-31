@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -17,12 +18,12 @@ namespace FunderMaps.Core.Authentication
         /// <summary>
         ///     The <see cref="UserManager"/> used.
         /// </summary>
-        public UserManager UserManager { get; set; }
+        public UserManager UserManager { get; }
 
         /// <summary>
         ///     The <see cref="OrganizationManager"/> used.
         /// </summary>
-        public OrganizationManager OrganizationManager { get; set; }
+        public OrganizationManager OrganizationManager { get; }
 
         /// <summary>
         ///     The <see cref="AuthenticationOptions"/> used.
@@ -30,13 +31,23 @@ namespace FunderMaps.Core.Authentication
         public AuthenticationOptions Options { get; set; }
 
         /// <summary>
+        ///     The <see cref="ILogger"/> used.
+        /// </summary>
+        private ILogger Logger { get; set; }
+
+        /// <summary>
         ///     Creates a new instance.
         /// </summary>
-        public AuthManager(UserManager userManager, OrganizationManager organizationManager, IOptions<AuthenticationOptions> optionsAccessor) //, ILogger<AuthManager> logger)
+        public AuthManager(
+            UserManager userManager,
+            OrganizationManager organizationManager,
+            IOptions<AuthenticationOptions> optionsAccessor,
+            ILogger<AuthManager> logger)
         {
             UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             OrganizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
             Options = optionsAccessor?.Value ?? new AuthenticationOptions();
+            Logger = logger ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
         // TODO: Add role
@@ -91,17 +102,17 @@ namespace FunderMaps.Core.Authentication
             var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (claim != null)
             {
-                return await UserManager.GetAsync(Guid.Parse(claim.Value));
+                return await UserManager.GetAsync(Guid.Parse(claim.Value)).ConfigureAwait(false);
             }
             claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
             if (claim != null)
             {
-                return await UserManager.GetByEmailAsync(claim.Value);
+                return await UserManager.GetByEmailAsync(claim.Value).ConfigureAwait(false);
             }
             claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
             if (claim != null)
             {
-                return await UserManager.GetByEmailAsync(claim.Value);
+                return await UserManager.GetByEmailAsync(claim.Value).ConfigureAwait(false);
             }
 
             throw new InvalidOperationException(); // TODO:
@@ -130,37 +141,21 @@ namespace FunderMaps.Core.Authentication
         ///     The task object representing the asynchronous operation, containing a flag that is true
         ///     if the specified user can sign-in, otherwise false.
         /// </returns>
-        public virtual async Task<bool> CanSignInAsync(User user)
+        public virtual async Task<SignInContext> CanSignInAsync(User user)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            //if (Options.SignIn.RequireConfirmedEmail && !(await UserManager.IsEmailConfirmedAsync(user)))
-            //{
-            //    //Logger.LogWarning(0, "User {userId} cannot sign in without a confirmed email.", await UserManager.GetUserIdAsync(user));
-            //    return false;
-            //}
-            //if (Options.SignIn.RequireConfirmedPhoneNumber && !(await UserManager.IsPhoneNumberConfirmedAsync(user)))
-            //{
-            //    //Logger.LogWarning(1, "User {userId} cannot sign in without a confirmed phone number.", await UserManager.GetUserIdAsync(user));
-            //    return false;
-            //}
-            // TODO: Remove
-            //if (Options.SignIn.RequireConfirmedAccount && !(await _confirmation.IsConfirmedAsync(UserManager, user)))
-            //{
-            //    //Logger.LogWarning(4, "User {userId} cannot sign in without a confirmed account.", await UserManager.GetUserIdAsync(user));
-            //    return false;
-            //}
+            if (await UserManager.IsLockedOutAsync(user).ConfigureAwait(false))
+            {
+                Logger.LogWarning(3, $"User {user} is currently locked out.");
 
-            //if (await UserManager.IsLockedOutAsync(user))
-            //{
-            //Logger.LogWarning(3, "User {userId} is currently locked out.", await UserManager.GetUserIdAsync(user));
-            //return AuthContext.LockedOut;
-            //}
+                return SignInContext.LockedOut;
+            }
 
-            return true;
+            return SignInContext.Success;
         }
 
         /// <summary>
@@ -202,9 +197,10 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (!await CanSignInAsync(user).ConfigureAwait(false))
+            var result = await CanSignInAsync(user).ConfigureAwait(false);
+            if (result != SignInContext.Success)
             {
-                return SignInContext.NotAllowed;
+                return result;
             }
 
             return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
@@ -218,7 +214,7 @@ namespace FunderMaps.Core.Authentication
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> PasswordSignInAsync(string email, string password, string authenticationType)
         {
-            User user = await UserManager.GetByEmailAsync(email);
+            User user = await UserManager.GetByEmailAsync(email).ConfigureAwait(false);
             if (user == null)
             {
                 return SignInContext.Failed;
@@ -240,25 +236,22 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (!await CanSignInAsync(user).ConfigureAwait(false))
+            var result = await CanSignInAsync(user).ConfigureAwait(false);
+            if (result != SignInContext.Success)
             {
-                return SignInContext.NotAllowed;
+                return result;
             }
 
-            if (await UserManager.CheckPasswordAsync(user, password))
+            if (await UserManager.CheckPasswordAsync(user, password).ConfigureAwait(false))
             {
-                //var alwaysLockout = AppContext.TryGetSwitch("Microsoft.AspNetCore.Identity.CheckPasswordSignInAlwaysResetLockoutOnSuccess", out var enabled) && enabled;
-                //if (alwaysLockout)
-                //{
-                //return await UserManager.ResetAccessFailedCountAsync(user);
-                //}
+                //await UserManager.ResetAccessFailedCountAsync(user);
 
                 return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
             }
 
-            //Logger.LogWarning(2, "User {userId} failed to provide the correct password.", await UserManager.GetAsync(user.Id)); // TODO: Should be UserManager.GetAsync(user)'
+            Logger.LogWarning(2, $"User {user} failed to provide the correct password.");
 
-            //await UserManager.IncreaseAccessFailedCountAsync(user);
+            await UserManager.IncreaseAccessFailedCountAsync(user).ConfigureAwait(false);
 
             return SignInContext.Failed;
         }

@@ -257,6 +257,24 @@ namespace FunderMaps.Data.Repositories
             return reader.SafeGetString(0);
         }
 
+        public async ValueTask<bool> IsLockedOutAsync(User entity)
+        {
+            var sql = @"
+                SELECT EXISTS (
+                    SELECT  *
+                    FROM    application.user
+                    WHERE   id = @id
+                    AND     lockout_end > NOW()
+                    LIMIT   1
+                ) AS is_locked";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", entity.Id);
+
+            return (bool)await cmd.ExecuteScalarEnsureRowAsync().ConfigureAwait(false);
+        }
+
         /// <summary>
         ///     Retrieve all <see cref="User"/>.
         /// </summary>
@@ -371,6 +389,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="User"/>.</returns>
         public async ValueTask RegisterAccess(User entity)
         {
+            // TODO: db func
             // TODO: db trigger to update last_login
             var sql = @"
                 UPDATE  application.user

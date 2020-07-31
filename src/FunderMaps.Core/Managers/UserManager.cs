@@ -147,5 +147,25 @@ namespace FunderMaps.Core.Managers
 
             await _userRepository.DeleteAsync(id).ConfigureAwait(false);
         }
+
+        public virtual async ValueTask IncreaseAccessFailedCountAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            await _userRepository.BumpAccessFailed(user).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask<bool> IsLockedOutAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return await _userRepository.IsLockedOutAsync(user).ConfigureAwait(false);
+        }
     }
 }
