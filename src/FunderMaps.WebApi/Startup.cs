@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IO.Compression;
 using System.Text;
 
-// TODO: Register assemly as api controller
+// TODO: Register assembly as api controller
 namespace FunderMaps
 {
     /// <summary>
@@ -54,7 +54,7 @@ namespace FunderMaps
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers(); // TODO: Should we IgnoreNullValues ?
+            services.AddControllers(); // TODO: REVIEW: Should we IgnoreNullValues ?
 
             services.AddResponseCompression(options =>
             {
@@ -62,22 +62,6 @@ namespace FunderMaps
                 // over HTTPS because of BREACH exploit.
                 options.EnableForHttps = true;
             });
-
-            // TODO: Move
-            //services.AddMailKit(builder =>
-            //{
-            //    var config = _configuration.GetSection("Email");
-            //    builder.UseMailKit(new MailKitOptions()
-            //    {
-            //        Server = config.GetValue<string>("Server"),
-            //        Port = config.GetValue<int>("Port"),
-            //        SenderName = config.GetValue<string>("SenderName"),
-            //        SenderEmail = config.GetValue<string>("SenderEmail"),
-            //        Account = config.GetValue<string>("Account"),
-            //        Password = config.GetValue<string>("Password"),
-            //        Security = true,
-            //    });
-            //});
 
             // Configure compression providers.
             services
@@ -96,32 +80,11 @@ namespace FunderMaps
         }
 
         /// <summary>
-        /// Configure the identity framework and the authentications methods.
+        ///     Configure the identity framework and the authentications methods.
         /// </summary>
-        private void ConfigureAuthentication(IServiceCollection services)
+        private static void ConfigureAuthentication(IServiceCollection services)
         {
-            services.AddFunderMapsCoreAuthentication(options =>
-            {
-                //options.Password = Constants.PasswordPolicy;
-                //options.Lockout = Constants.LockoutOptions;
-                //options.SignIn.RequireConfirmedEmail = false;
-                //options.SignIn.RequireConfirmedPhoneNumber = false;
-            });
-
-            //services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>
-            //{
-            //    options.Password = Constants.PasswordPolicy;
-            //    options.Lockout = Constants.LockoutOptions;
-            //    options.User.RequireUniqueEmail = true;
-            //})
-            //.AddDapperStores(options =>
-            //{
-            //    options.UserTable = "user";
-            //    options.Schema = "application";
-            //    options.MatchWithUnderscore = true;
-            //    options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionStringFallback("FunderMapsConnection"));
-            //})
-            //.AddDefaultTokenProviders();
+            services.AddFunderMapsCoreAuthentication();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
