@@ -31,9 +31,9 @@ namespace FunderMaps.Core.Authentication
         public AuthenticationOptions Options { get; set; }
 
         /// <summary>
-        ///     The <see cref="ILogger"/> used.
+        ///     Gets the <see cref="ILogger"/> used to log messages from the manager.
         /// </summary>
-        private ILogger Logger { get; set; }
+        protected ILogger Logger { get; }
 
         /// <summary>
         ///     Creates a new instance.

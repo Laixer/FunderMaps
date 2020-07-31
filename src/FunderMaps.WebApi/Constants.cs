@@ -34,11 +34,6 @@ namespace FunderMaps
         };
 
         /// <summary>
-        ///     Static file cache retention.
-        /// </summary>
-        internal const int StaticFileCacheRetention = 60 * 60 * 24 * 30;
-
-        /// <summary>
         ///     Application role for administrator
         /// </summary>
         internal const string AdministratorRole = "administrator";

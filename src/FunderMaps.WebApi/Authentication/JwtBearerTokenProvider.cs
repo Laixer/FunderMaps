@@ -26,9 +26,6 @@ namespace FunderMaps.WebApi.Authentication
         /// <summary>
         ///     Gets the <see cref="ILogger"/> used to log messages from the manager.
         /// </summary>
-        /// <value>
-        ///     The <see cref="ILogger"/> used to log messages from the manager.
-        /// </value>
         protected ILogger Logger { get; }
 
         /// <summary>
@@ -39,20 +36,15 @@ namespace FunderMaps.WebApi.Authentication
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, ISystemClock clock)
+        public JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILogger<JwtBearerTokenProvider> logger, ISystemClock clock)
         {
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
 
-            if (logger == null)
-            {
-                throw new ArgumentNullException(nameof(logger));
-            }
-
             Options = options.Get(JwtBearerDefaults.AuthenticationScheme);
-            Logger = logger.CreateLogger(GetType().FullName);
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
