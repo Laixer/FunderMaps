@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Authentication;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Managers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
@@ -44,39 +43,6 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register core managers in DI container.
             services.AddScoped<UserManager>();
             services.AddScoped<OrganizationManager>();
-
-            return services;
-        }
-
-        // TODO: Want to move this to another assemly?
-        public static IServiceCollection AddFunderMapsCoreAuthentication(this IServiceCollection services)
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            services.AddFunderMapsCoreAuthentication(setupAction: null);
-
-            return services;
-        }
-
-        // TODO: Want to move this to another assemly?
-        public static IServiceCollection AddFunderMapsCoreAuthentication(this IServiceCollection services, Action<AuthenticationOptions> setupAction)
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            // TODO: AddScoped -> Transient?s
-
-            services.AddScoped<AuthManager>();
-
-            if (setupAction != null)
-            {
-                services.Configure(setupAction);
-            }
 
             return services;
         }

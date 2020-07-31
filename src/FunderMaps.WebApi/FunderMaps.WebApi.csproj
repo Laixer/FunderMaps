@@ -53,6 +53,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FunderMaps.Cloud\FunderMaps.Cloud.csproj" />
+    <ProjectReference Include="..\FunderMaps.Core.Authentication\FunderMaps.Core.Authentication.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
     <ProjectReference Include="..\FunderMaps.Data\FunderMaps.Data.csproj" />
   </ItemGroup>

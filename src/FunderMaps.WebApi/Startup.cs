@@ -2,19 +2,19 @@
 using FunderMaps.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
-using FunderMaps.Models.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.IO.Compression;
+using System.Text;
 
+// TODO: Register assemly as api controller
 namespace FunderMaps
 {
     /// <summary>
@@ -28,16 +28,16 @@ namespace FunderMaps
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// Create a new instance.
+        ///     Create a new instance.
         /// </summary>
         /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
+        ///     This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <remarks>
-        /// Order is undetermined when configuring services.
+        ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
@@ -46,7 +46,7 @@ namespace FunderMaps
 
             services.AddAutoMapper(typeof(Startup));
 
-            //ConfigureAuthentication(services);
+            ConfigureAuthentication(services);
             //ConfigureAuthorization(services);
 
             services.AddLocalization(options =>
@@ -54,10 +54,12 @@ namespace FunderMaps
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers();
+            services.AddControllers(); // TODO: Should we IgnoreNullValues ?
 
             services.AddResponseCompression(options =>
             {
+                // NOTE: Compression is disabled by default when serving data
+                // over HTTPS because of BREACH exploit.
                 options.EnableForHttps = true;
             });
 
@@ -87,11 +89,6 @@ namespace FunderMaps
                 //.AddCheck<DatabaseHealthCheck>("db_health_check")
                 .AddCheck<FileStorageCheck>("file_health_check");
 
-            // Register components from local assemly.
-            //services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-            //services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
-            //services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
-
             // Register components from reference assemblies.
             services.AddFunderMapsCoreServices();
             //services.AddFunderMapsCloudServices();
@@ -103,12 +100,20 @@ namespace FunderMaps
         /// </summary>
         private void ConfigureAuthentication(IServiceCollection services)
         {
-            services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>
+            services.AddFunderMapsCoreAuthentication(options =>
             {
                 options.Password = Constants.PasswordPolicy;
                 options.Lockout = Constants.LockoutOptions;
-                options.User.RequireUniqueEmail = true;
-            })
+                options.SignIn.RequireConfirmedEmail = false;
+                options.SignIn.RequireConfirmedPhoneNumber = false;
+            });
+
+            //services.AddIdentity<FunderMapsUser, FunderMapsRole>(options =>
+            //{
+            //    options.Password = Constants.PasswordPolicy;
+            //    options.Lockout = Constants.LockoutOptions;
+            //    options.User.RequireUniqueEmail = true;
+            //})
             //.AddDapperStores(options =>
             //{
             //    options.UserTable = "user";
@@ -116,29 +121,27 @@ namespace FunderMaps
             //    options.MatchWithUnderscore = true;
             //    options.UseNpgsql<FunderMapsCustomQuery>(_configuration.GetConnectionStringFallback("FunderMapsConnection"));
             //})
-            .AddDefaultTokenProviders();
+            //.AddDefaultTokenProviders();
 
-            // FUTURE: Replace with AddIdentityServer
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = false;
-                options.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
-                    ValidIssuer = Configuration.GetJwtIssuer(),
-                    ValidAudience = Configuration.GetJwtAudience(),
-                    IssuerSigningKey = Configuration.GetJwtSignKey(),
-                };
-            });
+                    options.SaveToken = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        //ValidIssuer = Configuration.GetJwtIssuer(),
+                        //ValidAudience = Configuration.GetJwtAudience(),
+                        //IssuerSigningKey = Configuration.GetJwtSignKey(),
+                        ValidIssuer = "kaas.com",
+                        ValidAudience = "kaas.com",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sdfgykaegfykuewgfkyagyfkgykaeugfykauewgfkyaewgfy"))
+                    };
+                })
+                .AddJwtBearerTokenProvider();
         }
 
         /// <summary>
-        /// Configure the authorization policies.
+        ///     Configure the authorization policies.
         /// </summary>
         private static void ConfigureAuthorization(IServiceCollection services)
         {
@@ -218,7 +221,6 @@ namespace FunderMaps
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //app.UseCors("CORSDeveloperPolicy"); // TODO:
             }
             else
             {
@@ -236,6 +238,7 @@ namespace FunderMaps
 
             app.UseEndpoints(endpoints =>
             {
+                // TODO: Set /api endpoint as default
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });
