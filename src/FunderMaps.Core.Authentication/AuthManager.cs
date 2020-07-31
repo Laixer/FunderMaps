@@ -33,6 +33,8 @@ namespace FunderMaps.Core.Authentication
             Options = optionsAccessor?.Value ?? new AuthenticationOptions();
         }
 
+        // TODO: Add role
+
         /// <summary>
         ///     Create <see cref="ClaimsPrincipal"/> for specified <paramref name="user"/>.
         /// </summary>
@@ -70,6 +72,27 @@ namespace FunderMaps.Core.Authentication
             return new ClaimsPrincipal(identity);
         }
 
+        public async Task<User> GetUserAsync(ClaimsPrincipal principal)
+        {
+            var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (claim != null)
+            {
+                return await UserManager.GetAsync(Guid.Parse(claim.Value));
+            }
+            claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            if (claim != null)
+            {
+                return await UserManager.GetByEmailAsync(claim.Value);
+            }
+            claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+            if (claim != null)
+            {
+                return await UserManager.GetByEmailAsync(claim.Value);
+            }
+
+            throw new InvalidOperationException(); // TODO:
+        }
+
         /// <summary>
         ///     Returns true if the principal has an identity with the application identity.
         /// </summary>
@@ -95,6 +118,11 @@ namespace FunderMaps.Core.Authentication
         /// </returns>
         public virtual async Task<bool> CanSignInAsync(User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             //if (Options.SignIn.RequireConfirmedEmail && !(await UserManager.IsEmailConfirmedAsync(user)))
             //{
             //    //Logger.LogWarning(0, "User {userId} cannot sign in without a confirmed email.", await UserManager.GetUserIdAsync(user));
@@ -111,37 +139,49 @@ namespace FunderMaps.Core.Authentication
             //    //Logger.LogWarning(4, "User {userId} cannot sign in without a confirmed account.", await UserManager.GetUserIdAsync(user));
             //    return false;
             //}
+
+            //if (await UserManager.IsLockedOutAsync(user))
+            //{
+            //Logger.LogWarning(3, "User {userId} is currently locked out.", await UserManager.GetUserIdAsync(user));
+            //return AuthContext.LockedOut;
+            //}
+
             return true;
         }
 
         /// <summary>
-        ///     Attempts to sign in the specified <paramref name="userName"/> and <paramref name="password"/> combination.
+        ///     Attempts to sign in the specified <paramref name="principal"/>.
         /// </summary>
-        /// <param name="email">The user email to sign in.</param>
-        /// <param name="password">The password to attempt to sign in with.</param>
-        /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
-        /// <returns>SignIn result.</returns>
-        public virtual async Task<AuthContext> PasswordSignInAsync(string email, string password, bool lockoutOnFailure, string authenticationType)
+        /// <param name="principal">The principal to sign in.</param>
+        /// <param name="checkIfAuthenticated">Check if the current principal is authenticated.</param>
+        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
+        public virtual async Task<AuthContext> SignInAsync(ClaimsPrincipal principal, bool checkIfAuthenticated, string authenticationType)
         {
-            User user = await UserManager.GetByEmailAsync(email);
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
+            }
+
+            if (!IsSignedIn(principal) && checkIfAuthenticated)
+            {
+                return AuthContext.NotAllowed;
+            }
+
+            User user = await GetUserAsync(principal).ConfigureAwait(false);
             if (user == null)
             {
                 return AuthContext.Failed;
             }
 
-            return await PasswordSignInAsync(user, password, lockoutOnFailure, authenticationType);
+            return await SignInAsync(user, authenticationType);
         }
 
         /// <summary>
-        /// Attempts a password sign in for a user.
+        ///     Attempts to sign in the specified <paramref name="userName"/> and <paramref name="password"/> combination.
         /// </summary>
         /// <param name="user">The user to sign in.</param>
-        /// <param name="password">The password to attempt to sign in with.</param>
-        /// <param name="lockoutOnFailure">Flag indicating if the user account should be locked if the sign in fails.</param>
-        /// <returns>The task object representing the asynchronous operation containing the <see name="SignInResult"/>
-        /// for the sign-in attempt.</returns>
-        /// <returns></returns>
-        public virtual async Task<AuthContext> PasswordSignInAsync(User user, string password, bool lockoutOnFailure, string authenticationType)
+        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
+        public virtual async Task<AuthContext> SignInAsync(User user, string authenticationType)
         {
             if (user == null)
             {
@@ -153,11 +193,43 @@ namespace FunderMaps.Core.Authentication
                 return AuthContext.NotAllowed;
             }
 
-            //if (await UserManager.IsLockedOutAsync(user))
-            //{
-            //Logger.LogWarning(3, "User {userId} is currently locked out.", await UserManager.GetUserIdAsync(user));
-            //return AuthContext.LockedOut;
-            //}
+            return new AuthContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
+        }
+
+        /// <summary>
+        ///     Attempts to sign in the specified <paramref name="userName"/> and <paramref name="password"/> combination.
+        /// </summary>
+        /// <param name="email">The user email to sign in.</param>
+        /// <param name="password">The password to attempt to sign in with.</param>
+        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
+        public virtual async Task<AuthContext> PasswordSignInAsync(string email, string password, string authenticationType)
+        {
+            User user = await UserManager.GetByEmailAsync(email);
+            if (user == null)
+            {
+                return AuthContext.Failed;
+            }
+
+            return await PasswordSignInAsync(user, password, authenticationType);
+        }
+
+        /// <summary>
+        /// Attempts a password sign in for a user.
+        /// </summary>
+        /// <param name="user">The user to sign in.</param>
+        /// <param name="password">The password to attempt to sign in with.</param>
+        /// <returns>Instance of <see cref="AuthContext"/>.</returns>
+        public virtual async Task<AuthContext> PasswordSignInAsync(User user, string password, string authenticationType)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (!await CanSignInAsync(user))
+            {
+                return AuthContext.NotAllowed;
+            }
 
             if (await UserManager.CheckPasswordAsync(user, password))
             {
@@ -172,36 +244,9 @@ namespace FunderMaps.Core.Authentication
 
             //Logger.LogWarning(2, "User {userId} failed to provide the correct password.", await UserManager.GetAsync(user.Id)); // TODO: Should be UserManager.GetAsync(user)'
 
-            //if (UserManager.SupportsUserLockout && lockoutOnFailure)
-            //{
-            //    // If lockout is requested, increment access failed count which might lock out the user
-            //    await UserManager.AccessFailedAsync(user);
-            //    if (await UserManager.IsLockedOutAsync(user))
-            //    {
-            //        return await LockedOut(user);
-            //    }
-            //}
+            //await UserManager.IncreaseAccessFailedCountAsync(user);
 
             return AuthContext.Failed;
-        }
-
-        /// <summary>
-        /// Signs in the specified <paramref name="user"/>, whilst preserving the existing
-        /// AuthenticationProperties of the current signed-in user like rememberMe, as an asynchronous operation.
-        /// </summary>
-        /// <param name="user">The user to sign-in.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        public virtual async Task RefreshSignInAsync(User user)
-        {
-            //var auth = await Context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
-            var claims = new List<Claim>();
-            //var authenticationMethod = auth?.Principal?.FindFirst(ClaimTypes.AuthenticationMethod);
-            //if (authenticationMethod != null)
-            //{
-            //    claims.Add(authenticationMethod);
-            //}
-
-            //CreateUserPrincipal(user, claims);
         }
     }
 }

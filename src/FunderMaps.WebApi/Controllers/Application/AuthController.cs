@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Controllers;
 using FunderMaps.Core.Authentication;
-using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -36,7 +35,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpPost("signin")]
         public async Task<IActionResult> SignInAsync([FromBody] SignInDto input)
         {
-            var result = await _authManager.PasswordSignInAsync(input.Email, input.Password, true, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
+            var result = await _authManager.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
             switch (result.Result)
             {
                 case AuthResult.Success:
@@ -61,13 +60,26 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpGet("token-refresh")]
         public async Task<IActionResult> RefreshSignInAsync()
         {
-            // User.<>
-            //User user = await _userManager.GetAsync(Guid.Empty).ConfigureAwait(false);
+            var result = await _authManager.SignInAsync(User, checkIfAuthenticated: true, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
+            switch (result.Result)
+            {
+                case AuthResult.Success:
+                    {
+                        if (result.Principal == null)
+                        {
+                            throw new InvalidOperationException(); // TODO:
+                        }
+                        var token = await _tokenProvider.GetTokenAsStringAsync(result.Principal).ConfigureAwait(false);
+                        return Ok(new { Token = token });
+                    }
+                case AuthResult.Failed:
+                case AuthResult.LockedOut:
+                case AuthResult.NotAllowed:
+                    return Unauthorized();
+            }
 
-            var token = await _tokenProvider.GetTokenAsStringAsync(result.Principal).ConfigureAwait(false);
-            return Ok(new { Token = token });
-
-            return NoContent();
+            // If we got this far, something failed
+            throw new InvalidOperationException();
         }
     }
 }
