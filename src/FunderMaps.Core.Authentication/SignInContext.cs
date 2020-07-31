@@ -2,16 +2,40 @@
 
 namespace FunderMaps.Core.Authentication
 {
+    /// <summary>
+    ///     Context returned from various authentication operations.
+    /// </summary>
     public class SignInContext
     {
-        public static SignInContext Failed = new SignInContext(AuthResult.Failed);
-        public static SignInContext Success = new SignInContext(AuthResult.Success);
-        public static SignInContext LockedOut = new SignInContext(AuthResult.LockedOut);
-        public static SignInContext NotAllowed = new SignInContext(AuthResult.NotAllowed);
+        /// <summary>
+        ///     Return result as Failed.
+        /// </summary>
+        public static SignInContext Failed { get; } = new SignInContext(AuthResult.Failed);
 
+        /// <summary>
+        ///     Return result as Success.
+        /// </summary>
+        public static SignInContext Success { get; } = new SignInContext(AuthResult.Success);
+
+        /// <summary>
+        ///     Return result as LockedOut.
+        /// </summary>        
+        public static SignInContext LockedOut { get; } = new SignInContext(AuthResult.LockedOut);
+
+        /// <summary>
+        ///     Return result as NotAllowed.
+        /// </summary>
+        public static SignInContext NotAllowed { get; } = new SignInContext(AuthResult.NotAllowed);
+
+        /// <summary>
+        ///     Authentication result.
+        /// </summary>
         public AuthResult Result { get; }
+
+        /// <summary>
+        ///     Claims principal.
+        /// </summary>
         public ClaimsPrincipal Principal { get; }
-        public string Token { get; }
 
         /// <summary>
         ///     Create new instance.

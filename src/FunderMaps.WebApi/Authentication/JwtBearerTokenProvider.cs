@@ -58,6 +58,11 @@ namespace FunderMaps.WebApi.Authentication
 
         protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
         {
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
+            }
+
             var properties = new AuthenticationProperties();
 
             var issuerSigningKey = Options.TokenValidationParameters.IssuerSigningKey;
@@ -68,6 +73,7 @@ namespace FunderMaps.WebApi.Authentication
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
+            // TODO: Otherwise email
             var nameClaim = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name, StringComparison.Ordinal));
             if (nameClaim != null)
             {
