@@ -10,22 +10,13 @@ namespace FunderMaps.Controllers
     public abstract class BaseApiController : ControllerBase
     {
         /// <summary>
-        /// Return bad request with an error model.
-        /// </summary>
-        /// <param name="code">Error code.</param>
-        /// <param name="message">Error message.</param>
-        /// <returns>ActionResult.</returns>
-        protected ActionResult BadRequest(int code, string message) =>
-            StatusCode(400, new ErrorOutputModel(code, message));
-
-        /// <summary>
         /// Return not found with an error model.
         /// </summary>
         /// <param name="code">Error code.</param>
         /// <param name="message">Error message.</param>
         /// <returns>ActionResult.</returns>
         protected ActionResult NotFound(int code, string message) =>
-            StatusCode(404, new ErrorOutputModel(code, message));
+            StatusCode(404, message);
 
         /// <summary>
         /// Return default error model with resource not found.

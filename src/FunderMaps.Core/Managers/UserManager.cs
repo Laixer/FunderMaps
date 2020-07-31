@@ -113,14 +113,29 @@ namespace FunderMaps.Core.Managers
             user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id).ConfigureAwait(false));
             user.Validate();
 
-            var currentPasswordHash = await _userRepository.GetPasswordHashAsync(user).ConfigureAwait(false);
-            if (!_passwordHasher.IsPasswordValid(currentPasswordHash, currentPassword))
+            if (!await CheckPasswordAsync(user, currentPassword).ConfigureAwait(false))
             {
                 throw new Exception(); // TODO: Auth invalid ex.
             }
 
             var newPasswordHash = _passwordHasher.HashPassword(newPassword);
             await _userRepository.SetPasswordHashAsync(user, newPasswordHash).ConfigureAwait(false);
+        }
+
+        public virtual async ValueTask<bool> CheckPasswordAsync(User user, string password)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            var currentPasswordHash = await _userRepository.GetPasswordHashAsync(user).ConfigureAwait(false);
+            return _passwordHasher.IsPasswordValid(currentPasswordHash, password);
         }
 
         public virtual async ValueTask DeleteAsync(Guid id)
