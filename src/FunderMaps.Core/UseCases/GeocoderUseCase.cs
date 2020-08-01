@@ -42,7 +42,7 @@ namespace FunderMaps.Core.UseCases
         /// </summary>
         /// <param name="query">Search query.</param>
         /// <param name="navigation">Recordset nagivation.</param>
-        public IAsyncEnumerable<Address> GetAllBySuggestionAsync(string query, INavigation navigation)
+        public virtual IAsyncEnumerable<Address> GetAllBySuggestionAsync(string query, INavigation navigation)
             => _addressRepository.GetBySearchQueryAsync(query, navigation);
     }
 }
