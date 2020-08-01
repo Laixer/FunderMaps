@@ -107,7 +107,7 @@ namespace FunderMaps.Data.Repositories
                 ExternalSource = reader.SafeGetString(6),
             };
 
-        public async Task<Address> GetByExternalIdAsync(string id, string source)
+        public async ValueTask<Address> GetByExternalIdAsync(string id, string source)
         {
             var sql = @"
                 SELECT  id,

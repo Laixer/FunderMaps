@@ -19,13 +19,12 @@ namespace FunderMaps.IntegrationTests.Repositories
 
         public ValueTask<string> AddAsync(Address entity)
         {
-            DataStore.Entities.Add(entity);
-            return new ValueTask<string>(entity.Id);
+            return new ValueTask<string>(DataStore.Add(entity).Id);
         }
 
         public ValueTask<ulong> CountAsync()
         {
-            throw new NotImplementedException();
+            return new ValueTask<ulong>(DataStore.Count());
         }
 
         public ValueTask DeleteAsync(string id)
@@ -33,9 +32,9 @@ namespace FunderMaps.IntegrationTests.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Address> GetByExternalIdAsync(string id, string source)
+        public ValueTask<Address> GetByExternalIdAsync(string id, string source)
         {
-            throw new NotImplementedException();
+            return new ValueTask<Address>(DataStore.Entities.FirstOrDefault(e => e.ExternalId == id && e.ExternalSource == source));
         }
 
         public ValueTask<Address> GetByIdAsync(string id)
@@ -45,12 +44,17 @@ namespace FunderMaps.IntegrationTests.Repositories
 
         public IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
         {
-            throw new NotImplementedException();
+            var result = DataStore.Entities.Where(e =>
+            {
+                return e.Street.Contains(query, StringComparison.InvariantCultureIgnoreCase)
+                || e.PostalCode.Contains(query, StringComparison.InvariantCultureIgnoreCase);
+            });
+            return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(result, navigation));
         }
 
         public IAsyncEnumerable<Address> ListAllAsync(INavigation navigation)
         {
-            throw new NotImplementedException();
+            return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.Entities, navigation));
         }
 
         public ValueTask UpdateAsync(Address entity)
