@@ -2,6 +2,7 @@
 using FunderMaps.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
+using FunderMaps.WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -82,7 +83,7 @@ namespace FunderMaps
         /// <summary>
         ///     Configure the identity framework and the authentications methods.
         /// </summary>
-        private static void ConfigureAuthentication(IServiceCollection services)
+        private void ConfigureAuthentication(IServiceCollection services)
         {
             services.AddFunderMapsCoreAuthentication();
 
@@ -92,12 +93,9 @@ namespace FunderMaps
                     options.SaveToken = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        //ValidIssuer = Configuration.GetJwtIssuer(),
-                        //ValidAudience = Configuration.GetJwtAudience(),
-                        //IssuerSigningKey = Configuration.GetJwtSignKey(),
-                        ValidIssuer = "kaas.com",
-                        ValidAudience = "kaas.com",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("sdfgykaegfykuewgfkyagyfkgykaeugfykauewgfkyaewgfy"))
+                        ValidIssuer = Configuration.GetJwtIssuer(),
+                        ValidAudience = Configuration.GetJwtAudience(),
+                        IssuerSigningKey = JwtHelper.CreateSecurityKey(Configuration.GetJwtSigningKey()),
                     };
                 })
                 .AddJwtBearerTokenProvider();
