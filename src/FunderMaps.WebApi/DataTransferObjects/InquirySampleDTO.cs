@@ -5,38 +5,38 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.WebApi.DataTransferObjects
 {
     /// <summary>
-    /// Inquiry sample DTO.
+    ///     Inquiry sample DTO.
     /// </summary>
-    public class InquirySampleDTO
+    public sealed class InquirySampleDto
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Inquiry identifier.
+        ///     Inquiry identifier.
         /// </summary>
         public int Inquiry { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         public string Address { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
-        /// Built year.
+        ///     Built year.
         /// </summary>
         public DateTime BuiltYear { get; set; }
 
         /// <summary>
-        /// Substructure.
+        ///     Substructure.
         /// </summary>
         public Substructure Substructure { get; set; }
 
@@ -45,27 +45,27 @@ namespace FunderMaps.WebApi.DataTransferObjects
         //
 
         /// <summary>
-        /// CPT.
+        ///     CPT.
         /// </summary>
         public string Cpt { get; set; }
 
         /// <summary>
-        /// Monitoring well.
+        ///     Monitoring well.
         /// </summary>
         public string MonitoringWell { get; set; }
 
         /// <summary>
-        /// Groundwater level temp.
+        ///     Groundwater level temp.
         /// </summary>
         public decimal GroundwaterLevelTemp { get; set; }
 
         /// <summary>
-        /// Ground level.
+        ///     Ground level.
         /// </summary>
         public decimal GroundLevel { get; set; }
 
         /// <summary>
-        /// Groundwater level net.
+        ///     Groundwater level net.
         /// </summary>
         public decimal GroundwaterLevelNet { get; set; }
 
@@ -74,42 +74,42 @@ namespace FunderMaps.WebApi.DataTransferObjects
         //
 
         /// <summary>
-        /// Foundation type.
+        ///     Foundation type.
         /// </summary>
         public FoundationType Type { get; set; }
 
         /// <summary>
-        /// Enforcement term.
+        ///     Enforcement term.
         /// </summary>
         public EnforcementTerm EnforcementTerm { get; set; }
 
         /// <summary>
-        /// Recovery advised.
+        ///     Recovery advised.
         /// </summary>
         public bool RecoveryAdvised { get; set; }
 
         /// <summary>
-        /// Damage cause.
+        ///     Damage cause.
         /// </summary>
         public FoundationDamageCause DamageCause { get; set; }
 
         /// <summary>
-        /// Damage cause.
+        ///     Damage cause.
         /// </summary>
         public FoundationDamageCharacteristics DamageCharacteristics { get; set; }
 
         /// <summary>
-        /// Construction pile.
+        ///     Construction pile.
         /// </summary>
         public ConstructionPile ConstructionPile { get; set; }
 
         /// <summary>
-        /// Wood type.
+        ///     Wood type.
         /// </summary>
         public WoodType WoodType { get; set; }
 
         /// <summary>
-        /// Wood encroachement.
+        ///     Wood encroachement.
         /// </summary>
         public WoodEncroachement WoodEncroachement { get; set; }
 
@@ -118,57 +118,57 @@ namespace FunderMaps.WebApi.DataTransferObjects
         //
 
         /// <summary>
-        /// Construction level.
+        ///     Construction level.
         /// </summary>
         public decimal ConstructionLevel { get; set; }
 
         /// <summary>
-        /// Wood level.
+        ///     Wood level.
         /// </summary>
         public decimal WoodLevel { get; set; }
 
         /// <summary>
-        /// Pile diameter top.
+        ///     Pile diameter top.
         /// </summary>
         public decimal PileDiameterTop { get; set; }
 
         /// <summary>
-        /// Pile diameter bottom.
+        ///     Pile diameter bottom.
         /// </summary>
         public decimal PileDiameterBottom { get; set; }
 
         /// <summary>
-        /// Pile head level.
+        ///     Pile head level.
         /// </summary>
         public decimal PileHeadLevel { get; set; }
 
         /// <summary>
-        /// Pile tip level.
+        ///     Pile tip level.
         /// </summary>
         public decimal PileTipLevel { get; set; }
 
         /// <summary>
-        /// Foundation depth.
+        ///     Foundation depth.
         /// </summary>
         public decimal FoundationDepth { get; set; }
 
         /// <summary>
-        /// Mason level.
+        ///     Mason level.
         /// </summary>
         public decimal MasonLevel { get; set; }
 
         /// <summary>
-        /// Concrete charger length.
+        ///     Concrete charger length.
         /// </summary>
         public decimal ConcreteChargerLength { get; set; }
 
         /// <summary>
-        /// Pile distance length.
+        ///     Pile distance length.
         /// </summary>
         public decimal PileDistanceLength { get; set; }
 
         /// <summary>
-        /// Wood penetration depth.
+        ///     Wood penetration depth.
         /// </summary>
         public decimal WoodPenetrationDepth { get; set; }
 
@@ -177,42 +177,42 @@ namespace FunderMaps.WebApi.DataTransferObjects
         //
 
         /// <summary>
-        /// Overall quality.
+        ///     Overall quality.
         /// </summary>
         public FoundationQuality OverallQuality { get; set; }
 
         /// <summary>
-        /// Wood quality.
+        ///     Wood quality.
         /// </summary>
         public WoodQuality WoodQuality { get; set; }
 
         /// <summary>
-        /// Construction quality.
+        ///     Construction quality.
         /// </summary>
         public Quality ConstructionQuality { get; set; }
 
         /// <summary>
-        /// Wood capacity horizontal quality.
+        ///     Wood capacity horizontal quality.
         /// </summary>
         public Quality WoodCapacityHorizontalQuality { get; set; }
 
         /// <summary>
-        /// Pile wood capacity vertical quality.
+        ///     Pile wood capacity vertical quality.
         /// </summary>
         public Quality PileWoodCapacityVerticalQuality { get; set; }
 
         /// <summary>
-        /// carrying capacity quality.
+        ///     Carrying capacity quality.
         /// </summary>
         public Quality CarryingCapacityQuality { get; set; }
 
         /// <summary>
-        /// Mason quality.
+        ///     Mason quality.
         /// </summary>
         public Quality MasonQuality { get; set; }
 
         /// <summary>
-        /// Wood quality necessity.
+        ///     Wood quality necessity.
         /// </summary>
         public bool WoodQualityNecessity { get; set; }
 
@@ -221,132 +221,132 @@ namespace FunderMaps.WebApi.DataTransferObjects
         //
 
         /// <summary>
-        /// Crack indoor restored.
+        ///     Crack indoor restored.
         /// </summary>
         public bool CrackIndoorRestored { get; set; }
 
         /// <summary>
-        /// Crack indoor type.
+        ///     Crack indoor type.
         /// </summary>
         public CrackType CrackIndoorType { get; set; }
 
         /// <summary>
-        /// Crack indoor size.
+        ///     Crack indoor size.
         /// </summary>
         public decimal CrackIndoorSize { get; set; }
 
         /// <summary>
-        /// Crack facade front size.
+        ///     Crack facade front size.
         /// </summary>
         public bool CrackFacadeFrontRestored { get; set; }
 
         /// <summary>
-        /// Crack facade front type.
+        ///     Crack facade front type.
         /// </summary>
         public CrackType CrackFacadeFrontType { get; set; }
 
         /// <summary>
-        /// Crack facade front size.
+        ///     Crack facade front size.
         /// </summary>
         public decimal CrackFacadeFrontSize { get; set; }
 
         /// <summary>
-        /// Crack facade back size.
+        ///     Crack facade back size.
         /// </summary>
         public bool CrackFacadeBackRestored { get; set; }
 
         /// <summary>
-        /// Crack facade back type.
+        ///     Crack facade back type.
         /// </summary>
         public CrackType CrackFacadeBackType { get; set; }
 
         /// <summary>
-        /// Crack facade back size.
+        ///     Crack facade back size.
         /// </summary>
         public decimal CrackFacadeBackSize { get; set; }
 
         /// <summary>
-        /// Crack facade left size.
+        ///     Crack facade left size.
         /// </summary>
         public bool CrackFacadeLeftRestored { get; set; }
 
         /// <summary>
-        /// Crack facade left type.
+        ///     Crack facade left type.
         /// </summary>
         public CrackType CrackFacadeLeftType { get; set; }
 
         /// <summary>
-        /// Crack facade left size.
+        ///     Crack facade left size.
         /// </summary>
         public decimal CrackFacadeLeftkSize { get; set; }
 
         /// <summary>
-        /// Crack facade right size.
+        ///     Crack facade right size.
         /// </summary>
         public bool CrackFacadeRightRestored { get; set; }
 
         /// <summary>
-        /// Crack facade right type.
+        ///     Crack facade right type.
         /// </summary>
         public CrackType CrackFacadeRightType { get; set; }
 
         /// <summary>
-        /// Crack facade right size.
+        ///     Crack facade right size.
         /// </summary>
         public decimal CrackFacadeRightkSize { get; set; }
 
         /// <summary>
-        /// Deformed facade.
+        ///     Deformed facade.
         /// </summary>
         public bool DeformedFacade { get; set; }
 
         /// <summary>
-        /// Threshold updown skewed.
+        ///     Threshold updown skewed.
         /// </summary>
         public bool ThresholdUpdownSkewed { get; set; }
 
         /// <summary>
-        /// Threshold front level.
+        ///     Threshold front level.
         /// </summary>
         public decimal ThresholdFrontLevel { get; set; }
 
         /// <summary>
-        /// Threshold back level.
+        ///     Threshold back level.
         /// </summary>
         public decimal ThresholdBackLevel { get; set; }
 
         /// <summary>
-        /// Skewed parallel.
+        ///     Skewed parallel.
         /// </summary>
         public decimal SkewedParallel { get; set; }
 
         /// <summary>
-        /// Skewed perpendicular.
+        ///     Skewed perpendicular.
         /// </summary>
         public decimal SkewedPerpendicular { get; set; }
 
         /// <summary>
-        /// Skewed facade.
+        ///     Skewed facade.
         /// </summary>
         public RotationType SkewedFacade { get; set; }
 
         /// <summary>
-        /// Settlement speed.
+        ///     Settlement speed.
         /// </summary>
         public double SettlementSpeed { get; set; }
 
         /// <summary>
-        /// Record create date.
+        ///     Record create date.
         /// </summary>
         public DateTime CreateDate { get; set; }
 
         /// <summary>
-        /// Record last update.
+        ///     Record last update.
         /// </summary>
         public DateTime? UpdateDate { get; set; }
 
         /// <summary>
-        /// Record delete date.
+        ///     Record delete date.
         /// </summary>
         public DateTime? DeleteDate { get; set; }
     }

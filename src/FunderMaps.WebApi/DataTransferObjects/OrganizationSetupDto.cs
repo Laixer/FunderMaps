@@ -5,7 +5,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Organization setup DTO.
     /// </summary>
-    public class OrganizationSetupDto
+    public sealed class OrganizationSetupDto
     {
         /// <summary>
         ///     User email address.

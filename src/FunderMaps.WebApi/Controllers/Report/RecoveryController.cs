@@ -36,7 +36,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             var recovery = await _recoveryUseCase.GetAsync(id).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<RecoveryDTO>(recovery));
+            return Ok(_mapper.Map<RecoveryDto>(recovery));
         }
 
         [HttpGet]
@@ -47,7 +47,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoveryDTO>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
@@ -61,14 +61,14 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoveryDTO>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] RecoveryDTO input)
+        public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
         {
             if (input == null)
             {
@@ -77,7 +77,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             var recovery = await _recoveryUseCase.CreateAsync(_mapper.Map<Recovery>(input)).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<RecoveryDTO>(recovery));
+            return Ok(_mapper.Map<RecoveryDto>(recovery));
         }
 
         [HttpPost("upload-document")]
@@ -94,7 +94,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDTO input)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
         {
             if (input == null)
             {
@@ -110,7 +110,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpPut("{id:int}/status")]
-        public async Task<IActionResult> SetStatusAsync(int id, [FromBody] RecoveryDTO input)
+        public async Task<IActionResult> SetStatusAsync(int id, [FromBody] RecoveryDto input)
         {
             if (input == null)
             {

@@ -6,7 +6,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Organization proposal DTO.
     /// </summary>
-    public class OrganizationProposalDto
+    public sealed class OrganizationProposalDto
     {
         /// <summary>
         ///     Organization identifier.

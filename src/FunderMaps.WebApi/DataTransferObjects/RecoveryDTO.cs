@@ -5,61 +5,60 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.WebApi.DataTransferObjects
 {
     /// <summary>
-    /// Recovery DTO.
+    ///     Recovery DTO.
     /// </summary>
-    public class RecoveryDTO
+    public sealed class RecoveryDto
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         public string Note { get; set; }
 
         /// <summary>
-        /// Foundation recovery type.
+        ///     Foundation recovery type.
         /// </summary>
         [Required]
         public RecoveryDocumentType Type { get; set; }
 
         /// <summary>
-        /// Document file name.
+        ///     Document file name.
         /// </summary>
         [Required]
         public string DocumentFile { get; set; }
 
         /// <summary>
-        /// Document date.
+        ///     Document date.
         /// </summary>
         [Required]
         public DateTime DocumentDate { get; set; }
 
-
         /// <summary>
-        /// Attribution key.
+        ///     Attribution key.
         /// </summary>
         public int Attribution { get; set; }
 
         /// <summary>
-        /// Record access policy.
+        ///     Record access policy.
         /// </summary>
         public AccessPolicy AccessPolicy { get; set; }
 
         /// <summary>
-        /// Record create date.
+        ///     Record create date.
         /// </summary>
         public DateTime CreateDate { get; set; }
 
         /// <summary>
-        /// Record last update.
+        ///     Record last update.
         /// </summary>
         public DateTime? UpdateDate { get; set; }
 
         /// <summary>
-        /// Record delete date.
+        ///     Record delete date.
         /// </summary>
         public DateTime? DeleteDate { get; set; }
     }

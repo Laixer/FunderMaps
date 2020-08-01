@@ -39,13 +39,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             var inquiry = await _inquiryUseCase.GetAsync(id).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<InquiryDTO>(inquiry));
+            return Ok(_mapper.Map<InquiryDto>(inquiry));
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
-            var result = await _mapper.MapAsync<IList<InquiryDTO>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
@@ -54,18 +54,18 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
         {
-            var result = await _mapper.MapAsync<IList<InquiryDTO>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] InquiryDTO input)
+        public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
         {
             var inquiry = await _inquiryUseCase.CreateAsync(_mapper.Map<Inquiry>(input)).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<InquiryDTO>(inquiry));
+            return Ok(_mapper.Map<InquiryDto>(inquiry));
         }
 
         [HttpPost("upload-document")]
@@ -84,7 +84,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDTO input)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDto input)
         {
             var inquiry = _mapper.Map<Inquiry>(input);
             inquiry.Id = id;

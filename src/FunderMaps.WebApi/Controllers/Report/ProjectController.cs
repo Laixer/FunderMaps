@@ -37,7 +37,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             var project = await _projectUseCase.GetAsync(id).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<ProjectDTO>(project));
+            return Ok(_mapper.Map<ProjectDto>(project));
         }
 
         [HttpGet]
@@ -48,14 +48,14 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<ProjectDTO>, Project>(_projectUseCase.GetAllAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<ProjectDto>, Project>(_projectUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] ProjectDTO input)
+        public async Task<IActionResult> CreateAsync([FromBody] ProjectDto input)
         {
             if (input == null)
             {
@@ -64,11 +64,11 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             var project = await _projectUseCase.CreateAsync(_mapper.Map<Project>(input)).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<ProjectDTO>(project));
+            return Ok(_mapper.Map<ProjectDto>(project));
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProjectDTO input)
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProjectDto input)
         {
             if (input == null)
             {

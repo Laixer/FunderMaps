@@ -5,7 +5,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     User signin DTO.
     /// </summary>
-    public class SignInDto
+    public sealed class SignInDto
     {
         /// <summary>
         ///     User email address.

@@ -5,44 +5,44 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.WebApi.DataTransferObjects
 {
     /// <summary>
-    /// Inquiry DTO.
+    ///     Inquiry DTO.
     /// </summary>
-    public class InquiryDTO
+    public sealed class InquiryDto
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         public int Id { get; set; }
 
         /// <summary>
-        /// Client document identifier.
+        ///     Client document identifier.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
         public string DocumentName { get; set; }
 
         /// <summary>
-        /// Inspection.
+        ///     Inspection.
         /// </summary>
         public bool Inspection { get; set; }
 
         /// <summary>
-        /// Joint measurement.
+        ///     Joint measurement.
         /// </summary>
         public bool JointMeasurement { get; set; }
 
         /// <summary>
-        /// Floor measurement.
+        ///     Floor measurement.
         /// </summary>
         public bool FloorMeasurement { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
-        /// Original document creation.
+        ///     Original document creation.
         /// </summary>
         [DataType(DataType.DateTime)]
         [Required, Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
@@ -50,7 +50,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
 
         // TODO: Check if starts with https://
         /// <summary>
-        /// Document file name.
+        ///     Document file name.
         /// </summary>
         [Required, Url]
         public string DocumentFile { get; set; }
@@ -61,37 +61,37 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
-        /// Report type.
+        ///     Report type.
         /// </summary>
         public InquiryType Type { get; set; }
 
         /// <summary>
-        /// Coforms the F3O standaard.
+        ///     Conforms the F3O standaard.
         /// </summary>
         public bool StandardF3o { get; set; }
 
         /// <summary>
-        /// Attribution key.
+        ///     Attribution key.
         /// </summary>
         public int Attribution { get; set; }
 
         /// <summary>
-        /// Record access policy.
+        ///     Record access policy.
         /// </summary>
         public AccessPolicy AccessPolicy { get; set; }
 
         /// <summary>
-        /// Record create date.
+        ///     Record create date.
         /// </summary>
         public DateTime CreateDate { get; set; }
 
         /// <summary>
-        /// Record last update.
+        ///     Record last update.
         /// </summary>
         public DateTime? UpdateDate { get; set; }
 
         /// <summary>
-        /// Record delete date.
+        ///     Record delete date.
         /// </summary>
         public DateTime? DeleteDate { get; set; }
     }

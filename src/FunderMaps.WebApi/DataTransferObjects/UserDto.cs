@@ -7,7 +7,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Incident DTO.
     /// </summary>
-    public class UserDto
+    public sealed class UserDto
     {
         /// <summary>
         ///     Unique identifier.

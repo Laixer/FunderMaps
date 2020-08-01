@@ -39,7 +39,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             var incident = await _incidentUseCase.GetAsync(id).ConfigureAwait(false);
 
-            var output = _mapper.Map<IncidentDTO>(incident);
+            var output = _mapper.Map<IncidentDto>(incident);
 
             return Ok(output);
         }
@@ -47,14 +47,14 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
-            var result = await _mapper.MapAsync<IList<IncidentDTO>, Incident>(_incidentUseCase.GetAllAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<IncidentDto>, Incident>(_incidentUseCase.GetAllAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] IncidentDTO input)
+        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
@@ -68,14 +68,14 @@ namespace FunderMaps.WebApi.Controllers.Report
             incident = await _incidentUseCase.CreateAsync(incident).ConfigureAwait(false);
 
             // Map.
-            var output = _mapper.Map<IncidentDTO>(incident);
+            var output = _mapper.Map<IncidentDto>(incident);
 
             // Return.
             return Ok(output);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync([Incident] string id, [FromBody] IncidentDTO input)
+        public async Task<IActionResult> UpdateAsync([Incident] string id, [FromBody] IncidentDto input)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);

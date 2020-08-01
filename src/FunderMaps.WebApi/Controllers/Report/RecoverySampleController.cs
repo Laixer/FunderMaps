@@ -35,7 +35,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             var recoverySample = await _recoveryUseCase.GetSampleAsync(id).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<RecoverySampleDTO>(recoverySample));
+            return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
 
         [HttpGet]
@@ -46,14 +46,14 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoverySampleDTO>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(int recoveryId, [FromBody] RecoverySampleDTO input)
+        public async Task<IActionResult> CreateAsync(int recoveryId, [FromBody] RecoverySampleDto input)
         {
             if (input == null)
             {
@@ -65,11 +65,11 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             recoverySample = await _recoveryUseCase.CreateSampleAsync(recoverySample).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<RecoverySampleDTO>(recoverySample));
+            return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDTO input)
+        public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDto input)
         {
             if (input == null)
             {

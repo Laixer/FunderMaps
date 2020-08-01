@@ -5,7 +5,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Change password DTO.
     /// </summary>
-    public class ChangePasswordDto
+    public sealed class ChangePasswordDto
     {
         /// <summary>
         ///     User current password.

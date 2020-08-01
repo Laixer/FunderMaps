@@ -8,120 +8,120 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Incident DTO.
     /// </summary>
-    public class IncidentDTO
+    public sealed class IncidentDto
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Unique identifier.
         /// </summary>
         [Incident]
         public string Id { get; set; }
 
         /// <summary>
-        /// Client identifier.
+        ///     Client identifier.
         /// </summary>
         [Required, Range(1, 99)]
         public int ClientId { get; set; }
 
         /// <summary>
-        /// Foundation type.
+        ///     Foundation type.
         /// </summary>
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
-        /// Building chained to another building.
+        ///     Building chained to another building.
         /// </summary>
         public bool ChainedBuilding { get; set; }
 
         /// <summary>
-        /// Whether the contact is an owner of the building.
+        ///     Whether the contact is an owner of the building.
         /// </summary>
         public bool Owner { get; set; }
 
         /// <summary>
-        /// Whether foundation was recovered or not.
+        ///     Whether foundation was recovered or not.
         /// </summary>
         public bool FoundationRecovery { get; set; }
 
         /// <summary>
-        /// Whether neighbor foundation was recovered or not.
+        ///     Whether neighbor foundation was recovered or not.
         /// </summary>
         public bool NeightborRecovery { get; set; }
 
         /// <summary>
-        /// Foundation damage cause.
+        ///     Foundation damage cause.
         /// </summary>
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
-        /// Document name.
+        ///     Document name.
         /// </summary>
         public string[] DocumentFile { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         public string Note { get; set; }
 
         /// <summary>
-        /// Internal note.
+        ///     Internal note.
         /// </summary>
         public string InternalNote { get; set; }
 
         /// <summary>
-        /// Audit status.
+        ///     Audit status.
         /// </summary>
         public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
-        /// Question type.
+        ///     Question type.
         /// </summary>
         public IncidentQuestionType QuestionType { get; set; }
 
         /// <summary>
-        /// Fouindational damage.
+        ///     Fouindational damage.
         /// </summary>
         public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
 
         /// <summary>
-        /// Environmental damage.
+        ///     Environmental damage.
         /// </summary>
         public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
 
         /// <summary>
-        /// Contact email.
+        ///     Contact email.
         /// </summary>
         [EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
-        /// Contact name.
+        ///     Contact name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Contact phone number.
+        ///     Contact phone number.
         /// </summary>
         [Phone]
         public string PhoneNumber { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         [Required, Address]
         public string Address { get; set; }
 
         /// <summary>
-        /// Record create date.
+        ///     Record create date.
         /// </summary>
         public DateTime CreateDate { get; set; }
 
         /// <summary>
-        /// Record last update.
+        ///     Record last update.
         /// </summary>
         public DateTime? UpdateDate { get; set; }
 
         /// <summary>
-        /// Record delete date.
+        ///     Record delete date.
         /// </summary>
         public DateTime? DeleteDate { get; set; }
     }

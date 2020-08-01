@@ -5,7 +5,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Application version DTO.
     /// </summary>
-    public class AppVersionDto
+    public sealed class AppVersionDto
     {
         /// <summary>
         ///     Application name.

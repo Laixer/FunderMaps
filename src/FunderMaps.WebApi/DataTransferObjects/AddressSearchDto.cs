@@ -6,7 +6,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Address search DTO.
     /// </summary>
-    public class AddressSearchDto : PaginationModel
+    public sealed class AddressSearchDto : PaginationModel
     {
         /// <summary>
         ///     Search query.

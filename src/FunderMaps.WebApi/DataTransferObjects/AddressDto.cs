@@ -6,7 +6,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Address DTO.
     /// </summary>
-    public class AddressDto
+    public sealed class AddressDto
     {
         /// <summary>
         ///     Unique identifier.

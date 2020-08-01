@@ -35,7 +35,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             var inquirySample = await _inquiryUseCase.GetSampleAsync(id).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<InquirySampleDTO>(inquirySample));
+            return Ok(_mapper.Map<InquirySampleDto>(inquirySample));
         }
 
         [HttpGet]
@@ -46,14 +46,14 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<InquirySampleDTO>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDTO input)
+        public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input)
         {
             if (input == null)
             {
@@ -65,11 +65,11 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             inquirySample = await _inquiryUseCase.CreateSampleAsync(inquirySample).ConfigureAwait(false);
 
-            return Ok(_mapper.Map<InquirySampleDTO>(inquirySample));
+            return Ok(_mapper.Map<InquirySampleDto>(inquirySample));
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySampleDTO input)
+        public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySampleDto input)
         {
             if (input == null)
             {

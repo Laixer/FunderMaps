@@ -5,14 +5,17 @@ using FunderMaps.WebApi.DataTransferObjects;
 namespace FunderMaps.WebApi.Profiles
 {
     /// <summary>
-    /// Mapping profile.
+    ///     Mapping profile.
     /// </summary>
     public class RecoveryProfile : Profile
     {
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         public RecoveryProfile()
-            => CreateMap<Recovery, RecoveryDTO>().ReverseMap();
+        {
+            CreateMap<Recovery, RecoveryDto>().ReverseMap();
+            CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
+        }
     }
 }
