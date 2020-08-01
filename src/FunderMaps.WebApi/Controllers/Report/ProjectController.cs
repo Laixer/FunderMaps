@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 #if DEBUG || USE_PROJECT // NOTE: This is a future feature already implemented.
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
     ///     Endpoint controller for project operations.
     /// </summary>
-    [ApiController]
-    [Route("api/project")]
+    [ApiController, Route("api/project")]
     public class ProjectController : BaseApiController
     {
         private readonly IMapper _mapper;
@@ -92,5 +92,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods
 
 #endif

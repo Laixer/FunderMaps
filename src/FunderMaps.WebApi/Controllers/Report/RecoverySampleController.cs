@@ -9,13 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
     ///     Endpoint controller for recovery sample operations.
     /// </summary>
-    [ApiController]
-    [Route("api/recovery/{recoveryId}/sample")]
+    [ApiController, Route("api/recovery/{recoveryId}/sample")]
     public class RecoverySampleController : BaseApiController
     {
         private readonly IMapper _mapper;
@@ -94,3 +94,4 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods
