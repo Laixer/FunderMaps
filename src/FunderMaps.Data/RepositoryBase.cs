@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -11,10 +12,11 @@ namespace FunderMaps.Data
     /// <summary>
     ///     Generic repository.
     /// </summary>
-    /// <typeparam name="TEntry">Derivative of base entity.</typeparam>
+    /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
     /// <typeparam name="TEntryPrimaryKey">Primary key of entity.</typeparam>
-    internal abstract class RepositoryBase<TEntry, TEntryPrimaryKey> : IAsyncRepository<TEntry, TEntryPrimaryKey>
-        where TEntry : BaseEntity
+    internal abstract class RepositoryBase<TEntity, TEntryPrimaryKey> : IAsyncRepository<TEntity, TEntryPrimaryKey>
+        where TEntity : BaseEntity
+        where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>
     {
         /// <summary>
         ///     Data provider interface.
@@ -65,22 +67,22 @@ namespace FunderMaps.Data
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.GetByIdAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntry> GetByIdAsync(TEntryPrimaryKey id);
+        public abstract ValueTask<TEntity> GetByIdAsync(TEntryPrimaryKey id);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.ListAllAsync"/>
         /// </summary>
-        public abstract IAsyncEnumerable<TEntry> ListAllAsync(INavigation navigation);
+        public abstract IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.AddAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntryPrimaryKey> AddAsync(TEntry entity);
+        public abstract ValueTask<TEntryPrimaryKey> AddAsync(TEntity entity);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.UpdateAsync"/>
         /// </summary>
-        public abstract ValueTask UpdateAsync(TEntry entity);
+        public abstract ValueTask UpdateAsync(TEntity entity);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.DeleteAsync"/>
