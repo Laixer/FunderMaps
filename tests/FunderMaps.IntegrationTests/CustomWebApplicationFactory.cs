@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FunderMaps.IntegrationTests
 {
@@ -19,10 +20,16 @@ namespace FunderMaps.IntegrationTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.ConfigureServices(services =>
+            {
+                //services.Remove(services.SingleOrDefault(d => d.ServiceType.Name == "DbProvider"));
+            });
+
             builder.ConfigureTestServices(services =>
             {
                 services.AddSingleton(typeof(EntityDataStore<>));
                 services.AddScoped<IAddressRepository, TestAddressRepository>();
+                services.AddScoped<IContactRepository, TestContactRepository>();
                 services.AddScoped<IIncidentRepository, TestIncidentRepository>();
             });
         }

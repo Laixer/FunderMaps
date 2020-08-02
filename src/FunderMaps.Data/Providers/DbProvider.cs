@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Providers
 {
+    // TODO: This is not testable
+
     /// <summary>
-    /// Database provider.
+    ///     Database provider.
     /// </summary>
     internal abstract class DbProvider
     {
@@ -16,7 +18,7 @@ namespace FunderMaps.Data.Providers
         public string ConnectionString { get; }
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         /// <param name="configuration">Application configuration.</param>
         /// <param name="options">Configuration options.</param>
@@ -27,13 +29,13 @@ namespace FunderMaps.Data.Providers
         }
 
         /// <summary>
-        /// Create a new connection instance.
+        ///     Create a new connection instance.
         /// </summary>
         /// <returns><see cref="DbConnection"/> instance.</returns>
         public abstract DbConnection ConnectionScope();
 
         /// <summary>
-        /// Open database connection.
+        ///     Open database connection.
         /// </summary>
         /// <returns>See <see cref="DbConnection"/>.</returns>
         public virtual async Task<DbConnection> OpenConnectionScopeAsync()
@@ -44,7 +46,7 @@ namespace FunderMaps.Data.Providers
         }
 
         /// <summary>
-        /// Create command on the database connection.
+        ///     Create command on the database connection.
         /// </summary>
         /// <param name="cmdText">The text of the query.</param>
         /// <param name="connection">Database connection, see <see cref="DbConnection"/>.</param>

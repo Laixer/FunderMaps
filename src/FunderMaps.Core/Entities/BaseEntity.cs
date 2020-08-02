@@ -1,5 +1,7 @@
 ﻿namespace FunderMaps.Core.Entities
 {
+    // TODO: IEquatable<T>, see https://docs.microsoft.com/en-us/dotnet/api/system.iequatable-1?redirectedfrom=MSDN&view=netcore-3.1
+
     /// <summary>
     ///     Base for all entities.
     /// </summary>

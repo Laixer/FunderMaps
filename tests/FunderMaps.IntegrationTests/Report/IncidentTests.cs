@@ -49,22 +49,23 @@ namespace FunderMaps.IntegrationTests.Report
                 Note = "This is an incident in testing",
             };
             var client = _factory.CreateClient();
-            var dataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
+            var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
+            var contactDataStore = _factory.Services.GetService<EntityDataStore<Contact>>();
 
             // Act
             var response = await client.PostAsJsonAsync("api/incident", incident).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(incidentDataStore.IsSet);
+            Assert.True(contactDataStore.IsSet);
             var actualIncident = await response.Content.ReadFromJsonAsync<IncidentDto>().ConfigureAwait(false);
 
             // Assert
             Assert.StartsWith("FIR", actualIncident.Id, System.StringComparison.InvariantCulture);
-            //Assert.Equal(expectedAddress.BuildingNumber, actualAddress.BuildingNumber);
-            //Assert.Equal(expectedAddress.PostalCode, actualAddress.PostalCode);
-            //Assert.Equal(expectedAddress.Street, actualAddress.Street);
-            //Assert.Equal(expectedAddress.IsActive, actualAddress.IsActive);
-            //Assert.Equal(expectedAddress.ExternalId, actualAddress.ExternalId);
-            //Assert.Equal(expectedAddress.ExternalSource, actualAddress.ExternalSource);
+            Assert.Equal(incident.Name, actualIncident.Name);
+            Assert.Equal(incident.Email, actualIncident.Email);
+            Assert.Equal(incident.PhoneNumber, actualIncident.PhoneNumber);
+            Assert.Equal(incident.Address, actualIncident.Address);
         }
     }
 }

@@ -14,10 +14,9 @@ namespace FunderMaps.IntegrationTests
             return entity;
         }
 
-        public ulong Count()
-        {
-            return (ulong)Entities.Count;
-        }
+        public ulong Count() => (ulong)Entities.Count;
+
+        public bool IsSet => Entities.Count > 0;
 
         public void Add(IList<TEntity> entityList)
         {
