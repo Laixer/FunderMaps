@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FunderMaps.IntegrationTests
 {
@@ -32,6 +31,15 @@ namespace FunderMaps.IntegrationTests
                 services.AddScoped<IContactRepository, TestContactRepository>();
                 services.AddScoped<IIncidentRepository, TestIncidentRepository>();
             });
+        }
+
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(TEntity entity)
+            where TEntity : BaseEntity
+        {
+            var dataStore = Services.GetService<EntityDataStore<TEntity>>();
+            dataStore.Entities = new List<TEntity> { entity };
+
+            return this;
         }
 
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IList<TEntity> list)

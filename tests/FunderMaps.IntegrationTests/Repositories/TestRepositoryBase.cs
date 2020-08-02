@@ -22,6 +22,12 @@ namespace FunderMaps.IntegrationTests.Repositories
             EntityPrimaryKey = entryPrimaryKey;
         }
 
+        protected TEntity FindEntityById(TEntryPrimaryKey id)
+            => DataStore.Entities.FirstOrDefault(e => EntityPrimaryKey(e).Equals(id));
+
+        protected int FindIndexById(TEntryPrimaryKey id)
+            => DataStore.Entities.IndexOf(DataStore.Entities.FirstOrDefault(e => EntityPrimaryKey(e).Equals(id)));
+
         public virtual ValueTask<TEntryPrimaryKey> AddAsync(TEntity entity)
         {
             DataStore.Add(entity);
@@ -29,26 +35,24 @@ namespace FunderMaps.IntegrationTests.Repositories
         }
 
         public virtual ValueTask<ulong> CountAsync()
-        {
-            return new ValueTask<ulong>(DataStore.Count());
-        }
+            => new ValueTask<ulong>(DataStore.Count());
 
         public virtual ValueTask DeleteAsync(TEntryPrimaryKey id)
         {
-            DataStore.Entities.Remove(DataStore.Entities.First(e => EntityPrimaryKey(e).Equals(id)));
+            DataStore.Entities.Remove(FindEntityById(id));
             return new ValueTask();
         }
 
         public virtual ValueTask<TEntity> GetByIdAsync(TEntryPrimaryKey id)
-        {
-            return new ValueTask<TEntity>(DataStore.Entities.FirstOrDefault(e => EntityPrimaryKey(e).Equals(id)));
-        }
+            => new ValueTask<TEntity>(FindEntityById(id));
 
         public virtual IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation)
-        {
-            return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.Entities, navigation));
-        }
+            => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.Entities, navigation));
 
-        public abstract ValueTask UpdateAsync(TEntity entity);
+        public virtual ValueTask UpdateAsync(TEntity entity)
+        {
+            DataStore.Entities[FindIndexById(EntityPrimaryKey(entity))] = entity;
+            return new ValueTask();
+        }
     }
 }

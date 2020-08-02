@@ -29,10 +29,5 @@ namespace FunderMaps.IntegrationTests.Repositories
             });
             return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(result, navigation));
         }
-
-        public override ValueTask UpdateAsync(Address entity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

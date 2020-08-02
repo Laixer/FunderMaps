@@ -1,7 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.IntegrationTests.Repositories
@@ -17,11 +15,6 @@ namespace FunderMaps.IntegrationTests.Repositories
         {
             entity.Id = $"FIR032020-{DataStore.Count() + 1}";
             return base.AddAsync(entity);
-        }
-
-        public override ValueTask UpdateAsync(Incident entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }
