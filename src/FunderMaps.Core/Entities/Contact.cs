@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Contact email.
         /// </summary>
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
@@ -23,5 +23,18 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         [Phone]
         public string PhoneNumber { get; set; }
+
+        /// <summary>
+        ///     Print object as name.
+        /// </summary>
+        /// <returns>String representing contact.</returns>
+        public override string ToString() => Email;
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
     }
 }
