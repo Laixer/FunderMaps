@@ -23,6 +23,7 @@ namespace FunderMaps.IntegrationTests
             {
                 services.AddSingleton(typeof(EntityDataStore<>));
                 services.AddScoped<IAddressRepository, TestAddressRepository>();
+                services.AddScoped<IIncidentRepository, TestIncidentRepository>();
             });
         }
 

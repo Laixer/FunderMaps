@@ -5,8 +5,9 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests
+namespace FunderMaps.IntegrationTests.Geocoder
 {
+    // TODO: Use DTO
     public class AddressTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
         private readonly CustomWebApplicationFactory<Startup> _factory;

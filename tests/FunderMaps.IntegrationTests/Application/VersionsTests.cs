@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests
+namespace FunderMaps.IntegrationTests.Application
 {
     public class VersionsTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
