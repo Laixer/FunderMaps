@@ -14,6 +14,8 @@ namespace FunderMaps.IntegrationTests
             return entity;
         }
 
+        public void Clear() => Entities.Clear();
+
         public ulong Count() => (ulong)Entities.Count;
 
         public bool IsSet => Entities.Count > 0;
