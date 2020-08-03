@@ -32,7 +32,7 @@ namespace FunderMaps.IntegrationTests.Geocoder
                 ExternalSource = "bag",
             };
             var client = _factory
-                .WithDataStoreList(new[] { expectedAddress })
+                .WithDataStoreList(expectedAddress)
                 .CreateClient();
 
             // Act
