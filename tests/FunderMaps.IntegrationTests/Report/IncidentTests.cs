@@ -20,38 +20,27 @@ namespace FunderMaps.IntegrationTests.Report
             _factory = factory;
         }
 
-        [Fact]
-        public async Task CreateIncidentReturnIncident()
+        internal class FakeIncidentDtoData : EnumerableHelper<IncidentDto>
+        {
+            protected override IEnumerable<IncidentDto> GetEnumerableEntity()
+            {
+                return new IncidentDtoFaker().Generate(100);
+            }
+        }
+
+        internal class FakeIncidentData : EnumerableHelper<Incident>
+        {
+            protected override IEnumerable<Incident> GetEnumerableEntity()
+            {
+                return new IncidentFaker().Generate(100);
+            }
+        }
+
+        [Theory]
+        [ClassData(typeof(FakeIncidentDtoData))]
+        public async Task CreateIncidentReturnIncident(IncidentDto incident)
         {
             // Arrange
-            var incident = new IncidentDto
-            {
-                Name = "Piet Puk",
-                ClientId = 3,
-                Email = "piet@puk.com",
-                PhoneNumber = "06360557722",
-                FoundationType = FoundationType.NoPileMasonry,
-                Address = "gfm-67f8fe46717947d8bcd22bee5ca092ae",
-                FoundationDamageCharacteristics = new FoundationDamageCharacteristics[]
-                {
-                    FoundationDamageCharacteristics.JammingDoorWindow,
-                    FoundationDamageCharacteristics.Crack,
-                    FoundationDamageCharacteristics.ThresholdAboveSubsurface,
-                },
-                EnvironmentDamageCharacteristics = new EnvironmentDamageCharacteristics[]
-                {
-                    EnvironmentDamageCharacteristics.ConstructionNearby,
-                    EnvironmentDamageCharacteristics.SaggingSewerConnection,
-                },
-                Owner = true,
-                FoundationRecovery = true,
-                NeightborRecovery = true,
-                ChainedBuilding = true,
-                FoundationDamageCause = FoundationDamageCause.BioInfection,
-                DocumentFile = new string[] { "https://example.com/file.pdf" },
-                Note = "This is an incident in testing",
-                InternalNote = "An internal node",
-            };
             var client = _factory.CreateClient();
             var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
             var contactDataStore = _factory.Services.GetService<EntityDataStore<Contact>>();
@@ -84,16 +73,8 @@ namespace FunderMaps.IntegrationTests.Report
             Assert.Equal(incident.InternalNote, actualIncident.InternalNote);
         }
 
-        public class GetIncidentByIdReturnSingleIncidentData : EnumerableHelper<Incident>
-        {
-            protected override IEnumerable<Incident> GetEnumerableEntity()
-            {
-                return new IncidentFaker().Generate(100);
-            }
-        }
-
         [Theory]
-        [ClassData(typeof(GetIncidentByIdReturnSingleIncidentData))]
+        [ClassData(typeof(FakeIncidentData))]
         public async Task GetIncidentByIdReturnSingleIncident(Incident incident)
         {
             // Arrange
@@ -162,16 +143,8 @@ namespace FunderMaps.IntegrationTests.Report
             Assert.Equal(100, incidentList.Count);
         }
 
-        public class UpdateIncidentReturnNoContentData : EnumerableHelper<Incident>
-        {
-            protected override IEnumerable<Incident> GetEnumerableEntity()
-            {
-                return new IncidentFaker().Generate(100);
-            }
-        }
-
         [Theory]
-        [ClassData(typeof(UpdateIncidentReturnNoContentData))]
+        [ClassData(typeof(FakeIncidentData))]
         public async Task UpdateIncidentReturnNoContent(Incident incident)
         {
             // Arrange
@@ -202,6 +175,25 @@ namespace FunderMaps.IntegrationTests.Report
             Assert.Equal(newIncident.DocumentFile, actualIncident.DocumentFile);
             Assert.Equal(newIncident.Note, actualIncident.Note);
             Assert.Equal(newIncident.InternalNote, actualIncident.InternalNote);
+        }
+
+        [Theory]
+        [ClassData(typeof(FakeIncidentData))]
+        public async Task DeleteIncidentReturnNoContent(Incident incident)
+        {
+            // Arrange
+            var client = _factory
+                .WithDataStoreList(incident)
+                .CreateClient();
+            var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
+
+            // Act
+            var response = await client.DeleteAsync($"api/incident/{incident.Id}").ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            // Assert
+            Assert.False(incidentDataStore.IsSet);
         }
     }
 }
