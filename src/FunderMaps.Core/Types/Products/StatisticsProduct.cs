@@ -1,23 +1,17 @@
-﻿using FunderMaps.Webservice.Types;
+﻿using FunderMaps.Core.Types.Distributions;
+using FunderMaps.Core.Types.Regions;
 
-namespace FunderMaps.Webservice.Models.Building
+namespace FunderMaps.Core.Types.Products
 {
     /// <summary>
-    /// Represents a model for the foundation plus endpoint.
+    /// Model representing statistics about some region.
     /// </summary>
-    public sealed class BuildingFoundationPlus : BuildingBase
+    public sealed class StatisticsProduct : ProductBase
     {
         /// <summary>
-        /// Complete description of this building.
+        /// The region in which these statistics were caluclated.
         /// </summary>
-        public string FullDescription { get; set; }
-
-        /// <summary>
-        /// Represents the reliability of all data about this building.
-        /// TODO What unit? Percentage?
-        /// TODO Correct name?
-        /// </summary>
-        public double Reliability { get; set; }
+        public Region Region { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.
@@ -39,6 +33,16 @@ namespace FunderMaps.Webservice.Models.Building
         /// Represents the percentage of collected data in the given region.
         /// </summary>
         public double DataCollectedPercentage { get; set; }
+
+        /// <summary>
+        /// Total amount of restored buildings in the given area.
+        /// </summary>
+        public uint TotalBuildingRestored { get; set; }
+
+        /// <summary>
+        /// Total amount of incidents in the given region.
+        /// </summary>
+        public uint TotalIncidents { get; set; }
 
         /// <summary>
         /// Total amount of reports in the given region.

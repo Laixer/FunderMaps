@@ -1,13 +1,29 @@
-﻿using FunderMaps.Webservice.Enums;
-using FunderMaps.Webservice.Types;
+﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Distributions;
+using FunderMaps.Core.Types.Products;
 
-namespace FunderMaps.Webservice.Models.Building
+namespace FunderMaps.Core.Types.Products
 {
     /// <summary>
     /// Represents a model for the complete endpoint.
     /// </summary>
-    public sealed class BuildingComplete : BuildingBase
+    public sealed class AnalysisProduct : ProductBase
     {
+        /// <summary>
+        /// Represents the internal id of this building.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Represents the external id of this building.
+        /// </summary>
+        public string ExternalId { get; set; }
+
+        /// <summary>
+        /// Represents the external data source of this building.
+        /// </summary>
+        public ExternalDataSource ExternalSource { get; set; }
+
         /// <summary>
         /// Represents the foundation type of this building.
         /// </summary>
