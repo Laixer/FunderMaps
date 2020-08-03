@@ -96,14 +96,8 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(incident));
             }
 
-            incident.Id = null;
-            incident.AuditStatus = Types.AuditStatus.Todo;
-            incident.CreateDate = DateTime.MinValue;
-            incident.UpdateDate = null;
-            incident.DeleteDate = null;
-            incident.AddressNavigation = null;
-
-            Validator.ValidateObject(incident, new ValidationContext(incident), true);
+            incident.InitializeDefaults();
+            incident.Validate();
 
             // There does not have to be a contact, but if it exists we'll save it.
             if (incident.ContactNavigation != null)
@@ -123,7 +117,13 @@ namespace FunderMaps.Core.UseCases
         /// <exception cref="EntityNotFoundException">When <paramref name="incident" /> is not found.</exception>
         public virtual async ValueTask UpdateAsync(Incident incident)
         {
-            Validator.ValidateObject(incident, new ValidationContext(incident), true);
+            if (incident == null)
+            {
+                throw new ArgumentNullException(nameof(incident));
+            }
+
+            incident.InitializeDefaults(await _incidentRepository.GetByIdAsync(incident.Id).ConfigureAwait(false));
+            incident.Validate();
 
             await _incidentRepository.UpdateAsync(incident).ConfigureAwait(false);
         }

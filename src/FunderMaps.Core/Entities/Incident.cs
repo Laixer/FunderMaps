@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Types;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -104,6 +105,49 @@ namespace FunderMaps.Core.Entities
         ///     Meta data.
         /// </summary>
         public object Meta { get; set; }
+
+        /// <summary>
+        ///     Print object as name.
+        /// </summary>
+        /// <returns>String representing incident.</returns>
+        public override string ToString() => Id;
+
+        /// <summary>
+        ///     Initialize property defaults.
+        /// </summary>
+        public void InitializeDefaults()
+        {
+            Id = null;
+            AuditStatus = AuditStatus.Todo;
+            CreateDate = DateTime.MinValue;
+            UpdateDate = null;
+            DeleteDate = null;
+            AddressNavigation = null;
+        }
+
+        /// <summary>
+        ///     Initialize properties from another entity.
+        /// </summary>
+        public void InitializeDefaults(Incident other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
+            Id = other.Id;
+            AuditStatus = other.AuditStatus;
+            CreateDate = other.CreateDate;
+            UpdateDate = other.UpdateDate;
+            DeleteDate = other.DeleteDate;
+        }
+
+        public override void Validate()
+        {
+            base.Validate();
+
+            Validator.ValidateObject(this, new ValidationContext(this), true);
+        }
 
         /// <summary>
         ///     Contact object.

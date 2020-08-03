@@ -11,6 +11,8 @@
     /// </remarks>
     public abstract class BaseEntity
     {
+        // TODO: Should be an abstract function.
+
         /// <summary>
         ///     Validate entity properties.
         /// </summary>
