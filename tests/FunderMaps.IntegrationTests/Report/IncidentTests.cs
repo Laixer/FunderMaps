@@ -166,7 +166,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<Incident> GetEnumerableEntity()
             {
-                return new IncidentFaker().Generate(2);
+                return new IncidentFaker().Generate(100);
             }
         }
 
@@ -175,20 +175,33 @@ namespace FunderMaps.IntegrationTests.Report
         public async Task UpdateIncidentReturnNoContent(Incident incident)
         {
             // Arrange
-            var newIncident = new IncidentFaker().Generate();
+            var newIncident = new IncidentDtoFaker().Generate();
             var client = _factory
                 .WithDataStoreList(incident)
                 .CreateClient();
+            var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
 
             // Act
             var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            //var incidentList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>().ConfigureAwait(false);
-            //Assert.NotNull(incidentList);
+            Assert.Equal(1, incidentDataStore.Entities.Count);
 
             // Assert
-            //Assert.Equal(100, incidentList.Count);
+            var actualIncident = incidentDataStore.Entities[0];
+            Assert.Equal(incident.Id, actualIncident.Id);
+            Assert.Equal(incident.AuditStatus, actualIncident.AuditStatus);
+            Assert.Equal(newIncident.FoundationType, actualIncident.FoundationType);
+            Assert.Equal(newIncident.FoundationDamageCharacteristics, actualIncident.FoundationDamageCharacteristics);
+            Assert.Equal(newIncident.EnvironmentDamageCharacteristics, actualIncident.EnvironmentDamageCharacteristics);
+            Assert.Equal(newIncident.Owner, actualIncident.Owner);
+            Assert.Equal(newIncident.FoundationRecovery, actualIncident.FoundationRecovery);
+            Assert.Equal(newIncident.NeightborRecovery, actualIncident.NeightborRecovery);
+            Assert.Equal(newIncident.ChainedBuilding, actualIncident.ChainedBuilding);
+            Assert.Equal(newIncident.FoundationDamageCause, actualIncident.FoundationDamageCause);
+            Assert.Equal(newIncident.DocumentFile, actualIncident.DocumentFile);
+            Assert.Equal(newIncident.Note, actualIncident.Note);
+            Assert.Equal(newIncident.InternalNote, actualIncident.InternalNote);
         }
     }
 }

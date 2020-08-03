@@ -7,7 +7,7 @@ namespace FunderMaps.IntegrationTests.Faker
     {
         public AddressFaker()
         {
-            RuleFor(f => f.Id, f => AddressId);
+            RuleFor(f => f.Id, f => $"gfm-{new Bogus.Faker().Random.Hash(32)}");
             RuleFor(f => f.BuildingNumber, f => $"{f.Address.BuildingNumber()} {f.Address.SecondaryAddress()}"); // TODO SecondaryAddress for some
             RuleFor(f => f.PostalCode, f => f.Address.ZipCode());
             RuleFor(f => f.Street, f => f.Address.StreetName());
@@ -15,7 +15,5 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.ExternalId, f => $"NL.IMBAG.NUMMERAANDUIDING.{f.Random.ReplaceNumbers("################")}");
             RuleFor(f => f.ExternalSource, f => "bag");
         }
-
-        public static string AddressId => $"gfm-{new Bogus.Faker().Random.Hash(32)}";
     }
 }
