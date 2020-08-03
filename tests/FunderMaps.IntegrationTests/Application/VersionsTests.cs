@@ -31,18 +31,5 @@ namespace FunderMaps.IntegrationTests.Application
             Assert.True(response.Headers.CacheControl.Public);
             Assert.NotNull(response.Headers.CacheControl.MaxAge);
         }
-
-        [Fact]
-        public async Task GetEndpointsReturnMethodNotAllowed()
-        {
-            // Arrange
-            var client = _factory.CreateClient();
-
-            // Act
-            var response = await client.PostAsync("api/version", null).ConfigureAwait(false);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
-        }
     }
 }

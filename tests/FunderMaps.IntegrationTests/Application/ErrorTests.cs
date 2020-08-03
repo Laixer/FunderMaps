@@ -29,5 +29,19 @@ namespace FunderMaps.IntegrationTests.Application
             Assert.False(response.IsSuccessStatusCode);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        [Theory]
+        [InlineData("api/version")]
+        public async Task GetEndpointsReturnMethodNotAllowed(string uri)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync(uri, null).ConfigureAwait(false);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
+        }
     }
 }
