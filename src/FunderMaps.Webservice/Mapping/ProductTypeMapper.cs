@@ -1,4 +1,5 @@
-﻿using FunderMaps.Webservice.Enums;
+﻿using FunderMaps.Webservice.Core.Enums;
+using FunderMaps.Webservice.Enums;
 using FunderMaps.Webservice.Exceptions;
 using FunderMaps.Webservice.Utility;
 

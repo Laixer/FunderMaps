@@ -1,9 +1,9 @@
-﻿namespace FunderMaps.Webservice.Enums
+﻿namespace FunderMaps.Webservice.Core.Enums
 {
     /// <summary>
     /// Enum representing the different FunderMaps product types.
     /// </summary>
-    public enum ProductType
+    public enum ProductType2 // TODO Fix
     {
         /// <summary>
         /// Represents all data about a given building itself.

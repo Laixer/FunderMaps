@@ -1,4 +1,4 @@
-﻿using FunderMaps.Webservice.Enums;
+﻿using FunderMaps.Webservice.Core.Enums;
 using FunderMaps.Webservice.ResponseModels;
 using System;
 using System.Threading.Tasks;
