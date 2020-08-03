@@ -19,7 +19,7 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.FoundationRecovery, f => incident.FoundationRecovery);
             RuleFor(f => f.NeightborRecovery, f => incident.NeightborRecovery);
             RuleFor(f => f.FoundationDamageCause, f => incident.FoundationDamageCause);
-            RuleFor(f => f.DocumentFile, f => new string[] { f.Internet.UrlWithPath("https", f.Internet.DomainName(), ".pdf") }); // TODO: 0-n
+            RuleFor(f => f.DocumentFile, f => incident.DocumentFile);
             RuleFor(f => f.Note, f => incident.Note);
             RuleFor(f => f.InternalNote, f => incident.InternalNote);
             RuleFor(f => f.AuditStatus, f => incident.AuditStatus);
