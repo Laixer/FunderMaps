@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Webservice.Types
+﻿namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
     /// Represents the distribution of foundation risks.

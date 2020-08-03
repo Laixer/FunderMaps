@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace FunderMaps.Webservice.Types
+namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
     /// Represents a distribution of construction years.

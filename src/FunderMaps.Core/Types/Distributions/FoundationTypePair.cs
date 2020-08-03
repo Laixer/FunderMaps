@@ -1,6 +1,4 @@
-﻿using FunderMaps.Webservice.Enums;
-
-namespace FunderMaps.Webservice.Types
+﻿namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
     /// Contains a pair of a <see cref="FoundationType"/> and the total amount

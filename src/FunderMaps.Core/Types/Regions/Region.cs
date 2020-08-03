@@ -1,6 +1,6 @@
 ﻿using GeoJSON.Net.Geometry;
 
-namespace FunderMaps.Webservice.Types
+namespace FunderMaps.Core.Types.Regions
 {
     /// <summary>
     /// Represents an area.

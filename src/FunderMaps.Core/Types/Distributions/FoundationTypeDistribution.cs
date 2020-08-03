@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FunderMaps.Webservice.Types
+namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
     /// Represents a distribution of foundation types.

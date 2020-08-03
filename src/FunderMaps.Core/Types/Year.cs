@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.Webservice.Types
+namespace FunderMaps.Core.Types
 {
     /// <summary>
     /// Represents a year.

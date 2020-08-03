@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Webservice.Types
+﻿namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
     /// Represents how many buildings have their construction years in a given

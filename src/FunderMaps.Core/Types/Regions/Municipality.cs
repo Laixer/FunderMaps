@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace FunderMaps.Webservice.Types
+﻿namespace FunderMaps.Core.Types.Regions
 {
     /// <summary>
     /// Represents a municipality <see cref="Region"/>.
