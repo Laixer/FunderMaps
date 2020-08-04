@@ -13,6 +13,7 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public string Id { get; set; }
 
+        // TODO: Contraints
         /// <summary>
         ///     Built year.
         /// </summary>
