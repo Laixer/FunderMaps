@@ -4,7 +4,6 @@ namespace FunderMaps.Webservice.Utility
 {
     /// <summary>
     /// Contains extension functionality for <see cref="string"/> types.
-    /// TODO Move to some utility project.
     /// </summary>
     public static class StringExtensions
     {
