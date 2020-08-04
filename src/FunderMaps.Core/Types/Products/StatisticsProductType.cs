@@ -8,36 +8,36 @@
         /// <summary>
         /// Area analysis on the ratio of foundation types.
         /// </summary>
-        StatisticsFoundationRatio,
+        FoundationRatio,
 
         /// <summary>
         /// Area analysis on the distribution of built years.
         /// </summary>
-        StatisticsConstructionYears,
+        ConstructionYears,
 
         /// <summary>
         /// Area analysis on building foundation risk.
         /// </summary>
-        StatisticsFoundationRisk,
+        FoundationRisk,
 
         /// <summary>
         /// Area analysis on the percentage of data collected.
         /// </summary>
-        StatisticsDataCollected,
+        DataCollected,
 
         /// <summary>
         /// Area analysis on the amount of restored buildings.
         /// </summary>
-        StatisticsBuildingsRestored,
+        BuildingsRestored,
 
         /// <summary>
         /// Area analysis on the amount of incidents.
         /// </summary>
-        StatisticsIncidents,
+        Incidents,
 
         /// <summary>
         /// Area analysis on the amount of reports.
         /// </summary>
-        StatisticsReports,
+        Reports,
     }
 }

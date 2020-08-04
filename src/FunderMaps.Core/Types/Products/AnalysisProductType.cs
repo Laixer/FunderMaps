@@ -8,37 +8,37 @@
         /// <summary>
         /// Represents all data about a given building itself.
         /// </summary>
-        AnalysisBuildingData,
+        BuildingData,
 
         /// <summary>
         /// Represents all data about a foundation for a given building.
         /// </summary>
-        AnalysisFoundation,
+        Foundation,
 
         /// <summary>
         /// Represents all data about a foundation for a given building, including 
         /// the details on which the data is based.
         /// </summary>
-        AnalysisFoundationPlus,
+        FoundationPlus,
 
         /// <summary>
         /// Represents all data about foundation restoration costs for a given building.
         /// </summary>
-        AnalysisCosts,
+        Costs,
 
         /// <summary>
         /// Represents a call with all possible data combined for a given building.
         /// </summary>
-        AnalysisComplete,
+        Complete,
 
         /// <summary>
         /// Represents descriptive texts for a given building.
         /// </summary>
-        AnalysisBuildingDescription,
+        BuildingDescription,
 
         /// <summary>
         /// Represents all data about the risks for a given building.
         /// </summary>
-        AnalysisRisk,
+        Risk,
     }
 }
