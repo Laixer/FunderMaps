@@ -1,9 +1,9 @@
-﻿namespace FunderMaps.Webservice.ResponseModels.Building
+﻿namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
     /// <summary>
     /// Represents a response model for the foundation endpoint.
     /// </summary>
-    public class FoundationResponseModel : BuildingResponseModelBase
+    public class AnalysisFoundationResponseModel : AnalysisResponseModelBase
     {
         /// <summary>
         /// Represents the foundation type of this building.

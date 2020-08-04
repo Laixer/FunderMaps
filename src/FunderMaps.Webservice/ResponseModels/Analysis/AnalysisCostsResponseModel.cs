@@ -1,9 +1,9 @@
-﻿namespace FunderMaps.Webservice.ResponseModels.Building
+﻿namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
     /// <summary>
     /// Represents a response model for the costs endpoint.
     /// </summary>
-    public sealed class CostsResponseModel : BuildingResponseModelBase
+    public sealed class AnalysisCostsResponseModel : AnalysisResponseModelBase
     {
         /// <summary>
         /// Represents the foundation risk for this building.

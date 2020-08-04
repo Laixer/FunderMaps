@@ -7,7 +7,7 @@ namespace FunderMaps.Webservice.ResponseModels
     /// Wrapper class for our API response object.
     /// </summary>
     /// <typeparam name="TResponseModel"><see cref="ModelBase"/></typeparam>
-    public sealed class ResponseWrapper<TResponseModel>
+    public class ResponseWrapper<TResponseModel>
         where TResponseModel : ResponseModelBase
     {
         /// <summary>
@@ -29,10 +29,5 @@ namespace FunderMaps.Webservice.ResponseModels
         /// Total items in the <see cref="Models"/> field.
         /// </summary>
         public uint ModelCount => (uint)((Models == null) ? 0 : Models.Count());
-
-        /// <summary>
-        /// Total items in the data store based on the request.
-        /// </summary>
-        public uint TotalCount { get; set; }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using FunderMaps.Webservice.ResponseModels.Types;
 
-namespace FunderMaps.Webservice.ResponseModels.Building
+namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
     /// <summary>
     /// Represents a response model for the foundation plus endpoint.
     /// </summary>
-    public sealed class FoundationPlusResponseModel : FoundationResponseModel
+    public sealed class AnalysisFoundationPlusResponseModel : AnalysisFoundationResponseModel
     {
         /// <summary>
         /// Complete description of this building.

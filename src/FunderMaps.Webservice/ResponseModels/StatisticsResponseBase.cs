@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Webservice.ResponseModels.Types;
-using FunderMaps.Webservice.Types;
 
 namespace FunderMaps.Webservice.ResponseModels
 {
