@@ -2,6 +2,7 @@
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.ResponseModels;
+using FunderMaps.Webservice.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,21 +11,21 @@ using System.Threading.Tasks;
 namespace FunderMaps.Webservice.Controllers
 {
     /// <summary>
-    /// Controller for all statistics endpoints.
+    /// Controller for all analysis endpoints.
     /// </summary>
-    [Route("api/statistics")]
+    [Route("api/analysis")]
     [ApiController]
-    public sealed class StatisticsController : ControllerBase
+    public sealed class AnalysisController : ControllerBase
     {
         private const uint DefaultPage = 1;
         private const uint DefaultLimit = 25;
-        private readonly ILogger<StatisticsController> _logger;
+        private readonly ILogger<AnalysisController> _logger;
         private readonly IProductResultService _productResultService;
 
         /// <summary>
         /// Constructor for dependency injection.
         /// </summary>
-        public StatisticsController(ILogger<StatisticsController> logger,
+        public AnalysisController(ILogger<AnalysisController> logger,
             IProductResultService productResultService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -44,14 +45,16 @@ namespace FunderMaps.Webservice.Controllers
         /// The default for <paramref name="limit"/> is <see cref="DefaultLimit"/>./// 
         /// </remarks>
         /// <param name="product">The requested product type</param>
-        /// <param name="areaCode">Get all buildings in an area code</param>
+        /// <param name="q">Query string</param>
+        /// <param name="id">Internal building id</param>
+        /// <param name="bagid">BAG id</param>
         /// <param name="fullFence">Get all buildings in the geofence</param>
         /// <param name="page">Page to display</param>
         /// <param name="limit">Items per page</param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromRoute] string product, [FromRoute] string areaCode,
-            [FromRoute] bool fullFence, [FromRoute] uint? page, [FromRoute] uint? limit)
+        public async Task<IActionResult> GetProductAsync([FromRoute] string product, [FromRoute] string q,
+            [FromRoute] string id, [FromRoute] string bagid, [FromRoute] bool fullFence, [FromRoute] uint? page, [FromRoute] uint? limit)
         {
             // Check for product
             if (string.IsNullOrEmpty(product))
@@ -60,27 +63,37 @@ namespace FunderMaps.Webservice.Controllers
             }
 
             // Check for invalid combinations
-            if ((fullFence && !string.IsNullOrEmpty(areaCode)) ||
-                (!fullFence && string.IsNullOrEmpty(areaCode)))
+            // Check for both bagid and id
+            if ((fullFence && ArgumentUtility.NotNullCount(q, id, bagid) > 0) ||
+                (ArgumentUtility.NotNullCount(q, id, bagid) > 1) ||
+                (!fullFence && ArgumentUtility.NotNullCount(q, id, bagid) == 0))
             {
-                return Problem("Please select one of the following options: area code or fullfence");
+                return Problem("Please select one of the following options: id, bagid, query or fullfence");
             }
 
             try
             {
-                var analysisProduct = ProductTypeMapper.MapStatistics(product);
+                var analysisProduct = ProductTypeMapper.MapAnalysis(product);
                 var userId = Guid.NewGuid(); // TODO Implement auth
 
                 // Process according to specified parameters
                 // TODO Assignment, how to do more elegant?
-                var response = null as ResponseWrapper<StatisticsResponseModelBase>;
-                if (!string.IsNullOrEmpty(areaCode))
+                var response = null as ResponseWrapper<AnalysisResponseModelBase>;
+                if (!string.IsNullOrEmpty(q))
                 {
-                    response = await _productResultService.GetStatisticsByAreaAsync(userId, analysisProduct, areaCode, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
+                    response = await _productResultService.GetAnalysisByQueryAsync(userId, analysisProduct, q, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
+                }
+                else if (!string.IsNullOrEmpty(id))
+                {
+                    response = await _productResultService.GetAnalysisByIdAsync(userId, analysisProduct, id, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
+                }
+                else if (!string.IsNullOrEmpty(bagid))
+                {
+                    response = await _productResultService.GetAnalysisByBagIdAsync(userId, analysisProduct, bagid, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
                 }
                 else if (fullFence)
                 {
-                    response = await _productResultService.GetStatisticsInFenceAsync(userId, analysisProduct, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
+                    response = await _productResultService.GetAnalysisInFenceAsync(userId, analysisProduct, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
                 }
                 else
                 {
