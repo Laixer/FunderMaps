@@ -1,3 +1,4 @@
+using FunderMaps.Webservice.HealthChecks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -43,6 +44,10 @@ namespace FunderMaps.Webservice
                 // over HTTPS because of BREACH exploit.
                 options.EnableForHttps = true;
             });
+
+            // Configure health checks.
+            services.AddHealthChecks()
+                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
 
             // Configure compression providers.
             services
