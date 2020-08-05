@@ -8,12 +8,9 @@ namespace FunderMaps.IntegrationTests.Faker
     {
         public ContactFaker()
         {
-            Rules((f, o) =>
-            {
-                o.Email = f.Internet.Email();
-                o.Name = f.Person.FullName.OrNull(f, .3f);
-                o.PhoneNumber = f.Phone.PhoneNumber("###########").OrNull(f, .3f);
-            });
+            RuleFor(f => f.Email, f => f.Internet.Email());
+            RuleFor(f => f.Name, f => f.Person.FullName.OrNull(f, .3f));
+            RuleFor(f => f.PhoneNumber, f => f.Phone.PhoneNumber("###########").OrNull(f, .3f));
         }
     }
 }

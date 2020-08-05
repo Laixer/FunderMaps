@@ -57,6 +57,7 @@ namespace FunderMaps.Core.Entities
         public string InvoiceEmail { get; set; }
 
         // TODO: Convert to geocoder address?
+        // TODO: Drop the PO box?
 
         /// <summary>
         ///     Street.
