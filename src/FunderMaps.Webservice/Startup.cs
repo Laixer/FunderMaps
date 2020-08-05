@@ -1,4 +1,8 @@
+using AutoMapper;
+using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.HealthChecks;
+using FunderMaps.Webservice.Mapping;
+using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -44,6 +48,11 @@ namespace FunderMaps.Webservice
                 // over HTTPS because of BREACH exploit.
                 options.EnableForHttps = true;
             });
+
+            // Configure services.
+            services.AddTransient<IMappingService, MappingService>();
+            // Configure AutoMapper.
+            services.AddAutoMapper(typeof(AutoMapperProfile));
 
             // Configure health checks.
             services.AddHealthChecks()
