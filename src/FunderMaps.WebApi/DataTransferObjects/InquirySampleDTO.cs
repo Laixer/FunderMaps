@@ -19,6 +19,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         public int Inquiry { get; set; }
 
+        // TODO: Required?
         /// <summary>
         ///     Address identifier.
         /// </summary>
@@ -278,7 +279,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Crack facade left size.
         /// </summary>
-        public decimal CrackFacadeLeftkSize { get; set; }
+        public decimal CrackFacadeLeftSize { get; set; }
 
         /// <summary>
         ///     Crack facade right size.
@@ -293,7 +294,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Crack facade right size.
         /// </summary>
-        public decimal CrackFacadeRightkSize { get; set; }
+        public decimal CrackFacadeRightSize { get; set; }
 
         /// <summary>
         ///     Deformed facade.
@@ -333,7 +334,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Settlement speed.
         /// </summary>
-        public double SettlementSpeed { get; set; }
+        public decimal SettlementSpeed { get; set; }
 
         /// <summary>
         ///     Record create date.

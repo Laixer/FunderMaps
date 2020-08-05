@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO inherit from StateControl?
     /// <summary>
     ///     Project entity.
     /// </summary>

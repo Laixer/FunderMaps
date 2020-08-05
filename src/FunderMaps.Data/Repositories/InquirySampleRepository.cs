@@ -12,20 +12,21 @@ using System.Threading.Tasks;
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
-    /// Inquiry sample repository.
+    ///     Inquiry sample repository.
     /// </summary>
     internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IInquirySampleRepository
     {
         /// <summary>
-        /// Create a new instance.
+        ///     Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
         public InquirySampleRepository(DbProvider dbProvider)
             : base(dbProvider)
-        { }
+        {
+        }
 
         /// <summary>
-        /// Create new <see cref="InquirySample"/>.
+        ///     Create new <see cref="InquirySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="InquirySample"/>.</returns>
@@ -63,7 +64,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Retrieve number of entities.
+        ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
         public override ValueTask<ulong> CountAsync()

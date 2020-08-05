@@ -64,12 +64,15 @@ namespace FunderMaps.Core.Entities
         ///     Can move to this state from:
         ///     <list type="bullet">
         ///         <item>Todo</item>
+        ///         <item>Pending</item
         ///         <item>Rejected</item>
         ///     </list>
         /// </remarks>
         public void TransitionToPending()
         {
-            if (AuditStatus != AuditStatus.Todo && AuditStatus != AuditStatus.Rejected)
+            if (AuditStatus != AuditStatus.Todo
+                && AuditStatus != AuditStatus.Rejected
+                && AuditStatus != AuditStatus.Pending)
             {
                 throw new StateTransitionException(AuditStatus, AuditStatus.Pending);
             }

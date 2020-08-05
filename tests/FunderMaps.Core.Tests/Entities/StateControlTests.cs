@@ -40,6 +40,23 @@ namespace FunderMaps.Core.Tests.Entities
         }
 
         [Fact]
+        public void TransitionToPendingFromPending()
+        {
+            // Arrange
+            var entity = new TestEntity
+            {
+                AuditStatus = AuditStatus.Pending
+            };
+
+            // Act
+            entity.TransitionToPending();
+
+            // Assert
+            Assert.Equal(AuditStatus.Pending, entity.AuditStatus);
+            Assert.True(entity.AllowWrite);
+        }
+
+        [Fact]
         public void TransitionToPendingFromRejected()
         {
             // Arrange
