@@ -53,7 +53,6 @@ namespace FunderMaps.IntegrationTests.Report
             var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
 
             // Assert
-            Assert.NotEqual(inquiry.Id, actualInquiry.Id); // TODO: By formal definition it is possile this fails due to bad luck
             Assert.Equal(inquiry.DocumentName, actualInquiry.DocumentName);
             Assert.Equal(inquiry.Inspection, actualInquiry.Inspection);
             Assert.Equal(inquiry.JointMeasurement, actualInquiry.JointMeasurement);
