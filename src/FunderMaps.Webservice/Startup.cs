@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.IO.Compression;
 
 namespace FunderMaps.Webservice
@@ -38,9 +39,12 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            if (services == null) { throw new ArgumentNullException(nameof(services)); }
+
             //services.AddApplicationInsightsTelemetry();
 
-            services.AddControllers(); // TODO: REVIEW: Should we IgnoreNullValues ?
+            // TODO: REVIEW: Should we IgnoreNullValues ?
+            services.AddControllers();
 
             services.AddResponseCompression(options =>
             {
@@ -53,6 +57,7 @@ namespace FunderMaps.Webservice
             services.AddTransient<IProductService, DebugProductService>();
             services.AddTransient<IProductResultService, ProductResultService>();
             services.AddTransient<IMappingService, MappingService>();
+
             // Configure AutoMapper.
             services.AddAutoMapper(typeof(AutoMapperProfile));
 
