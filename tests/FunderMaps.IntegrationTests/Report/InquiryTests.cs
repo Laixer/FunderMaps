@@ -170,6 +170,30 @@ namespace FunderMaps.IntegrationTests.Report
         }
 
         [Theory]
+        [InlineData(AuditStatus.Pending, AuditStatus.PendingReview, "status_review")]
+        [InlineData(AuditStatus.PendingReview, AuditStatus.Rejected, "status_rejected")]
+        [InlineData(AuditStatus.PendingReview, AuditStatus.Done, "status_approved")]
+        public async Task SetStatusInquiryReturnNoContent(AuditStatus initialStatus, AuditStatus status, string url)
+        {
+            // Arrange
+            var inquiry = new InquiryFaker()
+                .RuleFor(f => f.AuditStatus, f => initialStatus)
+                .Generate();
+            var client = _factory
+                .WithDataStoreList(inquiry)
+                .CreateClient();
+            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
+
+            // Act
+            var response = await client.PutAsync($"api/inquiry/{inquiry.Id}/{url}", null).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            // Assert
+            Assert.Equal(status, inquiryDataStore.Entities[0].AuditStatus);
+        }
+
+        [Theory]
         [ClassData(typeof(FakeInquiryData))]
         public async Task DeleteInquiryReturnNoContent(Inquiry inquiry)
         {
