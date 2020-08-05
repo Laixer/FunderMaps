@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
+using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<IncidentDto> GetEnumerableEntity()
             {
-                return new IncidentDtoFaker().Generate(100);
+                return new IncidentDtoFaker().Generate(10, 1000);
             }
         }
 
@@ -32,7 +33,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<Incident> GetEnumerableEntity()
             {
-                return new IncidentFaker().Generate(100);
+                return new IncidentFaker().Generate(10, 1000);
             }
         }
 
@@ -90,6 +91,7 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Assert
             Assert.StartsWith("FIR", actualIncident.Id, System.StringComparison.InvariantCulture);
+            Assert.Equal(incident.Id, actualIncident.Id);
             Assert.Equal(incident.AuditStatus, actualIncident.AuditStatus);
             Assert.Equal(incident.FoundationType, actualIncident.FoundationType);
             Assert.Equal(incident.Address, actualIncident.Address);
@@ -110,7 +112,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
-                .WithDataStoreList(new IncidentFaker().Generate(10))
+                .WithDataStoreList(new IncidentFaker().Generate(10, 100))
                 .CreateClient();
 
             // Act
@@ -148,7 +150,7 @@ namespace FunderMaps.IntegrationTests.Report
         public async Task UpdateIncidentReturnNoContent(Incident incident)
         {
             // Arrange
-            var newIncident = new IncidentDtoFaker().Generate();
+            var newIncident = new IncidentDtoFaker().Generate(); // TODO Move outside of test
             var client = _factory
                 .WithDataStoreList(incident)
                 .CreateClient();

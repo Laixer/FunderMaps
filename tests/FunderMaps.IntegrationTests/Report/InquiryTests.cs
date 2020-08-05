@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
+using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<InquiryDto> GetEnumerableEntity()
             {
-                return new InquiryDtoFaker().Generate(100);
+                return new InquiryDtoFaker().Generate(10, 1000);
             }
         }
 
@@ -32,13 +33,13 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<Inquiry> GetEnumerableEntity()
             {
-                return new InquiryFaker().Generate(100);
+                return new InquiryFaker().Generate(10, 1000);
             }
         }
 
         [Theory]
         [ClassData(typeof(FakeInquiryDtoData))]
-        public async Task CreateIncidentReturnIncident(InquiryDto inquiry)
+        public async Task CreateInquiryReturnInquiry(InquiryDto inquiry)
         {
             // Arrange
             var client = _factory.CreateClient();
@@ -65,6 +66,126 @@ namespace FunderMaps.IntegrationTests.Report
             Assert.Equal(inquiry.StandardF3o, actualInquiry.StandardF3o);
             //Assert.Equal(inquiry.Attribution, actualInquiry.Attribution);
             Assert.Equal(inquiry.AccessPolicy, actualInquiry.AccessPolicy);
+        }
+
+        [Theory]
+        [ClassData(typeof(FakeInquiryData))]
+        public async Task GetInquiryByIdReturnSingleInquiry(Inquiry inquiry)
+        {
+            // Arrange
+            var client = _factory
+                .WithDataStoreList(inquiry)
+                .CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
+
+            // Assert
+            Assert.Equal(inquiry.Id, actualInquiry.Id); // TODO: By formal definition it is possile this fails due to bad luck
+            Assert.Equal(inquiry.DocumentName, actualInquiry.DocumentName);
+            Assert.Equal(inquiry.Inspection, actualInquiry.Inspection);
+            Assert.Equal(inquiry.JointMeasurement, actualInquiry.JointMeasurement);
+            Assert.Equal(inquiry.FloorMeasurement, actualInquiry.FloorMeasurement);
+            Assert.Equal(inquiry.Note, actualInquiry.Note);
+            Assert.Equal(inquiry.DocumentDate, actualInquiry.DocumentDate);
+            Assert.Equal(inquiry.DocumentFile, actualInquiry.DocumentFile);
+            Assert.Equal(inquiry.AuditStatus, actualInquiry.AuditStatus);
+            Assert.Equal(inquiry.Type, actualInquiry.Type);
+            Assert.Equal(inquiry.StandardF3o, actualInquiry.StandardF3o);
+            //Assert.Equal(inquiry.Attribution, actualInquiry.Attribution);
+            Assert.Equal(inquiry.AccessPolicy, actualInquiry.AccessPolicy);
+        }
+
+        [Fact]
+        public async Task GetAllInquiryReturnPageInquiry()
+        {
+            // Arrange
+            var client = _factory
+                .WithDataStoreList(new InquiryFaker().Generate(10, 100))
+                .CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/inquiry").ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var inquiryList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
+            Assert.NotNull(inquiryList);
+
+            // Assert
+            Assert.True(inquiryList.Count > 0);
+        }
+
+        [Fact]
+        public async Task GetAllInquiryReturnAllInquiry()
+        {
+            // Arrange
+            var client = _factory
+                .WithDataStoreList(new InquiryFaker().Generate(100))
+                .CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/inquiry?limit=100").ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var inquiryList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
+            Assert.NotNull(inquiryList);
+
+            // Assert
+            Assert.Equal(100, inquiryList.Count);
+        }
+
+        [Theory]
+        [ClassData(typeof(FakeInquiryData))]
+        public async Task UpdateInquiryReturnNoContent(Inquiry inquiry)
+        {
+            // Arrange
+            var newInquiry = new InquiryFaker().Generate();
+            var client = _factory
+                .WithDataStoreList(inquiry)
+                .CreateClient();
+            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
+
+            // Act
+            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(1, inquiryDataStore.Entities.Count);
+
+            // Assert
+            var actualInquiry = inquiryDataStore.Entities[0];
+            Assert.Equal(inquiry.Id, actualInquiry.Id);
+            Assert.Equal(newInquiry.DocumentName, actualInquiry.DocumentName);
+            Assert.Equal(newInquiry.Inspection, actualInquiry.Inspection);
+            Assert.Equal(newInquiry.JointMeasurement, actualInquiry.JointMeasurement);
+            Assert.Equal(newInquiry.FloorMeasurement, actualInquiry.FloorMeasurement);
+            Assert.Equal(newInquiry.Note, actualInquiry.Note);
+            Assert.Equal(newInquiry.DocumentDate, actualInquiry.DocumentDate);
+            Assert.Equal(newInquiry.DocumentFile, actualInquiry.DocumentFile);
+            Assert.Equal(newInquiry.Type, actualInquiry.Type);
+            Assert.Equal(newInquiry.StandardF3o, actualInquiry.StandardF3o);
+            Assert.Equal(inquiry.AuditStatus, actualInquiry.AuditStatus);
+        }
+
+        [Theory]
+        [ClassData(typeof(FakeInquiryData))]
+        public async Task DeleteInquiryReturnNoContent(Inquiry inquiry)
+        {
+            // Arrange
+            var client = _factory
+                .WithDataStoreList(inquiry)
+                .CreateClient();
+            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
+
+            // Act
+            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            // Assert
+            Assert.False(inquiryDataStore.IsSet);
         }
     }
 }
