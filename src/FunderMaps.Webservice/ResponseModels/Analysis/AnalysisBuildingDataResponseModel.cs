@@ -5,7 +5,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
     /// <summary>
     /// Represents a response model for the building data endpoint.
     /// </summary>
-    public sealed class AnalysisResponseModel : AnalysisResponseModelBase
+    public sealed class AnalysisBuildingDataResponseModel : AnalysisResponseModelBase
     {
         /// <summary>
         /// Represents the foundation type of this building.
@@ -20,6 +20,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the height of this building.
         /// </summary>
-        public double BuildingHeight { get; set; }
+        public double? BuildingHeight { get; set; }
     }
 }

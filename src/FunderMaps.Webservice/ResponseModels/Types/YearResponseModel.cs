@@ -13,6 +13,6 @@ namespace FunderMaps.Webservice.ResponseModels.Types
         /// <summary>
         /// The year this represents.
         /// </summary>
-        public int Year { get; set; }
+        public int YearValue { get; set; }
     }
 }

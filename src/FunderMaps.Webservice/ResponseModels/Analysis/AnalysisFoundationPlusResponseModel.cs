@@ -17,7 +17,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// TODO What unit? Percentage?
         /// TODO Correct name?
         /// </summary>
-        public double Reliability { get; set; }
+        public double? Reliability { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.
@@ -38,11 +38,11 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the percentage of collected data in the given region.
         /// </summary>
-        public double DataCollectedPercentage { get; set; }
+        public double? DataCollectedPercentage { get; set; }
 
         /// <summary>
         /// Total amount of reports in the given region.
         /// </summary>
-        public uint TotalReportCount { get; set; }
+        public uint? TotalReportCount { get; set; }
     }
 }
