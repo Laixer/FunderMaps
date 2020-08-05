@@ -51,6 +51,7 @@ namespace FunderMaps.Webservice
 
             // Configure services.
             services.AddTransient<IProductService, DebugProductService>();
+            services.AddTransient<IProductResultService, ProductResultService>();
             services.AddTransient<IMappingService, MappingService>();
             // Configure AutoMapper.
             services.AddAutoMapper(typeof(AutoMapperProfile));
