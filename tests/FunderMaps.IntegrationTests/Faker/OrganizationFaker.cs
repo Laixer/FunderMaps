@@ -2,23 +2,22 @@
 using Bogus.Extensions;
 using Bogus.Extensions.UnitedStates;
 using FunderMaps.Core.Entities;
+using FunderMaps.IntegrationTests.Extensions;
 using System;
 
 namespace FunderMaps.IntegrationTests.Faker
 {
     public class OrganizationFaker : Faker<Organization>
     {
-        public OrganizationProposal Proposal { get; } = new OrganizationProposalFaker().Generate();
-
         public OrganizationFaker()
         {
-            RuleFor(f => f.Id, f => Proposal.Id);
-            RuleFor(f => f.Name, f => Proposal.Name);
-            RuleFor(f => f.Email, f => Proposal.Email);
+            RuleFor(f => f.Id, f => new OrganizationProposalFaker().Generate().Id);
+            RuleFor(f => f.Name, f => new OrganizationProposalFaker().Generate().Name);
+            RuleFor(f => f.Email, f => new OrganizationProposalFaker().Generate().Email);
             RuleFor(f => f.PhoneNumber, f => f.Phone.PhoneNumber("###########").OrNull(f, .3f));
             RuleFor(f => f.RegistrationNumber, f => f.Company.Ein().OrNull(f, .7f));
-            RuleFor(f => f.BrandingLogo, f => f.Company.Ein()); //
-            RuleFor(f => f.InvoiceName, f => Proposal.Name); //
+            RuleFor(f => f.BrandingLogo, f => f.Internet.RemoteFileWithSecureUrl()); //
+            RuleFor(f => f.InvoiceName, f => new OrganizationProposalFaker().Generate().Name); //
             RuleFor(f => f.InvoicePoBox, f => f.Address.ZipCode()); //
             RuleFor(f => f.InvoiceEmail, (f, o) => f.Internet.Email(o.Name));
             RuleFor(f => f.HomeStreet, f => f.Address.StreetName());

@@ -6,14 +6,11 @@ namespace FunderMaps.IntegrationTests.Faker
 {
     public class InquirySampleFaker : Faker<InquirySample>
     {
-        public Inquiry Inquiry { get; } = new InquiryFaker().Generate();
-        public Address Address { get; } = new AddressFaker().Generate();
-
         public InquirySampleFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);
-            RuleFor(f => f.Inquiry, f => Inquiry.Id);
-            RuleFor(f => f.Address, f => Address.Id);
+            RuleFor(f => f.Inquiry, f => new InquiryFaker().Generate().Id);
+            RuleFor(f => f.Address, f => new AddressFaker().Generate().Id);
             RuleFor(f => f.Note, f => f.Lorem.Text());
             RuleFor(f => f.BaseMeasurementLevel, f => f.PickRandom<BaseMeasurementLevel>());
             RuleFor(f => f.BuiltYear, f => f.Date.Recent());

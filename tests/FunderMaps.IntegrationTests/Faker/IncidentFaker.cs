@@ -9,9 +9,6 @@ namespace FunderMaps.IntegrationTests.Faker
 {
     public class IncidentFaker : Faker<Incident>
     {
-        public Address Address { get; } = new AddressFaker().Generate();
-        public Contact Contact { get; } = new ContactFaker().Generate();
-
         public IncidentFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Replace("FIR######-#####"));
@@ -27,8 +24,8 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.InternalNote, f => f.Lorem.Text());
             RuleFor(f => f.FoundationDamageCharacteristics, f => f.Random.ArrayElements((FoundationDamageCharacteristics[])Enum.GetValues(typeof(FoundationDamageCharacteristics))));
             RuleFor(f => f.EnvironmentDamageCharacteristics, f => f.Random.ArrayElements((EnvironmentDamageCharacteristics[])Enum.GetValues(typeof(EnvironmentDamageCharacteristics))));
-            RuleFor(f => f.Email, f => Contact.Email);
-            RuleFor(f => f.Address, f => Address.Id);
+            RuleFor(f => f.Email, f => new ContactFaker().Generate().Email);
+            RuleFor(f => f.Address, f => new AddressFaker().Generate().Id);
             RuleFor(f => f.AuditStatus, f => f.PickRandom<AuditStatus>());
             RuleFor(f => f.QuestionType, f => f.PickRandom<IncidentQuestionType>());
             RuleFor(f => f.Meta, f => new { Gateway = f.Commerce.Product() });

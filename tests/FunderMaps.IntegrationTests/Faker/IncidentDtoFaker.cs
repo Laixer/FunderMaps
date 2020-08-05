@@ -7,29 +7,25 @@ namespace FunderMaps.IntegrationTests.Faker
     {
         public IncidentDtoFaker()
         {
-            var incident = new IncidentFaker().Generate();
-            var contact = new ContactFaker().Generate();
-            var address = new AddressFaker().Generate();
-
-            RuleFor(f => f.Id, f => incident.Id);
-            RuleFor(f => f.ClientId, f => incident.ClientId);
-            RuleFor(f => f.FoundationType, f => incident.FoundationType);
-            RuleFor(f => f.ChainedBuilding, f => incident.ChainedBuilding);
-            RuleFor(f => f.Owner, f => incident.Owner);
-            RuleFor(f => f.FoundationRecovery, f => incident.FoundationRecovery);
-            RuleFor(f => f.NeightborRecovery, f => incident.NeightborRecovery);
-            RuleFor(f => f.FoundationDamageCause, f => incident.FoundationDamageCause);
-            RuleFor(f => f.DocumentFile, f => incident.DocumentFile);
-            RuleFor(f => f.Note, f => incident.Note);
-            RuleFor(f => f.InternalNote, f => incident.InternalNote);
-            RuleFor(f => f.AuditStatus, f => incident.AuditStatus);
-            RuleFor(f => f.QuestionType, f => incident.QuestionType);
-            RuleFor(f => f.FoundationDamageCharacteristics, f => incident.FoundationDamageCharacteristics);
-            RuleFor(f => f.EnvironmentDamageCharacteristics, f => incident.EnvironmentDamageCharacteristics);
-            RuleFor(f => f.Email, f => contact.Email);
-            RuleFor(f => f.Name, f => contact.Name);
-            RuleFor(f => f.PhoneNumber, f => contact.PhoneNumber);
-            RuleFor(f => f.Address, f => address.Id);
+            RuleFor(f => f.Id, f => new IncidentFaker().Generate().Id);
+            RuleFor(f => f.ClientId, f => new IncidentFaker().Generate().ClientId);
+            RuleFor(f => f.FoundationType, f => new IncidentFaker().Generate().FoundationType);
+            RuleFor(f => f.ChainedBuilding, f => new IncidentFaker().Generate().ChainedBuilding);
+            RuleFor(f => f.Owner, f => new IncidentFaker().Generate().Owner);
+            RuleFor(f => f.FoundationRecovery, f => new IncidentFaker().Generate().FoundationRecovery);
+            RuleFor(f => f.NeightborRecovery, f => new IncidentFaker().Generate().NeightborRecovery);
+            RuleFor(f => f.FoundationDamageCause, f => new IncidentFaker().Generate().FoundationDamageCause);
+            RuleFor(f => f.DocumentFile, f => new IncidentFaker().Generate().DocumentFile);
+            RuleFor(f => f.Note, f => new IncidentFaker().Generate().Note);
+            RuleFor(f => f.InternalNote, f => new IncidentFaker().Generate().InternalNote);
+            RuleFor(f => f.AuditStatus, f => new IncidentFaker().Generate().AuditStatus);
+            RuleFor(f => f.QuestionType, f => new IncidentFaker().Generate().QuestionType);
+            RuleFor(f => f.FoundationDamageCharacteristics, f => new IncidentFaker().Generate().FoundationDamageCharacteristics);
+            RuleFor(f => f.EnvironmentDamageCharacteristics, f => new IncidentFaker().Generate().EnvironmentDamageCharacteristics);
+            RuleFor(f => f.Email, f => new ContactFaker().Generate().Email);
+            RuleFor(f => f.Name, f => new ContactFaker().Generate().Name);
+            RuleFor(f => f.PhoneNumber, f => new ContactFaker().Generate().PhoneNumber);
+            RuleFor(f => f.Address, f => new AddressFaker().Generate().Id);
         }
     }
 }

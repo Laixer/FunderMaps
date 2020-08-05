@@ -19,7 +19,7 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.DocumentDate, f => f.Date.Between(DateTime.Parse("1000-01-01"), DateTime.Now));
             RuleFor(f => f.DocumentFile, f => f.Internet.RemoteFileWithSecureUrl());
             RuleFor(f => f.Type, f => f.PickRandom<InquiryType>());
-            RuleFor(f => f.StandardF3o, f => f.Random.Bool());
+            RuleFor(f => f.StandardF3o, f => f.Random.Bool(0.3f));
         }
     }
 }

@@ -7,15 +7,12 @@ namespace FunderMaps.IntegrationTests.Faker
 {
     public class RecoverySampleFaker : Faker<RecoverySample>
     {
-        public Recovery Recovery { get; } = new RecoveryFaker().Generate();
-        public Address Address { get; } = new AddressFaker().Generate();
-
         public RecoverySampleFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);
-            RuleFor(f => f.Recovery, f => Recovery.Id);
+            RuleFor(f => f.Recovery, f => new RecoveryFaker().Generate().Id);
             RuleFor(f => f.Note, f => f.Lorem.Text());
-            RuleFor(f => f.Address, f => Address.Id);
+            RuleFor(f => f.Address, f => new AddressFaker().Generate().Id);
             RuleFor(f => f.Status, f => f.PickRandom<RecoveryStatus>());
             RuleFor(f => f.Type, f => f.PickRandom<RecoveryType>());
             RuleFor(f => f.PileType, f => f.PickRandom<PileType>());

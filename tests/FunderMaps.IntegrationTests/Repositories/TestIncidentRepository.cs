@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Entities;
+﻿using Bogus;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using System.Threading.Tasks;
 
@@ -13,7 +14,7 @@ namespace FunderMaps.IntegrationTests.Repositories
 
         public override ValueTask<string> AddAsync(Incident entity)
         {
-            entity.Id = $"FIR032020-{DataStore.Count() + 1}";
+            entity.Id = new Randomizer().Replace("FIR######-#####");
             return base.AddAsync(entity);
         }
     }
