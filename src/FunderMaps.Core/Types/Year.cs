@@ -12,17 +12,17 @@ namespace FunderMaps.Core.Types
         /// Creates a <see cref="Year"/> from a <see cref="DateTimeOffset"/>.
         /// </summary>
         /// <param name="dto"><see cref="DateTimeOffset"/></param>
-        public Year(DateTimeOffset dto) => ThisYear = dto.Year;
+        public Year(DateTimeOffset dto) => YearValue = dto.Year;
 
         /// <summary>
         /// Creates a <see cref="Year"/> from an integer.
         /// </summary>
         /// <param name="thisYear">Integer representing this year</param>
-        public Year(int thisYear) => ThisYear = thisYear;
+        public Year(int thisYear) => YearValue = thisYear;
 
         /// <summary>
         /// Represents this year.
         /// </summary>
-        public int ThisYear { get; set; }
+        public int YearValue { get; set; }
     }
 }
