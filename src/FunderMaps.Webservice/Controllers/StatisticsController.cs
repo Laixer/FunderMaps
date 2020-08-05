@@ -50,8 +50,7 @@ namespace FunderMaps.Webservice.Controllers
         /// <param name="limit">Items per page</param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromRoute] string product, [FromRoute] string areaCode,
-            [FromRoute] bool fullFence, [FromRoute] uint? page, [FromRoute] uint? limit)
+        public async Task<IActionResult> GetProductAsync(string product, string areaCode, bool fullFence, uint? page, uint? limit)
         {
             // Check for product
             if (string.IsNullOrEmpty(product))
@@ -68,12 +67,12 @@ namespace FunderMaps.Webservice.Controllers
 
             try
             {
-                var analysisProduct = ProductTypeMapper.MapStatistics(product);
+                var analysisProduct = ProductTypeMapper.MapStatisticsFromString(product);
                 var userId = Guid.NewGuid(); // TODO Implement auth
 
                 // Process according to specified parameters
                 // TODO Assignment, how to do more elegant?
-                var response = null as ResponseWrapper<StatisticsResponseModelBase>;
+                var response = null as ResponseWrapper;
                 if (!string.IsNullOrEmpty(areaCode))
                 {
                     response = await _productResultService.GetStatisticsByAreaAsync(userId, analysisProduct, areaCode, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);

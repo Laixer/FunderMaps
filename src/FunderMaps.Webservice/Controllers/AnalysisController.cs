@@ -6,6 +6,7 @@ using FunderMaps.Webservice.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
@@ -53,8 +54,7 @@ namespace FunderMaps.Webservice.Controllers
         /// <param name="limit">Items per page</param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromRoute] string product, [FromRoute] string q,
-            [FromRoute] string id, [FromRoute] string bagid, [FromRoute] bool fullFence, [FromRoute] uint? page, [FromRoute] uint? limit)
+        public async Task<IActionResult> GetProductAsync(string product, string q, string id, string bagid, bool fullFence, uint? page, uint? limit)
         {
             // Check for product
             if (string.IsNullOrEmpty(product))
@@ -73,12 +73,12 @@ namespace FunderMaps.Webservice.Controllers
 
             try
             {
-                var analysisProduct = ProductTypeMapper.MapAnalysis(product);
+                var analysisProduct = ProductTypeMapper.MapAnalysisFromString(product);
                 var userId = Guid.NewGuid(); // TODO Implement auth
 
                 // Process according to specified parameters
                 // TODO Assignment, how to do more elegant?
-                var response = null as ResponseWrapper<AnalysisResponseModelBase>;
+                var response = null as ResponseWrapper;
                 if (!string.IsNullOrEmpty(q))
                 {
                     response = await _productResultService.GetAnalysisByQueryAsync(userId, analysisProduct, q, page ?? DefaultPage, limit ?? DefaultLimit).ConfigureAwait(false);
