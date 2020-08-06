@@ -33,7 +33,10 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<Inquiry> GetEnumerableEntity()
             {
-                return new InquiryFaker().Generate(10, 1000);
+                // TODO; can have more stats
+                return new InquiryFaker()
+                    .RuleFor(f => f.AuditStatus, f => AuditStatus.Pending)
+                    .Generate(10, 1000);
             }
         }
 
