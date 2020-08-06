@@ -25,7 +25,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<InquiryDto> GetEnumerableEntity()
             {
-                return new InquiryDtoFaker().Generate(10, 1000);
+                return new InquiryDtoFaker().Generate(10, 100);
             }
         }
 
@@ -36,7 +36,7 @@ namespace FunderMaps.IntegrationTests.Report
                 // TODO; can have more stats
                 return new InquiryFaker()
                     .RuleFor(f => f.AuditStatus, f => AuditStatus.Pending)
-                    .Generate(10, 1000);
+                    .Generate(10, 100);
             }
         }
 

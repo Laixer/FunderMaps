@@ -26,7 +26,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<InquirySampleDto> GetEnumerableEntity()
             {
-                return new InquirySampleDtoFaker().Generate(10, 1000);
+                return new InquirySampleDtoFaker().Generate(10, 100);
             }
 
             protected override IEnumerable<object[]> GetData()
@@ -40,7 +40,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<InquirySample> GetEnumerableEntity()
             {
-                return new InquirySampleFaker().Generate(10, 1000);
+                return new InquirySampleFaker().Generate(10, 100);
             }
         }
 

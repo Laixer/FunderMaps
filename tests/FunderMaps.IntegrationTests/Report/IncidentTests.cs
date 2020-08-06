@@ -25,7 +25,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<IncidentDto> GetEnumerableEntity()
             {
-                return new IncidentDtoFaker().Generate(10, 1000);
+                return new IncidentDtoFaker().Generate(10, 100);
             }
         }
 
@@ -33,7 +33,7 @@ namespace FunderMaps.IntegrationTests.Report
         {
             protected override IEnumerable<Incident> GetEnumerableEntity()
             {
-                return new IncidentFaker().Generate(10, 1000);
+                return new IncidentFaker().Generate(10, 100);
             }
         }
 
