@@ -9,8 +9,8 @@ namespace FunderMaps.IntegrationTests.Faker
         public InquirySampleFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);
-            RuleFor(f => f.Inquiry, f => new InquiryFaker().Generate().Id);
-            RuleFor(f => f.Address, f => new AddressFaker().Generate().Id);
+            RuleFor(f => f.Inquiry, f => f.UniqueIndex);
+            RuleFor(f => f.Address, f => $"gfm-{f.Random.Hash(32)}");
             RuleFor(f => f.Note, f => f.Lorem.Text());
             RuleFor(f => f.BaseMeasurementLevel, f => f.PickRandom<BaseMeasurementLevel>());
             RuleFor(f => f.BuiltYear, f => f.Date.Recent());

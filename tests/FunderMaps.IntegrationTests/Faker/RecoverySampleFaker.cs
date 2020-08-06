@@ -10,9 +10,9 @@ namespace FunderMaps.IntegrationTests.Faker
         public RecoverySampleFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);
-            RuleFor(f => f.Recovery, f => new RecoveryFaker().Generate().Id);
+            RuleFor(f => f.Recovery, f => f.UniqueIndex);
             RuleFor(f => f.Note, f => f.Lorem.Text());
-            RuleFor(f => f.Address, f => new AddressFaker().Generate().Id);
+            RuleFor(f => f.Address, f => $"gfm-{f.Random.Hash(32)}");
             RuleFor(f => f.Status, f => f.PickRandom<RecoveryStatus>());
             RuleFor(f => f.Type, f => f.PickRandom<RecoveryType>());
             RuleFor(f => f.PileType, f => f.PickRandom<PileType>());
