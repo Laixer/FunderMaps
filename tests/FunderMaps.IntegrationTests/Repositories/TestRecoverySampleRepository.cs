@@ -5,18 +5,18 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.IntegrationTests.Repositories
 {
-    public class TestIncidentRepository : TestRepositoryBase<Incident, string>, IIncidentRepository
+    public class TestRecoverySampleRepository : TestRepositoryBase<RecoverySample, int>, IRecoverySampleRepository
     {
         private static readonly Randomizer randomizer = new Randomizer();
 
-        public TestIncidentRepository(EntityDataStore<Incident> dataStore)
+        public TestRecoverySampleRepository(EntityDataStore<RecoverySample> dataStore)
             : base(dataStore, e => e.Id)
         {
         }
 
-        public override ValueTask<string> AddAsync(Incident entity)
+        public override ValueTask<int> AddAsync(RecoverySample entity)
         {
-            entity.Id = randomizer.Replace("FIR######-#####");
+            entity.Id = randomizer.Int(0, int.MaxValue);
             return base.AddAsync(entity);
         }
     }

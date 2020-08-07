@@ -10,6 +10,8 @@ namespace FunderMaps.IntegrationTests.Repositories
 {
     public class TestInquiryRepository : TestRepositoryBase<Inquiry, int>, IInquiryRepository
     {
+        private static readonly Randomizer randomizer = new Randomizer();
+
         public TestInquiryRepository(EntityDataStore<Inquiry> dataStore)
             : base(dataStore, e => e.Id)
         {
@@ -17,7 +19,7 @@ namespace FunderMaps.IntegrationTests.Repositories
 
         public override ValueTask<int> AddAsync(Inquiry entity)
         {
-            entity.Id = new Randomizer().Int(0, int.MaxValue);
+            entity.Id = randomizer.Int(0, int.MaxValue);
             return base.AddAsync(entity);
         }
 

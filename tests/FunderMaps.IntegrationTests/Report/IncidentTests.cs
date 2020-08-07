@@ -4,6 +4,7 @@ using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -90,7 +91,7 @@ namespace FunderMaps.IntegrationTests.Report
             var actualIncident = await response.Content.ReadFromJsonAsync<IncidentDto>().ConfigureAwait(false);
 
             // Assert
-            Assert.StartsWith("FIR", actualIncident.Id, System.StringComparison.InvariantCulture);
+            Assert.StartsWith("FIR", actualIncident.Id, StringComparison.InvariantCulture);
             Assert.Equal(incident.Id, actualIncident.Id);
             Assert.Equal(incident.AuditStatus, actualIncident.AuditStatus);
             Assert.Equal(incident.FoundationType, actualIncident.FoundationType);

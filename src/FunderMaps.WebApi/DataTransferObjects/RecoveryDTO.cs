@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.WebApi.DataTransferObjects
 {
+    // TODO: Missing AuditStatus?
     /// <summary>
     ///     Recovery DTO.
     /// </summary>
