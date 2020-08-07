@@ -1,12 +1,9 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;

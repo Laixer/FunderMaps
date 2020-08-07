@@ -12,6 +12,7 @@
     public abstract class BaseEntity
     {
         // TODO: Should be an abstract function.
+        // FUTURE: Let entity point to its PK.
 
         /// <summary>
         ///     Validate entity properties.

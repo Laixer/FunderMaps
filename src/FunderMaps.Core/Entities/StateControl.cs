@@ -64,7 +64,7 @@ namespace FunderMaps.Core.Entities
         ///     Can move to this state from:
         ///     <list type="bullet">
         ///         <item>Todo</item>
-        ///         <item>Pending</item
+        ///         <item>Pending</item>
         ///         <item>Rejected</item>
         ///     </list>
         /// </remarks>

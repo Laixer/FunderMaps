@@ -2,6 +2,7 @@
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO: Remove in the long term. This is meta data.
     /// <summary>
     ///     Record timestamps.
     /// </summary>
