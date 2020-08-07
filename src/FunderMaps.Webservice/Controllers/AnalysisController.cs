@@ -6,7 +6,6 @@ using FunderMaps.Webservice.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
@@ -14,8 +13,7 @@ namespace FunderMaps.Webservice.Controllers
     /// <summary>
     /// Controller for all analysis endpoints.
     /// </summary>
-    [Route("api/analysis")]
-    [ApiController]
+    [ApiController, Route("api/analysis")]
     public sealed class AnalysisController : ControllerBase
     {
         private const uint DefaultPage = 1;
@@ -24,7 +22,7 @@ namespace FunderMaps.Webservice.Controllers
         private readonly IProductResultService _productResultService;
 
         /// <summary>
-        /// Constructor for dependency injection.
+        /// Create new instance.
         /// </summary>
         public AnalysisController(ILogger<AnalysisController> logger,
             IProductResultService productResultService)
@@ -56,14 +54,13 @@ namespace FunderMaps.Webservice.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetProductAsync(string product, string q, string id, string bagid, bool fullFence, uint? page, uint? limit)
         {
-            // Check for product
+            // Check for product.
             if (string.IsNullOrEmpty(product))
             {
                 return BadRequest(Problem("Please specify a product"));
             }
 
-            // Check for invalid combinations
-            // Check for both bagid and id
+            // Check for invalid combinations.
             if ((fullFence && ArgumentUtility.NotNullCount(q, id, bagid) > 0) ||
                 (ArgumentUtility.NotNullCount(q, id, bagid) > 1) ||
                 (!fullFence && ArgumentUtility.NotNullCount(q, id, bagid) == 0))
@@ -97,13 +94,14 @@ namespace FunderMaps.Webservice.Controllers
                 }
                 else
                 {
-                    // If we reach this point, we can't process the request
+                    // If we reach this point, we can't process the request.
                     return Problem($"Could not parse request");
                 }
 
                 return Ok(response);
             }
             // TODO Use core exception? I think so, yes.
+            // TODO Use error handling according to issue #167
             catch (ProductNotFoundException e)
             {
                 _logger.LogError(e.Message);

@@ -12,8 +12,7 @@ namespace FunderMaps.Webservice.Controllers
     /// <summary>
     /// Controller for all statistics endpoints.
     /// </summary>
-    [Route("api/statistics")]
-    [ApiController]
+    [ApiController, Route("api/statistics")]
     public sealed class StatisticsController : ControllerBase
     {
         private const uint DefaultPage = 1;
@@ -22,7 +21,7 @@ namespace FunderMaps.Webservice.Controllers
         private readonly IProductResultService _productResultService;
 
         /// <summary>
-        /// Constructor for dependency injection.
+        /// Create new instance.
         /// </summary>
         public StatisticsController(ILogger<StatisticsController> logger,
             IProductResultService productResultService)
@@ -52,13 +51,13 @@ namespace FunderMaps.Webservice.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetProductAsync(string product, string areaCode, bool fullFence, uint? page, uint? limit)
         {
-            // Check for product
+            // Check for product.
             if (string.IsNullOrEmpty(product))
             {
                 return BadRequest(Problem("Please specify a product"));
             }
 
-            // Check for invalid combinations
+            // Check for invalid combinations.
             if ((fullFence && !string.IsNullOrEmpty(areaCode)) ||
                 (!fullFence && string.IsNullOrEmpty(areaCode)))
             {
@@ -83,13 +82,14 @@ namespace FunderMaps.Webservice.Controllers
                 }
                 else
                 {
-                    // If we reach this point, we can't process the request
+                    // If we reach this point, we can't process the request.
                     return Problem($"Could not parse request");
                 }
 
                 return Ok(response);
             }
             // TODO Use core exception? I think so, yes.
+            // TODO Use error handling according to issue #167
             catch (ProductNotFoundException e)
             {
                 _logger.LogError(e.Message);
