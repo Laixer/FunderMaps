@@ -1,8 +1,7 @@
 ﻿using FunderMaps.Controllers;
-using FunderMaps.Core.Authentication;
-using FunderMaps.Core.Interfaces;
+using FunderMaps.WebApi.Authentication;
 using FunderMaps.WebApi.DataTransferObjects;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -13,94 +12,71 @@ namespace FunderMaps.WebApi.Controllers.Application
     /// <summary>
     ///     Endpoint controller for application authentication.
     /// </summary>
+    [Authorize]
     [ApiController, Route("api/auth")]
     public class AuthController : BaseApiController
     {
-        private readonly AuthManager _authManager;
-        private readonly ISecurityTokenProvider _tokenProvider;
+        private readonly AuthenticationHelper _authenticationHelper;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(AuthManager authManager, ISecurityTokenProvider tokenProvider)
+        public AuthController(AuthenticationHelper authenticationHelper)
         {
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
-            _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+            _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
         }
 
+        [AllowAnonymous]
         [HttpGet("signin")]
         public async Task<IActionResult> SignInViaGetAsync([FromQuery] SignInDto input)
         {
-            var result = await _authManager.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
-            switch (result.Result)
-            {
-                case AuthResult.Success:
-                    {
-                        if (result.Principal == null)
-                        {
-                            throw new InvalidOperationException(); // TODO:
-                        }
-                        var token = await _tokenProvider.GetTokenAsStringAsync(result.Principal).ConfigureAwait(false);
-                        return Ok(new { Token = token });
-                    }
-                case AuthResult.Failed:
-                case AuthResult.LockedOut:
-                case AuthResult.NotAllowed:
-                    return Unauthorized();
-            }
+            // Act.
+            string token = await _authenticationHelper.SignInAsync(input.Email, input.Password);
 
-            // If we got this far, something failed
-            throw new InvalidOperationException();
+            // Map.
+            var output = new SignInSecurityTokenDto
+            {
+                Token = token,
+                TokenValidity = 2400,
+            };
+
+            // Return.
+            return Ok(output);
         }
 
+        [AllowAnonymous]
         [HttpPost("signin")]
         public async Task<IActionResult> SignInViaPostAsync([FromBody] SignInDto input)
         {
-            var result = await _authManager.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
-            switch (result.Result)
-            {
-                case AuthResult.Success:
-                    {
-                        if (result.Principal == null)
-                        {
-                            throw new InvalidOperationException(); // TODO:
-                        }
-                        var token = await _tokenProvider.GetTokenAsStringAsync(result.Principal).ConfigureAwait(false);
-                        return Ok(new { Token = token });
-                    }
-                case AuthResult.Failed:
-                case AuthResult.LockedOut:
-                case AuthResult.NotAllowed:
-                    return Unauthorized();
-            }
+            // Act.
+            string token = await _authenticationHelper.SignInAsync(input.Email, input.Password);
 
-            // If we got this far, something failed
-            throw new InvalidOperationException();
+            // Map.
+            var output = new SignInSecurityTokenDto
+            {
+                Token = token,
+                TokenValidity = 2400,
+            };
+
+            // Return.
+            return Ok(output);
         }
 
         [HttpGet("token-refresh")]
         public async Task<IActionResult> RefreshSignInAsync()
         {
-            var result = await _authManager.SignInAsync(User, checkIfAuthenticated: true, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
-            switch (result.Result)
-            {
-                case AuthResult.Success:
-                    {
-                        if (result.Principal == null)
-                        {
-                            throw new InvalidOperationException(); // TODO:
-                        }
-                        var token = await _tokenProvider.GetTokenAsStringAsync(result.Principal).ConfigureAwait(false);
-                        return Ok(new { Token = token });
-                    }
-                case AuthResult.Failed:
-                case AuthResult.LockedOut:
-                case AuthResult.NotAllowed:
-                    return Unauthorized();
-            }
+            // Act.
+            string token = await _authenticationHelper.RefreshSignInAsync(User);
 
-            // If we got this far, something failed
-            throw new InvalidOperationException();
+            // Map.
+            var output = new SignInSecurityTokenDto
+            {
+                Token = token,
+                TokenValidity = 2400,
+            };
+
+            // Return.
+            return Ok(output);
         }
     }
 }

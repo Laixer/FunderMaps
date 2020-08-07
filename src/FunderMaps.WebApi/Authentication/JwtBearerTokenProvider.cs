@@ -112,7 +112,7 @@ namespace FunderMaps.WebApi.Authentication
         /// <returns>Returns token as string.</returns>
         public virtual async Task<string> GetTokenAsStringAsync(ClaimsPrincipal principal)
         {
-            SecurityToken token = await GetToken(principal).ConfigureAwait(false);
+            SecurityToken token = await GetToken(principal);
 
             // TODO: Move to method.
             SecurityTokenHandler handler = (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);

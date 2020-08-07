@@ -43,7 +43,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             var organization = _mapper.Map<OrganizationProposal>(input);
 
             // Act.
-            organization = await _organizationManager.CreateProposalAsync(organization).ConfigureAwait(false);
+            organization = await _organizationManager.CreateProposalAsync(organization);
 
             // Map.
             var output = _mapper.Map<OrganizationProposalDto>(organization);
@@ -56,7 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync(Guid id)
         {
             // Act.
-            Organization organization = await _organizationManager.GetAsync(id).ConfigureAwait(false);
+            Organization organization = await _organizationManager.GetAsync(id);
 
             // Map.
             var output = _mapper.Map<OrganizationDto>(organization);
@@ -73,7 +73,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             organization.Id = id;
 
             // Act.
-            await _organizationManager.UpdateAsync(organization).ConfigureAwait(false);
+            await _organizationManager.UpdateAsync(organization);
 
             // Return.
             return NoContent();
@@ -90,7 +90,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             var user = _mapper.Map<User>(input);
 
             // Act.
-            user = await _organizationManager.AddUserAsync(id, user).ConfigureAwait(false);
+            user = await _organizationManager.AddUserAsync(id, user);
 
             // Map.
             var output = _mapper.Map<UserDto>(user);
@@ -106,7 +106,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(id, pagination.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<UserDto>, User>(userList).ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<UserDto>, User>(userList);
 
             // Return.
             return Ok(result);
@@ -120,7 +120,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             user.Id = userId;
 
             // Act.
-            await _organizationManager.UpdateUserAsync(id, user).ConfigureAwait(false);
+            await _organizationManager.UpdateUserAsync(id, user);
 
             // Return.
             return NoContent();
@@ -130,7 +130,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> DeleteUserAsync(Guid id, Guid userId)
         {
             // Act.
-            await _organizationManager.DeleteUserAsync(id, userId).ConfigureAwait(false);
+            await _organizationManager.DeleteUserAsync(id, userId);
 
             // Return.
             return NoContent();

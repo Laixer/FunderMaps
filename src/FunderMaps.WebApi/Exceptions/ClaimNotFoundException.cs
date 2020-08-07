@@ -5,6 +5,7 @@ namespace FunderMaps.Exceptions
     /// <summary>
     /// Claim was not found exception.
     /// </summary>
+    [Obsolete("Replaced by core ex.")]
     public class ClaimNotFoundException : Exception
     {
         /// <summary>

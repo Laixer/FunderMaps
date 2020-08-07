@@ -6,6 +6,8 @@ using System.Linq;
 
 namespace FunderMaps.Helpers
 {
+    // TODO: This thing has always been a problem.
+    // TODO: Register with CI container
     /// <summary>
     /// Application file wrapper.
     /// </summary>
