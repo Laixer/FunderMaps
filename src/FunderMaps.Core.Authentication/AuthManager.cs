@@ -104,17 +104,17 @@ namespace FunderMaps.Core.Authentication
             var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (claim != null)
             {
-                return await UserManager.GetAsync(Guid.Parse(claim.Value)).ConfigureAwait(false);
+                return await UserManager.GetAsync(Guid.Parse(claim.Value));
             }
             claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
             if (claim != null)
             {
-                return await UserManager.GetByEmailAsync(claim.Value).ConfigureAwait(false);
+                return await UserManager.GetByEmailAsync(claim.Value);
             }
             claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
             if (claim != null)
             {
-                return await UserManager.GetByEmailAsync(claim.Value).ConfigureAwait(false);
+                return await UserManager.GetByEmailAsync(claim.Value);
             }
 
             throw new InvalidOperationException(); // TODO:
@@ -150,7 +150,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (await UserManager.IsLockedOutAsync(user).ConfigureAwait(false))
+            if (await UserManager.IsLockedOutAsync(user))
             {
                 Logger.LogWarning(3, $"User {user} is currently locked out.");
 
@@ -178,13 +178,13 @@ namespace FunderMaps.Core.Authentication
                 return SignInContext.NotAllowed;
             }
 
-            User user = await GetUserAsync(principal).ConfigureAwait(false);
+            User user = await GetUserAsync(principal);
             if (user == null)
             {
                 return SignInContext.Failed;
             }
 
-            return await SignInAsync(user, authenticationType).ConfigureAwait(false);
+            return await SignInAsync(user, authenticationType);
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var result = await CanSignInAsync(user).ConfigureAwait(false);
+            var result = await CanSignInAsync(user);
             if (result != SignInContext.Success)
             {
                 return result;
@@ -218,13 +218,13 @@ namespace FunderMaps.Core.Authentication
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> PasswordSignInAsync(string email, string password, string authenticationType)
         {
-            User user = await UserManager.GetByEmailAsync(email).ConfigureAwait(false);
+            User user = await UserManager.GetByEmailAsync(email);
             if (user == null)
             {
                 return SignInContext.Failed;
             }
 
-            return await PasswordSignInAsync(user, password, authenticationType).ConfigureAwait(false);
+            return await PasswordSignInAsync(user, password, authenticationType);
         }
 
         /// <summary>
@@ -240,16 +240,16 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var result = await CanSignInAsync(user).ConfigureAwait(false);
+            var result = await CanSignInAsync(user);
             if (result != SignInContext.Success)
             {
                 return result;
             }
 
-            if (await UserManager.CheckPasswordAsync(user, password).ConfigureAwait(false))
+            if (await UserManager.CheckPasswordAsync(user, password))
             {
-                await UserManager.ResetAccessFailedCountAsync(user).ConfigureAwait(false);
-                await UserManager.IncreaseAccessCountAsync(user).ConfigureAwait(false);
+                await UserManager.ResetAccessFailedCountAsync(user);
+                await UserManager.IncreaseAccessCountAsync(user);
 
                 Logger.LogInformation(1, $"User {user} password sign in was successful.");
 
@@ -258,7 +258,7 @@ namespace FunderMaps.Core.Authentication
 
             Logger.LogWarning(2, $"User {user} failed to provide the correct password.");
 
-            await UserManager.IncreaseAccessFailedCountAsync(user).ConfigureAwait(false);
+            await UserManager.IncreaseAccessFailedCountAsync(user);
 
             return SignInContext.Failed;
         }
