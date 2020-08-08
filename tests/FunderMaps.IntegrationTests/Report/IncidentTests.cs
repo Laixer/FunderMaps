@@ -56,7 +56,7 @@ namespace FunderMaps.IntegrationTests.Report
             var actualIncident = await response.Content.ReadFromJsonAsync<IncidentDto>().ConfigureAwait(false);
 
             // Assert
-            Assert.StartsWith("FIR", actualIncident.Id, System.StringComparison.InvariantCulture);
+            Assert.StartsWith("FIR", actualIncident.Id, StringComparison.InvariantCulture);
             Assert.Equal(AuditStatus.Todo, actualIncident.AuditStatus);
             Assert.Equal(incident.Name, actualIncident.Name);
             Assert.Equal(incident.Email, actualIncident.Email);

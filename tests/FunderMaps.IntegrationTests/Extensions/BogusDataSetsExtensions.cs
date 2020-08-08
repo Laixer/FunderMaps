@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FunderMaps.IntegrationTests.Extensions
 {
-    public static class BogusDataSetsInternetExtensions
+    public static class BogusDataSetsExtensions
     {
         public static string RemoteFileWithSecureUrl(this Internet internet, string[] providedFileExt = null)
         {
@@ -28,6 +28,11 @@ namespace FunderMaps.IntegrationTests.Extensions
              where T : class
         {
             return faker.Generate(new Randomizer().Int(min, max));
+        }
+
+        public static string Password(this Randomizer randomizer, int length = 12)
+        {
+            return randomizer.String2(length, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
         }
     }
 }

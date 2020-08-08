@@ -30,10 +30,10 @@ namespace FunderMaps.IntegrationTests.Application
         public async Task GetUserFromSessionReturnSingleUser()
         {
             // Act
-            var response = await _client.GetAsync("api/user").ConfigureAwait(false);
+            var response = await _client.GetAsync("api/user");
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualUser = await response.Content.ReadFromJsonAsync<UserDto>().ConfigureAwait(false);
+            var actualUser = await response.Content.ReadFromJsonAsync<UserDto>();
 
             // Assert
             Assert.Equal(sessionUser.Id, actualUser.Id);
@@ -52,7 +52,7 @@ namespace FunderMaps.IntegrationTests.Application
             var newUser = new UserFaker().Generate();
 
             // Act
-            var response = await _client.PutAsJsonAsync("api/user", newUser).ConfigureAwait(false);
+            var response = await _client.PutAsJsonAsync("api/user", newUser);
 
             // Assert
             response.EnsureSuccessStatusCode();
