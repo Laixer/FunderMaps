@@ -12,9 +12,9 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FunderMaps.Cloud\FunderMaps.Cloud.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
     <ProjectReference Include="..\FunderMaps.Data\FunderMaps.Data.csproj" />
+    <ProjectReference Include="..\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

@@ -1,5 +1,4 @@
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Data;
 using FunderMaps.IndicentEndpoint.Extensions;
@@ -64,11 +63,13 @@ namespace FunderMaps.IndicentEndpoint
         [FunctionName("Incident")]
         public async Task<IActionResult> AddIncident([HttpTrigger(AuthorizationLevel.Function, "post")] IncidentInputViewModel input, HttpRequest request)
         {
+            // TODO: Can request be null?
             if (request == null)
             {
                 return ErrorResult("Input is empty"); // TODO:
             }
 
+            // TODO: Can request be null?
             if (input == null)
             {
                 return ErrorResult("Input is empty"); // TODO:
@@ -89,7 +90,7 @@ namespace FunderMaps.IndicentEndpoint
                 Gateway = gatewayName,
             };
 
-            await _incidentUseCase.CreateAsync(incident).ConfigureAwait(false);
+            await _incidentUseCase.CreateAsync(incident);
 
             return new OkObjectResult(null);
         }
@@ -102,6 +103,7 @@ namespace FunderMaps.IndicentEndpoint
         [FunctionName("Address")]
         public async Task<IActionResult> GetAddress([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
         {
+            // TODO: Can request be null?
             if (request == null)
             {
                 return ErrorResult("Input is empty"); // TODO:

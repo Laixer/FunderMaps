@@ -1,12 +1,12 @@
 ﻿namespace FunderMaps.IndicentEndpoint.ViewModels
 {
     /// <summary>
-    /// Address output view model.
+    ///     Address output view model.
     /// </summary>
     internal class AddressOutputViewModel
     {
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         public string Address { get; set; }
     }

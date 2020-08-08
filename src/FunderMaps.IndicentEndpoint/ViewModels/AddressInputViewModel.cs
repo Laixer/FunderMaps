@@ -1,17 +1,17 @@
 ﻿namespace FunderMaps.IndicentEndpoint.ViewModels
 {
     /// <summary>
-    /// Address input view model.
+    ///     Address input view model.
     /// </summary>
     internal class AddressInputViewModel
     {
         /// <summary>
-        /// Postcode.
+        ///     Postcode.
         /// </summary>
         public string Postcode { get; set; }
 
         /// <summary>
-        /// Building number.
+        ///     Building number.
         /// </summary>
         public string BuildingNumber { get; set; }
     }

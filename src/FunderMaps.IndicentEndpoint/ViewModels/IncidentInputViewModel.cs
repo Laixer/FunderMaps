@@ -4,79 +4,79 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.IndicentEndpoint.ViewModels
 {
     /// <summary>
-    /// Incident input view model.
+    ///     Incident input view model.
     /// </summary>
     public class IncidentInputViewModel
     {
         // FUTURE: Custom checker
         /// <summary>
-        /// Address identifier.
+        ///     Address identifier.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
         public string Address { get; set; }
 
         /// <summary>
-        /// Foundation type.
+        ///     Foundation type.
         /// </summary>
         [Required]
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
-        /// Building chained to another building.
+        ///     Building chained to another building.
         /// </summary>
         [Required]
         public bool ChainedBuilding { get; set; }
 
         /// <summary>
-        /// Whether the contact is an owner of the building.
+        ///     Whether the contact is an owner of the building.
         /// </summary>
         [Required]
         public bool Owner { get; set; }
 
         /// <summary>
-        /// Whether foundation was recovered or not.
+        ///     Whether foundation was recovered or not.
         /// </summary>
         [Required]
         public bool FoundationRecovery { get; set; }
 
         /// <summary>
-        /// Foundation damage cause.
+        ///     Foundation damage cause.
         /// </summary>
         [Required]
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
-        /// Document name.
+        ///     Document name.
         /// </summary>
         public string[] DocumentName { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
         public string Note { get; set; }
 
         /// <summary>
-        /// Foundational damage.
+        ///     Foundational damage.
         /// </summary>
         public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; } = new FoundationDamageCharacteristics[0];
 
         /// <summary>
-        /// Environmental damage.
+        ///     Environmental damage.
         /// </summary>
         public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; } = new EnvironmentDamageCharacteristics[0];
 
         /// <summary>
-        /// Contact name.
+        ///     Contact name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Contact email.
+        ///     Contact email.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        /// Contact phone number.
+        ///     Contact phone number.
         /// </summary>
         public string Phonenumber { get; set; }
     }

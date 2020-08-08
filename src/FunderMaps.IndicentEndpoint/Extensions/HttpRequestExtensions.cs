@@ -4,12 +4,12 @@ using System;
 namespace FunderMaps.IndicentEndpoint.Extensions
 {
     /// <summary>
-    /// HttpRequest extensions.
+    ///     HttpRequest extensions.
     /// </summary>
     public static class HttpRequestExtensions
     {
         /// <summary>
-        /// Get user agent from client.
+        ///     Get user agent from client.
         /// </summary>
         /// <param name="request">Instance to extend.</param>
         /// <returns>String containing the user agent or null.</returns>
