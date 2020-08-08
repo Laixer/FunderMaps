@@ -262,7 +262,7 @@ namespace FunderMaps.IntegrationTests.Report
         public async Task UpdateInquirySampleReturnNoContent(Inquiry inquiry, InquirySample sample)
         {
             // Arrange
-            var newInquirySample = new InquirySampleFaker().Generate();
+            var newSample = new InquirySampleFaker().Generate();
             var client = _factory
                 .WithDataStoreList(inquiry)
                 .WithDataStoreList(sample)
@@ -270,7 +270,7 @@ namespace FunderMaps.IntegrationTests.Report
             var inquirySampleDataStore = _factory.Services.GetService<EntityDataStore<InquirySample>>();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", newInquirySample).ConfigureAwait(false);
+            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", newSample).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(1, inquirySampleDataStore.Entities.Count);
@@ -278,65 +278,65 @@ namespace FunderMaps.IntegrationTests.Report
             // Assert
             var actualInquirySample = inquirySampleDataStore.Entities[0];
             Assert.Equal(sample.Id, actualInquirySample.Id);
-            Assert.Equal(newInquirySample.Address, actualInquirySample.Address);
-            Assert.Equal(newInquirySample.Note, actualInquirySample.Note);
-            Assert.Equal(newInquirySample.BuiltYear, actualInquirySample.BuiltYear);
-            Assert.Equal(newInquirySample.Substructure, actualInquirySample.Substructure);
-            Assert.Equal(newInquirySample.Cpt, actualInquirySample.Cpt);
-            Assert.Equal(newInquirySample.MonitoringWell, actualInquirySample.MonitoringWell);
-            Assert.Equal(newInquirySample.GroundwaterLevelTemp, actualInquirySample.GroundwaterLevelTemp);
-            Assert.Equal(newInquirySample.GroundLevel, actualInquirySample.GroundLevel);
-            Assert.Equal(newInquirySample.GroundwaterLevelNet, actualInquirySample.GroundwaterLevelNet);
-            Assert.Equal(newInquirySample.Type, actualInquirySample.Type);
-            Assert.Equal(newInquirySample.EnforcementTerm, actualInquirySample.EnforcementTerm);
-            Assert.Equal(newInquirySample.RecoveryAdvised, actualInquirySample.RecoveryAdvised);
-            Assert.Equal(newInquirySample.DamageCause, actualInquirySample.DamageCause);
-            Assert.Equal(newInquirySample.DamageCharacteristics, actualInquirySample.DamageCharacteristics);
-            Assert.Equal(newInquirySample.ConstructionPile, actualInquirySample.ConstructionPile);
-            Assert.Equal(newInquirySample.WoodType, actualInquirySample.WoodType);
-            Assert.Equal(newInquirySample.WoodEncroachement, actualInquirySample.WoodEncroachement);
-            Assert.Equal(newInquirySample.ConstructionLevel, actualInquirySample.ConstructionLevel);
-            Assert.Equal(newInquirySample.WoodLevel, actualInquirySample.WoodLevel);
-            Assert.Equal(newInquirySample.PileDiameterTop, actualInquirySample.PileDiameterTop);
-            Assert.Equal(newInquirySample.PileDiameterBottom, actualInquirySample.PileDiameterBottom);
-            Assert.Equal(newInquirySample.PileHeadLevel, actualInquirySample.PileHeadLevel);
-            Assert.Equal(newInquirySample.PileTipLevel, actualInquirySample.PileTipLevel);
-            Assert.Equal(newInquirySample.FoundationDepth, actualInquirySample.FoundationDepth);
-            Assert.Equal(newInquirySample.MasonLevel, actualInquirySample.MasonLevel);
-            Assert.Equal(newInquirySample.ConcreteChargerLength, actualInquirySample.ConcreteChargerLength);
-            Assert.Equal(newInquirySample.PileDistanceLength, actualInquirySample.PileDistanceLength);
-            Assert.Equal(newInquirySample.WoodPenetrationDepth, actualInquirySample.WoodPenetrationDepth);
-            Assert.Equal(newInquirySample.OverallQuality, actualInquirySample.OverallQuality);
-            Assert.Equal(newInquirySample.WoodQuality, actualInquirySample.WoodQuality);
-            Assert.Equal(newInquirySample.ConstructionQuality, actualInquirySample.ConstructionQuality);
-            Assert.Equal(newInquirySample.WoodCapacityHorizontalQuality, actualInquirySample.WoodCapacityHorizontalQuality);
-            Assert.Equal(newInquirySample.PileWoodCapacityVerticalQuality, actualInquirySample.PileWoodCapacityVerticalQuality);
-            Assert.Equal(newInquirySample.CarryingCapacityQuality, actualInquirySample.CarryingCapacityQuality);
-            Assert.Equal(newInquirySample.MasonQuality, actualInquirySample.MasonQuality);
-            Assert.Equal(newInquirySample.WoodQualityNecessity, actualInquirySample.WoodQualityNecessity);
-            Assert.Equal(newInquirySample.CrackIndoorRestored, actualInquirySample.CrackIndoorRestored);
-            Assert.Equal(newInquirySample.CrackIndoorType, actualInquirySample.CrackIndoorType);
-            Assert.Equal(newInquirySample.CrackIndoorSize, actualInquirySample.CrackIndoorSize);
-            Assert.Equal(newInquirySample.CrackFacadeFrontRestored, actualInquirySample.CrackFacadeFrontRestored);
-            Assert.Equal(newInquirySample.CrackFacadeFrontType, actualInquirySample.CrackFacadeFrontType);
-            Assert.Equal(newInquirySample.CrackFacadeFrontSize, actualInquirySample.CrackFacadeFrontSize);
-            Assert.Equal(newInquirySample.CrackFacadeBackRestored, actualInquirySample.CrackFacadeBackRestored);
-            Assert.Equal(newInquirySample.CrackFacadeBackType, actualInquirySample.CrackFacadeBackType);
-            Assert.Equal(newInquirySample.CrackFacadeBackSize, actualInquirySample.CrackFacadeBackSize);
-            Assert.Equal(newInquirySample.CrackFacadeLeftRestored, actualInquirySample.CrackFacadeLeftRestored);
-            Assert.Equal(newInquirySample.CrackFacadeLeftType, actualInquirySample.CrackFacadeLeftType);
-            Assert.Equal(newInquirySample.CrackFacadeLeftSize, actualInquirySample.CrackFacadeLeftSize);
-            Assert.Equal(newInquirySample.CrackFacadeRightRestored, actualInquirySample.CrackFacadeRightRestored);
-            Assert.Equal(newInquirySample.CrackFacadeRightType, actualInquirySample.CrackFacadeRightType);
-            Assert.Equal(newInquirySample.CrackFacadeRightSize, actualInquirySample.CrackFacadeRightSize);
-            Assert.Equal(newInquirySample.DeformedFacade, actualInquirySample.DeformedFacade);
-            Assert.Equal(newInquirySample.ThresholdUpdownSkewed, actualInquirySample.ThresholdUpdownSkewed);
-            Assert.Equal(newInquirySample.ThresholdFrontLevel, actualInquirySample.ThresholdFrontLevel);
-            Assert.Equal(newInquirySample.ThresholdBackLevel, actualInquirySample.ThresholdBackLevel);
-            Assert.Equal(newInquirySample.SkewedParallel, actualInquirySample.SkewedParallel);
-            Assert.Equal(newInquirySample.SkewedPerpendicular, actualInquirySample.SkewedPerpendicular);
-            Assert.Equal(newInquirySample.SkewedFacade, actualInquirySample.SkewedFacade);
-            Assert.Equal(newInquirySample.SettlementSpeed, actualInquirySample.SettlementSpeed);
+            Assert.Equal(newSample.Address, actualInquirySample.Address);
+            Assert.Equal(newSample.Note, actualInquirySample.Note);
+            Assert.Equal(newSample.BuiltYear, actualInquirySample.BuiltYear);
+            Assert.Equal(newSample.Substructure, actualInquirySample.Substructure);
+            Assert.Equal(newSample.Cpt, actualInquirySample.Cpt);
+            Assert.Equal(newSample.MonitoringWell, actualInquirySample.MonitoringWell);
+            Assert.Equal(newSample.GroundwaterLevelTemp, actualInquirySample.GroundwaterLevelTemp);
+            Assert.Equal(newSample.GroundLevel, actualInquirySample.GroundLevel);
+            Assert.Equal(newSample.GroundwaterLevelNet, actualInquirySample.GroundwaterLevelNet);
+            Assert.Equal(newSample.Type, actualInquirySample.Type);
+            Assert.Equal(newSample.EnforcementTerm, actualInquirySample.EnforcementTerm);
+            Assert.Equal(newSample.RecoveryAdvised, actualInquirySample.RecoveryAdvised);
+            Assert.Equal(newSample.DamageCause, actualInquirySample.DamageCause);
+            Assert.Equal(newSample.DamageCharacteristics, actualInquirySample.DamageCharacteristics);
+            Assert.Equal(newSample.ConstructionPile, actualInquirySample.ConstructionPile);
+            Assert.Equal(newSample.WoodType, actualInquirySample.WoodType);
+            Assert.Equal(newSample.WoodEncroachement, actualInquirySample.WoodEncroachement);
+            Assert.Equal(newSample.ConstructionLevel, actualInquirySample.ConstructionLevel);
+            Assert.Equal(newSample.WoodLevel, actualInquirySample.WoodLevel);
+            Assert.Equal(newSample.PileDiameterTop, actualInquirySample.PileDiameterTop);
+            Assert.Equal(newSample.PileDiameterBottom, actualInquirySample.PileDiameterBottom);
+            Assert.Equal(newSample.PileHeadLevel, actualInquirySample.PileHeadLevel);
+            Assert.Equal(newSample.PileTipLevel, actualInquirySample.PileTipLevel);
+            Assert.Equal(newSample.FoundationDepth, actualInquirySample.FoundationDepth);
+            Assert.Equal(newSample.MasonLevel, actualInquirySample.MasonLevel);
+            Assert.Equal(newSample.ConcreteChargerLength, actualInquirySample.ConcreteChargerLength);
+            Assert.Equal(newSample.PileDistanceLength, actualInquirySample.PileDistanceLength);
+            Assert.Equal(newSample.WoodPenetrationDepth, actualInquirySample.WoodPenetrationDepth);
+            Assert.Equal(newSample.OverallQuality, actualInquirySample.OverallQuality);
+            Assert.Equal(newSample.WoodQuality, actualInquirySample.WoodQuality);
+            Assert.Equal(newSample.ConstructionQuality, actualInquirySample.ConstructionQuality);
+            Assert.Equal(newSample.WoodCapacityHorizontalQuality, actualInquirySample.WoodCapacityHorizontalQuality);
+            Assert.Equal(newSample.PileWoodCapacityVerticalQuality, actualInquirySample.PileWoodCapacityVerticalQuality);
+            Assert.Equal(newSample.CarryingCapacityQuality, actualInquirySample.CarryingCapacityQuality);
+            Assert.Equal(newSample.MasonQuality, actualInquirySample.MasonQuality);
+            Assert.Equal(newSample.WoodQualityNecessity, actualInquirySample.WoodQualityNecessity);
+            Assert.Equal(newSample.CrackIndoorRestored, actualInquirySample.CrackIndoorRestored);
+            Assert.Equal(newSample.CrackIndoorType, actualInquirySample.CrackIndoorType);
+            Assert.Equal(newSample.CrackIndoorSize, actualInquirySample.CrackIndoorSize);
+            Assert.Equal(newSample.CrackFacadeFrontRestored, actualInquirySample.CrackFacadeFrontRestored);
+            Assert.Equal(newSample.CrackFacadeFrontType, actualInquirySample.CrackFacadeFrontType);
+            Assert.Equal(newSample.CrackFacadeFrontSize, actualInquirySample.CrackFacadeFrontSize);
+            Assert.Equal(newSample.CrackFacadeBackRestored, actualInquirySample.CrackFacadeBackRestored);
+            Assert.Equal(newSample.CrackFacadeBackType, actualInquirySample.CrackFacadeBackType);
+            Assert.Equal(newSample.CrackFacadeBackSize, actualInquirySample.CrackFacadeBackSize);
+            Assert.Equal(newSample.CrackFacadeLeftRestored, actualInquirySample.CrackFacadeLeftRestored);
+            Assert.Equal(newSample.CrackFacadeLeftType, actualInquirySample.CrackFacadeLeftType);
+            Assert.Equal(newSample.CrackFacadeLeftSize, actualInquirySample.CrackFacadeLeftSize);
+            Assert.Equal(newSample.CrackFacadeRightRestored, actualInquirySample.CrackFacadeRightRestored);
+            Assert.Equal(newSample.CrackFacadeRightType, actualInquirySample.CrackFacadeRightType);
+            Assert.Equal(newSample.CrackFacadeRightSize, actualInquirySample.CrackFacadeRightSize);
+            Assert.Equal(newSample.DeformedFacade, actualInquirySample.DeformedFacade);
+            Assert.Equal(newSample.ThresholdUpdownSkewed, actualInquirySample.ThresholdUpdownSkewed);
+            Assert.Equal(newSample.ThresholdFrontLevel, actualInquirySample.ThresholdFrontLevel);
+            Assert.Equal(newSample.ThresholdBackLevel, actualInquirySample.ThresholdBackLevel);
+            Assert.Equal(newSample.SkewedParallel, actualInquirySample.SkewedParallel);
+            Assert.Equal(newSample.SkewedPerpendicular, actualInquirySample.SkewedPerpendicular);
+            Assert.Equal(newSample.SkewedFacade, actualInquirySample.SkewedFacade);
+            Assert.Equal(newSample.SettlementSpeed, actualInquirySample.SettlementSpeed);
         }
 
         [Theory]

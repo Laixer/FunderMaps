@@ -109,7 +109,7 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.Id, f => f.Random.Uuid());
             RuleFor(f => f.GivenName, f => f.Person.FirstName.OrNull(f, .1f));
             RuleFor(f => f.LastName, f => f.Person.LastName.OrNull(f, .1f));
-            RuleFor(f => f.LastName, f => f.Person.Email);
+            RuleFor(f => f.Email, f => f.Person.Email);
             RuleFor(f => f.Avatar, f => f.Person.Avatar.OrNull(f, .8f));
             RuleFor(f => f.JobTitle, f => f.Random.ArrayElement(jobs.ToArray()));
             RuleFor(f => f.PhoneNumber, f => f.Phone.PhoneNumber("###########").OrNull(f, .3f));
