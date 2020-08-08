@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Cloud.Storage
+namespace FunderMaps.Infrastructure.Storage
 {
     // FUTURE: Use Azure SDK Storage v12
 

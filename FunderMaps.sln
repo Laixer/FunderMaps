@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.WebApi", "src\Fu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core", "src\FunderMaps.Core\FunderMaps.Core.csproj", "{7ABF7617-9900-42AA-A9F0-2994EA9125EA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Cloud", "src\FunderMaps.Cloud\FunderMaps.Cloud.csproj", "{FE4947DD-2A36-4FD6-BC31-674797585837}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Infrastructure", "src\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj", "{FE4947DD-2A36-4FD6-BC31-674797585837}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Laixer.TdmClient", "contrib\Laixer.TdmClient\Laixer.TdmClient.csproj", "{3F601EB6-0B9E-41D7-818C-D4FA753453A8}"
 EndProject
