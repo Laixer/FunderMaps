@@ -3,6 +3,7 @@ using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     Organization setup converts an already existing organization
     ///     proposal into a full organization.
     /// </remarks>
+    [AllowAnonymous]
     [ApiController]
     public class OrganizationSetupController : BaseApiController
     {

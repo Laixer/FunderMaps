@@ -4,6 +4,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     This controller offers operations to all forms of organization
     ///     administration.
     /// </remarks>
+    [Authorize]
     [ApiController, Route("api/organization")]
     public class OrganizationAdminController : BaseApiController
     {

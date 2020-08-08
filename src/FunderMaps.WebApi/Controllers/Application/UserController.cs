@@ -4,6 +4,7 @@ using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     This controller should *only* handle user operations on the current
     ///     user session. Therefore the user context must be active.
     /// </remarks>
+    [Authorize]
     [ApiController, Route("api/user")]
     public class UserController : BaseApiController
     {
