@@ -17,26 +17,32 @@ namespace FunderMaps.IntegrationTests
             ClientOptions.HandleCookies = false;
         }
 
-        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        protected virtual void ConfigureServices(IServiceCollection services)
         {
-            builder.ConfigureServices(services =>
-            {
-                //services.Remove(services.SingleOrDefault(d => d.ServiceType.Name == "DbProvider"));
-            });
-
-            builder.ConfigureTestServices(services =>
-            {
-                services.AddSingleton(typeof(EntityDataStore<>));
-                services.AddScoped<IAddressRepository, TestAddressRepository>();
-                services.AddScoped<IContactRepository, TestContactRepository>();
-                services.AddScoped<IIncidentRepository, TestIncidentRepository>();
-                services.AddScoped<IInquiryRepository, TestInquiryRepository>();
-                services.AddScoped<IInquirySampleRepository, TestInquirySampleRepository>();
-                services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
-                services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
-            });
+            //services.Remove(services.SingleOrDefault(d => d.ServiceType.Name == "DbProvider"));
         }
 
+        protected virtual void ConfigureTestServices(IServiceCollection services)
+        {
+            services.AddSingleton(typeof(EntityDataStore<>));
+            services.AddScoped<IAddressRepository, TestAddressRepository>();
+            services.AddScoped<IContactRepository, TestContactRepository>();
+            services.AddScoped<IIncidentRepository, TestIncidentRepository>();
+            services.AddScoped<IInquiryRepository, TestInquiryRepository>();
+            services.AddScoped<IInquirySampleRepository, TestInquirySampleRepository>();
+            services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
+            services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
+            services.AddScoped<IUserRepository, TestUserRepository>();
+            //services.AddScoped<IOrganizationRepository, TestUserRepository>();
+        }
+
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            builder.ConfigureServices(ConfigureServices);
+            builder.ConfigureTestServices(ConfigureTestServices);
+        }
+
+        // TODO Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(TEntity entity)
             where TEntity : BaseEntity
         {
@@ -46,6 +52,7 @@ namespace FunderMaps.IntegrationTests
             return this;
         }
 
+        // TODO Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IList<TEntity> list)
             where TEntity : BaseEntity
         {

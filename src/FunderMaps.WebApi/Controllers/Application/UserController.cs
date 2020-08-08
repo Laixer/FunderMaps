@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Controllers;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -20,17 +21,17 @@ namespace FunderMaps.WebApi.Controllers.Application
     [ApiController, Route("api/user")]
     public class UserController : BaseApiController
     {
-        private static readonly Guid testUserId = Guid.Parse("407988e2-e80c-4edd-85ab-2469c8beb15d"); // TODO: Get from context
-
         private readonly IMapper _mapper;
+        private readonly AuthManager _authManager;
         private readonly UserManager _userManager;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public UserController(IMapper mapper, UserManager userManager)
+        public UserController(IMapper mapper, AuthManager authManager, UserManager userManager)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
@@ -38,10 +39,10 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync()
         {
             // Act.
-            User user = await _userManager.GetAsync(testUserId).ConfigureAwait(false);
+            User sessionUser = await _authManager.GetUserAsync(User);
 
             // Map.
-            var output = _mapper.Map<UserDto>(user);
+            var output = _mapper.Map<UserDto>(sessionUser);
 
             // Return.
             return Ok(output);
@@ -52,7 +53,8 @@ namespace FunderMaps.WebApi.Controllers.Application
         {
             // Map.
             var user = _mapper.Map<User>(input);
-            user.Id = testUserId;
+            User sessionUser = await _authManager.GetUserAsync(User);
+            user.Id = sessionUser.Id;
 
             // Act.
             await _userManager.UpdateAsync(user).ConfigureAwait(false);
@@ -65,10 +67,10 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
             // Act.
-            User user = await _userManager.GetAsync(testUserId).ConfigureAwait(false);
+            User sessionUser = await _authManager.GetUserAsync(User);
 
             // Act.
-            await _userManager.ChangePasswordAsync(user, input.OldPassword, input.NewPassword).ConfigureAwait(false);
+            await _userManager.ChangePasswordAsync(sessionUser, input.OldPassword, input.NewPassword).ConfigureAwait(false);
 
             // Return.
             return NoContent();

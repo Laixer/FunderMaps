@@ -14,6 +14,9 @@ namespace FunderMaps.IntegrationTests
             return entity;
         }
 
+        /// <summary>
+        ///     Clear all entities from data store.
+        /// </summary>
         public void Clear() => Entities.Clear();
 
         public ulong Count() => (ulong)Entities.Count;
