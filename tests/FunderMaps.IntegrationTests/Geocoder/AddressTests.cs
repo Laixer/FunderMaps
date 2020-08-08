@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.IntegrationTests.Faker;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -8,11 +9,11 @@ using Xunit;
 namespace FunderMaps.IntegrationTests.Geocoder
 {
     // TODO: Use DTO
-    public class AddressTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class AddressTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public AddressTests(CustomWebApplicationFactory<Startup> factory)
+        public AddressTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -21,22 +22,14 @@ namespace FunderMaps.IntegrationTests.Geocoder
         public async Task GetAddressByIdReturnSingleAddress()
         {
             // Arrange
-            var expectedAddress = new Address
-            {
-                Id = "gfm-000000e718f94fd8a8d502885d0d50ce",
-                BuildingNumber = "117",
-                PostalCode = "3245TM",
-                Street = "Reiger",
-                IsActive = true,
-                ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0559200000005982",
-                ExternalSource = "bag",
-            };
+            var expectedAddress = new AddressFaker().Generate();
             var client = _factory
+                .WithAuthOptions(new UserFaker().Generate())
                 .WithDataStoreList(expectedAddress)
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync("api/address/gfm-000000e718f94fd8a8d502885d0d50ce").ConfigureAwait(false);
+            var response = await client.GetAsync($"api/address/{expectedAddress.Id}").ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var actualAddress = await response.Content.ReadFromJsonAsync<Address>().ConfigureAwait(false);
@@ -155,6 +148,7 @@ namespace FunderMaps.IntegrationTests.Geocoder
         {
             // Arrange
             var client = _factory
+                .WithAuthOptions(new UserFaker().Generate())
                 .WithDataStoreList(Addresses)
                 .CreateClient();
 
@@ -174,6 +168,7 @@ namespace FunderMaps.IntegrationTests.Geocoder
         {
             // Arrange
             var client = _factory
+                .WithAuthOptions(new UserFaker().Generate())
                 .WithDataStoreList(Addresses)
                 .CreateClient();
 
