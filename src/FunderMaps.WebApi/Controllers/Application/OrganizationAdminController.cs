@@ -37,22 +37,6 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         #region Organization
-        // TODO: Move to another controller
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] OrganizationProposalDto input)
-        {
-            // Map.
-            var organization = _mapper.Map<OrganizationProposal>(input);
-
-            // Act.
-            organization = await _organizationManager.CreateProposalAsync(organization);
-
-            // Map.
-            var output = _mapper.Map<OrganizationProposalDto>(organization);
-
-            // Return.
-            return Ok(output);
-        }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetAsync(Guid id)
