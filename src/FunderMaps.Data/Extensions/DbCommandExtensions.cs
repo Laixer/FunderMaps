@@ -65,7 +65,7 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToInt32(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToInt32(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToUInt32(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToUInt32(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToInt64(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToInt64(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace FunderMaps.Data.Extensions
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToUInt64(await command.ExecuteScalarEnsureRowAsync().ConfigureAwait(false), CultureInfo.InvariantCulture);
+            return Convert.ToUInt64(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Scalar result.</returns>
         public static async ValueTask<object> ExecuteScalarEnsureRowAsync(this DbCommand command)
         {
-            var result = await command.ExecuteScalarAsync().ConfigureAwait(false);
+            var result = await command.ExecuteScalarAsync();
             if (result == null)
             {
                 throw new EntityNotFoundException();
@@ -135,7 +135,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns><see cref="DbDataReader"/>.</returns>
         public static async ValueTask<DbDataReader> ExecuteReaderAsyncEnsureRowAsync(this DbCommand command)
         {
-            DbDataReader reader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+            DbDataReader reader = await command.ExecuteReaderAsync();
             if (!reader.HasRows)
             {
                 throw new EntityNotFoundException();
@@ -149,7 +149,7 @@ namespace FunderMaps.Data.Extensions
         /// <param name="command">The command to extend.</param>
         public static async ValueTask ExecuteNonQueryEnsureAffectedAsync(this DbCommand command)
         {
-            int affected = await command.ExecuteNonQueryAsync().ConfigureAwait(false);
+            int affected = await command.ExecuteNonQueryAsync();
             if (affected <= 0)
             {
                 throw new EntityNotFoundException();

@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using FunderMaps.Controllers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Application
 {
-    public class ContractorController
+    [Authorize]
+    [ApiController, Route("api/contractor")]
+    public class ContractorController : BaseApiController
     {
     }
 }
