@@ -31,11 +31,10 @@ namespace FunderMaps.IntegrationTests.Application
         {
             // Act
             var response = await _client.GetAsync("api/user");
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualUser = await response.Content.ReadFromJsonAsync<UserDto>();
 
             // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var actualUser = await response.Content.ReadFromJsonAsync<UserDto>();
             Assert.Equal(sessionUser.Id, actualUser.Id);
             Assert.Equal(sessionUser.GivenName, actualUser.GivenName);
             Assert.Equal(sessionUser.LastName, actualUser.LastName);
@@ -55,7 +54,6 @@ namespace FunderMaps.IntegrationTests.Application
             var response = await _client.PutAsJsonAsync("api/user", newUser);
 
             // Assert
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
     }

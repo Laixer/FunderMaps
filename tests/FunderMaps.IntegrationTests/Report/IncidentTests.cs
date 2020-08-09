@@ -48,31 +48,30 @@ namespace FunderMaps.IntegrationTests.Report
             var contactDataStore = _factory.Services.GetService<EntityDataStore<Contact>>();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/incident", incident).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+            var response = await client.PostAsJsonAsync("api/incident", incident);
+            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(incidentDataStore.IsSet);
             Assert.True(contactDataStore.IsSet);
-            var actualIncident = await response.Content.ReadFromJsonAsync<IncidentDto>().ConfigureAwait(false);
-
-            // Assert
-            Assert.StartsWith("FIR", actualIncident.Id, StringComparison.InvariantCulture);
-            Assert.Equal(AuditStatus.Todo, actualIncident.AuditStatus);
-            Assert.Equal(incident.Name, actualIncident.Name);
-            Assert.Equal(incident.Email, actualIncident.Email);
-            Assert.Equal(incident.PhoneNumber, actualIncident.PhoneNumber);
-            Assert.Equal(incident.FoundationType, actualIncident.FoundationType);
-            Assert.Equal(incident.Address, actualIncident.Address);
-            Assert.Equal(incident.FoundationDamageCharacteristics, actualIncident.FoundationDamageCharacteristics);
-            Assert.Equal(incident.EnvironmentDamageCharacteristics, actualIncident.EnvironmentDamageCharacteristics);
-            Assert.Equal(incident.Owner, actualIncident.Owner);
-            Assert.Equal(incident.FoundationRecovery, actualIncident.FoundationRecovery);
-            Assert.Equal(incident.NeightborRecovery, actualIncident.NeightborRecovery);
-            Assert.Equal(incident.ChainedBuilding, actualIncident.ChainedBuilding);
-            Assert.Equal(incident.FoundationDamageCause, actualIncident.FoundationDamageCause);
-            Assert.Equal(incident.DocumentFile, actualIncident.DocumentFile);
-            Assert.Equal(incident.Note, actualIncident.Note);
-            Assert.Equal(incident.InternalNote, actualIncident.InternalNote);
+            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            Assert.Equal(incident.Name, returnObject.Name);
+            Assert.Equal(incident.Email, returnObject.Email);
+            Assert.Equal(incident.PhoneNumber, returnObject.PhoneNumber);
+            Assert.Equal(incident.FoundationType, returnObject.FoundationType);
+            Assert.Equal(incident.Address, returnObject.Address);
+            Assert.Equal(incident.FoundationDamageCharacteristics, returnObject.FoundationDamageCharacteristics);
+            Assert.Equal(incident.EnvironmentDamageCharacteristics, returnObject.EnvironmentDamageCharacteristics);
+            Assert.Equal(incident.Owner, returnObject.Owner);
+            Assert.Equal(incident.FoundationRecovery, returnObject.FoundationRecovery);
+            Assert.Equal(incident.NeightborRecovery, returnObject.NeightborRecovery);
+            Assert.Equal(incident.ChainedBuilding, returnObject.ChainedBuilding);
+            Assert.Equal(incident.FoundationDamageCause, returnObject.FoundationDamageCause);
+            Assert.Equal(incident.DocumentFile, returnObject.DocumentFile);
+            Assert.Equal(incident.Note, returnObject.Note);
+            Assert.Equal(incident.InternalNote, returnObject.InternalNote);
         }
 
         [Theory]
@@ -85,27 +84,26 @@ namespace FunderMaps.IntegrationTests.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/incident/{incident.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualIncident = await response.Content.ReadFromJsonAsync<IncidentDto>().ConfigureAwait(false);
+            var response = await client.GetAsync($"api/incident/{incident.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
             // Assert
-            Assert.StartsWith("FIR", actualIncident.Id, StringComparison.InvariantCulture);
-            Assert.Equal(incident.Id, actualIncident.Id);
-            Assert.Equal(incident.AuditStatus, actualIncident.AuditStatus);
-            Assert.Equal(incident.FoundationType, actualIncident.FoundationType);
-            Assert.Equal(incident.Address, actualIncident.Address);
-            Assert.Equal(incident.FoundationDamageCharacteristics, actualIncident.FoundationDamageCharacteristics);
-            Assert.Equal(incident.EnvironmentDamageCharacteristics, actualIncident.EnvironmentDamageCharacteristics);
-            Assert.Equal(incident.Owner, actualIncident.Owner);
-            Assert.Equal(incident.FoundationRecovery, actualIncident.FoundationRecovery);
-            Assert.Equal(incident.NeightborRecovery, actualIncident.NeightborRecovery);
-            Assert.Equal(incident.ChainedBuilding, actualIncident.ChainedBuilding);
-            Assert.Equal(incident.FoundationDamageCause, actualIncident.FoundationDamageCause);
-            Assert.Equal(incident.DocumentFile, actualIncident.DocumentFile);
-            Assert.Equal(incident.Note, actualIncident.Note);
-            Assert.Equal(incident.InternalNote, actualIncident.InternalNote);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+            Assert.Equal(incident.Id, returnObject.Id);
+            Assert.Equal(incident.AuditStatus, returnObject.AuditStatus);
+            Assert.Equal(incident.FoundationType, returnObject.FoundationType);
+            Assert.Equal(incident.Address, returnObject.Address);
+            Assert.Equal(incident.FoundationDamageCharacteristics, returnObject.FoundationDamageCharacteristics);
+            Assert.Equal(incident.EnvironmentDamageCharacteristics, returnObject.EnvironmentDamageCharacteristics);
+            Assert.Equal(incident.Owner, returnObject.Owner);
+            Assert.Equal(incident.FoundationRecovery, returnObject.FoundationRecovery);
+            Assert.Equal(incident.NeightborRecovery, returnObject.NeightborRecovery);
+            Assert.Equal(incident.ChainedBuilding, returnObject.ChainedBuilding);
+            Assert.Equal(incident.FoundationDamageCause, returnObject.FoundationDamageCause);
+            Assert.Equal(incident.DocumentFile, returnObject.DocumentFile);
+            Assert.Equal(incident.Note, returnObject.Note);
+            Assert.Equal(incident.InternalNote, returnObject.InternalNote);
         }
 
         [Fact]
@@ -117,14 +115,12 @@ namespace FunderMaps.IntegrationTests.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/incident").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var incidentList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>().ConfigureAwait(false);
-            Assert.NotNull(incidentList);
+            var response = await client.GetAsync($"api/incident");
+            var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
 
             // Assert
-            Assert.True(incidentList.Count > 0);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(returnList.Count > 0);
         }
 
         [Fact]
@@ -136,14 +132,12 @@ namespace FunderMaps.IntegrationTests.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/incident?limit=100").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var incidentList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>().ConfigureAwait(false);
-            Assert.NotNull(incidentList);
+            var response = await client.GetAsync($"api/incident?limit=100");
+            var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
 
             // Assert
-            Assert.Equal(100, incidentList.Count);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(100, returnList.Count);
         }
 
         [Theory]
@@ -158,12 +152,11 @@ namespace FunderMaps.IntegrationTests.Report
             var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(1, incidentDataStore.Entities.Count);
+            var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(1, incidentDataStore.Entities.Count);
             var actualIncident = incidentDataStore.Entities[0];
             Assert.Equal(incident.Id, actualIncident.Id);
             Assert.Equal(incident.AuditStatus, actualIncident.AuditStatus);
@@ -191,11 +184,10 @@ namespace FunderMaps.IntegrationTests.Report
             var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
 
             // Act
-            var response = await client.DeleteAsync($"api/incident/{incident.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            var response = await client.DeleteAsync($"api/incident/{incident.Id}");
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.False(incidentDataStore.IsSet);
         }
     }

@@ -23,10 +23,9 @@ namespace FunderMaps.IntegrationTests.Application
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync(uri).ConfigureAwait(false);
+            var response = await client.GetAsync(uri);
 
             // Assert
-            Assert.False(response.IsSuccessStatusCode);
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
@@ -38,7 +37,7 @@ namespace FunderMaps.IntegrationTests.Application
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.PostAsync(uri, null).ConfigureAwait(false);
+            var response = await client.PostAsync(uri, null);
 
             // Assert
             Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);

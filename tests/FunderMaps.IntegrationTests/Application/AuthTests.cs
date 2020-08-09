@@ -43,13 +43,12 @@ namespace FunderMaps.IntegrationTests.Application
 
             // Act
             var response = await _client.PostAsJsonAsync("api/auth/signin", signIn);
+            var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
             // Assert
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var securityToken = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>().ConfigureAwait(false);
-            Assert.NotNull(securityToken.Token);
-            Assert.True(securityToken.TokenValidity > 0);
+            Assert.NotNull(returnObject.Token);
+            Assert.True(returnObject.TokenValidity > 0);
         }
     }
 }

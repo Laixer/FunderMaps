@@ -21,10 +21,9 @@ namespace FunderMaps.IntegrationTests.Application
             var client = _factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync("api/version").ConfigureAwait(false);
+            var response = await client.GetAsync("api/version");
 
             // Assert
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Contains("json", response.Content.Headers.ContentType.ToString(), StringComparison.InvariantCultureIgnoreCase);
             Assert.Contains("utf-8", response.Content.Headers.ContentType.ToString(), StringComparison.InvariantCultureIgnoreCase);
