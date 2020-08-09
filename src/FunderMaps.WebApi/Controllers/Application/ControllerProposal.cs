@@ -67,11 +67,11 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(result);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             // Act.
-            await _organizationManager.DeleteAsync(id).ConfigureAwait(false);
+            await _organizationManager.DeleteProposalAsync(id);
 
             // Return.
             return NoContent();

@@ -50,12 +50,11 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.PostAsJsonAsync("api/inquiry", inquiry).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(inquiryDataStore.IsSet);
             var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
-
-            // Assert
             Assert.Equal(inquiry.DocumentName, actualInquiry.DocumentName);
             Assert.Equal(inquiry.Inspection, actualInquiry.Inspection);
             Assert.Equal(inquiry.JointMeasurement, actualInquiry.JointMeasurement);
@@ -81,11 +80,10 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.GetAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
 
             // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
             Assert.Equal(inquiry.Id, actualInquiry.Id);
             Assert.Equal(inquiry.DocumentName, actualInquiry.DocumentName);
             Assert.Equal(inquiry.Inspection, actualInquiry.Inspection);
@@ -111,12 +109,11 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.GetAsync($"api/inquiry").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var inquiryList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
             Assert.NotNull(inquiryList);
-
-            // Assert
             Assert.True(inquiryList.Count > 0);
         }
 
@@ -130,12 +127,11 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.GetAsync($"api/inquiry?limit=100").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
+
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var inquiryList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
             Assert.NotNull(inquiryList);
-
-            // Assert
             Assert.Equal(100, inquiryList.Count);
         }
 
@@ -152,11 +148,10 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(1, inquiryDataStore.Entities.Count);
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(1, inquiryDataStore.Entities.Count);
             var actualInquiry = inquiryDataStore.Entities[0];
             Assert.Equal(inquiry.Id, actualInquiry.Id);
             Assert.Equal(newInquiry.DocumentName, actualInquiry.DocumentName);
@@ -188,10 +183,9 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.PutAsync($"api/inquiry/{inquiry.Id}/{url}", null).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(status, inquiryDataStore.Entities[0].AuditStatus);
         }
 
@@ -207,10 +201,9 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.False(inquiryDataStore.IsSet);
         }
     }

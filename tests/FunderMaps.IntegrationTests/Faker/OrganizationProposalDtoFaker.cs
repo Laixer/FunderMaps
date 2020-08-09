@@ -1,11 +1,11 @@
 ﻿using Bogus;
-using FunderMaps.Core.Entities;
+using FunderMaps.WebApi.DataTransferObjects;
 
 namespace FunderMaps.IntegrationTests.Faker
 {
-    public class OrganizationProposalFaker : Faker<OrganizationProposal>
+    public class OrganizationProposalDtoFaker : Faker<OrganizationProposalDto>
     {
-        public OrganizationProposalFaker()
+        public OrganizationProposalDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Uuid());
             RuleFor(f => f.Name, f => f.Company.CompanyName());

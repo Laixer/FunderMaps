@@ -33,6 +33,7 @@ namespace FunderMaps.IntegrationTests
             services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
             services.AddScoped<IUserRepository, TestUserRepository>();
+            services.AddScoped<IOrganizationProposalRepository, TestOrganizationProposalRepository>();
             //services.AddScoped<IOrganizationRepository, TestUserRepository>();
         }
 
