@@ -55,6 +55,7 @@ namespace FunderMaps.Webservice
 
             // Configure services.
             services.AddTransient<IProductService, DebugProductService>();
+            services.AddTransient<IProductRequestService, ProductRequestService>();
             services.AddTransient<IProductResultService, ProductResultService>();
             services.AddTransient<IMappingService, MappingService>();
 
