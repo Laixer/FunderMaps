@@ -1,16 +1,13 @@
-﻿using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Extensions;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.ResponseModels;
-using System;
-using System.Threading.Tasks;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Webservice.Utility;
-using FunderMaps.Core.Types;
-using FunderMaps.Webservice.Translation;
-using AutoMapper;
-using FunderMaps.Webservice.ResponseModels.Analysis;
+using System;
 using System.Collections.Generic;
-using FunderMaps.Webservice.Mapping;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Services
 {
@@ -31,25 +28,20 @@ namespace FunderMaps.Webservice.Services
             _mappingService = mappingService ?? throw new ArgumentNullException(nameof(mappingService));
         }
 
-        public async Task<ResponseWrapper> GetAnalysisByBagIdAsync(Guid userId, AnalysisProductType productType, string bagId, uint pageNumber = 1, uint pageCount = 25)
+        public async Task<ResponseWrapper> GetAnalysisByBagIdAsync(Guid userId, AnalysisProductType productType, string bagId, INavigation navigation)
         {
             userId.ThrowIfNullOrEmpty();
             bagId.ThrowIfNullOrEmpty();
-            if (pageNumber == 0) { throw new ArgumentOutOfRangeException(nameof(pageNumber)); }
-            if (pageCount == 0) { throw new ArgumentOutOfRangeException(nameof(pageCount)); }
+            navigation.Validate();
 
-            var result = await _productService.GetAnalysisByExternalIdAsync(userId, productType, bagId, ExternalDataSource.Bag, pageNumber, pageCount).ConfigureAwait(false);
+            var result = await _productService.GetAnalysisByExternalIdAsync(userId, productType, bagId, ExternalDataSource.Bag, navigation).ConfigureAwait(false);
             return _mappingService.MapToAnalysisWrapper(productType, new List<AnalysisProduct> { result });
         }
 
-        public Task<ResponseWrapper> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
-
-        public Task<ResponseWrapper> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
-
-        public Task<ResponseWrapper> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
-
-        public Task<ResponseWrapper> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string areaCode, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
-
-        public Task<ResponseWrapper> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string areaCode, INavigation navigation) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation) => throw new NotImplementedException();
     }
 }
