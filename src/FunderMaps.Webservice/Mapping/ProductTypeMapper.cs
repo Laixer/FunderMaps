@@ -34,7 +34,7 @@ namespace FunderMaps.Webservice.Mapping
                 "FOUNDATIONPLUS" => AnalysisProductType.FoundationPlus,
                 "COMPLETE" => AnalysisProductType.Complete,
                 "RISK" => AnalysisProductType.Risk,
-                _ => throw new ProductNotFoundException(nameof(name)),
+                _ => throw new ProductNotFoundException(name),
             };
         }
 
@@ -58,7 +58,7 @@ namespace FunderMaps.Webservice.Mapping
                 "DATACOLLECTED" => StatisticsProductType.DataCollected,
                 "FOUNDATIONRATIO" => StatisticsProductType.FoundationRatio,
                 "FOUNDATIONRISK" => StatisticsProductType.FoundationRisk,
-                _ => throw new ProductNotFoundException(nameof(name)),
+                _ => throw new ProductNotFoundException(name),
             };
         }
 

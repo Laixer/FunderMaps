@@ -3,7 +3,8 @@
 namespace FunderMaps.Webservice.ResponseModels
 {
     /// <summary>
-    /// Base class for analysis endpoint responses.
+    /// Base class for staistics endpoint responses.
+    /// TODO Is this correct?
     /// </summary>
     public abstract class StatisticsResponseModelBase : ResponseModelBase
     {
