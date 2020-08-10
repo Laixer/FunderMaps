@@ -50,8 +50,6 @@ namespace FunderMaps.Core.Authentication
             Logger = logger ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
-        // TODO: Add role
-
         /// <summary>
         ///     Create <see cref="ClaimsPrincipal"/> for specified <paramref name="user"/>.
         /// </summary>
