@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
+using System;
 
 namespace FunderMaps.Core.Types.Products
 {
@@ -41,9 +42,9 @@ namespace FunderMaps.Core.Types.Products
         public FoundationRisk? FoundationRisk { get; set; }
 
         /// <summary>
-        /// Represents the <see cref="Year"/> in which this building was built.
+        /// Represents the year in which this building was built.
         /// </summary>
-        public Year ConstructionYear { get; set; }
+        public DateTimeOffset ConstructionYear { get; set; }
 
         /// <summary>
         /// Represents the height of this building.

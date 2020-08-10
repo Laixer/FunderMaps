@@ -1,4 +1,4 @@
-﻿using FunderMaps.Webservice.ResponseModels.Types;
+﻿using System;
 
 namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
@@ -15,7 +15,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the <see cref="Year"/> in which this building was built.
         /// </summary>
-        public YearResponseModel ConstructionYear { get; set; }
+        public DateTimeOffset ConstructionYear { get; set; }
 
         /// <summary>
         /// Represents the height of this building.

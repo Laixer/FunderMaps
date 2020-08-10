@@ -40,7 +40,6 @@ namespace FunderMaps.Webservice.Mapping
             CreateMap<StatisticsProduct, StatisticsReportsResponseModel>();
 
             // All custom types we use
-            CreateMap<Year, YearResponseModel>();
             CreateMap<Years, YearsResponseModel>();
             CreateMap<ConstructionYearDistribution, ConstructionYearDistributionResponseModel>();
             CreateMap<ConstructionYearPair, ConstructionYearPairResponseModel>();

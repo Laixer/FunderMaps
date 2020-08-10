@@ -1,36 +1,48 @@
-﻿using System;
+﻿using FunderMaps.Core.Helpers;
+using System;
 
 namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Represents a collection of years.
+    ///     Represents a collection of years.
     /// </summary>
     public sealed class Years
     {
         /// <summary>
-        /// Empty constructor.
+        ///     Empty constructor.
         /// </summary>
         public Years() { }
 
         /// <summary>
-        /// Constructor based on two years.
+        ///     Constructor based on two years.
         /// </summary>
-        /// <param name="yearFrom"><see cref="Year"/></param>
-        /// <param name="yearTo"><see cref="Year"/></param>
-        public Years(Year yearFrom, Year yearTo)
+        /// <param name="yearFrom"><see cref="DateTimeOffset"/></param>
+        /// <param name="yearTo"><see cref="DateTimeOffset"/></param>
+        public Years(DateTimeOffset yearFrom, DateTimeOffset yearTo)
         {
-            YearFrom = yearFrom ?? throw new ArgumentNullException(nameof(yearFrom));
-            YearTo = yearTo ?? throw new ArgumentNullException(nameof(yearTo));
-            if (YearFrom.YearValue >= yearTo.YearValue) { throw new ArgumentOutOfRangeException(nameof(yearFrom)); }
+            if (yearFrom == null)
+            {
+                throw new ArgumentNullException(nameof(yearFrom));
+            }
+
+            if (yearTo == null)
+            {
+                throw new ArgumentNullException(nameof(yearTo));
+            }
+
+            if (yearFrom.Year >= yearTo.Year)
+            {
+                throw new ArgumentOutOfRangeException(nameof(yearFrom));
+            }
         }
 
         /// <summary>
-        /// Static constructor for easy decade creation.
+        ///     Static constructor for easy decade creation.
         /// </summary>
         /// <remarks>
-        /// The <paramref name="decadeStart"/> must be a multiple of 10. The 
-        /// returned <see cref="YearFrom"/> will be created based on this value,
-        /// the <see cref="YearTo"/> will be 9 years later.
+        ///     The <paramref name="decadeStart"/> must be a multiple of 10. The 
+        ///     returned <see cref="YearFrom"/> will be created based on this value,
+        ///     the <see cref="YearTo"/> will be 9 years later.
         /// </remarks>
         /// <param name="decadeStart">Starting year as integer</param>
         /// <returns><see cref="Years"/></returns>
@@ -39,19 +51,19 @@ namespace FunderMaps.Core.Types
             if (decadeStart % 10 != 0) { throw new ArgumentOutOfRangeException(nameof(decadeStart)); }
             return new Years
             {
-                YearFrom = new Year(decadeStart),
-                YearTo = new Year(decadeStart + 9)
+                YearFrom = DateTimeOffsetHelper.FromYear(decadeStart),
+                YearTo = DateTimeOffsetHelper.FromYear(decadeStart + 9),
             };
         }
 
         /// <summary>
-        /// The first year for this collection of years.
+        ///     The first year for this collection of years.
         /// </summary>
-        public Year YearFrom { get; set; }
+        public DateTimeOffset YearFrom { get; set; }
 
         /// <summary>
-        /// The last year in this collection of years.
+        ///     The last year in this collection of years.
         /// </summary>
-        public Year YearTo { get; set; }
+        public DateTimeOffset YearTo { get; set; }
     }
 }
