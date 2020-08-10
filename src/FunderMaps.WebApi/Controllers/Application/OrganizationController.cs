@@ -3,11 +3,9 @@ using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -38,13 +36,11 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
-        #region Organization
-
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
             // Act.
-            Organization organization = await _organizationManager.GetAsync(testOrgId).ConfigureAwait(false);
+            Organization organization = await _organizationManager.GetAsync(testOrgId);
 
             // Map.
             var output = _mapper.Map<OrganizationDto>(organization);
@@ -61,71 +57,11 @@ namespace FunderMaps.WebApi.Controllers.Application
             organization.Id = testOrgId;
 
             // Act.
-            await _organizationManager.UpdateAsync(organization).ConfigureAwait(false);
+            await _organizationManager.UpdateAsync(organization);
 
             // Return.
             return NoContent();
         }
-
-        #endregion Organization
-
-        // TODO: Move this out
-        #region Organization User
-
-        [HttpPost("user")]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserDto input)
-        {
-            // Map.
-            var user = _mapper.Map<User>(input);
-
-            // Act.
-            user = await _organizationManager.AddUserAsync(testOrgId, user).ConfigureAwait(false);
-
-            // Map.
-            var output = _mapper.Map<UserDto>(user);
-
-            // Return.
-            return Ok(output);
-        }
-
-        [HttpGet("user")]
-        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
-        {
-            // Assign.
-            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(testOrgId, pagination.Navigation);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<UserDto>, User>(userList).ConfigureAwait(false);
-
-            // Return.
-            return Ok(result);
-        }
-
-        [HttpPut("user/{id:guid}")]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto input)
-        {
-            // Map.
-            var user = _mapper.Map<User>(input);
-            user.Id = id;
-
-            // Act.
-            await _organizationManager.UpdateUserAsync(testOrgId, user).ConfigureAwait(false);
-
-            // Return.
-            return NoContent();
-        }
-
-        [HttpDelete("user/{id:guid}")]
-        public async Task<IActionResult> DeleteUserAsync(Guid id)
-        {
-            // Act.
-            await _organizationManager.DeleteUserAsync(testOrgId, id).ConfigureAwait(false);
-
-            // Return.
-            return NoContent();
-        }
-
-        #endregion Organization User
     }
 }
 #pragma warning restore CA1062 // Validate arguments of public methods
