@@ -14,7 +14,10 @@ namespace FunderMaps.Core.Extensions
         /// <param name="self"><see cref="Guid"/></param>
         public static void ThrowIfNullOrEmpty(this Guid self)
         {
-            if (self == null || self == Guid.Empty) { throw new ArgumentNullException(nameof(self)); }
+            if (self == null || self == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
         }
     }
 }

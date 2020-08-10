@@ -1,17 +1,17 @@
 ﻿using System.Linq;
 
-namespace FunderMaps.Webservice.Utility
+namespace FunderMaps.Core.Helpers
 {
     /// <summary>
-    /// Contains utility functions regarding collections of arguments.
+    /// Contains utility functions regarding collections of strings.
     /// </summary>
-    internal static class ArgumentUtility
+    public static class StringCollectionHelper
     {
         /// <summary>
         /// Returns the amount of items that are not null or emty in a list.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        internal static int NotNullCount(params string[] s) => s.Where(s => !string.IsNullOrEmpty(s)).Count();
+        public static int NotNullCount(params string[] s) => s.Where(s => !string.IsNullOrEmpty(s)).Count();
     }
 }
