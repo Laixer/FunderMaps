@@ -31,17 +31,11 @@ namespace FunderMaps.IntegrationTests.Application
         {
             // Act
             var response = await _client.GetAsync("api/user");
+            var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualUser = await response.Content.ReadFromJsonAsync<UserDto>();
-            Assert.Equal(sessionUser.Id, actualUser.Id);
-            Assert.Equal(sessionUser.GivenName, actualUser.GivenName);
-            Assert.Equal(sessionUser.LastName, actualUser.LastName);
-            Assert.Equal(sessionUser.Avatar, actualUser.Avatar);
-            Assert.Equal(sessionUser.JobTitle, actualUser.JobTitle);
-            Assert.Equal(sessionUser.PhoneNumber, actualUser.PhoneNumber);
-            Assert.Equal(sessionUser.Role, actualUser.Role);
+            Assert.Equal(sessionUser.Id, returnObject.Id);
         }
 
         [Fact]
