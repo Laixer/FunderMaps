@@ -7,6 +7,7 @@ using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.Utility;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Services
@@ -28,20 +29,26 @@ namespace FunderMaps.Webservice.Services
             _mappingService = mappingService ?? throw new ArgumentNullException(nameof(mappingService));
         }
 
-        public async Task<ResponseWrapper> GetAnalysisByBagIdAsync(Guid userId, AnalysisProductType productType, string bagId, INavigation navigation)
+        public async Task<ResponseWrapper> GetAnalysisByBagIdAsync(Guid userId, AnalysisProductType productType, string bagId, INavigation navigation, CancellationToken token)
         {
+            // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             bagId.ThrowIfNullOrEmpty();
             navigation.Validate();
+            if (token == null) { throw new ArgumentNullException(nameof(token)); }
 
+            // Check for cancellation.
+            token.ThrowIfCancellationRequested();
+
+            // Get result, map and return.
             var result = await _productService.GetAnalysisByExternalIdAsync(userId, productType, bagId, ExternalDataSource.Bag, navigation).ConfigureAwait(false);
             return _mappingService.MapToAnalysisWrapper(productType, new List<AnalysisProduct> { result });
         }
 
-        public Task<ResponseWrapper> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation) => throw new NotImplementedException();
-        public Task<ResponseWrapper> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation) => throw new NotImplementedException();
-        public Task<ResponseWrapper> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation) => throw new NotImplementedException();
-        public Task<ResponseWrapper> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string areaCode, INavigation navigation) => throw new NotImplementedException();
-        public Task<ResponseWrapper> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string areaCode, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<ResponseWrapper> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
     }
 }

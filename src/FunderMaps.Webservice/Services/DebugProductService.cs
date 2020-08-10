@@ -1,4 +1,6 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Helpers;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
@@ -14,13 +16,13 @@ namespace FunderMaps.Webservice.Services
     /// </summary>
     public sealed class DebugProductService : IProductService
     {
-        public Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalSource, uint pageNumber = 1, uint pageCount = 25)
+        public Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalSource, INavigation navigation)
             => Task.FromResult(GetAnalysisDummy());
 
-        public Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, uint pageNumber = 1, uint pageCount = 25)
+        public Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation)
             => Task.FromResult(GetAnalysisDummy());
 
-        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, uint pageNumber = 1, uint pageCount = 25)
+        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation)
         {
             await Task.CompletedTask.ConfigureAwait(false);
             return new List<AnalysisProduct>
@@ -31,7 +33,7 @@ namespace FunderMaps.Webservice.Services
             };
         }
 
-        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, uint pageNumber = 1, uint pageCount = 25)
+        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation)
         {
             await Task.CompletedTask.ConfigureAwait(false);
             return new List<AnalysisProduct>
@@ -42,8 +44,8 @@ namespace FunderMaps.Webservice.Services
             };
         }
 
-        public Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
-        public Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, uint pageNumber = 1, uint pageCount = 25) => throw new NotImplementedException();
+        public Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, INavigation navigation) => throw new NotImplementedException();
+        public Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation) => throw new NotImplementedException();
 
         /// <summary>
         /// Creates a new <see cref="AnalysisProduct"/> dummy where all fields
@@ -53,7 +55,7 @@ namespace FunderMaps.Webservice.Services
         private static AnalysisProduct GetAnalysisDummy() => new AnalysisProduct
         {
             BuildingHeight = 100,
-            ConstructionYear = new Year(1995),
+            ConstructionYear = DateTimeOffsetHelper.FromYear(1995),
             ConstructionYearDistribution = new ConstructionYearDistribution
             {
                 Decades = new List<ConstructionYearPair> {
