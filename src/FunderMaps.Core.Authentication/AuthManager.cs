@@ -66,22 +66,17 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            var identity = new ClaimsIdentity(authenticationType, ClaimTypes.Name, ClaimTypes.Role);
-            if (user.Id != Guid.Empty)
+            user.Validate();
+
+            var claims = new[]
             {
-                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-            }
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim(FunderMapsAuthenticationClaimTypes.Organization, "042c0b02-f387-4791-b87c-c13b16e963c8"),
+                new Claim(FunderMapsAuthenticationClaimTypes.OrganizationRole, "SuperUser"),
+            };
 
-            if (!string.IsNullOrEmpty(user.Email))
-            {
-                identity.AddClaim(new Claim(ClaimTypes.Name, user.Email));
-                identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-            }
-
-            identity.AddClaim(new Claim(ClaimTypes.Role, user.Role.ToString()));
-
-            //token.AddClaim(ClaimTypes.OrganizationUser, organizationUser.OrganizationId);
-            //token.AddClaim(ClaimTypes.OrganizationUserRole, organizationUser.Role);
+            var identity = new ClaimsIdentity(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
 
             if (additionalClaims != null)
             {
@@ -102,22 +97,33 @@ namespace FunderMaps.Core.Authentication
             }
 
             var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            if (claim != null)
+            if (claim == null)
             {
-                return await UserManager.GetAsync(Guid.Parse(claim.Value));
-            }
-            claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-            if (claim != null)
-            {
-                return await UserManager.GetByEmailAsync(claim.Value);
-            }
-            claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
-            if (claim != null)
-            {
-                return await UserManager.GetByEmailAsync(claim.Value);
+                throw new InvalidOperationException(); // TODO:
             }
 
-            throw new InvalidOperationException(); // TODO:
+            return await UserManager.GetAsync(Guid.Parse(claim.Value));
+        }
+
+        public async Task<Organization> GetOrganizationAsync(ClaimsPrincipal principal)
+        {
+            if (principal == null)
+            {
+                throw new ArgumentNullException(nameof(principal));
+            }
+
+            var claim = principal.Claims.FirstOrDefault(c => c.Type == FunderMapsAuthenticationClaimTypes.Organization);
+            if (claim == null)
+            {
+                throw new InvalidOperationException(); // TODO:
+            }
+
+            User user = await GetUserAsync(principal);
+            if (!await OrganizationManager.IsUserInOrganizationAsync(Guid.Parse(claim.Value), user))
+            {
+                throw new InvalidOperationException(); // TODO:
+            }
+            return await OrganizationManager.GetAsync(Guid.Parse(claim.Value));
         }
 
         /// <summary>

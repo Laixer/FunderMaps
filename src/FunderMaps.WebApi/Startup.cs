@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
 using FunderMaps.WebApi.Authentication;

@@ -45,13 +45,13 @@ namespace FunderMaps.Data.Repositories
                     @role);
             ";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("user_id", userId);
             cmd.AddParameterWithValue("organization_id", organizationId);
             cmd.AddParameterWithValue("role", role);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
         /// <summary>
@@ -66,18 +66,18 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   organization_id = @organization_id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("organization_id", organizationId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            while (await reader.ReadAsync().ConfigureAwait(false))
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            while (await reader.ReadAsync())
             {
                 yield return reader.GetGuid(0);
             }
         }
 
-        public async ValueTask IsUserInOrganization(Guid organizationId, Guid userId)
+        public async ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId)
         {
             if (organizationId == Guid.Empty)
             {
@@ -89,19 +89,24 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(userId));
             }
 
+            // TODO: database function
             var sql = @"
-                SELECT  1
-                FROM    application.organization_user
-                WHERE   user_id = @user_id
-                AND     organization_id = @organization_id
-                LIMIT   1";
+                SELECT EXISTS (
+                    SELECT  1
+                    FROM    application.organization_user
+                    WHERE   user_id = @user_id
+                    AND     organization_id = @organization_id
+                    LIMIT   1
+                )";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("user_id", userId);
             cmd.AddParameterWithValue("organization_id", organizationId);
 
-            await cmd.ExecuteScalarEnsureRowAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
+            return reader.GetBoolean(0);
         }
     }
 }

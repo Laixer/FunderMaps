@@ -12,6 +12,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Unique identifier.
         /// </summary>
+        [Required] // TODO: Check Id is not empty
         public Guid Id { get; set; }
 
         /// <summary>
