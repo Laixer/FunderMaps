@@ -71,6 +71,7 @@ namespace FunderMaps.Webservice.Services
         private ResponseWrapper GetAnalysisWrapper(AnalysisProductType productType, IEnumerable<AnalysisProduct> items)
             => productType switch
             {
+                // TODO Static lookup array for typeof
                 AnalysisProductType.BuildingData => new ResponseWrapper<AnalysisBuildingDataResponseModel>
                 {
                     Models = items.Select(x => _mapper.Map<AnalysisProduct, AnalysisBuildingDataResponseModel>(x))

@@ -10,7 +10,7 @@ namespace FunderMaps.Webservice.Services
 {
     /// <summary>
     /// Used for testing purposes.
-    /// TODO Remove.
+    /// TODO Make Faker.
     /// </summary>
     public sealed class DebugProductService : IProductService
     {

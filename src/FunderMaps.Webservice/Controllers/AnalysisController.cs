@@ -95,7 +95,7 @@ namespace FunderMaps.Webservice.Controllers
                 else
                 {
                     // If we reach this point, we can't process the request.
-                    return Problem($"Could not parse request");
+                    return Problem("Could not parse request");
                 }
 
                 return Ok(response);
