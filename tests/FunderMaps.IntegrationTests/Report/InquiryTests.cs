@@ -12,11 +12,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Report
 {
-    public class InquiryTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class InquiryTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public InquiryTests(CustomWebApplicationFactory<Startup> factory)
+        public InquiryTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -45,7 +45,10 @@ namespace FunderMaps.IntegrationTests.Report
         public async Task CreateInquiryReturnInquiry(InquiryDto inquiry)
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
@@ -75,6 +78,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .CreateClient();
 
@@ -104,6 +109,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(new InquiryFaker().Generate(10, 100))
                 .CreateClient();
 
@@ -122,6 +129,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(new InquiryFaker().Generate(100))
                 .CreateClient();
 
@@ -142,6 +151,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var newInquiry = new InquiryFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .CreateClient();
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
@@ -177,6 +188,8 @@ namespace FunderMaps.IntegrationTests.Report
                 .RuleFor(f => f.AuditStatus, f => initialStatus)
                 .Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .CreateClient();
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
@@ -195,6 +208,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .CreateClient();
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();

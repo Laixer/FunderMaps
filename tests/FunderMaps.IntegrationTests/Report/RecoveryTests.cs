@@ -11,11 +11,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Report
 {
-    public class RecoveryTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class RecoveryTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public RecoveryTests(CustomWebApplicationFactory<Startup> factory)
+        public RecoveryTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -41,18 +41,20 @@ namespace FunderMaps.IntegrationTests.Report
         public async Task CreateRecoveryReturnRecovery(RecoveryDto recovery)
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
             var recoveryDataStore = _factory.Services.GetService<EntityDataStore<Recovery>>();
 
             // Act
             var response = await client.PostAsJsonAsync("api/recovery", recovery).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(recoveryDataStore.IsSet);
             var actualRecovery = await response.Content.ReadFromJsonAsync<RecoveryDto>().ConfigureAwait(false);
 
             // Assert
             //Assert.Equal(AuditStatus.Todo, actualRecovery.AuditStatus);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(recoveryDataStore.IsSet);
             Assert.Equal(recovery.Note, actualRecovery.Note);
             Assert.Equal(recovery.Type, actualRecovery.Type);
             Assert.Equal(recovery.DocumentFile, actualRecovery.DocumentFile);
@@ -66,16 +68,17 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .CreateClient();
 
             // Act
             var response = await client.GetAsync($"api/recovery/{recovery.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var actualRecovery = await response.Content.ReadFromJsonAsync<RecoveryDto>().ConfigureAwait(false);
 
             // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(recovery.Note, actualRecovery.Note);
             Assert.Equal(recovery.Type, actualRecovery.Type);
             Assert.Equal(recovery.DocumentFile, actualRecovery.DocumentFile);
@@ -88,17 +91,17 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(new RecoveryFaker().Generate(10, 100))
                 .CreateClient();
 
             // Act
             var response = await client.GetAsync($"api/recovery").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var recoveryList = await response.Content.ReadFromJsonAsync<List<RecoveryDto>>().ConfigureAwait(false);
-            Assert.NotNull(recoveryList);
 
             // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(recoveryList.Count > 0);
         }
 
@@ -107,17 +110,17 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(new RecoveryFaker().Generate(100))
                 .CreateClient();
 
             // Act
             var response = await client.GetAsync($"api/recovery?limit=100").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var recoveryList = await response.Content.ReadFromJsonAsync<List<RecoveryDto>>().ConfigureAwait(false);
-            Assert.NotNull(recoveryList);
 
             // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(100, recoveryList.Count);
         }
 
@@ -128,20 +131,20 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var newRecovery = new RecoveryDtoFaker().Generate(); // TODO Move outside of test
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .CreateClient();
             var recoveryDataStore = _factory.Services.GetService<EntityDataStore<Recovery>>();
 
             // Act
             var response = await client.PutAsJsonAsync($"api/recovery/{recovery.Id}", newRecovery).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(1, recoveryDataStore.Entities.Count);
 
             // Assert
             var actualRecovery = recoveryDataStore.Entities[0];
             Assert.Equal(recovery.Id, actualRecovery.Id);
-
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(1, recoveryDataStore.Entities.Count);
             Assert.Equal(newRecovery.Note, actualRecovery.Note);
             Assert.Equal(newRecovery.Type, actualRecovery.Type);
             Assert.Equal(newRecovery.DocumentFile, actualRecovery.DocumentFile);
@@ -155,16 +158,17 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .CreateClient();
             var recoveryDataStore = _factory.Services.GetService<EntityDataStore<Recovery>>();
 
             // Act
             var response = await client.DeleteAsync($"api/recovery/{recovery.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.False(recoveryDataStore.IsSet);
         }
     }

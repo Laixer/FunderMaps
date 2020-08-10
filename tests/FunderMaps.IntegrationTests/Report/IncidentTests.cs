@@ -13,11 +13,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Report
 {
-    public class IncidentTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class IncidentTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public IncidentTests(CustomWebApplicationFactory<Startup> factory)
+        public IncidentTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -43,7 +43,10 @@ namespace FunderMaps.IntegrationTests.Report
         public async Task CreateIncidentReturnIncident(IncidentDto incident)
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
             var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
             var contactDataStore = _factory.Services.GetService<EntityDataStore<Contact>>();
 
@@ -80,6 +83,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(incident)
                 .CreateClient();
 
@@ -111,6 +116,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(new IncidentFaker().Generate(10, 100))
                 .CreateClient();
 
@@ -128,6 +135,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(new IncidentFaker().Generate(100))
                 .CreateClient();
 
@@ -147,6 +156,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var newIncident = new IncidentDtoFaker().Generate(); // TODO Move outside of test
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(incident)
                 .CreateClient();
             var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
@@ -179,6 +190,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(incident)
                 .CreateClient();
             var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();

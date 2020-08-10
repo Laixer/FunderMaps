@@ -4,6 +4,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for project operations.
     /// </summary>
+    [Authorize]
     [ApiController, Route("api/project")]
     public class ProjectController : BaseApiController
     {

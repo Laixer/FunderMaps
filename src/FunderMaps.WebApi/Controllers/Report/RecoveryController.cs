@@ -4,6 +4,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,6 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for recovery operations.
     /// </summary>
+    [Authorize]
     [ApiController, Route("api/recovery")]
     public class RecoveryController : BaseApiController
     {

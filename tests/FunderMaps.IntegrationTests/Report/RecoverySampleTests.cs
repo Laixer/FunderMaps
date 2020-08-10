@@ -12,11 +12,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Report
 {
-    public class RecoverySampleTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class RecoverySampleTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public RecoverySampleTests(CustomWebApplicationFactory<Startup> factory)
+        public RecoverySampleTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -60,6 +60,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .CreateClient();
             var recoverySampleDataStore = _factory.Services.GetService<EntityDataStore<Recovery>>();
@@ -90,6 +92,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .WithDataStoreList(sample)
                 .CreateClient();
@@ -119,6 +123,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var recovery = new RecoveryFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .WithDataStoreList(new RecoverySampleFaker().RuleFor(f => f.Recovery, f => recovery.Id).Generate(10, 100))
                 .CreateClient();
@@ -140,6 +146,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var recovery = new RecoveryFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .WithDataStoreList(new RecoverySampleFaker().RuleFor(f => f.Recovery, f => recovery.Id).Generate(100))
                 .CreateClient();
@@ -162,6 +170,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var newSample = new RecoverySampleFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .WithDataStoreList(sample)
                 .CreateClient();
@@ -194,6 +204,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(recovery)
                 .WithDataStoreList(sample)
                 .CreateClient();

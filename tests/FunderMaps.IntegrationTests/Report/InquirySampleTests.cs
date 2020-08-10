@@ -13,11 +13,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Report
 {
-    public class InquirySampleTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class InquirySampleTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public InquirySampleTests(CustomWebApplicationFactory<Startup> factory)
+        public InquirySampleTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -61,6 +61,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .CreateClient();
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
@@ -68,7 +70,6 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", sample).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(AuditStatus.Pending, inquiryDataStore.Entities[0].AuditStatus);
             Assert.True(inquirySampleDataStore.IsSet);
@@ -142,13 +143,14 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .WithDataStoreList(sample)
                 .CreateClient();
 
             // Act
             var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var actualInquirySample = await response.Content.ReadFromJsonAsync<InquirySampleDto>().ConfigureAwait(false);
 
@@ -221,13 +223,14 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var inquiry = new InquiryFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .WithDataStoreList(new InquirySampleFaker().RuleFor(f => f.Inquiry, f => inquiry.Id).Generate(10, 100))
                 .CreateClient();
 
             // Act
             var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             var inquirySampleList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>().ConfigureAwait(false);
             Assert.NotNull(inquirySampleList);
@@ -242,6 +245,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var inquiry = new InquiryFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .WithDataStoreList(new InquirySampleFaker().RuleFor(f => f.Inquiry, f => inquiry.Id).Generate(100))
                 .CreateClient();
@@ -264,6 +269,8 @@ namespace FunderMaps.IntegrationTests.Report
             // Arrange
             var newSample = new InquirySampleFaker().Generate();
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .WithDataStoreList(sample)
                 .CreateClient();
@@ -271,7 +278,6 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", newSample).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(1, inquirySampleDataStore.Entities.Count);
 
@@ -345,6 +351,8 @@ namespace FunderMaps.IntegrationTests.Report
         {
             // Arrange
             var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(inquiry)
                 .WithDataStoreList(sample)
                 .CreateClient();
@@ -352,7 +360,6 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             // Assert

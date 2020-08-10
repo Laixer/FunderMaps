@@ -6,6 +6,7 @@ using FunderMaps.Core.UseCases;
 using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,6 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for inquiry operations.
     /// </summary>
+    [Authorize]
     [ApiController, Route("api/inquiry")]
     public class InquiryController : BaseApiController
     {

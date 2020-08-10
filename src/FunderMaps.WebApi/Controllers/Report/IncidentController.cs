@@ -5,6 +5,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for incident operations.
     /// </summary>
+    [Authorize]
     [ApiController, Route("api/incident")]
     public class IncidentController : BaseApiController
     {
