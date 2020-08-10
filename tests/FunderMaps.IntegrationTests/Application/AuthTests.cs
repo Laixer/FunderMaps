@@ -26,7 +26,7 @@ namespace FunderMaps.IntegrationTests.Application
             var passwordHash = new PasswordHasher().HashPassword(password);
             _factory = factory;
             _client = _factory
-                .WithAuthOptions(sessionUser)
+                .WithAuthentication(options => options.User = sessionUser)
                 .WithDataStoreList(new UserRecord { User = sessionUser, Password = passwordHash })
                 .CreateClient();
         }

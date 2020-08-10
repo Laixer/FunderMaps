@@ -24,7 +24,8 @@ namespace FunderMaps.IntegrationTests.Geocoder
             // Arrange
             var expectedAddress = new AddressFaker().Generate();
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(expectedAddress)
                 .CreateClient();
 
@@ -148,7 +149,8 @@ namespace FunderMaps.IntegrationTests.Geocoder
         {
             // Arrange
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(Addresses)
                 .CreateClient();
 
@@ -168,7 +170,8 @@ namespace FunderMaps.IntegrationTests.Geocoder
         {
             // Arrange
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(Addresses)
                 .CreateClient();
 

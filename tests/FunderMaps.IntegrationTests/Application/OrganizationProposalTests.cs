@@ -24,7 +24,8 @@ namespace FunderMaps.IntegrationTests.Application
             // Arrange
             var organization = new OrganizationProposalDtoFaker().Generate();
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .CreateClient();
 
             // Act
@@ -42,7 +43,8 @@ namespace FunderMaps.IntegrationTests.Application
             // Arrange
             var organization = new OrganizationProposalFaker().Generate();
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
 
@@ -61,7 +63,8 @@ namespace FunderMaps.IntegrationTests.Application
             // Arrange
             var organization = new OrganizationProposalFaker().Generate(0, 10);
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
 
@@ -80,7 +83,8 @@ namespace FunderMaps.IntegrationTests.Application
             // Arrange
             var organization = new OrganizationProposalFaker().Generate();
             var client = _factory
-                .WithAuthOptions(new UserFaker().Generate())
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
 

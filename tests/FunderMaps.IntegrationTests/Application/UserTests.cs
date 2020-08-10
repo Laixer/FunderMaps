@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.IntegrationTests.Faker;
-using FunderMaps.IntegrationTests.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http;
@@ -21,8 +20,8 @@ namespace FunderMaps.IntegrationTests.Application
         {
             _factory = factory;
             _client = _factory
-                .WithAuthOptions(sessionUser)
-                .WithDataStoreList(new UserRecord { User = sessionUser })
+                .WithAuthentication(options => options.User = sessionUser)
+                .WithAuthenticationStores()
                 .CreateClient();
         }
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Controllers;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -22,17 +23,17 @@ namespace FunderMaps.WebApi.Controllers.Application
     [ApiController, Route("api/organization")]
     public class OrganizationController : BaseApiController
     {
-        private static readonly Guid testOrgId = Guid.Parse("042c0b02-f387-4791-b87c-c13b16e963c8"); // TODO: Get from context
-
         private readonly IMapper _mapper;
+        private readonly AuthManager _authManager;
         private readonly OrganizationManager _organizationManager;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationController(IMapper mapper, OrganizationManager organizationManager)
+        public OrganizationController(IMapper mapper, AuthManager authManager, OrganizationManager organizationManager)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
@@ -40,10 +41,10 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync()
         {
             // Act.
-            Organization organization = await _organizationManager.GetAsync(testOrgId);
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
 
             // Map.
-            var output = _mapper.Map<OrganizationDto>(organization);
+            var output = _mapper.Map<OrganizationDto>(sessionOrganization);
 
             // Return.
             return Ok(output);
@@ -54,7 +55,8 @@ namespace FunderMaps.WebApi.Controllers.Application
         {
             // Map.
             var organization = _mapper.Map<Organization>(input);
-            organization.Id = testOrgId;
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            organization.Id = sessionOrganization.Id;
 
             // Act.
             await _organizationManager.UpdateAsync(organization);
