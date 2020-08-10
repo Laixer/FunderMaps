@@ -1,6 +1,8 @@
-﻿using FunderMaps.Webservice.Enums;
+﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.ResponseModels;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Abstractions.Services
@@ -11,16 +13,16 @@ namespace FunderMaps.Webservice.Abstractions.Services
     /// </summary>
     public interface IProductResultService
     {
-        Task<ResponseWrapper<BuildingResponseModelBase>> GetBuildingByQueryAsync(Guid userId, ProductType product, string query, uint? limit);
+        Task<ResponseWrapper> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation, CancellationToken token);
 
-        Task<ResponseWrapper<BuildingResponseModelBase>> GetBuildingByIdAsync(Guid userId, ProductType product, string id);
+        Task<ResponseWrapper> GetAnalysisByBagIdAsync(Guid userId, AnalysisProductType productType, string bagId, INavigation navigation, CancellationToken token);
 
-        Task<ResponseWrapper<BuildingResponseModelBase>> GetBuildingByBagidAsync(Guid userId, ProductType product, string bagid);
+        Task<ResponseWrapper> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation, CancellationToken token);
 
-        Task<ResponseWrapper<BuildingResponseModelBase>> GetBuildingAllAsync(Guid userId, ProductType product);
+        Task<ResponseWrapper> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token);
 
-        Task<ResponseWrapper<StatisticsResponseModelBase>> GetStatistics(Guid userId, ProductType product);
+        Task<ResponseWrapper> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string areaCode, INavigation navigation, CancellationToken token);
 
-        // TODO Expand
+        Task<ResponseWrapper> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token);
     }
 }

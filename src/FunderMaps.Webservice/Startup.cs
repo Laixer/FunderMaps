@@ -1,9 +1,15 @@
+using AutoMapper;
+using FunderMaps.Webservice.Abstractions.Services;
+using FunderMaps.Webservice.HealthChecks;
+using FunderMaps.Webservice.Mapping;
+using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 using System.IO.Compression;
 
 namespace FunderMaps.Webservice
@@ -33,9 +39,12 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            if (services == null) { throw new ArgumentNullException(nameof(services)); }
+
             //services.AddApplicationInsightsTelemetry();
 
-            services.AddControllers(); // TODO: REVIEW: Should we IgnoreNullValues ?
+            // TODO: REVIEW: Should we IgnoreNullValues ?
+            services.AddControllers();
 
             services.AddResponseCompression(options =>
             {
@@ -43,6 +52,19 @@ namespace FunderMaps.Webservice
                 // over HTTPS because of BREACH exploit.
                 options.EnableForHttps = true;
             });
+
+            // Configure services.
+            services.AddTransient<IProductService, DebugProductService>();
+            services.AddTransient<IProductRequestService, ProductRequestService>();
+            services.AddTransient<IProductResultService, ProductResultService>();
+            services.AddTransient<IMappingService, MappingService>();
+
+            // Configure AutoMapper.
+            services.AddAutoMapper(typeof(AutoMapperProfile));
+
+            // Configure health checks.
+            services.AddHealthChecks()
+                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
 
             // Configure compression providers.
             services

@@ -4,22 +4,27 @@ using System.Linq;
 namespace FunderMaps.Webservice.ResponseModels
 {
     /// <summary>
-    /// Wrapper class for our API response object.
+    /// Base class for the response wrapper. 
     /// </summary>
-    /// <typeparam name="TResponseModel"><see cref="ModelBase"/></typeparam>
-    public sealed class ResponseWrapper<TResponseModel>
-        where TResponseModel : ResponseModelBase
+    /// <remarks>
+    /// This has no generics and thus can be used as a base for both abstract
+    /// and non-abstract implementations of the <see cref="ResponseWrapper{TResponseModel}"/>.
+    /// </remarks>
+    public class ResponseWrapper
     {
         /// <summary>
         /// String representation of the requested product.
         /// </summary>
         public string Product { get; set; }
+    }
 
-        /// <summary>
-        /// Represents the type of a model.
-        /// </summary>
-        public string ModelType { get; set; }
-
+    /// <summary>
+    /// Wrapper class for our API response object.
+    /// </summary>
+    /// <typeparam name="TResponseModel"><see cref="ResponseModelBase"/></typeparam>
+    public class ResponseWrapper<TResponseModel> : ResponseWrapper
+        where TResponseModel : ResponseModelBase
+    {
         /// <summary>
         /// Collection of <see cref="TResponseModel"/>.
         /// </summary>

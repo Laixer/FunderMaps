@@ -5,7 +5,7 @@ namespace FunderMaps.Webservice.ResponseModels.Types
     /// <summary>
     /// Response model representing a region.
     /// </summary>
-    public sealed class RegionResponseModel
+    public class RegionResponseModel
     {
         /// <summary>
         /// Represents the name of this region.

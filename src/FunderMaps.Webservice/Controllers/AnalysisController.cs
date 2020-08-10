@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 namespace FunderMaps.Webservice.Controllers
 {
     /// <summary>
-    ///     Controller for all statistics endpoints.
+    ///     Controller for all analysis endpoints.
     /// </summary>
-    [ApiController, Route("api/statistics")]
-    public sealed class StatisticsController : ControllerBase
+    [ApiController, Route("api/analysis")]
+    public sealed class AnalysisController : ControllerBase
     {
-        private readonly ILogger<StatisticsController> _logger;
+        private readonly ILogger<AnalysisController> _logger;
         private readonly IProductRequestService _productRequestService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public StatisticsController(ILogger<StatisticsController> logger,
+        public AnalysisController(ILogger<AnalysisController> logger,
             IProductRequestService productRequestService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -33,26 +33,26 @@ namespace FunderMaps.Webservice.Controllers
         ///     Gets one or more <see cref="ResponseModelBase"/> items in a wrapper. 
         ///     Specify one of the following:
         /// <list type="bullet">
-        ///     <item>- Query string <paramref name="q"/></item>
-        ///     <item>- Internal id <paramref name="id"/></item>
-        ///     <item>- BAG id <paramref name="bagid"/></item>
-        ///     <item>- Get all buildings in geofence <paramref name="fullFence"/></item>
+        ///     <item>Query string <paramref name="q"/></item>
+        ///     <item>Internal id <paramref name="id"/></item>
+        ///     <item>BAG id <paramref name="bagid"/></item>
+        ///     <item>Get all buildings in geofence <paramref name="fullFence"/></item>
         /// </list>
         /// </summary>
         /// <remarks>
         ///     <paramref name="inputModel"/> is validated through <see cref="ApiControllerAttribute"/>.
         /// </remarks>
-        /// <param name="inputModel"><see cref="StatisticsInputModel"/></param>
+        /// <param name="inputModel"><see cref="AnalysisInputModel"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromQuery] StatisticsInputModel inputModel)
+        public async Task<IActionResult> GetProductAsync([FromQuery] AnalysisInputModel inputModel)
         {
             // Get user id.
             // TODO Implement auth
             var userId = Guid.NewGuid();
 
             // Process request and return.
-            return Ok(await _productRequestService.ProcessStatisticsRequestAsync(userId, inputModel, HttpContext.RequestAborted).ConfigureAwait(false));
+            return Ok(await _productRequestService.ProcessAnalysisRequestAsync(userId, inputModel, HttpContext.RequestAborted).ConfigureAwait(false));
         }
     }
 }
