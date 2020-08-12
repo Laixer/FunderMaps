@@ -264,12 +264,17 @@ namespace FunderMaps.Core.Authentication
         }
 
         /// <summary>
-        /// Attempts a password sign in for a user.
+        ///     Attempts a password sign in for a user.
         /// </summary>
         /// <param name="user">The user to sign in.</param>
         /// <param name="password">The password to attempt to sign in with.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
-        public virtual async Task<SignInContext> PasswordSignInAsync(User user, Organization organization, OrganizationRole organizationRole, string password, string authenticationType)
+        public virtual async Task<SignInContext> PasswordSignInAsync(
+            User user,
+            Organization organization,
+            OrganizationRole organizationRole,
+            string password,
+            string authenticationType)
         {
             if (user == null)
             {

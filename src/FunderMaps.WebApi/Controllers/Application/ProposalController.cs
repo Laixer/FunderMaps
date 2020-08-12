@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.WebApi.Controllers.Application
 {
-    [Authorize]
+    [Authorize(Roles = Core.Authentication.Constants.ApplicationRoleAdministrator)]
     [ApiController, Route("api/organization/proposal")]
-    public class ControllerProposal : BaseApiController
+    public class ProposalController : BaseApiController
     {
         private readonly IMapper _mapper;
         private readonly OrganizationManager _organizationManager;
 
-        public ControllerProposal(IMapper mapper, OrganizationManager organizationManager)
+        public ProposalController(IMapper mapper, OrganizationManager organizationManager)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));

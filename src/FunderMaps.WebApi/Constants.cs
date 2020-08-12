@@ -34,11 +34,6 @@ namespace FunderMaps
         };
 
         /// <summary>
-        ///     Application role for administrator
-        /// </summary>
-        internal const string AdministratorRole = "administrator";
-
-        /// <summary>
         ///     Retrieve application version.
         /// </summary>
         internal static Version ApplicationVersion => Assembly.GetEntryAssembly().GetName().Version;
