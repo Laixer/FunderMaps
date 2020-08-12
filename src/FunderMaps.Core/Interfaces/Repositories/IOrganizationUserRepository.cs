@@ -14,6 +14,10 @@ namespace FunderMaps.Core.Interfaces.Repositories
 
         ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId);
 
+        ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId);
+
+        ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId);
+
         IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId); // TODO: Should have navigation
     }
 }

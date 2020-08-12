@@ -50,5 +50,15 @@ namespace FunderMaps.IntegrationTests.Repositories
         {
             return Helper.AsAsyncEnumerable(DataStore.Entities.Select(s => s.UserId));
         }
+
+        public ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
+        {
+            return new ValueTask<Guid>(DataStore.Entities.First(e => e.UserId == userId).OrganizationId);
+        }
+
+        public ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
+        {
+            return new ValueTask<OrganizationRole>(DataStore.Entities.First(e => e.UserId == userId).OrganizationRole);
+        }
     }
 }

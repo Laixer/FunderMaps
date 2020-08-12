@@ -19,6 +19,7 @@ namespace FunderMaps.IntegrationTests.Application
         private readonly HttpClient _client;
 
         private readonly User sessionUser = new UserFaker().Generate();
+        private readonly Organization sessionOrganization = new OrganizationFaker().Generate();
         private readonly string password = new Randomizer().Password(128);
 
         public AuthTests(AuthWebApplicationFactory<Startup> factory)
@@ -28,6 +29,8 @@ namespace FunderMaps.IntegrationTests.Application
             _client = _factory
                 .WithAuthentication(options => options.User = sessionUser)
                 .WithDataStoreList(new UserRecord { User = sessionUser, Password = passwordHash })
+                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreList(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
                 .CreateClient();
         }
 

@@ -253,6 +253,35 @@ namespace FunderMaps.Core.Managers
         }
 
         /// <summary>
+        ///     Retrieve organization by user.
+        /// </summary>
+        /// <param name="user">User object to retrieve organization for.</param>
+        public virtual async ValueTask<Organization> GetUserOrganizationAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var organizationId = await _organizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
+            return await GetAsync(organizationId);
+        }
+
+        /// <summary>
+        ///     Retrieve organization user role.
+        /// </summary>
+        /// <param name="user">User object to retrieve organization for.</param>
+        public virtual async ValueTask<OrganizationRole> GetUserOrganizationRoleAsync(User user)
+        {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            return await _organizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
+        }
+
+        /// <summary>
         ///     Retrieve all users by organization.
         /// </summary>
         /// <param name="id">Organization id.</param>

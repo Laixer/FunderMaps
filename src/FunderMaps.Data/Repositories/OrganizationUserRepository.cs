@@ -108,6 +108,38 @@ namespace FunderMaps.Data.Repositories
             await reader.ReadAsync();
             return reader.GetBoolean(0);
         }
+
+        public async ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
+        {
+            var sql = @"
+                SELECT  organization_id
+                FROM    application.organization_user
+                WHERE   user_id = @user_id";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("user_id", userId);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
+            return reader.GetGuid(0);
+        }
+
+        public async ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
+        {
+            var sql = @"
+                SELECT  role
+                FROM    application.organization_user
+                WHERE   user_id = @user_id";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("user_id", userId);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
+            return reader.GetFieldValue<OrganizationRole>(0);
+        }
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

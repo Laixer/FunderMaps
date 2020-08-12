@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -54,24 +55,37 @@ namespace FunderMaps.Core.Authentication
         ///     Create <see cref="ClaimsPrincipal"/> for specified <paramref name="user"/>.
         /// </summary>
         /// <param name="user">The user to create the principal for.</param>
+        /// <param name="organization">The organization user is a member of.</param>
+        /// <param name="organizationRole">The user role in the organization.</param>
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
         /// <returns><see cref="ClaimsPrincipal"/>.</returns>
-        public static ClaimsPrincipal CreateUserPrincipal(User user, string authenticationType, IEnumerable<Claim> additionalClaims = null)
+        public static ClaimsPrincipal CreateUserPrincipal(
+            User user,
+            Organization organization,
+            OrganizationRole organizationRole,
+            string authenticationType,
+            IEnumerable<Claim> additionalClaims = null)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
+            if (organization == null)
+            {
+                throw new ArgumentNullException(nameof(organization));
+            }
+
             user.Validate();
+            organization.Validate();
 
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.Organization, "042c0b02-f387-4791-b87c-c13b16e963c8"),
-                new Claim(FunderMapsAuthenticationClaimTypes.OrganizationRole, "SuperUser"),
+                new Claim(FunderMapsAuthenticationClaimTypes.Organization, organization.Id.ToString()),
+                new Claim(FunderMapsAuthenticationClaimTypes.OrganizationRole, organizationRole.ToString()),
             };
 
             var identity = new ClaimsIdentity(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
@@ -183,12 +197,20 @@ namespace FunderMaps.Core.Authentication
             }
 
             User user = await GetUserAsync(principal);
-            if (user == null)
+            Organization organization = await GetOrganizationAsync(principal);
+            if (user == null || organization == null)
             {
                 return SignInContext.Failed;
             }
 
-            return await SignInAsync(user, authenticationType);
+            // TODO:
+            var claim = principal.Claims.FirstOrDefault(c => c.Type == FunderMapsAuthenticationClaimTypes.OrganizationRole);
+            if (claim == null)
+            {
+                return SignInContext.Failed;
+            }
+
+            return await SignInAsync(user, organization, Enum.Parse<OrganizationRole>(claim.Value), authenticationType);
         }
 
         /// <summary>
@@ -196,12 +218,20 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="user">The user to sign in.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
-        public virtual async Task<SignInContext> SignInAsync(User user, string authenticationType)
+        public virtual async Task<SignInContext> SignInAsync(User user, Organization organization, OrganizationRole organizationRole, string authenticationType)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
+            if (organization == null)
+            {
+                throw new ArgumentNullException(nameof(organization));
+            }
+
+            user.Validate();
+            organization.Validate();
 
             var result = await CanSignInAsync(user);
             if (result != SignInContext.Success)
@@ -211,7 +241,7 @@ namespace FunderMaps.Core.Authentication
 
             Logger.LogInformation(1, $"User {user} sign in was successful.");
 
-            return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
+            return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, organization, organizationRole, authenticationType));
         }
 
         /// <summary>
@@ -228,7 +258,9 @@ namespace FunderMaps.Core.Authentication
                 return SignInContext.Failed;
             }
 
-            return await PasswordSignInAsync(user, password, authenticationType);
+            Organization organization = await OrganizationManager.GetUserOrganizationAsync(user);
+            OrganizationRole organizationRole = await OrganizationManager.GetUserOrganizationRoleAsync(user);
+            return await PasswordSignInAsync(user, organization, organizationRole, password, authenticationType);
         }
 
         /// <summary>
@@ -237,12 +269,20 @@ namespace FunderMaps.Core.Authentication
         /// <param name="user">The user to sign in.</param>
         /// <param name="password">The password to attempt to sign in with.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
-        public virtual async Task<SignInContext> PasswordSignInAsync(User user, string password, string authenticationType)
+        public virtual async Task<SignInContext> PasswordSignInAsync(User user, Organization organization, OrganizationRole organizationRole, string password, string authenticationType)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
+
+            if (organization == null)
+            {
+                throw new ArgumentNullException(nameof(organization));
+            }
+
+            user.Validate();
+            organization.Validate();
 
             var result = await CanSignInAsync(user);
             if (result != SignInContext.Success)
@@ -257,7 +297,7 @@ namespace FunderMaps.Core.Authentication
 
                 Logger.LogInformation(1, $"User {user} password sign in was successful.");
 
-                return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, authenticationType));
+                return new SignInContext(AuthResult.Success, CreateUserPrincipal(user, organization, organizationRole, authenticationType));
             }
 
             Logger.LogWarning(2, $"User {user} failed to provide the correct password.");
