@@ -34,6 +34,18 @@ namespace FunderMaps
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
+        ///     This method gets called by the runtime. Use this method to add production services to the container.
+        /// </summary>
+        /// <remarks>
+        ///     Order is undetermined when configuring services.
+        /// </remarks>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureProductionServices(IServiceCollection services)
+        {
+            services.AddApplicationInsightsTelemetry();
+        }
+
+        /// <summary>
         ///     This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <remarks>
@@ -42,8 +54,6 @@ namespace FunderMaps
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry();
-
             services.AddAutoMapper(typeof(Startup));
 
             ConfigureAuthentication(services);
@@ -216,10 +226,10 @@ namespace FunderMaps
             {
                 app.UseExceptionHandler("/oops");
                 app.UseHsts();
-            }
 
-            app.UseResponseCompression();
-            app.UseHttpsRedirection();
+                app.UseResponseCompression();
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
 
