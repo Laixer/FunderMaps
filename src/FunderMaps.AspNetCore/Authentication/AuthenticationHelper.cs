@@ -6,7 +6,7 @@ using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace FunderMaps.WebApi.Authentication
+namespace FunderMaps.AspNetCore.Authentication
 {
     // TODO: Terrible name.
     /// <summary>

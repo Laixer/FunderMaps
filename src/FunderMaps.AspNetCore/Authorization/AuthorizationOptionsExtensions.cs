@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using System;
 
-namespace FunderMaps.WebApi.Authorization
+namespace FunderMaps.AspNetCore.Authorization
 {
     public static class AuthorizationOptionsExtensions
     {

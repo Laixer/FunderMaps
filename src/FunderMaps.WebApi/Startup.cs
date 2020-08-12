@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
-using FunderMaps.WebApi.Authentication;
-using FunderMaps.WebApi.Authorization;
 using FunderMaps.WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

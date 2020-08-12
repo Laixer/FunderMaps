@@ -1,5 +1,5 @@
-﻿using FunderMaps.Controllers;
-using FunderMaps.WebApi.Authentication;
+﻿using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Controllers;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -11,7 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace FunderMaps.WebApi.Authentication
+namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
     ///     Jwt bearer token provider.
