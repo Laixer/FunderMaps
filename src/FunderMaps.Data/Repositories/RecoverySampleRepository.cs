@@ -19,7 +19,10 @@ namespace FunderMaps.Data.Repositories
         /// Create a new instance.
         /// </summary>
         /// <param name="dbProvider">Database provider.</param>
-        public RecoverySampleRepository(DbProvider dbProvider) : base(dbProvider) { }
+        public RecoverySampleRepository(DbProvider dbProvider)
+            : base(dbProvider)
+        {
+        }
 
         /// <summary>
         /// Create new <see cref="RecoverySample"/>.
@@ -61,7 +64,7 @@ namespace FunderMaps.Data.Repositories
                 RETURNING id;
             ";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("recovery", entity.Recovery);
             cmd.AddParameterWithValue("address", entity.Address);
@@ -74,7 +77,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("permit", entity.Permit);
             cmd.AddParameterWithValue("permit_date", entity.PermitDate);
             cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
-            return await cmd.ExecuteScalarIntAsync().ConfigureAwait(false);
+            return await cmd.ExecuteScalarIntAsync();
         }
 
         /// <summary>
@@ -101,10 +104,10 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.recovery_sample
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
@@ -134,12 +137,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            await reader.ReadAsync();
 
             return new RecoverySample
             {
@@ -192,11 +195,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
-            while (await reader.ReadAsync().ConfigureAwait(false))
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
                 yield return new RecoverySample
                 {
@@ -241,7 +244,7 @@ namespace FunderMaps.Data.Repositories
                             recovery_date = @recovery_date,
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
             using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("recovery", entity.Recovery);
             cmd.AddParameterWithValue("address", entity.Address);
@@ -255,7 +258,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("permit_date", entity.PermitDate);
             cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
             cmd.AddParameterWithValue("id", entity.Id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

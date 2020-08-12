@@ -51,7 +51,7 @@ namespace FunderMaps.Data.Repositories
                 RETURNING id;
             ";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("note", entity.Note);
             cmd.AddParameterWithValue("attribution", entity.Attribution);
@@ -59,7 +59,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("type", entity.Type);
             cmd.AddParameterWithValue("document_date", entity.DocumentDate);
             cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            return await cmd.ExecuteScalarIntAsync().ConfigureAwait(false);
+            return await cmd.ExecuteScalarIntAsync();
         }
 
         /// <summary>
@@ -86,10 +86,10 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.recovery
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
@@ -114,12 +114,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            await reader.ReadAsync();
 
             return new Recovery
             {
@@ -162,11 +162,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsync().ConfigureAwait(false);
-            while (await reader.ReadAsync().ConfigureAwait(false))
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
                 yield return new Recovery
                 {
@@ -204,7 +204,7 @@ namespace FunderMaps.Data.Repositories
                             document_file = @document_file
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
             using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("note", entity.Note);
             cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
@@ -212,7 +212,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("document_date", entity.DocumentDate);
             cmd.AddParameterWithValue("document_file", entity.DocumentFile);
             cmd.AddParameterWithValue("id", entity.Id);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync();
         }
     }
 }

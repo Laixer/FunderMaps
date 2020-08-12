@@ -60,15 +60,15 @@ namespace FunderMaps.Data.Repositories
                     @email,
                     @passwordHash)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
             cmd.AddParameterWithValue("id", id);
             cmd.AddParameterWithValue("email", email);
             cmd.AddParameterWithValue("passwordHash", passwordHash);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
 
             return reader.GetGuid(0);
         }
@@ -97,10 +97,10 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
         private static void MapToWriter(DbCommand cmd, Organization entity)
@@ -196,12 +196,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
 
             return MapFromReader(reader);
         }
@@ -243,12 +243,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_name = application.normalize(@name)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("name", name);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
 
             return MapFromReader(reader);
         }
@@ -290,12 +290,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("email", email);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
 
             return MapFromReader(reader);
         }
@@ -308,12 +308,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
 
             return reader.SafeGetString(0);
         }
@@ -359,11 +359,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            while (await reader.ReadAsync().ConfigureAwait(false))
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            while (await reader.ReadAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -408,13 +408,13 @@ namespace FunderMaps.Data.Repositories
                         postal_country = @postal_country
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
             using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", entity.Id);
 
             MapToWriter(cmd, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
     }
 }

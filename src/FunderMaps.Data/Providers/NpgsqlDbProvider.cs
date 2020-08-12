@@ -7,12 +7,12 @@ using System.Data.Common;
 namespace FunderMaps.Data.Providers
 {
     /// <summary>
-    /// Npgsql database provider.
+    ///     Npgsql database provider.
     /// </summary>
     internal class NpgsqlDbProvider : DbProvider
     {
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
         /// <param name="configuration">Application configuration.</param>
         /// <param name="options">Configuration options.</param>
@@ -23,7 +23,7 @@ namespace FunderMaps.Data.Providers
 
         // TODO: Move somewhere
         /// <summary>
-        /// Static initializer.
+        ///     Static initializer.
         /// </summary>
         static NpgsqlDbProvider()
         {
@@ -57,13 +57,13 @@ namespace FunderMaps.Data.Providers
         }
 
         /// <summary>
-        /// Create a new Npgsql connection instance.
+        ///     Create a new Npgsql connection instance.
         /// </summary>
         /// <returns><see cref="DbConnection"/> instance.</returns>
         public override DbConnection ConnectionScope() => new NpgsqlConnection(ConnectionString);
 
         /// <summary>
-        /// Create Npgsql command on the database connection.
+        ///     Create Npgsql command on the database connection.
         /// </summary>
         /// <param name="cmdText">The text of the query.</param>
         /// <param name="connection">Database connection, see <see cref="DbConnection"/>.</param>

@@ -47,13 +47,13 @@ namespace FunderMaps.Data.Repositories
                     @phone_number)
                 ON CONFLICT DO NOTHING";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
             MapToWriter(cmd, entity);
 
             // Cannot ensure affect, row can already exist.
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryAsync();
 
             return entity.Email;
         }
@@ -82,10 +82,10 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("email", email);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
         private static void MapToWriter(DbCommand cmd, Contact entity)
@@ -118,12 +118,12 @@ namespace FunderMaps.Data.Repositories
                 WHERE   email = @email
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("email", email);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync();
 
             return MapFromReader(reader);
         }
@@ -147,11 +147,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            while (await reader.ReadAsync().ConfigureAwait(false))
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            while (await reader.ReadAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -174,12 +174,12 @@ namespace FunderMaps.Data.Repositories
                             phone_number = @phone_number
                     WHERE   email = @email";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
             using var cmd = DbProvider.CreateCommand(sql, connection);
 
             MapToWriter(cmd, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync().ConfigureAwait(false);
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
     }
 }

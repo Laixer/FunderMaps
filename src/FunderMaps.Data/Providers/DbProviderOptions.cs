@@ -1,12 +1,12 @@
 ﻿namespace FunderMaps.Data.Providers
 {
     /// <summary>
-    /// Database provider options.
+    ///     Database provider options.
     /// </summary>
     internal class DbProviderOptions
     {
         /// <summary>
-        /// Database connection name.
+        ///     Database connection name.
         /// </summary>
         public string ConnectionStringName { get; set; }
     }

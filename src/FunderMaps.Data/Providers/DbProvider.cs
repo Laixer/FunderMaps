@@ -41,7 +41,7 @@ namespace FunderMaps.Data.Providers
         public virtual async Task<DbConnection> OpenConnectionScopeAsync()
         {
             var connection = ConnectionScope();
-            await connection.OpenAsync().ConfigureAwait(false);
+            await connection.OpenAsync();
             return connection;
         }
 
