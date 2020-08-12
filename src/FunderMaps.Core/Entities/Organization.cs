@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO: Impl some sort of OrgAuth interface
+
     /// <summary>
     ///     Organization entity.
     /// </summary>

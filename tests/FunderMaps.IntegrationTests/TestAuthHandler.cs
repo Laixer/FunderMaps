@@ -26,7 +26,8 @@ namespace FunderMaps.IntegrationTests
             AuthSchemeOptions = authPrincipal;
         }
 
-        private static ClaimsPrincipal CreateUserPrincipal(User user,
+        private static ClaimsPrincipal CreateUserPrincipal(
+            User user,
             Organization organization,
             OrganizationRole organizationRole,
             string authenticationType,

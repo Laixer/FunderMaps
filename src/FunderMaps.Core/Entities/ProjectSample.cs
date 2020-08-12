@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -37,6 +38,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Address identifier.
         /// </summary>
+        [Address]
         public string Address { get; set; }
 
         /// <summary>

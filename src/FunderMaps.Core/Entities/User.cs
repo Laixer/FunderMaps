@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO: Impl some sort of UserAuth interface
+
     /// <summary>
     ///     User entity.
     /// </summary>
