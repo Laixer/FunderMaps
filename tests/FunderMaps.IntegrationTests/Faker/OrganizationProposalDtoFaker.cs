@@ -9,7 +9,7 @@ namespace FunderMaps.IntegrationTests.Faker
         {
             RuleFor(f => f.Id, f => f.Random.Uuid());
             RuleFor(f => f.Name, f => f.Company.CompanyName());
-            RuleFor(f => f.Email, (f, o) => f.Internet.Email());
+            RuleFor(f => f.Email, f => f.Internet.Email());
         }
     }
 }

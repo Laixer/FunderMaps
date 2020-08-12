@@ -36,13 +36,13 @@ namespace FunderMaps.WebApi.Controllers.Application
 
         // TODO: This is anon, maybe return nothing?
         [HttpPost("api/organization/{id:guid}/setup")]
-        public async Task<IActionResult> GetAsync(Guid id, [FromBody] OrganizationSetupDto input)
+        public async Task<IActionResult> CreateAsync(Guid id, [FromBody] OrganizationSetupDto input)
         {
             // Map.
             var user = new User { Email = input.Email };
 
             // Act.
-            Organization organization = await _organizationManager.CreateFromProposalAsync(id, user, input.Password).ConfigureAwait(false);
+            Organization organization = await _organizationManager.CreateFromProposalAsync(id, user, input.Password);
 
             // Map.
             var output = _mapper.Map<OrganizationDto>(organization);
