@@ -50,6 +50,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        [Authorize(Policy = "SuperuserPolicy")]
         [HttpPut]
         public async Task<IActionResult> UpdateAsync([FromBody] OrganizationDto input)
         {

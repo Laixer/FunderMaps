@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Controllers;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -12,24 +13,32 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.WebApi.Controllers.Application
 {
+    /// <summary>
+    ///     Endpoint controller for organization user operations.
+    /// </summary>
+    /// <remarks>
+    ///     This controller should *only* handle organization operations on the current
+    ///     user session. Therefore the user context must be active.
+    /// </remarks>
     [Authorize]
     [ApiController, Route("api/organization/user")]
     public class OrganizationUserController : BaseApiController
     {
-        private static readonly Guid testOrgId = Guid.Parse("042c0b02-f387-4791-b87c-c13b16e963c8"); // TODO: Get from context
-
         private readonly IMapper _mapper;
+        private readonly AuthManager _authManager;
         private readonly OrganizationManager _organizationManager;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationUserController(IMapper mapper, OrganizationManager organizationManager)
+        public OrganizationUserController(IMapper mapper, AuthManager authManager, OrganizationManager organizationManager)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
+        [Authorize(Policy = "SuperuserPolicy")]
         [HttpPost]
         public async Task<IActionResult> AddUserAsync([FromBody] UserDto input)
         {
@@ -37,7 +46,8 @@ namespace FunderMaps.WebApi.Controllers.Application
             var user = _mapper.Map<User>(input);
 
             // Act.
-            user = await _organizationManager.AddUserAsync(testOrgId, user);
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            user = await _organizationManager.AddUserAsync(sessionOrganization.Id, user);
 
             // Map.
             var output = _mapper.Map<UserDto>(user);
@@ -49,8 +59,9 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpGet]
         public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
         {
-            // Assign.
-            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(testOrgId, pagination.Navigation);
+            // Act.
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(sessionOrganization.Id, pagination.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<UserDto>, User>(userList);
@@ -59,6 +70,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(result);
         }
 
+        [Authorize(Policy = "SuperuserPolicy")]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto input)
         {
@@ -67,17 +79,20 @@ namespace FunderMaps.WebApi.Controllers.Application
             user.Id = id;
 
             // Act.
-            await _organizationManager.UpdateUserAsync(testOrgId, user);
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            await _organizationManager.UpdateUserAsync(sessionOrganization.Id, user);
 
             // Return.
             return NoContent();
         }
 
+        [Authorize(Policy = "SuperuserPolicy")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUserAsync(Guid id)
         {
             // Act.
-            await _organizationManager.DeleteUserAsync(testOrgId, id);
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            await _organizationManager.DeleteUserAsync(sessionOrganization.Id, id);
 
             // Return.
             return NoContent();

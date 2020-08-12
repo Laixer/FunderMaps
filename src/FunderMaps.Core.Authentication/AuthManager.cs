@@ -108,6 +108,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(principal));
             }
 
+            // TODO: Use principal.FindFirst
             var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             if (claim == null)
             {

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.WebApi.Controllers.Application
 {
-    [Authorize(Roles = Core.Authentication.Constants.ApplicationRoleAdministrator)]
+    [Authorize(Policy = "AdministratorPolicy")]
     [ApiController, Route("api/organization/proposal")]
     public class ProposalController : BaseApiController
     {
