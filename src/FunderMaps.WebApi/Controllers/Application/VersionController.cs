@@ -21,7 +21,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     often and this call is primarily used to check if the
         ///     API is responding.
         /// </remarks>
-        [HttpGet("api/version"), ResponseCache(Duration = 60 * 60 * 24)]
+        [HttpGet("version"), ResponseCache(Duration = 60 * 60 * 24)]
         public IActionResult Get()
             => Ok(new AppVersionDto
             {

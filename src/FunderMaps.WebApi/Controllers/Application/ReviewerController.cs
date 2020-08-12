@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Application
 {
-    [ApiController, Route("api/reviewer")]
+    [ApiController, Route("reviewer")]
     public class ReviewerController : BaseApiController
     {
     }

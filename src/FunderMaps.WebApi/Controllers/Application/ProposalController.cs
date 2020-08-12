@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Application
 {
     [Authorize(Policy = "AdministratorPolicy")]
-    [ApiController, Route("api/organization/proposal")]
+    [ApiController, Route("organization/proposal")]
     public class ProposalController : BaseApiController
     {
         private readonly IMapper _mapper;

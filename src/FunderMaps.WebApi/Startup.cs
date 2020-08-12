@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -236,6 +237,7 @@ namespace FunderMaps
                 app.UseHttpsRedirection();
             }
 
+            app.UsePathBase(new PathString("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
@@ -243,7 +245,6 @@ namespace FunderMaps
 
             app.UseEndpoints(endpoints =>
             {
-                // TODO: Set /api endpoint as default
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });

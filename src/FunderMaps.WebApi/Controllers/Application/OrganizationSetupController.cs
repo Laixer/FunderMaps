@@ -34,7 +34,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         // TODO: This is anon, maybe return nothing?
-        [HttpPost("api/organization/{id:guid}/setup")]
+        [HttpPost("organization/{id:guid}/setup")]
         public async Task<IActionResult> CreateAsync(Guid id, [FromBody] OrganizationSetupDto input)
         {
             // Map.

@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for incident operations.
     /// </summary>
-    [ApiController, Route("api/incident")]
+    [ApiController, Route("incident")]
     public class IncidentController : BaseApiController
     {
         // TODO: Move to Constants
