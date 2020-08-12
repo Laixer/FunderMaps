@@ -52,45 +52,5 @@ namespace FunderMaps
         ///     Evidence storage destination.
         /// </summary>
         internal const string EvidenceStorage = "evidence";
-
-        /// <summary>
-        ///     Organization with member policy.
-        /// </summary>
-        internal const string OrganizationMemberPolicy = "OrganizationMember";
-
-        /// <summary>
-        ///     Organization member with write organization role.
-        /// </summary>
-        internal const string OrganizationMemberWritePolicy = "OrganizationMemberWrite";
-
-        /// <summary>
-        ///     Organization member with verify organization role.
-        /// </summary>
-        internal const string OrganizationMemberVerifyPolicy = "OrganizationMemberVerify";
-
-        /// <summary>
-        ///     Organization member with superuser organization role.
-        /// </summary>
-        internal const string OrganizationMemberSuperPolicy = "OrganizationMemberSuper";
-
-        /// <summary>
-        ///     Organization with member or administrator policy.
-        /// </summary>
-        internal const string OrganizationMemberOrAdministratorPolicy = "OrganizationMemberOrAdministrator";
-
-        /// <summary>
-        ///     Organization member with write organization role or administrator policy.
-        /// </summary>
-        internal const string OrganizationMemberWriteOrAdministratorPolicy = "OrganizationMemberWriteOrAdministrator";
-
-        /// <summary>
-        ///     Organization member with verify organization role or administrator policy.
-        /// </summary>
-        internal const string OrganizationMemberVerifyOrAdministratorPolicy = "OrganizationMemberVerifyOrAdministrator";
-
-        /// <summary>
-        ///     Organization member with superuser organization role or administrator policy.
-        /// </summary>
-        internal const string OrganizationMemberSuperOrAdministratorPolicy = "OrganizationMemberSuperOrAdministrator";
     }
 }

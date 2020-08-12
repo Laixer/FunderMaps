@@ -33,11 +33,11 @@ namespace FunderMaps.AspNetCore.Authorization
                 throw new ArgumentNullException(nameof(options));
             }
 
-            options.AddPolicy("AdministratorPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.AdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireRole(Core.Types.ApplicationRole.Administrator.ToString()));
 
-            options.AddPolicy("SuperuserAdministratorPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.SuperuserAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
@@ -45,14 +45,14 @@ namespace FunderMaps.AspNetCore.Authorization
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
-            options.AddPolicy("SuperuserPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.SuperuserPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
                     return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString());
                 }));
 
-            options.AddPolicy("VerifierAdministratorPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.VerifierAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
@@ -61,7 +61,7 @@ namespace FunderMaps.AspNetCore.Authorization
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
-            options.AddPolicy("VerifierPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.VerifierPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
@@ -69,7 +69,7 @@ namespace FunderMaps.AspNetCore.Authorization
                            context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString());
                 }));
 
-            options.AddPolicy("WriterAdministratorPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.WriterAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
@@ -79,7 +79,7 @@ namespace FunderMaps.AspNetCore.Authorization
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
-            options.AddPolicy("WriterPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.WriterPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
@@ -88,7 +88,7 @@ namespace FunderMaps.AspNetCore.Authorization
                            context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Writer.ToString());
                 }));
 
-            options.AddPolicy("ReaderAdministratorPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.ReaderAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
@@ -99,7 +99,7 @@ namespace FunderMaps.AspNetCore.Authorization
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
-            options.AddPolicy("ReaderPolicy", policy => policy
+            options.AddPolicy(AuthorizationPolicy.ReaderPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
