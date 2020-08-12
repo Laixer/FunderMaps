@@ -4,7 +4,6 @@ using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,6 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
     /// <summary>
     ///     Endpoint controller for address operations.
     /// </summary>
-    [Authorize]
     [ApiController, Route("api/address")]
     public class AddressController : BaseApiController
     {

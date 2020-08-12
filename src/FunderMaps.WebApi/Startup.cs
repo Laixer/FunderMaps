@@ -5,6 +5,7 @@ using FunderMaps.HealthChecks;
 using FunderMaps.WebApi.Authentication;
 using FunderMaps.WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -119,6 +120,10 @@ namespace FunderMaps
         {
             services.AddAuthorization(options =>
             {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
                 // Authorization policy matrix
                 //                              || ApplicationRole                || OrganizationRole
                 //                              || Administrator   | User | Guest || Superuser | Verifier | Writer | Reader

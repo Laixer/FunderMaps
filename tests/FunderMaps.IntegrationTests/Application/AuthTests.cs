@@ -67,5 +67,21 @@ namespace FunderMaps.IntegrationTests.Application
             Assert.NotNull(returnObject.Token);
             Assert.True(returnObject.TokenValidity > 0);
         }
+
+        [Theory]
+        [InlineData("/")]
+        [InlineData("api/user")]
+        [InlineData("api/auth/token-refresh")]
+        public async Task RefreshSignInReturnUnauthorized(string uri)
+        {
+            // Arrange
+            using var client = new CustomWebApplicationFactory<Startup>().CreateClient();
+
+            // Act
+            var response = await client.GetAsync(uri);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
     }
 }

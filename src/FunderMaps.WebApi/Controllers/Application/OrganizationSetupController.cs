@@ -18,8 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     Organization setup converts an already existing organization
     ///     proposal into a full organization.
     /// </remarks>
-    [AllowAnonymous]
-    [ApiController]
+    [AllowAnonymous, ApiController]
     public class OrganizationSetupController : BaseApiController
     {
         private readonly IMapper _mapper;

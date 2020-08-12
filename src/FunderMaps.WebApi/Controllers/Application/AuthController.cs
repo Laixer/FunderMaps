@@ -12,7 +12,6 @@ namespace FunderMaps.WebApi.Controllers.Application
     /// <summary>
     ///     Endpoint controller for application authentication.
     /// </summary>
-    [Authorize]
     [ApiController, Route("api/auth")]
     public class AuthController : BaseApiController
     {

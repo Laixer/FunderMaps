@@ -4,11 +4,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Application
 {
-    public class ErrorTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ErrorTests : IClassFixture<AuthWebApplicationFactory<Startup>>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthWebApplicationFactory<Startup> _factory;
 
-        public ErrorTests(CustomWebApplicationFactory<Startup> factory)
+        public ErrorTests(AuthWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
@@ -20,7 +20,10 @@ namespace FunderMaps.IntegrationTests.Application
         public async Task GetEndpointsReturnNotFound(string uri)
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
 
             // Act
             var response = await client.GetAsync(uri);
@@ -34,7 +37,10 @@ namespace FunderMaps.IntegrationTests.Application
         public async Task GetEndpointsReturnMethodNotAllowed(string uri)
         {
             // Arrange
-            var client = _factory.CreateClient();
+            var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
 
             // Act
             var response = await client.PostAsync(uri, null);

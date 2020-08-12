@@ -7,11 +7,11 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Application
 {
-    public class OrganizationSetupTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class OrganizationSetupTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly CustomWebApplicationFactory<Startup> _factory;
 
-        public OrganizationSetupTests(AuthWebApplicationFactory<Startup> factory)
+        public OrganizationSetupTests(CustomWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
         }
