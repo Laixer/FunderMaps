@@ -1,4 +1,5 @@
-﻿using FunderMaps.IntegrationTests.Repositories;
+﻿using FunderMaps.IntegrationTests.Authentication;
+using FunderMaps.IntegrationTests.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -22,7 +23,12 @@ namespace FunderMaps.IntegrationTests
 
             WithDataStoreList(new UserRecord { User = authPrincipal.User });
             WithDataStoreList(authPrincipal.Organization);
-            WithDataStoreList(new OrganizationUserRecord { UserId = authPrincipal.User.Id, OrganizationId = authPrincipal.Organization.Id });
+            WithDataStoreList(new OrganizationUserRecord
+            {
+                UserId = authPrincipal.User.Id,
+                OrganizationId = authPrincipal.Organization.Id,
+                OrganizationRole = authPrincipal.OrganizationRole,
+            });
 
             return this;
         }

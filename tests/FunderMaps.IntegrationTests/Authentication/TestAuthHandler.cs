@@ -9,10 +9,12 @@ using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
-namespace FunderMaps.IntegrationTests
+namespace FunderMaps.IntegrationTests.Authentication
 {
     public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
+        public const string AuthenticationScheme = "Test";
+
         public TestAuthenticationSchemeOptions AuthSchemeOptions { get; set; }
 
         public TestAuthHandler(
@@ -60,9 +62,9 @@ namespace FunderMaps.IntegrationTests
                 AuthSchemeOptions.User,
                 AuthSchemeOptions.Organization,
                 AuthSchemeOptions.OrganizationRole,
-                "Test",
+                AuthenticationScheme,
                 AuthSchemeOptions.Claims);
-            var ticket = new AuthenticationTicket(principal, "Test");
+            var ticket = new AuthenticationTicket(principal, AuthenticationScheme);
             var result = AuthenticateResult.Success(ticket);
 
             return Task.FromResult(result);
