@@ -22,8 +22,8 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///         <see cref="OrganizationUserController"/>.
     ///     </para>
     /// </remarks>
-    [Authorize]
-    [ApiController, Route("api/organization/user")]
+    [Authorize(Policy = "AdministratorPolicy")]
+    [ApiController, Route("api/organization/{id:guid}/user")]
     public class OrganizationUserAdminController : BaseApiController
     {
         private readonly IMapper _mapper;
@@ -38,7 +38,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
-        [HttpPost("{id:guid}/user")]
+        [HttpPost]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserDto input)
         {
             // Map.
@@ -54,7 +54,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
-        [HttpGet("{id:guid}/user")]
+        [HttpGet]
         public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationModel pagination)
         {
             // Assign.
@@ -67,7 +67,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(result);
         }
 
-        [HttpPut("{id:guid}/user/{userId:guid}")]
+        [HttpPut("{userId:guid}")]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] UserDto input)
         {
             // Map.
@@ -81,7 +81,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             return NoContent();
         }
 
-        [HttpDelete("{id:guid}/user/{userId:guid}")]
+        [HttpDelete("{userId:guid}")]
         public async Task<IActionResult> DeleteUserAsync(Guid id, Guid userId)
         {
             // Act.
