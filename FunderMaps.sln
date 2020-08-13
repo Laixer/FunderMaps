@@ -37,7 +37,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core.Authenticat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Webservice", "src\FunderMaps.Webservice\FunderMaps.Webservice.csproj", "{278702CF-559B-4ED5-8C57-FD0E23DC4014}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.AspNetCore", "src\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj", "{8A28CFFE-2028-40AC-9CCD-81796FD360AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.AspNetCore", "src\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj", "{8A28CFFE-2028-40AC-9CCD-81796FD360AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Webservice.Tests", "FunderMaps.Webservice.Tests\FunderMaps.Webservice.Tests.csproj", "{755A0ACE-73E7-4569-882F-DCE38B80B3F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,10 @@ Global
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{755A0ACE-73E7-4569-882F-DCE38B80B3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{755A0ACE-73E7-4569-882F-DCE38B80B3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{755A0ACE-73E7-4569-882F-DCE38B80B3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{755A0ACE-73E7-4569-882F-DCE38B80B3F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +121,7 @@ Global
 		{604F9414-3E2F-4DC7-9420-366441FFA31D} = {3CCE5914-CD6D-4DFD-9FF5-E872044553DD}
 		{278702CF-559B-4ED5-8C57-FD0E23DC4014} = {54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE} = {54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}
+		{755A0ACE-73E7-4569-882F-DCE38B80B3F9} = {0219D434-DD4F-4187-ADED-8CD4A62E90F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDA50611-E011-4C1E-8823-7A6943652DCE}
