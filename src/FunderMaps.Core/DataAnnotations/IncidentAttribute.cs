@@ -13,21 +13,9 @@ namespace FunderMaps.Core.DataAnnotations
         ///     Returns true if the value starts with incident identifier.
         /// </summary>
         /// <param name="value">The value to test for validity.</param>
-        /// <returns><c>true</c> means the <paramref name="value" /> is valid</returns>
+        /// <returns><c>true</c> means the <paramref name="value" /> is valid.</returns>
         public override bool IsValid(object value)
-        {
-            if (value == null)
-            {
-                return true;
-            }
-
-            if (!(value is string valueAsString))
-            {
-                return false;
-            }
-
-            return valueAsString.StartsWith("FIR", StringComparison.InvariantCulture);
-        }
+            => value is string str && str.StartsWith("FIR", StringComparison.InvariantCulture);
 
         /// <summary>
         ///     Override of <see cref="ValidationAttribute.FormatErrorMessage" />

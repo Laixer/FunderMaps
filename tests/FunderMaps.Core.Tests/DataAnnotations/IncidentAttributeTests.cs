@@ -24,15 +24,10 @@ namespace FunderMaps.Core.Tests.DataAnnotations
             // Arrange
             var attr = new AddressAttribute();
 
-            // Act
-            bool valid = attr.IsValid("FI-12345");
-            bool valid2 = attr.IsValid("FIR12345");
-            bool valid3 = attr.IsValid("fir-12345");
-
             // Assert
-            Assert.False(valid);
-            Assert.False(valid2);
-            Assert.False(valid3);
+            Assert.False(attr.IsValid("FI-12345"));
+            Assert.False(attr.IsValid("FIR12345"));
+            Assert.False(attr.IsValid("fir-12345"));
         }
     }
 }

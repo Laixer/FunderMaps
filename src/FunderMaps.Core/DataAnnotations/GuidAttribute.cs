@@ -4,18 +4,18 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.DataAnnotations
 {
     /// <summary>
-    ///     Address validation attribute.
+    ///     Guid validation attribute.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-    public class AddressAttribute : ValidationAttribute
+    public class GuidAttribute : ValidationAttribute
     {
         /// <summary>
-        ///     Returns true if the value starts with address identifier.
+        ///     Returns true if the value is an non empty guid.
         /// </summary>
         /// <param name="value">The value to test for validity.</param>
-        /// <returns><c>true</c> means the <paramref name="value" /> is valid</returns>
+        /// <returns><c>true</c> means the <paramref name="value" /> is valid.</returns>
         public override bool IsValid(object value)
-            => value is string str && str.StartsWith("gfm-", StringComparison.InvariantCulture);
+            => value is Guid guid && Guid.Empty != guid;
 
         /// <summary>
         ///     Override of <see cref="ValidationAttribute.FormatErrorMessage" />
@@ -24,6 +24,6 @@ namespace FunderMaps.Core.DataAnnotations
         /// <param name="name">The user-visible name to include in the formatted message.</param>
         /// <returns>A string describing the invalid field.</returns>
         public override string FormatErrorMessage(string name)
-            => $"The {name} field is not a valid address identifier.";
+            => $"The {name} field is not a valid non empty guid.";
     }
 }

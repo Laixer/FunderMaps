@@ -5,7 +5,7 @@ using Xunit;
 namespace FunderMaps.Core.Tests.Extensions
 {
     /// <summary>
-    ///     Testing class for <see cref="FunderMaps.Core.Extensions.StringExtensions"/>
+    ///     Testing class for <see cref="StringExtensions"/>
     /// </summary>
     public sealed class StringExtensionTests
     {
@@ -25,7 +25,7 @@ namespace FunderMaps.Core.Tests.Extensions
             // Arrange
             var str = null as string;
 
-            // Assert.
+            // Assert
             Assert.Throws<ArgumentNullException>(() => str.ThrowIfNullOrEmpty());
         }
 
@@ -38,7 +38,7 @@ namespace FunderMaps.Core.Tests.Extensions
             // Act
             str.ThrowIfNullOrEmpty();
 
-            // Assert.
+            // Assert
             Assert.False(string.IsNullOrEmpty(str));
         }
     }

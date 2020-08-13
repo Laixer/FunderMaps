@@ -1,30 +1,29 @@
 ﻿using FunderMaps.Core.DataAnnotations;
+using System;
 using Xunit;
 
 namespace FunderMaps.Core.Tests.DataAnnotations
 {
-    public class AddressAttributeTests
+    public class GuidAttributeTests
     {
         [Fact]
         public void IsValidOnInput()
         {
             // Arrange
-            var attr = new AddressAttribute();
+            var attr = new GuidAttribute();
 
             // Assert
-            Assert.True(attr.IsValid("gfm-12345"));
+            Assert.True(attr.IsValid(Guid.NewGuid()));
         }
 
         [Fact]
         public void IsInvalidOnInput()
         {
             // Arrange
-            var attr = new AddressAttribute();
+            var attr = new GuidAttribute();
 
             // Assert
-            Assert.False(attr.IsValid("ggfm-12345"));
-            Assert.False(attr.IsValid("gfm12345"));
-            Assert.False(attr.IsValid("GFM-12345"));
+            Assert.False(attr.IsValid(Guid.Empty));
         }
     }
 }
