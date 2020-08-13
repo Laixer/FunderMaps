@@ -8,11 +8,11 @@
         /// <summary>
         /// Basis Registratie Gebouwen.
         /// </summary>
-        Bag,
+        NlBag,
 
         /// <summary>
         /// Open Street Maps.
         /// </summary>
-        Osm,
+        NlOsm,
     }
 }
