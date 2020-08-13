@@ -4,26 +4,27 @@ using Xunit;
 
 namespace FunderMaps.Core.Tests.DataAnnotations
 {
-    public class GuidAttributeTests
+    public class GuidAttributeTests : IClassFixture<GuidAttribute>
     {
+        private readonly GuidAttribute _guidAttribute;
+
+        public GuidAttributeTests(GuidAttribute guidAttribute)
+        {
+            _guidAttribute = guidAttribute;
+        }
+
         [Fact]
         public void IsValidOnInput()
         {
-            // Arrange
-            var attr = new GuidAttribute();
-
             // Assert
-            Assert.True(attr.IsValid(Guid.NewGuid()));
+            Assert.True(_guidAttribute.IsValid(Guid.NewGuid()));
         }
 
         [Fact]
         public void IsInvalidOnInput()
         {
-            // Arrange
-            var attr = new GuidAttribute();
-
             // Assert
-            Assert.False(attr.IsValid(Guid.Empty));
+            Assert.False(_guidAttribute.IsValid(Guid.Empty));
         }
     }
 }

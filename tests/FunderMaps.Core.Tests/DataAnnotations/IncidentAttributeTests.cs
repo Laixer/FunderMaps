@@ -3,31 +3,30 @@ using Xunit;
 
 namespace FunderMaps.Core.Tests.DataAnnotations
 {
-    public class IncidentAttributeTests
+    public class IncidentAttributeTests : IClassFixture<IncidentAttribute>
     {
+        private readonly IncidentAttribute _incidentAttribute;
+
+        public IncidentAttributeTests(IncidentAttribute incidentAttribute)
+        {
+            _incidentAttribute = incidentAttribute;
+        }
+
         [Fact]
         public void IsValidOnInput()
         {
-            // Arrange
-            var attr = new IncidentAttribute();
-
-            // Act
-            bool valid = attr.IsValid("FIR-12345");
-
             // Assert
-            Assert.True(valid);
+            Assert.True(_incidentAttribute.IsValid(null));
+            Assert.True(_incidentAttribute.IsValid("FIR-12345"));
         }
 
         [Fact]
         public void IsInvalidOnInput()
         {
-            // Arrange
-            var attr = new AddressAttribute();
-
             // Assert
-            Assert.False(attr.IsValid("FI-12345"));
-            Assert.False(attr.IsValid("FIR12345"));
-            Assert.False(attr.IsValid("fir-12345"));
+            Assert.False(_incidentAttribute.IsValid("FI-12345"));
+            Assert.False(_incidentAttribute.IsValid("FIR12345"));
+            Assert.False(_incidentAttribute.IsValid("fir-12345"));
         }
     }
 }
