@@ -1,10 +1,16 @@
-﻿namespace FunderMaps.Core.Interfaces
+﻿using FunderMaps.Core.Types.Products;
+using System;
+using System.Threading.Tasks;
+
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
-    /// Contract for tracking user behaviour regarding requests.
+    ///     Contract for tracking user behaviour regarding requests.
     /// </summary>
     public interface IUserTrackingService
     {
-        // TODO Implement
+        Task ProcessAnalysisRequest(Guid userId, AnalysisProductType productType);
+
+        Task ProcessStatisticsRequestAsync(Guid userId, StatisticsProductType productType);
     }
 }
