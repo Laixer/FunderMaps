@@ -4,7 +4,10 @@ using Xunit;
 
 namespace FunderMaps.Core.Tests.Extensions
 {
-    public class GuidExtensionsTests
+    /// <summary>
+    ///     Testing class for <see cref="GuidExtensions"/>.
+    /// </summary>
+    public sealed class GuidExtensionsTests
     {
         [Fact]
         public void NewGuidDoesNotThrow()
