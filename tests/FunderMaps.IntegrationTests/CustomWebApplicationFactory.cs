@@ -49,17 +49,17 @@ namespace FunderMaps.IntegrationTests
             where TEntity : BaseEntity
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
-            dataStore.Add(entity);
+            dataStore.Reset(entity);
 
             return this;
         }
 
         // TODO Helper, move ?
-        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IList<TEntity> list)
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IEnumerable<TEntity> list)
             where TEntity : BaseEntity
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
-            dataStore.Add(list);
+            dataStore.Reset(list);
 
             return this;
         }

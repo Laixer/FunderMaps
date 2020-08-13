@@ -10,7 +10,7 @@ namespace FunderMaps.IntegrationTests
     public class EntityDataStore<TEntity>
         where TEntity : BaseEntity
     {
-        public IList<TEntity> Entities { get; } = new List<TEntity>();
+        public IList<TEntity> Entities { get; private set; } = new List<TEntity>();
 
         /// <summary>
         ///     Add entity to the data store.
@@ -21,6 +21,36 @@ namespace FunderMaps.IntegrationTests
         {
             Entities.Add(entity);
             return entity;
+        }
+
+        /// <summary>
+        ///     Add all entities to the data store.
+        /// </summary>
+        /// <param name="entityList">Entity list to add.</param>
+        public void Add(IEnumerable<TEntity> entityList)
+        {
+            foreach (var entity in entityList)
+            {
+                Entities.Add(entity);
+            }
+        }
+
+        /// <summary>
+        ///     Add all entities to the data store.
+        /// </summary>
+        /// <param name="entityList">Entity list to add.</param>
+        public void Reset(TEntity entity)
+        {
+            Entities = new List<TEntity>() { entity };
+        }
+
+        /// <summary>
+        ///     Add all entities to the data store.
+        /// </summary>
+        /// <param name="entityList">Entity list to add.</param>
+        public void Reset(IEnumerable<TEntity> entityList)
+        {
+            Entities = new List<TEntity>(entityList);
         }
 
         /// <summary>
@@ -37,17 +67,5 @@ namespace FunderMaps.IntegrationTests
         ///     True if there are entities in the data store.
         /// </summary>
         public bool IsSet => Entities.Count > 0;
-
-        /// <summary>
-        ///     Add all entities to the data store.
-        /// </summary>
-        /// <param name="entityList">Entity list to add.</param>
-        public void Add(IList<TEntity> entityList)
-        {
-            foreach (var entity in entityList)
-            {
-                Entities.Add(entity);
-            }
-        }
     }
 }
