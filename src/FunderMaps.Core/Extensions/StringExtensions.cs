@@ -3,25 +3,25 @@
 namespace FunderMaps.Webservice.Utility
 {
     /// <summary>
-    /// Contains extension functionality for <see cref="string"/> types.
+    ///     Contains extension functionality for <see cref="string"/> types.
     /// </summary>
     public static class StringExtensions
     {
         /// <summary>
-        /// Throws an <see cref="ArgumentNullException"/> if <paramref name="s"/>
-        /// is null or empty.
+        ///     Throws an <see cref="ArgumentNullException"/> if <paramref name="str"/>
+        ///     is null or empty.
         /// </summary>
-        /// <param name="s">The <see cref="string"/> to check</param>
-        public static void ThrowIfNullOrEmpty(this string s)
+        /// <param name="str">The <see cref="string"/> to check</param>
+        public static void ThrowIfNullOrEmpty(this string str)
         {
-            if (s == null)
+            if (str == null)
             {
-                throw new ArgumentNullException(nameof(s));
+                throw new ArgumentNullException(nameof(str));
             }
 
-            if (string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(str))
             {
-                throw new ArgumentNullException(nameof(s));
+                throw new ArgumentNullException(nameof(str));
             }
         }
     }

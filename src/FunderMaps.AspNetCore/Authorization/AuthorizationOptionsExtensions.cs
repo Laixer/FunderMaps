@@ -6,6 +6,7 @@ namespace FunderMaps.AspNetCore.Authorization
 {
     public static class AuthorizationOptionsExtensions
     {
+        // TODO: Move the business logic to the core.
         /// <summary>
         ///     Add FunderMaps authorization policy.
         /// </summary>
