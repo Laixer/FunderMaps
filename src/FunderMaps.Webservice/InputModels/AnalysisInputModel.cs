@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Helpers;
-using FunderMaps.Webservice.Utility;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 

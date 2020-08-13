@@ -1,8 +1,8 @@
 ﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;
-using FunderMaps.Webservice.Utility;
 using System;
 
 namespace FunderMaps.Webservice.Mapping

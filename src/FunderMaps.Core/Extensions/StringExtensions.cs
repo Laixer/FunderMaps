@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.Webservice.Utility
+namespace FunderMaps.Core.Extensions
 {
     /// <summary>
     ///     Contains extension functionality for <see cref="string"/> types.
