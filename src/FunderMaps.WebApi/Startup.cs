@@ -17,7 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IO.Compression;
 
 // TODO: Register assembly as api controller
-namespace FunderMaps
+namespace FunderMaps.WebApi
 {
     /// <summary>
     ///     Application configuration.

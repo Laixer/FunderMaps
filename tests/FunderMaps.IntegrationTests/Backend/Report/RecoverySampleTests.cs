@@ -10,13 +10,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Report
+namespace FunderMaps.IntegrationTests.Backend.Report
 {
-    public class RecoverySampleTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class RecoverySampleTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public RecoverySampleTests(AuthWebApplicationFactory<Startup> factory)
+        public RecoverySampleTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }
@@ -67,23 +67,22 @@ namespace FunderMaps.IntegrationTests.Report
             var recoverySampleDataStore = _factory.Services.GetService<EntityDataStore<Recovery>>();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/sample", sample).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(recoverySampleDataStore.IsSet);
-            var actualRecoverySample = await response.Content.ReadFromJsonAsync<RecoverySampleDto>().ConfigureAwait(false);
+            var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/sample", sample);
+            var returnObject = await response.Content.ReadFromJsonAsync<RecoverySampleDto>();
 
             // Assert
-            Assert.Equal(sample.Note, actualRecoverySample.Note);
-            Assert.Equal(sample.Address, actualRecoverySample.Address);
-            Assert.Equal(sample.Status, actualRecoverySample.Status);
-            Assert.Equal(sample.Type, actualRecoverySample.Type);
-            Assert.Equal(sample.PileType, actualRecoverySample.PileType);
-            Assert.Equal(sample.Contractor, actualRecoverySample.Contractor);
-            Assert.Equal(sample.Facade, actualRecoverySample.Facade);
-            Assert.Equal(sample.Permit, actualRecoverySample.Permit);
-            Assert.Equal(sample.PermitDate, actualRecoverySample.PermitDate);
-            Assert.Equal(sample.RecoveryDate, actualRecoverySample.RecoveryDate);
+            Assert.True(recoverySampleDataStore.IsSet);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(sample.Note, returnObject.Note);
+            Assert.Equal(sample.Address, returnObject.Address);
+            Assert.Equal(sample.Status, returnObject.Status);
+            Assert.Equal(sample.Type, returnObject.Type);
+            Assert.Equal(sample.PileType, returnObject.PileType);
+            Assert.Equal(sample.Contractor, returnObject.Contractor);
+            Assert.Equal(sample.Facade, returnObject.Facade);
+            Assert.Equal(sample.Permit, returnObject.Permit);
+            Assert.Equal(sample.PermitDate, returnObject.PermitDate);
+            Assert.Equal(sample.RecoveryDate, returnObject.RecoveryDate);
         }
 
         [Theory]
@@ -99,22 +98,21 @@ namespace FunderMaps.IntegrationTests.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualRecoverySample = await response.Content.ReadFromJsonAsync<RecoverySampleDto>().ConfigureAwait(false);
+            var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<RecoverySampleDto>();
 
             // Assert
-            Assert.Equal(sample.Note, actualRecoverySample.Note);
-            Assert.Equal(sample.Address, actualRecoverySample.Address);
-            Assert.Equal(sample.Status, actualRecoverySample.Status);
-            Assert.Equal(sample.Type, actualRecoverySample.Type);
-            Assert.Equal(sample.PileType, actualRecoverySample.PileType);
-            Assert.Equal(sample.Contractor, actualRecoverySample.Contractor);
-            Assert.Equal(sample.Facade, actualRecoverySample.Facade);
-            Assert.Equal(sample.Permit, actualRecoverySample.Permit);
-            Assert.Equal(sample.PermitDate, actualRecoverySample.PermitDate);
-            Assert.Equal(sample.RecoveryDate, actualRecoverySample.RecoveryDate);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(sample.Note, returnObject.Note);
+            Assert.Equal(sample.Address, returnObject.Address);
+            Assert.Equal(sample.Status, returnObject.Status);
+            Assert.Equal(sample.Type, returnObject.Type);
+            Assert.Equal(sample.PileType, returnObject.PileType);
+            Assert.Equal(sample.Contractor, returnObject.Contractor);
+            Assert.Equal(sample.Facade, returnObject.Facade);
+            Assert.Equal(sample.Permit, returnObject.Permit);
+            Assert.Equal(sample.PermitDate, returnObject.PermitDate);
+            Assert.Equal(sample.RecoveryDate, returnObject.RecoveryDate);
         }
 
         [Fact]
@@ -130,14 +128,12 @@ namespace FunderMaps.IntegrationTests.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var recoverySampleList = await response.Content.ReadFromJsonAsync<List<RecoverySampleDto>>().ConfigureAwait(false);
-            Assert.NotNull(recoverySampleList);
+            var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample");
+            var returnList = await response.Content.ReadFromJsonAsync<List<RecoverySampleDto>>();
 
             // Assert
-            Assert.True(recoverySampleList.Count > 0);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(returnList.Count > 0);
         }
 
         [Fact]
@@ -153,14 +149,12 @@ namespace FunderMaps.IntegrationTests.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample?limit=100").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var recoverySampleList = await response.Content.ReadFromJsonAsync<List<RecoverySampleDto>>().ConfigureAwait(false);
-            Assert.NotNull(recoverySampleList);
+            var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample?limit=100");
+            var returnList = await response.Content.ReadFromJsonAsync<List<RecoverySampleDto>>();
 
             // Assert
-            Assert.Equal(100, recoverySampleList.Count);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(100, returnList.Count);
         }
 
         [Theory]
@@ -178,12 +172,11 @@ namespace FunderMaps.IntegrationTests.Report
             var recoverySampleDataStore = _factory.Services.GetService<EntityDataStore<RecoverySample>>();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}", newSample).ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(1, recoverySampleDataStore.Entities.Count);
+            var response = await client.PutAsJsonAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}", newSample);
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(1, recoverySampleDataStore.Entities.Count);
             var actualSample = recoverySampleDataStore.Entities[0];
             Assert.Equal(sample.Id, actualSample.Id);
             Assert.Equal(newSample.Note, actualSample.Note);
@@ -212,11 +205,10 @@ namespace FunderMaps.IntegrationTests.Report
             var recoverySampleDataStore = _factory.Services.GetService<EntityDataStore<RecoverySample>>();
 
             // Act
-            var response = await client.DeleteAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            var response = await client.DeleteAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}");
 
             // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.False(recoverySampleDataStore.IsSet);
         }
     }

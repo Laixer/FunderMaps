@@ -10,13 +10,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Report
+namespace FunderMaps.IntegrationTests.Backend.Report
 {
-    public class InquiryTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class InquiryTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public InquiryTests(AuthWebApplicationFactory<Startup> factory)
+        public InquiryTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }
@@ -53,23 +53,23 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.PostAsJsonAsync("api/inquiry", inquiry).ConfigureAwait(false);
+            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(inquiryDataStore.IsSet);
-            var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
-            Assert.Equal(inquiry.DocumentName, actualInquiry.DocumentName);
-            Assert.Equal(inquiry.Inspection, actualInquiry.Inspection);
-            Assert.Equal(inquiry.JointMeasurement, actualInquiry.JointMeasurement);
-            Assert.Equal(inquiry.FloorMeasurement, actualInquiry.FloorMeasurement);
-            Assert.Equal(inquiry.Note, actualInquiry.Note);
-            Assert.Equal(inquiry.DocumentDate, actualInquiry.DocumentDate);
-            Assert.Equal(inquiry.DocumentFile, actualInquiry.DocumentFile);
-            Assert.Equal(AuditStatus.Todo, actualInquiry.AuditStatus);
-            Assert.Equal(inquiry.Type, actualInquiry.Type);
-            Assert.Equal(inquiry.StandardF3o, actualInquiry.StandardF3o);
+            Assert.Equal(inquiry.DocumentName, returnObject.DocumentName);
+            Assert.Equal(inquiry.Inspection, returnObject.Inspection);
+            Assert.Equal(inquiry.JointMeasurement, returnObject.JointMeasurement);
+            Assert.Equal(inquiry.FloorMeasurement, returnObject.FloorMeasurement);
+            Assert.Equal(inquiry.Note, returnObject.Note);
+            Assert.Equal(inquiry.DocumentDate, returnObject.DocumentDate);
+            Assert.Equal(inquiry.DocumentFile, returnObject.DocumentFile);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            Assert.Equal(inquiry.Type, returnObject.Type);
+            Assert.Equal(inquiry.StandardF3o, returnObject.StandardF3o);
             //Assert.Equal(inquiry.Attribution, actualInquiry.Attribution);
-            Assert.Equal(inquiry.AccessPolicy, actualInquiry.AccessPolicy);
+            Assert.Equal(inquiry.AccessPolicy, returnObject.AccessPolicy);
         }
 
         [Theory]
@@ -85,23 +85,23 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.GetAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
+            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualInquiry = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
-            Assert.Equal(inquiry.Id, actualInquiry.Id);
-            Assert.Equal(inquiry.DocumentName, actualInquiry.DocumentName);
-            Assert.Equal(inquiry.Inspection, actualInquiry.Inspection);
-            Assert.Equal(inquiry.JointMeasurement, actualInquiry.JointMeasurement);
-            Assert.Equal(inquiry.FloorMeasurement, actualInquiry.FloorMeasurement);
-            Assert.Equal(inquiry.Note, actualInquiry.Note);
-            Assert.Equal(inquiry.DocumentDate, actualInquiry.DocumentDate);
-            Assert.Equal(inquiry.DocumentFile, actualInquiry.DocumentFile);
-            Assert.Equal(inquiry.AuditStatus, actualInquiry.AuditStatus);
-            Assert.Equal(inquiry.Type, actualInquiry.Type);
-            Assert.Equal(inquiry.StandardF3o, actualInquiry.StandardF3o);
+            Assert.Equal(inquiry.Id, returnObject.Id);
+            Assert.Equal(inquiry.DocumentName, returnObject.DocumentName);
+            Assert.Equal(inquiry.Inspection, returnObject.Inspection);
+            Assert.Equal(inquiry.JointMeasurement, returnObject.JointMeasurement);
+            Assert.Equal(inquiry.FloorMeasurement, returnObject.FloorMeasurement);
+            Assert.Equal(inquiry.Note, returnObject.Note);
+            Assert.Equal(inquiry.DocumentDate, returnObject.DocumentDate);
+            Assert.Equal(inquiry.DocumentFile, returnObject.DocumentFile);
+            Assert.Equal(inquiry.AuditStatus, returnObject.AuditStatus);
+            Assert.Equal(inquiry.Type, returnObject.Type);
+            Assert.Equal(inquiry.StandardF3o, returnObject.StandardF3o);
             //Assert.Equal(inquiry.Attribution, actualInquiry.Attribution);
-            Assert.Equal(inquiry.AccessPolicy, actualInquiry.AccessPolicy);
+            Assert.Equal(inquiry.AccessPolicy, returnObject.AccessPolicy);
         }
 
         [Fact]
@@ -116,12 +116,11 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.GetAsync($"api/inquiry").ConfigureAwait(false);
+            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var inquiryList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
-            Assert.NotNull(inquiryList);
-            Assert.True(inquiryList.Count > 0);
+            Assert.True(returnList.Count > 0);
         }
 
         [Fact]
@@ -136,12 +135,11 @@ namespace FunderMaps.IntegrationTests.Report
 
             // Act
             var response = await client.GetAsync($"api/inquiry?limit=100").ConfigureAwait(false);
+            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var inquiryList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
-            Assert.NotNull(inquiryList);
-            Assert.Equal(100, inquiryList.Count);
+            Assert.Equal(100, returnList.Count);
         }
 
         [Theory]

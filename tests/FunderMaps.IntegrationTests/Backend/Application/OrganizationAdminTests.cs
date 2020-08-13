@@ -6,13 +6,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Application
+namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationAdminTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class OrganizationAdminTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public OrganizationAdminTests(AuthWebApplicationFactory<Startup> factory)
+        public OrganizationAdminTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }

@@ -2,13 +2,13 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Application
+namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class ErrorTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class ErrorTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public ErrorTests(AuthWebApplicationFactory<Startup> factory)
+        public ErrorTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }

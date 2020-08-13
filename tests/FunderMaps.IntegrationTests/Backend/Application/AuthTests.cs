@@ -9,13 +9,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Application
+namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class AuthTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class AuthTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public AuthTests(AuthWebApplicationFactory<Startup> factory)
+        public AuthTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }
@@ -75,7 +75,7 @@ namespace FunderMaps.IntegrationTests.Application
         public async Task RefreshSignInReturnUnauthorized(string uri)
         {
             // Arrange
-            using var client = new CustomWebApplicationFactory<Startup>().CreateClient();
+            using var client = new BackendWebApplicationFactory().CreateClient();
 
             // Act
             var response = await client.GetAsync(uri);

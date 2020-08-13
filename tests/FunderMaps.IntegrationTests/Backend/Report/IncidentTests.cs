@@ -11,13 +11,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Report
+namespace FunderMaps.IntegrationTests.Backend.Report
 {
-    public class IncidentTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class IncidentTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public IncidentTests(AuthWebApplicationFactory<Startup> factory)
+        public IncidentTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }

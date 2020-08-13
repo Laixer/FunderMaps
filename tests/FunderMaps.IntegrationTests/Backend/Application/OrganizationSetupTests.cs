@@ -5,13 +5,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Application
+namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationSetupTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class OrganizationSetupTests : IClassFixture<BackendWebApplicationFactory>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly BackendWebApplicationFactory _factory;
 
-        public OrganizationSetupTests(CustomWebApplicationFactory<Startup> factory)
+        public OrganizationSetupTests(BackendWebApplicationFactory factory)
         {
             _factory = factory;
         }

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
-namespace FunderMaps
+namespace FunderMaps.WebApi
 {
     /// <summary>
     ///     Application entry.

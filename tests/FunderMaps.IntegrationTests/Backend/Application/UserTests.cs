@@ -7,16 +7,16 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Application
+namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class UserTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class UserTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
         private readonly User sessionUser = new UserFaker().Generate();
 
-        public UserTests(AuthWebApplicationFactory<Startup> factory)
+        public UserTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
             _client = _factory

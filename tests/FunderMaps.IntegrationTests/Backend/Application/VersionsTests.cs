@@ -3,13 +3,13 @@ using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Application
+namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class VersionsTests : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class VersionsTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly CustomWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public VersionsTests(CustomWebApplicationFactory<Startup> factory)
+        public VersionsTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }

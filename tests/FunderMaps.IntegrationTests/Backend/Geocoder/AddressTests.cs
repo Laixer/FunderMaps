@@ -6,14 +6,14 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Geocoder
+namespace FunderMaps.IntegrationTests.Backend.Geocoder
 {
     // TODO: Use DTO
-    public class AddressTests : IClassFixture<AuthWebApplicationFactory<Startup>>
+    public class AddressTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthWebApplicationFactory<Startup> _factory;
+        private readonly AuthBackendWebApplicationFactory _factory;
 
-        public AddressTests(AuthWebApplicationFactory<Startup> factory)
+        public AddressTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
         }
@@ -30,19 +30,12 @@ namespace FunderMaps.IntegrationTests.Geocoder
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/address/{expectedAddress.Id}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualAddress = await response.Content.ReadFromJsonAsync<Address>().ConfigureAwait(false);
+            var response = await client.GetAsync($"api/address/{expectedAddress.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<Address>();
 
             // Assert
-            Assert.Equal(expectedAddress.Id, actualAddress.Id);
-            Assert.Equal(expectedAddress.BuildingNumber, actualAddress.BuildingNumber);
-            Assert.Equal(expectedAddress.PostalCode, actualAddress.PostalCode);
-            Assert.Equal(expectedAddress.Street, actualAddress.Street);
-            Assert.Equal(expectedAddress.IsActive, actualAddress.IsActive);
-            Assert.Equal(expectedAddress.ExternalId, actualAddress.ExternalId);
-            Assert.Equal(expectedAddress.ExternalSource, actualAddress.ExternalSource);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(expectedAddress.Id, returnObject.Id);
         }
 
         internal static readonly IList<Address> Addresses = new List<Address>
@@ -155,14 +148,12 @@ namespace FunderMaps.IntegrationTests.Geocoder
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/address/suggest?query={query}").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var addessList = await response.Content.ReadFromJsonAsync<List<Address>>().ConfigureAwait(false);
-            Assert.NotNull(addessList);
+            var response = await client.GetAsync($"api/address/suggest?query={query}");
+            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
             // Assert
-            Assert.True(addessList.Count > 0);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(returnList.Count > 0);
         }
 
         [Fact]
@@ -176,14 +167,12 @@ namespace FunderMaps.IntegrationTests.Geocoder
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/address/suggest?query=laan&limit=2").ConfigureAwait(false);
-            response.EnsureSuccessStatusCode();
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var addessList = await response.Content.ReadFromJsonAsync<List<Address>>().ConfigureAwait(false);
-            Assert.NotNull(addessList);
+            var response = await client.GetAsync($"api/address/suggest?query=laan&limit=2");
+            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
             // Assert
-            Assert.Equal(2, addessList.Count);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(2, returnList.Count);
         }
     }
 }
