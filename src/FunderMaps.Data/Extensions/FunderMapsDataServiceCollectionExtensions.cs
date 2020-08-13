@@ -24,6 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Keep the order in which they are directory listed
             services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IAnalysisRepository, AnalysisRepository>();
             services.AddScoped<IBuildingRepository, BuildingRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IIncidentRepository, IncidentRepository>();
@@ -36,6 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IProjectSampleRepository, ProjectSampleRepository>();
             services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
+            services.AddScoped<IStatisticsRepository, StatisticsRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
             return services;
