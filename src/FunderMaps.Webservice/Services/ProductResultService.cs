@@ -40,7 +40,7 @@ namespace FunderMaps.Webservice.Services
             token.ThrowIfCancellationRequested();
 
             // Get result, map and return.
-            var result = await _productService.GetAnalysisByExternalIdAsync(userId, productType, bagId, ExternalDataSource.Bag, navigation).ConfigureAwait(false);
+            var result = await _productService.GetAnalysisByExternalIdAsync(userId, productType, bagId, ExternalDataSource.NlBag, navigation, token).ConfigureAwait(false);
             return _mappingService.MapToAnalysisWrapper(productType, new List<AnalysisProduct> { result });
         }
 

@@ -6,23 +6,24 @@ using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Services
-{
-    /// <summary>
-    /// Used for testing purposes.
+{    
     /// TODO Make Faker.
-    /// </summary>
+     /// <summary>
+     ///     Used for testing purposes.
+     /// </summary>
     public sealed class DebugProductService : IProductService
     {
-        public Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalSource, INavigation navigation)
+        public Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalSource, INavigation navigation, CancellationToken token)
             => Task.FromResult(GetAnalysisDummy());
 
-        public Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation)
+        public Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation, CancellationToken token)
             => Task.FromResult(GetAnalysisDummy());
 
-        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation)
+        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation, CancellationToken token)
         {
             await Task.CompletedTask.ConfigureAwait(false);
             return new List<AnalysisProduct>
@@ -33,7 +34,7 @@ namespace FunderMaps.Webservice.Services
             };
         }
 
-        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation)
+        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token)
         {
             await Task.CompletedTask.ConfigureAwait(false);
             return new List<AnalysisProduct>
@@ -44,8 +45,8 @@ namespace FunderMaps.Webservice.Services
             };
         }
 
-        public Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, INavigation navigation) => throw new NotImplementedException();
-        public Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation) => throw new NotImplementedException();
+        public Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
 
         /// <summary>
         /// Creates a new <see cref="AnalysisProduct"/> dummy where all fields
@@ -68,7 +69,7 @@ namespace FunderMaps.Webservice.Services
             DewateringDepth = 12,
             DryPeriod = 25,
             ExternalId = "NL.IMBAG.PAND.285747389504823",
-            ExternalSource = ExternalDataSource.Bag,
+            ExternalSource = ExternalDataSource.NlBag,
             FoundationRisk = FoundationRisk.A,
             FoundationRiskDistribution = new FoundationRiskDistribution
             {
