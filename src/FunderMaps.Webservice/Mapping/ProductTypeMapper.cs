@@ -12,7 +12,7 @@ namespace FunderMaps.Webservice.Mapping
     /// and their respective names.
     /// TODO How to do this elegantly? Also see <see cref="Translation.ProductTypeTranslator"/>.
     /// </summary>
-    internal static class ProductTypeMapper
+    public static class ProductTypeMapper
     {
         /// <summary>
         /// Maps a given <paramref name="name"/> to the corresponding <see cref="ProductType"/>.
