@@ -69,11 +69,11 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquirySampleDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", sample).ConfigureAwait(false);
+            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", sample);
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(AuditStatus.Pending, inquiryDataStore.Entities[0].AuditStatus);
             Assert.True(inquirySampleDataStore.IsSet);
-            var actualInquirySample = await response.Content.ReadFromJsonAsync<InquirySampleDto>().ConfigureAwait(false);
+            var actualInquirySample = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
 
             // Assert
             Assert.Equal(sample.Address, actualInquirySample.Address);
@@ -150,9 +150,9 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}").ConfigureAwait(false);
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var actualInquirySample = await response.Content.ReadFromJsonAsync<InquirySampleDto>().ConfigureAwait(false);
+            var actualInquirySample = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
 
             // Assert
             Assert.Equal(sample.Id, actualInquirySample.Id);
@@ -230,9 +230,9 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample").ConfigureAwait(false);
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var inquirySampleList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>().ConfigureAwait(false);
+            var inquirySampleList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>();
             Assert.NotNull(inquirySampleList);
 
             // Assert
@@ -252,10 +252,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample?limit=100").ConfigureAwait(false);
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample?limit=100");
             response.EnsureSuccessStatusCode();
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var inquirySampleList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>().ConfigureAwait(false);
+            var inquirySampleList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>();
             Assert.NotNull(inquirySampleList);
 
             // Assert
@@ -277,7 +277,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquirySampleDataStore = _factory.Services.GetService<EntityDataStore<InquirySample>>();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", newSample).ConfigureAwait(false);
+            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", newSample);
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(1, inquirySampleDataStore.Entities.Count);
 
@@ -359,7 +359,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquirySampleDataStore = _factory.Services.GetService<EntityDataStore<InquirySample>>();
 
             // Act
-            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}").ConfigureAwait(false);
+            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
             // Assert

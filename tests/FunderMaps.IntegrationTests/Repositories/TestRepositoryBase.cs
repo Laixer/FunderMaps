@@ -56,7 +56,7 @@ namespace FunderMaps.IntegrationTests.Repositories
         /// </summary>
         /// <returns>Number of items in data store.</returns>
         public virtual ValueTask<ulong> CountAsync()
-            => new ValueTask<ulong>(DataStore.Count());
+            => new ValueTask<ulong>(DataStore.Count);
 
         /// <summary>
         ///     Remove entity from data store.

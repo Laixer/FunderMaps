@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace FunderMaps.IntegrationTests
 {
-    public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
+    public abstract class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
          where TStartup : class
     {
         public CustomWebApplicationFactory()
@@ -49,18 +49,17 @@ namespace FunderMaps.IntegrationTests
             where TEntity : BaseEntity
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
-            dataStore.Entities = new List<TEntity> { entity };
+            dataStore.Add(entity);
 
             return this;
         }
 
-        // TODO: make actual list
         // TODO Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IList<TEntity> list)
             where TEntity : BaseEntity
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
-            dataStore.Entities = list;
+            dataStore.Add(list);
 
             return this;
         }

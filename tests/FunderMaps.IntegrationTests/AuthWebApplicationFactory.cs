@@ -6,7 +6,7 @@ using System;
 
 namespace FunderMaps.IntegrationTests
 {
-    public class AuthWebApplicationFactory<TStartup> : CustomWebApplicationFactory<TStartup>
+    public abstract class AuthWebApplicationFactory<TStartup> : CustomWebApplicationFactory<TStartup>
         where TStartup : class
     {
         public AuthWebApplicationFactory<TStartup> WithAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)

@@ -75,7 +75,8 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task RefreshSignInReturnUnauthorized(string uri)
         {
             // Arrange
-            using var client = new BackendWebApplicationFactory().CreateClient();
+            using var factory = new BackendWebApplicationFactory();
+            var client = factory.CreateClient();
 
             // Act
             var response = await client.GetAsync(uri);

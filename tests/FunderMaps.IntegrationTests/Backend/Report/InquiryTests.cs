@@ -52,8 +52,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/inquiry", inquiry).ConfigureAwait(false);
-            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
+            var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
+            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -84,8 +84,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
-            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>().ConfigureAwait(false);
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -115,8 +115,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/inquiry").ConfigureAwait(false);
-            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
+            var response = await client.GetAsync($"api/inquiry");
+            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -134,8 +134,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/inquiry?limit=100").ConfigureAwait(false);
-            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>().ConfigureAwait(false);
+            var response = await client.GetAsync($"api/inquiry?limit=100");
+            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -156,7 +156,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry).ConfigureAwait(false);
+            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -193,7 +193,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
-            var response = await client.PutAsync($"api/inquiry/{inquiry.Id}/{url}", null).ConfigureAwait(false);
+            var response = await client.PutAsync($"api/inquiry/{inquiry.Id}/{url}", null);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -213,7 +213,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
-            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}").ConfigureAwait(false);
+            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

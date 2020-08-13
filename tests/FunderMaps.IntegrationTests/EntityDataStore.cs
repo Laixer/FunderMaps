@@ -3,11 +3,20 @@ using System.Collections.Generic;
 
 namespace FunderMaps.IntegrationTests
 {
+    /// <summary>
+    ///     Fakes a entity data store.
+    /// </summary>
+    /// <typeparam name="TEntity">Entity object.</typeparam>
     public class EntityDataStore<TEntity>
         where TEntity : BaseEntity
     {
-        public IList<TEntity> Entities { get; set; } = new List<TEntity>();
+        public IList<TEntity> Entities { get; } = new List<TEntity>();
 
+        /// <summary>
+        ///     Add entity to the data store.
+        /// </summary>
+        /// <param name="entity">Entity object to add.</param>
+        /// <returns>Inserted entity.</returns>
         public TEntity Add(TEntity entity)
         {
             Entities.Add(entity);
@@ -19,10 +28,20 @@ namespace FunderMaps.IntegrationTests
         /// </summary>
         public void Clear() => Entities.Clear();
 
-        public ulong Count() => (ulong)Entities.Count;
+        /// <summary>
+        ///     Gets the number of entities in the data store.
+        /// </summary>
+        public ulong Count => (ulong)Entities.Count;
 
+        /// <summary>
+        ///     True if there are entities in the data store.
+        /// </summary>
         public bool IsSet => Entities.Count > 0;
 
+        /// <summary>
+        ///     Add all entities to the data store.
+        /// </summary>
+        /// <param name="entityList">Entity list to add.</param>
         public void Add(IList<TEntity> entityList)
         {
             foreach (var entity in entityList)

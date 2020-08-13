@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.IntegrationTests
 {
+    /// <summary>
+    ///     Helper class.
+    /// </summary>
     public static class Helper
     {
         /// <summary>
@@ -16,7 +19,7 @@ namespace FunderMaps.IntegrationTests
         /// <returns>Instance of <see cref="IAsyncEnumerable"/>.</returns>
         public static async IAsyncEnumerable<T> AsAsyncEnumerable<T>(IEnumerable<T> list)
         {
-            await Task.CompletedTask.ConfigureAwait(false);
+            await Task.CompletedTask;
             foreach (var item in list)
             {
                 yield return item;

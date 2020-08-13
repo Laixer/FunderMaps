@@ -71,7 +71,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Act
             var response = await client.GetAsync("api/organization/proposal");
-            var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationProposalDto>>().ConfigureAwait(false);
+            var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationProposalDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
