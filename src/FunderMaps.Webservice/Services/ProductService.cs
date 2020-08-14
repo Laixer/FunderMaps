@@ -64,7 +64,7 @@ namespace FunderMaps.Webservice.Services
             var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource, token).ConfigureAwait(false);
 
             // Pass on for further processing
-            return product == null ? null : await ProcessAnalysisAsync(userId, productType, product, token).ConfigureAwait(false);
+            return await ProcessAnalysisAsync(userId, productType, product, token).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace FunderMaps.Webservice.Services
             var product = await _analysisRepository.GetByIdAsync(userId, id, token).ConfigureAwait(false);
 
             // Pass on for further processing
-            return product == null ? null : await ProcessAnalysisAsync(userId, productType, product, token).ConfigureAwait(false);
+            return await ProcessAnalysisAsync(userId, productType, product, token).ConfigureAwait(false);
         }
 
         /// <summary>
