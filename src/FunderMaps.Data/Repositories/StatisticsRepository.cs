@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
     /// TODO Implement.
@@ -17,7 +18,8 @@ namespace FunderMaps.Data.Repositories
         public Task<FoundationRiskDistribution> GetFoundationRiskDistributionAsync(string neighborhoodId, CancellationToken token) => throw new NotImplementedException();
         public Task<FoundationTypeDistribution> GetFoundationTypeDistributionAsync(string neighborhoodId, CancellationToken token) => throw new NotImplementedException();
         public Task<uint> GetTotalBuildingRestoredCountAsync(string neighborhoodId, CancellationToken token) => throw new NotImplementedException();
-        public Task<uint> GetTotalIncidentCountAsync(string municipalityId, CancellationToken token) => throw new NotImplementedException();
+        public Task<uint> GetTotalIncidentCountAsync(string neighborhoodId, CancellationToken token) => throw new NotImplementedException();
         public Task<uint> GetTotalReportCountAsync(string neighborhoodId, CancellationToken token) => throw new NotImplementedException();
     }
 }
+#pragma warning disable CA1812 // Internal class is never instantiated
