@@ -45,7 +45,9 @@ namespace FunderMaps.Webservice.Services
             };
         }
 
-        public Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string areaId, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+
+
         public Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
 
         /// <summary>
