@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Xunit;
 
 namespace FunderMaps.Core.Tests.DataAnnotations
@@ -24,6 +25,7 @@ namespace FunderMaps.Core.Tests.DataAnnotations
         public void IsInvalidOnInput()
         {
             // Assert
+            Assert.False(_addressAttribute.IsValid(""));
             Assert.False(_addressAttribute.IsValid("ggfm-12345"));
             Assert.False(_addressAttribute.IsValid("gfm12345"));
             Assert.False(_addressAttribute.IsValid("GFM-12345"));
