@@ -25,7 +25,7 @@ namespace FunderMaps.Core.Tests.DataAnnotations
         {
             // Assert
             Assert.False(_incidentAttribute.IsValid("FI-12345"));
-            Assert.False(_incidentAttribute.IsValid("FIR12345"));
+            Assert.False(_incidentAttribute.IsValid("fir12345"));
             Assert.False(_incidentAttribute.IsValid("fir-12345"));
         }
     }
