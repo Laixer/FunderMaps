@@ -1,4 +1,6 @@
 using AutoMapper;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
@@ -54,10 +56,15 @@ namespace FunderMaps.Webservice
             });
 
             // Configure services.
-            services.AddTransient<IProductService, DebugProductService>();
+            services.AddTransient<IDescriptionService, DescriptionService>();
+            services.AddTransient<IMappingService, MappingService>();
             services.AddTransient<IProductRequestService, ProductRequestService>();
             services.AddTransient<IProductResultService, ProductResultService>();
-            services.AddTransient<IMappingService, MappingService>();
+            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IUserTrackingService, UserTrackingService>();
+
+            // Configure FunderMaps services.
+            services.AddFunderMapsDataServices("FunderMapsConnection");
 
             // Configure AutoMapper.
             services.AddAutoMapper(typeof(AutoMapperProfile));
