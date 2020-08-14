@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Extensions;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -13,14 +14,14 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
     ///     Repository for analysis products.
     /// </summary>
-    internal sealed class AnalysisRepository : IAnalysisRepository
+    internal sealed class AnalysisRepository : DataBase, IAnalysisRepository
     {
-        private readonly DbProvider _dbProvider;
         private readonly IDescriptionService _descriptionService;
 
         /// <summary>
@@ -28,8 +29,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         public AnalysisRepository(DbProvider dbProvider,
             IDescriptionService descriptionService)
+            : base(dbProvider)
         {
-            _dbProvider = dbProvider ?? throw new ArgumentNullException(nameof(dbProvider));
             _descriptionService = descriptionService ?? throw new ArgumentNullException(nameof(descriptionService));
         }
 
@@ -41,6 +42,10 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets an analysis product by its external building id and source.
         /// </summary>
+        /// <remarks>
+        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
+        ///     is thrown. Check this condition before calling this function.
+        /// </remarks>
         /// <param name="userId">Internal user id.</param>
         /// <param name="externalId">External building id.</param>
         /// <param name="externalSource">External data source</param>
@@ -67,13 +72,14 @@ namespace FunderMaps.Data.Repositories
                     ac.external_source = @ExternalSource";
 
             // Execute sql.
-            await using var connection = await _dbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            await using var cmd = _dbProvider.CreateCommand(sql, connection);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("ExternalId", externalId);
+            cmd.AddParameterWithValue("ExternalSource", externalSource);
             cmd.AddParameterWithValue("ExternalSource", externalSource);
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync().ConfigureAwait(false);
+            await reader.ReadAsync(token).ConfigureAwait(false);
 
             // Map, append and return product.
             var product = MapFromReader(reader);
@@ -82,8 +88,45 @@ namespace FunderMaps.Data.Repositories
             return product;
         }
 
-        public Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token) => throw new NotImplementedException();
-        public Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, CancellationToken token) => throw new NotImplementedException();
+        public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token)
+        {
+            // Validate parameters.
+            userId.ThrowIfNullOrEmpty();
+            id.ThrowIfNullOrEmpty();
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            //// Build sql.
+            //var sql = @"
+            //    SELECT 
+            //        * 
+            //    FROM geocoder.analysis_complete AS ac
+            //    WHERE ac.id = @ExternalId";
+
+            //// Execute sql.
+            //await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            //await using var cmd = DbProvider.CreateCommand(sql, connection);
+            //cmd.AddParameterWithValue("ExternalId", externalId);
+            //cmd.AddParameterWithValue("ExternalSource", externalSource);
+
+            //await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            //await reader.ReadAsync(token).ConfigureAwait(false);
+
+            //// Map, append and return product.
+            //var product = MapFromReader(reader);
+            //product.FullDescription = _descriptionService.GenerateFullDescription(product);
+            //product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
+            //return product;
+
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, CancellationToken token)
+        {
+            throw new NotImplementedException();
+        }
 
         /// TODO How to handle doubles?
         /// TODO Make additional extensions?
@@ -98,7 +141,7 @@ namespace FunderMaps.Data.Repositories
                 Id = reader.SafeGetString(0),
                 ExternalId = reader.SafeGetString(1),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(2),
-                FoundationType = reader.GetFieldValue<FoundationType>(3), // TODO This will clash
+                FoundationType = reader.GetFieldValue<FoundationType>(3),
                 GroundWaterLevel = reader.GetDouble(4),
                 FoundationRisk = reader.GetFieldValue<FoundationRisk>(5),
                 ConstructionYear = DateTimeOffsetHelper.FromYear(reader.GetSafeInt(6) ?? 0), // TODO Make extension, clean up
@@ -111,3 +154,4 @@ namespace FunderMaps.Data.Repositories
             };
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

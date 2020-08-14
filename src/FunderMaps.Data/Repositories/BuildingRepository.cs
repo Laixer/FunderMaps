@@ -1,9 +1,12 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
+using FunderMaps.Webservice.Utility;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -36,6 +39,31 @@ namespace FunderMaps.Data.Repositories
 
         public override ValueTask<Building> GetByIdAsync(string id)
         {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        ///     Checks whether or not an item exists inside the geofence of the
+        ///     organization to which the <paramref name="userId"/> belongs.
+        /// </summary>
+        /// <remarks>
+        ///     If said organization has no fence this will return true.
+        /// </remarks>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="buildingId">Internal building id.</param>
+        /// <param name="token"><see cref="CancellationToken"/></param>
+        /// <returns>Boolean result</returns>
+        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token)
+        {
+            userId.ThrowIfNullOrEmpty();
+            buildingId.ThrowIfNullOrEmpty();
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
+            var sql = @"";
+
             throw new NotImplementedException();
         }
 
