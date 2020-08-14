@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Webservice.ResponseModels.Types;
+using System;
 
 namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
@@ -10,7 +11,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the foundation type of this building.
         /// </summary>
-        public string FoundationType { get; set; }
+        public FoundationTypeResponseModel FoundationType { get; set; }
 
         /// <summary>
         /// Represents the <see cref="Year"/> in which this building was built.

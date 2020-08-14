@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Webservice.ResponseModels.Analysis
+﻿using FunderMaps.Webservice.ResponseModels.Types;
+
+namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
     /// <summary>
     /// Represents a response model for the risk endpoint.
@@ -8,12 +10,12 @@
         /// <summary>
         /// Represents the foundation type of this building.
         /// </summary>
-        public string FoundationType { get; set; }
+        public FoundationTypeResponseModel FoundationType { get; set; }
 
         /// <summary>
         /// Represents the foundation risk for this building.
         /// </summary>
-        public string FoundationRisk { get; set; }
+        public FoundationRiskResponseModel FoundationRisk { get; set; }
 
         /// <summary>
         /// Description of the terrain on which this building lies.
