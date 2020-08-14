@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Webservice.ResponseModels.Analysis
+﻿using FunderMaps.Webservice.ResponseModels.Types;
+
+namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
     /// <summary>
     /// Represents a response model for the costs endpoint.
@@ -8,7 +10,7 @@
         /// <summary>
         /// Represents the foundation risk for this building.
         /// </summary>
-        public string FoundationRisk { get; set; }
+        public FoundationRiskResponseModel FoundationRisk { get; set; }
 
         /// <summary>
         /// Represents the estimated restoration costs for this building.

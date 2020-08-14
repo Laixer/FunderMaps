@@ -49,8 +49,10 @@ namespace FunderMaps.Webservice.Mapping
             CreateMap<Region, RegionResponseModel>();
 
             // All enums
-            CreateMap<FoundationRisk, string>().ConvertUsing(x => FoundationRiskTranslator.Translate(x));
-            CreateMap<FoundationType, string>().ConvertUsing(x => FoundationTypeTranslator.Translate(x));
+            CreateMap<AnalysisProductType, AnalysisProductTypeResponseModel>();
+            CreateMap<FoundationRisk, FoundationRiskResponseModel>();
+            CreateMap<FoundationType, FoundationTypeResponseModel>();
+            CreateMap<StatisticsProductType, StatisticsProductTypeResponseModel>();
         }
     }
 }

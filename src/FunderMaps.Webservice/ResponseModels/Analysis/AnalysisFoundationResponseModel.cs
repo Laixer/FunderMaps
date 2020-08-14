@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Webservice.ResponseModels.Analysis
+﻿using FunderMaps.Webservice.ResponseModels.Types;
+
+namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
     /// <summary>
     /// Represents a response model for the foundation endpoint.
@@ -8,7 +10,7 @@
         /// <summary>
         /// Represents the foundation type of this building.
         /// </summary>
-        public string FoundationType { get; set; }
+        public FoundationTypeResponseModel FoundationType { get; set; }
 
         /// <summary>
         /// Represents the ground water level.
@@ -19,7 +21,7 @@
         /// <summary>
         /// Represents the foundation risk for this building.
         /// </summary>
-        public string FoundationRisk { get; set; }
+        public FoundationRiskResponseModel FoundationRisk { get; set; }
 
         /// <summary>
         /// Represents the ground level (maaiveldniveau) of this building.
