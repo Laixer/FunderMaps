@@ -35,10 +35,12 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<CrackType>("report.crack_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<EnforcementTerm>("report.enforcement_term");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<EnvironmentDamageCharacteristics>("report.environment_damage_characteristics");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalDataSource>("geocoder.data_source");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<Facade>("report.facade");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationDamageCause>("report.foundation_damage_cause");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationDamageCharacteristics>("report.foundation_damage_characteristics");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationQuality>("report.foundation_quality");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRisk>("data.foundation_risk_indication");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("report.foundation_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<IncidentQuestionType>("report.incident_question_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<InquiryType>("report.inquiry_type");
