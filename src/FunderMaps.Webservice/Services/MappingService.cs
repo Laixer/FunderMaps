@@ -13,9 +13,10 @@ using System.Linq;
 
 namespace FunderMaps.Webservice.Services
 {
-    /// <summary>
-    /// Manages all our mapping operations.
     /// TODO This is too hard coded, this might be optimizable with generics.
+    /// TODO Do we really need to add the product to the response?
+    /// <summary>
+    ///     Manages all our mapping operations.
     /// </summary>
     public sealed class MappingService : IMappingService
     {
@@ -40,7 +41,7 @@ namespace FunderMaps.Webservice.Services
             if (items == null) { throw new ArgumentNullException(nameof(items)); }
 
             var wrapper = GetAnalysisWrapper(productType, items);
-            wrapper.Product = ProductTypeTranslator.TranslateAnalysis(productType);
+            //wrapper.Product = ProductTypeTranslator.TranslateAnalysis(productType);
             return wrapper;
         }
 
@@ -58,7 +59,7 @@ namespace FunderMaps.Webservice.Services
             if (items == null) { throw new ArgumentNullException(nameof(items)); }
 
             var wrapper = GetStatisticsWrapper(productType, items);
-            wrapper.Product = ProductTypeTranslator.TranslateStatistics(productType);
+            //wrapper.Product = ProductTypeTranslator.TranslateStatistics(productType);
             return wrapper;
         }
 
