@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Core.Entities.Application;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -6,8 +7,16 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Organization proposal.
     /// </summary>
-    public sealed class OrganizationProposal : BaseEntity
+    public sealed class OrganizationProposal : IdentifiableEntity<OrganizationProposal, Guid>, IApplicationEntity<OrganizationProposal>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public OrganizationProposal()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Organization identifier.
         /// </summary>
@@ -37,13 +46,6 @@ namespace FunderMaps.Core.Entities
         public void InitializeDefaults()
         {
             Id = Guid.Empty;
-        }
-
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
         }
     }
 }

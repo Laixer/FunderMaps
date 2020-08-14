@@ -11,8 +11,8 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
     /// <typeparam name="TEntryPrimaryKey">Primary key of entity.</typeparam>
     public interface IAsyncRepository<TEntity, TEntryPrimaryKey>
-        where TEntity : BaseEntity
-        where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>
+        where TEntity : IdentifiableEntity<TEntity, TEntryPrimaryKey>
+        where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>, IComparable<TEntryPrimaryKey>
     {
         /// <summary>
         ///     Retrieve <typeparamref name="TEntity"/> by id.

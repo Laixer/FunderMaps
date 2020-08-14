@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Core.Entities.Application;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -8,8 +9,16 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Organization entity.
     /// </summary>
-    public sealed class Organization : BaseEntity
+    public sealed class Organization : IdentifiableEntity<Organization, Guid>, IApplicationEntity<Organization>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public Organization()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Organization identifier.
         /// </summary>
@@ -150,7 +159,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Initialize property defaults.
         /// </summary>
-        public void InitializeDefaults()
+        public override void InitializeDefaults()
         {
             Id = Guid.Empty;
         }
@@ -168,13 +177,6 @@ namespace FunderMaps.Core.Entities
             Id = other.Id;
             Name = other.Name;
             Email = other.Email;
-        }
-
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
         }
     }
 }

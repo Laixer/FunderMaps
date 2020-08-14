@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Entities.Report;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,8 +8,13 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Inquiry entity.
     /// </summary>
-    public sealed class Inquiry : StateControl
+    public sealed class Inquiry : StateControl<Inquiry, int>, IReportEntity<Inquiry>
     {
+        public Inquiry()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Unique identifier.
         /// </summary>
@@ -99,13 +105,6 @@ namespace FunderMaps.Core.Entities
             CreateDate = other.CreateDate;
             UpdateDate = other.UpdateDate;
             DeleteDate = other.DeleteDate;
-        }
-
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
         }
     }
 }

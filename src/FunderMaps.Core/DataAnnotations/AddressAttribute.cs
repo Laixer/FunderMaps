@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.DataAnnotations
 {
+    // TODO: Rename address to Geocoder
     /// <summary>
     ///     Address validation attribute.
     /// </summary>

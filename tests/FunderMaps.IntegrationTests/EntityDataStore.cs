@@ -8,7 +8,7 @@ namespace FunderMaps.IntegrationTests
     /// </summary>
     /// <typeparam name="TEntity">Entity object.</typeparam>
     public class EntityDataStore<TEntity>
-        where TEntity : BaseEntity
+        where TEntity : BaseEntity<TEntity>
     {
         public IList<TEntity> Entities { get; private set; } = new List<TEntity>();
 

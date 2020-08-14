@@ -7,8 +7,13 @@ namespace FunderMaps.Core.Tests.Entities
 {
     public class StateControlTests
     {
-        private class TestEntity : StateControl
+        private class TestEntity : StateControl<TestEntity, int>
         {
+            // TOOD: Does not make much sense
+            public TestEntity()
+                : base(e => 0)
+            {
+            }
         }
 
         [Fact]

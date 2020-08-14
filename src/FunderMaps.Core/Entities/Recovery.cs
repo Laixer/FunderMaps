@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Entities.Report;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,8 +9,13 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Foundation recovery entity.
     /// </summary>
-    public sealed class Recovery : AttributionControl
+    public sealed class Recovery : AttributionControl<Recovery, int>, IReportEntity<Recovery>
     {
+        public Recovery()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Unique identifier.
         /// </summary>
@@ -37,12 +43,5 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         [Required]
         public DateTime DocumentDate { get; set; }
-
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-        }
     }
 }

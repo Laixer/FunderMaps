@@ -15,8 +15,8 @@ namespace FunderMaps.IntegrationTests.Repositories
     /// <typeparam name="TEntity">Entity type.</typeparam>
     /// <typeparam name="TEntryPrimaryKey">Entity primary key.</typeparam>
     public abstract class TestRepositoryBase<TEntity, TEntryPrimaryKey> : IAsyncRepository<TEntity, TEntryPrimaryKey>
-        where TEntity : BaseEntity
-        where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>
+        where TEntity : IdentifiableEntity<TEntity, TEntryPrimaryKey>
+        where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>, IComparable<TEntryPrimaryKey>
     {
         protected Func<TEntity, TEntryPrimaryKey> EntityPrimaryKey { get; }
 

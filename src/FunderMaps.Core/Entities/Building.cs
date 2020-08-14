@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Entities.Geocoder;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -6,11 +8,20 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Building entity.
     /// </summary>
-    public sealed class Building : BaseEntity
+    public sealed class Building : IdentifiableEntity<Building, string>, IGeocoderEntity<Building>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public Building()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Unique identifier.
         /// </summary>
+        [Required, Address] // TODO: Rename address to Geocoder
         public string Id { get; set; }
 
         // TODO: Contraints
@@ -22,7 +33,8 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Building is active or not.
         /// </summary>
-        public bool IsActive { get; set; }
+        [Required]
+        public bool IsActive { get; set; } = true;
 
         /// <summary>
         ///     Address identifier.

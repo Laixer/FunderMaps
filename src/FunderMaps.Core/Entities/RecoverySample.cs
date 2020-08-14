@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
 using System;
 
@@ -7,8 +8,13 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Recovery sample entity.
     /// </summary>
-    public sealed class RecoverySample : RecordControl
+    public sealed class RecoverySample : RecordControl<RecoverySample, int>, IReportEntity<RecoverySample>
     {
+        public RecoverySample()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Recovery sample identifier.
         /// </summary>

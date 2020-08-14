@@ -1,12 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FunderMaps.Core.Entities.Application;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     ///     Contact information.
     /// </summary>
-    public sealed class Contact : BaseEntity
+    public sealed class Contact : IdentifiableEntity<Contact, string>, IApplicationEntity<Contact>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public Contact()
+            : base(e => e.Email)
+        {
+        }
+
         /// <summary>
         ///     Contact email.
         /// </summary>
@@ -30,11 +39,10 @@ namespace FunderMaps.Core.Entities
         /// <returns>String representing contact.</returns>
         public override string ToString() => Email;
 
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-        }
+        public override bool Equals(Contact other)
+            => other != null &&
+                Email == other.Email &&
+                Name == other.Name &&
+                PhoneNumber == other.PhoneNumber;
     }
 }

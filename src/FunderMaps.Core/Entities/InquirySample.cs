@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -11,8 +12,13 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Inquiry sample entity.
     /// </summary>
-    public sealed class InquirySample : RecordControl
+    public sealed class InquirySample : RecordControl<InquirySample, int>, IReportEntity<InquirySample>
     {
+        public InquirySample()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Unique identifier.
         /// </summary>

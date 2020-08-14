@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Entities.Application;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,12 +10,19 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     User entity.
     /// </summary>
-    public sealed class User : BaseEntity
+    public sealed class User : IdentifiableEntity<User, Guid>, IApplicationEntity<User>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public User()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Unique identifier.
         /// </summary>
-        [Required] // TODO: Check Id is not empty
         public Guid Id { get; set; }
 
         /// <summary>
@@ -28,7 +36,7 @@ namespace FunderMaps.Core.Entities
         public string LastName { get; set; }
 
         /// <summary>
-        /// Unique email address.
+        ///     Unique email address.
         /// </summary>
         [Required, EmailAddress]
         public string Email { get; set; }
@@ -64,7 +72,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Initialize property defaults.
         /// </summary>
-        public void InitializeDefaults()
+        public override void InitializeDefaults()
         {
             Id = Guid.Empty;
             Role = ApplicationRole.User;
@@ -85,11 +93,10 @@ namespace FunderMaps.Core.Entities
             Role = other.Role;
         }
 
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
-        }
+        public override bool Equals(User other)
+            => other != null &&
+                Id == other.Id &&
+                Email == other.Email &&
+                Role == other.Role;
     }
 }

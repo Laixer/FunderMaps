@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Core.Entities.Report;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -7,8 +8,13 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Project entity.
     /// </summary>
-    public sealed class Project : RecordControl
+    public sealed class Project : RecordControl<Project, int>, IReportEntity<Project>
     {
+        public Project()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Project identifier.
         /// </summary>

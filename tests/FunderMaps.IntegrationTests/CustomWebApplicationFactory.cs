@@ -46,7 +46,7 @@ namespace FunderMaps.IntegrationTests
 
         // TODO Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(TEntity entity)
-            where TEntity : BaseEntity
+            where TEntity : BaseEntity<TEntity>
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
             dataStore.Reset(entity);
@@ -56,7 +56,7 @@ namespace FunderMaps.IntegrationTests
 
         // TODO Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IEnumerable<TEntity> list)
-            where TEntity : BaseEntity
+            where TEntity : BaseEntity<TEntity>
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
             dataStore.Reset(list);

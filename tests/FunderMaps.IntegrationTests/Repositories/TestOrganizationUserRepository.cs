@@ -8,11 +8,17 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.IntegrationTests.Repositories
 {
-    public class OrganizationUserRecord : BaseEntity
+    public class OrganizationUserRecord : BaseEntity<OrganizationUserRecord>
     {
         public Guid UserId { get; set; }
         public Guid OrganizationId { get; set; }
         public OrganizationRole OrganizationRole { get; set; }
+
+        public override int CompareTo(OrganizationUserRecord other)
+            => UserId.CompareTo(other.UserId);
+
+        public override bool Equals(OrganizationUserRecord other)
+            => UserId == other.UserId && OrganizationId == other.OrganizationId;
     }
 
     public class TestOrganizationUserRepository : IOrganizationUserRepository

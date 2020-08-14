@@ -1,13 +1,20 @@
 ﻿using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Types;
+using System;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     ///     Entity state control.
     /// </summary>
-    public abstract class StateControl : AttributionControl
+    public abstract class StateControl<TEntity, TEntryIdentifier> : AttributionControl<TEntity, TEntryIdentifier>
+        where TEntity : class
+        where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
+        protected StateControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey) : base(entryPrimaryKey)
+        {
+        }
+
         /// <summary>
         ///     Enitity status.
         /// </summary>

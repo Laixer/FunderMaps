@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.IntegrationTests.Repositories
 {
-    public class UserRecord : BaseEntity
+    public class UserRecord : BaseEntity<UserRecord>
     {
         public User User { get; set; }
         public uint AccessFailedCount { get; set; }
@@ -16,6 +16,12 @@ namespace FunderMaps.IntegrationTests.Repositories
         public DateTime LastLogin { get; set; }
         public string Password { get; set; }
         public bool IsLockedOut { get; set; }
+
+        public override int CompareTo(UserRecord other)
+            => User.CompareTo(other.User);
+
+        public override bool Equals(UserRecord other)
+            => User == other.User;
     }
 
     public class TestUserRepository : IUserRepository

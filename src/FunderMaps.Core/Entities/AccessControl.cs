@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Types;
+using System;
 
 namespace FunderMaps.Core.Entities
 {
@@ -6,8 +7,15 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Record control.
     /// </summary>
-    public abstract class AccessControl : RecordControl
+    public abstract class AccessControl<TEntity, TEntryIdentifier> : RecordControl<TEntity, TEntryIdentifier>
+        where TEntity : class
+        where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
+        protected AccessControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
+            : base(entryPrimaryKey)
+        {
+        }
+
         /// <summary>
         ///     Record access policy.
         /// </summary>

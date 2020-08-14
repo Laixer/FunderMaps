@@ -6,8 +6,15 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Record timestamps.
     /// </summary>
-    public abstract class RecordControl : BaseEntity
+    public abstract class RecordControl<TEntity, TEntryIdentifier> : IdentifiableEntity<TEntity, TEntryIdentifier>
+        where TEntity : class
+        where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
+        protected RecordControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
+            : base(entryPrimaryKey)
+        {
+        }
+
         /// <summary>
         ///     Record create date.
         /// </summary>

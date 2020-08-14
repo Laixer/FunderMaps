@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,8 +11,13 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Indicent entity.
     /// </summary>
-    public sealed class Incident : RecordControl
+    public sealed class Incident : RecordControl<Incident, string>, IReportEntity<Incident>
     {
+        public Incident()
+            : base(e => e.Id)
+        {
+        }
+
         /// <summary>
         ///     Unique identifier.
         /// </summary>
@@ -141,13 +147,6 @@ namespace FunderMaps.Core.Entities
             CreateDate = other.CreateDate;
             UpdateDate = other.UpdateDate;
             DeleteDate = other.DeleteDate;
-        }
-
-        public override void Validate()
-        {
-            base.Validate();
-
-            Validator.ValidateObject(this, new ValidationContext(this), true);
         }
 
         /// <summary>
