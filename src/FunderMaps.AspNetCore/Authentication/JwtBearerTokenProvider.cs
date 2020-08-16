@@ -48,6 +48,11 @@ namespace FunderMaps.AspNetCore.Authentication
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
+        private SecurityTokenHandler Handler
+            => (SecurityTokenHandler)Options
+                .SecurityTokenValidators
+                .FirstOrDefault(s => (s as SecurityTokenHandler).CanValidateToken);
+
         protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
         {
             if (principal == null)
@@ -65,7 +70,6 @@ namespace FunderMaps.AspNetCore.Authentication
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            // TODO: Otherwise email
             var nameClaim = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name, StringComparison.Ordinal));
             if (nameClaim != null)
             {
@@ -112,16 +116,12 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <returns>Returns token as string.</returns>
         public virtual async Task<string> GetTokenAsStringAsync(ClaimsPrincipal principal)
         {
-            SecurityToken token = await GetToken(principal);
-
-            // TODO: Move to method.
-            SecurityTokenHandler handler = (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);
-            if (handler == null)
+            if (Handler == null)
             {
                 throw new InvalidOperationException();
             }
 
-            return handler.WriteToken(token);
+            return Handler.WriteToken(await GetToken(principal));
         }
     }
 }

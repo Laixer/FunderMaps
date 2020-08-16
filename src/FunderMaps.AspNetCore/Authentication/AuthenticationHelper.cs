@@ -1,8 +1,8 @@
 ﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -42,12 +42,12 @@ namespace FunderMaps.AspNetCore.Authentication
             var result = await _authManager.PasswordSignInAsync(email, password, JwtBearerDefaults.AuthenticationScheme);
             if (result.Result != AuthResult.Success)
             {
-                throw new AuthenticationException(); // TODO Use own ex.
+                throw new AuthenticationException();
             }
 
             if (result.Principal == null)
             {
-                throw new InvalidOperationException(); // TODO:
+                throw new InvalidOperationException();
             }
             return await _tokenProvider.GetTokenAsStringAsync(result.Principal);
         }
@@ -67,7 +67,7 @@ namespace FunderMaps.AspNetCore.Authentication
 
             if (result.Principal == null)
             {
-                throw new InvalidOperationException(); // TODO Use own ex.
+                throw new InvalidOperationException();
             }
             return await _tokenProvider.GetTokenAsStringAsync(result.Principal);
         }
