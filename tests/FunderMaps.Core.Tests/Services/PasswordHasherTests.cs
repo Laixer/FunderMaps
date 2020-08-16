@@ -13,7 +13,7 @@ namespace FunderMaps.Core.Tests.Services
         public void GetAsyncReturnsAddress(string password)
         {
             // Arrange
-            var passwordHasher = new PasswordHasher();
+            var passwordHasher = new PasswordHasher(new RandomGenerator());
 
             // Act
             var hash = passwordHasher.HashPassword(password);
@@ -32,7 +32,7 @@ namespace FunderMaps.Core.Tests.Services
         public void HashPasswordAndValidateSuccess(string password)
         {
             // Arrange
-            var passwordHasher = new PasswordHasher();
+            var passwordHasher = new PasswordHasher(new RandomGenerator());
 
             // Act
             var hash = passwordHasher.HashPassword(password);
@@ -49,7 +49,7 @@ namespace FunderMaps.Core.Tests.Services
         public void HashPasswordAndValidateInvalid(string password)
         {
             // Arrange
-            var passwordHasher = new PasswordHasher();
+            var passwordHasher = new PasswordHasher(new RandomGenerator());
 
             // Act
             var hash = passwordHasher.HashPassword(password + "x");

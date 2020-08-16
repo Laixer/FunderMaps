@@ -5,6 +5,9 @@ using System.Security.Cryptography;
 
 namespace FunderMaps.Core.Services
 {
+    /// <summary>
+    ///     Password hasher.
+    /// </summary>
     public class PasswordHasher : IPasswordHasher
     {
         private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
@@ -13,8 +16,16 @@ namespace FunderMaps.Core.Services
         private const int saltSize = 128 / 8; // 128 bits
         private const byte formatMarker = 0x01;
 
-        // TODO: Replace with IRandom
-        private readonly RandomNumberGenerator _rng = new RNGCryptoServiceProvider();
+        private readonly IRandom _random;
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        /// <param name="random"></param>
+        public PasswordHasher(IRandom random)
+        {
+            _random = random;
+        }
 
         // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -36,10 +47,12 @@ namespace FunderMaps.Core.Services
             return areSame;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5379:Do Not Use Weak Key Derivation Function Algorithm", Justification = "<Pending>")]
         private byte[] GeneratePasswordHash(string password)
         {
             byte[] salt = new byte[saltSize];
-            _rng.GetBytes(salt);
+            _random.WriteBytes(salt);
+            //_rng.GetBytes(salt);
 
             using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterRounds, hashAlgorithm);
             byte[] subkey = pbkdf2.GetBytes(subkeyLength);
@@ -51,7 +64,8 @@ namespace FunderMaps.Core.Services
             return outputBytes;
         }
 
-        private bool VerifyHashedPassword(byte[] inputBytes, string password)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5379:Do Not Use Weak Key Derivation Function Algorithm", Justification = "<Pending>")]
+        private static bool VerifyHashedPassword(byte[] inputBytes, string password)
         {
             byte[] salt = new byte[saltSize];
             Buffer.BlockCopy(inputBytes, 1, salt, 0, saltSize);
@@ -65,6 +79,11 @@ namespace FunderMaps.Core.Services
             return ByteArraysEqual(subkey, expectedSubkey);
         }
 
+        /// <summary>
+        ///     Hash plaintext paassword and return the password hash.
+        /// </summary>
+        /// <param name="password">Plaintext password.</param>
+        /// <returns></returns>
         public string HashPassword(string password)
         {
             if (password == null)
@@ -80,6 +99,12 @@ namespace FunderMaps.Core.Services
             return Convert.ToBase64String(GeneratePasswordHash(password));
         }
 
+        /// <summary>
+        ///     Check if password is valid.
+        /// </summary>
+        /// <param name="hashedPassword">Password hash.</param>
+        /// <param name="providedPassword">Plaintext password to test.</param>
+        /// <returns>Returns <c>true</c> if passwords match, false otherwise.</returns>
         public bool IsPasswordValid(string hashedPassword, string providedPassword)
         {
             if (hashedPassword == null)

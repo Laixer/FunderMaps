@@ -116,7 +116,7 @@ namespace FunderMaps.Core.Managers
 
             if (!await CheckPasswordAsync(user, currentPassword).ConfigureAwait(false))
             {
-                throw new AuthenticationException(); // FUTURE: InvalidCredentialException
+                throw new InvalidCredentialException();
             }
 
             var newPasswordHash = _passwordHasher.HashPassword(newPassword);
