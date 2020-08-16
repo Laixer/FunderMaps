@@ -35,8 +35,6 @@ namespace FunderMaps.Core.UseCases
             return await _addressRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
 
-        // TODO: Add cache
-
         /// <summary>
         ///     Retrieve all addresses matching search query.
         /// </summary>

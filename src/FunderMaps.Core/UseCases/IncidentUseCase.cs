@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.UseCases
 {
-    // TODO: Memory caching.
     /// <summary>
     ///     Use case to the incident entity.
     /// </summary>
@@ -34,7 +33,12 @@ namespace FunderMaps.Core.UseCases
             return await BuildAsync(incident).ConfigureAwait(false);
         }
 
-        // TODO: This is working, but not efficient
+        // FUTURE: This is working, but not efficient
+        /// <summary>
+        ///     Build return object.
+        /// </summary>
+        /// <param name="incident">Single incident.</param>
+        /// <returns>Incident with all navigation properties.</returns>
         protected async ValueTask<Incident> BuildAsync(Incident incident)
         {
             if (incident == null)
@@ -47,7 +51,7 @@ namespace FunderMaps.Core.UseCases
                 incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email).ConfigureAwait(false);
             }
 
-            // TODO:
+            // FUTURE:
             // incident.AddressNavigation = ...
 
             return incident;

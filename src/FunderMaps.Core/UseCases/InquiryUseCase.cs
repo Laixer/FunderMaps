@@ -45,7 +45,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask<Inquiry> GetAsync(int id)
         {
-            // TODO:
+            // FUTURE:
             //inquiry.AttributionNavigation = ...
             return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
         }
@@ -100,12 +100,11 @@ namespace FunderMaps.Core.UseCases
             }
 
             inquiry.InitializeDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
-
-            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
+            inquiry.Validate();
 
             if (!inquiry.AllowWrite)
             {
-                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                throw new EntityReadOnlyException();
             }
 
             await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
@@ -202,7 +201,7 @@ namespace FunderMaps.Core.UseCases
 
             if (!inquiry.AllowWrite)
             {
-                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                throw new EntityReadOnlyException();
             }
 
             var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
@@ -223,7 +222,7 @@ namespace FunderMaps.Core.UseCases
         {
             await foreach (var inquirySample in _inquirySampleRepository.ListAllAsync(navigation))
             {
-                // TODO: This is working, but not efficient
+                // FUTURE: This is working, but not efficient
                 inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
                 yield return inquirySample;
             }
@@ -236,20 +235,20 @@ namespace FunderMaps.Core.UseCases
         public virtual async ValueTask DeleteSampleAsync(int id)
         {
             // FUTURE: Too much logic
-            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
 
             if (!inquiry.AllowWrite)
             {
-                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                throw new EntityReadOnlyException();
             }
 
-            await _inquirySampleRepository.DeleteAsync(id).ConfigureAwait(false);
-            var itemCount = await _inquiryRepository.CountAsync().ConfigureAwait(false); // TODO: Should only select inquiry
+            await _inquirySampleRepository.DeleteAsync(id);
+            var itemCount = await _inquiryRepository.CountAsync(); // FUTURE: Should only select inquiry
             if (itemCount == 0)
             {
                 inquiry.TransitionToTodo();
-                await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+                await _inquiryRepository.UpdateAsync(inquiry);
             }
         }
 
@@ -265,21 +264,20 @@ namespace FunderMaps.Core.UseCases
             }
 
             inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-
-            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+            inquirySample.Validate();
 
             // FUTURE: Too much logic
-            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
 
             if (!inquiry.AllowWrite)
             {
-                throw new FunderMapsCoreException("Cannot alter entity"); // TODO: not allowed exception
+                throw new EntityReadOnlyException();
             }
 
-            await _inquirySampleRepository.UpdateAsync(inquirySample).ConfigureAwait(false);
+            await _inquirySampleRepository.UpdateAsync(inquirySample);
 
             inquiry.TransitionToPending();
-            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+            await _inquiryRepository.UpdateAsync(inquiry);
         }
 
         #endregion

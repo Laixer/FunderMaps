@@ -32,9 +32,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 Email = sessionUser.Email,
                 Password = password,
             };
+            using var random = new RandomGenerator();
             var client = _factory
                 .WithAuthentication(options => options.User = sessionUser)
-                .WithDataStoreList(new UserRecord { User = sessionUser, Password = new PasswordHasher().HashPassword(password) })
+                .WithDataStoreList(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
                 .WithDataStoreList(sessionOrganization)
                 .WithDataStoreList(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
                 .CreateClient();

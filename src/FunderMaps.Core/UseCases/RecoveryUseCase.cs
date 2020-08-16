@@ -43,7 +43,7 @@ namespace FunderMaps.Core.UseCases
                 throw new EntityNotFoundException();
             }
 
-            // TODO:
+            // FUTURE:
             //recovery.AttributionNavigation = ...
 
             return recovery;
