@@ -124,7 +124,7 @@ namespace FunderMaps.Data.Repositories
             return new Recovery
             {
                 Id = reader.GetInt(0),
-                Note = reader.SafeGetString(1),
+                Note = reader.GetSafeString(1),
                 CreateDate = reader.GetDateTime(2),
                 UpdateDate = reader.GetSafeDateTime(3),
                 DeleteDate = reader.GetSafeDateTime(4),
@@ -132,7 +132,7 @@ namespace FunderMaps.Data.Repositories
                 AccessPolicy = reader.GetFieldValue<AccessPolicy>(6),
                 Type = reader.GetFieldValue<RecoveryDocumentType>(7),
                 DocumentDate = reader.GetDateTime(8),
-                DocumentFile = reader.SafeGetString(9),
+                DocumentFile = reader.GetSafeString(9),
             };
         }
 
@@ -171,7 +171,7 @@ namespace FunderMaps.Data.Repositories
                 yield return new Recovery
                 {
                     Id = reader.GetInt(0),
-                    Note = reader.SafeGetString(1),
+                    Note = reader.GetSafeString(1),
                     CreateDate = reader.GetDateTime(2),
                     UpdateDate = reader.GetSafeDateTime(3),
                     DeleteDate = reader.GetSafeDateTime(4),
@@ -179,7 +179,7 @@ namespace FunderMaps.Data.Repositories
                     AccessPolicy = reader.GetFieldValue<AccessPolicy>(6),
                     Type = reader.GetFieldValue<RecoveryDocumentType>(7),
                     DocumentDate = reader.GetDateTime(8),
-                    DocumentFile = reader.SafeGetString(9),
+                    DocumentFile = reader.GetSafeString(9),
                 };
             }
         }

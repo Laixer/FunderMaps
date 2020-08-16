@@ -86,7 +86,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync();
-            return reader.SafeGetString(0);
+            return reader.GetSafeString(0);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace FunderMaps.Data.Repositories
         private static Incident MapFromReader(DbDataReader reader)
             => new Incident
             {
-                Id = reader.SafeGetString(0),
+                Id = reader.GetSafeString(0),
                 FoundationType = reader.GetFieldValue<FoundationType>(1),
                 ChainedBuilding = reader.GetBoolean(2),
                 Owner = reader.GetBoolean(3),
@@ -151,15 +151,15 @@ namespace FunderMaps.Data.Repositories
                 NeightborRecovery = reader.GetBoolean(5),
                 FoundationDamageCause = reader.GetFieldValue<FoundationDamageCause>(6),
                 DocumentFile = reader.GetSafeFieldValue<string[]>(7),
-                Note = reader.SafeGetString(8),
-                InternalNote = reader.SafeGetString(9),
-                Email = reader.SafeGetString(10),
+                Note = reader.GetSafeString(8),
+                InternalNote = reader.GetSafeString(9),
+                Email = reader.GetSafeString(10),
                 CreateDate = reader.GetDateTime(11),
                 UpdateDate = reader.GetSafeDateTime(12),
                 DeleteDate = reader.GetSafeDateTime(13),
                 FoundationDamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics[]>(14),
                 EnvironmentDamageCharacteristics = reader.GetFieldValue<EnvironmentDamageCharacteristics[]>(15),
-                Address = reader.SafeGetString(16),
+                Address = reader.GetSafeString(16),
                 AuditStatus = reader.GetFieldValue<AuditStatus>(17),
                 QuestionType = reader.GetFieldValue<IncidentQuestionType>(18),
                 Meta = reader.GetFieldValue<object>(19),

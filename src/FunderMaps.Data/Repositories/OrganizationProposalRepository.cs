@@ -87,8 +87,8 @@ namespace FunderMaps.Data.Repositories
             => new OrganizationProposal
             {
                 Id = reader.GetGuid(0),
-                Name = reader.SafeGetString(1),
-                Email = reader.SafeGetString(2),
+                Name = reader.GetSafeString(1),
+                Email = reader.GetSafeString(2),
             };
 
         /// <summary>

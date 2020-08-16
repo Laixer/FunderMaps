@@ -36,8 +36,7 @@ namespace FunderMaps.Data.Extensions
             return parameter;
         }
 
-        // TODO: Do not depend on Npgsql.
-        // TODO: Refactor.
+        // FUTURE: Do not depend on Npgsql. Too npgsql specific.
         public static DbParameter AddJsonParameterWithValue(this DbCommand command, string parameterName, object value)
         {
             if (command == null)

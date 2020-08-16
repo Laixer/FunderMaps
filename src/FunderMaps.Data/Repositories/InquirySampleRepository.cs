@@ -113,8 +113,8 @@ namespace FunderMaps.Data.Repositories
             {
                 Id = reader.GetInt(0),
                 Inquiry = reader.GetInt(1),
-                Address = reader.SafeGetString(2),
-                Note = reader.SafeGetString(3),
+                Address = reader.GetSafeString(2),
+                Note = reader.GetSafeString(3),
                 CreateDate = reader.GetDateTime(4),
                 UpdateDate = reader.GetSafeDateTime(5),
                 DeleteDate = reader.GetSafeDateTime(6),

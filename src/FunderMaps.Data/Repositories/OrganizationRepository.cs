@@ -133,30 +133,30 @@ namespace FunderMaps.Data.Repositories
             => new Organization
             {
                 Id = reader.GetGuid(0),
-                Name = reader.SafeGetString(1),
-                Email = reader.SafeGetString(2),
-                PhoneNumber = reader.SafeGetString(3),
-                RegistrationNumber = reader.SafeGetString(4),
-                BrandingLogo = reader.SafeGetString(5),
-                InvoiceName = reader.SafeGetString(6),
-                InvoicePoBox = reader.SafeGetString(7),
-                InvoiceEmail = reader.SafeGetString(8),
-                HomeStreet = reader.SafeGetString(9),
+                Name = reader.GetSafeString(1),
+                Email = reader.GetSafeString(2),
+                PhoneNumber = reader.GetSafeString(3),
+                RegistrationNumber = reader.GetSafeString(4),
+                BrandingLogo = reader.GetSafeString(5),
+                InvoiceName = reader.GetSafeString(6),
+                InvoicePoBox = reader.GetSafeString(7),
+                InvoiceEmail = reader.GetSafeString(8),
+                HomeStreet = reader.GetSafeString(9),
                 HomeAddressNumber = reader.GetSafeInt(10),
-                HomeAddressNumberPostfix = reader.SafeGetString(11),
-                HomeCity = reader.SafeGetString(12),
-                HomePostbox = reader.SafeGetString(13),
-                HomeZipcode = reader.SafeGetString(14),
-                HomeState = reader.SafeGetString(15),
-                HomeCountry = reader.SafeGetString(16),
-                PostalStreet = reader.SafeGetString(17),
+                HomeAddressNumberPostfix = reader.GetSafeString(11),
+                HomeCity = reader.GetSafeString(12),
+                HomePostbox = reader.GetSafeString(13),
+                HomeZipcode = reader.GetSafeString(14),
+                HomeState = reader.GetSafeString(15),
+                HomeCountry = reader.GetSafeString(16),
+                PostalStreet = reader.GetSafeString(17),
                 PostalAddressNumber = reader.GetSafeInt(18),
-                PostalAddressNumberPostfix = reader.SafeGetString(19),
-                PostalCity = reader.SafeGetString(20),
-                PostalPostbox = reader.SafeGetString(21),
-                PostalZipcode = reader.SafeGetString(22),
-                PostalState = reader.SafeGetString(23),
-                PostalCountry = reader.SafeGetString(24),
+                PostalAddressNumberPostfix = reader.GetSafeString(19),
+                PostalCity = reader.GetSafeString(20),
+                PostalPostbox = reader.GetSafeString(21),
+                PostalZipcode = reader.GetSafeString(22),
+                PostalState = reader.GetSafeString(23),
+                PostalCountry = reader.GetSafeString(24),
             };
 
         /// <summary>
@@ -315,7 +315,7 @@ namespace FunderMaps.Data.Repositories
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync();
 
-            return reader.SafeGetString(0);
+            return reader.GetSafeString(0);
         }
 
         /// <summary>

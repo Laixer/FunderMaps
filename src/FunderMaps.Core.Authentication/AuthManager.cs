@@ -111,7 +111,7 @@ namespace FunderMaps.Core.Authentication
             var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
             if (claim == null)
             {
-                throw new InvalidOperationException(); // TODO:
+                throw new InvalidOperationException();
             }
 
             return await UserManager.GetAsync(Guid.Parse(claim.Value));
@@ -127,13 +127,13 @@ namespace FunderMaps.Core.Authentication
             var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.Organization);
             if (claim == null)
             {
-                throw new InvalidOperationException(); // TODO:
+                throw new InvalidOperationException();
             }
 
             User user = await GetUserAsync(principal);
             if (!await OrganizationManager.IsUserInOrganizationAsync(Guid.Parse(claim.Value), user))
             {
-                throw new InvalidOperationException(); // TODO:
+                throw new InvalidOperationException();
             }
             return await OrganizationManager.GetAsync(Guid.Parse(claim.Value));
         }
@@ -203,7 +203,6 @@ namespace FunderMaps.Core.Authentication
                 return SignInContext.Failed;
             }
 
-            // TODO:
             var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.OrganizationRole);
             if (claim == null)
             {

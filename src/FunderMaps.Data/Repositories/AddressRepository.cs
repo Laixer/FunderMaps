@@ -63,7 +63,7 @@ namespace FunderMaps.Data.Repositories
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync();
 
-            return reader.SafeGetString(0);
+            return reader.GetSafeString(0);
         }
 
         /// <summary>
@@ -98,13 +98,13 @@ namespace FunderMaps.Data.Repositories
         private static Address MapFromReader(DbDataReader reader)
             => new Address
             {
-                Id = reader.SafeGetString(0),
-                BuildingNumber = reader.SafeGetString(1),
-                PostalCode = reader.SafeGetString(2),
-                Street = reader.SafeGetString(3),
+                Id = reader.GetSafeString(0),
+                BuildingNumber = reader.GetSafeString(1),
+                PostalCode = reader.GetSafeString(2),
+                Street = reader.GetSafeString(3),
                 IsActive = reader.GetBoolean(4),
-                ExternalId = reader.SafeGetString(5),
-                ExternalSource = reader.SafeGetString(6),
+                ExternalId = reader.GetSafeString(5),
+                ExternalSource = reader.GetSafeString(6),
             };
 
         public async ValueTask<Address> GetByExternalIdAsync(string id, string source)

@@ -44,7 +44,7 @@ namespace FunderMaps.Data
         /// <param name="navigation">Navigation instance of type <see cref="INavigation"/>.</param>
         protected static void ConstructNavigation(ref string cmdText, INavigation navigation)
         {
-            // TODO: SECURITY: HACK: This is 100% textbook SQLi.
+            // FUTURE: Can we improve stability and readability here?
             if (!string.IsNullOrEmpty(navigation.SortColumn))
             {
                 cmdText += $"\r\n ORDER BY {navigation.SortColumn} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";

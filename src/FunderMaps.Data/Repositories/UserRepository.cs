@@ -116,12 +116,12 @@ namespace FunderMaps.Data.Repositories
             => new User
             {
                 Id = reader.GetGuid(0),
-                GivenName = reader.SafeGetString(1),
-                LastName = reader.SafeGetString(2),
-                Email = reader.SafeGetString(3),
-                Avatar = reader.SafeGetString(4),
-                JobTitle = reader.SafeGetString(5),
-                PhoneNumber = reader.SafeGetString(6),
+                GivenName = reader.GetSafeString(1),
+                LastName = reader.GetSafeString(2),
+                Email = reader.GetSafeString(3),
+                Avatar = reader.GetSafeString(4),
+                JobTitle = reader.GetSafeString(5),
+                PhoneNumber = reader.GetSafeString(6),
                 Role = reader.GetFieldValue<ApplicationRole>(7),
             };
 
@@ -254,7 +254,7 @@ namespace FunderMaps.Data.Repositories
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync();
 
-            return reader.SafeGetString(0);
+            return reader.GetSafeString(0);
         }
 
         public async ValueTask<bool> IsLockedOutAsync(User entity)

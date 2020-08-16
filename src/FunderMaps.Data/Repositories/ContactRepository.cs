@@ -98,9 +98,9 @@ namespace FunderMaps.Data.Repositories
         private static Contact MapFromReader(DbDataReader reader)
             => new Contact
             {
-                Email = reader.SafeGetString(0),
-                Name = reader.SafeGetString(1),
-                PhoneNumber = reader.SafeGetString(2),
+                Email = reader.GetSafeString(0),
+                Name = reader.GetSafeString(1),
+                PhoneNumber = reader.GetSafeString(2),
             };
 
         /// <summary>

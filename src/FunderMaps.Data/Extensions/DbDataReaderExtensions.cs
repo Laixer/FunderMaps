@@ -4,12 +4,12 @@ using System.Data.Common;
 namespace FunderMaps.Data.Extensions
 {
     /// <summary>
-    /// DbDataReader extensions.
+    ///     DbDataReader extensions.
     /// </summary>
     internal static class DbDataReaderExtensions
     {
         /// <summary>
-        /// Return value as integer.
+        ///     Return value as integer.
         /// </summary>
         /// <param name="reader">Input reader to extend.</param>
         /// <param name="ordinal">Column ordinal.</param>
@@ -25,7 +25,7 @@ namespace FunderMaps.Data.Extensions
         }
 
         /// <summary>
-        /// Return value as unsigned integer.
+        ///     Return value as unsigned integer.
         /// </summary>
         /// <param name="reader">Input reader to extend.</param>
         /// <param name="ordinal">Column ordinal.</param>
@@ -61,14 +61,13 @@ namespace FunderMaps.Data.Extensions
             return reader.GetInt(ordinal);
         }
 
-        //TODO: Rename SafeGetString -> GetSafeString
         /// <summary>
-        /// Return value as nullable string.
+        ///     Return value as nullable string.
         /// </summary>
         /// <param name="reader">Input reader to extend.</param>
         /// <param name="ordinal">Column ordinal.</param>
         /// <returns>Value as nullable string.</returns>
-        public static string SafeGetString(this DbDataReader reader, int ordinal)
+        public static string GetSafeString(this DbDataReader reader, int ordinal)
         {
             if (reader == null)
             {
@@ -79,7 +78,7 @@ namespace FunderMaps.Data.Extensions
         }
 
         /// <summary>
-        /// Return value as nullable datetime.
+        ///     Return value as nullable datetime.
         /// </summary>
         /// <param name="reader">Input reader to extend.</param>
         /// <param name="ordinal">Column ordinal.</param>
@@ -95,21 +94,21 @@ namespace FunderMaps.Data.Extensions
         }
 
         /// <summary>
-        /// Return value as nullable <typeparamref name="Type"/>.
+        ///     Return value as nullable <typeparamref name="TFieldType"/>.
         /// </summary>
-        /// <typeparam name="Type">Type to return value to.</typeparam>
+        /// <typeparam name="TFieldType">Type to return value to.</typeparam>
         /// <param name="reader">Input reader to extend.</param>
         /// <param name="ordinal">Column ordinal.</param>
         /// <returns>Value or null.</returns>
-        public static Type GetSafeFieldValue<Type>(this DbDataReader reader, int ordinal)
-            where Type : class
+        public static TFieldType GetSafeFieldValue<TFieldType>(this DbDataReader reader, int ordinal)
+            where TFieldType : class
         {
             if (reader == null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
 
-            return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<Type>(ordinal);
+            return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<TFieldType>(ordinal);
         }
     }
 }
