@@ -21,7 +21,7 @@ namespace FunderMaps.Data.Providers
         {
         }
 
-        // TODO: Move somewhere
+        // FUTURE: Move somewhere. Too npgsql specific
         /// <summary>
         ///     Static initializer.
         /// </summary>

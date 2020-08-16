@@ -2,7 +2,6 @@
 {
     internal class Mailkit
     {
-        // TODO: Move
         //services.AddMailKit(builder =>
         //{
         //    var config = _configuration.GetSection("Email");

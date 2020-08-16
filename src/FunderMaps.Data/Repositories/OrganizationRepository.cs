@@ -28,16 +28,19 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Create new <see cref="Organization"/>.
         /// </summary>
+        /// <remarks>
+        ///     Organizations can only be created from organization
+        ///     proposals. Therefore this method should be a no-op.
+        /// </remarks>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Organization"/>.</returns>
         public override ValueTask<Guid> AddAsync(Organization entity)
         {
-            throw new InvalidOperationException(); // TODO: Org should never be created this way.
+            throw new InvalidOperationException();
         }
 
         public async ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
-            // TODO: Check id
             if (id == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(id));
@@ -379,8 +382,6 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-
-            // TODO: Name change, email chane own function call
 
             var sql = @"
                 UPDATE  application.organization

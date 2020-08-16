@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Providers
 {
-    // TODO: This is not testable
+    // TODO: This is not testable. We want unit tests for this part.
 
     /// <summary>
     ///     Database provider.

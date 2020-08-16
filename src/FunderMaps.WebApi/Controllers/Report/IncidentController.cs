@@ -19,9 +19,6 @@ namespace FunderMaps.WebApi.Controllers.Report
     [ApiController, Route("incident")]
     public class IncidentController : BaseApiController
     {
-        // TODO: Move to Constants
-        private const string gatewayName = "FunderMaps.WebApi";
-
         private readonly IMapper _mapper;
         private readonly IncidentUseCase _incidentUseCase;
 
@@ -61,7 +58,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             incident.Meta = new
             {
                 // FUTURE: Register org?
-                Gateway = gatewayName,
+                Gateway = Constants.IncidentGateway,
             };
 
             // Act.

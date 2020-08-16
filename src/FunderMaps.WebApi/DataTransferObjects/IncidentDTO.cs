@@ -22,7 +22,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         [Required, Range(1, 99)]
         public int ClientId { get; set; }
 
-        // TODO: Rename to type
+        // FUTURE: Rename to type
         /// <summary>
         ///     Foundation type.
         /// </summary>

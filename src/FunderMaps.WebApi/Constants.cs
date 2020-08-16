@@ -44,6 +44,11 @@ namespace FunderMaps
         internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
 
         /// <summary>
+        ///     Incident gateway name.
+        /// </summary>
+        internal const string IncidentGateway = "FunderMaps.WebApi";
+
+        /// <summary>
         ///     Report storage destination.
         /// </summary>
         internal const string ReportStorage = "report";

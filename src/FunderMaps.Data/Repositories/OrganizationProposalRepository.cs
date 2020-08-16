@@ -36,7 +36,7 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            // TODO: Call SP directly
+            // FUTURE: Call SP directly
             var sql = @"
                 SELECT application.create_organization_proposal(
                     @name,

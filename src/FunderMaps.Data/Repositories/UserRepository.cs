@@ -38,7 +38,7 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
-            // TODO: normalized_email should be db trigger function
+            // FUTURE: normalized_email should be db trigger function
             var sql = @"
                 INSERT INTO application.user(
                     given_name,
@@ -407,8 +407,8 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="User"/>.</returns>
         public async ValueTask RegisterAccess(User entity)
         {
-            // TODO: db func
-            // TODO: db trigger to update last_login
+            // FUTURE: db func
+            // FUTURE: db trigger to update last_login
             var sql = @"
                 UPDATE  application.user
                 SET     login_count = login_count + 1,

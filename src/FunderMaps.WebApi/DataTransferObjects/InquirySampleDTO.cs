@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,10 +20,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         public int Inquiry { get; set; }
 
-        // TODO: Required?
         /// <summary>
         ///     Address identifier.
         /// </summary>
+        [Required, Address]
         public string Address { get; set; }
 
         /// <summary>

@@ -88,7 +88,7 @@ namespace FunderMaps.WebApi
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers(); // TODO: REVIEW: Should we IgnoreNullValues ?
+            services.AddControllers();
 
             services.AddResponseCompression(options =>
             {

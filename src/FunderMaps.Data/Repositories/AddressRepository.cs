@@ -162,7 +162,6 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        // TODO: Combination should be unique, cannot return enumerable
         /// <summary>
         ///     Retrieve <see cref="Address"/> by search query.
         /// </summary>

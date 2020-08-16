@@ -12,8 +12,8 @@ namespace FunderMaps.WebApi.Helpers
                 return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(defaultKey));
             }
 
-            // TODO: Write warning to log
-            // TODO: Using IRandom
+            // FUTURE: Write warning to log
+            // FUTURE: Using IRandom
             using var rng = new Core.Services.RandomGenerator();
             return new SymmetricSecurityKey(rng.GetRandomByteArray(32));
         }

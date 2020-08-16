@@ -89,7 +89,7 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(userId));
             }
 
-            // TODO: database function
+            // FUTURE: database function
             var sql = @"
                 SELECT EXISTS (
                     SELECT  1

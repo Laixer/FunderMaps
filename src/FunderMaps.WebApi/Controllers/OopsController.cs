@@ -13,7 +13,7 @@ namespace FunderMaps.WebApi.Controllers
     /// </summary>
     public class OopsController : ControllerBase
     {
-        // TODO: Maybe log the exception?
+        // FUTURE: Maybe log the exception?
 
         /// <summary>
         ///     Wrap exceptions in a response.

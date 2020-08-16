@@ -72,7 +72,7 @@ namespace FunderMaps.Data.Repositories
 
             MapToWriter(cmd, entity);
 
-            return await cmd.ExecuteScalarIntAsync(); // TODO: Ensure
+            return await cmd.ExecuteScalarIntAsync();
         }
 
         public Task<uint> CountAsync(Guid orgId)
@@ -90,7 +90,7 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    report.inquiry";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql); // TODO: Ensure
+            return ExecuteScalarUnsignedLongCommandAsync(sql);
         }
 
         /// <summary>
