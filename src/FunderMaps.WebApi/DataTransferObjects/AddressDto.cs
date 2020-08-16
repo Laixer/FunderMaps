@@ -11,7 +11,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Unique identifier.
         /// </summary>
-        [Address]
+        [Geocoder]
         public string Id { get; set; }
 
         /// <summary>

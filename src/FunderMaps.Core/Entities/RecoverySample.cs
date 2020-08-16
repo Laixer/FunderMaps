@@ -2,6 +2,7 @@
 using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
@@ -33,7 +34,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Address identifier.
         /// </summary>
-        [Address]
+        [Required, Geocoder]
         public string Address { get; set; }
 
         /// <summary>

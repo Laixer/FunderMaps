@@ -31,7 +31,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync([Address] string id)
+        public async Task<IActionResult> GetAsync([Geocoder] string id)
         {
             // Assign.
             Address address = await _geocoderUseCase.GetAsync(id).ConfigureAwait(false);

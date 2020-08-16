@@ -35,7 +35,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Address identifier.
         /// </summary>
-        [Required, Address]
+        [Required, Geocoder]
         public string Address { get; set; }
 
         /// <summary>

@@ -108,7 +108,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Address identifier.
         /// </summary>
-        [Required, Address]
+        [Required, Geocoder]
         public string Address { get; set; }
 
         /// <summary>

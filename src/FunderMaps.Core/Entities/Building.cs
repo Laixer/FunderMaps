@@ -21,7 +21,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Unique identifier.
         /// </summary>
-        [Required, Address] // TODO: Rename address to Geocoder
+        [Required, Geocoder]
         public string Id { get; set; }
 
         // TODO: Contraints, see #203

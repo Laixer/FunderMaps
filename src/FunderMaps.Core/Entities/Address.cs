@@ -20,7 +20,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Unique identifier.
         /// </summary>
-        [Required, Address]
+        [Required, Geocoder]
         public string Id { get; set; }
 
         /// <summary>

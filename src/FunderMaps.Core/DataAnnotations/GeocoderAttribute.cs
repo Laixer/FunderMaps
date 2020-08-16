@@ -3,15 +3,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.DataAnnotations
 {
-    // TODO: Rename address to Geocoder
     /// <summary>
-    ///     Address validation attribute.
+    ///     Geocoder identifier validation attribute.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-    public class AddressAttribute : ValidationAttribute
+    public class GeocoderAttribute : ValidationAttribute
     {
         /// <summary>
-        ///     Returns true if the value starts with address identifier.
+        ///     Returns true if the value starts with geocoder identifier.
         /// </summary>
         /// <param name="value">The value to test for validity.</param>
         /// <returns><c>true</c> means the <paramref name="value" /> is valid</returns>
@@ -25,6 +24,6 @@ namespace FunderMaps.Core.DataAnnotations
         /// <param name="name">The user-visible name to include in the formatted message.</param>
         /// <returns>A string describing the invalid field.</returns>
         public override string FormatErrorMessage(string name)
-            => $"The {name} field is not a valid address identifier.";
+            => $"The {name} field is not a valid geocoder identifier.";
     }
 }

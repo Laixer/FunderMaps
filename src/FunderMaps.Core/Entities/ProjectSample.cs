@@ -10,6 +10,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class ProjectSample : RecordControl<ProjectSample, int>, IReportEntity<ProjectSample>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public ProjectSample()
             : base(e => e.Id)
         {
@@ -44,7 +47,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Address identifier.
         /// </summary>
-        [Address]
+        [Geocoder]
         public string Address { get; set; }
 
         /// <summary>

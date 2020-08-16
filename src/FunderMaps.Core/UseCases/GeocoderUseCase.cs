@@ -30,9 +30,9 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask<Address> GetAsync(string id)
         {
-            Validator.ValidateValue(id, new ValidationContext(id), new List<AddressAttribute> { new AddressAttribute() });
+            Validator.ValidateValue(id, new ValidationContext(id), new List<GeocoderAttribute> { new GeocoderAttribute() });
 
-            return await _addressRepository.GetByIdAsync(id).ConfigureAwait(false);
+            return await _addressRepository.GetByIdAsync(id);
         }
 
         /// <summary>
