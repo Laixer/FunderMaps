@@ -108,8 +108,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(principal));
             }
 
-            // TODO: Use principal.FindFirst
-            var claim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            var claim = principal.FindFirst(ClaimTypes.NameIdentifier);
             if (claim == null)
             {
                 throw new InvalidOperationException(); // TODO:
@@ -125,7 +124,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(principal));
             }
 
-            var claim = principal.Claims.FirstOrDefault(c => c.Type == FunderMapsAuthenticationClaimTypes.Organization);
+            var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.Organization);
             if (claim == null)
             {
                 throw new InvalidOperationException(); // TODO:
@@ -205,7 +204,7 @@ namespace FunderMaps.Core.Authentication
             }
 
             // TODO:
-            var claim = principal.Claims.FirstOrDefault(c => c.Type == FunderMapsAuthenticationClaimTypes.OrganizationRole);
+            var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.OrganizationRole);
             if (claim == null)
             {
                 return SignInContext.Failed;
