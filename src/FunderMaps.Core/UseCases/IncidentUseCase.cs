@@ -29,8 +29,8 @@ namespace FunderMaps.Core.UseCases
 
         private async ValueTask<Incident> GetAndBuildAsync(string id)
         {
-            var incident = await _incidentRepository.GetByIdAsync(id).ConfigureAwait(false);
-            return await BuildAsync(incident).ConfigureAwait(false);
+            var incident = await _incidentRepository.GetByIdAsync(id);
+            return await BuildAsync(incident);
         }
 
         // FUTURE: This is working, but not efficient
@@ -48,7 +48,7 @@ namespace FunderMaps.Core.UseCases
 
             if (!string.IsNullOrEmpty(incident.Email))
             {
-                incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email).ConfigureAwait(false);
+                incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
             }
 
             // FUTURE:
@@ -67,7 +67,7 @@ namespace FunderMaps.Core.UseCases
         {
             Validator.ValidateValue(id, new ValidationContext(id), new List<IncidentAttribute> { new IncidentAttribute() });
 
-            return await GetAndBuildAsync(id).ConfigureAwait(false);
+            return await GetAndBuildAsync(id);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace FunderMaps.Core.UseCases
         {
             await foreach (var incident in _incidentRepository.ListAllAsync(navigation))
             {
-                yield return await BuildAsync(incident).ConfigureAwait(false);
+                yield return await BuildAsync(incident);
             }
         }
 
@@ -106,11 +106,11 @@ namespace FunderMaps.Core.UseCases
             // There does not have to be a contact, but if it exists we'll save it.
             if (incident.ContactNavigation != null)
             {
-                await _contactRepository.AddAsync(incident.ContactNavigation).ConfigureAwait(false);
+                await _contactRepository.AddAsync(incident.ContactNavigation);
             }
 
-            var id = await _incidentRepository.AddAsync(incident).ConfigureAwait(false);
-            return await GetAndBuildAsync(id).ConfigureAwait(false);
+            var id = await _incidentRepository.AddAsync(incident);
+            return await GetAndBuildAsync(id);
         }
 
         /// <summary>
@@ -126,10 +126,10 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(incident));
             }
 
-            incident.InitializeDefaults(await _incidentRepository.GetByIdAsync(incident.Id).ConfigureAwait(false));
+            incident.InitializeDefaults(await _incidentRepository.GetByIdAsync(incident.Id));
             incident.Validate();
 
-            await _incidentRepository.UpdateAsync(incident).ConfigureAwait(false);
+            await _incidentRepository.UpdateAsync(incident);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace FunderMaps.Core.UseCases
         {
             Validator.ValidateValue(id, new ValidationContext(id), new List<IncidentAttribute> { new IncidentAttribute() });
 
-            await _incidentRepository.DeleteAsync(id).ConfigureAwait(false);
+            await _incidentRepository.DeleteAsync(id);
         }
     }
 }

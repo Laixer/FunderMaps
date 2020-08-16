@@ -14,6 +14,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class InquirySample : RecordControl<InquirySample, int>, IReportEntity<InquirySample>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public InquirySample()
             : base(e => e.Id)
         {
@@ -362,5 +365,14 @@ namespace FunderMaps.Core.Entities
         ///     Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
+
+        public override void InitializeDefaults()
+        {
+            Id = 0;
+            BaseMeasurementLevel = BaseMeasurementLevel.NAP;
+            CreateDate = DateTime.MinValue;
+            UpdateDate = null;
+            DeleteDate = null;
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public async ValueTask<Project> GetAsync(int id)
         {
-            var project = await _projectRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var project = await _projectRepository.GetByIdAsync(id);
             if (project == null)
             {
                 throw new EntityNotFoundException();
@@ -56,8 +56,11 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(project));
             }
 
-            var id = await _projectRepository.AddAsync(project).ConfigureAwait(false);
-            return await _projectRepository.GetByIdAsync(id).ConfigureAwait(false);
+            project.InitializeDefaults();
+            project.Validate();
+
+            var id = await _projectRepository.AddAsync(project);
+            return await _projectRepository.GetByIdAsync(id);
         }
 
         /// <summary>
@@ -80,7 +83,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public async ValueTask DeleteAsync(int id)
         {
-            await _projectRepository.DeleteAsync(id).ConfigureAwait(false);
+            await _projectRepository.DeleteAsync(id);
         }
     }
 }

@@ -37,7 +37,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public async ValueTask<Recovery> GetAsync(int id)
         {
-            var recovery = await _recoveryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var recovery = await _recoveryRepository.GetByIdAsync(id);
             if (recovery == null)
             {
                 throw new EntityNotFoundException();
@@ -62,9 +62,10 @@ namespace FunderMaps.Core.UseCases
 
             //recovery.Status = InquiryStatus.Todo;  //?
             recovery.Attribution = 1; // TODO: Remove
+            recovery.Validate();
 
-            var id = await _recoveryRepository.AddAsync(recovery).ConfigureAwait(false);
-            return await _recoveryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var id = await _recoveryRepository.AddAsync(recovery);
+            return await _recoveryRepository.GetByIdAsync(id);
         }
 
         /// <summary>
@@ -87,7 +88,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public async ValueTask DeleteAsync(int id)
         {
-            await _recoveryRepository.DeleteAsync(id).ConfigureAwait(false);
+            await _recoveryRepository.DeleteAsync(id);
         }
 
         /// <summary>
@@ -96,14 +97,14 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity sample id.</param>
         public async ValueTask<RecoverySample> GetSampleAsync(int id)
         {
-            var recoverySample = await _recoverySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var recoverySample = await _recoverySampleRepository.GetByIdAsync(id);
             if (recoverySample == null)
             {
                 throw new EntityNotFoundException();
             }
 
-            recoverySample.RecoveryNavigation = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery).ConfigureAwait(false);
-            //inquirySample.AddressNavigation = await _addressRepository.GetByIdAsync(inquirySample.Address).ConfigureAwait(false);
+            recoverySample.RecoveryNavigation = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+            //inquirySample.AddressNavigation = await _addressRepository.GetByIdAsync(inquirySample.Address);
             return recoverySample;
         }
 
@@ -119,15 +120,11 @@ namespace FunderMaps.Core.UseCases
             }
 
             // TODO: Set Inquiry.Status = InquiryStatus.Pending
-            recoverySample.Id = 0;
-            recoverySample.CreateDate = DateTime.MinValue;
-            recoverySample.UpdateDate = null;
-            recoverySample.DeleteDate = null;
-            recoverySample.RecoveryNavigation = null;
-            recoverySample.AddressNavigation = null;
+            recoverySample.InitializeDefaults();
+            recoverySample.Validate();
 
-            var id = await _recoverySampleRepository.AddAsync(recoverySample).ConfigureAwait(false);
-            return await _recoverySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var id = await _recoverySampleRepository.AddAsync(recoverySample);
+            return await _recoverySampleRepository.GetByIdAsync(id);
         }
 
         /// <summary>
@@ -139,7 +136,7 @@ namespace FunderMaps.Core.UseCases
             await foreach (var recoverySample in _recoverySampleRepository.ListAllAsync(navigation))
             {
                 // TODO: This is working, but not efficient
-                recoverySample.RecoveryNavigation = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery).ConfigureAwait(false);
+                recoverySample.RecoveryNavigation = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
                 yield return recoverySample;
             }
         }
@@ -152,7 +149,7 @@ namespace FunderMaps.Core.UseCases
         {
             // TODO: Set Recovery.Status = InquiryStatus.Todo ?
 
-            await _recoverySampleRepository.DeleteAsync(id).ConfigureAwait(false);
+            await _recoverySampleRepository.DeleteAsync(id);
         }
 
         /// <summary>

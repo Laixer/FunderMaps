@@ -85,5 +85,15 @@ namespace FunderMaps.Core.Entities
         ///     Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
+
+        public override void InitializeDefaults()
+        {
+            Id = 0;
+            CreateDate = DateTime.MinValue;
+            UpdateDate = null;
+            DeleteDate = null;
+            RecoveryNavigation = null;
+            AddressNavigation = null;
+        }
     }
 }

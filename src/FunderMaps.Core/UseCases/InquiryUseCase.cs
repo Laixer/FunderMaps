@@ -47,7 +47,7 @@ namespace FunderMaps.Core.UseCases
         {
             // FUTURE:
             //inquiry.AttributionNavigation = ...
-            return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            return await _inquiryRepository.GetByIdAsync(id);
         }
 
         // TODO: Remove stream.
@@ -58,7 +58,7 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(file));
             }
 
-            await _fileStorageService.StoreFileAsync("somestore", file, stream).ConfigureAwait(false);
+            await _fileStorageService.StoreFileAsync("somestore", file, stream);
         }
 
         /// <summary>
@@ -74,11 +74,10 @@ namespace FunderMaps.Core.UseCases
 
             inquiry.InitializeDefaults();
             inquiry.Attribution = 1; // TODO: Remove
+            inquiry.Validate();
 
-            Validator.ValidateObject(inquiry, new ValidationContext(inquiry), true);
-
-            var id = await _inquiryRepository.AddAsync(inquiry).ConfigureAwait(false);
-            return await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var id = await _inquiryRepository.AddAsync(inquiry);
+            return await _inquiryRepository.GetByIdAsync(id);
         }
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquiry));
             }
 
-            inquiry.InitializeDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id).ConfigureAwait(false));
+            inquiry.InitializeDefaults(await _inquiryRepository.GetByIdAsync(inquiry.Id));
             inquiry.Validate();
 
             if (!inquiry.AllowWrite)
@@ -107,7 +106,7 @@ namespace FunderMaps.Core.UseCases
                 throw new EntityReadOnlyException();
             }
 
-            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+            await _inquiryRepository.UpdateAsync(inquiry);
         }
 
         /// <summary>
@@ -118,7 +117,7 @@ namespace FunderMaps.Core.UseCases
         public virtual async ValueTask UpdateStatusAsync(int id, AuditStatus status)
         {
             // FUTURE: Abstract this away.
-            var inquiry = await _inquiryRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
 
             Func<ValueTask> postUpdateEvent = () => new ValueTask();
 
@@ -149,8 +148,8 @@ namespace FunderMaps.Core.UseCases
                     throw new StateTransitionException(inquiry.AuditStatus, status);
             }
 
-            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
-            await postUpdateEvent().ConfigureAwait(false);
+            await _inquiryRepository.UpdateAsync(inquiry);
+            await postUpdateEvent();
         }
 
         /// <summary>
@@ -159,7 +158,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity id.</param>
         public virtual async ValueTask DeleteAsync(int id)
         {
-            await _inquiryRepository.DeleteAsync(id).ConfigureAwait(false);
+            await _inquiryRepository.DeleteAsync(id);
         }
 
         #endregion
@@ -172,8 +171,8 @@ namespace FunderMaps.Core.UseCases
         /// <param name="id">Entity sample id.</param>
         public virtual async ValueTask<InquirySample> GetSampleAsync(int id)
         {
-            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
-            inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+            inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
             return inquirySample;
         }
 
@@ -188,27 +187,22 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquirySample));
             }
 
-            inquirySample.Id = 0;
-            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP;
-            inquirySample.CreateDate = DateTime.MinValue;
-            inquirySample.UpdateDate = null;
-            inquirySample.DeleteDate = null;
-
-            Validator.ValidateObject(inquirySample, new ValidationContext(inquirySample), true);
+            inquirySample.InitializeDefaults();
+            inquirySample.Validate();
 
             // FUTURE: Too much logic
-            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
 
             if (!inquiry.AllowWrite)
             {
                 throw new EntityReadOnlyException();
             }
 
-            var id = await _inquirySampleRepository.AddAsync(inquirySample).ConfigureAwait(false);
-            inquirySample = await _inquirySampleRepository.GetByIdAsync(id).ConfigureAwait(false);
+            var id = await _inquirySampleRepository.AddAsync(inquirySample);
+            inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
 
             inquiry.TransitionToPending();
-            await _inquiryRepository.UpdateAsync(inquiry).ConfigureAwait(false);
+            await _inquiryRepository.UpdateAsync(inquiry);
 
             inquirySample.InquiryNavigation = inquiry;
             return inquirySample;
@@ -223,7 +217,7 @@ namespace FunderMaps.Core.UseCases
             await foreach (var inquirySample in _inquirySampleRepository.ListAllAsync(navigation))
             {
                 // FUTURE: This is working, but not efficient
-                inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry).ConfigureAwait(false);
+                inquirySample.InquiryNavigation = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
                 yield return inquirySample;
             }
         }
