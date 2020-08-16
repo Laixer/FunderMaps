@@ -24,7 +24,7 @@ namespace FunderMaps.Core.Entities
         [Required, Address] // TODO: Rename address to Geocoder
         public string Id { get; set; }
 
-        // TODO: Contraints
+        // TODO: Contraints, see #203
         /// <summary>
         ///     Built year.
         /// </summary>
@@ -42,7 +42,7 @@ namespace FunderMaps.Core.Entities
         [Required]
         public string Address { get; set; }
 
-        // TODO: Type
+        // TODO: Type, see #211
         /// <summary>
         ///     External data source id.
         /// </summary>

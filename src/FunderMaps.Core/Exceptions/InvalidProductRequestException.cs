@@ -32,6 +32,5 @@ namespace FunderMaps.Core.Exceptions
             : base(message, innerException)
         {
         }
-        s
     }
 }

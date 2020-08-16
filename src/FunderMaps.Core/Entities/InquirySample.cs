@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities
 {
     // FUTURE: Inherit from parent child enforcing contract.
-    // TODO: Split into partial classes.
+    // FUTURE: Split into partial classes.
 
     /// <summary>
     ///     Inquiry sample entity.
@@ -47,7 +47,7 @@ namespace FunderMaps.Core.Entities
         [Required]
         public BaseMeasurementLevel BaseMeasurementLevel { get; set; } = BaseMeasurementLevel.NAP;
 
-        // TODO: Constraint
+        // TODO: Constraint, see #203
         /// <summary>
         ///     Built year.
         /// </summary>

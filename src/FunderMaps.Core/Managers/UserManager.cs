@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
@@ -115,7 +116,7 @@ namespace FunderMaps.Core.Managers
 
             if (!await CheckPasswordAsync(user, currentPassword).ConfigureAwait(false))
             {
-                throw new Exception(); // TODO: Auth invalid ex.
+                throw new AuthenticationException(); // FUTURE: InvalidCredentialException
             }
 
             var newPasswordHash = _passwordHasher.HashPassword(newPassword);

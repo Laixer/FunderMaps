@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities
 {
     // TODO inherit from StateControl?
-    // TODO: Move validation on properties.
     /// <summary>
     ///     Indicent entity.
     /// </summary>

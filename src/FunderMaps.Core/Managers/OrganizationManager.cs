@@ -225,7 +225,7 @@ namespace FunderMaps.Core.Managers
             // Make sure organization exists.
             await _organizationRepository.GetByIdAsync(id);
 
-            // TODO: Do in 1 call.
+            // FUTURE: Do in 1 call.
             user = await _userManager.CreateAsync(user, plainPassword);
             await _organizationUserRepository.AddAsync(id, user.Id, role);
             return user;

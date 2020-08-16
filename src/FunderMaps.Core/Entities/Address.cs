@@ -52,7 +52,7 @@ namespace FunderMaps.Core.Entities
         [Required(AllowEmptyStrings = false)]
         public string ExternalId { get; set; }
 
-        // TODO: This is a type.
+        // TODO: This is a type, see #211
         /// <summary>
         ///     External data source.
         /// </summary>
