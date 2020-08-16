@@ -20,7 +20,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     This controller should *only* handle organization operations on the current
     ///     user session. Therefore the user context must be active.
     /// </remarks>
-    [ApiController, Route("organization/user")]
+    [Route("organization/user")]
     public class OrganizationUserController : BaseApiController
     {
         private readonly IMapper _mapper;

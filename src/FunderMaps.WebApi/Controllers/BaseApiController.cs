@@ -8,6 +8,6 @@ namespace FunderMaps.Controllers
     [Controller]
     public abstract class BaseApiController : ControllerBase
     {
-        //
+        // FUTURE: Inject User, Organization, OrganizationRole properties.
     }
 }

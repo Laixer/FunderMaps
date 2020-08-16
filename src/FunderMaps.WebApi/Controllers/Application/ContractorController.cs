@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Application
 {
-    [ApiController, Route("contractor")]
+    // TODO: Set ResponseCache
+    [Route("contractor")]
     public class ContractorController : BaseApiController
     {
     }

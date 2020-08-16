@@ -9,7 +9,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     /// <summary>
     ///     Return application versioning information.
     /// </summary>
-    [AllowAnonymous, ApiController]
+    [AllowAnonymous]
     public class VersionController : BaseApiController
     {
         // GET: api/version

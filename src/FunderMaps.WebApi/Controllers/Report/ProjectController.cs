@@ -17,7 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for project operations.
     /// </summary>
-    [ApiController, Route("project")]
+    [Route("project")]
     public class ProjectController : BaseApiController
     {
         private readonly IMapper _mapper;

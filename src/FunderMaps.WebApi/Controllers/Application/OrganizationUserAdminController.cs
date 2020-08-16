@@ -23,7 +23,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     </para>
     /// </remarks>
     [Authorize(Policy = "AdministratorPolicy")]
-    [ApiController, Route("organization/{id:guid}/user")]
+    [Route("organization/{id:guid}/user")]
     public class OrganizationUserAdminController : BaseApiController
     {
         private readonly IMapper _mapper;

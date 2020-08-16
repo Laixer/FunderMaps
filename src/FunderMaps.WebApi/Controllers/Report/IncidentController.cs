@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     ///     Endpoint controller for incident operations.
     /// </summary>
-    [ApiController, Route("incident")]
+    [Route("incident")]
     public class IncidentController : BaseApiController
     {
         private readonly IMapper _mapper;

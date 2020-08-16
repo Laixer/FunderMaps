@@ -15,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// <summary>
     /// Endpoint controller for inquiry sample operations.
     /// </summary>
-    [ApiController, Route("inquiry/{inquiryId}/sample")]
+    [Route("inquiry/{inquiryId}/sample")]
     public class InquirySampleController : BaseApiController
     {
         private readonly IMapper _mapper;

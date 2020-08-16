@@ -15,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
     /// <summary>
     ///     Endpoint controller for address operations.
     /// </summary>
-    [ApiController, Route("address")]
+    [Route("address")]
     public class AddressController : BaseApiController
     {
         private readonly IMapper _mapper;
