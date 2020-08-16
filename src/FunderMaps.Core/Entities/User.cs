@@ -81,7 +81,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Initialize properties from another entity.
         /// </summary>
-        public void InitializeDefaults(User other)
+        public override void InitializeDefaults(User other)
         {
             if (other == null)
             {

@@ -10,6 +10,7 @@ namespace FunderMaps.Core.Services
     public class RandomGenerator : IRandom, IDisposable
     {
         private readonly RandomNumberGenerator _rng;
+        private bool disposedValue;
 
         /// <summary>
         ///     Create new instance.
@@ -51,9 +52,37 @@ namespace FunderMaps.Core.Services
             return buffer;
         }
 
-        public virtual void Dispose()
+        #region Dispose Pattern
+
+        /// <summary>
+        ///     Dispose helper.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
         {
-            _rng.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                    _rng.Dispose();
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
         }
+
+        /// <summary>
+        ///     Dispose objects.
+        /// </summary>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        #endregion Dispose Pattern
     }
 }

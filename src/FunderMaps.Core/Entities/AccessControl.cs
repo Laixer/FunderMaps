@@ -11,6 +11,9 @@ namespace FunderMaps.Core.Entities
         where TEntity : class
         where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         protected AccessControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
             : base(entryPrimaryKey)
         {

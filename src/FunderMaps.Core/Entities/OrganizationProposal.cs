@@ -43,7 +43,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Initialize property defaults.
         /// </summary>
-        public void InitializeDefaults()
+        public override void InitializeDefaults()
         {
             Id = Guid.Empty;
         }

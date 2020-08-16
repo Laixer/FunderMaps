@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Extensions
     public static class GuidExtensions
     {
         /// <summary>
-        ///     Throws an <see cref="ArgumentNullException"/> if the <paramref name="self"/>
+        ///     Throws an <see cref="ArgumentNullException"/> if the <paramref name="inputGuid"/>
         ///     Guid is either null or empty.
         /// </summary>
         /// <param name="inputGuid"><see cref="Guid"/></param>

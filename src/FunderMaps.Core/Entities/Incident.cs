@@ -121,7 +121,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Initialize property defaults.
         /// </summary>
-        public void InitializeDefaults()
+        public override void InitializeDefaults()
         {
             Id = null;
             AuditStatus = AuditStatus.Todo;
@@ -134,7 +134,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Initialize properties from another entity.
         /// </summary>
-        public void InitializeDefaults(Incident other)
+        public override void InitializeDefaults(Incident other)
         {
             if (other == null)
             {
