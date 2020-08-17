@@ -1,11 +1,15 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.UseCases;
 using FunderMaps.IndicentEndpoint.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using Moq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -69,10 +73,52 @@ namespace FunderMaps.IndicentEndpoint.Tests
             };
 
             // Act
-            var response = await endpoint.AddIncident(input, httpRequest.Request);
+            var response = (OkObjectResult)await endpoint.AddIncident(input, httpRequest.Request);
 
             // Assert
-            Assert.IsType<OkObjectResult>(response);
+            Assert.Equal(200, response.StatusCode);
+        }
+
+        [Fact]
+        public async void GetAllAddressByQueryReturnMatchingAddressList()
+        {
+            static Dictionary<string, StringValues> CreateDictionary(string key, string value)
+            {
+                var qs = new Dictionary<string, StringValues>
+                {
+                    { key, value }
+                };
+                return qs;
+            }
+
+            static async IAsyncEnumerable<Address> ReturnAsyncEnumerable()
+            {
+                await Task.CompletedTask;
+                yield return new Address { Id = "gfm-123" };
+            }
+
+            // Arrange
+            var contactRepositoryMock = new Mock<IContactRepository>();
+            var incidentRepositoryMock = new Mock<IIncidentRepository>();
+            var addressRepositoryMock = new Mock<IAddressRepository>();
+            addressRepositoryMock
+                .Setup(s => s.GetBySearchQueryAsync(It.IsAny<string>(), It.IsAny<INavigation>()))
+                .Returns(ReturnAsyncEnumerable());
+
+            var incidentUseCase = new IncidentUseCase(contactRepositoryMock.Object, incidentRepositoryMock.Object);
+            var geocoderUseCase = new GeocoderUseCase(addressRepositoryMock.Object);
+
+            var httpRequest = new DefaultHttpContext();
+            httpRequest.Request.Query = new QueryCollection(CreateDictionary("query", "query"));
+            var endpoint = new HttpPortalEndpoint(incidentUseCase, geocoderUseCase);
+
+            // Act
+            var response = (OkObjectResult)await endpoint.GetAddress(httpRequest.Request);
+            var returnObject = (AddressOutputViewModel)response.Value;
+
+            // Assert
+            Assert.Equal(200, response.StatusCode);
+            Assert.StartsWith("gfm-", returnObject.Address);
         }
     }
 }

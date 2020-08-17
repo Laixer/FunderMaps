@@ -3,7 +3,7 @@
     /// <summary>
     ///     Address output view model.
     /// </summary>
-    internal class AddressOutputViewModel
+    public class AddressOutputViewModel
     {
         /// <summary>
         ///     Address identifier.
