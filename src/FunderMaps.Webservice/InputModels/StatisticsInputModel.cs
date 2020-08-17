@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FunderMaps.Webservice.ResponseModels.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.InputModels
 {
@@ -12,16 +13,12 @@ namespace FunderMaps.Webservice.InputModels
         ///     Product type.
         /// </summary>
         [Required]
-        public string Product { get; set; }
+        public StatisticsProductTypeResponseModel? Product { get; set; }
 
         /// <summary>
         ///     Incidates the area code for the calculations.
         /// </summary>
-        public string AreaCode { get; set; }
-
-        /// <summary>
-        ///     Indicates whether or not we want the statistics for our entire fence.
-        /// </summary>
-        public bool FullFence { get; set; } = false;
+        [Required]
+        public string NeighborhoodCode { get; set; }
     }
 }
