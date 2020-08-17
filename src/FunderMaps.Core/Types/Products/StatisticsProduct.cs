@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Types.Distributions;
-using FunderMaps.Core.Types.Regions;
 
 namespace FunderMaps.Core.Types.Products
 {
@@ -9,9 +8,14 @@ namespace FunderMaps.Core.Types.Products
     public sealed class StatisticsProduct : ProductBase
     {
         /// <summary>
-        /// The region in which these statistics were caluclated.
+        ///     Internal neighborhood id in which these statistics were calculated.
         /// </summary>
-        public Region Region { get; set; }
+        public string NeighborhoodId { get; set; }
+
+        /// <summary>
+        ///     Neighborhood code in which these statistics were calculated.
+        /// </summary>
+        public string NeighborhoodCode { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.

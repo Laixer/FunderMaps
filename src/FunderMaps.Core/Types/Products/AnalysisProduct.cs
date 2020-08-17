@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Distributions;
-using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Types.Distributions;
 using System;
 
 namespace FunderMaps.Core.Types.Products
@@ -19,6 +17,11 @@ namespace FunderMaps.Core.Types.Products
         /// Represents the external id of this building.
         /// </summary>
         public string ExternalId { get; set; }
+
+        /// <summary>
+        ///     Internal neighborhood id in which this building lies.
+        /// </summary>
+        public string NeighborhoodId { get; set; }
 
         /// <summary>
         /// Represents the external data source of this building.
@@ -92,7 +95,7 @@ namespace FunderMaps.Core.Types.Products
         /// TODO What unit? Percentage?
         /// TODO Correct name?
         /// </summary>
-        public double? Reliability { get; set; }
+        public Reliability? Reliability { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.
