@@ -1,6 +1,8 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.IntegrationTests.Repositories;
+using FunderMaps.IntegrationTests.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -25,17 +27,27 @@ namespace FunderMaps.IntegrationTests
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(EntityDataStore<>));
+            services.AddSingleton(typeof(ObjectDataStore));
+
+            // Repositories
             services.AddScoped<IAddressRepository, TestAddressRepository>();
+            services.AddScoped<IAnalysisRepository, TestAnalysisRepository>();
+            services.AddScoped<IBuildingRepository, TestBuildingRepository>();
             services.AddScoped<IContactRepository, TestContactRepository>();
             services.AddScoped<IIncidentRepository, TestIncidentRepository>();
             services.AddScoped<IInquiryRepository, TestInquiryRepository>();
             services.AddScoped<IInquirySampleRepository, TestInquirySampleRepository>();
             services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
+            services.AddScoped<IStatisticsRepository, TestStatisticsRepository>();
             services.AddScoped<IUserRepository, TestUserRepository>();
             services.AddScoped<IOrganizationProposalRepository, TestOrganizationProposalRepository>();
             services.AddScoped<IOrganizationRepository, TestOrganizationRepository>();
             services.AddScoped<IOrganizationUserRepository, TestOrganizationUserRepository>();
+
+            // Services
+            services.AddScoped<IUserTrackingService, TestUserTrackingService>();
+            services.AddScoped<IDescriptionService, TestDescriptionService>();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -60,6 +72,28 @@ namespace FunderMaps.IntegrationTests
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
             dataStore.Reset(list);
+
+            return this;
+        }
+
+        // FUTURE Helper, move ?
+        public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreItem<TObject>(TObject obj)
+            where TObject : class
+        {
+            // TODO Implement better
+            var dataStore = Services.GetService<ObjectDataStore>();
+            dataStore.ClearByTypeAndAddSingle<TObject>(obj);
+
+            return this;
+        }
+
+        // FUTURE Helper, move ?
+        public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreList<TObject>(IEnumerable<TObject> objList)
+            where TObject : class
+        {
+            // TODO Implement better
+            var dataStore = Services.GetService<ObjectDataStore>();
+            dataStore.ClearByTypeAndAddList<TObject>(objList);
 
             return this;
         }
