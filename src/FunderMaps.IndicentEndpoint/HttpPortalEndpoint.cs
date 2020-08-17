@@ -63,18 +63,6 @@ namespace FunderMaps.IndicentEndpoint
         [FunctionName("Incident")]
         public async Task<IActionResult> AddIncident([HttpTrigger(AuthorizationLevel.Function, "post")] IncidentInputViewModel input, HttpRequest request)
         {
-            // TODO: Can request be null?
-            if (request == null)
-            {
-                return ErrorResult("Input is empty"); // TODO:
-            }
-
-            // TODO: Can request be null?
-            if (input == null)
-            {
-                return ErrorResult("Input is empty"); // TODO:
-            }
-
             var results = new List<ValidationResult>();
             if (!Validator.TryValidateObject(input, new ValidationContext(input, null, null), results, true))
             {
@@ -103,20 +91,13 @@ namespace FunderMaps.IndicentEndpoint
         [FunctionName("Address")]
         public async Task<IActionResult> GetAddress([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest request)
         {
-            // TODO: Can request be null?
-            if (request == null)
-            {
-                return ErrorResult("Input is empty"); // TODO:
-            }
-
             string query = request.Query["query"];
-
             if (string.IsNullOrEmpty(query))
             {
                 return ErrorResult("Input is empty"); // TODO:
             }
 
-            // TODO: Should yield single item
+            // FUTURE: Should yield single item
             await foreach (var address in _geocoderUseCase.GetAllBySuggestionAsync(query, Navigation.SingleRow))
             {
                 return new OkObjectResult(new AddressOutputViewModel

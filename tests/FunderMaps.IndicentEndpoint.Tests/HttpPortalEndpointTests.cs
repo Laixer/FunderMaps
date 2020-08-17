@@ -15,6 +15,8 @@ using Xunit;
 
 namespace FunderMaps.IndicentEndpoint.Tests
 {
+    // FUTURE: We;re testing too much. This should only be a 
+    // unit test, not an integration test.
     public class HttpPortalEndpointTests
     {
         [Fact]
