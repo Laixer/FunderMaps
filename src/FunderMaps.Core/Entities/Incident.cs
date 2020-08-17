@@ -12,6 +12,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class Incident : RecordControl<Incident, string>, IReportEntity<Incident>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public Incident()
             : base(e => e.Id)
         {

@@ -86,7 +86,7 @@ namespace FunderMaps.IndicentEndpoint
             incident.Meta = new
             {
                 UserAgent = request.UserAgent(),
-                RemoteAddress = request.HttpContext.Connection.RemoteIpAddress.ToString(),
+                RemoteAddress = request.HttpContext.Connection.RemoteIpAddress?.ToString(),
                 Gateway = gatewayName,
             };
 

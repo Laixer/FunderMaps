@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.IndicentEndpoint.ViewModels
@@ -8,11 +9,16 @@ namespace FunderMaps.IndicentEndpoint.ViewModels
     /// </summary>
     public class IncidentInputViewModel
     {
-        // FUTURE: Custom checker
+        /// <summary>
+        ///     Client identifier.
+        /// </summary>
+        [Required, Range(1, 99)]
+        public int ClientId { get; set; }
+
         /// <summary>
         ///     Address identifier.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required, Geocoder]
         public string Address { get; set; }
 
         /// <summary>

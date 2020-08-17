@@ -26,6 +26,7 @@ namespace FunderMaps.IndicentEndpoint.Extensions
                 throw new ArgumentNullException(nameof(input));
             }
 
+            incident.ClientId = input.ClientId;
             incident.Address = input.Address;
             incident.FoundationType = input.FoundationType;
             incident.ChainedBuilding = input.ChainedBuilding;
