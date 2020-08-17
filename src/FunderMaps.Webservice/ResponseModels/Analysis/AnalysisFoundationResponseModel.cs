@@ -30,16 +30,12 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the dewatering depth (ontwateringsdiepte) for this building.
-        /// TODO Correct unit?
-        /// TODO Correct name?
         /// </summary>
         public double? DewateringDepth { get; set; }
 
         /// <summary>
-        /// Represents the period of drought (droogstand) for this building.
-        /// TODO Correct unit?
-        /// TODO Correct name?
+        /// Represents the drystand (droogstand) for this building.
         /// </summary>
-        public double? DryPeriod { get; set; }
+        public double? Drystand { get; set; }
     }
 }
