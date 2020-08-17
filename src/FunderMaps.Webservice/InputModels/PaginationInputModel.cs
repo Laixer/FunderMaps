@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.InputModels
 {
@@ -17,6 +18,7 @@ namespace FunderMaps.Webservice.InputModels
         /// <summary>
         ///     Recordset limit.
         /// </summary>
+        [Range(1, uint.MaxValue)]
         public int Limit { get; set; } = 25;
 
         /// <summary>

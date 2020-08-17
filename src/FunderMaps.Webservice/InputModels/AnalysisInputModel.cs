@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Helpers;
+using FunderMaps.Webservice.ResponseModels.Types;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -14,7 +15,7 @@ namespace FunderMaps.Webservice.InputModels
         ///     Product type.
         /// </summary>
         [Required]
-        public string Product { get; set; }
+        public AnalysisProductTypeResponseModel? Product { get; set; }
 
         /// <summary>
         ///     Query search string.
@@ -32,11 +33,6 @@ namespace FunderMaps.Webservice.InputModels
         public string BagId { get; set; }
 
         /// <summary>
-        ///     Bool indicating if we want everything in our fence.
-        /// </summary>
-        public bool FullFence { get; set; } = false;
-
-        /// <summary>
         ///     Validate this object.
         /// </summary>
         /// <remarks>
@@ -48,8 +44,7 @@ namespace FunderMaps.Webservice.InputModels
         /// <returns><see cref="IEnumerable{ValidationResult}"/></returns>
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (FullFence && StringCollectionHelper.NotNullCount(Query, Id, BagId) != 0 ||
-                !FullFence && StringCollectionHelper.NotNullCount(Query, Id, BagId) != 1)
+            if (StringCollectionHelper.NotNullCount(Query, Id, BagId) != 1)
             {
                 yield return new ValidationResult("Please select one of the following: id, bagid, query or fullfence");
             }
