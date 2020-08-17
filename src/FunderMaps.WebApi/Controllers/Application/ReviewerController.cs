@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Controllers;
 using Microsoft.AspNetCore.Mvc;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Application
 {
     // TODO: Set ResponseCache
@@ -9,3 +10,4 @@ namespace FunderMaps.WebApi.Controllers.Application
     {
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

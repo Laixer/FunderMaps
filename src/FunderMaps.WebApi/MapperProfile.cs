@@ -16,6 +16,7 @@ namespace FunderMaps.WebApi
         {
             CreateMap<Address, AddressDto>().ReverseMap();
             CreateMap<Contact, IncidentDto>().ReverseMap();
+            CreateMap<Organization, ContractorDto>();
             CreateMap<Incident, IncidentDto>()
                 .IncludeMembers(s => s.ContactNavigation)
                 .ReverseMap();
