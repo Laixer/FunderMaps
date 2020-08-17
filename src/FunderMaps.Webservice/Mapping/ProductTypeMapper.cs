@@ -1,8 +1,7 @@
-﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;
+using FunderMaps.Webservice.ResponseModels.Types;
 using System;
 
 namespace FunderMaps.Webservice.Mapping
@@ -15,52 +14,42 @@ namespace FunderMaps.Webservice.Mapping
     public static class ProductTypeMapper
     {
         /// <summary>
-        /// Maps a given <paramref name="name"/> to the corresponding <see cref="ProductType"/>.
+        ///     Maps an <see cref="AnalysisProductTypeResponseModel"/> to its 
+        ///     corresponding <see cref="AnalysisProductType"/>.
         /// </summary>
-        /// <remarks>
-        /// This changes the <paramref name="name"/> to lower case before comparing.
-        /// </remarks>
-        /// <param name="name"><see cref="Product"/> name</param>
-        /// <returns><see cref="ProductType"/></returns>
-        public static AnalysisProductType MapAnalysisFromString(string name)
-        {
-            name.ThrowIfNullOrEmpty();
-            return name.ToUpperInvariant() switch
+        /// <param name="input"><see cref="AnalysisProductTypeResponseModel"/></param>
+        /// <returns><see cref="AnalysisProductType"/></returns>
+        public static AnalysisProductType MapAnalysis(AnalysisProductTypeResponseModel input)
+            => input switch
             {
-                "BUILDINGDATA" => AnalysisProductType.BuildingData,
-                "COSTS" => AnalysisProductType.Costs,
-                "DESCRIPTION" => AnalysisProductType.BuildingDescription,
-                "FOUNDATION" => AnalysisProductType.Foundation,
-                "FOUNDATIONPLUS" => AnalysisProductType.FoundationPlus,
-                "COMPLETE" => AnalysisProductType.Complete,
-                "RISK" => AnalysisProductType.Risk,
-                _ => throw new ProductNotFoundException(name),
+                AnalysisProductTypeResponseModel.BuildingData => AnalysisProductType.BuildingData,
+                AnalysisProductTypeResponseModel.Foundation => AnalysisProductType.Foundation,
+                AnalysisProductTypeResponseModel.FoundationPlus => AnalysisProductType.FoundationPlus,
+                AnalysisProductTypeResponseModel.Costs => AnalysisProductType.Costs,
+                AnalysisProductTypeResponseModel.Complete => AnalysisProductType.Complete,
+                AnalysisProductTypeResponseModel.BuildingDescription => AnalysisProductType.BuildingDescription,
+                AnalysisProductTypeResponseModel.Risk => AnalysisProductType.Risk,
+                _ => throw new InvalidOperationException(nameof(input))
             };
-        }
 
         /// <summary>
-        /// Maps a given <paramref name="name"/> to the corresponding <see cref="ProductType"/>.
+        ///     Maps a <see cref="StatisticsProductTypeResponseModel"/> to its
+        ///     corresponding <see cref="StatisticsProductType"/>.
         /// </summary>
-        /// <remarks>
-        /// This changes the <paramref name="name"/> to lower case before comparing.
-        /// </remarks>
-        /// <param name="name"><see cref="Product"/> name</param>
+        /// <param name="input"><see cref="StatisticsProductTypeResponseModel"/></param>
         /// <returns><see cref="StatisticsProductType"/></returns>
-        public static StatisticsProductType MapStatisticsFromString(string name)
-        {
-            name.ThrowIfNullOrEmpty();
-            return name.ToUpperInvariant() switch
+        public static StatisticsProductType MapStatistics(StatisticsProductTypeResponseModel input)
+            => input switch
             {
-                "RESTORATION" => StatisticsProductType.BuildingsRestored,
-                "INCIDENTS" => StatisticsProductType.Incidents,
-                "REPORTS" => StatisticsProductType.Reports,
-                "CONSTRUCTIONYEARS" => StatisticsProductType.ConstructionYears,
-                "DATACOLLECTED" => StatisticsProductType.DataCollected,
-                "FOUNDATIONRATIO" => StatisticsProductType.FoundationRatio,
-                "FOUNDATIONRISK" => StatisticsProductType.FoundationRisk,
-                _ => throw new ProductNotFoundException(name),
+                StatisticsProductTypeResponseModel.FoundationRatio => StatisticsProductType.FoundationRatio,
+                StatisticsProductTypeResponseModel.ConstructionYears => StatisticsProductType.ConstructionYears,
+                StatisticsProductTypeResponseModel.FoundationRisk => StatisticsProductType.FoundationRisk,
+                StatisticsProductTypeResponseModel.DataCollected => StatisticsProductType.DataCollected,
+                StatisticsProductTypeResponseModel.BuildingsRestored => StatisticsProductType.BuildingsRestored,
+                StatisticsProductTypeResponseModel.Incidents => StatisticsProductType.Incidents,
+                StatisticsProductTypeResponseModel.Reports => StatisticsProductType.Reports,
+                _ => throw new InvalidOperationException(nameof(input))
             };
-        }
 
         /// <summary>
         /// Maps an <see cref="AnalysisProductType"/> to the corresponding
@@ -68,19 +57,16 @@ namespace FunderMaps.Webservice.Mapping
         /// </summary>
         /// <param name="product"><see cref="AnalysisProductType"/></param>
         /// <returns><see cref="AnalysisResponseModelBase"/> <see cref="Type"/></returns>
-        public static Type MapAnalysisResponseModelType(AnalysisProductType product)
+        public static Type MapAnalysisResponseModelType(AnalysisProductType product) => product switch
         {
-            return product switch
-            {
-                AnalysisProductType.BuildingData => typeof(AnalysisBuildingDataResponseModel),
-                AnalysisProductType.Foundation => typeof(AnalysisFoundationResponseModel),
-                AnalysisProductType.FoundationPlus => typeof(AnalysisFoundationPlusResponseModel),
-                AnalysisProductType.Costs => typeof(AnalysisCostsResponseModel),
-                AnalysisProductType.Complete => typeof(AnalysisCompleteResponseModel),
-                AnalysisProductType.BuildingDescription => typeof(AnalysisBuildingDescriptionResponseModel),
-                AnalysisProductType.Risk => typeof(AnalysisRiskResponseModel),
-                _ => throw new InvalidOperationException(nameof(product)),
-            };
-        }
+            AnalysisProductType.BuildingData => typeof(AnalysisBuildingDataResponseModel),
+            AnalysisProductType.Foundation => typeof(AnalysisFoundationResponseModel),
+            AnalysisProductType.FoundationPlus => typeof(AnalysisFoundationPlusResponseModel),
+            AnalysisProductType.Costs => typeof(AnalysisCostsResponseModel),
+            AnalysisProductType.Complete => typeof(AnalysisCompleteResponseModel),
+            AnalysisProductType.BuildingDescription => typeof(AnalysisBuildingDescriptionResponseModel),
+            AnalysisProductType.Risk => typeof(AnalysisRiskResponseModel),
+            _ => throw new InvalidOperationException(nameof(product)),
+        };
     }
 }

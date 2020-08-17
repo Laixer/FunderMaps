@@ -52,6 +52,7 @@ namespace FunderMaps.Webservice.Mapping
             CreateMap<AnalysisProductType, AnalysisProductTypeResponseModel>();
             CreateMap<FoundationRisk, FoundationRiskResponseModel>();
             CreateMap<FoundationType, FoundationTypeResponseModel>();
+            CreateMap<Reliability, ReliabilityResponseModel>();
             CreateMap<StatisticsProductType, StatisticsProductTypeResponseModel>();
         }
     }

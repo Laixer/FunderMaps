@@ -5,6 +5,7 @@ namespace FunderMaps.Webservice.Translation
 {
     /// <summary>
     /// Translates <see cref="ProductType"/> enums.
+    /// TODO Shouldn't this be removed?
     /// TODO This should be done using constants, naming can be cleaned up throughout the project.
     /// </summary>
     internal static class ProductTypeTranslator

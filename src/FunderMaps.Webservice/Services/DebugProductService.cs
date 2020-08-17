@@ -95,7 +95,7 @@ namespace FunderMaps.Webservice.Services
             GroundLevel = 15,
             GroundWaterLevel = 12,
             Id = $"gfm-{Guid.NewGuid()}",
-            Reliability = 76,
+            Reliability = Reliability.Indicative,
             RestorationCosts = 1434,
             TerrainDescription = "This is my terrain description",
             TotalBuildingRestoredCount = 23,
