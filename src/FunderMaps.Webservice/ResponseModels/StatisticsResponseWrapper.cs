@@ -14,5 +14,19 @@ namespace FunderMaps.Webservice.ResponseModels
         ///     Analysis product type.
         /// </summary>
         public StatisticsProductTypeResponseModel Product { get; set; }
+
+        // FUTURE Do we want this?
+        ///// <summary>
+        /////     Represents the neighborhood code in which the statistics were calculated.
+        /////     FUTURE Change to dynamic region.
+        ///// </summary>
+        //public string NeighborhoodCode { get; set; }
+
+        // FUTURE Do we want this?
+        ///// <summary>
+        /////     Represents the neighborhood internal id in which the statistics were calculated.
+        /////     FUTURE Change to dynamic region.
+        ///// </summary>
+        //public string NeighborhoodId { get; set; }
     }
 }

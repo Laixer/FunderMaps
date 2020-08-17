@@ -14,10 +14,8 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the reliability of all data about this building.
-        /// TODO What unit? Percentage?
-        /// TODO Correct name?
         /// </summary>
-        public double? Reliability { get; set; }
+        public ReliabilityResponseModel? Reliability { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.
