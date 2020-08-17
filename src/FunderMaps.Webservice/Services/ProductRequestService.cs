@@ -39,7 +39,7 @@ namespace FunderMaps.Webservice.Services
             token.ThrowIfCancellationRequested();
 
             // Map product type.
-            var product = ProductTypeMapper.MapAnalysisFromString(inputModel.Product);
+            var product = ProductTypeMapper.MapAnalysis(inputModel.Product ?? throw new InvalidOperationException(nameof(inputModel.Product)));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.Query))
@@ -54,13 +54,9 @@ namespace FunderMaps.Webservice.Services
             {
                 return await _productResultService.GetAnalysisByBagIdAsync(userId, product, inputModel.BagId, inputModel.Navigation, token).ConfigureAwait(false);
             }
-            else if (inputModel.FullFence)
-            {
-                return await _productResultService.GetAnalysisInFenceAsync(userId, product, inputModel.Navigation, token).ConfigureAwait(false);
-            }
 
             // If we reach this point we can't process the request.
-            throw new InvalidProductRequestException(inputModel.Product);
+            throw new InvalidProductRequestException(nameof(inputModel.Product));
         }
 
         /// <summary>
@@ -80,20 +76,16 @@ namespace FunderMaps.Webservice.Services
             token.ThrowIfCancellationRequested();
 
             // Map product type.
-            var product = ProductTypeMapper.MapStatisticsFromString(inputModel.Product);
+            var product = ProductTypeMapper.MapStatistics(inputModel.Product ?? throw new InvalidOperationException(nameof(inputModel.Product)));
 
             // Process according to specified parameters
-            if (!string.IsNullOrEmpty(inputModel.AreaCode))
+            if (!string.IsNullOrEmpty(inputModel.NeighborhoodCode))
             {
-                return await _productResultService.GetStatisticsByAreaAsync(userId, product, inputModel.AreaCode, inputModel.Navigation, token).ConfigureAwait(false);
-            }
-            else if (inputModel.FullFence)
-            {
-                return await _productResultService.GetStatisticsInFenceAsync(userId, product, inputModel.Navigation, token).ConfigureAwait(false);
+                return await _productResultService.GetStatisticsByAreaAsync(userId, product, inputModel.NeighborhoodCode, inputModel.Navigation, token).ConfigureAwait(false);
             }
 
             // If we reach this point we can't process the request.
-            throw new InvalidProductRequestException(inputModel.Product);
+            throw new InvalidProductRequestException(nameof(inputModel.Product));
         }
     }
 }
