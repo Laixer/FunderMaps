@@ -129,7 +129,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task UpdateRecoveryReturnNoContent(Recovery recovery)
         {
             // Arrange
-            var newRecovery = new RecoveryDtoFaker().Generate(); // TODO Move outside of test
+            var newRecovery = new RecoveryDtoFaker().Generate(); // FUTURE outside of test
             var client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()

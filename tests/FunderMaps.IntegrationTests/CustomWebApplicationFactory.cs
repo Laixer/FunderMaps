@@ -44,7 +44,7 @@ namespace FunderMaps.IntegrationTests
             builder.ConfigureTestServices(ConfigureTestServices);
         }
 
-        // TODO Helper, move ?
+        // FUTURE Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(TEntity entity)
             where TEntity : BaseEntity<TEntity>
         {
@@ -54,7 +54,7 @@ namespace FunderMaps.IntegrationTests
             return this;
         }
 
-        // TODO Helper, move ?
+        // FUTURE Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IEnumerable<TEntity> list)
             where TEntity : BaseEntity<TEntity>
         {
