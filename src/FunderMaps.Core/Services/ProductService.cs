@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Webservice.Services
+namespace FunderMaps.Core.Services
 {
     /// <summary>
     ///     Service for retrieving products from our data store.
