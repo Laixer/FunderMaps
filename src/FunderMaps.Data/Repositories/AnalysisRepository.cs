@@ -7,7 +7,6 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
-using FunderMaps.Webservice.Utility;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -29,15 +28,12 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         public AnalysisRepository(DbProvider dbProvider,
             IDescriptionService descriptionService)
-            : base(dbProvider)
-        {
-            _descriptionService = descriptionService ?? throw new ArgumentNullException(nameof(descriptionService));
-        }
+            : base(dbProvider) => _descriptionService = descriptionService ?? throw new ArgumentNullException(nameof(descriptionService));
 
         /// <summary>
         ///     Scrapped for now.
         /// </summary>
-        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, CancellationToken token) => throw new NotImplementedException();
+        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
 
         /// <summary>
         ///     Gets an analysis product by its external building id and source.
@@ -123,10 +119,7 @@ namespace FunderMaps.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, CancellationToken token)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
 
         /// TODO How to handle doubles?
         /// TODO Make additional extensions?
@@ -150,7 +143,7 @@ namespace FunderMaps.Data.Repositories
                 RestorationCosts = reader.GetDouble(9),
                 DewateringDepth = reader.GetDouble(10),
                 DryPeriod = reader.GetDouble(11),
-                Reliability = reader.GetDouble(12),
+                Reliability = reader.GetFieldValue<Reliability>(12),
             };
     }
 }

@@ -13,8 +13,8 @@ namespace FunderMaps.Core.Interfaces.Repositories
 
         Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource, CancellationToken token);
 
-        Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, CancellationToken token);
+        Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token);
 
-        Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, CancellationToken token);
+        Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token);
     }
 }
