@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
@@ -48,23 +49,18 @@ namespace FunderMaps.IntegrationTests.Repositories
         }
 
         public ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId)
-        {
-            return new ValueTask<bool>(DataStore.Entities.Any(e => e.UserId == userId && e.OrganizationId == organizationId));
-        }
+            => new ValueTask<bool>(DataStore.Entities.Any(e => e.UserId == userId && e.OrganizationId == organizationId));
 
-        public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId)
-        {
-            return Helper.AsAsyncEnumerable(DataStore.Entities.Select(s => s.UserId));
-        }
+        public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
+            => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.Entities.Select(s => s.UserId), navigation));
+
+        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole organizationRole, INavigation navigation)
+            => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.Entities.Where(s => s.OrganizationRole == organizationRole).Select(s => s.UserId), navigation));
 
         public ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
-        {
-            return new ValueTask<Guid>(DataStore.Entities.First(e => e.UserId == userId).OrganizationId);
-        }
+            => new ValueTask<Guid>(DataStore.Entities.First(e => e.UserId == userId).OrganizationId);
 
         public ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
-        {
-            return new ValueTask<OrganizationRole>(DataStore.Entities.First(e => e.UserId == userId).OrganizationRole);
-        }
+            => new ValueTask<OrganizationRole>(DataStore.Entities.First(e => e.UserId == userId).OrganizationRole);
     }
 }

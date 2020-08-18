@@ -8,6 +8,8 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
+    // FUTURE: navigation test
+
     public class ContractorTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly AuthBackendWebApplicationFactory _factory;
