@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Infrastructure.Notification
@@ -22,13 +23,10 @@ namespace FunderMaps.Infrastructure.Notification
                 Content = content,
             };
 
-            foreach (var address in addresses)
+            message.ToAddresses = addresses.Select(address => new EmailAddress
             {
-                message.AddToAddress(new EmailAddress
-                {
-                    Address = address,
-                });
-            }
+                Address = address,
+            });
 
             await _emailService.SendAsync(message);
         }
