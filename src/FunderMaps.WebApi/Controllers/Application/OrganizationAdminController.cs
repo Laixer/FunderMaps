@@ -50,6 +50,19 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        {
+            // Act.
+            IAsyncEnumerable<Organization> organizationList = _organizationManager.GetAllAsync(pagination.Navigation);
+
+            // Map.
+            var result = await _mapper.MapAsync<IList<OrganizationDto>, Organization>(organizationList);
+
+            // Return.
+            return Ok(result);
+        }
+
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] OrganizationDto input)
         {
@@ -59,6 +72,16 @@ namespace FunderMaps.WebApi.Controllers.Application
 
             // Act.
             await _organizationManager.UpdateAsync(organization);
+
+            // Return.
+            return NoContent();
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteAsync(Guid id)
+        {
+            // Act.
+            await _organizationManager.DeleteAsync(id);
 
             // Return.
             return NoContent();

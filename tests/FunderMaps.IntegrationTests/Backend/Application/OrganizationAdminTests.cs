@@ -41,6 +41,26 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
+        public async Task GetAllOrganizationReturnPageOrganization()
+        {
+            // Arrange
+            var organization = new OrganizationFaker().Generate(0, 10);
+            var client = _factory
+                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .WithDataStoreList(organization)
+                .CreateClient();
+
+            // Act
+            var response = await client.GetAsync("api/admin/organization");
+            var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationDto>>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnList);
+        }
+
+        [Fact]
         public async Task UpdateOrganizationReturnNoContent()
         {
             // Arrange
