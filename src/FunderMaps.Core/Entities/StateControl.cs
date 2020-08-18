@@ -4,6 +4,7 @@ using System;
 
 namespace FunderMaps.Core.Entities
 {
+    // FUTURE: This needs to be rewritten.
     /// <summary>
     ///     Entity state control.
     /// </summary>
@@ -11,7 +12,11 @@ namespace FunderMaps.Core.Entities
         where TEntity : class
         where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
-        protected StateControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey) : base(entryPrimaryKey)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        protected StateControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
+            : base(entryPrimaryKey)
         {
         }
 

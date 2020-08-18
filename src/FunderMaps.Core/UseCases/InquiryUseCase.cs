@@ -6,7 +6,6 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -117,7 +116,7 @@ namespace FunderMaps.Core.UseCases
         public virtual async ValueTask UpdateStatusAsync(int id, AuditStatus status)
         {
             // FUTURE: Abstract this away.
-            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            Inquiry inquiry = await _inquiryRepository.GetByIdAsync(id);
 
             Func<ValueTask> postUpdateEvent = () => new ValueTask();
 
@@ -134,15 +133,19 @@ namespace FunderMaps.Core.UseCases
                     break;
                 case AuditStatus.PendingReview:
                     inquiry.TransitionToReview();
-
-                    // TODO: Reviewer receives notification
-                    postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
+                    {
+                        // TODO: Reviewer receives notification
+                        var message = "";
+                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, message);
+                    }
                     break;
                 case AuditStatus.Rejected:
                     inquiry.TransitionToRejected();
-
-                    // TODO: Creator receives notification + message
-                    postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" });
+                    {
+                        // TODO: Creator receives notification + message
+                        var message = "";
+                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, message);
+                    }
                     break;
                 default:
                     throw new StateTransitionException(inquiry.AuditStatus, status);

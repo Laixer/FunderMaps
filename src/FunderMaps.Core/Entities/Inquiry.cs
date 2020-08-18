@@ -10,6 +10,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class Inquiry : StateControl<Inquiry, int>, IReportEntity<Inquiry>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public Inquiry()
             : base(e => e.Id)
         {

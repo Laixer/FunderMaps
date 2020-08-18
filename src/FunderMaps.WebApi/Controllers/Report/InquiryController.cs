@@ -36,7 +36,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var inquiry = await _inquiryUseCase.GetAsync(id).ConfigureAwait(false);
+            var inquiry = await _inquiryUseCase.GetAsync(id);
 
             return Ok(_mapper.Map<InquiryDto>(inquiry));
         }
@@ -44,25 +44,34 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
-            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            // Act.
+            IAsyncEnumerable<Inquiry> inquiryList = _inquiryUseCase.GetAllAsync(pagination.Navigation);
 
+            // Map.
+            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(inquiryList);
+
+            // Return.
             return Ok(result);
         }
 
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
         {
-            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(_inquiryUseCase.GetAllAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            // FUTURE: _inquiryUseCase.GetAllRecentAsync
+            // Act.
+            IAsyncEnumerable<Inquiry> inquiryList = _inquiryUseCase.GetAllAsync(pagination.Navigation);
 
+            // Map.
+            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(inquiryList);
+
+            // Return.
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
         {
-            var inquiry = await _inquiryUseCase.CreateAsync(_mapper.Map<Inquiry>(input)).ConfigureAwait(false);
+            var inquiry = await _inquiryUseCase.CreateAsync(_mapper.Map<Inquiry>(input));
 
             return Ok(_mapper.Map<InquiryDto>(inquiry));
         }
@@ -77,7 +86,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentException(); // TODO
             }
 
-            await _inquiryUseCase.StoreDocumentAsync(virtualFile.File, input.OpenReadStream()).ConfigureAwait(false);
+            await _inquiryUseCase.StoreDocumentAsync(virtualFile.File, input.OpenReadStream());
 
             return Ok(virtualFile.File);
         }
@@ -88,7 +97,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var inquiry = _mapper.Map<Inquiry>(input);
             inquiry.Id = id;
 
-            await _inquiryUseCase.UpdateAsync(inquiry).ConfigureAwait(false);
+            await _inquiryUseCase.UpdateAsync(inquiry);
 
             return NoContent();
         }
@@ -96,7 +105,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPut("{id:int}/status_review")]
         public async Task<IActionResult> SetStatusReviewAsync(int id)
         {
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview).ConfigureAwait(false);
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview);
 
             return NoContent();
         }
@@ -104,7 +113,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPut("{id:int}/status_rejected")]
         public async Task<IActionResult> SetStatusRejectedAsync(int id)
         {
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected).ConfigureAwait(false);
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected);
 
             return NoContent();
         }
@@ -112,7 +121,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPut("{id:int}/status_approved")]
         public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done).ConfigureAwait(false);
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done);
 
             return NoContent();
         }
@@ -120,7 +129,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _inquiryUseCase.DeleteAsync(id).ConfigureAwait(false);
+            await _inquiryUseCase.DeleteAsync(id);
 
             return NoContent();
         }

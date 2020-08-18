@@ -2,6 +2,8 @@
 
 namespace FunderMaps.Core.Interfaces
 {
+    // FUTURE: Collect all INotify services and determine which can handle the notification
+
     /// <summary>
     ///     Notification service.
     /// </summary>
@@ -11,7 +13,8 @@ namespace FunderMaps.Core.Interfaces
         ///     Notify by email.
         /// </summary>
         /// <param name="address">Recipient mail adresses.</param>
+        /// <param name="content">Message content.</param>
         /// <returns></returns>
-        public abstract ValueTask NotifyByEmailAsync(string[] address);
+        public abstract ValueTask NotifyByEmailAsync(string[] address, string content);
     }
 }

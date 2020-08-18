@@ -2,6 +2,7 @@
 
 namespace FunderMaps.Core.Entities
 {
+    // FUTURE: This needs to be rewritten.
     /// <summary>
     ///     Attribution control.
     /// </summary>
@@ -9,6 +10,9 @@ namespace FunderMaps.Core.Entities
         where TEntity : class
         where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         protected AttributionControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
             : base(entryPrimaryKey)
         {
