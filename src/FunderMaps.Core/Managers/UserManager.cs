@@ -33,7 +33,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(id));
             }
 
-            return await _userRepository.GetByIdAsync(id).ConfigureAwait(false);
+            return await _userRepository.GetByIdAsync(id);
         }
 
         public virtual async ValueTask<User> GetByEmailAsync(string email)
@@ -45,7 +45,7 @@ namespace FunderMaps.Core.Managers
 
             Validator.ValidateValue(email, new ValidationContext(email), new List<EmailAddressAttribute> { new EmailAddressAttribute() });
 
-            return await _userRepository.GetByEmailAsync(email).ConfigureAwait(false);
+            return await _userRepository.GetByEmailAsync(email);
         }
 
         public virtual async ValueTask<User> CreateAsync(User user, string plainPassword = null)
@@ -58,14 +58,14 @@ namespace FunderMaps.Core.Managers
             user.InitializeDefaults();
             user.Validate();
 
-            var id = await _userRepository.AddAsync(user).ConfigureAwait(false);
-            user.InitializeDefaults(await _userRepository.GetByIdAsync(id).ConfigureAwait(false));
+            var id = await _userRepository.AddAsync(user);
+            user.InitializeDefaults(await _userRepository.GetByIdAsync(id));
 
             if (!string.IsNullOrEmpty(plainPassword))
             {
                 // FUTURE: Want to do this in a single call.
                 var passwordHash = _passwordHasher.HashPassword(plainPassword);
-                await _userRepository.SetPasswordHashAsync(user, passwordHash).ConfigureAwait(false);
+                await _userRepository.SetPasswordHashAsync(user, passwordHash);
             }
 
             return user;
@@ -88,10 +88,10 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id).ConfigureAwait(false));
+            user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id));
             user.Validate();
 
-            await _userRepository.UpdateAsync(user).ConfigureAwait(false);
+            await _userRepository.UpdateAsync(user);
         }
 
         public virtual async ValueTask ChangePasswordAsync(User user, string currentPassword, string newPassword)
@@ -111,16 +111,16 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(newPassword));
             }
 
-            user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id).ConfigureAwait(false));
+            user.InitializeDefaults(await _userRepository.GetByIdAsync(user.Id));
             user.Validate();
 
-            if (!await CheckPasswordAsync(user, currentPassword).ConfigureAwait(false))
+            if (!await CheckPasswordAsync(user, currentPassword))
             {
                 throw new InvalidCredentialException();
             }
 
             var newPasswordHash = _passwordHasher.HashPassword(newPassword);
-            await _userRepository.SetPasswordHashAsync(user, newPasswordHash).ConfigureAwait(false);
+            await _userRepository.SetPasswordHashAsync(user, newPasswordHash);
         }
 
         public virtual async ValueTask<bool> CheckPasswordAsync(User user, string password)
@@ -135,7 +135,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(password));
             }
 
-            var currentPasswordHash = await _userRepository.GetPasswordHashAsync(user).ConfigureAwait(false);
+            var currentPasswordHash = await _userRepository.GetPasswordHashAsync(user);
             return _passwordHasher.IsPasswordValid(currentPasswordHash, password);
         }
 
@@ -146,7 +146,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(id));
             }
 
-            await _userRepository.DeleteAsync(id).ConfigureAwait(false);
+            await _userRepository.DeleteAsync(id);
         }
 
         public virtual async ValueTask IncreaseAccessFailedCountAsync(User user)
@@ -156,7 +156,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            await _userRepository.BumpAccessFailed(user).ConfigureAwait(false);
+            await _userRepository.BumpAccessFailed(user);
         }
 
         public virtual async ValueTask ResetAccessFailedCountAsync(User user)
@@ -166,7 +166,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            await _userRepository.ResetAccessFailed(user).ConfigureAwait(false);
+            await _userRepository.ResetAccessFailed(user);
         }
 
         public virtual async ValueTask IncreaseAccessCountAsync(User user)
@@ -176,7 +176,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            await _userRepository.RegisterAccess(user).ConfigureAwait(false);
+            await _userRepository.RegisterAccess(user);
         }
 
         public virtual async ValueTask<bool> IsLockedOutAsync(User user)
@@ -186,7 +186,7 @@ namespace FunderMaps.Core.Managers
                 throw new ArgumentNullException(nameof(user));
             }
 
-            return await _userRepository.IsLockedOutAsync(user).ConfigureAwait(false);
+            return await _userRepository.IsLockedOutAsync(user);
         }
     }
 }

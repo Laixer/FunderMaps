@@ -46,8 +46,8 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             var sessionUser = new UserFaker().Generate();
-            var organizationUser1 = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
+            var organizationUser1 = new UserFaker().Generate();
             var client = _factory
                 .WithAuthentication(options =>
                 {

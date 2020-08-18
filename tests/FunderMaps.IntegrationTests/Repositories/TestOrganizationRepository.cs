@@ -20,9 +20,7 @@ namespace FunderMaps.IntegrationTests.Repositories
         }
 
         public override ValueTask<Guid> AddAsync(Organization entity)
-        {
-            throw new InvalidOperationException();
-        }
+            => throw new InvalidOperationException();
 
         public ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
@@ -40,13 +38,9 @@ namespace FunderMaps.IntegrationTests.Repositories
         }
 
         public ValueTask<Organization> GetByEmailAsync(string email)
-        {
-            return new ValueTask<Organization>(DataStore.Entities.FirstOrDefault(e => e.Email == email));
-        }
+            => new ValueTask<Organization>(DataStore.Entities.FirstOrDefault(e => e.Email == email));
 
         public ValueTask<Organization> GetByNameAsync(string name)
-        {
-            return new ValueTask<Organization>(DataStore.Entities.FirstOrDefault(e => e.Name == name));
-        }
+            => new ValueTask<Organization>(DataStore.Entities.FirstOrDefault(e => e.Name == name));
     }
 }

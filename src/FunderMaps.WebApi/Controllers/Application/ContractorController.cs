@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 #pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Application
 {
-    // TODO: Set ResponseCache
-    [Route("contractor")]
     public class ContractorController : BaseApiController
     {
         private readonly IMapper _mapper;
@@ -28,8 +26,8 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
+        [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 24)]
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
             // Assign.
             IAsyncEnumerable<Organization> organizationList = _organizationManager.GetAllAsync(pagination.Navigation);

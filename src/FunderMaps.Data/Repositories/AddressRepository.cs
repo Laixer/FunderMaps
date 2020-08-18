@@ -83,7 +83,8 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Incident"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override ValueTask DeleteAsync(string id) => new ValueTask();
+        public override ValueTask DeleteAsync(string id)
+            => throw new InvalidOperationException();
 
         private static void MapToWriter(DbCommand cmd, Address entity)
         {

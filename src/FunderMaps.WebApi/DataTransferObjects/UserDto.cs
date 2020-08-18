@@ -25,7 +25,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public string LastName { get; set; }
 
         /// <summary>
-        /// Unique email address.
+        ///     Unique email address.
         /// </summary>
         [Required, EmailAddress]
         public string Email { get; set; }
