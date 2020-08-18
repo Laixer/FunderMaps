@@ -22,10 +22,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Theory]
-        [InlineData(OrganizationRole.Superuser)]
-        [InlineData(OrganizationRole.Verifier)]
-        [InlineData(OrganizationRole.Writer)]
-        public async Task GetAllReviewerReturnAllReviewer(OrganizationRole role)
+        [InlineData(OrganizationRole.Superuser, 2)]
+        [InlineData(OrganizationRole.Verifier, 3)]
+        [InlineData(OrganizationRole.Writer, 2)]
+        public async Task GetAllReviewerReturnAllReviewer(OrganizationRole role, int expectedCount)
         {
             // Arrange
             var sessionUser = new UserFaker().Generate();
@@ -91,7 +91,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(2, returnList.Count);
+            Assert.Equal(expectedCount, returnList.Count);
             Assert.True(response.Headers.CacheControl.Public);
             Assert.NotNull(response.Headers.CacheControl.MaxAge);
         }
