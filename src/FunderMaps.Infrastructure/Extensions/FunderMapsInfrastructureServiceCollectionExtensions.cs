@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -29,6 +30,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.RemoveAll<IFileStorageService>();
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+
+            services.RemoveAll<IEmailService>();
+            services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.Section));
+            services.AddTransient<IEmailService, EmailService>();
 
             // FUTURE: Bind
             services.Configure<FileStorageOptions>(options =>

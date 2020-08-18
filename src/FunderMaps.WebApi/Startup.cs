@@ -110,7 +110,7 @@ namespace FunderMaps.WebApi
 
             // Register components from reference assemblies.
             services.AddFunderMapsCoreServices();
-            //services.AddFunderMapsCloudServices();
+            services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
             services.AddTransient<AuthenticationHelper>();
