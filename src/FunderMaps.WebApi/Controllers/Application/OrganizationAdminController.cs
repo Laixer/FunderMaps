@@ -3,9 +3,11 @@ using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -22,7 +24,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     </para>
     /// </remarks>
     [Authorize(Policy = "AdministratorPolicy")]
-    [Route("organization")]
+    [Route("admin/organization")]
     public class OrganizationAdminController : BaseApiController
     {
         private readonly IMapper _mapper;

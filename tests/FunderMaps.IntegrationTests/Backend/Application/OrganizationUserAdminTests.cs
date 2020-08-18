@@ -35,7 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/user", newOrganizationUser);
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newOrganizationUser);
             var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
 
             // Assert
@@ -79,7 +79,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/organization/{organization.Id}/user");
+            var response = await client.GetAsync($"api/admin/organization/{organization.Id}/user");
             var returnList = await response.Content.ReadFromJsonAsync<List<UserDto>>();
 
             // Assert
@@ -110,7 +110,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/organization/{organization.Id}/user/{organizationUser1.Id}", newOrganizationUser);
+            var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser1.Id}", newOrganizationUser);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -138,7 +138,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.DeleteAsync($"api/organization/{organization.Id}/user/{organizationUser1.Id}");
+            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{organizationUser1.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -162,7 +162,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/user", newOrganizationUser);
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newOrganizationUser);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -206,7 +206,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/organization/{organization.Id}/user");
+            var response = await client.GetAsync($"api/admin/organization/{organization.Id}/user");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -237,7 +237,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/organization/{organization.Id}/user/{organizationUser1.Id}", newOrganizationUser);
+            var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser1.Id}", newOrganizationUser);
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -267,7 +267,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 .CreateClient();
 
             // Act
-            var response = await client.DeleteAsync($"api/organization/{organization.Id}/user/{organizationUser1.Id}");
+            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{organizationUser1.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

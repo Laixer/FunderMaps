@@ -39,7 +39,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task GetOrganizationProposaByIdReturnSingleOrganizationProposa()
+        public async Task GetOrganizationProposalByIdReturnSingleOrganizationProposa()
         {
             // Arrange
             var organization = new OrganizationProposalFaker().Generate();
@@ -59,7 +59,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task GetAllOrganizationProposaReturnPageOrganizationProposal()
+        public async Task GetAllOrganizationProposalReturnPageOrganizationProposal()
         {
             // Arrange
             var organization = new OrganizationProposalFaker().Generate(0, 10);
@@ -79,7 +79,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task DeleteOrganizationProposaReturnNoContent()
+        public async Task DeleteOrganizationProposalReturnNoContent()
         {
             // Arrange
             var organization = new OrganizationProposalFaker().Generate();
@@ -118,7 +118,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Theory]
         [InlineData(ApplicationRole.User)]
         [InlineData(ApplicationRole.Guest)]
-        public async Task GetOrganizationProposaByIdReturnForbidden(ApplicationRole role)
+        public async Task GetOrganizationProposalByIdReturnForbidden(ApplicationRole role)
         {
             // Arrange
             var organization = new OrganizationProposalFaker().Generate();
@@ -138,7 +138,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Theory]
         [InlineData(ApplicationRole.User)]
         [InlineData(ApplicationRole.Guest)]
-        public async Task GetAllOrganizationProposaReturnForbidden(ApplicationRole role)
+        public async Task GetAllOrganizationProposalReturnForbidden(ApplicationRole role)
         {
             // Arrange
             var organization = new OrganizationProposalFaker().Generate(0, 10);
@@ -158,7 +158,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Theory]
         [InlineData(ApplicationRole.User)]
         [InlineData(ApplicationRole.Guest)]
-        public async Task DeleteOrganizationProposaReturnForbidden(ApplicationRole role)
+        public async Task DeleteOrganizationProposalReturnForbidden(ApplicationRole role)
         {
             // Arrange
             var organization = new OrganizationProposalFaker().Generate();

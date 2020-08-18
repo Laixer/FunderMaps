@@ -1,6 +1,8 @@
 ﻿using FunderMaps.Core.Types;
+using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -23,16 +25,13 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
-                {
-                    options.User.Role = ApplicationRole.Administrator;
-                })
+                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/organization/{organization.Id}");
+            var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
             var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
 
             // Assert
@@ -67,16 +66,31 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var newOrganization = new OrganizationFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
-                {
-                    options.User.Role = ApplicationRole.Administrator;
-                })
+                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/organization/{organization.Id}", newOrganization);
+            var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}", newOrganization);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteOrganizationReturnNoContent()
+        {
+            // Arrange
+            var organization = new OrganizationFaker().Generate();
+            var client = _factory
+                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .WithDataStoreList(organization)
+                .CreateClient();
+
+            // Act
+            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -85,22 +99,79 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Theory]
         [InlineData(ApplicationRole.User)]
         [InlineData(ApplicationRole.Guest)]
-        public async Task UpdateOrganizationReturnForbidden(ApplicationRole applicationRole)
+        public async Task GetOrganizationByIdReturnForbidden(ApplicationRole role)
         {
             // Arrange
-            var newOrganization = new OrganizationFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
-                {
-                    options.User.Role = applicationRole;
-                })
+                .WithAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/organization/{organization.Id}", newOrganization);
+            var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(ApplicationRole.User)]
+        [InlineData(ApplicationRole.Guest)]
+        public async Task GetAllOrganizationReturnForbidden(ApplicationRole role)
+        {
+            // Arrange
+            var organization = new OrganizationFaker().Generate(0, 10);
+            var client = _factory
+                .WithAuthentication(options => options.User.Role = role)
+                .WithAuthenticationStores()
+                .WithDataStoreList(organization)
+                .CreateClient();
+
+            // Act
+            var response = await client.GetAsync("api/admin/organization");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(ApplicationRole.User)]
+        [InlineData(ApplicationRole.Guest)]
+        public async Task UpdateOrganizationReturnForbidden(ApplicationRole role)
+        {
+            // Arrange
+            var newOrganization = new OrganizationFaker().Generate();
+            var organization = new OrganizationFaker().Generate();
+            var client = _factory
+                .WithAuthentication(options => options.User.Role = role)
+                .WithAuthenticationStores()
+                .WithDataStoreList(organization)
+                .CreateClient();
+
+            // Act
+            var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}", newOrganization);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(ApplicationRole.User)]
+        [InlineData(ApplicationRole.Guest)]
+        public async Task DeleteOrganizationReturnForbidden(ApplicationRole role)
+        {
+            // Arrange
+            var organization = new OrganizationFaker().Generate();
+            var client = _factory
+                .WithAuthentication(options => options.User.Role = role)
+                .WithAuthenticationStores()
+                .WithDataStoreList(organization)
+                .CreateClient();
+
+            // Act
+            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
