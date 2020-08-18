@@ -185,6 +185,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquiry = new InquiryFaker()
                 .RuleFor(f => f.AuditStatus, f => initialStatus)
                 .Generate();
+            var statusChange = new StatusChangeDtoFaker().Generate();
             var client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()
@@ -193,7 +194,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
 
             // Act
-            var response = await client.PutAsync($"api/inquiry/{inquiry.Id}/{url}", null);
+            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{url}", statusChange);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

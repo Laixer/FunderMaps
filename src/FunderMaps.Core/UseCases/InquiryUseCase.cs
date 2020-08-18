@@ -113,7 +113,8 @@ namespace FunderMaps.Core.UseCases
         /// </summary>
         /// <param name="id">Entity id.</param>
         /// <param name="status">New entity status.</param>
-        public virtual async ValueTask UpdateStatusAsync(int id, AuditStatus status)
+        /// <param name="message">Status change message.</param>
+        public virtual async ValueTask UpdateStatusAsync(int id, AuditStatus status, string message)
         {
             // FUTURE: Abstract this away.
             Inquiry inquiry = await _inquiryRepository.GetByIdAsync(id);
@@ -133,19 +134,15 @@ namespace FunderMaps.Core.UseCases
                     break;
                 case AuditStatus.PendingReview:
                     inquiry.TransitionToReview();
-                    {
-                        // TODO: Reviewer receives notification
-                        var message = "";
-                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, message);
-                    }
+
+                    // TODO: Reviewer receives notification
+                    postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, message);
                     break;
                 case AuditStatus.Rejected:
                     inquiry.TransitionToRejected();
-                    {
-                        // TODO: Creator receives notification + message
-                        var message = "";
-                        postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, message);
-                    }
+
+                    // TODO: Creator receives notification + message
+                    postUpdateEvent = () => _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, message);
                     break;
                 default:
                     throw new StateTransitionException(inquiry.AuditStatus, status);

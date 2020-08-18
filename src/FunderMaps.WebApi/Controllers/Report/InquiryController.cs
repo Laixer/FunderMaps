@@ -94,43 +94,54 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDto input)
         {
+            // Map.
             var inquiry = _mapper.Map<Inquiry>(input);
             inquiry.Id = id;
 
+            // Act.
             await _inquiryUseCase.UpdateAsync(inquiry);
 
+            // Return.
             return NoContent();
         }
 
-        [HttpPut("{id:int}/status_review")]
-        public async Task<IActionResult> SetStatusReviewAsync(int id)
+        [HttpPost("{id:int}/status_review")]
+        public async Task<IActionResult> SetStatusReviewAsync(int id, StatusChangeDto input)
         {
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview);
+            // Act.
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview, input.Message);
 
+            // Return.
             return NoContent();
         }
 
-        [HttpPut("{id:int}/status_rejected")]
-        public async Task<IActionResult> SetStatusRejectedAsync(int id)
+        [HttpPost("{id:int}/status_rejected")]
+        public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
         {
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected);
+            // Act.
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected, input.Message);
 
+            // Return.
             return NoContent();
         }
 
-        [HttpPut("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id)
+        [HttpPost("{id:int}/status_approved")]
+        public async Task<IActionResult> SetStatusApprovedAsync(int id, StatusChangeDto input)
         {
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done);
+            // Act.
+            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done, input.Message);
 
+            // Return.
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
+            // Act.
             await _inquiryUseCase.DeleteAsync(id);
 
+            // Return.
             return NoContent();
         }
     }
