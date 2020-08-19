@@ -4,6 +4,10 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {
+    /// FUTURE Same format as <see cref="IAnalysisRepository"/> (using <see cref="Core.Types.Products.StatisticsProduct"/>)?
+    /// <summary>
+    ///     Contract for a statistic analysis repository.
+    /// </summary>
     public interface IStatisticsRepository
     {
         Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string neighborhoodId, CancellationToken token);

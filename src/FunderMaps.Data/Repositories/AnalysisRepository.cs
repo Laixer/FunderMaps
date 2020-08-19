@@ -10,6 +10,7 @@ using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,24 +59,27 @@ namespace FunderMaps.Data.Repositories
             }
 
             // Build sql.
+            // TODO This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
-                SELECT 
-                    * 
-                FROM geocoder.analysis_complete AS ac
-                WHERE 
+                SELECT
+                    *
+                FROM data.analysis_complete AS ac
+                WHERE
                     ac.external_id = @ExternalId
                     AND
-                    ac.external_source = @ExternalSource";
+                    ac.external_source = @ExternalSource
+                    AND 
+                    application.is_geometry_in_fence(@UserId, ac.geom)";
 
             // Execute sql.
-            await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("ExternalId", externalId);
             cmd.AddParameterWithValue("ExternalSource", externalSource);
-            cmd.AddParameterWithValue("ExternalSource", externalSource);
+            cmd.AddParameterWithValue("UserId", userId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            await reader.ReadAsync(token).ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync(token);
 
             // Map, append and return product.
             var product = MapFromReader(reader);
@@ -84,6 +88,13 @@ namespace FunderMaps.Data.Repositories
             return product;
         }
 
+        /// <summary>
+        ///     Gets an analysis product by its internal building id.
+        /// </summary>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="id">Internal building id.</param>
+        /// <param name="token"><see cref="CancellationToken"/></param>
+        /// <returns><see cref="AnalysisProduct"/></returns>
         public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token)
         {
             // Validate parameters.
@@ -94,35 +105,91 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(token));
             }
 
-            //// Build sql.
-            //var sql = @"
-            //    SELECT 
-            //        * 
-            //    FROM geocoder.analysis_complete AS ac
-            //    WHERE ac.id = @ExternalId";
+            // Build sql.
+            // TODO This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
+            var sql = @"
+                SELECT
+                    *
+                FROM data.analysis_complete AS ac
+                WHERE
+                    ac.id = @Id
+                    AND 
+                    application.is_geometry_in_fence(@UserId, ac.geom)";
 
-            //// Execute sql.
-            //await using var connection = await DbProvider.OpenConnectionScopeAsync().ConfigureAwait(false);
-            //await using var cmd = DbProvider.CreateCommand(sql, connection);
-            //cmd.AddParameterWithValue("ExternalId", externalId);
-            //cmd.AddParameterWithValue("ExternalSource", externalSource);
+            // Execute sql.
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("Id", id);
+            cmd.AddParameterWithValue("UserId", userId);
 
-            //await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
-            //await reader.ReadAsync(token).ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync(token);
 
-            //// Map, append and return product.
-            //var product = MapFromReader(reader);
-            //product.FullDescription = _descriptionService.GenerateFullDescription(product);
-            //product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
-            //return product;
-
-            throw new NotImplementedException();
+            // Map, append and return product.
+            var product = MapFromReader(reader);
+            product.FullDescription = _descriptionService.GenerateFullDescription(product);
+            product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
+            return product;
         }
 
-        public Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        /// FUTURE Sorting order and sorting column
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="query"></param>
+        /// <param name="navigation"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token)
+        {
+            // Validate parameters.
+            userId.ThrowIfNullOrEmpty();
+            query.ThrowIfNullOrEmpty();
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
 
-        /// TODO How to handle doubles?
-        /// TODO Make additional extensions?
+            // Build sql.
+            var sql = @"
+                SELECT
+                    *
+                FROM data.analysis_complete AS ac
+                JOIN geocoder.address AS a ON a.building_id = ac.id
+                JOIN geocoder.search_address(@Query) AS s ON s.id = a.id
+                WHERE
+                    application.is_geometry_in_fence(@UserId, ac.geom)
+                LIMIT @Limit
+                OFFSET @Offset";
+
+            // Execute sql.
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("Query", query);
+            cmd.AddParameterWithValue("UserId", userId);
+            cmd.AddParameterWithValue("Limit", (navigation ?? Navigation.DefaultCollection).Limit);
+            cmd.AddParameterWithValue("Offset", (navigation ?? Navigation.DefaultCollection).Limit);
+            
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+
+            // Map, append and return products.
+            // FUTURE: Make async enumerable.
+            var result = new List<AnalysisProduct>();
+            while (await reader.ReadAsync(token))
+            {
+                var product = MapFromReader(reader);
+                product.FullDescription = _descriptionService.GenerateFullDescription(product);
+                product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
+                result.Add(product);
+            }
+            return result;
+        }
+
         /// <summary>
         ///     Maps a reader to an <see cref="AnalysisProduct"/>.
         /// </summary>
@@ -137,13 +204,14 @@ namespace FunderMaps.Data.Repositories
                 FoundationType = reader.GetFieldValue<FoundationType>(3),
                 GroundWaterLevel = reader.GetDouble(4),
                 FoundationRisk = reader.GetFieldValue<FoundationRisk>(5),
-                ConstructionYear = DateTimeOffsetHelper.FromYear(reader.GetSafeInt(6) ?? 0), // TODO Make extension, clean up
+                ConstructionYear = DateTimeOffsetHelper.FromYear(reader.GetSafeInt(6) ?? 0), // FUTURE Make extension, clean up
                 BuildingHeight = reader.GetDouble(7),
                 GroundLevel = reader.GetFloat(8),
                 RestorationCosts = reader.GetDouble(9),
                 DewateringDepth = reader.GetDouble(10),
                 DryPeriod = reader.GetDouble(11),
                 Reliability = reader.GetFieldValue<Reliability>(12),
+                NeighborhoodId = reader.GetSafeString(13)
             };
     }
 }
