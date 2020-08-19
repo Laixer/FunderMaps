@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
     <ProjectReference Include="..\FunderMaps.Data\FunderMaps.Data.csproj" />
   </ItemGroup>
