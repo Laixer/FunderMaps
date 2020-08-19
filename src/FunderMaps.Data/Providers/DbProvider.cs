@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Providers
@@ -42,6 +43,18 @@ namespace FunderMaps.Data.Providers
         {
             var connection = ConnectionScope();
             await connection.OpenAsync();
+            return connection;
+        }
+
+        /// <summary>
+        ///     Open database connection with cancellation options.
+        /// </summary>
+        /// <param name="token"><see cref="CancellationToken"/></param>
+        /// <returns>See <see cref="DbConnection"/>.</returns>
+        public virtual async Task<DbConnection> OpenConnectionScopeAsync(CancellationToken token)
+        {
+            var connection = ConnectionScope();
+            await connection.OpenAsync(token);
             return connection;
         }
 
