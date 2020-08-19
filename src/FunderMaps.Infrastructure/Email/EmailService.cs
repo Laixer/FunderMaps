@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Infrastructure.Email
 {
+    // FUTURE: Catch ex.
     // FUTURE: Turn this into a factory
     // FUTURE: We can configure much more and we will in a next release.
     // TODO: Check input.
@@ -20,6 +21,9 @@ namespace FunderMaps.Infrastructure.Email
         private readonly ISmtpClient emailClient = new SmtpClient();
         private bool disposedValue;
 
+        /// <summary>
+        ///     Logger.
+        /// </summary>
         public ILogger Logger { get; }
 
         public EmailService(IOptions<EmailOptions> options, ILogger<EmailService> logger)

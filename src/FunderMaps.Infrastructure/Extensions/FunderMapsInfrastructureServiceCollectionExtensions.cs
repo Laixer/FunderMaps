@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Notification;
+using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -37,7 +38,22 @@ namespace Microsoft.Extensions.DependencyInjection
             // Remove all existing email services and inject local email service.
             services.RemoveAll<IEmailService>();
             services.Configure<EmailOptions>(Configuration.GetSection(EmailOptions.Section));
-            services.AddTransient<IEmailService, EmailService>();
+            services.AddSingleton<IEmailService, EmailService>();
+
+            // Remove all existing file storage services and inject local file stoage service.
+            services.RemoveAll<IFileStorageService>();
+            // FUTURE: Is there another way to configure this service?
+            services.Configure<FileStorageOptions>(options =>
+            {
+                var rootKey = Configuration.GetSection(FileStorageOptions.Section);
+
+                // FUTURE: This can be improved.
+                foreach (var item in rootKey?.GetChildren())
+                {
+                    options.StorageContainers.Add(item.Key, item.Value);
+                }
+            });
+            services.AddScoped<IFileStorageService, AzureBlobStorageService>();
         }
 
         /// <summary>
@@ -70,38 +86,12 @@ namespace Microsoft.Extensions.DependencyInjection
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            // Remove all existing file storage services and inject local file stoage service.
-            //services.RemoveAll<IFileStorageService>();
-            //services.AddScoped<IFileStorageService, AzureBlobStorageService>();
-
             if (HostEnvironment.IsProduction())
             {
                 ConfigureProductionServices(services);
             }
 
             ConfigureServices(services);
-
-            // FUTURE: Bind
-            //services.Configure<FileStorageOptions>(options =>
-            //{
-            //    if (options.StorageContainers == null)
-            //    {
-            //        options.StorageContainers = new Dictionary<string, string>();
-            //    }
-
-            //    var rootKey = configuration.GetSection("FileStorageContainers");
-            //    if (rootKey == null)
-            //    {
-            //        return; // TODO: This can never be oke.
-            //    }
-
-            //    // FUTURE: This can drastically be improved.
-            //    foreach (var item in rootKey.GetChildren())
-            //    {
-            //        options.StorageContainers.Add(item.Key, item.Value);
-            //    }
-            //});
-
             return services;
         }
     }
