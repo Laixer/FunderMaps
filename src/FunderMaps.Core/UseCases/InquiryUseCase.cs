@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -49,15 +48,11 @@ namespace FunderMaps.Core.UseCases
             return await _inquiryRepository.GetByIdAsync(id);
         }
 
-        // TODO: Remove stream.
-        public async ValueTask StoreDocumentAsync(FileWrapper file, Stream stream)
+        public async ValueTask<string> StoreDocumentAsync(Stream stream, string fileName, string contentType)
         {
-            if (file == null)
-            {
-                throw new ArgumentNullException(nameof(file));
-            }
-
-            await _fileStorageService.StoreFileAsync("somestore", file, stream);
+            string newFileName = IO.Path.GetUniqueName(fileName);
+            await _fileStorageService.StoreFileAsync("intake-test", newFileName, contentType, stream);
+            return newFileName;
         }
 
         /// <summary>

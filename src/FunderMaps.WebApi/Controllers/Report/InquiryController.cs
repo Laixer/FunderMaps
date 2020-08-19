@@ -86,9 +86,14 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentException(); // TODO
             }
 
-            await _inquiryUseCase.StoreDocumentAsync(virtualFile.File, input.OpenReadStream());
+            // Act.
+            var fileName = await _inquiryUseCase.StoreDocumentAsync(
+                input.OpenReadStream(),
+                input.FileName,
+                input.ContentType);
 
-            return Ok(virtualFile.File);
+            // Return.
+            return Ok(fileName);
         }
 
         [HttpPut("{id:int}")]
