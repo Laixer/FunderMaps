@@ -36,21 +36,21 @@ namespace FunderMaps.Core.Types.Products
         /// <summary>
         /// Represents the percentage of collected data in the given region.
         /// </summary>
-        public double DataCollectedPercentage { get; set; }
+        public double? DataCollectedPercentage { get; set; }
 
         /// <summary>
         /// Total amount of restored buildings in the given area.
         /// </summary>
-        public uint TotalBuildingRestored { get; set; }
+        public uint? TotalBuildingRestored { get; set; }
 
         /// <summary>
         /// Total amount of incidents in the given region.
         /// </summary>
-        public uint TotalIncidents { get; set; }
+        public uint? TotalIncidents { get; set; }
 
         /// <summary>
         /// Total amount of reports in the given region.
         /// </summary>
-        public uint TotalReportCount { get; set; }
+        public uint? TotalReportCount { get; set; }
     }
 }
