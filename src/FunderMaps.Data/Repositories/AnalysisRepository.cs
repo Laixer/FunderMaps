@@ -131,8 +131,8 @@ namespace FunderMaps.Data.Repositories
         private static AnalysisProduct MapFromReader(DbDataReader reader)
             => new AnalysisProduct
             {
-                Id = reader.SafeGetString(0),
-                ExternalId = reader.SafeGetString(1),
+                Id = reader.GetSafeString(0),
+                ExternalId = reader.GetSafeString(1),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(2),
                 FoundationType = reader.GetFieldValue<FoundationType>(3),
                 GroundWaterLevel = reader.GetDouble(4),
