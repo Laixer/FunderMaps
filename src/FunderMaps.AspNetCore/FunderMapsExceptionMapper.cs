@@ -1,8 +1,9 @@
-﻿using FunderMaps.Core.Exceptions;
+﻿using FunderMaps.AspNetCore.ErrorMessaging;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using System.Net;
 
-namespace FunderMaps.AspNetCore.ErrorMessaging
+namespace FunderMaps.AspNetCore
 {
     /// <summary>
     ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessageFeature"/>.
