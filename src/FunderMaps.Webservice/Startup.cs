@@ -61,7 +61,6 @@ namespace FunderMaps.Webservice
             services.AddTransient<IProductRequestService, ProductRequestService>();
             services.AddTransient<IProductResultService, ProductResultService>();
             services.AddTransient<IProductService, ProductService>();
-            services.AddTransient<IUserTrackingService, UserTrackingService>();
 
             // Configure FunderMaps services.
             services.AddFunderMapsDataServices("FunderMapsConnection");

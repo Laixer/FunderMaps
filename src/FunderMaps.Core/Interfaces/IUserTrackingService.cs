@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Types.Products;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces
@@ -9,8 +10,10 @@ namespace FunderMaps.Core.Interfaces
     /// </summary>
     public interface IUserTrackingService
     {
-        Task ProcessAnalysisRequest(Guid userId, AnalysisProductType productType);
+        Task ProcessSingleAnalysisRequest(Guid userId, AnalysisProductType productType, CancellationToken token);
 
-        Task ProcessStatisticsRequestAsync(Guid userId, StatisticsProductType productType);
+        Task ProcessMultipleAnalysisRequest(Guid userId, AnalysisProductType productType, uint itemCount, CancellationToken token);
+
+        Task ProcessStatisticsRequestAsync(Guid userId, StatisticsProductType productType, CancellationToken token);
     }
 }
