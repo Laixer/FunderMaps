@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Webservice.ResponseModels.Types;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 
 namespace FunderMaps.Webservice.ResponseModels.Analysis

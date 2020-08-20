@@ -1,5 +1,4 @@
-﻿using FunderMaps.Webservice.ResponseModels.Types;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace FunderMaps.Webservice.ResponseModels

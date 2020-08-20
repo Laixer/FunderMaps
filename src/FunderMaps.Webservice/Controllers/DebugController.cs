@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
+#if DEBUG
 namespace FunderMaps.Webservice.Controllers
 {
     [Route("debug")]
@@ -46,3 +47,4 @@ namespace FunderMaps.Webservice.Controllers
         }
     }
 }
+#endif

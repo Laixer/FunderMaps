@@ -2,10 +2,13 @@
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.ResponseModels;
+using FunderMaps.Webservice.ResponseModels.Analysis;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
@@ -45,6 +48,7 @@ namespace FunderMaps.Webservice.Controllers
         /// <param name="inputModel"><see cref="AnalysisInputModel"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(AnalysisResponseWrapper<AnalysisResponseModelBase>))]
         public async Task<IActionResult> GetProductAsync([FromQuery] AnalysisInputModel inputModel)
         {
             // Get user id.

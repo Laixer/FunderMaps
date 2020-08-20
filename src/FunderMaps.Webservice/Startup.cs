@@ -2,6 +2,7 @@ using AutoMapper;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Webservice.Abstractions.Services;
+using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.Services;
@@ -76,6 +77,14 @@ namespace FunderMaps.Webservice
             services
                 .Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
                 .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+
+            // Configure Swagger.
+            services.AddSwaggerGen(c =>
+            {
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                c.SchemaFilter<EnumSchemaFilter>();
+                c.GeneratePolymorphicSchemas();
+            });
         }
 
         /// <summary>
@@ -98,6 +107,13 @@ namespace FunderMaps.Webservice
 
             app.UseResponseCompression();
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
 
