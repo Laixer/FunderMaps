@@ -1,19 +1,19 @@
 ﻿using FunderMaps.Core.Interfaces;
 
-namespace FunderMaps.AspNetCore.ErrorMessaging
+namespace FunderMaps.Core.Types
 {
     /// <summary>
-    ///     Contains details about an error message.
+    ///     Default implementation of an error message.
     /// </summary>
-    public class ErrorMessageFeature : IErrorMessage
+    public class ErrorMessage : IErrorMessage
     {
         /// <summary>
-        ///     Message to display.
+        ///     Error message text message.
         /// </summary>
         public string Message { get; set; }
 
         /// <summary>
-        ///     HTTP Status code for this error message.
+        ///     Error message status code.
         /// </summary>
         public int StatusCode { get; set; }
     }

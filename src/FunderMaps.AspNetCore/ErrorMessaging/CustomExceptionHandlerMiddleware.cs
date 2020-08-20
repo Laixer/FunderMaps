@@ -115,7 +115,6 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
             try
             {
                 ClearHttpContext(context);
-                // context.Response.StatusCode = (int) HttpStatusCode.Conflict; TODO 
 
                 context.Features.Set(_mapper.Map(edi.SourceException as TException));
 

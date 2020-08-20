@@ -1,9 +1,5 @@
 using AutoMapper;
-using FunderMaps.AspNetCore;
-using FunderMaps.AspNetCore.ErrorMessaging;
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
@@ -59,7 +55,7 @@ namespace FunderMaps.Webservice
             });
 
             // Configure exception mapping.
-            services.AddSingleton<IExceptionMapper<FunderMapsCoreException>, FunderMapsExceptionMapper>();
+            services.AddFunderMapsExceptionMapper();
 
             // Configure services.
             services.AddTransient<IProductService, DebugProductService>();
