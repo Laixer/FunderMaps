@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  AZURE_WEBAPP_NAME: your-app-name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '3.1.101'
+
 jobs:
   build:
 
@@ -16,10 +21,12 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
     - name: Install dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore
+    - name: Publish
+      run: dotnet publish --configuration Release --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dist' 
