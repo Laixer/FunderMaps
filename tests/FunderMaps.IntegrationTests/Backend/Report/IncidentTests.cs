@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -75,6 +77,30 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.Equal(incident.DocumentFile, returnObject.DocumentFile);
             Assert.Equal(incident.Note, returnObject.Note);
             Assert.Equal(incident.InternalNote, returnObject.InternalNote);
+        }
+
+        [Fact]
+        public async Task UploadDocumentReturnDocument()
+        {
+            // Arrange
+            var client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
+            using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
+            byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
+            using var formContent = new MultipartFormDataContent
+            {
+                { byteArrayContent, "input", "inputfile.pdf"}
+            };
+
+            // Act
+            var response = await client.PostAsync("api/inquiry/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Name);
         }
 
         [Theory]

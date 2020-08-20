@@ -79,7 +79,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
         {
-            // TODO: Replace with validator?
+            // FUTURE: Replace with validator?
             var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
             if (!virtualFile.IsValid)
             {
@@ -92,8 +92,13 @@ namespace FunderMaps.WebApi.Controllers.Report
                 input.FileName,
                 input.ContentType);
 
+            var output = new DocumentDto
+            {
+                Name = fileName,
+            };
+
             // Return.
-            return Ok(fileName);
+            return Ok(output);
         }
 
         [HttpPut("{id:int}")]
