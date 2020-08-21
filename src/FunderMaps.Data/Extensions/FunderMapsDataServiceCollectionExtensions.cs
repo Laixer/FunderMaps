@@ -45,6 +45,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // Add user tracking service
             services.AddScoped<IUserTrackingService, UserTrackingService>();
 
+            // Add description service
+            services.AddSingleton<IDescriptionService, DescriptionService>();
+
             return services;
         }
 
