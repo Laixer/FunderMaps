@@ -11,6 +11,7 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice.Statistics
 {
+    /// TODO Lots of duplicate code.
     /// <summary>
     ///     Integration test for the statistics controller.
     /// </summary>

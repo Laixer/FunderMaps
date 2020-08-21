@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Types.Distributions;
+﻿using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;
@@ -10,8 +9,8 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice.MappingValidation
 {
-    /// TODO Make explicit for each type.
-    /// FUTURE This contains a lot of boiler plate code, maybe use IComparable or something similar.
+    /// TODO Contains a lot of duplicate code.
+    /// TODO External id and external source are not present in our analysis result. Do we want this?
     /// <summary>
     ///     Checks our mapping for analysis products.
     /// </summary>
@@ -22,7 +21,122 @@ namespace FunderMaps.IntegrationTests.Webservice.MappingValidation
         /// </summary>
         /// <param name="product"><see cref="AnalysisProduct"/></param>
         /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
-        internal static void Validate(AnalysisProduct product, AnalysisCompleteResponseModel model)
+        internal static void ValidateAnalysisBuildingData(AnalysisProduct product, AnalysisBuildingDataResponseModel model)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            // Assert.
+            ValidateBase(product, model);
+            Assert.Equal(product.BuildingHeight, model.BuildingHeight);
+            Assert.Equal(product.ConstructionYear, model.ConstructionYear);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationType), model.FoundationType);
+        }
+
+        /// <summary>
+        ///     Validate a <see cref="AnalysisCompleteResponseModel"/>.
+        /// </summary>
+        /// <param name="product"><see cref="AnalysisProduct"/></param>
+        /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
+        internal static void ValidateAnalysisFoundation(AnalysisProduct product, AnalysisFoundationResponseModel model)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            // Assert.
+            ValidateBase(product, model);
+            Assert.Equal(product.DewateringDepth, model.DewateringDepth);
+            Assert.Equal(product.Drystand, model.Drystand);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationRisk), model.FoundationRisk);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationType), model.FoundationType);
+            Assert.Equal(product.GroundLevel, model.GroundLevel);
+            Assert.Equal(product.GroundWaterLevel, model.GroundWaterLevel);
+
+            // FUTURE Description service should be tested separately.
+            // Assert.Equal(product.FullDescription, descriptionService.GenerateFullDescription(product));
+        }
+
+        /// TODO Inheritance with <see cref="ValidateAnalysisFoundation(AnalysisProduct, AnalysisFoundationResponseModel)"/>? Think not.
+        /// <summary>
+        ///     Validate a <see cref="AnalysisCompleteResponseModel"/>.
+        /// </summary>
+        /// <param name="product"><see cref="AnalysisProduct"/></param>
+        /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
+        internal static void ValidateAnalysisFoundationPlus(AnalysisProduct product, AnalysisFoundationPlusResponseModel model)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            // Assert.
+            ValidateBase(product, model);
+            Assert.Equal(product.DataCollectedPercentage, model.DataCollectedPercentage);
+            Assert.Equal(product.DewateringDepth, model.DewateringDepth);
+            Assert.Equal(product.Drystand, model.Drystand);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationRisk), model.FoundationRisk);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationType), model.FoundationType);
+            Assert.Equal(product.GroundLevel, model.GroundLevel);
+            Assert.Equal(product.GroundWaterLevel, model.GroundWaterLevel);
+            Assert.Equal(TestEnumMapper.Map(product.Reliability), model.Reliability);
+            Assert.Equal(product.TotalReportCount, model.TotalReportCount);
+
+            ValidateConstructionYearDistribution(product.ConstructionYearDistribution, model.ConstructionYearDistribution);
+            ValidateFoundationRiskDistribution(product.FoundationRiskDistribution, model.FoundationRiskDistribution);
+            ValidateFoundationTypeDistribution(product.FoundationTypeDistribution, model.FoundationTypeDistribution);
+
+            // FUTURE Description service should be tested separately.
+            // Assert.Equal(product.FullDescription, descriptionService.GenerateFullDescription(product));
+            // Assert.Equal(product.TerrainDescription, descriptionService.GenerateTerrainDescription(product));
+        }
+
+        /// <summary>
+        ///     Validate a <see cref="AnalysisCompleteResponseModel"/>.
+        /// </summary>
+        /// <param name="product"><see cref="AnalysisProduct"/></param>
+        /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
+        internal static void ValidateAnalysisCosts(AnalysisProduct product, AnalysisCostsResponseModel model)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            // Assert.
+            ValidateBase(product, model);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationRisk), model.FoundationRisk);
+            Assert.Equal(TestEnumMapper.Map(product.Reliability), model.Reliability);
+            Assert.Equal(product.RestorationCosts, model.RestorationCosts);
+            Assert.Equal(product.TotalBuildingRestoredCount, model.TotalBuildingRestoredCount);
+            Assert.Equal(product.TotalIncidentCount, model.TotalIncidentCount);
+        }
+
+        /// <summary>
+        ///     Validate a <see cref="AnalysisCompleteResponseModel"/>.
+        /// </summary>
+        /// <param name="product"><see cref="AnalysisProduct"/></param>
+        /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
+        internal static void ValidateAnalysisComplete(AnalysisProduct product, AnalysisCompleteResponseModel model)
         {
             if (product == null)
             {
@@ -57,10 +171,59 @@ namespace FunderMaps.IntegrationTests.Webservice.MappingValidation
             // FUTURE Description service should be tested separately.
             // Assert.Equal(product.FullDescription, descriptionService.GenerateFullDescription(product));
             // Assert.Equal(product.TerrainDescription, descriptionService.GenerateTerrainDescription(product));
+        }
 
-            // TODO External id and external source are not present in our result. Do we want this?
-            // Assert.Equal(product.ExternalId, model.External);
-            // Assert.Equal(product.ExternalSource, model.);
+        /// <summary>
+        ///     Validate a <see cref="AnalysisCompleteResponseModel"/>.
+        /// </summary>
+        /// <param name="product"><see cref="AnalysisProduct"/></param>
+        /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
+        internal static void ValidateAnalysisBuildingDescription(AnalysisProduct product, AnalysisBuildingDescriptionResponseModel model)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            // Assert.
+            ValidateBase(product, model);
+
+            // FUTURE Description service should be tested separately.
+            // Assert.Equal(product.FullDescription, descriptionService.GenerateFullDescription(product));
+            // Assert.Equal(product.TerrainDescription, descriptionService.GenerateTerrainDescription(product));
+        }
+
+        /// <summary>
+        ///     Validate a <see cref="AnalysisCompleteResponseModel"/>.
+        /// </summary>
+        /// <param name="product"><see cref="AnalysisProduct"/></param>
+        /// <param name="model"><see cref="AnalysisCompleteResponseModel"/></param>
+        internal static void ValidateAnalysisRisk(AnalysisProduct product, AnalysisRiskResponseModel model)
+        {
+            if (product == null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+            if (model == null)
+            {
+                throw new ArgumentNullException(nameof(model));
+            }
+
+            // Assert.
+            ValidateBase(product, model);
+            Assert.Equal(product.DewateringDepth, model.DewateringDepth);
+            Assert.Equal(product.Drystand, model.Drystand);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationRisk), model.FoundationRisk);
+            Assert.Equal(TestEnumMapper.Map(product.FoundationType), model.FoundationType);
+            Assert.Equal(TestEnumMapper.Map(product.Reliability), model.Reliability);
+            Assert.Equal(product.RestorationCosts, model.RestorationCosts);
+
+            // FUTURE Description service should be tested separately.
+            // Assert.Equal(product.FullDescription, descriptionService.GenerateFullDescription(product));
         }
 
         /// <summary>
