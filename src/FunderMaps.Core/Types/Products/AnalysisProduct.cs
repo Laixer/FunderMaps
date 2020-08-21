@@ -83,7 +83,7 @@ namespace FunderMaps.Core.Types.Products
         /// TODO Correct unit?
         /// TODO Correct name?
         /// </summary>
-        public double? DryPeriod { get; set; }
+        public double? Drystand { get; set; }
 
         /// <summary>
         /// Complete description of this building.

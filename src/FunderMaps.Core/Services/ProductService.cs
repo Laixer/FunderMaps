@@ -191,10 +191,10 @@ namespace FunderMaps.Core.Services
                     product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByExternalIdAsync(neighborhoodCode, token);
                     break;
                 case StatisticsProductType.BuildingsRestored:
-                    product.TotalBuildingRestored = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(neighborhoodCode, token);
+                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(neighborhoodCode, token);
                     break;
                 case StatisticsProductType.Incidents:
-                    product.TotalIncidents = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(neighborhoodCode, token);
+                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(neighborhoodCode, token);
                     break;
                 case StatisticsProductType.Reports:
                     product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(neighborhoodCode, token);

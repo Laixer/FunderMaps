@@ -71,16 +71,16 @@ namespace FunderMaps.Data.Repositories
             => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationTypeDistribution;
 
         public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalBuildingRestored;
+            => (uint) (await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalBuildingRestoredCount;
 
         public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighborhoodId, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalBuildingRestored;
+            => (uint) (await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalBuildingRestoredCount;
 
         public async Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalIncidents;
+            => (uint) (await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalIncidentCount;
 
         public async Task<uint> GetTotalIncidentCountByIdAsync(string neighborhoodId, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalIncidents;
+            => (uint) (await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalIncidentCount;
 
         public async Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
             => (uint) (await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalReportCount;
@@ -163,8 +163,8 @@ namespace FunderMaps.Data.Repositories
                 FoundationTypeDistribution = product == StatisticsProductType.FoundationRatio ? await MapFoundationTypeDistributionAsync(reader, token) : null,
                 NeighborhoodCode = method == IdMethod.NeighborhoodCode ? identifier : null,
                 NeighborhoodId = method == IdMethod.NeighborhoodId ? identifier : null,
-                TotalBuildingRestored = product == StatisticsProductType.BuildingsRestored ? await MapBuildingsRestoredAsync(reader, token) : (uint?)null,
-                TotalIncidents = product == StatisticsProductType.Incidents ? await MapIncidentsAsync(reader, token) : (uint?)null,
+                TotalBuildingRestoredCount = product == StatisticsProductType.BuildingsRestored ? await MapBuildingsRestoredAsync(reader, token) : (uint?)null,
+                TotalIncidentCount = product == StatisticsProductType.Incidents ? await MapIncidentsAsync(reader, token) : (uint?)null,
                 TotalReportCount = product == StatisticsProductType.Reports ? await MapInquiriesAsync(reader, token) : (uint?)null,
             };
         }

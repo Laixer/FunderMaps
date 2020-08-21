@@ -41,12 +41,12 @@ namespace FunderMaps.Core.Types.Products
         /// <summary>
         /// Total amount of restored buildings in the given area.
         /// </summary>
-        public uint? TotalBuildingRestored { get; set; }
+        public uint? TotalBuildingRestoredCount { get; set; }
 
         /// <summary>
         /// Total amount of incidents in the given region.
         /// </summary>
-        public uint? TotalIncidents { get; set; }
+        public uint? TotalIncidentCount { get; set; }
 
         /// <summary>
         /// Total amount of reports in the given region.

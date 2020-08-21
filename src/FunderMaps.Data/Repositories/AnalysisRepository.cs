@@ -209,7 +209,7 @@ namespace FunderMaps.Data.Repositories
                 GroundLevel = reader.GetFloat(8),
                 RestorationCosts = reader.GetDouble(9),
                 DewateringDepth = reader.GetDouble(10),
-                DryPeriod = reader.GetDouble(11),
+                Drystand = reader.GetDouble(11),
                 Reliability = reader.GetFieldValue<Reliability>(12),
                 NeighborhoodId = reader.GetSafeString(13)
             };
