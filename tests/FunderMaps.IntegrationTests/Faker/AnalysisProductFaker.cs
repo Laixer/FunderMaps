@@ -1,11 +1,11 @@
 ﻿using Bogus;
 using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using System;
 
 namespace FunderMaps.IntegrationTests.Faker
 {
+    /// TOOD Clean up product initialization.
     /// <summary>
     ///     Faker for <see cref="AnalysisProduct"/>.
     /// </summary>
@@ -16,16 +16,16 @@ namespace FunderMaps.IntegrationTests.Faker
         {
             RuleFor(f => f.BuildingHeight, f => f.Random.Double(3, 25));
             RuleFor(f => f.ConstructionYear, f => new DateTimeOffset(f.Random.Int(900, 2100), 1, 1, 1, 1, 1, TimeSpan.Zero));
-            RuleFor(f => f.ConstructionYearDistribution, f => new ConstructionYearDistribution()); // Empty
+            RuleFor(f => f.ConstructionYearDistribution, f => null);
             RuleFor(f => f.DataCollectedPercentage, f => f.Random.Double(0, 100));
             RuleFor(f => f.DewateringDepth, f => f.Random.Double(-100, 100));
-            RuleFor(f => f.DryPeriod, f => f.Random.Double(-100, 100));
+            RuleFor(f => f.Drystand, f => f.Random.Double(-100, 100));
             RuleFor(f => f.ExternalId, f => $"NL.IMBAG.PAND.{f.Random.Hash(16)}");
             RuleFor(f => f.ExternalSource, f => f.PickRandom<ExternalDataSource>());
             RuleFor(f => f.FoundationRisk, f => f.PickRandom<FoundationRisk>());
-            RuleFor(f => f.FoundationRiskDistribution, f => new FoundationRiskDistribution()); // Empty
+            RuleFor(f => f.FoundationRiskDistribution, f => null);
             RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>()); ;
-            RuleFor(f => f.FoundationTypeDistribution, f => new FoundationTypeDistribution()); // Empty
+            RuleFor(f => f.FoundationTypeDistribution, f => null);
             RuleFor(f => f.FullDescription, f => f.Random.Words(10));
             RuleFor(f => f.GroundLevel, f => f.Random.Double(-300, 300));
             RuleFor(f => f.GroundWaterLevel, f => f.Random.Double(-100, 0));

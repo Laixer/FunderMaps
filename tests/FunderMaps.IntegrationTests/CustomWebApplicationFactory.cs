@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Services;
 using FunderMaps.IntegrationTests.Repositories;
 using FunderMaps.IntegrationTests.Services;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +48,6 @@ namespace FunderMaps.IntegrationTests
 
             // Services
             services.AddScoped<IUserTrackingService, TestUserTrackingService>();
-            services.AddScoped<IDescriptionService, TestDescriptionService>();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)

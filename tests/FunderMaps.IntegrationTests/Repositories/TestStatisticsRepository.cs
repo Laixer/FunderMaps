@@ -43,16 +43,16 @@ namespace FunderMaps.IntegrationTests.Repositories
             => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodId == neighboorhoodId).FirstOrDefault()?.FoundationTypeDistribution ?? throw new EntityNotFoundException();
 
         public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodCode == neighborhoodCode).FirstOrDefault()?.TotalBuildingRestored ?? throw new EntityNotFoundException();
+            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodCode == neighborhoodCode).FirstOrDefault()?.TotalBuildingRestoredCount ?? throw new EntityNotFoundException();
 
         public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighboorhoodId, CancellationToken token)
-            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodId == neighboorhoodId).FirstOrDefault()?.TotalBuildingRestored ?? throw new EntityNotFoundException();
+            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodId == neighboorhoodId).FirstOrDefault()?.TotalBuildingRestoredCount ?? throw new EntityNotFoundException();
 
         public async Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodCode == neighborhoodCode).FirstOrDefault()?.TotalIncidents ?? throw new EntityNotFoundException();
+            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodCode == neighborhoodCode).FirstOrDefault()?.TotalIncidentCount ?? throw new EntityNotFoundException();
 
         public async Task<uint> GetTotalIncidentCountByIdAsync(string neighboorhoodId, CancellationToken token)
-            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodId == neighboorhoodId).FirstOrDefault()?.TotalIncidents ?? throw new EntityNotFoundException();
+            => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodId == neighboorhoodId).FirstOrDefault()?.TotalIncidentCount ?? throw new EntityNotFoundException();
 
         public async Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
             => DataStore.GetObjectsFromType<StatisticsProduct>().Where(x => x.NeighborhoodCode == neighborhoodCode).FirstOrDefault()?.TotalReportCount ?? throw new EntityNotFoundException();

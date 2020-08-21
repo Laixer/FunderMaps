@@ -11,7 +11,6 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice.Analysis
 {
-    /// TODO Test the mapping as well.
     /// <summary>
     ///     Integration test for the analysis controller.
     /// </summary>
