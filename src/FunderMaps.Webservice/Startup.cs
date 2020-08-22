@@ -1,4 +1,5 @@
 using AutoMapper;
+using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
@@ -53,6 +54,9 @@ namespace FunderMaps.Webservice
                 options.EnableForHttps = true;
             });
 
+            // Configure exception mapping.
+            services.AddFunderMapsExceptionMapper();
+
             // Configure services.
             services.AddTransient<IProductService, DebugProductService>();
             services.AddTransient<IProductRequestService, ProductRequestService>();
@@ -86,9 +90,10 @@ namespace FunderMaps.Webservice
             }
             else
             {
-                //app.UseExceptionHandler("/oops");
+                app.UseExceptionHandler(); // TODO This should be fixed for production!
                 app.UseHsts();
             }
+            app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/error");
 
             app.UseResponseCompression();
             app.UseHttpsRedirection();
