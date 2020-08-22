@@ -91,13 +91,6 @@ namespace FunderMaps.WebApi
 
             services.AddControllers();
 
-            services.AddResponseCompression(options =>
-            {
-                // NOTE: Compression is disabled by default when serving data
-                // over HTTPS because of BREACH exploit.
-                options.EnableForHttps = true;
-            });
-
             // Configure compression providers.
             services
                 .Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
@@ -133,7 +126,6 @@ namespace FunderMaps.WebApi
                 app.UseExceptionHandler("/oops");
                 app.UseHsts();
 
-                app.UseResponseCompression();
                 app.UseHttpsRedirection();
             }
 
