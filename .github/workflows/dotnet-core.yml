@@ -26,7 +26,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --nologo --configuration ${{ BUILD_CONFIG }} --no-restore
+      run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
     - name: Test
       run: dotnet test --nologo --no-restore
   
@@ -45,4 +45,4 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Publish
-      run: dotnet publish --nologo --configuration ${{ BUILD_CONFIG }} --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dist' 
+      run: dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dist' 
