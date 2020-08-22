@@ -10,12 +10,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using System.IO.Compression;
 
 [assembly: ApiController]
 namespace FunderMaps.WebApi
@@ -35,18 +33,6 @@ namespace FunderMaps.WebApi
         /// </summary>
         /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
         public Startup(IConfiguration configuration) => Configuration = configuration;
-
-        /// <summary>
-        ///     This method gets called by the runtime. Use this method to add production services to the container.
-        /// </summary>
-        /// <remarks>
-        ///     Order is undetermined when configuring services.
-        /// </remarks>
-        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public void ConfigureProductionServices(IServiceCollection services)
-        {
-            services.AddApplicationInsightsTelemetry();
-        }
 
         /// <summary>
         ///     This method gets called by the runtime. Use this method to add services to the container.
@@ -91,11 +77,6 @@ namespace FunderMaps.WebApi
 
             services.AddControllers();
 
-            // Configure compression providers.
-            services
-                .Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
-                .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
-
             services.AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("api_health_check")
                 //.AddCheck<DatabaseHealthCheck>("db_health_check")
@@ -124,9 +105,6 @@ namespace FunderMaps.WebApi
             else
             {
                 app.UseExceptionHandler("/oops");
-                app.UseHsts();
-
-                app.UseHttpsRedirection();
             }
 
             app.UsePathBase(new PathString("/api"));
