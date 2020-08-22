@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Core.Types;
+using System;
 
 namespace FunderMaps.Core.Entities
 {

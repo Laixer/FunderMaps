@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using FunderMaps.Controllers;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Control;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -22,23 +24,35 @@ namespace FunderMaps.WebApi.Controllers.Report
     public class InquiryController : BaseApiController
     {
         private readonly IMapper _mapper;
+        private readonly AuthManager _authManager;
         private readonly InquiryUseCase _inquiryUseCase;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public InquiryController(IMapper mapper, InquiryUseCase inquiryUseCase)
+        public InquiryController(IMapper mapper, AuthManager authManager, InquiryUseCase inquiryUseCase)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _authManager = authManager ?? throw new ArgumentNullException(nameof(mapper));
             _inquiryUseCase = inquiryUseCase ?? throw new ArgumentNullException(nameof(inquiryUseCase));
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
+            // Act.
             var inquiry = await _inquiryUseCase.GetAsync(id);
 
-            return Ok(_mapper.Map<InquiryDto>(inquiry));
+            // Map.
+            var result = _mapper.Map<InquiryDto>(inquiry);
+            result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
+            result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
+            result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
+            result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
+            result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
+
+            // Return.
+            return Ok(result);
         }
 
         [HttpGet]
@@ -48,32 +62,62 @@ namespace FunderMaps.WebApi.Controllers.Report
             IAsyncEnumerable<Inquiry> inquiryList = _inquiryUseCase.GetAllAsync(pagination.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(inquiryList);
+            var resultList = new List<InquiryDto>();
+            await foreach (var inquiry in inquiryList)
+            {
+                var result = _mapper.Map<InquiryDto>(inquiry);
+                result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
+                result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
+                result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
+                result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
+                result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
+                resultList.Add(result);
+            }
 
             // Return.
-            return Ok(result);
+            return Ok(resultList);
         }
 
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
         {
             // FUTURE: _inquiryUseCase.GetAllRecentAsync
-            // Act.
-            IAsyncEnumerable<Inquiry> inquiryList = _inquiryUseCase.GetAllAsync(pagination.Navigation);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<InquiryDto>, Inquiry>(inquiryList);
 
             // Return.
-            return Ok(result);
+            return Ok(await GetAllAsync(pagination));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
         {
-            var inquiry = await _inquiryUseCase.CreateAsync(_mapper.Map<Inquiry>(input));
+            // Map.
+            var inquiry = _mapper.Map<Inquiry>(input);
 
-            return Ok(_mapper.Map<InquiryDto>(inquiry));
+            User sessionUser = await _authManager.GetUserAsync(User);
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+
+            var attribution = new AttributionControl
+            {
+                Reviewer = input.Reviewer,
+                Creator = sessionUser.Id,
+                Owner = sessionOrganization.Id,
+                Contractor = input.Contractor,
+            };
+
+            // Act.
+            inquiry = await _inquiryUseCase.CreateAsync(attribution, inquiry);
+
+            // Map.
+            var result = _mapper.Map<InquiryDto>(inquiry);
+            result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
+            result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
+            result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
+            result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
+            result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
+            result.UpdateDate = await _inquiryUseCase.GetRecordUpdateDateAsync(result.Id);
+
+            // Return.
+            return Ok(result);
         }
 
         [HttpPost("upload-document")]

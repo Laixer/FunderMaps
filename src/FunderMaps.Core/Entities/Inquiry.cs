@@ -1,20 +1,22 @@
 ﻿using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Control;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    ///     Inquiry entity.
+    ///     Inquiry base entity.
     /// </summary>
-    public sealed class Inquiry : StateControl<Inquiry, int>, IReportEntity<Inquiry>
+    public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>, IReportEntity<TParent>
+        where TParent : class
     {
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public Inquiry()
-            : base(e => e.Id)
+        public InquiryBase(Func<TParent, int> entryPrimaryKey)
+            : base(entryPrimaryKey)
         {
         }
 
@@ -85,17 +87,26 @@ namespace FunderMaps.Core.Entities
         public override void InitializeDefaults()
         {
             Id = 0;
-            AuditStatus = AuditStatus.Todo;
-            CreateDate = DateTime.MinValue;
-            UpdateDate = null;
-            DeleteDate = null;
-            AttributionNavigation = null;
+        }
+    }
+
+    /// <summary>
+    ///     Inquiry entity.
+    /// </summary>
+    public class Inquiry : InquiryBase<Inquiry>
+    {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public Inquiry()
+            : base(e => e.Id)
+        {
         }
 
         /// <summary>
         ///     Initialize properties from another entity.
         /// </summary>
-        public void InitializeDefaults(Inquiry other)
+        public override void InitializeDefaults(Inquiry other)
         {
             if (other == null)
             {
@@ -103,11 +114,53 @@ namespace FunderMaps.Core.Entities
             }
 
             Id = other.Id;
-            AuditStatus = other.AuditStatus;
-            Attribution = other.Attribution;
-            CreateDate = other.CreateDate;
-            UpdateDate = other.UpdateDate;
-            DeleteDate = other.DeleteDate;
+        }
+    }
+
+    /// <summary>
+    ///     Inquiry full entity.
+    /// </summary>
+    public sealed class InquiryFull : InquiryBase<InquiryFull>, IAttribution, IStateControl, IAccessControl, IRecordControl
+    {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public InquiryFull()
+            : base(e => e.Id)
+        {
+        }
+
+        /// <summary>
+        ///     Attribution control.
+        /// </summary>
+        public AttributionControl Attribution { get; set; }
+
+        /// <summary>
+        ///     State control.
+        /// </summary>
+        public StateControl State { get; set; }
+
+        /// <summary>
+        ///     Access control.
+        /// </summary>
+        public AccessControl Access { get; set; }
+
+        /// <summary>
+        ///     Record control.
+        /// </summary>
+        public RecordControl Record { get; set; }
+
+        /// <summary>
+        ///     Initialize properties from another entity.
+        /// </summary>
+        public override void InitializeDefaults(InquiryFull other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
+            Id = other.Id;
         }
     }
 }

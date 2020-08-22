@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -56,11 +57,6 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public string DocumentFile { get; set; }
 
         /// <summary>
-        ///     Report status.
-        /// </summary>
-        public AuditStatus AuditStatus { get; set; }
-
-        /// <summary>
         ///     Report type.
         /// </summary>
         public InquiryType Type { get; set; }
@@ -71,9 +67,20 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public bool StandardF3o { get; set; }
 
         /// <summary>
-        ///     Attribution key.
+        ///     Report status.
         /// </summary>
-        public int Attribution { get; set; }
+        public AuditStatus AuditStatus { get; set; }
+
+        /// <summary>
+        ///     Reviewer identifier.
+        /// </summary>
+        public Guid? Reviewer { get; set; }
+
+        /// <summary>
+        ///     Contractor identifier.
+        /// </summary>
+        [Guid]
+        public Guid Contractor { get; set; }
 
         /// <summary>
         ///     Record access policy.
@@ -89,10 +96,5 @@ namespace FunderMaps.WebApi.DataTransferObjects
         ///     Record last update.
         /// </summary>
         public DateTime? UpdateDate { get; set; }
-
-        /// <summary>
-        ///     Record delete date.
-        /// </summary>
-        public DateTime? DeleteDate { get; set; }
     }
 }

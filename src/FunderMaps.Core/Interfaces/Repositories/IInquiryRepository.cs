@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// <summary>
     /// Operations for the inquiry repository.
     /// </summary>
-    public interface IInquiryRepository : IAsyncRepository<Inquiry, int>
+    public interface IInquiryRepository : IAsyncRepository<InquiryFull, int>
     {
         /// <summary>
         /// Retrieve entity by id and document_id and organization.
@@ -16,7 +16,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="id">Unique identifier.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>Entity.</returns>
-        Task<Inquiry> GetByIdAsync(int id, Guid orgId);
+        Task<InquiryFull> GetByIdAsync(int id, Guid orgId);
 
         /// <summary>
         /// Retrieve entity by id and document_id and organization or public record.
@@ -24,13 +24,13 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="id">Unique identifier.</param>
         /// <param name="orgId">Organization identifier.</param>
         /// <returns>Entity.</returns>
-        Task<Inquiry> GetPublicAndByIdAsync(int id, Guid orgId);
+        Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId);
 
         /// <summary>
         /// Retrieve all entities and filter on organization id.
         /// </summary>
         /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<Inquiry>> ListAllAsync(Guid orgId, INavigation navigation);
+        Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation);
 
         /// <summary>
         /// Retrieve number of entities and filter on organization id.

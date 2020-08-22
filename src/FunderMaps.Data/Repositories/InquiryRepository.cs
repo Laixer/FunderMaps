@@ -2,6 +2,7 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Control;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
@@ -14,7 +15,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Inquiry repository.
     /// </summary>
-    internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryRepository
+    internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRepository
     {
         /// <summary>
         ///     Create a new instance.
@@ -26,11 +27,11 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Create new <see cref="Inquiry"/>.
+        ///     Create new <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        /// <returns>Created <see cref="Inquiry"/>.</returns>
-        public override async ValueTask<int> AddAsync(Inquiry entity)
+        /// <returns>Created <see cref="InquiryFull"/>.</returns>
+        public override async ValueTask<int> AddAsync(InquiryFull entity)
         {
             if (entity == null)
             {
@@ -38,37 +39,53 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
+                WITH attribution AS (
+	                INSERT INTO application.attribution(
+                        reviewer,
+                        creator,
+                        owner,
+                        contractor)
+		            VALUES (
+                        @reviewer,
+                        @creator,
+                        @owner,
+                        @contractor)
+	                RETURNING id AS attribution_id
+                )
                 INSERT INTO report.inquiry(
-                    document_name,
-                    inspection,
-                    joint_measurement,
-                    floor_measurement,
-                    note,
-                    document_date,
-                    document_file,
-                    attribution,
+	                document_name,
+	                inspection,
+	                joint_measurement,
+	                floor_measurement,
+	                note,
+	                document_date,
+	                document_file,
+	                attribution,
                     access_policy,
                     audit_status,
-                    type,
-                    standard_f3o)
-                VALUES (
-                    @document_name,
+	                type,
+	                standard_f3o)
+                SELECT @document_name,
                     @inspection,
                     @joint_measurement,
                     @floor_measurement,
                     @note,
                     @document_date,
                     @document_file,
-                    @attribution,
+	                attribution_id,
                     @access_policy,
                     @audit_status,
-                    @type,
-                    @standard_f3o)
-                RETURNING id;
-            ";
+	                @type,
+                    @standard_f3o
+                FROM attribution
+                RETURNING id";
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
+            cmd.AddParameterWithValue("creator", entity.Attribution.Creator);
+            cmd.AddParameterWithValue("owner", entity.Attribution.Owner);
+            cmd.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
             MapToWriter(cmd, entity);
 
@@ -94,7 +111,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Delete <see cref="Inquiry"/>.
+        ///     Delete <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
@@ -110,7 +127,7 @@ namespace FunderMaps.Data.Repositories
             await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, Inquiry entity)
+        private static void MapToWriter(DbCommand cmd, InquiryFull entity)
         {
             cmd.AddParameterWithValue("document_name", entity.DocumentName);
             cmd.AddParameterWithValue("inspection", entity.Inspection);
@@ -119,65 +136,91 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("note", entity.Note);
             cmd.AddParameterWithValue("document_date", entity.DocumentDate);
             cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("attribution", entity.Attribution);
-            cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            cmd.AddParameterWithValue("audit_status", entity.AuditStatus);
+            cmd.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
+            cmd.AddParameterWithValue("audit_status", entity.State.AuditStatus);
             cmd.AddParameterWithValue("type", entity.Type);
             cmd.AddParameterWithValue("standard_f3o", entity.StandardF3o);
         }
 
-        private static Inquiry MapFromReader(DbDataReader reader)
-            => new Inquiry
+        private static InquiryFull MapFromReader(DbDataReader reader)
+            => new InquiryFull
             {
                 Id = reader.GetInt(0),
                 DocumentName = reader.GetSafeString(1),
                 Inspection = reader.GetBoolean(2),
                 JointMeasurement = reader.GetBoolean(3),
                 FloorMeasurement = reader.GetBoolean(4),
-                CreateDate = reader.GetDateTime(5),
-                UpdateDate = reader.GetSafeDateTime(6),
-                DeleteDate = reader.GetSafeDateTime(7),
-                Note = reader.GetSafeString(8),
-                DocumentDate = reader.GetDateTime(9),
-                DocumentFile = reader.GetSafeString(10),
-                Attribution = reader.GetInt(11),
-                AccessPolicy = reader.GetFieldValue<AccessPolicy>(12),
-                AuditStatus = reader.GetFieldValue<AuditStatus>(13),
-                Type = reader.GetFieldValue<InquiryType>(14),
-                StandardF3o = reader.GetBoolean(15),
+                Note = reader.GetSafeString(5),
+                DocumentDate = reader.GetDateTime(6),
+                DocumentFile = reader.GetSafeString(7),
+                Type = reader.GetFieldValue<InquiryType>(8),
+                StandardF3o = reader.GetBoolean(9),
+                Attribution = new AttributionControl
+                {
+                    Reviewer = reader.GetFieldValue<Guid?>(10),
+                    Creator = reader.GetGuid(11),
+                    Owner = reader.GetGuid(12),
+                    Contractor = reader.GetGuid(13),
+                },
+                State = new StateControl
+                {
+                    AuditStatus = reader.GetFieldValue<AuditStatus>(14),
+                },
+                Access = new AccessControl
+                {
+                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(15),
+                },
+                Record = new RecordControl
+                {
+                    CreateDate = reader.GetDateTime(16),
+                    UpdateDate = reader.GetSafeDateTime(17),
+                    DeleteDate = reader.GetSafeDateTime(18),
+                },
             };
 
-        public Task<Inquiry> GetByIdAsync(int id, Guid orgId)
+        public Task<InquiryFull> GetByIdAsync(int id, Guid orgId)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        ///     Retrieve <see cref="Inquiry"/> by id.
+        ///     Retrieve <see cref="InquiryFull"/> by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="Inquiry"/>.</returns>
-        public override async ValueTask<Inquiry> GetByIdAsync(int id)
+        /// <returns><see cref="InquiryFull"/>.</returns>
+        public override async ValueTask<InquiryFull> GetByIdAsync(int id)
         {
             var sql = @"
-                SELECT  id,
+                SELECT  inquiry.id,
                         document_name,
                         inspection,
                         joint_measurement,
                         floor_measurement,
-                        create_date,
-                        update_date,
-                        delete_date,
                         note,
                         document_date,
                         document_file,
-                        attribution,
-                        access_policy,
-                        audit_status,
                         type,
-                        standard_f3o
+                        standard_f3o,
+
+                        -- attribution
+                        attribution.reviewer,
+                        attribution.creator,
+                        attribution.owner,
+                        attribution.contractor,
+
+                        -- state control
+                        audit_status,
+
+                        -- access control
+                        access_policy,
+		                
+                        -- record control
+                        create_date,
+		                update_date,
+		                delete_date
                 FROM    report.inquiry
-                WHERE   id = @id
+                JOIN 	application.attribution ON attribution.id = inquiry.attribution
+                WHERE   inquiry.id = @id
                 LIMIT   1";
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
@@ -190,21 +233,21 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        public Task<Inquiry> GetPublicAndByIdAsync(int id, Guid orgId)
+        public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyList<Inquiry>> ListAllAsync(Guid orgId, INavigation navigation)
+        public Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        ///     Retrieve all <see cref="Inquiry"/>.
+        ///     Retrieve all <see cref="InquiryFull"/>.
         /// </summary>
-        /// <returns>List of <see cref="Inquiry"/>.</returns>
-        public override async IAsyncEnumerable<Inquiry> ListAllAsync(INavigation navigation)
+        /// <returns>List of <see cref="InquiryFull"/>.</returns>
+        public override async IAsyncEnumerable<InquiryFull> ListAllAsync(INavigation navigation)
         {
             if (navigation == null)
             {
@@ -212,23 +255,35 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
+                SELECT  inquiry.id,
                         document_name,
                         inspection,
                         joint_measurement,
                         floor_measurement,
-                        create_date,
-                        update_date,
-                        delete_date,
                         note,
                         document_date,
                         document_file,
-                        attribution,
-                        access_policy,
-                        audit_status,
                         type,
-                        standard_f3o
-                FROM    report.inquiry";
+                        standard_f3o,
+
+                        -- attribution
+                        attribution.reviewer,
+                        attribution.creator,
+                        attribution.owner,
+                        attribution.contractor,
+
+                        -- state control
+                        audit_status,
+
+                        -- access control
+                        access_policy,
+		                
+                        -- record control
+                        create_date,
+		                update_date,
+		                delete_date
+                FROM    report.inquiry
+                JOIN 	application.attribution ON attribution.id = inquiry.attribution";
 
             ConstructNavigation(ref sql, navigation);
 
@@ -243,10 +298,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Update <see cref="Inquiry"/>.
+        ///     Update <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Inquiry entity)
+        public override async ValueTask UpdateAsync(InquiryFull entity)
         {
             if (entity == null)
             {
@@ -262,7 +317,6 @@ namespace FunderMaps.Data.Repositories
                             note = @note,
                             document_date = @document_date,
                             document_file = @document_file,
-                            attribution = @attribution,
                             access_policy = @access_policy,
                             audit_status = @audit_status,
                             type = @type,
