@@ -1,9 +1,7 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -24,59 +22,23 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             _factory = factory;
         }
 
-        internal class FakeIncidentDtoData : EnumerableHelper<IncidentDto>
-        {
-            protected override IEnumerable<IncidentDto> GetEnumerableEntity()
-            {
-                return new IncidentDtoFaker().Generate(10, 100);
-            }
-        }
-
-        internal class FakeIncidentData : EnumerableHelper<Incident>
-        {
-            protected override IEnumerable<Incident> GetEnumerableEntity()
-            {
-                return new IncidentFaker().Generate(10, 100);
-            }
-        }
-
-        [Theory]
-        [ClassData(typeof(FakeIncidentDtoData))]
-        public async Task CreateIncidentReturnIncident(IncidentDto incident)
+        [Fact]
+        public async Task CreateIncidentReturnIncident()
         {
             // Arrange
             var client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
-            var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
-            var contactDataStore = _factory.Services.GetService<EntityDataStore<Contact>>();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/incident", incident);
+            var response = await client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(incidentDataStore.IsSet);
-            Assert.True(contactDataStore.IsSet);
             Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
             Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-            Assert.Equal(incident.Name, returnObject.Name);
-            Assert.Equal(incident.Email, returnObject.Email);
-            Assert.Equal(incident.PhoneNumber, returnObject.PhoneNumber);
-            Assert.Equal(incident.FoundationType, returnObject.FoundationType);
-            Assert.Equal(incident.Address, returnObject.Address);
-            Assert.Equal(incident.FoundationDamageCharacteristics, returnObject.FoundationDamageCharacteristics);
-            Assert.Equal(incident.EnvironmentDamageCharacteristics, returnObject.EnvironmentDamageCharacteristics);
-            Assert.Equal(incident.Owner, returnObject.Owner);
-            Assert.Equal(incident.FoundationRecovery, returnObject.FoundationRecovery);
-            Assert.Equal(incident.NeightborRecovery, returnObject.NeightborRecovery);
-            Assert.Equal(incident.ChainedBuilding, returnObject.ChainedBuilding);
-            Assert.Equal(incident.FoundationDamageCause, returnObject.FoundationDamageCause);
-            Assert.Equal(incident.DocumentFile, returnObject.DocumentFile);
-            Assert.Equal(incident.Note, returnObject.Note);
-            Assert.Equal(incident.InternalNote, returnObject.InternalNote);
         }
 
         [Fact]
@@ -91,11 +53,11 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
             using var formContent = new MultipartFormDataContent
             {
-                { byteArrayContent, "input", "inputfile.pdf"}
+                { byteArrayContent, "input", "inputfile.pdf" }
             };
 
             // Act
-            var response = await client.PostAsync("api/inquiry/upload-document", formContent);
+            var response = await client.PostAsync("api/inquiry/upload-document", formContent); // TODO: There is no such controller?
             var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
 
             // Assert
@@ -103,16 +65,15 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.NotNull(returnObject.Name);
         }
 
-        [Theory]
-        [ClassData(typeof(FakeIncidentData))]
-        public async Task GetIncidentByIdReturnSingleIncident(Incident incident)
+        [Fact]
+        public async Task GetIncidentByIdReturnSingleIncident()
         {
             // Arrange
             var client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()
-                .WithDataStoreList(incident)
                 .CreateClient();
+            var incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
             // Act
             var response = await client.GetAsync($"api/incident/{incident.Id}");
@@ -121,24 +82,11 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-            Assert.Equal(incident.Id, returnObject.Id);
-            Assert.Equal(incident.AuditStatus, returnObject.AuditStatus);
-            Assert.Equal(incident.FoundationType, returnObject.FoundationType);
-            Assert.Equal(incident.Address, returnObject.Address);
-            Assert.Equal(incident.FoundationDamageCharacteristics, returnObject.FoundationDamageCharacteristics);
-            Assert.Equal(incident.EnvironmentDamageCharacteristics, returnObject.EnvironmentDamageCharacteristics);
-            Assert.Equal(incident.Owner, returnObject.Owner);
-            Assert.Equal(incident.FoundationRecovery, returnObject.FoundationRecovery);
-            Assert.Equal(incident.NeightborRecovery, returnObject.NeightborRecovery);
-            Assert.Equal(incident.ChainedBuilding, returnObject.ChainedBuilding);
-            Assert.Equal(incident.FoundationDamageCause, returnObject.FoundationDamageCause);
-            Assert.Equal(incident.DocumentFile, returnObject.DocumentFile);
-            Assert.Equal(incident.Note, returnObject.Note);
-            Assert.Equal(incident.InternalNote, returnObject.InternalNote);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
         }
 
         [Fact]
-        public async Task GetAllIncidentReturnPageIncident()
+        public async Task GetAllIncidentReturnNavigationIncident()
         {
             // Arrange
             var client = _factory
@@ -146,88 +94,53 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .WithAuthenticationStores()
                 .WithDataStoreList(new IncidentFaker().Generate(10, 100))
                 .CreateClient();
+            for (int i = 0; i < 10; i++)
+            {
+                await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+            }
 
             // Act
-            var response = await client.GetAsync($"api/incident");
+            var response = await client.GetAsync($"api/incident?limit=10");
             var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count > 0);
+            Assert.Equal(10, returnList.Count);
         }
 
         [Fact]
-        public async Task GetAllIncidentReturnAllIncident()
+        public async Task UpdateIncidentReturnNoContent()
         {
             // Arrange
+            var newIncident = new IncidentDtoFaker().Generate();
             var client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()
-                .WithDataStoreList(new IncidentFaker().Generate(100))
                 .CreateClient();
-
-            // Act
-            var response = await client.GetAsync($"api/incident?limit=100");
-            var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(100, returnList.Count);
-        }
-
-        [Theory]
-        [ClassData(typeof(FakeIncidentData))]
-        public async Task UpdateIncidentReturnNoContent(Incident incident)
-        {
-            // Arrange
-            var newIncident = new IncidentDtoFaker().Generate(); // TODO Move outside of test
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(incident)
-                .CreateClient();
-            var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
+            var incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
             // Act
             var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(1, incidentDataStore.Entities.Count);
-            var actualIncident = incidentDataStore.Entities[0];
-            Assert.Equal(incident.Id, actualIncident.Id);
-            Assert.Equal(incident.AuditStatus, actualIncident.AuditStatus);
-            Assert.Equal(newIncident.FoundationType, actualIncident.FoundationType);
-            Assert.Equal(newIncident.FoundationDamageCharacteristics, actualIncident.FoundationDamageCharacteristics);
-            Assert.Equal(newIncident.EnvironmentDamageCharacteristics, actualIncident.EnvironmentDamageCharacteristics);
-            Assert.Equal(newIncident.Owner, actualIncident.Owner);
-            Assert.Equal(newIncident.FoundationRecovery, actualIncident.FoundationRecovery);
-            Assert.Equal(newIncident.NeightborRecovery, actualIncident.NeightborRecovery);
-            Assert.Equal(newIncident.ChainedBuilding, actualIncident.ChainedBuilding);
-            Assert.Equal(newIncident.FoundationDamageCause, actualIncident.FoundationDamageCause);
-            Assert.Equal(newIncident.DocumentFile, actualIncident.DocumentFile);
-            Assert.Equal(newIncident.Note, actualIncident.Note);
-            Assert.Equal(newIncident.InternalNote, actualIncident.InternalNote);
         }
 
-        [Theory]
-        [ClassData(typeof(FakeIncidentData))]
-        public async Task DeleteIncidentReturnNoContent(Incident incident)
+        [Fact]
+        public async Task DeleteIncidentReturnNoContent()
         {
             // Arrange
             var client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()
-                .WithDataStoreList(incident)
                 .CreateClient();
-            var incidentDataStore = _factory.Services.GetService<EntityDataStore<Incident>>();
+            var incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
             // Act
             var response = await client.DeleteAsync($"api/incident/{incident.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.False(incidentDataStore.IsSet);
         }
     }
 }
