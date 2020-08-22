@@ -49,6 +49,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
+
+            // TODO: Test using faker?
             using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
             byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
             using var formContent = new MultipartFormDataContent

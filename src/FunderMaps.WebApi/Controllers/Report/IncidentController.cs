@@ -46,6 +46,8 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // TODO: Upload action.
+
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
