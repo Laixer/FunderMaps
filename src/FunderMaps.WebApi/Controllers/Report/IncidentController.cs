@@ -4,8 +4,10 @@ using FunderMaps.Core.Authentication;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
+using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -46,7 +48,30 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
-        // TODO: Upload action.
+        [HttpPost("upload-document")]
+        public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
+        {
+            // FUTURE: Replace with validator?
+            var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
+            if (!virtualFile.IsValid)
+            {
+                throw new ArgumentException(); // TODO
+            }
+
+            // Act.
+            var fileName = await _incidentUseCase.StoreDocumentAsync(
+                input.OpenReadStream(),
+                input.FileName,
+                input.ContentType);
+
+            var output = new DocumentDto
+            {
+                Name = fileName,
+            };
+
+            // Return.
+            return Ok(output);
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)

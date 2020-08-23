@@ -59,7 +59,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             };
 
             // Act
-            var response = await client.PostAsync("api/inquiry/upload-document", formContent); // TODO: There is no such controller?
+            var response = await client.PostAsync("api/incident/upload-document", formContent);
             var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
 
             // Assert
