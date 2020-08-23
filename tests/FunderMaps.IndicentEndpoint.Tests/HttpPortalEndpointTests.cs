@@ -24,6 +24,7 @@ namespace FunderMaps.IndicentEndpoint.Tests
         public async void CreateIncidentReturnOk()
         {
             // Arrange
+            var fileStorageService = new Mock<IFileStorageService>();
             var contactRepositoryMock = new Mock<IContactRepository>();
             contactRepositoryMock
                 .Setup(s => s.AddAsync(It.IsAny<Contact>()))
@@ -43,7 +44,7 @@ namespace FunderMaps.IndicentEndpoint.Tests
                 }));
             var addressRepositoryMock = new Mock<IAddressRepository>();
 
-            var incidentUseCase = new IncidentUseCase(contactRepositoryMock.Object, incidentRepositoryMock.Object);
+            var incidentUseCase = new IncidentUseCase(fileStorageService.Object, contactRepositoryMock.Object, incidentRepositoryMock.Object);
             var geocoderUseCase = new GeocoderUseCase(addressRepositoryMock.Object);
 
             var httpRequest = new DefaultHttpContext();
@@ -101,6 +102,7 @@ namespace FunderMaps.IndicentEndpoint.Tests
             }
 
             // Arrange
+            var fileStorageService = new Mock<IFileStorageService>();
             var contactRepositoryMock = new Mock<IContactRepository>();
             var incidentRepositoryMock = new Mock<IIncidentRepository>();
             var addressRepositoryMock = new Mock<IAddressRepository>();
@@ -108,7 +110,7 @@ namespace FunderMaps.IndicentEndpoint.Tests
                 .Setup(s => s.GetBySearchQueryAsync(It.IsAny<string>(), It.IsAny<INavigation>()))
                 .Returns(ReturnAsyncEnumerable());
 
-            var incidentUseCase = new IncidentUseCase(contactRepositoryMock.Object, incidentRepositoryMock.Object);
+            var incidentUseCase = new IncidentUseCase(fileStorageService.Object, contactRepositoryMock.Object, incidentRepositoryMock.Object);
             var geocoderUseCase = new GeocoderUseCase(addressRepositoryMock.Object);
 
             var httpRequest = new DefaultHttpContext();
