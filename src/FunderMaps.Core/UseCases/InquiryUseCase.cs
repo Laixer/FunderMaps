@@ -111,10 +111,17 @@ namespace FunderMaps.Core.UseCases
             return inquiry.Access.AccessPolicy;
         }
 
+        /// <summary>
+        ///     Store document and return new name.
+        /// </summary>
+        /// <param name="stream">FIle stream.</param>
+        /// <param name="fileName">Original file name.</param>
+        /// <param name="contentType">Original file content type.</param>
+        /// <returns></returns>
         public async ValueTask<string> StoreDocumentAsync(Stream stream, string fileName, string contentType)
         {
             string newFileName = IO.Path.GetUniqueName(fileName);
-            await _fileStorageService.StoreFileAsync("intake-test", newFileName, contentType, stream); // TODO: store?
+            await _fileStorageService.StoreFileAsync("inquiry-report", newFileName, contentType, stream); // TODO: store?
             return newFileName;
         }
 
