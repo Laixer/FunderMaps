@@ -82,27 +82,68 @@ namespace FunderMaps.Core.Entities
         public override bool Equals(object obj)
             => obj != null && Equals(obj as TEntity);
 
+        /// <summary>
+        ///     Compare left smaller than right.
+        /// </summary>
+        /// <param name="left">Instance of <see cref="BaseEntity{TEntity}"/>.</param>
+        /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public static bool operator <(BaseEntity<TEntity> left, TEntity right)
-            => left.CompareTo(right) < 0;
+            => left != null && left.CompareTo(right) < 0;
 
+        /// <summary>
+        ///     Compare left smaller or equal than right.
+        /// </summary>
+        /// <param name="left">Instance of <see cref="BaseEntity{TEntity}"/>.</param>
+        /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public static bool operator <=(BaseEntity<TEntity> left, TEntity right)
-            => left.CompareTo(right) <= 0;
+            => left != null && left.CompareTo(right) <= 0;
 
+        /// <summary>
+        ///     Compare left greater than right.
+        /// </summary>
+        /// <param name="left">Instance of <see cref="BaseEntity{TEntity}"/>.</param>
+        /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public static bool operator >(BaseEntity<TEntity> left, TEntity right)
-            => left.CompareTo(right) > 0;
+            => left != null && left.CompareTo(right) > 0;
 
+        /// <summary>
+        ///     Compare left greater or equal than right.
+        /// </summary>
+        /// <param name="left">Instance of <see cref="BaseEntity{TEntity}"/>.</param>
+        /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public static bool operator >=(BaseEntity<TEntity> left, TEntity right)
-            => left.CompareTo(right) >= 0;
+            => left != null && left.CompareTo(right) >= 0;
 
+        /// <summary>
+        ///     Compare left equal to right.
+        /// </summary>
+        /// <param name="left">Instance of <see cref="BaseEntity{TEntity}"/>.</param>
+        /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public static bool operator ==(BaseEntity<TEntity> left, BaseEntity<TEntity> right)
             => ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
 
+        /// <summary>
+        ///     Compare left not equal to right.
+        /// </summary>
+        /// <param name="left">Instance of <see cref="BaseEntity{TEntity}"/>.</param>
+        /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public static bool operator !=(BaseEntity<TEntity> left, BaseEntity<TEntity> right)
             => !(left == right);
 
         #endregion Operator Overloading
     }
 
+    /// <summary>
+    ///     Base for all indentifiable entities.
+    /// </summary>
+    /// <typeparam name="TEntity">Entity type.</typeparam>
+    /// <typeparam name="TEntryIdentifier">Entity identifier type.</typeparam>
     public abstract class IdentifiableEntity<TEntity, TEntryIdentifier> : BaseEntity<TEntity>
         where TEntity : class
         where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
@@ -125,9 +166,19 @@ namespace FunderMaps.Core.Entities
         public override string ToString()
             => EntityIdentifier(DerivedEntity).ToString();
 
+        /// <summary>
+        ///     Check if self is equal to other entity.
+        /// </summary>
+        /// <param name="other">Entity to compare.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public override bool Equals(TEntity other)
             => other != null && EntityIdentifier(DerivedEntity).Equals(EntityIdentifier(other));
 
+        /// <summary>
+        ///     Compare self to other entity.
+        /// </summary>
+        /// <param name="other">Entity to compare.</param>
+        /// <returns>The Levenshtein distance between objects.</returns>
         public override int CompareTo(TEntity other)
             => other == null ? 1 : EntityIdentifier(DerivedEntity).CompareTo(EntityIdentifier(other));
     }

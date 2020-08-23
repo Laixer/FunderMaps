@@ -3,8 +3,12 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Services
 {
+    /// <summary>
+    ///     Dummy file storage service.
+    /// </summary>
     internal class NullFileStorageService : IFileStorageService
     {
         public ValueTask<bool> FileExistsAsync(string store, string name)
@@ -28,3 +32,4 @@ namespace FunderMaps.Core.Services
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

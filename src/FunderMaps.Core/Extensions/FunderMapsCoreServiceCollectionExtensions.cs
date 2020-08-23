@@ -31,7 +31,6 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register core service fillers in DI container.
             services.AddScoped<IEmailService, NullEmailService>();
             services.AddScoped<IFileStorageService, NullFileStorageService>();
-            services.AddScoped<IGeocoderService, NullGeocoderService>();
             services.AddScoped<INotificationService, NullNotificationService>();
 
             // Register core use cases in DI container.
