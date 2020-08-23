@@ -10,6 +10,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class Project : RecordControl<Project, int>, IReportEntity<Project>
     {
+        /// <summary>
+        ///     Creaew new instance.
+        /// </summary>
         public Project()
             : base(e => e.Id)
         {
