@@ -90,7 +90,7 @@ namespace FunderMaps.Webservice
             }
             else
             {
-                app.UseExceptionHandler(); // TODO This should be fixed for production!
+                app.UseExceptionHandler("/error");
                 app.UseHsts();
             }
             app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/error");
