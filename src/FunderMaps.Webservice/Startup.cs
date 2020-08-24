@@ -8,6 +8,7 @@ using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.IO.Compression;
 
+[assembly: ApiController]
 namespace FunderMaps.Webservice
 {
     /// <summary>
@@ -44,17 +46,8 @@ namespace FunderMaps.Webservice
         {
             if (services == null) { throw new ArgumentNullException(nameof(services)); }
 
-            //services.AddApplicationInsightsTelemetry();
-
             // TODO: REVIEW: Should we IgnoreNullValues ?
             services.AddControllers();
-
-            services.AddResponseCompression(options =>
-            {
-                // NOTE: Compression is disabled by default when serving data
-                // over HTTPS because of BREACH exploit.
-                options.EnableForHttps = true;
-            });
 
             // Configure services.
             services.AddTransient<IDescriptionService, DescriptionService>();
@@ -102,11 +95,7 @@ namespace FunderMaps.Webservice
             else
             {
                 //app.UseExceptionHandler("/oops");
-                app.UseHsts();
             }
-
-            app.UseResponseCompression();
-            app.UseHttpsRedirection();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
