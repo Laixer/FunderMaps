@@ -80,7 +80,7 @@ namespace FunderMaps.Infrastructure.Email
             await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
             await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
             await emailClient.SendAsync(message);
-            await emailClient.DisconnectAsync(true);
+            await emailClient.DisconnectAsync(quit: true);
 
             Logger.LogInformation($"Message sent with success");
         }
