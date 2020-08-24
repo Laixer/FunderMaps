@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
@@ -16,23 +15,22 @@ namespace FunderMaps.IntegrationTests.Backend.Report
     public class IncidentTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly AuthBackendWebApplicationFactory _factory;
+        private readonly HttpClient _client;
 
         public IncidentTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
+            _client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
         }
 
         [Fact]
         public async Task CreateIncidentReturnIncident()
         {
-            // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-
             // Act
-            var response = await client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
+            var response = await _client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
             // Assert
@@ -45,11 +43,6 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task UploadDocumentReturnDocument()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-
             // TODO: Test using faker?
             using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
             byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
@@ -59,7 +52,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             };
 
             // Act
-            var response = await client.PostAsync("api/incident/upload-document", formContent);
+            var response = await _client.PostAsync("api/incident/upload-document", formContent);
             var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
 
             // Assert
@@ -71,14 +64,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task GetIncidentByIdReturnSingleIncident()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+            var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
             // Act
-            var response = await client.GetAsync($"api/incident/{incident.Id}");
+            var response = await _client.GetAsync($"api/incident/{incident.Id}");
             var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
             // Assert
@@ -91,18 +80,13 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task GetAllIncidentReturnNavigationIncident()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(new IncidentFaker().Generate(10, 100))
-                .CreateClient();
             for (int i = 0; i < 10; i++)
             {
-                await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+                await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
             }
 
             // Act
-            var response = await client.GetAsync($"api/incident?limit=10");
+            var response = await _client.GetAsync($"api/incident?limit=10");
             var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
 
             // Assert
@@ -115,14 +99,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var newIncident = new IncidentDtoFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+            var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
+            var response = await _client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -132,14 +112,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task DeleteIncidentReturnNoContent()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+            var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
             // Act
-            var response = await client.DeleteAsync($"api/incident/{incident.Id}");
+            var response = await _client.DeleteAsync($"api/incident/{incident.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

@@ -14,24 +14,22 @@ namespace FunderMaps.IntegrationTests.Backend.Report
     public class InquiryTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly AuthBackendWebApplicationFactory _factory;
+        private readonly HttpClient _client;
 
         public InquiryTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
+            _client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
         }
 
         [Fact]
         public async Task CreateInquiryReturnInquiry()
         {
-            // Arrange
-            var inquiry = new InquiryDtoFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-
             // Act
-            var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
+            var response = await _client.PostAsJsonAsync("api/inquiry", new InquiryDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
 
             // Assert
@@ -44,11 +42,6 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task UploadDocumentReturnDocument()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-
             // TODO: Test using faker?
             using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
             byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
@@ -58,7 +51,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             };
 
             // Act
-            var response = await client.PostAsync("api/inquiry/upload-document", formContent); // TODO: There is no such controller?
+            var response = await _client.PostAsync("api/inquiry/upload-document", formContent); // TODO: There is no such controller?
             var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
 
             // Assert
@@ -70,14 +63,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task GetInquiryByIdReturnSingleInquiry()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
 
             // Act
-            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}");
+            var response = await _client.GetAsync($"api/inquiry/{inquiry.Id}");
             var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
 
             // Assert
@@ -90,17 +79,13 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task GetAllInquiryReturnNavigationInquiry()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
             for (int i = 0; i < 10; i++)
             {
-                await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+                await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
             }
 
             // Act
-            var response = await client.GetAsync($"api/inquiry?limit=10");
+            var response = await _client.GetAsync($"api/inquiry?limit=10");
             var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>();
 
             // Assert
@@ -113,14 +98,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var newInquiry = new InquiryDtoFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry);
+            var response = await _client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -130,15 +111,11 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task SetStatusReviewInquiryReturnNoContent()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
-            await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
+            var response = await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -150,16 +127,12 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task SetStatusRejectedAndApprovedInquiryReturnNoContent(string uri)
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
-            await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
-            await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
+            await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{uri}", new StatusChangeDtoFaker().Generate());
+            var response = await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{uri}", new StatusChangeDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -169,14 +142,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task DeleteInquiryReturnNoContent()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
 
             // Act
-            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}");
+            var response = await _client.DeleteAsync($"api/inquiry/{inquiry.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
