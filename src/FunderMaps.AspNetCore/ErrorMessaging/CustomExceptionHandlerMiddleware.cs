@@ -99,7 +99,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <returns><see cref="Task"/></returns>
         protected virtual async Task HandleExceptionAsync(ExceptionDispatchInfo edi, HttpContext context)
         {
-            _logger.LogError(edi.SourceException.Message);
+            _logger.LogDebug($"The received ex message: {edi.SourceException.Message}");
 
             // We can't do anything if the response has already started, just abort.
             // This means headers have already been sent to the client.
