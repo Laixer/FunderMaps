@@ -2,6 +2,7 @@
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,23 +12,22 @@ namespace FunderMaps.IntegrationTests.Backend.Report
     public class RecoveryTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly AuthBackendWebApplicationFactory _factory;
+        private readonly HttpClient _client;
 
         public RecoveryTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
+            _client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .CreateClient();
         }
 
         [Fact]
         public async Task CreateRecoveryReturnRecovery()
         {
-            // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-
             // Act
-            var response = await client.PostAsJsonAsync("api/recovery", new RecoveryDtoFaker().Generate());
+            var response = await _client.PostAsJsonAsync("api/recovery", new RecoveryDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<RecoveryDto>();
 
             // Assert
@@ -40,14 +40,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task GetRecoveryByIdReturnSingleRecovery()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var recovery = await client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
+            var recovery = await _client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
 
             // Act
-            var response = await client.GetAsync($"api/recovery/{recovery.Id}");
+            var response = await _client.GetAsync($"api/recovery/{recovery.Id}");
             var returnObject = await response.Content.ReadFromJsonAsync<RecoveryDto>();
 
             // Assert
@@ -60,17 +56,13 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task GetAllRecoveryReturnNavigationRecovery()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
             for (int i = 0; i < 10; i++)
             {
-                await client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
+                await _client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
             }
 
             // Act
-            var response = await client.GetAsync($"api/recovery?limit=10");
+            var response = await _client.GetAsync($"api/recovery?limit=10");
             var returnList = await response.Content.ReadFromJsonAsync<List<RecoveryDto>>();
 
             // Assert
@@ -83,14 +75,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var newRecovery = new RecoveryDtoFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var recovery = await client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
+            var recovery = await _client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/recovery/{recovery.Id}", newRecovery);
+            var response = await _client.PutAsJsonAsync($"api/recovery/{recovery.Id}", newRecovery);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -100,14 +88,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task DeleteRecoveryReturnNoContent()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .CreateClient();
-            var recovery = await client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
+            var recovery = await _client.PostAsJsonGetFromJsonAsync<RecoveryDto, RecoveryDto>("api/recovery", new RecoveryDtoFaker().Generate());
 
             // Act
-            var response = await client.DeleteAsync($"api/recovery/{recovery.Id}");
+            var response = await _client.DeleteAsync($"api/recovery/{recovery.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
