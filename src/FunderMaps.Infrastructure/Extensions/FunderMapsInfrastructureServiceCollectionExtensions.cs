@@ -54,6 +54,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
             });
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+
+            // Remove all existing notification services and inject local email service.
+            services.RemoveAll<INotificationService>();
+            services.AddTransient<INotificationService, NotificationHubService>();
         }
 
         /// <summary>
@@ -90,8 +94,10 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 ConfigureProductionServices(services);
             }
-
-            ConfigureServices(services);
+            else
+            {
+                ConfigureServices(services);
+            }
             return services;
         }
     }
