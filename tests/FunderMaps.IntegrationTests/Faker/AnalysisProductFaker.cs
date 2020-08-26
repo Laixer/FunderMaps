@@ -5,13 +5,12 @@ using System;
 
 namespace FunderMaps.IntegrationTests.Faker
 {
-    /// TOOD Clean up product initialization.
     /// <summary>
     ///     Faker for <see cref="AnalysisProduct"/>.
     /// </summary>
     public class AnalysisProductFaker : Faker<AnalysisProduct>
     {
-        /// FUTURE Check subclass product initialization --> slow?
+        // FUTURE Check subclass product initialization --> slow?
         public AnalysisProductFaker()
         {
             RuleFor(f => f.BuildingHeight, f => f.Random.Double(3, 25));

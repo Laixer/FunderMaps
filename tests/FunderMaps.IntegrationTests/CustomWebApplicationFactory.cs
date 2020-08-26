@@ -1,9 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Services;
 using FunderMaps.IntegrationTests.Repositories;
-using FunderMaps.IntegrationTests.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -15,10 +12,7 @@ namespace FunderMaps.IntegrationTests
     public abstract class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
          where TStartup : class
     {
-        public CustomWebApplicationFactory()
-        {
-            ClientOptions.HandleCookies = false;
-        }
+        public CustomWebApplicationFactory() => ClientOptions.HandleCookies = false;
 
         protected virtual void ConfigureServices(IServiceCollection services)
         {
@@ -41,13 +35,11 @@ namespace FunderMaps.IntegrationTests
             services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
             services.AddScoped<IStatisticsRepository, TestStatisticsRepository>();
+            services.AddScoped<ITrackingRepository, TestTrackingRepository>();
             services.AddScoped<IUserRepository, TestUserRepository>();
             services.AddScoped<IOrganizationProposalRepository, TestOrganizationProposalRepository>();
             services.AddScoped<IOrganizationRepository, TestOrganizationRepository>();
             services.AddScoped<IOrganizationUserRepository, TestOrganizationUserRepository>();
-
-            // Services
-            services.AddScoped<IUserTrackingService, TestUserTrackingService>();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -80,7 +72,7 @@ namespace FunderMaps.IntegrationTests
         public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreItem<TObject>(TObject obj)
             where TObject : class
         {
-            // TODO Implement better
+            // FUTURE Implement better
             var dataStore = Services.GetService<ObjectDataStore>();
             dataStore.ClearByTypeAndAddSingle<TObject>(obj);
 
@@ -91,7 +83,7 @@ namespace FunderMaps.IntegrationTests
         public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreList<TObject>(IEnumerable<TObject> objList)
             where TObject : class
         {
-            // TODO Implement better
+            // FUTURE Implement better
             var dataStore = Services.GetService<ObjectDataStore>();
             dataStore.ClearByTypeAndAddList<TObject>(objList);
 

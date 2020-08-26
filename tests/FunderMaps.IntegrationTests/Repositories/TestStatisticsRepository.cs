@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace FunderMaps.IntegrationTests.Repositories
 {
-    /// TODO Fill empty objects.
-    /// TODO Do we want this returning format?
     /// <summary>
     ///     Mockup <see cref="StatisticsProduct"/> repository.
     /// </summary>

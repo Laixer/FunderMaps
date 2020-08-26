@@ -26,15 +26,10 @@ namespace FunderMaps.IntegrationTests.Repositories
 
         public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource, CancellationToken token)
         {
+            // NOTE: We ignore external data source here.
             var selected = DataStore.GetObjectsFromType<AnalysisProduct>().Where(x =>
-            {
-                bool kaas = x.ExternalId == externalId;
-                bool worst = x.ExternalSource == externalSource;
-                return kaas && worst;
-            });
-
-            var first = selected.FirstOrDefault();
-            return first ?? throw new EntityNotFoundException();
+                (x.ExternalId == externalId));
+            return selected.FirstOrDefault() ?? throw new EntityNotFoundException();
         }
 
         public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token)

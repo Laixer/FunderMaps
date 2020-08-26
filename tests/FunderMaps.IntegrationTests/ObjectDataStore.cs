@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace FunderMaps.IntegrationTests
 {
-    /// TODO Duplicate functionality with <see cref="EntityDataStore{TEntity}"/>.
+    // FUTURE Duplicate functionality with <see cref="EntityDataStore{TEntity}"/>.
     /// <summary>
     ///     Data store for objects.
     /// </summary>
