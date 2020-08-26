@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -10,7 +9,6 @@ using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +31,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Scrapped for now.
         /// </summary>
-        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token = default) => throw new NotImplementedException();
 
         /// <summary>
         ///     Gets an analysis product by its external building id and source.
@@ -47,21 +45,31 @@ namespace FunderMaps.Data.Repositories
         /// <param name="externalSource">External data source</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource, CancellationToken token)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             // Build sql.
-            // TODO This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
+            // FUTURE This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
                 SELECT
-                    *
+                    id,
+                    external_id,
+                    external_source,
+                    foundation_type,
+                    groundwater_level,
+                    foundation_risk,
+                    construction_year,
+                    building_height,
+                    ground_level,
+                    restoration_costs,
+                    dewatering_depth,
+                    drystand,
+                    reliability,
+                    geom,
+                    neighborhood_id
                 FROM data.analysis_complete AS ac
                 WHERE
                     ac.external_id = @ExternalId
@@ -90,21 +98,31 @@ namespace FunderMaps.Data.Repositories
         /// <param name="id">Internal building id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token)
+        public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             id.ThrowIfNullOrEmpty();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             // Build sql.
-            // TODO This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
+            // FUTURE This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
                 SELECT
-                    *
+                    id,
+                    external_id,
+                    external_source,
+                    foundation_type,
+                    groundwater_level,
+                    foundation_risk,
+                    construction_year,
+                    building_height,
+                    ground_level,
+                    restoration_costs,
+                    dewatering_depth,
+                    drystand,
+                    reliability,
+                    geom,
+                    neighborhood_id
                 FROM data.analysis_complete AS ac
                 WHERE
                     ac.id = @Id
@@ -123,7 +141,7 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        /// FUTURE Sorting order and sorting column
+        // FUTURE Sorting order and sorting column
         /// <summary>
         ///     
         /// </summary>
@@ -132,7 +150,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="navigation"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token)
+        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
@@ -141,15 +159,25 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             // Build sql.
             var sql = @"
                 SELECT
-                    *
+                    id,
+                    external_id,
+                    external_source,
+                    foundation_type,
+                    groundwater_level,
+                    foundation_risk,
+                    construction_year,
+                    building_height,
+                    ground_level,
+                    restoration_costs,
+                    dewatering_depth,
+                    drystand,
+                    reliability,
+                    geom,
+                    neighborhood_id
                 FROM data.analysis_complete AS ac
                 JOIN geocoder.address AS a ON a.building_id = ac.id
                 JOIN geocoder.search_address(@Query) AS s ON s.id = a.id
@@ -165,7 +193,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("UserId", userId);
             cmd.AddParameterWithValue("Limit", (navigation ?? Navigation.DefaultCollection).Limit);
             cmd.AddParameterWithValue("Offset", (navigation ?? Navigation.DefaultCollection).Limit);
-            
+
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
 
             // FUTURE: Make async enumerable.
@@ -191,7 +219,7 @@ namespace FunderMaps.Data.Repositories
                 FoundationType = reader.GetFieldValue<FoundationType>(3),
                 GroundWaterLevel = reader.GetDouble(4),
                 FoundationRisk = reader.GetFieldValue<FoundationRisk>(5),
-                ConstructionYear = DateTimeOffsetHelper.FromYear(reader.GetSafeInt(6) ?? 0), // FUTURE Make extension, clean up
+                ConstructionYear = reader.GetDateTime(6),
                 BuildingHeight = reader.GetDouble(7),
                 GroundLevel = reader.GetFloat(8),
                 RestorationCosts = reader.GetDouble(9),

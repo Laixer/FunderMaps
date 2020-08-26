@@ -44,10 +44,6 @@ namespace FunderMaps.Data.Repositories
         {
             userId.ThrowIfNullOrEmpty();
             buildingId.ThrowIfNullOrEmpty();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             throw new NotImplementedException();
         }

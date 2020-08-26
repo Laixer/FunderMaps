@@ -8,14 +8,13 @@ using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
-    /// FUTURE: This casts uint? to uint (and similar). In theory this is safe
+    // FUTURE: This casts uint? to uint (and similar). In theory this is safe
     ///     but this is VERY bug sensitive.
     /// <summary>
     ///     Repository for statistics.
@@ -46,50 +45,50 @@ namespace FunderMaps.Data.Repositories
             NeighborhoodId
         }
 
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token)
+        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
             => (await ProcessAsync(StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodCode, neighborhoodCode, token)).ConstructionYearDistribution;
 
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string neighborhoodId, CancellationToken token)
+        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string neighborhoodId, CancellationToken token = default)
             => (await ProcessAsync(StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodId, neighborhoodId, token)).ConstructionYearDistribution;
 
-        public async Task<double> GetDataCollectedPercentageByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => (double) (await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodCode, neighborhoodCode, token)).DataCollectedPercentage;
+        public async Task<double> GetDataCollectedPercentageByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
+            => (double)(await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodCode, neighborhoodCode, token)).DataCollectedPercentage;
 
-        public async Task<double> GetDataCollectedPercentageByIdAsync(string neighborhoodId, CancellationToken token)
-            => (double) (await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodId, neighborhoodId, token)).DataCollectedPercentage;
+        public async Task<double> GetDataCollectedPercentageByIdAsync(string neighborhoodId, CancellationToken token = default)
+            => (double)(await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodId, neighborhoodId, token)).DataCollectedPercentage;
 
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token)
+        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
             => (await ProcessAsync(StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodCode, neighborhoodCode, token)).FoundationRiskDistribution;
 
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string neighborhoodId, CancellationToken token)
+        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string neighborhoodId, CancellationToken token = default)
             => (await ProcessAsync(StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationRiskDistribution;
 
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token)
+        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
             => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodCode, neighborhoodCode, token)).FoundationTypeDistribution;
 
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string neighborhoodId, CancellationToken token)
+        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string neighborhoodId, CancellationToken token = default)
             => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationTypeDistribution;
 
-        public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalBuildingRestoredCount;
+        public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
+            => (uint)(await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalBuildingRestoredCount;
 
-        public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighborhoodId, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalBuildingRestoredCount;
+        public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighborhoodId, CancellationToken token = default)
+            => (uint)(await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalBuildingRestoredCount;
 
-        public async Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalIncidentCount;
+        public async Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
+            => (uint)(await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalIncidentCount;
 
-        public async Task<uint> GetTotalIncidentCountByIdAsync(string neighborhoodId, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalIncidentCount;
+        public async Task<uint> GetTotalIncidentCountByIdAsync(string neighborhoodId, CancellationToken token = default)
+            => (uint)(await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalIncidentCount;
 
-        public async Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalReportCount;
+        public async Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
+            => (uint)(await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalReportCount;
 
-        public async Task<uint> GetTotalReportCountByIdAsync(string neighborhoodId, CancellationToken token)
-            => (uint) (await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalReportCount;
+        public async Task<uint> GetTotalReportCountByIdAsync(string neighborhoodId, CancellationToken token = default)
+            => (uint)(await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalReportCount;
 
 
-        /// TODO This seems a bit hacky. The format might change in the future when we decide to change the process of getting the data.
+        // TODO This seems a bit hacky. The format might change in the future when we decide to change the process of getting the data.
         /// <summary>
         ///     Wrapper function to handle every case we have.
         /// </summary>
@@ -101,17 +100,14 @@ namespace FunderMaps.Data.Repositories
         /// <param name="method"><see cref="IdMethod"/></param>
         /// <param name="identifier">Neighborhood id or code</param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier, CancellationToken token)
+        private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier, CancellationToken token = default)
         {
             // Validate parameters.
             identifier.ThrowIfNullOrEmpty();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             static string GetTable(StatisticsProductType product)
-                => product switch
+            {
+                return product switch
                 {
                     StatisticsProductType.FoundationRatio => "statistics_foundation_type",
                     StatisticsProductType.ConstructionYears => "statistics_construction_years",
@@ -122,14 +118,17 @@ namespace FunderMaps.Data.Repositories
                     StatisticsProductType.Reports => "statistics_inquiries",
                     _ => throw new InvalidOperationException(nameof(product))
                 };
+            }
 
             static string GetIdColumnName(IdMethod method)
-                => method switch
+            {
+                return method switch
                 {
                     IdMethod.NeighborhoodCode => "external_id",
                     IdMethod.NeighborhoodId => "id",
                     _ => throw new InvalidOperationException(nameof(method))
                 };
+            }
 
             // TODO SQL injection.
             // Build SQL.
@@ -177,7 +176,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="ConstructionYearDistribution"/></returns>
-        private static async Task<ConstructionYearDistribution> MapConstructionYearDistributionAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<ConstructionYearDistribution> MapConstructionYearDistributionAsync(DbDataReader reader, CancellationToken token = default)
         {
             // FUTURE: Make functional
             var pairs = new List<ConstructionYearPair>();
@@ -203,7 +202,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Amount of buildings restored.</returns>
-        private static async Task<uint> MapBuildingsRestoredAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<uint> MapBuildingsRestoredAsync(DbDataReader reader, CancellationToken token = default)
         {
             await reader.ReadAsync(token);
             return reader.GetUInt(1);
@@ -215,20 +214,20 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Percentage of data collected.</returns>
-        private static async Task<double> MapDataCollectedAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<double> MapDataCollectedAsync(DbDataReader reader, CancellationToken token = default)
         {
             await reader.ReadAsync(token);
             return reader.GetDouble(1);
         }
 
-        /// FUTURE: Clean up, this is ugly.
+        // FUTURE: Clean up, this is ugly.
         /// <summary>
         ///     Gets a <see cref="FoundationRiskDistribution"/> from a <paramref name="reader"/>.
         /// </summary>
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="FoundationRiskDistribution"/></returns>
-        private static async Task<FoundationRiskDistribution> MapFoundationRiskDistributionAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<FoundationRiskDistribution> MapFoundationRiskDistributionAsync(DbDataReader reader, CancellationToken token = default)
         {
             var map = new Dictionary<FoundationRisk, double>
             {
@@ -260,7 +259,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="FoundationTypeDistribution"/></returns>
-        private static async Task<FoundationTypeDistribution> MapFoundationTypeDistributionAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<FoundationTypeDistribution> MapFoundationTypeDistributionAsync(DbDataReader reader, CancellationToken token = default)
         {
             // FUTURE: Make functional
             var pairs = new List<FoundationTypePair>();
@@ -286,7 +285,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Amount of incidents.</returns>
-        private static async Task<uint> MapIncidentsAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<uint> MapIncidentsAsync(DbDataReader reader, CancellationToken token = default)
         {
             await reader.ReadAsync(token);
             return reader.GetUInt(1);
@@ -298,7 +297,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"><see cref="DbDataReader"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Amount of inquiries.</returns>
-        private static async Task<uint> MapInquiriesAsync(DbDataReader reader, CancellationToken token)
+        private static async Task<uint> MapInquiriesAsync(DbDataReader reader, CancellationToken token = default)
         {
             await reader.ReadAsync(token);
             return reader.GetUInt(1);
