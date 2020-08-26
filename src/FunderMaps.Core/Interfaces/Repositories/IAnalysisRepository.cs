@@ -9,12 +9,12 @@ namespace FunderMaps.Core.Interfaces.Repositories
 {
     public interface IAnalysisRepository
     {
-        Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token);
+        Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token = default);
 
-        Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource, CancellationToken token);
+        Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource, CancellationToken token = default);
 
-        Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token);
+        Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token = default);
 
-        Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token);
+        Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token = default);
     }
 }
