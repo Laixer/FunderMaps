@@ -1,34 +1,19 @@
-﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Webservice.Abstractions.Services;
+﻿using FunderMaps.Webservice.Handlers;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.Webservice.Controllers
 {
     /// <summary>
     ///     Controller for all statistics endpoints.
     /// </summary>
-    [ApiController, Route("api/statistics")]
+    [Route("statistics")]
     public sealed class StatisticsController : ControllerBase
     {
-        private readonly ILogger<StatisticsController> _logger;
-        private readonly IProductRequestService _productRequestService;
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public StatisticsController(ILogger<StatisticsController> logger,
-            IProductRequestService productRequestService)
-        {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _productRequestService = productRequestService ?? throw new ArgumentNullException(nameof(productRequestService));
-        }
-
         /// <summary>
         ///     Gets one or more <see cref="ResponseModelBase"/> items in a wrapper. 
         ///     Specify one of the following:
@@ -40,19 +25,21 @@ namespace FunderMaps.Webservice.Controllers
         /// </list>
         /// </summary>
         /// <remarks>
-        ///     <paramref name="inputModel"/> is validated through <see cref="ApiControllerAttribute"/>.
+        ///     <paramref name="input"/> is validated through <see cref="ApiControllerAttribute"/>.
         /// </remarks>
-        /// <param name="inputModel"><see cref="StatisticsInputModel"/></param>
+        /// <param name="input"><see cref="StatisticsInputModel"/></param>
+        /// <param name="productRequestHandler"><see cref="ProductRequestHandler"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromQuery] StatisticsInputModel inputModel)
+        public async Task<IActionResult> GetProductAsync([FromQuery] StatisticsInputModel input, [FromServices] ProductRequestHandler productRequestHandler)
         {
             // Get user id.
             // TODO Implement auth
             var userId = Guid.NewGuid();
 
             // Process request and return.
-            return Ok(await _productRequestService.ProcessStatisticsRequestAsync(userId, inputModel, HttpContext.RequestAborted).ConfigureAwait(false));
+            return Ok(await productRequestHandler.ProcessStatisticsRequestAsync(userId, input, HttpContext.RequestAborted).ConfigureAwait(false));
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods

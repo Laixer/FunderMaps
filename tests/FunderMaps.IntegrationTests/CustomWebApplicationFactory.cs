@@ -12,10 +12,7 @@ namespace FunderMaps.IntegrationTests
     public abstract class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
          where TStartup : class
     {
-        public CustomWebApplicationFactory()
-        {
-            ClientOptions.HandleCookies = false;
-        }
+        public CustomWebApplicationFactory() => ClientOptions.HandleCookies = false;
 
         protected virtual void ConfigureServices(IServiceCollection services)
         {
@@ -25,13 +22,20 @@ namespace FunderMaps.IntegrationTests
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(EntityDataStore<>));
+            services.AddSingleton(typeof(ObjectDataStore));
+
+            // Repositories
             services.AddScoped<IAddressRepository, TestAddressRepository>();
+            services.AddScoped<IAnalysisRepository, TestAnalysisRepository>();
+            services.AddScoped<IBuildingRepository, TestBuildingRepository>();
             services.AddScoped<IContactRepository, TestContactRepository>();
             services.AddScoped<IIncidentRepository, TestIncidentRepository>();
             services.AddScoped<IInquiryRepository, TestInquiryRepository>();
             services.AddScoped<IInquirySampleRepository, TestInquirySampleRepository>();
             services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
+            services.AddScoped<IStatisticsRepository, TestStatisticsRepository>();
+            services.AddScoped<ITrackingRepository, TestTrackingRepository>();
             services.AddScoped<IUserRepository, TestUserRepository>();
             services.AddScoped<IOrganizationProposalRepository, TestOrganizationProposalRepository>();
             services.AddScoped<IOrganizationRepository, TestOrganizationRepository>();
@@ -44,7 +48,7 @@ namespace FunderMaps.IntegrationTests
             builder.ConfigureTestServices(ConfigureTestServices);
         }
 
-        // TODO Helper, move ?
+        // FUTURE Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(TEntity entity)
             where TEntity : BaseEntity<TEntity>
         {
@@ -54,12 +58,34 @@ namespace FunderMaps.IntegrationTests
             return this;
         }
 
-        // TODO Helper, move ?
+        // FUTURE Helper, move ?
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IEnumerable<TEntity> list)
             where TEntity : BaseEntity<TEntity>
         {
             var dataStore = Services.GetService<EntityDataStore<TEntity>>();
             dataStore.Reset(list);
+
+            return this;
+        }
+
+        // FUTURE Helper, move ?
+        public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreItem<TObject>(TObject obj)
+            where TObject : class
+        {
+            // FUTURE Implement better
+            var dataStore = Services.GetService<ObjectDataStore>();
+            dataStore.ClearByTypeAndAddSingle<TObject>(obj);
+
+            return this;
+        }
+
+        // FUTURE Helper, move ?
+        public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreList<TObject>(IEnumerable<TObject> objList)
+            where TObject : class
+        {
+            // FUTURE Implement better
+            var dataStore = Services.GetService<ObjectDataStore>();
+            dataStore.ClearByTypeAndAddList<TObject>(objList);
 
             return this;
         }

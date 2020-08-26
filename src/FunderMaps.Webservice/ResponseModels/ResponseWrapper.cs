@@ -10,13 +10,7 @@ namespace FunderMaps.Webservice.ResponseModels
     /// This has no generics and thus can be used as a base for both abstract
     /// and non-abstract implementations of the <see cref="ResponseWrapper{TResponseModel}"/>.
     /// </remarks>
-    public class ResponseWrapper
-    {
-        /// <summary>
-        /// String representation of the requested product.
-        /// </summary>
-        public string Product { get; set; }
-    }
+    public class ResponseWrapper { }
 
     /// <summary>
     /// Wrapper class for our API response object.

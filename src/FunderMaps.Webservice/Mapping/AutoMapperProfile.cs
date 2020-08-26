@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Extensions.EnumMapping;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
@@ -7,7 +6,6 @@ using FunderMaps.Core.Types.Regions;
 using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
 using FunderMaps.Webservice.ResponseModels.Types;
-using FunderMaps.Webservice.Translation;
 
 namespace FunderMaps.Webservice.Mapping
 {
@@ -49,8 +47,11 @@ namespace FunderMaps.Webservice.Mapping
             CreateMap<Region, RegionResponseModel>();
 
             // All enums
-            CreateMap<FoundationRisk, string>().ConvertUsing(x => FoundationRiskTranslator.Translate(x));
-            CreateMap<FoundationType, string>().ConvertUsing(x => FoundationTypeTranslator.Translate(x));
+            CreateMap<AnalysisProductType, AnalysisProductTypeResponseModel>();
+            CreateMap<FoundationRisk, FoundationRiskResponseModel>();
+            CreateMap<FoundationType, FoundationTypeResponseModel>();
+            CreateMap<Reliability, ReliabilityResponseModel>();
+            CreateMap<StatisticsProductType, StatisticsProductTypeResponseModel>();
         }
     }
 }

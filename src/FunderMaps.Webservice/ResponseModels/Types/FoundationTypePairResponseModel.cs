@@ -9,7 +9,7 @@
         /// <summary>
         /// The type of foundation.
         /// </summary>
-        public string FoundationType { get; set; }
+        public FoundationTypeResponseModel FoundationType { get; set; }
 
         /// <summary>
         /// The total amount of buildings having this foundation type.

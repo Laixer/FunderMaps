@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace FunderMaps.WebApi.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
     ///     Application version DTO.

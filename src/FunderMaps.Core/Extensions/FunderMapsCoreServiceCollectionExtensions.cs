@@ -2,6 +2,7 @@
 using FunderMaps.Core.Managers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
+using FunderMaps.Webservice.Abstractions.Services;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -43,6 +44,10 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register core managers in DI container.
             services.AddScoped<UserManager>();
             services.AddScoped<OrganizationManager>();
+
+            // Register core services in DI container.
+            services.AddSingleton<IDescriptionService, DescriptionService>();
+            services.AddTransient<IProductService, ProductService>();
 
             return services;
         }

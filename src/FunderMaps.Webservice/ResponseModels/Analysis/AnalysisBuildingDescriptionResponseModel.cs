@@ -7,7 +7,6 @@
     {
         /// <summary>
         /// Description of the terrain on which this building lies.
-        /// TODO Correct name?
         /// </summary>
         public string TerrainDescription { get; set; }
 

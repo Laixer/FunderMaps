@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Distributions;
-using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Types.Distributions;
 using System;
 
 namespace FunderMaps.Core.Types.Products
@@ -21,6 +19,11 @@ namespace FunderMaps.Core.Types.Products
         public string ExternalId { get; set; }
 
         /// <summary>
+        ///     Internal neighborhood id in which this building lies.
+        /// </summary>
+        public string NeighborhoodId { get; set; }
+
+        /// <summary>
         /// Represents the external data source of this building.
         /// </summary>
         public ExternalDataSource? ExternalSource { get; set; }
@@ -32,7 +35,6 @@ namespace FunderMaps.Core.Types.Products
 
         /// <summary>
         /// Represents the ground water level.
-        /// TODO Unit and reference?
         /// </summary>
         public double? GroundWaterLevel { get; set; }
 
@@ -53,8 +55,6 @@ namespace FunderMaps.Core.Types.Products
 
         /// <summary>
         /// Description of the terrain on which this building lies.
-        /// TODO Correct name?
-        /// </summary>
         public string TerrainDescription { get; set; }
 
         /// <summary>
@@ -64,23 +64,18 @@ namespace FunderMaps.Core.Types.Products
 
         /// <summary>
         /// Represents the estimated restoration costs for this building.
-        /// TODO Correct unit?
         /// </summary>
         public double? RestorationCosts { get; set; }
 
         /// <summary>
         /// Represents the dewatering depth (ontwateringsdiepte) for this building.
-        /// TODO Correct unit?
-        /// TODO Correct name?
         /// </summary>
         public double? DewateringDepth { get; set; }
 
         /// <summary>
         /// Represents the period of drought (droogstand) for this building.
-        /// TODO Correct unit?
-        /// TODO Correct name?
         /// </summary>
-        public double? DryPeriod { get; set; }
+        public double? Drystand { get; set; }
 
         /// <summary>
         /// Complete description of this building.
@@ -89,10 +84,8 @@ namespace FunderMaps.Core.Types.Products
 
         /// <summary>
         /// Represents the reliability of all data about this building.
-        /// TODO What unit? Percentage?
-        /// TODO Correct name?
         /// </summary>
-        public double? Reliability { get; set; }
+        public Reliability? Reliability { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.

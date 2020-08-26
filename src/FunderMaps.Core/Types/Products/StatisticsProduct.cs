@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Types.Distributions;
-using FunderMaps.Core.Types.Regions;
 
 namespace FunderMaps.Core.Types.Products
 {
@@ -9,9 +8,14 @@ namespace FunderMaps.Core.Types.Products
     public sealed class StatisticsProduct : ProductBase
     {
         /// <summary>
-        /// The region in which these statistics were caluclated.
+        ///     Internal neighborhood id in which these statistics were calculated.
         /// </summary>
-        public Region Region { get; set; }
+        public string NeighborhoodId { get; set; }
+
+        /// <summary>
+        ///     Neighborhood code in which these statistics were calculated.
+        /// </summary>
+        public string NeighborhoodCode { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.
@@ -32,21 +36,21 @@ namespace FunderMaps.Core.Types.Products
         /// <summary>
         /// Represents the percentage of collected data in the given region.
         /// </summary>
-        public double DataCollectedPercentage { get; set; }
+        public double? DataCollectedPercentage { get; set; }
 
         /// <summary>
         /// Total amount of restored buildings in the given area.
         /// </summary>
-        public uint TotalBuildingRestored { get; set; }
+        public uint? TotalBuildingRestoredCount { get; set; }
 
         /// <summary>
         /// Total amount of incidents in the given region.
         /// </summary>
-        public uint TotalIncidents { get; set; }
+        public uint? TotalIncidentCount { get; set; }
 
         /// <summary>
         /// Total amount of reports in the given region.
         /// </summary>
-        public uint TotalReportCount { get; set; }
+        public uint? TotalReportCount { get; set; }
     }
 }

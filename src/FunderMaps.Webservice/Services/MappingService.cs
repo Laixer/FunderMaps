@@ -1,23 +1,20 @@
 ﻿using AutoMapper;
-using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
-using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
-using FunderMaps.Webservice.Translation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace FunderMaps.Webservice.Services
 {
+    // FUTURE Do we need to add the product to the response?
     /// <summary>
-    /// Manages all our mapping operations.
-    /// TODO This is too hard coded, this might be optimizable with generics.
+    ///     Manages all our mapping operations.
     /// </summary>
-    public sealed class MappingService : IMappingService
+    public class MappingService : IMappingService
     {
         private readonly IMapper _mapper;
 
@@ -37,10 +34,13 @@ namespace FunderMaps.Webservice.Services
         /// <returns><see cref="ResponseWrapper{AnalysisResponseModelBase}"/></returns>
         public ResponseWrapper MapToAnalysisWrapper(AnalysisProductType productType, IEnumerable<AnalysisProduct> items)
         {
-            if (items == null) { throw new ArgumentNullException(nameof(items)); }
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             var wrapper = GetAnalysisWrapper(productType, items);
-            wrapper.Product = ProductTypeTranslator.TranslateAnalysis(productType);
+            //wrapper.Product = ProductTypeTranslator.TranslateAnalysis(productType); FUTURE
             return wrapper;
         }
 
@@ -55,10 +55,13 @@ namespace FunderMaps.Webservice.Services
         /// <returns><see cref="ResponseWrapper{StatisticsResponseModelBase}"/></returns>
         public ResponseWrapper MapToStatisticsWrapper(StatisticsProductType productType, IEnumerable<StatisticsProduct> items)
         {
-            if (items == null) { throw new ArgumentNullException(nameof(items)); }
+            if (items == null)
+            {
+                throw new ArgumentNullException(nameof(items));
+            }
 
             var wrapper = GetStatisticsWrapper(productType, items);
-            wrapper.Product = ProductTypeTranslator.TranslateStatistics(productType);
+            //wrapper.Product = ProductTypeTranslator.TranslateStatistics(productType); FUTURE
             return wrapper;
         }
 
@@ -68,10 +71,10 @@ namespace FunderMaps.Webservice.Services
         /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="items"><see cref="AnalysisProduct"/> collection</param>
         /// <returns><see cref="ResponseWrapper{AnalysisResponseModelBase}"/></returns>
-        private ResponseWrapper GetAnalysisWrapper(AnalysisProductType productType, IEnumerable<AnalysisProduct> items)
+        protected virtual ResponseWrapper GetAnalysisWrapper(AnalysisProductType productType, IEnumerable<AnalysisProduct> items)
             => productType switch
             {
-                // TODO Static lookup array for typeof
+                // FUTURE Static lookup array for typeof
                 AnalysisProductType.BuildingData => new ResponseWrapper<AnalysisBuildingDataResponseModel>
                 {
                     Models = items.Select(x => _mapper.Map<AnalysisProduct, AnalysisBuildingDataResponseModel>(x))
@@ -109,7 +112,7 @@ namespace FunderMaps.Webservice.Services
         /// <param name="productType"><see cref="StatisticsProductType"/></param>
         /// <param name="items"><see cref="StatisticsProduct"/> collection</param>
         /// <returns><see cref="ResponseWrapper{StatisticsResponseModelBase}"/></returns>
-        private ResponseWrapper GetStatisticsWrapper(StatisticsProductType productType, IEnumerable<StatisticsProduct> items) 
+        protected virtual ResponseWrapper GetStatisticsWrapper(StatisticsProductType productType, IEnumerable<StatisticsProduct> items)
             => productType switch
             {
                 StatisticsProductType.FoundationRatio => new ResponseWrapper<StatisticsFoundationRatioResponseModel>

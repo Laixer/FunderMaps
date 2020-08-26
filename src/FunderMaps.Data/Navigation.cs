@@ -51,5 +51,10 @@ namespace FunderMaps.Data
         ///     Return recent rows.
         /// </summary>
         public static Navigation Recent { get => new Navigation { Limit = 5 }; }
+
+        /// <summary>
+        ///     Default navigation implementation.
+        /// </summary>
+        public static Navigation DefaultCollection { get => new Navigation { Limit = 25 }; }
     }
 }

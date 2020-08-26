@@ -80,6 +80,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
             try
             {
                 await task;
+                return;
             }
             catch (TException e)
             {
