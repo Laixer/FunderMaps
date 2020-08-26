@@ -23,8 +23,9 @@ namespace FunderMaps.Core.Services
         /// </summary>
         public ProductTrackingService(IAnalysisRepository analysisRepository,
             IStatisticsRepository statisticsRepository,
-            ITrackingRepository trackingRepository)
-            : base(analysisRepository, statisticsRepository)
+            ITrackingRepository trackingRepository,
+            IDescriptionService descriptionService)
+            : base(analysisRepository, statisticsRepository, descriptionService)
                 => _trackingRepository = trackingRepository ?? throw new ArgumentNullException(nameof(trackingRepository));
 
         /// <summary>

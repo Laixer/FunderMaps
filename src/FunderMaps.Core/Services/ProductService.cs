@@ -31,7 +31,7 @@ namespace FunderMaps.Core.Services
         /// <summary>
         ///     <see cref="IDescriptionService"/>.
         /// </summary>
-        protected readonly IDescriptionService _descriptionService
+        protected readonly IDescriptionService _descriptionService;
 
         /// <summary>
         ///     Create new instance.
