@@ -48,7 +48,6 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Act
             var response = await client.PostAsJsonAsync("api/auth/signin", signIn);
-            var err = await response.Content.ReadAsStringAsync();
             var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
             // Assert
