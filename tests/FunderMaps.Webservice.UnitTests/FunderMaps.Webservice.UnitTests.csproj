@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\FunderMaps.Webservice\FunderMaps.Webservice.csproj" />
-    <ProjectReference Include="..\tests\FunderMaps.IntegrationTests\FunderMaps.IntegrationTests.csproj" />
+    <ProjectReference Include="..\..\src\FunderMaps.Webservice\FunderMaps.Webservice.csproj" />
+    <ProjectReference Include="..\FunderMaps.IntegrationTests\FunderMaps.IntegrationTests.csproj" />
   </ItemGroup>
 
 </Project>
