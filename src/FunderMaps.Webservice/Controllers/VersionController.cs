@@ -1,18 +1,16 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Application
+namespace FunderMaps.Webservice.Controllers
 {
     /// <summary>
-    ///     Return application versioning information.
+    ///  Version controller.
     /// </summary>
     [AllowAnonymous]
-    public class VersionController : BaseApiController
+    public class VersionController : ControllerBase
     {
-        // GET: api/version
         /// <summary>
         ///     Return application versioning information.
         /// </summary>
@@ -22,6 +20,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     API is responding.
         /// </remarks>
         [HttpGet("version"), ResponseCache(Duration = 60 * 60 * 24)]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(AppVersionDto))]
         public IActionResult Get()
             => Ok(new AppVersionDto
             {
@@ -31,4 +30,3 @@ namespace FunderMaps.WebApi.Controllers.Application
             });
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods
