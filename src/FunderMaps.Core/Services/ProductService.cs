@@ -13,24 +13,36 @@ using System.Threading.Tasks;
 namespace FunderMaps.Core.Services
 {
     /// <summary>
-    ///     Service for retrieving products from our data store.
+    ///     Service for retrieving products from our data store. This completes
+    ///     each product, including descriptions for analysis products.
     /// </summary>
-    public sealed class ProductService : IProductService
+    public class ProductService : IProductService
     {
-        private readonly IUserTrackingService _userTrackingService;
-        private readonly IAnalysisRepository _analysisRepository;
-        private readonly IStatisticsRepository _statisticsRepository;
+        /// <summary>
+        ///     <see cref="IAnalysisRepository"/>.
+        /// </summary>
+        protected readonly IAnalysisRepository _analysisRepository;
+
+        /// <summary>
+        ///     <see cref="IStatisticsRepository"/>.
+        /// </summary>
+        protected readonly IStatisticsRepository _statisticsRepository;
+
+        /// <summary>
+        ///     <see cref="IDescriptionService"/>.
+        /// </summary>
+        protected readonly IDescriptionService _descriptionService
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ProductService(IUserTrackingService userTrackingService,
-            IAnalysisRepository analysisRepository,
-            IStatisticsRepository statisticsRepository)
+        public ProductService(IAnalysisRepository analysisRepository,
+            IStatisticsRepository statisticsRepository,
+            IDescriptionService descriptionService)
         {
-            _userTrackingService = userTrackingService ?? throw new ArgumentNullException(nameof(userTrackingService));
             _analysisRepository = analysisRepository ?? throw new ArgumentNullException(nameof(analysisRepository));
             _statisticsRepository = statisticsRepository ?? throw new ArgumentNullException(nameof(statisticsRepository));
+            _descriptionService = descriptionService ?? throw new ArgumentNullException(nameof(descriptionService));
         }
 
         /// <summary>
@@ -43,16 +55,12 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalDataSource, INavigation navigation, CancellationToken token)
+        public virtual async Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalDataSource, INavigation navigation, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
             navigation.Validate();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             // Check for cancellation.
             token.ThrowIfCancellationRequested();
@@ -60,10 +68,8 @@ namespace FunderMaps.Core.Services
             // Get analysis product.
             var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource, token);
 
-            // Process and mark.
-            product = await ProcessAnalysisAsync(userId, productType, product, token);
-            await _userTrackingService.ProcessSingleAnalysisRequest(userId, productType, token);
-            return product;
+            // Process and return.
+            return await ProcessAnalysisAsync(userId, productType, product, token);
         }
 
         /// <summary>
@@ -75,16 +81,12 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation, CancellationToken token)
+        public virtual async Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id, INavigation navigation, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             id.ThrowIfNullOrEmpty();
             navigation.Validate();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             // Check for cancellation.
             token.ThrowIfCancellationRequested();
@@ -92,10 +94,8 @@ namespace FunderMaps.Core.Services
             // Get analysis product.
             var product = await _analysisRepository.GetByIdAsync(userId, id, token);
 
-            // Process and mark.
-            product = await ProcessAnalysisAsync(userId, productType, product, token);
-            await _userTrackingService.ProcessSingleAnalysisRequest(userId, productType, token);
-            return product;
+            // Process and return.
+            return await ProcessAnalysisAsync(userId, productType, product, token);
         }
 
         /// <summary>
@@ -110,16 +110,12 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation, CancellationToken token)
+        public virtual async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             query.ThrowIfNullOrEmpty();
             navigation.Validate();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
 
             // Check for cancellation.
             token.ThrowIfCancellationRequested();
@@ -127,14 +123,13 @@ namespace FunderMaps.Core.Services
             // Get analysis product.
             var products = await _analysisRepository.GetByQueryAsync(userId, query, navigation, token);
 
-            // Process and mark.
+            // Process and return.
             // FUTURE Clean up, make async foreach or similar.
             var result = new Collection<AnalysisProduct>();
             foreach (var product in products)
             {
                 result.Add(await ProcessAnalysisAsync(userId, productType, product, token));
             }
-            await _userTrackingService.ProcessMultipleAnalysisRequest(userId, productType, (uint) result.Count, token);
             return result;
         }
 
@@ -146,7 +141,7 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token = default) => throw new NotImplementedException();
 
         /// <summary>
         ///     Gets statistics for a given area code.
@@ -161,16 +156,15 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        public async Task<StatisticsProduct> GetStatisticsByAreaAsync(Guid userId, StatisticsProductType productType, string neighborhoodCode, INavigation navigation, CancellationToken token)
+        public virtual async Task<StatisticsProduct> GetStatisticsByNeighborhoodAsync(Guid userId, StatisticsProductType productType, string neighborhoodCode, INavigation navigation, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             neighborhoodCode.ThrowIfNullOrEmpty();
             navigation.Validate();
-            if (token == null)
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+
+            // Check for cancellation.
+            token.ThrowIfCancellationRequested();
 
             // Create and assign.
             var product = new StatisticsProduct();
@@ -203,8 +197,6 @@ namespace FunderMaps.Core.Services
                     throw new InvalidOperationException(nameof(productType));
             }
 
-            // Track and return.
-            await _userTrackingService.ProcessStatisticsRequestAsync(userId, productType, token);
             return product;
         }
 
@@ -216,7 +208,7 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        public Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token) => throw new NotImplementedException();
+        public virtual Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token = default) => throw new NotImplementedException();
 
         /// <summary>
         ///     This function does the following:
@@ -235,22 +227,28 @@ namespace FunderMaps.Core.Services
         /// <param name="product"><see cref="AnalysisProduct"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="Task"/></returns>
-        private async Task<AnalysisProduct> ProcessAnalysisAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task<AnalysisProduct> ProcessAnalysisAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
-            await ProcessAnalysisFoundationTypeDistributionAsync(productType, product, token);
-            await ProcessAnalysisConstructionYearDistributionAsync(productType, product, token);
-            await ProcessAnalysisFoundationRiskDistributionAsync(productType, product, token);
-            await ProcessAnalysisDataCollectedPercentageAsync(productType, product, token);
-            await ProcessAnalysisTotalBuildingsRestoredCountAsync(productType, product, token);
-            await ProcessAnalysisTotalIncidentCountAsync(productType, product, token);
-            await ProcessAnalysisTotalReportCountAsync(productType, product, token);
+            await Task.WhenAll(new Task[]
+            {
+                ProcessAnalysisFoundationTypeDistributionAsync(productType, product, token),
+                ProcessAnalysisConstructionYearDistributionAsync(productType, product, token),
+                ProcessAnalysisFoundationRiskDistributionAsync(productType, product, token),
+                ProcessAnalysisDataCollectedPercentageAsync(productType, product, token),
+                ProcessAnalysisTotalBuildingsRestoredCountAsync(productType, product, token),
+                ProcessAnalysisTotalIncidentCountAsync(productType, product, token),
+                ProcessAnalysisTotalReportCountAsync(productType, product, token),
+            });
+
+            product.FullDescription = _descriptionService.GenerateFullDescription(product);
+            product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
 
             return product;
         }
 
         #region Process statistic part of analysis
 
-        private async Task ProcessAnalysisFoundationTypeDistributionAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisFoundationTypeDistributionAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {
@@ -261,7 +259,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisConstructionYearDistributionAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisConstructionYearDistributionAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {
@@ -272,7 +270,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisFoundationRiskDistributionAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisFoundationRiskDistributionAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {
@@ -283,7 +281,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisDataCollectedPercentageAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisDataCollectedPercentageAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {
@@ -294,7 +292,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisTotalBuildingsRestoredCountAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisTotalBuildingsRestoredCountAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {
@@ -305,7 +303,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisTotalIncidentCountAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisTotalIncidentCountAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {
@@ -316,7 +314,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisTotalReportCountAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token)
+        private async Task ProcessAnalysisTotalReportCountAsync(AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
         {
             switch (productType)
             {

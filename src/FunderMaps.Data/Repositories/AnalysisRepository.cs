@@ -22,14 +22,13 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal sealed class AnalysisRepository : DataBase, IAnalysisRepository
     {
-        private readonly IDescriptionService _descriptionService;
-
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AnalysisRepository(DbProvider dbProvider,
-            IDescriptionService descriptionService)
-            : base(dbProvider) => _descriptionService = descriptionService ?? throw new ArgumentNullException(nameof(descriptionService));
+        public AnalysisRepository(DbProvider dbProvider)
+            : base(dbProvider)
+        {
+        }
 
         /// <summary>
         ///     Scrapped for now.
@@ -81,11 +80,7 @@ namespace FunderMaps.Data.Repositories
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync(token);
 
-            // Map, append and return product.
-            var product = MapFromReader(reader);
-            product.FullDescription = _descriptionService.GenerateFullDescription(product);
-            product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
-            return product;
+            return MapFromReader(reader);
         }
 
         /// <summary>
@@ -125,11 +120,7 @@ namespace FunderMaps.Data.Repositories
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync(token);
 
-            // Map, append and return product.
-            var product = MapFromReader(reader);
-            product.FullDescription = _descriptionService.GenerateFullDescription(product);
-            product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
-            return product;
+            return MapFromReader(reader);
         }
 
         /// FUTURE Sorting order and sorting column
@@ -177,15 +168,11 @@ namespace FunderMaps.Data.Repositories
             
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
 
-            // Map, append and return products.
             // FUTURE: Make async enumerable.
             var result = new List<AnalysisProduct>();
             while (await reader.ReadAsync(token))
             {
-                var product = MapFromReader(reader);
-                product.FullDescription = _descriptionService.GenerateFullDescription(product);
-                product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
-                result.Add(product);
+                result.Add(MapFromReader(reader));
             }
             return result;
         }
