@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Tests.Entities
     {
         private class TestEntity : StateControl<TestEntity, int>
         {
-            // TOOD: Does not make much sense
+            // TODO: Does not make much sense
             public TestEntity()
                 : base(e => 0)
             {
