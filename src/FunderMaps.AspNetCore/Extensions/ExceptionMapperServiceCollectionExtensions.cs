@@ -4,7 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FunderMaps.AspNetCore.Extensions
 {
-    // TODO This is a duplicate of FunderMaps.WebApi.Extensions.ExceptionMapperServiceCollectionExtensions.cs
     /// <summary>
     ///     Extension functionality to add exception mapping to the services.
     /// </summary>
