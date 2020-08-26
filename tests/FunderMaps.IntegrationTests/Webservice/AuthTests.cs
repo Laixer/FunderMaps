@@ -2,25 +2,29 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Core.Services;
+using FunderMaps.IntegrationTests.Backend;
 using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.IntegrationTests.Repositories;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Application
+namespace FunderMaps.IntegrationTests.Webservice
 {
-    public class AuthTests : IClassFixture<AuthBackendWebApplicationFactory>
+    // NOTE: This was copied from the WebApi tests.
+    /// <summary>
+    ///     Tests our authentication.
+    /// </summary>
+    public class AuthTests : IClassFixture<AuthWebserviceWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private readonly AuthWebserviceWebApplicationFactory _factory;
 
-        public AuthTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public AuthTests(AuthWebserviceWebApplicationFactory factory) => _factory = factory;
 
         [Fact]
         public async Task SignInReturnSuccessAndToken()

@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.WebApi.DataTransferObjects
+namespace FunderMaps.AspNetCore.InputModels
 {
     /// <summary>
     ///     User signin DTO.
     /// </summary>
-    public sealed class SignInDto
+    public sealed class SignInInputModel
     {
         /// <summary>
         ///     User email address.

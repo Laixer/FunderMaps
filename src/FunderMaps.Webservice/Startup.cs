@@ -1,13 +1,16 @@
 using AutoMapper;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Services;
+using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.Core.Services;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
+using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +21,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO.Compression;
+using FunderMaps.Extensions;
+using FunderMaps.AspNetCore.Authentication;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -49,23 +55,12 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            if (services == null) { throw new ArgumentNullException(nameof(services)); }
-
             services.AddControllers();
 
-            services.AddResponseCompression(options =>
-            {
-                // NOTE: Compression is disabled by default when serving data
-                // over HTTPS because of BREACH exploit.
-                options.EnableForHttps = true;
-            });
-
-            // Configure exception mapping.
-            services.AddFunderMapsExceptionMapper();
-
-            // Configure services.
+            // Configure project specific services.
             services.AddTransient<IMappingService, MappingService>();
             services.AddTransient<ProductRequestHandler>();
+            services.AddTransient<AuthenticationHelper>();
 
             // Override default product service by tracking variant of product service.
             var descriptor = new ServiceDescriptor(typeof(IProductService), typeof(ProductTrackingService), ServiceLifetime.Transient);
@@ -74,6 +69,7 @@ namespace FunderMaps.Webservice
             // Configure FunderMaps services.
             services.AddFunderMapsDataServices("FunderMapsConnection");
             services.AddFunderMapsCoreServices();
+            services.AddFunderMapsExceptionMapper();
 
             // Configure AutoMapper.
             services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -82,11 +78,6 @@ namespace FunderMaps.Webservice
             services.AddHealthChecks()
                 .AddCheck<WebserviceHealthCheck>("webservice_health_check");
 
-            // Configure compression providers.
-            services
-                .Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest)
-                .Configure<BrotliCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
-
             // Configure Swagger.
             services.AddSwaggerGen(c =>
             {
@@ -94,6 +85,32 @@ namespace FunderMaps.Webservice
                 c.SchemaFilter<EnumSchemaFilter>();
                 c.GeneratePolymorphicSchemas();
             });
+
+            // Add the authentication layer.
+            services.AddFunderMapsCoreAuthentication();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.SaveToken = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = Configuration.GetJwtIssuer(),
+                        ValidAudience = Configuration.GetJwtAudience(),
+                        IssuerSigningKey = JwtHelper.CreateSecurityKey(Configuration.GetJwtSigningKey()), // TODO: Only for testing
+                    };
+                })
+                .AddJwtBearerTokenProvider();
+
+            // Add the authorization layer.
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddFunderMapsPolicy();
+            });
+
         }
 
         /// <summary>
@@ -119,7 +136,6 @@ namespace FunderMaps.Webservice
             else
             {
                 app.UseExceptionHandler("/error");
-                app.UseHsts();
             }
             app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/error");
 

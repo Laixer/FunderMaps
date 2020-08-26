@@ -1,21 +1,21 @@
 ﻿using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Controllers;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Net;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Application
+namespace FunderMaps.Webservice.Controllers
 {
+    // NOTE: This is copied from the WebApi.
     /// <summary>
     ///     Endpoint controller for application authentication.
     /// </summary>
     [Route("auth")]
-    public class AuthController : BaseApiController
+    public class AuthController : ControllerBase
     {
         private readonly AuthenticationHelper _authenticationHelper;
 
@@ -23,12 +23,16 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Create new instance.
         /// </summary>
         public AuthController(AuthenticationHelper authenticationHelper)
-        {
-            _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
-        }
+            => _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
 
+        /// <summary>
+        ///     User sign in endpoint.
+        /// </summary>
+        /// <param name="input"><see cref="SignInInputModel"/></param>
+        /// <returns><see cref="OkObjectResult"/></returns>
         [AllowAnonymous]
         [HttpPost("signin")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(SignInSecurityTokenDto))]
         public async Task<IActionResult> SignInAsync([FromBody] SignInInputModel input)
         {
             // Act.
@@ -45,7 +49,12 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        /// <summary>
+        ///     Refresh access token for user.
+        /// </summary>
+        /// <returns><see cref="OkObjectResult"/></returns>
         [HttpGet("token-refresh")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(SignInSecurityTokenDto))]
         public async Task<IActionResult> RefreshSignInAsync()
         {
             // Act.

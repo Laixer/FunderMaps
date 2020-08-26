@@ -3,21 +3,18 @@ using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Statistics;
 using FunderMaps.Webservice.ResponseModels.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Webservice.Statistics
+namespace FunderMaps.IntegrationTests.Webservice
 {
     /// <summary>
     ///     Integration test for the statistics controller.
     /// </summary>
-    public class StatisticsTests : IClassFixture<WebserviceWebApplicationFactory>
+    public class StatisticsTests : IClassFixture<AuthWebserviceWebApplicationFactory>
     {
         private readonly HttpClient client;
         private readonly StatisticsProduct statisticsProduct;
@@ -25,12 +22,14 @@ namespace FunderMaps.IntegrationTests.Webservice.Statistics
         /// <summary>
         ///     Create new instance and setup the test data.
         /// </summary>
-        public StatisticsTests(WebserviceWebApplicationFactory factory)
+        public StatisticsTests(AuthWebserviceWebApplicationFactory factory)
         {
             // Arrange.
             statisticsProduct = new StatisticsProductFaker()
                 .Generate();
             client = factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithObjectStoreItem(statisticsProduct)
                 .CreateClient();
         }
@@ -47,7 +46,7 @@ namespace FunderMaps.IntegrationTests.Webservice.Statistics
         {
             // Act.
             var response = await client.GetAsync($"api/statistics/get?product={product}&neighborhoodCode={statisticsProduct.NeighborhoodCode}");
-            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsBuildingsRestoredResponseModel>>(); 
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsBuildingsRestoredResponseModel>>();
 
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

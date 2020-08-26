@@ -1,8 +1,8 @@
-﻿using FunderMaps.Webservice.Handlers;
+﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Webservice.Handlers;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -33,15 +33,17 @@ namespace FunderMaps.Webservice.Controllers
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisResponseModelBase>))]
-        public async Task<IActionResult> GetProductAsync([FromQuery] AnalysisInputModel input, [FromServices] ProductRequestHandler productRequestHandler)
+        public async Task<IActionResult> GetProductAsync([FromQuery] AnalysisInputModel input,
+            [FromServices] ProductRequestHandler productRequestHandler,
+            [FromServices] AuthManager authManager)
         {
-            // Get user id.
-            // TODO Implement auth
-            var userId = Guid.NewGuid();
+            // Get signed in user.
+            var user = await authManager.GetUserAsync(User);
 
-            var result = await productRequestHandler.ProcessAnalysisRequestAsync(userId, input, HttpContext.RequestAborted);
+            // Process request.
+            var result = await productRequestHandler.ProcessAnalysisRequestAsync(user.Id, input, HttpContext.RequestAborted);
 
-            // Process request and return.
+            // Return in ok result.
             return Ok(result);
         }
     }

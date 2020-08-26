@@ -1,4 +1,5 @@
-﻿using FunderMaps.Webservice.Handlers;
+﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Webservice.Handlers;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
@@ -31,14 +32,18 @@ namespace FunderMaps.Webservice.Controllers
         /// <param name="productRequestHandler"><see cref="ProductRequestHandler"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromQuery] StatisticsInputModel input, [FromServices] ProductRequestHandler productRequestHandler)
+        public async Task<IActionResult> GetProductAsync([FromQuery] StatisticsInputModel input, 
+            [FromServices] ProductRequestHandler productRequestHandler,
+            [FromServices] AuthManager authManager)
         {
             // Get user id.
-            // TODO Implement auth
-            var userId = Guid.NewGuid();
+            var user = await authManager.GetUserAsync(User);
 
             // Process request and return.
-            return Ok(await productRequestHandler.ProcessStatisticsRequestAsync(userId, input, HttpContext.RequestAborted).ConfigureAwait(false));
+            var result = await productRequestHandler.ProcessStatisticsRequestAsync(user.Id, input, HttpContext.RequestAborted);
+
+            // Return in ok result.
+            return Ok(result);
         }
     }
 }
