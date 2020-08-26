@@ -1,58 +1,51 @@
 ﻿using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Data;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.Services
+namespace FunderMaps.Data.Repositories
 {
-    /// TODO Implement
     /// <summary>
-    ///     Service for tracking user behaviour with regards to products.
+    ///     User tracking repository. This has a minimum item count of 1, as
+    ///     we also want to track requests that return nothing.
     /// </summary>
-    internal sealed class UserTrackingService : DataBase, IUserTrackingService
+    internal class TrackingRepository : DataBase, ITrackingRepository
     {
         /// <summary>
-        ///     Create new instance.
+        ///     Create new instance and invoke base.
         /// </summary>
-        public UserTrackingService(DbProvider dbProvider) : base(dbProvider)
+        public TrackingRepository(DbProvider dbProvider)
+            : base(dbProvider)
         {
         }
 
         /// <summary>
-        ///     Process an analysis product which returned one or more items.
+        ///     Process analysis product usage. The minimum item count is 1,
+        ///     as we also want to track requests that return nothing.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
-        /// <param name="itemCount">Amount of items returned</param>
+        /// <param name="product"><see cref="AnalysisProductType"/></param>
+        /// <param name="itemCount">Result set item count.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="Task"/></returns>
-        public Task ProcessMultipleAnalysisRequest(Guid userId, AnalysisProductType productType, uint itemCount, CancellationToken token)
-            => ProcessAsync(userId, MapAnalysisProduct(productType), itemCount, token);
+        public Task ProcessAnalysisUsageAsync(Guid userId, AnalysisProductType product, uint itemCount = 1, CancellationToken token = default)
+            => ProcessUsageAsync(userId, MapAnalysisProduct(product), itemCount, token);
 
         /// <summary>
-        ///     Process an analysis product which returned one or more items.
+        ///     Process statistics product usage. The minimum item count is 1,
+        ///     as we also want to track requests that return nothing.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="product"><see cref="StatisticsProductType"/></param>
+        /// <param name="itemCount">Result set item count.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="Task"/></returns>
-        public Task ProcessSingleAnalysisRequest(Guid userId, AnalysisProductType productType, CancellationToken token)
-            => ProcessAsync(userId, MapAnalysisProduct(productType), 1, token);
-
-        /// <summary>
-        ///     Process an analysis product which returned one or more items.
-        /// </summary>
-        /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="StatisticsProductType"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="Task"/></returns>
-        public Task ProcessStatisticsRequestAsync(Guid userId, StatisticsProductType productType, CancellationToken token)
-            => ProcessAsync(userId, MapStatisticsProduct(productType), 1, token);
+        public Task ProcessStatisticsUsageAsync(Guid userId, StatisticsProductType product, uint itemCount = 1, CancellationToken token = default)
+            => ProcessUsageAsync(userId, MapStatisticsProduct(product), itemCount, token);
 
         /// <summary>
         ///     Processes a user tracking request.
@@ -68,32 +61,36 @@ namespace FunderMaps.Core.Services
         /// <param name="itemCount">Amount of items returned by product</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="Task"/></returns>
-        private async Task ProcessAsync(Guid userId, string productMapped, uint itemCount, CancellationToken token)
+        protected async Task ProcessUsageAsync(Guid userId, string productMapped, uint itemCount, CancellationToken token = default)
         {
             // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             productMapped.ThrowIfNullOrEmpty();
 
             // If a product returned 0 items, we still queried the DB. Mark this as 1.
-            if (itemCount == 0)
-            {
-                itemCount = 1;
-            }
+            itemCount = itemCount == 0U ? 1U : itemCount;
 
             // Build sql.
             // TODO SQL injection - sort of.
             var sql = @"
-                INSERT INTO application.product_usage AS pu (user_id, product, count) VALUES
-                    (@UserId, CAST(@Product AS application.product), @Count)
-                ON CONFLICT (user_id, product) DO UPDATE SET
+                INSERT INTO application.product_usage AS pu (
+                    user_id,
+                    product,
+                    count)
+                VALUES (                    
+                    @UserId,
+                    @Product::application.product,
+                    @Count)
+                ON CONFLICT (user_id, product)
+                DO UPDATE SET
                     count = pu.count + excluded.count";
 
             // Execute sql.
-            using var connection = await DbProvider.OpenConnectionScopeAsync(token);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("UserId", userId);
             cmd.AddParameterWithValue("Product", productMapped);
-            cmd.AddParameterWithValue("Count", (int)itemCount); // TODO Theoretically unsafe.
+            cmd.AddParameterWithValue("Count", (int)itemCount);
 
             await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }

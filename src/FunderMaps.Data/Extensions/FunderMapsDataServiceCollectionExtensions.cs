@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Services;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using System;
@@ -40,13 +38,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
             services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+            services.AddScoped<ITrackingRepository, TrackingRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
-
-            // Add user tracking service
-            services.AddScoped<IUserTrackingService, UserTrackingService>();
-
-            // Add description service
-            services.AddSingleton<IDescriptionService, DescriptionService>();
 
             return services;
         }
