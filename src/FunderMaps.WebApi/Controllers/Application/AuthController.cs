@@ -1,4 +1,6 @@
 ﻿using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Controllers;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +29,7 @@ namespace FunderMaps.WebApi.Controllers.Application
 
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<IActionResult> SignInAsync([FromBody] SignInDto input)
+        public async Task<IActionResult> SignInAsync([FromBody] SignInInputModel input)
         {
             // Act.
             string token = await _authenticationHelper.SignInAsync(input.Email, input.Password);

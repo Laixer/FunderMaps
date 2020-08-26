@@ -1,4 +1,6 @@
 ﻿using Bogus;
+using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Core.Services;
 using FunderMaps.IntegrationTests.Extensions;
 using FunderMaps.IntegrationTests.Faker;
@@ -27,7 +29,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var sessionUser = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var password = new Randomizer().Password(128);
-            var signIn = new SignInDto
+            var signIn = new SignInInputModel
             {
                 Email = sessionUser.Email,
                 Password = password,
