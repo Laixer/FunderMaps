@@ -1,26 +1,34 @@
 ﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Extensions;
+using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.ResponseModels;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Webservice.Services
+namespace FunderMaps.Webservice.Handlers
 {
     /// <summary>
-    ///     Handles product requests by calling the <see cref="IProductResultService"/>.
+    ///     Handles product requests.
     /// </summary>
-    public sealed class ProductRequestService : IProductRequestService
+    public sealed class ProductRequestHandler
     {
-        private readonly IProductResultService _productResultService;
+        private readonly IProductService _productService;
+        private readonly IMappingService _mappingService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ProductRequestService(IProductResultService productResultService) => _productResultService = productResultService ?? throw new ArgumentNullException(nameof(productResultService));
+        public ProductRequestHandler(IProductService productService,
+            IMappingService mappingService)
+        {
+            _productService = productService ?? throw new ArgumentNullException(nameof(productService));
+            _mappingService = mappingService ?? throw new ArgumentNullException(nameof(mappingService));
+        }
 
         /// <summary>
         ///     Processes an analysis request.
@@ -29,12 +37,8 @@ namespace FunderMaps.Webservice.Services
         /// <param name="inputModel"><see cref="AnalysisInputModel"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="ResponseWrapper{AnalysisResponseModelBase}"/></returns>
-        public async Task<ResponseWrapper> ProcessAnalysisRequestAsync(Guid userId, AnalysisInputModel inputModel, CancellationToken token)
+        internal async Task<ResponseWrapper> ProcessAnalysisRequestAsync(Guid userId, AnalysisInputModel inputModel, CancellationToken token = default)
         {
-            userId.ThrowIfNullOrEmpty();
-            if (inputModel == null) { throw new ArgumentNullException(nameof(inputModel)); }
-            if (token == null) { throw new ArgumentNullException(nameof(token)); }
-
             // Check for cancellation.
             token.ThrowIfCancellationRequested();
 
@@ -44,15 +48,18 @@ namespace FunderMaps.Webservice.Services
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.Query))
             {
-                return await _productResultService.GetAnalysisByQueryAsync(userId, product, inputModel.Query, inputModel.Navigation, token).ConfigureAwait(false);
+                var result = await _productService.GetAnalysisByQueryAsync(userId, product, inputModel.Query, inputModel.Navigation, token);
+                return _mappingService.MapToAnalysisWrapper(product, result);
             }
             else if (!string.IsNullOrEmpty(inputModel.Id))
             {
-                return await _productResultService.GetAnalysisByIdAsync(userId, product, inputModel.Id, inputModel.Navigation, token).ConfigureAwait(false);
+                var result = await _productService.GetAnalysisByIdAsync(userId, product, inputModel.Id, inputModel.Navigation, token);
+                return _mappingService.MapToAnalysisWrapper(product, new List<AnalysisProduct> { result });
             }
             else if (!string.IsNullOrEmpty(inputModel.BagId))
             {
-                return await _productResultService.GetAnalysisByBagIdAsync(userId, product, inputModel.BagId, inputModel.Navigation, token).ConfigureAwait(false);
+                var result = await _productService.GetAnalysisByExternalIdAsync(userId, product, inputModel.BagId, ExternalDataSource.NlBag, inputModel.Navigation, token);
+                return _mappingService.MapToAnalysisWrapper(product, new List<AnalysisProduct> { result });
             }
 
             // If we reach this point we can't process the request.
@@ -66,12 +73,8 @@ namespace FunderMaps.Webservice.Services
         /// <param name="inputModel"><see cref="StatisticsInputModel"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="ResponseWrapper{StatisticsResponseModelBase}"/></returns>
-        public async Task<ResponseWrapper> ProcessStatisticsRequestAsync(Guid userId, StatisticsInputModel inputModel, CancellationToken token)
+        internal async Task<ResponseWrapper> ProcessStatisticsRequestAsync(Guid userId, StatisticsInputModel inputModel, CancellationToken token = default)
         {
-            userId.ThrowIfNullOrEmpty();
-            if (inputModel == null) { throw new ArgumentNullException(nameof(inputModel)); }
-            if (token == null) { throw new ArgumentNullException(nameof(token)); }
-
             // Check for cancellation.
             token.ThrowIfCancellationRequested();
 
@@ -81,7 +84,8 @@ namespace FunderMaps.Webservice.Services
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.NeighborhoodCode))
             {
-                return await _productResultService.GetStatisticsByAreaAsync(userId, product, inputModel.NeighborhoodCode, inputModel.Navigation, token).ConfigureAwait(false);
+                var result = await _productService.GetStatisticsByNeighborhoodAsync(userId, product, inputModel.NeighborhoodCode, inputModel.Navigation, token);
+                return _mappingService.MapToStatisticsWrapper(product, new List<StatisticsProduct> { result });
             }
 
             // If we reach this point we can't process the request.

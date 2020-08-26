@@ -3,15 +3,19 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
+using FunderMaps.Webservice.Handlers;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO.Compression;
@@ -46,18 +50,19 @@ namespace FunderMaps.Webservice
         {
             if (services == null) { throw new ArgumentNullException(nameof(services)); }
 
-            // TODO: REVIEW: Should we IgnoreNullValues ?
             services.AddControllers();
 
             // Configure services.
-            services.AddTransient<IDescriptionService, DescriptionService>();
             services.AddTransient<IMappingService, MappingService>();
-            services.AddTransient<IProductRequestService, ProductRequestService>();
-            services.AddTransient<IProductResultService, ProductResultService>();
-            services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<ProductRequestHandler>();
+
+            // Override default product service by tracking variant of product service.
+            var descriptor = new ServiceDescriptor(typeof(IProductService), typeof(ProductTrackingService), ServiceLifetime.Transient);
+            services.Replace(descriptor);
 
             // Configure FunderMaps services.
             services.AddFunderMapsDataServices("FunderMapsConnection");
+            services.AddFunderMapsCoreServices();
 
             // Configure AutoMapper.
             services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -88,6 +93,14 @@ namespace FunderMaps.Webservice
         /// </remarks>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            if (env.IsProduction())
+            {
+                app.UseForwardedHeaders(new ForwardedHeadersOptions
+                {
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+                });
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -104,6 +117,7 @@ namespace FunderMaps.Webservice
                 c.RoutePrefix = string.Empty;
             });
 
+            app.UsePathBase(new PathString("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
@@ -111,7 +125,6 @@ namespace FunderMaps.Webservice
 
             app.UseEndpoints(endpoints =>
             {
-                // TODO: Set /api endpoint as default
                 endpoints.MapControllers();
                 endpoints.MapHealthChecks("/health");
             });

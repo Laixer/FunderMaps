@@ -19,13 +19,11 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Description of the terrain on which this building lies.
-        /// TODO Correct name?
         /// </summary>
         public string TerrainDescription { get; set; }
 
         /// <summary>
         /// Represents the estimated restoration costs for this building.
-        /// TODO Correct unit?
         /// </summary>
         public double? RestorationCosts { get; set; }
 
@@ -41,8 +39,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the reliability of all data about this building.
-        /// TODO What unit? Percentage?
-        /// TODO Correct name?
         /// </summary>
         public ReliabilityResponseModel Reliability { get; set; }
     }

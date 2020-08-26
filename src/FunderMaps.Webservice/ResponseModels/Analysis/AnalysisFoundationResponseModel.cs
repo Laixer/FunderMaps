@@ -14,7 +14,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the ground water level.
-        /// TODO Unit and reference?
         /// </summary>
         public double? GroundWaterLevel { get; set; }
 

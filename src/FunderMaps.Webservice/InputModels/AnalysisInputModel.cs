@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Helpers;
+﻿using FunderMaps.AspNetCore.InputModels;
+using FunderMaps.Core.Helpers;
 using FunderMaps.Webservice.ResponseModels.Types;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -7,7 +8,6 @@ namespace FunderMaps.Webservice.InputModels
 {
     /// <summary>
     ///     DTO for an analysis product request.
-    ///     TODO This should check for invalid combinations.
     /// </summary>
     public sealed class AnalysisInputModel : PaginationInputModel, IValidatableObject
     {
@@ -46,7 +46,7 @@ namespace FunderMaps.Webservice.InputModels
         {
             if (StringCollectionHelper.NotNullCount(Query, Id, BagId) != 1)
             {
-                yield return new ValidationResult("Please select one of the following: id, bagid, query or fullfence");
+                yield return new ValidationResult("Please select one of the following: id, bagid, query");
             }
         }
     }

@@ -15,7 +15,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the ground water level.
-        /// TODO Unit and reference?
         /// </summary>
         public double? GroundWaterLevel { get; set; }
 
@@ -36,7 +35,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Description of the terrain on which this building lies.
-        /// TODO Correct name?
         /// </summary>
         public string TerrainDescription { get; set; }
 
@@ -47,7 +45,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the estimated restoration costs for this building.
-        /// TODO Correct unit?
         /// </summary>
         public double? RestorationCosts { get; set; }
 

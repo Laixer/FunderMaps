@@ -1,11 +1,11 @@
-﻿using FunderMaps.Webservice.ResponseModels.Types;
+﻿using FunderMaps.AspNetCore.InputModels;
+using FunderMaps.Webservice.ResponseModels.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.InputModels
 {
     /// <summary>
     ///     DTO for statistics request.
-    ///     TODO This should check for invalid combinations.
     /// </summary>
     public sealed class StatisticsInputModel : PaginationInputModel
     {

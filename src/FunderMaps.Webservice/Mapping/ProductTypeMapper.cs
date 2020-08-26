@@ -8,8 +8,7 @@ namespace FunderMaps.Webservice.Mapping
 {
     /// <summary>
     /// Contains mapping functionality between <see cref="ProductType"/>s 
-    /// and their respective names.
-    /// TODO How to do this elegantly? Also see <see cref="Translation.ProductTypeTranslator"/>.
+    /// and their respective core enums.
     /// </summary>
     public static class ProductTypeMapper
     {

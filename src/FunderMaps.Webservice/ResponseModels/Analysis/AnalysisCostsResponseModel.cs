@@ -14,7 +14,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
 
         /// <summary>
         /// Represents the estimated restoration costs for this building.
-        /// TODO Correct unit?
         /// </summary>
         public double? RestorationCosts { get; set; }
 

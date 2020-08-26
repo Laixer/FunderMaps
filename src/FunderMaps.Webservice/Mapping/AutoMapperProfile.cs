@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.Extensions.EnumMapping;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
@@ -7,7 +6,6 @@ using FunderMaps.Core.Types.Regions;
 using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
 using FunderMaps.Webservice.ResponseModels.Types;
-using FunderMaps.Webservice.Translation;
 
 namespace FunderMaps.Webservice.Mapping
 {
