@@ -11,14 +11,14 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Webservice.Analysis
+namespace FunderMaps.IntegrationTests.Webservice
 {
     /// <summary>
     ///     Integration test for the analysis controller.
     /// </summary>
-    public class AnalysisTests : IClassFixture<WebserviceWebApplicationFactory>
+    public class AnalysisTests : IClassFixture<AuthWebserviceWebApplicationFactory>
     {
-        private const int ItemCount = 4;
+        private const int ItemCount = 100;
 
         private readonly HttpClient client;
         private readonly List<AnalysisProduct> analysisProducts;
@@ -27,7 +27,7 @@ namespace FunderMaps.IntegrationTests.Webservice.Analysis
         /// <summary>
         ///     Create new instance and setup the test data.
         /// </summary>
-        public AnalysisTests(WebserviceWebApplicationFactory factory)
+        public AnalysisTests(AuthWebserviceWebApplicationFactory factory)
         {
             // Arrange.
             analysisProducts = new AnalysisProductFaker().Generate(ItemCount);
@@ -40,6 +40,8 @@ namespace FunderMaps.IntegrationTests.Webservice.Analysis
             }
 
             client = factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
                 .WithObjectStoreList(analysisProducts)
                 .WithObjectStoreList(statisticsProducts)
                 .CreateClient();
