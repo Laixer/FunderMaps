@@ -6,6 +6,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.UseCases
@@ -15,14 +16,16 @@ namespace FunderMaps.Core.UseCases
     /// </summary>
     public class IncidentUseCase
     {
+        private readonly IFileStorageService _fileStorageService;
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentUseCase(IContactRepository contactRepository, IIncidentRepository incidentRepository)
+        public IncidentUseCase(IFileStorageService fileStorageService, IContactRepository contactRepository, IIncidentRepository incidentRepository)
         {
+            _fileStorageService = fileStorageService;
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
         }
@@ -68,6 +71,20 @@ namespace FunderMaps.Core.UseCases
             Validator.ValidateValue(id, new ValidationContext(id), new List<IncidentAttribute> { new IncidentAttribute() });
 
             return await GetAndBuildAsync(id);
+        }
+
+        /// <summary>
+        ///     Store document and return new name.
+        /// </summary>
+        /// <param name="stream">FIle stream.</param>
+        /// <param name="fileName">Original file name.</param>
+        /// <param name="contentType">Original file content type.</param>
+        /// <returns></returns>
+        public async ValueTask<string> StoreDocumentAsync(Stream stream, string fileName, string contentType)
+        {
+            string newFileName = IO.Path.GetUniqueName(fileName);
+            await _fileStorageService.StoreFileAsync("incident-report", newFileName, contentType, stream); // TODO: store?
+            return newFileName;
         }
 
         /// <summary>

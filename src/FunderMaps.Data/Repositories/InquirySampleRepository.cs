@@ -43,7 +43,7 @@ namespace FunderMaps.Data.Repositories
                     address,
                     note,
                     base_measurement_level,
-                    built_year,
+                    building_year,
                     substructure)
                 VALUES (
                     @inquiry,
@@ -52,8 +52,7 @@ namespace FunderMaps.Data.Repositories
                     @base_measurement_level,
                     @built_year,
                     @substructure)
-                RETURNING id;
-            ";
+                RETURNING id";
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);

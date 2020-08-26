@@ -356,16 +356,6 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public decimal SettlementSpeed { get; set; }
 
-        /// <summary>
-        ///     Inquiry object.
-        /// </summary>
-        public Inquiry InquiryNavigation { get; set; }
-
-        /// <summary>
-        ///     Address object.
-        /// </summary>
-        public Address AddressNavigation { get; set; }
-
         public override void InitializeDefaults()
         {
             Id = 0;

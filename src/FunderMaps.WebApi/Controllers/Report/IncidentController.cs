@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using FunderMaps.Controllers;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
+using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -20,33 +23,66 @@ namespace FunderMaps.WebApi.Controllers.Report
     public class IncidentController : BaseApiController
     {
         private readonly IMapper _mapper;
+        private readonly AuthManager _authManager;
         private readonly IncidentUseCase _incidentUseCase;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentController(IMapper mapper, IncidentUseCase incidentUseCase)
+        public IncidentController(IMapper mapper, AuthManager authManager, IncidentUseCase incidentUseCase)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
             _incidentUseCase = incidentUseCase ?? throw new ArgumentNullException(nameof(incidentUseCase));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([Incident] string id)
         {
-            var incident = await _incidentUseCase.GetAsync(id).ConfigureAwait(false);
+            var incident = await _incidentUseCase.GetAsync(id);
 
+            // Map.
             var output = _mapper.Map<IncidentDto>(incident);
 
+            // Return.
+            return Ok(output);
+        }
+
+        [HttpPost("upload-document")]
+        public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
+        {
+            // FUTURE: Replace with validator?
+            var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
+            if (!virtualFile.IsValid)
+            {
+                throw new ArgumentException(); // TODO
+            }
+
+            // Act.
+            var fileName = await _incidentUseCase.StoreDocumentAsync(
+                input.OpenReadStream(),
+                input.FileName,
+                input.ContentType);
+
+            var output = new DocumentDto
+            {
+                Name = fileName,
+            };
+
+            // Return.
             return Ok(output);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
-            var result = await _mapper.MapAsync<IList<IncidentDto>, Incident>(_incidentUseCase.GetAllAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            // Act.
+            IAsyncEnumerable<Incident> incidentList = _incidentUseCase.GetAllAsync(pagination.Navigation);
 
+            // Map.
+            var result = await _mapper.MapAsync<IList<IncidentDto>, Incident>(incidentList);
+
+            // Return.
             return Ok(result);
         }
 
@@ -55,14 +91,19 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
+
+            User sessionUser = await _authManager.GetUserAsync(User);
+            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+
             incident.Meta = new
             {
-                // FUTURE: Register org?
+                SessionUser = sessionUser.Id,
+                sessionOrganization = sessionOrganization.Id,
                 Gateway = Constants.IncidentGateway,
             };
 
             // Act.
-            incident = await _incidentUseCase.CreateAsync(incident).ConfigureAwait(false);
+            incident = await _incidentUseCase.CreateAsync(incident);
 
             // Map.
             var output = _mapper.Map<IncidentDto>(incident);
@@ -79,8 +120,9 @@ namespace FunderMaps.WebApi.Controllers.Report
             incident.Id = id;
 
             // Act.
-            await _incidentUseCase.UpdateAsync(incident).ConfigureAwait(false);
+            await _incidentUseCase.UpdateAsync(incident);
 
+            // Return.
             return NoContent();
         }
 
@@ -88,8 +130,9 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> DeleteAsync([Incident] string id)
         {
             // Act.
-            await _incidentUseCase.DeleteAsync(id).ConfigureAwait(false);
+            await _incidentUseCase.DeleteAsync(id);
 
+            // Return.
             return NoContent();
         }
     }

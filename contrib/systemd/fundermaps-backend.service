@@ -1,0 +1,16 @@
+[Unit]
+Description=FunderMaps Backend WebApplication
+
+[Service]
+WorkingDirectory=/var/www/fundermaps-backend
+ExecStart=/var/www/fundermaps-backend/FunderMaps
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=fundermaps-backend
+User=fundermaps-backend
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+
+[Install]
+WantedBy=multi-user.target

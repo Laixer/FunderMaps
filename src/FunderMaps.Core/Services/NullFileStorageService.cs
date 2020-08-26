@@ -1,36 +1,24 @@
-﻿using FunderMaps.Core.Helpers;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Services
 {
+    /// <summary>
+    ///     Dummy file storage service.
+    /// </summary>
     internal class NullFileStorageService : IFileStorageService
     {
-        public ValueTask<bool> FileExists(string store, string name)
+        public ValueTask<bool> FileExistsAsync(string store, string name)
         {
             return new ValueTask<bool>(false);
         }
 
-        public Uri GetAccessLink(string store, string name, double hoursValid)
+        public ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid)
         {
-            return new Uri("/");
-        }
-
-        public ValueTask<string> GetStorageNameAsync()
-        {
-            return new ValueTask<string>("NullFileStorageService");
-        }
-
-        public ValueTask StoreFileAsync(string store, string name, byte[] content)
-        {
-            return new ValueTask();
-        }
-
-        public ValueTask StoreFileAsync(string store, FileWrapper file, byte[] content)
-        {
-            return new ValueTask();
+            return new ValueTask<Uri>(new Uri("http://localhost/blob"));
         }
 
         public ValueTask StoreFileAsync(string store, string name, Stream stream)
@@ -38,9 +26,10 @@ namespace FunderMaps.Core.Services
             return new ValueTask();
         }
 
-        public ValueTask StoreFileAsync(string store, FileWrapper file, Stream stream)
+        public ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
         {
             return new ValueTask();
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

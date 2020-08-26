@@ -1,10 +1,11 @@
 ﻿using FunderMaps.Core.Interfaces;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Services
 {
     /// <summary>
-    ///     Notification service.
+    ///     Dummpy notification service.
     /// </summary>
     internal class NullNotificationService : INotificationService
     {
@@ -19,3 +20,4 @@ namespace FunderMaps.Core.Services
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

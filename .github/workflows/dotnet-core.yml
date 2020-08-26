@@ -1,4 +1,4 @@
-name: .NET Core
+name: FunderMaps Ecosystem
 
 on:
   push:
@@ -6,9 +6,15 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  AZURE_WEBAPP_NAME: your-app-name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'
+  DOTNET_VERSION: '3.1.101'
+  BUILD_CONFIG: Release
+
 jobs:
   build:
-
+    name: Build & Test
     runs-on: ubuntu-latest
 
     steps:
@@ -16,10 +22,27 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.101
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
     - name: Test
-      run: dotnet test --no-restore
+      run: dotnet test --nologo --no-restore
+  
+  publish:
+    name: Publish
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Publish
+      run: dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dist' 

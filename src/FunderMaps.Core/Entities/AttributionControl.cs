@@ -26,6 +26,6 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Attribution object.
         /// </summary>
-        public Attribution AttributionNavigation { get; set; }
+        public Types.Control.AttributionControl AttributionNavigation { get; set; }
     }
 }

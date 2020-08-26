@@ -1,6 +1,7 @@
 using AutoMapper;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
+using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
@@ -51,6 +52,16 @@ namespace FunderMaps.Webservice
             if (services == null) { throw new ArgumentNullException(nameof(services)); }
 
             services.AddControllers();
+
+            services.AddResponseCompression(options =>
+            {
+                // NOTE: Compression is disabled by default when serving data
+                // over HTTPS because of BREACH exploit.
+                options.EnableForHttps = true;
+            });
+
+            // Configure exception mapping.
+            services.AddFunderMapsExceptionMapper();
 
             // Configure services.
             services.AddTransient<IMappingService, MappingService>();
@@ -107,8 +118,10 @@ namespace FunderMaps.Webservice
             }
             else
             {
-                //app.UseExceptionHandler("/oops");
+                app.UseExceptionHandler("/error");
+                app.UseHsts();
             }
+            app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/error");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

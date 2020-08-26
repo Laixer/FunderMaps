@@ -3,13 +3,18 @@
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
-    /// Options for the file storage service.
+    ///     Options for the file storage service.
     /// </summary>
     public sealed class FileStorageOptions
     {
         /// <summary>
-        /// Name per storage container.
+        ///     Configuration section key.
         /// </summary>
-        public IDictionary<string, string> StorageContainers { get; set; }
+        public const string Section = "FileStorageContainers";
+
+        /// <summary>
+        ///     Name per storage container.
+        /// </summary>
+        public IDictionary<string, string> StorageContainers { get; set; } = new Dictionary<string, string>();
     }
 }

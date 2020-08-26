@@ -1,11 +1,10 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Extensions;
+﻿using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,210 +14,141 @@ namespace FunderMaps.IntegrationTests.Backend.Report
     public class InquiryTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly AuthBackendWebApplicationFactory _factory;
+        private readonly HttpClient _client;
 
         public InquiryTests(AuthBackendWebApplicationFactory factory)
         {
             _factory = factory;
-        }
-
-        internal class FakeInquiryDtoData : EnumerableHelper<InquiryDto>
-        {
-            protected override IEnumerable<InquiryDto> GetEnumerableEntity()
-            {
-                return new InquiryDtoFaker().Generate(10, 100);
-            }
-        }
-
-        internal class FakeInquiryData : EnumerableHelper<Inquiry>
-        {
-            protected override IEnumerable<Inquiry> GetEnumerableEntity()
-            {
-                // TODO; can have more stats
-                return new InquiryFaker()
-                    .RuleFor(f => f.AuditStatus, f => AuditStatus.Pending)
-                    .Generate(10, 100);
-            }
-        }
-
-        [Theory]
-        [ClassData(typeof(FakeInquiryDtoData))]
-        public async Task CreateInquiryReturnInquiry(InquiryDto inquiry)
-        {
-            // Arrange
-            var client = _factory
+            _client = _factory
                 .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
-            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
+        }
 
+        [Fact]
+        public async Task CreateInquiryReturnInquiry()
+        {
             // Act
-            var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
+            var response = await _client.PostAsJsonAsync("api/inquiry", new InquiryDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(inquiryDataStore.IsSet);
-            Assert.Equal(inquiry.DocumentName, returnObject.DocumentName);
-            Assert.Equal(inquiry.Inspection, returnObject.Inspection);
-            Assert.Equal(inquiry.JointMeasurement, returnObject.JointMeasurement);
-            Assert.Equal(inquiry.FloorMeasurement, returnObject.FloorMeasurement);
-            Assert.Equal(inquiry.Note, returnObject.Note);
-            Assert.Equal(inquiry.DocumentDate, returnObject.DocumentDate);
-            Assert.Equal(inquiry.DocumentFile, returnObject.DocumentFile);
             Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-            Assert.Equal(inquiry.Type, returnObject.Type);
-            Assert.Equal(inquiry.StandardF3o, returnObject.StandardF3o);
-            //Assert.Equal(inquiry.Attribution, actualInquiry.Attribution);
-            Assert.Equal(inquiry.AccessPolicy, returnObject.AccessPolicy);
+            Assert.Null(returnObject.UpdateDate);
         }
 
-        [Theory]
-        [ClassData(typeof(FakeInquiryData))]
-        public async Task GetInquiryByIdReturnSingleInquiry(Inquiry inquiry)
+        [Fact]
+        public async Task UploadDocumentReturnDocument()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(inquiry)
-                .CreateClient();
+            // TODO: Test using faker?
+            using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
+            byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
+            using var formContent = new MultipartFormDataContent
+            {
+                { byteArrayContent, "input", "inputfile.pdf" }
+            };
 
             // Act
-            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}");
+            var response = await _client.PostAsync("api/inquiry/upload-document", formContent); // TODO: There is no such controller?
+            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Name);
+        }
+
+        [Fact]
+        public async Task GetInquiryByIdReturnSingleInquiry()
+        {
+            // Arrange
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+
+            // Act
+            var response = await _client.GetAsync($"api/inquiry/{inquiry.Id}");
             var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(inquiry.Id, returnObject.Id);
-            Assert.Equal(inquiry.DocumentName, returnObject.DocumentName);
-            Assert.Equal(inquiry.Inspection, returnObject.Inspection);
-            Assert.Equal(inquiry.JointMeasurement, returnObject.JointMeasurement);
-            Assert.Equal(inquiry.FloorMeasurement, returnObject.FloorMeasurement);
-            Assert.Equal(inquiry.Note, returnObject.Note);
-            Assert.Equal(inquiry.DocumentDate, returnObject.DocumentDate);
-            Assert.Equal(inquiry.DocumentFile, returnObject.DocumentFile);
-            Assert.Equal(inquiry.AuditStatus, returnObject.AuditStatus);
-            Assert.Equal(inquiry.Type, returnObject.Type);
-            Assert.Equal(inquiry.StandardF3o, returnObject.StandardF3o);
-            //Assert.Equal(inquiry.Attribution, actualInquiry.Attribution);
-            Assert.Equal(inquiry.AccessPolicy, returnObject.AccessPolicy);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            Assert.Null(returnObject.UpdateDate);
         }
 
         [Fact]
-        public async Task GetAllInquiryReturnPageInquiry()
+        public async Task GetAllInquiryReturnNavigationInquiry()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(new InquiryFaker().Generate(10, 100))
-                .CreateClient();
+            for (int i = 0; i < 10; i++)
+            {
+                await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            }
 
             // Act
-            var response = await client.GetAsync($"api/inquiry");
+            var response = await _client.GetAsync($"api/inquiry?limit=10");
             var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count > 0);
+            Assert.Equal(10, returnList.Count);
         }
 
         [Fact]
-        public async Task GetAllInquiryReturnAllInquiry()
+        public async Task UpdateInquiryReturnNoContent()
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(new InquiryFaker().Generate(100))
-                .CreateClient();
+            var newInquiry = new InquiryDtoFaker().Generate();
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
 
             // Act
-            var response = await client.GetAsync($"api/inquiry?limit=100");
-            var returnList = await response.Content.ReadFromJsonAsync<List<InquiryDto>>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(100, returnList.Count);
-        }
-
-        [Theory]
-        [ClassData(typeof(FakeInquiryData))]
-        public async Task UpdateInquiryReturnNoContent(Inquiry inquiry)
-        {
-            // Arrange
-            var newInquiry = new InquiryFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(inquiry)
-                .CreateClient();
-            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
-
-            // Act
-            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry);
+            var response = await _client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}", newInquiry);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(1, inquiryDataStore.Entities.Count);
-            var actualInquiry = inquiryDataStore.Entities[0];
-            Assert.Equal(inquiry.Id, actualInquiry.Id);
-            Assert.Equal(newInquiry.DocumentName, actualInquiry.DocumentName);
-            Assert.Equal(newInquiry.Inspection, actualInquiry.Inspection);
-            Assert.Equal(newInquiry.JointMeasurement, actualInquiry.JointMeasurement);
-            Assert.Equal(newInquiry.FloorMeasurement, actualInquiry.FloorMeasurement);
-            Assert.Equal(newInquiry.Note, actualInquiry.Note);
-            Assert.Equal(newInquiry.DocumentDate, actualInquiry.DocumentDate);
-            Assert.Equal(newInquiry.DocumentFile, actualInquiry.DocumentFile);
-            Assert.Equal(newInquiry.Type, actualInquiry.Type);
-            Assert.Equal(newInquiry.StandardF3o, actualInquiry.StandardF3o);
-            Assert.Equal(inquiry.AuditStatus, actualInquiry.AuditStatus);
         }
 
-        [Theory]
-        [InlineData(AuditStatus.Pending, AuditStatus.PendingReview, "status_review")]
-        [InlineData(AuditStatus.PendingReview, AuditStatus.Rejected, "status_rejected")]
-        [InlineData(AuditStatus.PendingReview, AuditStatus.Done, "status_approved")]
-        public async Task SetStatusInquiryReturnNoContent(AuditStatus initialStatus, AuditStatus status, string url)
+        [Fact]
+        public async Task SetStatusReviewInquiryReturnNoContent()
         {
             // Arrange
-            var inquiry = new InquiryFaker()
-                .RuleFor(f => f.AuditStatus, f => initialStatus)
-                .Generate();
-            var statusChange = new StatusChangeDtoFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(inquiry)
-                .CreateClient();
-            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{url}", statusChange);
+            var response = await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.Equal(status, inquiryDataStore.Entities[0].AuditStatus);
         }
 
         [Theory]
-        [ClassData(typeof(FakeInquiryData))]
-        public async Task DeleteInquiryReturnNoContent(Inquiry inquiry)
+        [InlineData("status_rejected")]
+        [InlineData("status_approved")]
+        public async Task SetStatusRejectedAndApprovedInquiryReturnNoContent(string uri)
         {
             // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(inquiry)
-                .CreateClient();
-            var inquiryDataStore = _factory.Services.GetService<EntityDataStore<Inquiry>>();
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+            await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
+            await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
 
             // Act
-            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}");
+            var response = await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{uri}", new StatusChangeDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            Assert.False(inquiryDataStore.IsSet);
+        }
+
+        [Fact]
+        public async Task DeleteInquiryReturnNoContent()
+        {
+            // Arrange
+            var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+
+            // Act
+            var response = await _client.DeleteAsync($"api/inquiry/{inquiry.Id}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
     }
 }

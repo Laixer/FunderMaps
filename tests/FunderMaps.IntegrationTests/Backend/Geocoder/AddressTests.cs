@@ -1,7 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.IntegrationTests.Faker;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -12,31 +12,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
     public class AddressTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly AuthBackendWebApplicationFactory _factory;
-
-        public AddressTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
-
-        [Fact]
-        public async Task GetAddressByIdReturnSingleAddress()
-        {
-            // Arrange
-            var expectedAddress = new AddressFaker().Generate();
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(expectedAddress)
-                .CreateClient();
-
-            // Act
-            var response = await client.GetAsync($"api/address/{expectedAddress.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<Address>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(expectedAddress.Id, returnObject.Id);
-        }
+        private readonly HttpClient _client;
 
         internal static readonly IList<Address> Addresses = new List<Address>
         {
@@ -132,6 +108,28 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             },
         };
 
+        public AddressTests(AuthBackendWebApplicationFactory factory)
+        {
+            _factory = factory;
+            _client = _factory
+                .WithAuthentication()
+                .WithAuthenticationStores()
+                .WithDataStoreList(Addresses)
+                .CreateClient();
+        }
+
+        [Fact]
+        public async Task GetAddressByIdReturnSingleAddress()
+        {
+            // Act
+            var response = await _client.GetAsync("api/address/gfm-67f8fd79bf3a461c923e7c24c0fb479f");
+            var returnObject = await response.Content.ReadFromJsonAsync<Address>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal("gfm-67f8fd79bf3a461c923e7c24c0fb479f", returnObject.Id);
+        }
+
         [Theory]
         [InlineData("kade")]
         [InlineData("4621E")]
@@ -140,15 +138,8 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         [InlineData("hage")]
         public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
         {
-            // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(Addresses)
-                .CreateClient();
-
             // Act
-            var response = await client.GetAsync($"api/address/suggest?query={query}");
+            var response = await _client.GetAsync($"api/address/suggest?query={query}");
             var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
             // Assert
@@ -159,15 +150,8 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         [Fact]
         public async Task GetLimitedAddressByQueryReturnMatchingAddressList()
         {
-            // Arrange
-            var client = _factory
-                .WithAuthentication()
-                .WithAuthenticationStores()
-                .WithDataStoreList(Addresses)
-                .CreateClient();
-
             // Act
-            var response = await client.GetAsync($"api/address/suggest?query=laan&limit=2");
+            var response = await _client.GetAsync($"api/address/suggest?query=laan&limit=2");
             var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
             // Assert
