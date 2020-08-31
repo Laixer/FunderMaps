@@ -1,4 +1,5 @@
-﻿using FunderMaps.WebApi.InputModels;
+﻿using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -10,12 +11,12 @@ namespace FunderMaps.IntegrationTests.Backend.Report
     /// <summary>
     ///     Anonymous tests for the incident create endpoint.
     /// </summary>
-    public class IncidentSubmitTests : IClassFixture<BackendWebApplicationFactory>
+    public class IncidentAnonymousTests : IClassFixture<BackendWebApplicationFactory>
     {
         private readonly BackendWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
-        public IncidentSubmitTests(BackendWebApplicationFactory factory)
+        public IncidentAnonymousTests(BackendWebApplicationFactory factory)
         {
             _factory = factory;
             _client = _factory
@@ -23,22 +24,16 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
-        public async Task SubmitIncidentReturnNoContent()
+        public async Task CreateIncidentReturnOk()
         {
             // Arrange.
-            var incident = new IncidentInputModel
-            {
-                Address = "gfm-dsfdlshfjsdhfljdshf",
-                ClientId = 14,
-                Email = "yeet@yoodle.com"
-            };
+            var incident = new IncidentDtoFaker().Generate();
 
             // Act.
-            var response = await _client.PostAsJsonAsync("api/incident/submit", incident);
-            var responseObject = await response.Content.ReadAsStringAsync(); // TODO Remove
+            var response = await _client.PostAsJsonAsync("api/incident", incident);
 
             // Assert.
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
         [Theory]
@@ -52,30 +47,30 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         [InlineData("gfm-correctid", 1492, "yesyes@disgood.nl")]
         [InlineData("gfm-correctid", -1000, "actually@right.nl")]
         [InlineData("gfm-lsdhfdsfajh", 14390, "invalidemail")]
-        public async Task SubmitInvalidIncidentReturnBadRequest(string address, int clientId, string email)
+        public async Task CreateInvalidIncidentReturnBadRequest(string address, int clientId, string email)
         {
             // Arrange.
-            var incident = new IncidentInputModel
-            {
-                Address = address,
-                ClientId = clientId,
-                Email = email
-            };
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => address)
+                .RuleFor(f => f.ClientId, f => clientId)
+                .RuleFor(f => f.Email, f => email)
+                .Generate();
+            incident.Address = address;
+            incident.ClientId = clientId;
+            incident.Email = email;
 
             // Act.
-            var response = await _client.PostAsJsonAsync("api/incident/submit", incident);
-            var responseObject = await response.Content.ReadAsStringAsync(); // TODO Remove
+            var response = await _client.PostAsJsonAsync("api/incident", incident);
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
-        public async Task SubmitNothingReturnBadRequest()
+        public async Task CreateEmptyBodyReturnBadRequest()
         {
             // Act.
-            var response = await _client.PostAsJsonAsync<IncidentInputModel>("api/incident/submit", null);
-            var responseObject = await response.Content.ReadAsStringAsync(); // TODO Remove
+            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident", null);
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
