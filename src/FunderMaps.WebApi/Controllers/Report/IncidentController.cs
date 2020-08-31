@@ -6,7 +6,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.InputModels;
 using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -89,21 +88,44 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Post a new incident to the backend.
+        /// </summary>
+        /// <remarks>
+        ///     This call can be made anonymous or as a user.
+        /// </remarks>
+        /// <param name="input"><see cref="IncidentDto"/></param>
+        /// <returns><see cref="OkObjectResult"/></returns>
+        [AllowAnonymous]
         [HttpPost]
+        [ProducesResponseType((int) HttpStatusCode.OK)]
         public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
 
-            User sessionUser = await _authManager.GetUserAsync(User);
-            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
-
-            incident.Meta = new
+            // Process the anonymity of the request.
+            if (_authManager.IsSignedIn(User))
             {
-                SessionUser = sessionUser.Id,
-                sessionOrganization = sessionOrganization.Id,
-                Gateway = Constants.IncidentGateway,
-            };
+                var sessionUser = await _authManager.GetUserAsync(User);
+                var sessionOrganization = await _authManager.GetOrganizationAsync(User);
+
+                incident.Meta = new
+                {
+                    SessionUser = sessionUser.Id,
+                    sessionOrganization = sessionOrganization.Id,
+                    Gateway = Constants.IncidentGateway,
+                };
+            }
+            else
+            {
+                incident.Meta = new
+                {
+                    UserAgent = Request.Headers["User-Agent"].ToString(),
+                    RemoteAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    Gateway = Constants.IncidentGateway,
+                };
+            }
 
             // Act.
             incident = await _incidentUseCase.CreateAsync(incident);
@@ -134,35 +156,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Act.
             await _incidentUseCase.DeleteAsync(id);
-
-            // Return.
-            return NoContent();
-        }
-
-        /// <summary>
-        ///     Submit a new incident to our backend.
-        /// </summary>
-        /// <param name="input"><see cref="IncidentInputModel"/></param>
-        /// <param name="incidentUseCase"><see cref="IncidentUseCase"/></param>
-        /// <param name="mapper"><see cref="IMapper"/></param>
-        /// <returns><see cref="OkObjectResult"/></returns>
-        [AllowAnonymous]
-        [HttpPost("submit")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        public async Task<IActionResult> SubmitAsync([FromBody] IncidentInputModel input, [FromServices] IncidentUseCase incidentUseCase, [FromServices] IMapper mapper)
-        {
-            // Map.
-            // TODO Clean up?
-            var incident = mapper.Map<Incident>(input);
-            incident.ContactNavigation = new Contact
-            {
-                Email = input.Email,
-                Name = input.Name,
-                PhoneNumber = input.Phonenumber
-            };
-
-            // Act.
-            await incidentUseCase.CreateAsync(incident);
 
             // Return.
             return NoContent();
