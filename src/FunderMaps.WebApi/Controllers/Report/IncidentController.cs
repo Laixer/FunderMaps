@@ -6,11 +6,14 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.WebApi.InputModels;
 using FunderMaps.WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -134,6 +137,35 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Return.
             return NoContent();
+        }
+
+        /// <summary>
+        ///     Submit a new incident to our backend.
+        /// </summary>
+        /// <param name="input"><see cref="IncidentInputModel"/></param>
+        /// <param name="incidentUseCase"><see cref="IncidentUseCase"/></param>
+        /// <param name="mapper"><see cref="IMapper"/></param>
+        /// <returns><see cref="OkObjectResult"/></returns>
+        [AllowAnonymous]
+        [HttpPost("submit")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SubmitAsync([FromBody] IncidentInputModel input, [FromServices] IncidentUseCase incidentUseCase, [FromServices] IMapper mapper)
+        {
+            // Map.
+            // TODO Clean up?
+            var incident = mapper.Map<Incident>(input);
+            incident.ContactNavigation = new Contact
+            {
+                Email = input.Email,
+                Name = input.Name,
+                PhoneNumber = input.Phonenumber
+            };
+
+            // Act.
+            await incidentUseCase.CreateAsync(incident);
+
+            // Return.
+            return Ok();
         }
     }
 }
