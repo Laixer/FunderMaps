@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 
 namespace FunderMaps.WebApi
@@ -29,6 +30,13 @@ namespace FunderMaps.WebApi
             CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
+            CreateMap<User, ReviewerDto>();
+
+            // Enum DTO's
+            // TODO Use DTO's everywhere and use reverse map as well
+            CreateMap<FoundationTypeDTO, FoundationType>();
+            CreateMap<FoundationDamageCauseDTO, FoundationDamageCause>();
+            CreateMap<FoundationDamageCharacteristicsDTO, FoundationDamageCharacteristics>();
         }
     }
 }
