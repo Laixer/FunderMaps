@@ -43,6 +43,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         public bool FoundationRecovery { get; set; }
 
+        // TODO Typo
         /// <summary>
         ///     Whether neighbor foundation was recovered or not.
         /// </summary>

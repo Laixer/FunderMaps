@@ -148,7 +148,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <returns><see cref="OkObjectResult"/></returns>
         [AllowAnonymous]
         [HttpPost("submit")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         public async Task<IActionResult> SubmitAsync([FromBody] IncidentInputModel input, [FromServices] IncidentUseCase incidentUseCase, [FromServices] IMapper mapper)
         {
             // Map.
@@ -165,7 +165,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             await incidentUseCase.CreateAsync(incident);
 
             // Return.
-            return Ok();
+            return NoContent();
         }
     }
 }

@@ -2,6 +2,7 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.WebApi.InputModels;
 
 namespace FunderMaps.WebApi
 {
@@ -31,6 +32,10 @@ namespace FunderMaps.WebApi
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
             CreateMap<User, ReviewerDto>();
+
+            // One way inputmodel
+            // TODO This sort-of mashes with IncidentDTO
+            CreateMap<IncidentInputModel, Incident>();
 
             // Enum DTO's
             // TODO Use DTO's everywhere and use reverse map as well
