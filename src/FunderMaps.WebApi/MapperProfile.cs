@@ -29,7 +29,6 @@ namespace FunderMaps.WebApi
             CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
-            CreateMap<User, ReviewerDto>();
         }
     }
 }
