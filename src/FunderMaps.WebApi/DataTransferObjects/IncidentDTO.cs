@@ -46,7 +46,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Whether neighbor foundation was recovered or not.
         /// </summary>
-        public bool NeightborRecovery { get; set; }
+        public bool NeighborRecovery { get; set; }
 
         /// <summary>
         ///     Foundation damage cause.
@@ -79,7 +79,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public IncidentQuestionType QuestionType { get; set; }
 
         /// <summary>
-        ///     Fouindational damage.
+        ///     Foundational damage.
         /// </summary>
         public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
 
