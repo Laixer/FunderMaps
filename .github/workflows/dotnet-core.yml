@@ -14,7 +14,6 @@ env:
 
 jobs:
   build:
-    if: github.ref == 'refs/heads/_placeholder'
     name: Build & Test
     runs-on: ubuntu-latest
 
