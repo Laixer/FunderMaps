@@ -33,7 +33,7 @@ jobs:
   publish:
     name: Publish
     needs: build
-    if: github.ref == 'refs/heads/master'
+#     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
@@ -45,4 +45,8 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Publish
-      run: dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/dist' 
+      run: |
+        pushd src/FunderMaps.WebApi
+        dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output dist
+        tar -czf test.tar.gz -C dist .
+        popd
