@@ -38,28 +38,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-#     - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-#     - name: Setup .NET Core
-#       uses: actions/setup-dotnet@v1
-#       with:
-#         dotnet-version: ${{ env.DOTNET_VERSION }} 
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
 
-#     - name: Install dependencies
-#       run: dotnet restore
+    - name: Install dependencies
+      run: dotnet restore
 
-#     - name: Publish FunderMaps.WebApi
-#       run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
-
-#     - name: Create archive
-#       run: tar -czf backed.tar.gz -C backend-dist .
-
-#     - name: Publish FunderMaps.Webservice
-#       run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
+    - name: Publish FunderMaps.WebApi
+      run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
 
     - name: Create archive
-#       run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
-      run: echo woei > kaas.txt
+      run: tar -czf ${{ env.ARCHIVE_BACKEND } -C backend-dist .
+
+    - name: Publish FunderMaps.Webservice
+      run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
+
+    - name: Create archive
+      run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
 
     - name: Copy archive via scp
       uses: appleboy/scp-action@master
@@ -68,7 +67,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        source: 'kaas.txt'
+        source: '*.tar.gz'
         target: '/var/cache/deployment'
         
     - name: Extract archive on remote server
@@ -79,4 +78,5 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          pwd
+          rm /var/cache/deployment/current/*
+          mv /var/cache/deployment/*.tar.gz /var/cache/deployment/current/
