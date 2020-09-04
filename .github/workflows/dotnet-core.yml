@@ -38,15 +38,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
+
     - name: Install dependencies
       run: dotnet restore
-    - name: Publish
-      run: |
-        pushd src/FunderMaps.WebApi
-        dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output dist
-        tar -czf test.tar.gz -C dist .
-        popd
+
+    - run: pushd src/FunderMaps.WebApi
+
+    - name: FunderMaps.WebApi
+      run: dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output dist
+
+    - name: Create archive
+      run: tar -czf test.tar.gz -C dist .
+
+    - run: popd
