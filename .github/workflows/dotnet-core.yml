@@ -47,12 +47,14 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
 
-    - run: pushd src/FunderMaps.WebApi
-
     - name: Publish FunderMaps.WebApi
-      run: dotnet publish --nologo --configuration ${{ env.BUILD_CONFIG }} --output dist
+      run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output fundermaps-backend-dist
 
     - name: Create archive
-      run: tar -czf test.tar.gz -C dist .
+      run: tar -czf fundermaps-backend.tar.gz -C fundermaps-backend-dist .
 
-    - run: popd
+    - name: Publish FunderMaps.Webservice
+      run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output fundermaps-webservice-dist
+
+    - name: Create archive
+      run: tar -czf fundermaps-webservice.tar.gz -C fundermaps-webservice-dist .
