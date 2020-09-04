@@ -59,12 +59,22 @@ jobs:
     - name: Create archive
       run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
 
-    - name: Copy archive via scp
-      uses: appleboy/scp-action@master
+#     - name: Copy archive via scp
+#       uses: appleboy/scp-action@master
+#       with:
+#         host: ${{ secrets.SSH_HOST }}
+#         username: ${{ secrets.SSH_USER }}
+#         key: ${{ secrets.SSH_KEY }}
+#         port: 22
+#         source: 'backed.tar.gz'
+#         target: '/tmp/'
+        
+    - name: Extract archive on remote server
+      uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        source: 'backed.tar.gz'
-        target: '/tmp/'
+        script: |
+          pwd
