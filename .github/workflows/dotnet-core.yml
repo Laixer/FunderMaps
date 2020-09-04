@@ -52,7 +52,7 @@ jobs:
       run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
 
     - name: Create archive
-      run: tar -czf ${{ env.ARCHIVE_BACKEND } -C backend-dist .
+      run: tar -czf ${{ env.ARCHIVE_BACKEND }} -C backend-dist .
 
     - name: Publish FunderMaps.Webservice
       run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
