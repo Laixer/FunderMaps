@@ -68,7 +68,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         source: '*.tar.gz'
-        target: '/var/cache/deployment'
+        target: '/var/cache/deployment/tmp'
         
     - name: Extract archive on remote server
       uses: appleboy/ssh-action@master
@@ -78,5 +78,6 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          rm /var/cache/deployment/current/*
-          mv /var/cache/deployment/*.tar.gz /var/cache/deployment/current/
+          rm /var/cache/deployment/current/*.tar.gz
+          mv /var/cache/deployment/tmp/*.tar.gz /var/cache/deployment/current/
+          /var/cache/deployment/deploy.sh
