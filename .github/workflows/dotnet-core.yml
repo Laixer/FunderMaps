@@ -69,7 +69,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         source: 'kaas.txt'
-        target: '/tmp/'
+        target: '/var/cache/deployment'
         
     - name: Extract archive on remote server
       uses: appleboy/ssh-action@master
