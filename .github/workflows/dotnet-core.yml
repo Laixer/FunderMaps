@@ -14,6 +14,7 @@ env:
 
 jobs:
   build:
+    if: github.ref == 'refs/heads/skip'
     name: Build & Test
     runs-on: ubuntu-latest
 
@@ -32,42 +33,43 @@ jobs:
   
   publish:
     name: Publish
-    needs: build
+#     needs: build
 #     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+#     - uses: actions/checkout@v2
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }} 
-
-    - name: Install dependencies
-      run: dotnet restore
-
-    - name: Publish FunderMaps.WebApi
-      run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
-
-    - name: Create archive
-      run: tar -czf backed.tar.gz -C backend-dist .
-
-    - name: Publish FunderMaps.Webservice
-      run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
-
-    - name: Create archive
-      run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
-
-#     - name: Copy archive via scp
-#       uses: appleboy/scp-action@master
+#     - name: Setup .NET Core
+#       uses: actions/setup-dotnet@v1
 #       with:
-#         host: ${{ secrets.SSH_HOST }}
-#         username: ${{ secrets.SSH_USER }}
-#         key: ${{ secrets.SSH_KEY }}
-#         port: 22
-#         source: 'backed.tar.gz'
-#         target: '/tmp/'
+#         dotnet-version: ${{ env.DOTNET_VERSION }} 
+
+#     - name: Install dependencies
+#       run: dotnet restore
+
+#     - name: Publish FunderMaps.WebApi
+#       run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
+
+#     - name: Create archive
+#       run: tar -czf backed.tar.gz -C backend-dist .
+
+#     - name: Publish FunderMaps.Webservice
+#       run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
+
+    - name: Create archive
+#       run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
+      run: echo woei > kaas.txt
+
+    - name: Copy archive via scp
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        source: 'kaas.txt'
+        target: '/tmp/'
         
     - name: Extract archive on remote server
       uses: appleboy/ssh-action@master
