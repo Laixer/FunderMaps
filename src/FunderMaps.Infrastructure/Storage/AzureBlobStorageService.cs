@@ -61,10 +61,11 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="containerName">Where to store the file.</param>
         /// <param name="blobName">The actual file on disk.</param>
         /// <returns>The blob block.</returns>
-        protected async Task<BlobClient> PrepareBlobAsync(string containerName, string blobName)
+        protected Task<BlobClient> PrepareBlobAsync(string containerName, string blobName)
         {
             BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(_options.StorageContainers.TryGetValue(containerName, out string store) ? store : containerName);
-            return container.GetBlobClient(blobName);
+            BlobClient blobClient = container.GetBlobClient(blobName);
+            return Task.FromResult(blobClient);
         }
 
         /// <summary>

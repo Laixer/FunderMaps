@@ -18,6 +18,9 @@ namespace FunderMaps.Core.Email
         [Required, EmailAddress]
         public string Address { get; set; }
 
+        /// <summary>
+        ///     Print address as string.
+        /// </summary>
         public override string ToString() => Address;
     }
 }
