@@ -7,21 +7,20 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Report
+namespace FunderMaps.IntegrationTests.Backend.Portal
 {
     /// <summary>
     ///     Anonymous tests for the incident create endpoint.
     /// </summary>
-    public class IncidentAnonymousTests : IClassFixture<BackendWebApplicationFactory>
+    public class IncidentPortalTests : IClassFixture<BackendWebApplicationFactory>
     {
         private readonly BackendWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
-        public IncidentAnonymousTests(BackendWebApplicationFactory factory)
+        public IncidentPortalTests(BackendWebApplicationFactory factory)
         {
             _factory = factory;
-            _client = _factory
-                .CreateClient();
+            _client = _factory.CreateClient();
         }
 
         [Fact]
@@ -31,10 +30,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var incident = new IncidentDtoFaker().Generate();
 
             // Act.
-            var response = await _client.PostAsJsonAsync("api/incident", incident);
+            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
             // Assert.
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Theory]
@@ -61,7 +60,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             incident.Email = email;
 
             // Act.
-            var response = await _client.PostAsJsonAsync("api/incident", incident);
+            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -71,7 +70,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task CreateEmptyBodyReturnBadRequest()
         {
             // Act.
-            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident", null);
+            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);

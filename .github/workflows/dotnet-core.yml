@@ -33,7 +33,7 @@ jobs:
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
     - name: Test
-      run: dotnet test --nologo --no-restore
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
   
   publish:
     name: Publish
