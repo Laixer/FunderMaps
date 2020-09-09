@@ -1,22 +1,22 @@
 {
-   // Use IntelliSense to find out which attributes exist for C# debugging
-   // Use hover for the description of the existing attributes
-   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-   "version": "0.2.0",
-   "configurations": [
+    // Use IntelliSense to find out which attributes exist for C# debugging
+    // Use hover for the description of the existing attributes
+    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+    "version": "0.2.0",
+    "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": "FunderMaps.Backend",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/FunderMaps/bin/Debug/netcoreapp2.1/FunderMaps.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/netcoreapp3.1/FunderMaps",
             "args": [],
-            "cwd": "${workspaceFolder}/FunderMaps",
+            "cwd": "${workspaceFolder}/src/FunderMaps.WebApi",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {
-                "enabled": true,
+                "enabled": false,
                 "args": "${auto-detect-url}",
                 "windows": {
                     "command": "cmd.exe",
@@ -31,9 +31,35 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "FunderMaps.Webservice",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/netcoreapp3.1/FunderMaps.Webservice",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FunderMaps.Webservice",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "launchBrowser": {
+                "enabled": false,
+                "args": "${auto-detect-url}",
+                "windows": {
+                    "command": "cmd.exe",
+                    "args": "/C start ${auto-detect-url}"
+                },
+                "osx": {
+                    "command": "open"
+                },
+                "linux": {
+                    "command": "xdg-open"
+                }
             },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
             }
         },
         {
@@ -41,6 +67,6 @@
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:pickProcess}"
-        }
-    ,]
+        },
+    ]
 }
