@@ -30,11 +30,16 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             _geocoderUseCase = geocoderUseCase ?? throw new ArgumentNullException(nameof(geocoderUseCase));
         }
 
+        /// <summary>
+        ///     Get address by identifier.
+        /// </summary>
+        /// <param name="id">Address identifier.</param>
+        /// <returns>Matching address.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([Geocoder] string id)
         {
             // Assign.
-            Address address = await _geocoderUseCase.GetAsync(id).ConfigureAwait(false);
+            Address address = await _geocoderUseCase.GetAsync(id);
 
             // Map.
             var output = _mapper.Map<AddressDto>(address);
@@ -43,6 +48,11 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             return Ok(output);
         }
 
+        /// <summary>
+        ///     Get address suggestions.
+        /// </summary>
+        /// <param name="input">Address search query.</param>
+        /// <returns>List of matching addresses.</returns>
         [HttpGet("suggest")]
         public async Task<IActionResult> GetAllSuggestionAsync([FromQuery] AddressSearchDto input)
         {
@@ -50,7 +60,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList).ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList);
 
             // Return.
             return Ok(result);

@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Entities.Geocoder;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 using Xunit;
@@ -19,7 +20,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Street = "street",
                 IsActive = true,
                 ExternalId = "external-1",
-                ExternalSource = "ext",
+                ExternalSource = ExternalDataSource.NlOsm,
             };
             var entity2 = new Address
             {
@@ -27,7 +28,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Street = "street",
                 IsActive = true,
                 ExternalId = "external-1",
-                ExternalSource = "ext",
+                ExternalSource = ExternalDataSource.NlCbs,
             };
 
             // Act
@@ -50,7 +51,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Street = "street",
                 IsActive = true,
                 ExternalId = "external-1",
-                ExternalSource = "ext",
+                ExternalSource = ExternalDataSource.NlBag,
             };
             var entity2 = new Address
             {
@@ -59,7 +60,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Street = "street",
                 IsActive = true,
                 ExternalId = "external-1",
-                ExternalSource = "ext",
+                ExternalSource = ExternalDataSource.NlBag,
             };
             var entity3 = new Address
             {
@@ -68,7 +69,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Street = "lane",
                 IsActive = false,
                 ExternalId = "external-2",
-                ExternalSource = "ext",
+                ExternalSource = ExternalDataSource.NlCbs,
             };
 
             // Assert

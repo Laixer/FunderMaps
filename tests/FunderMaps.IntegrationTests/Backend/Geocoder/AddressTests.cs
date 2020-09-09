@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -24,7 +25,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Leidsekade",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0363200012151882",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -34,7 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Mr. Rietkerklaan",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0794200000077355",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -44,7 +45,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Heerenhage",
                 IsActive = false,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0074200000377867",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -54,7 +55,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Beukstraat",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0748200000039597",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -64,7 +65,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Tweede Rozendwarsstraat",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0363200012071002",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -74,7 +75,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Tweede Jacob van Campenstraat",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0363200000423238",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -84,7 +85,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Einsteinstraat",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0935200000097589",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -94,7 +95,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "Franselaan",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0599200000270883",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
             new Address
             {
@@ -104,7 +105,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 Street = "van Deventerlaan",
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.1916200000035516",
-                ExternalSource = "bag",
+                ExternalSource = ExternalDataSource.NlBag,
             },
         };
 

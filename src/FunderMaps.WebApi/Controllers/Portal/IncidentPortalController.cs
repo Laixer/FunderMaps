@@ -102,7 +102,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
             IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList).ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList);
 
             // Return.
             return Ok(result);
