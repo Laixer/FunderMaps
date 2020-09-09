@@ -15,6 +15,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         private readonly AuthBackendWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
+        // FUTURE: Move into common test code
         internal static readonly IList<Address> Addresses = new List<Address>
         {
             new Address
