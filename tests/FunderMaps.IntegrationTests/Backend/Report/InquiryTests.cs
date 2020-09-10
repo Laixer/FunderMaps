@@ -41,16 +41,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task UploadDocumentReturnDocument()
         {
             // Arrange
-            // TODO: Test using faker?
-            using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
-            byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
-            using var formContent = new MultipartFormDataContent
-            {
-                { byteArrayContent, "input", "inputfile.pdf" }
-            };
+            using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
 
             // Act
-            var response = await _client.PostAsync("api/inquiry/upload-document", formContent); // TODO: There is no such controller?
+            var response = await _client.PostAsync("api/inquiry/upload-document", formContent);
             var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
 
             // Assert
