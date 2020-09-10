@@ -222,7 +222,7 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(0, returnList.Count);
+            Assert.Empty(returnList);
         }
     }
 }
