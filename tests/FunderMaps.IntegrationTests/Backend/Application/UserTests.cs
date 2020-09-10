@@ -1,5 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http;

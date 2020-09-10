@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Extensions;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Extensions;
+using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;

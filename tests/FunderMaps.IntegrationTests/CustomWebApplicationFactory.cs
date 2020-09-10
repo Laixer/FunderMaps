@@ -1,11 +1,12 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.IntegrationTests.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Testing;
+using FunderMaps.Testing.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FunderMaps.IntegrationTests
 {
@@ -21,8 +22,7 @@ namespace FunderMaps.IntegrationTests
 
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
-            services.AddSingleton(typeof(EntityDataStore<>));
-            services.AddSingleton(typeof(ObjectDataStore));
+            services.AddSingleton(typeof(DataStore<>));
 
             // Repositories
             services.AddScoped<IAddressRepository, TestAddressRepository>();
@@ -48,44 +48,36 @@ namespace FunderMaps.IntegrationTests
             builder.ConfigureTestServices(ConfigureTestServices);
         }
 
-        // FUTURE Helper, move ?
-        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(TEntity entity)
-            where TEntity : BaseEntity<TEntity>
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(TItem item)
+            where TItem : class
         {
-            var dataStore = Services.GetService<EntityDataStore<TEntity>>();
-            dataStore.Reset(entity);
+            var dataStore = Services.GetService<DataStore<TItem>>();
+            dataStore.Reset(item);
 
             return this;
         }
 
-        // FUTURE Helper, move ?
-        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TEntity>(IEnumerable<TEntity> list)
-            where TEntity : BaseEntity<TEntity>
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(List<TItem> item)
+            where TItem : class
         {
-            var dataStore = Services.GetService<EntityDataStore<TEntity>>();
+            WithDataStoreList(item.AsEnumerable<TItem>());
+
+            return this;
+        }
+
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(TItem[] item)
+            where TItem : class
+        {
+            WithDataStoreList(item.AsEnumerable<TItem>());
+
+            return this;
+        }
+
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(IEnumerable<TItem> list)
+            where TItem : class
+        {
+            var dataStore = Services.GetService<DataStore<TItem>>();
             dataStore.Reset(list);
-
-            return this;
-        }
-
-        // FUTURE Helper, move ?
-        public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreItem<TObject>(TObject obj)
-            where TObject : class
-        {
-            // FUTURE Implement better
-            var dataStore = Services.GetService<ObjectDataStore>();
-            dataStore.ClearByTypeAndAddSingle<TObject>(obj);
-
-            return this;
-        }
-
-        // FUTURE Helper, move ?
-        public virtual CustomWebApplicationFactory<TStartup> WithObjectStoreList<TObject>(IEnumerable<TObject> objList)
-            where TObject : class
-        {
-            // FUTURE Implement better
-            var dataStore = Services.GetService<ObjectDataStore>();
-            dataStore.ClearByTypeAndAddList<TObject>(objList);
 
             return this;
         }

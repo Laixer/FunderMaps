@@ -1,5 +1,5 @@
 ﻿using FunderMaps.IntegrationTests.Authentication;
-using FunderMaps.IntegrationTests.Repositories;
+using FunderMaps.Testing.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using System;

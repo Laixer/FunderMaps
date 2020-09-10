@@ -2,10 +2,9 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Core.Services;
-using FunderMaps.IntegrationTests.Extensions;
-using FunderMaps.IntegrationTests.Faker;
-using FunderMaps.IntegrationTests.Repositories;
-using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.Testing.Extensions;
+using FunderMaps.Testing.Faker;
+using FunderMaps.Testing.Repositories;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
