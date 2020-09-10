@@ -26,7 +26,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var newOrganizationUser = new UserFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = ApplicationRole.Administrator;
                 })
@@ -51,7 +51,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationUser1 = new UserFaker().Generate();
             var organizationUser2 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = ApplicationRole.Administrator;
                 })
@@ -95,7 +95,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organization = new OrganizationFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = ApplicationRole.Administrator;
                 })
@@ -123,7 +123,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organization = new OrganizationFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = ApplicationRole.Administrator;
                 })
@@ -153,7 +153,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var newOrganizationUser = new UserFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = applicationRole;
                 })
@@ -178,7 +178,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationUser1 = new UserFaker().Generate();
             var organizationUser2 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = applicationRole;
                 })
@@ -222,7 +222,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organization = new OrganizationFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = applicationRole;
                 })
@@ -252,7 +252,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organization = new OrganizationFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User.Role = applicationRole;
                 })

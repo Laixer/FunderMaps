@@ -40,7 +40,6 @@ namespace FunderMaps.IntegrationTests.Webservice
             }
 
             client = factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .WithDataStoreList(analysisProducts)
                 .WithDataStoreList(statisticsProducts)

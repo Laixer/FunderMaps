@@ -21,7 +21,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             var client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
 
@@ -38,7 +37,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             var client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
 

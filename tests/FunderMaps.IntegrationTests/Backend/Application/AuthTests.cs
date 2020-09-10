@@ -35,7 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             };
             using var random = new RandomGenerator();
             var client = _factory
-                .WithAuthentication(options => options.User = sessionUser)
+                .ConfigureAuthentication(options => options.User = sessionUser)
                 .WithDataStoreList(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
                 .WithDataStoreList(sessionOrganization)
                 .WithDataStoreList(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
@@ -56,7 +56,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             var client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
 

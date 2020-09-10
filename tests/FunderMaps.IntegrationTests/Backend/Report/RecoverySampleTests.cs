@@ -18,7 +18,6 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             _factory = factory;
             _client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
         }

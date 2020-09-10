@@ -25,7 +25,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate(10);
             var client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();

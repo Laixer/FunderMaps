@@ -20,7 +20,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             _factory = factory;
             _client = _factory
-                .WithAuthentication(options => options.User = sessionUser)
+                .ConfigureAuthentication(options => options.User = sessionUser)
                 .WithAuthenticationStores()
                 .CreateClient();
         }

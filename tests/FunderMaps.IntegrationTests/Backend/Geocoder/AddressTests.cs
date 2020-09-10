@@ -112,7 +112,6 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         {
             _factory = factory;
             _client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .WithDataStoreList(Addresses)
                 .CreateClient();

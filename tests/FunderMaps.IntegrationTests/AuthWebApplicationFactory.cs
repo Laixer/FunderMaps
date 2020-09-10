@@ -9,7 +9,7 @@ namespace FunderMaps.IntegrationTests
     public abstract class AuthWebApplicationFactory<TStartup> : CustomWebApplicationFactory<TStartup>
         where TStartup : class
     {
-        public AuthWebApplicationFactory<TStartup> WithAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)
+        public AuthWebApplicationFactory<TStartup> ConfigureAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)
         {
             var authPrincipal = Services.GetService<TestAuthenticationSchemeOptions>();
             initializer?.Invoke(authPrincipal);
