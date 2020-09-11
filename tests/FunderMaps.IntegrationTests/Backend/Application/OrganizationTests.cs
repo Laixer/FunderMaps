@@ -1,5 +1,5 @@
 ﻿using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
@@ -24,7 +24,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var sessionUser = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -49,7 +49,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var sessionUser = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -74,7 +74,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var newOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.OrganizationRole = organizationRole;
                 })

@@ -3,9 +3,9 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Core.Services;
 using FunderMaps.IntegrationTests.Backend;
-using FunderMaps.IntegrationTests.Extensions;
-using FunderMaps.IntegrationTests.Faker;
-using FunderMaps.IntegrationTests.Repositories;
+using FunderMaps.Testing.Extensions;
+using FunderMaps.Testing.Faker;
+using FunderMaps.Testing.Repositories;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -40,10 +40,10 @@ namespace FunderMaps.IntegrationTests.Webservice
             };
             using var random = new RandomGenerator();
             var client = _factory
-                .WithAuthentication(options => options.User = sessionUser)
-                .WithDataStoreList(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
-                .WithDataStoreList(sessionOrganization)
-                .WithDataStoreList(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
+                .ConfigureAuthentication(options => options.User = sessionUser)
+                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
+                .WithDataStoreItem(sessionOrganization)
+                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
                 .CreateClient();
 
             // Act
@@ -61,7 +61,6 @@ namespace FunderMaps.IntegrationTests.Webservice
         {
             // Arrange
             var client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
 

@@ -1,5 +1,5 @@
 ﻿using FunderMaps.Core.Types.Products;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Faker;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Types;
@@ -40,10 +40,9 @@ namespace FunderMaps.IntegrationTests.Webservice
             }
 
             client = factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
-                .WithObjectStoreList(analysisProducts)
-                .WithObjectStoreList(statisticsProducts)
+                .WithDataStoreList(analysisProducts)
+                .WithDataStoreList(statisticsProducts)
                 .CreateClient();
         }
 

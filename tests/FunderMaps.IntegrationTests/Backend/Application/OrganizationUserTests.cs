@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Faker;
-using FunderMaps.IntegrationTests.Repositories;
+using FunderMaps.Testing.Faker;
+using FunderMaps.Testing.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
@@ -25,7 +25,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var newOrganizationUser = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.OrganizationRole = OrganizationRole.Superuser;
                 })
@@ -49,7 +49,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var sessionOrganization = new OrganizationFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -59,7 +59,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -95,7 +95,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationUser1 = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -106,7 +106,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -139,7 +139,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationUser1 = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -150,7 +150,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new List<OrganizationUserRecord>
                 {
                     new OrganizationUserRecord
@@ -184,7 +184,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var newOrganizationUser = new UserFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.OrganizationRole = organizationRole;
                 })
@@ -210,7 +210,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationUser1 = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -221,7 +221,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -257,7 +257,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationUser1 = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options =>
+                .ConfigureAuthentication(options =>
                 {
                     options.User = sessionUser;
                     options.Organization = sessionOrganization;
@@ -268,7 +268,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new List<OrganizationUserRecord>
                 {
                     new OrganizationUserRecord

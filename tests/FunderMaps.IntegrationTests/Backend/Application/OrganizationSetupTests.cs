@@ -1,4 +1,4 @@
-﻿using FunderMaps.IntegrationTests.Faker;
+﻿using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
@@ -23,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organization = new OrganizationProposalFaker().Generate();
             var organizationSetup = new OrganizationSetupDtoFaker().Generate();
             var client = _factory
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
