@@ -24,14 +24,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
+
     - name: Install dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
+
     - name: Test
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
   
@@ -55,11 +59,21 @@ jobs:
     - name: Publish FunderMaps.WebApi
       run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
 
+    - name: Package version
+      run: |
+        git describe --long --always > backend-dist/VERSION
+        git rev-parse HEAD > backend-dist/COMMIT
+
     - name: Create archive
       run: tar -czf ${{ env.ARCHIVE_BACKEND }} -C backend-dist .
 
     - name: Publish FunderMaps.Webservice
       run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
+
+    - name: Package version
+      run: |
+        git describe --long --always > webservice-dist/VERSION
+        git rev-parse HEAD > webservice-dist/COMMIT
 
     - name: Create archive
       run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
