@@ -34,14 +34,19 @@ namespace FunderMaps
         };
 
         /// <summary>
-        ///     Retrieve application version.
-        /// </summary>
-        internal static Version ApplicationVersion => Assembly.GetEntryAssembly().GetName().Version;
-
-        /// <summary>
-        ///     Retrieve application name.
+        ///     Application name.
         /// </summary>
         internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
+
+        /// <summary>
+        ///     Application revision.
+        /// </summary>
+        internal static string ApplicationVersion => "@@VERSION@@";
+
+        /// <summary>
+        ///     Application commit.
+        /// </summary>
+        internal static string ApplicationCommit => "@@COMMIT@@";
 
         /// <summary>
         ///     Incident gateway name.

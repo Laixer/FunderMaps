@@ -1,5 +1,5 @@
 ﻿using FunderMaps.IntegrationTests.Authentication;
-using FunderMaps.IntegrationTests.Repositories;
+using FunderMaps.Testing.Repositories;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -9,7 +9,7 @@ namespace FunderMaps.IntegrationTests
     public abstract class AuthWebApplicationFactory<TStartup> : CustomWebApplicationFactory<TStartup>
         where TStartup : class
     {
-        public AuthWebApplicationFactory<TStartup> WithAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)
+        public AuthWebApplicationFactory<TStartup> ConfigureAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)
         {
             var authPrincipal = Services.GetService<TestAuthenticationSchemeOptions>();
             initializer?.Invoke(authPrincipal);
@@ -21,9 +21,9 @@ namespace FunderMaps.IntegrationTests
         {
             var authPrincipal = Services.GetService<TestAuthenticationSchemeOptions>();
 
-            WithDataStoreList(new UserRecord { User = authPrincipal.User });
-            WithDataStoreList(authPrincipal.Organization);
-            WithDataStoreList(new OrganizationUserRecord
+            WithDataStoreItem(new UserRecord { User = authPrincipal.User });
+            WithDataStoreItem(authPrincipal.Organization);
+            WithDataStoreItem(new OrganizationUserRecord
             {
                 UserId = authPrincipal.User.Id,
                 OrganizationId = authPrincipal.Organization.Id,

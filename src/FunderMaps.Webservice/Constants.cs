@@ -1,21 +1,25 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace FunderMaps.Webservice
 {
     /// <summary>
-    ///     Contains application constants.
+    ///     Application constants.
     /// </summary>
     internal static class Constants
     {
         /// <summary>
-        ///     Retrieve application name.
+        ///     Application name.
         /// </summary>
         internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
 
         /// <summary>
-        ///     Version.
+        ///     Application revision.
         /// </summary>
-        internal static Version ApplicationVersion => Assembly.GetEntryAssembly().GetName().Version;
+        internal static string ApplicationVersion => "@@VERSION@@";
+
+        /// <summary>
+        ///     Application commit.
+        /// </summary>
+        internal static string ApplicationCommit => "@@COMMIT@@";
     }
 }

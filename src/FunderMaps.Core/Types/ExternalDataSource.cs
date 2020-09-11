@@ -1,7 +1,7 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Represents an external data source.
+    ///     Represents an external data source.
     /// </summary>
     public enum ExternalDataSource
     {

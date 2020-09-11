@@ -1,11 +1,8 @@
-﻿using FunderMaps.Core.Types.Distributions;
-using FunderMaps.Core.Types.Products;
-using FunderMaps.IntegrationTests.Faker;
+﻿using FunderMaps.Core.Types.Products;
+using FunderMaps.Testing.Faker;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.ResponseModels;
-using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
-using FunderMaps.Webservice.ResponseModels.Types;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;

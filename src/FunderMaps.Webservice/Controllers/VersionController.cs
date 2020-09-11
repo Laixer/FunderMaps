@@ -26,7 +26,7 @@ namespace FunderMaps.Webservice.Controllers
             {
                 Name = Constants.ApplicationName,
                 Version = Constants.ApplicationVersion,
-                VersionString = Constants.ApplicationVersion.ToString(),
+                Commit = Constants.ApplicationCommit,
             });
     }
 }

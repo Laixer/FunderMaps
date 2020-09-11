@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities.Geocoder;
+using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -52,12 +53,11 @@ namespace FunderMaps.Core.Entities
         [Required(AllowEmptyStrings = false)]
         public string ExternalId { get; set; }
 
-        // TODO: This is a type, see #211
         /// <summary>
         ///     External data source.
         /// </summary>
         [Required]
-        public string ExternalSource { get; set; }
+        public ExternalDataSource ExternalSource { get; set; }
 
         /// <summary>
         ///     Print object as name.

@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Extensions;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Extensions;
+using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
@@ -25,9 +25,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -45,7 +45,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate(0, 10);
             var client = _factory
-                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
@@ -66,9 +66,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var newOrganization = new OrganizationFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -84,9 +84,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -104,9 +104,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options => options.User.Role = role)
+                .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -124,7 +124,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate(0, 10);
             var client = _factory
-                .WithAuthentication(options => options.User.Role = role)
+                .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
                 .WithDataStoreList(organization)
                 .CreateClient();
@@ -145,9 +145,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var newOrganization = new OrganizationFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options => options.User.Role = role)
+                .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -165,9 +165,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Arrange
             var organization = new OrganizationFaker().Generate();
             var client = _factory
-                .WithAuthentication(options => options.User.Role = role)
+                .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act

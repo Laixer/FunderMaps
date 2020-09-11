@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Faker;
 using Microsoft.AspNetCore.Authentication;
 using System.Collections.Generic;
 using System.Security.Claims;

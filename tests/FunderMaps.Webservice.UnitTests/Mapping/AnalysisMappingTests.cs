@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Testing.Faker;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;

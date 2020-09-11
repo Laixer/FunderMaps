@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.WebApi.DataTransferObjects
@@ -30,23 +31,5 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [Required(AllowEmptyStrings = false)]
         public string Street { get; set; }
-
-        /// <summary>
-        ///     Address is active or not.
-        /// </summary>
-        [Required]
-        public bool IsActive { get; set; }
-
-        /// <summary>
-        ///     External data source id.
-        /// </summary>
-        [Required(AllowEmptyStrings = false)]
-        public string ExternalId { get; set; }
-
-        /// <summary>
-        ///     External data source.
-        /// </summary>
-        [Required]
-        public string ExternalSource { get; set; }
     }
 }

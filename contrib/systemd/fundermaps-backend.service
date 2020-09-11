@@ -2,15 +2,27 @@
 Description=FunderMaps Backend WebApplication
 
 [Service]
-WorkingDirectory=/var/www/fundermaps-backend
 ExecStart=/var/www/fundermaps-backend/FunderMaps
+WorkingDirectory=/var/www/fundermaps-backend
 Restart=always
 RestartSec=10
 KillSignal=SIGINT
+User=www-data
 SyslogIdentifier=fundermaps-backend
-User=fundermaps-backend
+Environment=ASPNETCORE_URLS="http://localhost:5500"
 Environment=ASPNETCORE_ENVIRONMENT=Production
 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+PrivateDevices=yes
+PrivateUsers=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+DynamicUser=yes
+LockPersonality=yes
+RestrictRealtime=yes
+RestrictNamespaces=yes
+RestrictAddressFamilies=AF_UNIX AF_NETLINK AF_INET AF_INET6
 
 [Install]
 WantedBy=multi-user.target
