@@ -33,6 +33,11 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
 
+    - name: Print version
+      run: |
+        find src -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/" {} +
+        find src -type f -exec sed -i "s/@@COMMIT@@/$(git rev-parse HEAD)/" {} +
+
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
