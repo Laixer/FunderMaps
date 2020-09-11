@@ -27,6 +27,7 @@ namespace FunderMaps.Webservice
         /// <returns>See <see cref="IHostBuilder"/>.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSystemd()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

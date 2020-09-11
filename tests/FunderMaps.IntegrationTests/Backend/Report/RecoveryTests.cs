@@ -1,4 +1,4 @@
-﻿using FunderMaps.IntegrationTests.Faker;
+﻿using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
@@ -18,7 +18,6 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             _factory = factory;
             _client = _factory
-                .WithAuthentication()
                 .WithAuthenticationStores()
                 .CreateClient();
         }
