@@ -55,22 +55,21 @@ namespace FunderMaps.Data.Repositories
             // FUTURE This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
                 SELECT
-                    id,
-                    external_id,
-                    external_source,
-                    foundation_type,
-                    groundwater_level,
-                    foundation_risk,
-                    construction_year,
-                    building_height,
-                    ground_level,
-                    restoration_costs,
-                    dewatering_depth,
-                    drystand,
-                    reliability,
-                    geom,
-                    neighborhood_id
-                FROM data.analysis_complete AS ac
+                    ac.id,
+                    ac.external_id,
+                    ac.external_source,
+                    ac.foundation_type,
+                    ac.groundwater_level,
+                    ac.foundation_risk,
+                    ac.construction_year,
+                    ac.building_height,
+                    ac.ground_level,
+                    ac.restoration_costs,
+                    ac.dewatering_depth,
+                    ac.drystand,
+                    ac.reliability,
+                    ac.neighborhood_id
+                FROM data.analysis_product_complete AS ac
                 WHERE
                     ac.external_id = @ExternalId
                     AND
@@ -108,22 +107,21 @@ namespace FunderMaps.Data.Repositories
             // FUTURE This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
                 SELECT
-                    id,
-                    external_id,
-                    external_source,
-                    foundation_type,
-                    groundwater_level,
-                    foundation_risk,
-                    construction_year,
-                    building_height,
-                    ground_level,
-                    restoration_costs,
-                    dewatering_depth,
-                    drystand,
-                    reliability,
-                    geom,
-                    neighborhood_id
-                FROM data.analysis_complete AS ac
+                    ac.id,
+                    ac.external_id,
+                    ac.external_source,
+                    ac.foundation_type,
+                    ac.groundwater_level,
+                    ac.foundation_risk,
+                    ac.construction_year,
+                    ac.building_height,
+                    ac.ground_level,
+                    ac.restoration_costs,
+                    ac.dewatering_depth,
+                    ac.drystand,
+                    ac.reliability,
+                    ac.neighborhood_id
+                FROM data.analysis_product_complete AS ac
                 WHERE
                     ac.id = @Id
                     AND 
@@ -163,26 +161,25 @@ namespace FunderMaps.Data.Repositories
             // Build sql.
             var sql = @"
                 SELECT
-                    id,
-                    external_id,
-                    external_source,
-                    foundation_type,
-                    groundwater_level,
-                    foundation_risk,
-                    construction_year,
-                    building_height,
-                    ground_level,
-                    restoration_costs,
-                    dewatering_depth,
-                    drystand,
-                    reliability,
-                    geom,
-                    neighborhood_id
-                FROM data.analysis_complete AS ac
-                JOIN geocoder.address AS a ON a.building_id = ac.id
-                JOIN geocoder.search_address(@Query) AS s ON s.id = a.id
+                    ac.id,
+                    ac.external_id,
+                    ac.external_source,
+                    ac.foundation_type,
+                    ac.groundwater_level,
+                    ac.foundation_risk,
+                    ac.construction_year,
+                    ac.building_height,
+                    ac.ground_level,
+                    ac.restoration_costs,
+                    ac.dewatering_depth,
+                    ac.drystand,
+                    ac.reliability,
+                    ac.neighborhood_id
+                FROM data.analysis_product_complete AS ac
                 WHERE
                     application.is_geometry_in_fence(@UserId, ac.geom)
+                    AND
+                    ac.address_tsv @@ to_tsquery(@Query)
                 LIMIT @Limit
                 OFFSET @Offset";
 
@@ -192,7 +189,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("Query", query);
             cmd.AddParameterWithValue("UserId", userId);
             cmd.AddParameterWithValue("Limit", (navigation ?? Navigation.DefaultCollection).Limit);
-            cmd.AddParameterWithValue("Offset", (navigation ?? Navigation.DefaultCollection).Limit);
+            cmd.AddParameterWithValue("Offset", (navigation ?? Navigation.DefaultCollection).Offset);
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
 
@@ -217,14 +214,14 @@ namespace FunderMaps.Data.Repositories
                 ExternalId = reader.GetSafeString(1),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(2),
                 FoundationType = reader.GetFieldValue<FoundationType>(3),
-                GroundWaterLevel = reader.GetDouble(4),
+                GroundWaterLevel = reader.GetSafeDouble(4),
                 FoundationRisk = reader.GetFieldValue<FoundationRisk>(5),
                 ConstructionYear = reader.GetDateTime(6),
-                BuildingHeight = reader.GetDouble(7),
-                GroundLevel = reader.GetFloat(8),
-                RestorationCosts = reader.GetDouble(9),
-                DewateringDepth = reader.GetDouble(10),
-                Drystand = reader.GetDouble(11),
+                BuildingHeight = reader.GetSafeDouble(7),
+                GroundLevel = reader.GetSafeFloat(8),
+                RestorationCosts = reader.GetSafeDouble(9),
+                DewateringDepth = reader.GetSafeDouble(10),
+                Drystand = reader.GetSafeDouble(11),
                 Reliability = reader.GetFieldValue<Reliability>(12),
                 NeighborhoodId = reader.GetSafeString(13)
             };

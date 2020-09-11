@@ -5,6 +5,7 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -125,11 +126,11 @@ namespace FunderMaps.Core.Services
 
             // Process and return.
             // FUTURE Clean up, make async foreach or similar.
-            var result = new Collection<AnalysisProduct>();
-            foreach (var product in products)
+            var result = new ConcurrentBag<AnalysisProduct>();
+            Parallel.ForEach(products, (product) =>
             {
-                result.Add(await ProcessAnalysisAsync(userId, productType, product, token));
-            }
+                result.Add(Task.Run(() => ProcessAnalysisAsync(userId, productType, product, token)).Result);
+            });
             return result;
         }
 
@@ -141,7 +142,8 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token = default) => throw new NotImplementedException();
+        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token = default) 
+            => throw new NotImplementedException();
 
         /// <summary>
         ///     Gets statistics for a given area code.

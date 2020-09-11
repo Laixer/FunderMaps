@@ -62,6 +62,48 @@ namespace FunderMaps.Data.Extensions
         }
 
         /// <summary>
+        ///     Return value as nullable double.
+        /// </summary>
+        /// <param name="reader">Input reader to extend.</param>
+        /// <param name="ordinal">Column ordinal.</param>
+        /// <returns>Value as nullable double.</returns>
+        public static double? GetSafeDouble(this DbDataReader reader, int ordinal)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            if (reader.IsDBNull(ordinal))
+            {
+                return null;
+            }
+
+            return reader.GetDouble(ordinal);
+        }
+
+        /// <summary>
+        ///     Return value as nullable float.
+        /// </summary>
+        /// <param name="reader">Input reader to extend.</param>
+        /// <param name="ordinal">Column ordinal.</param>
+        /// <returns>Value as nullable float.</returns>
+        public static float? GetSafeFloat(this DbDataReader reader, int ordinal)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            if (reader.IsDBNull(ordinal))
+            {
+                return null;
+            }
+
+            return reader.GetFloat(ordinal);
+        }
+
+        /// <summary>
         ///     Return value as nullable string.
         /// </summary>
         /// <param name="reader">Input reader to extend.</param>

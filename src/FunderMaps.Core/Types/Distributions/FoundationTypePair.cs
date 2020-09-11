@@ -12,8 +12,8 @@
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
-        /// The total amount of buildings having this foundation type.
+        /// The percentage of buildings having this foundation type.
         /// </summary>
-        public uint TotalCount { get; set; }
+        public double Percentage { get; set; }
     }
 }

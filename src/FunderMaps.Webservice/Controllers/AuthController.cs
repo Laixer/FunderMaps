@@ -42,7 +42,7 @@ namespace FunderMaps.Webservice.Controllers
             var output = new SignInSecurityTokenDto
             {
                 Token = token,
-                TokenValidity = 2400,
+                TokenValidity = 2400, // TODO Don't hardcode
             };
 
             // Return.

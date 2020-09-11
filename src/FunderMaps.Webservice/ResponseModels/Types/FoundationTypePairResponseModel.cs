@@ -1,19 +1,19 @@
 ﻿namespace FunderMaps.Webservice.ResponseModels.Types
 {
     /// <summary>
-    /// Response model containing the amount of buildings which have a given
+    ///     Response model containing the amount of buildings which have a given
     /// <see cref="FoundationType"/>.
     /// </summary>
     public sealed class FoundationTypePairResponseModel
     {
         /// <summary>
-        /// The type of foundation.
+        ///     The type of foundation.
         /// </summary>
         public FoundationTypeResponseModel FoundationType { get; set; }
 
         /// <summary>
-        /// The total amount of buildings having this foundation type.
+        ///     The percentage of buildings having this foundation type.
         /// </summary>
-        public uint TotalCount { get; set; }
+        public double Percentage { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace FunderMaps.Webservice.Controllers
     /// <summary>
     ///     Controller for handling error responses.
     /// </summary>
-    [ApiController]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : ControllerBase
     {
         private readonly ILogger<ErrorController> _logger;

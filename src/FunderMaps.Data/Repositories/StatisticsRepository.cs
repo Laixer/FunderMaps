@@ -109,13 +109,13 @@ namespace FunderMaps.Data.Repositories
             {
                 return product switch
                 {
-                    StatisticsProductType.FoundationRatio => "statistics_foundation_type",
-                    StatisticsProductType.ConstructionYears => "statistics_construction_years",
-                    StatisticsProductType.FoundationRisk => "statistics_foundation_risk",
-                    StatisticsProductType.DataCollected => "statistics_data_collected",
-                    StatisticsProductType.BuildingsRestored => "statistics_buildings_restored",
-                    StatisticsProductType.Incidents => "statistics_incidents",
-                    StatisticsProductType.Reports => "statistics_inquiries",
+                    StatisticsProductType.FoundationRatio => "statistics_product_foundation_type",
+                    StatisticsProductType.ConstructionYears => "statistics_product_construction_years",
+                    StatisticsProductType.FoundationRisk => "statistics_product_foundation_risk",
+                    StatisticsProductType.DataCollected => "statistics_product_data_collected",
+                    StatisticsProductType.BuildingsRestored => "statistics_product_buildings_restored",
+                    StatisticsProductType.Incidents => "statistics_product_incidents",
+                    StatisticsProductType.Reports => "statistics_product_inquiries",
                     _ => throw new InvalidOperationException(nameof(product))
                 };
             }
@@ -151,6 +151,7 @@ namespace FunderMaps.Data.Repositories
 
             cmd.AddParameterWithValue("Identifier", identifier);
 
+            // TODO Don't throw if nothing is found
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
 
             // Map and return.
@@ -269,7 +270,7 @@ namespace FunderMaps.Data.Repositories
                 pairs.Add(new FoundationTypePair
                 {
                     FoundationType = reader.GetFieldValue<FoundationType>(1),
-                    TotalCount = reader.GetUInt(2)
+                    Percentage = reader.GetDouble(2)
                 });
             }
 

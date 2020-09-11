@@ -70,7 +70,7 @@ namespace FunderMaps.Testing.Faker
                 pairs.Add(new FoundationTypePair
                 {
                     FoundationType = foundationTypes[i],
-                    TotalCount = (uint)random.Next(1, 100)
+                    Percentage = (uint)random.Next(1, 100)
                 });
             }
 
