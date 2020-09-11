@@ -44,7 +44,7 @@ jobs:
     - name: Test
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
   
-  publish:
+  publish-backend:
     name: Publish Backend
     needs: build
     if: github.ref == 'refs/heads/master'
@@ -99,7 +99,7 @@ jobs:
           mv /var/cache/deployment/tmp/*.tar.gz /var/cache/deployment/current/
           /var/cache/deployment/deploy.sh
 
-  publish:
+  publish-webservice:
     name: Publish Webservice
     needs: build
     if: github.ref == 'refs/heads/master'
