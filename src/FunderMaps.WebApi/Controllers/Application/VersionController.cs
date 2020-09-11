@@ -27,6 +27,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             {
                 Name = Constants.ApplicationName,
                 Version = Constants.ApplicationVersion,
+                Commit = Constants.ApplicationCommit,
             });
     }
 }

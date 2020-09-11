@@ -14,5 +14,10 @@
         ///     Application version.
         /// </summary>
         public string Version { get; set; }
+
+        /// <summary>
+        ///     Application version commit.
+        /// </summary>
+        public string Commit { get; set; }
     }
 }
