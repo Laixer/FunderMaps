@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FunderMaps.AspNetCore.DataTransferObjects
+﻿namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
     ///     Application version DTO.
@@ -15,13 +11,13 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         public string Name { get; set; }
 
         /// <summary>
-        ///     Application version structure.
+        ///     Application version.
         /// </summary>
-        public Version Version { get; set; }
+        public string Version { get; set; }
 
         /// <summary>
-        ///     Application version as string.
+        ///     Application version commit.
         /// </summary>
-        public string VersionString { get; set; }
+        public string Commit { get; set; }
     }
 }

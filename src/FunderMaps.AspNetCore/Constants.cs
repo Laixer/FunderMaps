@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+using System.Reflection;
 
-namespace FunderMaps.Webservice
+namespace FunderMaps.AspNetCore
 {
     /// <summary>
     ///     Application constants.

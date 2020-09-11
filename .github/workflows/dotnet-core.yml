@@ -24,19 +24,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }} 
+
     - name: Install dependencies
       run: dotnet restore
+
+    - name: Print version
+      run: |
+        find src -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/" {} +
+        find src -type f -exec sed -i "s/@@COMMIT@@/$(git rev-parse HEAD)/" {} +
+
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
+
     - name: Test
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
   
-  publish:
-    name: Publish
+  publish-backend:
+    name: Publish Backend
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -52,17 +61,76 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
 
+    - name: Print version
+      run: |
+        find src -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/" {} +
+        find src -type f -exec sed -i "s/@@COMMIT@@/$(git rev-parse HEAD)/" {} +
+
     - name: Publish FunderMaps.WebApi
-      run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output backend-dist
+      run: dotnet publish src/FunderMaps.WebApi --nologo --configuration ${{ env.BUILD_CONFIG }} --output dist
+
+    - name: Package version
+      run: |
+        git describe --long --always > dist/VERSION
+        git rev-parse HEAD > dist/COMMIT
 
     - name: Create archive
-      run: tar -czf ${{ env.ARCHIVE_BACKEND }} -C backend-dist .
+      run: tar -czf ${{ env.ARCHIVE_BACKEND }} -C dist .
+
+    - name: Copy archive via scp
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        source: '*.tar.gz'
+        target: '/var/cache/deployment/tmp'
+        
+    - name: Running deploy script
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: 22
+        script: |
+          rm /var/cache/deployment/current/*.tar.gz
+          mv /var/cache/deployment/tmp/*.tar.gz /var/cache/deployment/current/
+          /var/cache/deployment/deploy.sh
+
+  publish-webservice:
+    name: Publish Webservice
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }} 
+
+    - name: Install dependencies
+      run: dotnet restore
+
+    - name: Print version
+      run: |
+        find src -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/" {} +
+        find src -type f -exec sed -i "s/@@COMMIT@@/$(git rev-parse HEAD)/" {} +
 
     - name: Publish FunderMaps.Webservice
-      run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output webservice-dist
+      run: dotnet publish src/FunderMaps.Webservice --nologo --configuration ${{ env.BUILD_CONFIG }} --output dist
+
+    - name: Package version
+      run: |
+        git describe --long --always > dist/VERSION
+        git rev-parse HEAD > dist/COMMIT
 
     - name: Create archive
-      run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C webservice-dist .
+      run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C dist .
 
     - name: Copy archive via scp
       uses: appleboy/scp-action@master
