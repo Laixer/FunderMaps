@@ -23,7 +23,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.ExternalSource, f => f.PickRandom<ExternalDataSource>());
             RuleFor(f => f.FoundationRisk, f => f.PickRandom<FoundationRisk>());
             RuleFor(f => f.FoundationRiskDistribution, f => null);
-            RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>()); ;
+            RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>());
             RuleFor(f => f.FoundationTypeDistribution, f => null);
             RuleFor(f => f.FullDescription, f => f.Random.Words(10));
             RuleFor(f => f.GroundLevel, f => f.Random.Double(-300, 300));

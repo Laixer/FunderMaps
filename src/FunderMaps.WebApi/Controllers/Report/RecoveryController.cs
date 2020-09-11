@@ -34,9 +34,14 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var recovery = await _recoveryUseCase.GetAsync(id).ConfigureAwait(false);
+            // Act.
+            var recovery = await _recoveryUseCase.GetAsync(id);
 
-            return Ok(_mapper.Map<RecoveryDto>(recovery));
+            // Map.
+            var output = _mapper.Map<RecoveryDto>(recovery);
+
+            // Return.
+            return Ok(output);
         }
 
         [HttpGet]
@@ -47,8 +52,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation));
 
             return Ok(result);
         }
@@ -61,8 +65,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation));
 
             return Ok(result);
         }
@@ -70,14 +73,17 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            // Map.
+            var recovery = _mapper.Map<Recovery>(input);
 
-            var recovery = await _recoveryUseCase.CreateAsync(_mapper.Map<Recovery>(input)).ConfigureAwait(false);
+            // Act.
+            recovery = await _recoveryUseCase.CreateAsync(recovery);
 
-            return Ok(_mapper.Map<RecoveryDto>(recovery));
+            // Map.
+            var output = _mapper.Map<RecoveryDto>(recovery);
+
+            // Return.
+            return Ok(output);
         }
 
         [HttpPost("upload-document")]
@@ -90,46 +96,44 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // FUTURE
 
+            // Return.
             return NoContent();
         }
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var recovery = _mapper.Map<Recovery>(input);
             recovery.Id = id;
 
-            await _recoveryUseCase.UpdateAsync(recovery).ConfigureAwait(false);
+            // Act.
+            await _recoveryUseCase.UpdateAsync(recovery);
 
+            // Return.
             return NoContent();
         }
 
         [HttpPut("{id:int}/status")]
         public async Task<IActionResult> SetStatusAsync(int id, [FromBody] RecoveryDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var recovery = _mapper.Map<Recovery>(input);
             recovery.Id = id;
 
             // FUTURE
 
+            // Return.
             return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _recoveryUseCase.DeleteAsync(id).ConfigureAwait(false);
+            // Act.
+            await _recoveryUseCase.DeleteAsync(id);
 
+            // Return.
             return NoContent();
         }
     }

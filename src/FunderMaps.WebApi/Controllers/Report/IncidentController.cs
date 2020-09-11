@@ -7,7 +7,6 @@ using FunderMaps.Core.UseCases;
 using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -50,6 +49,11 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        /// <summary>
+        ///     Upload document to the backstore.
+        /// </summary>
+        /// <param name="input">See <see cref="IFormFile"/>.</param>
+        /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
         {
@@ -91,12 +95,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Post a new incident to the backend.
         /// </summary>
-        /// <remarks>
-        ///     This call can be made anonymous or as a user.
-        /// </remarks>
         /// <param name="input"><see cref="IncidentDto"/></param>
         /// <returns><see cref="OkObjectResult"/></returns>
-        [AllowAnonymous]
         [HttpPost]
         [ProducesResponseType((int) HttpStatusCode.OK)]
         public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input)
@@ -104,28 +104,15 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Map.
             var incident = _mapper.Map<Incident>(input);
 
-            // Process the anonymity of the request.
-            if (_authManager.IsSignedIn(User))
-            {
-                var sessionUser = await _authManager.GetUserAsync(User);
-                var sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            var sessionUser = await _authManager.GetUserAsync(User);
+            var sessionOrganization = await _authManager.GetOrganizationAsync(User);
 
-                incident.Meta = new
-                {
-                    SessionUser = sessionUser.Id,
-                    sessionOrganization = sessionOrganization.Id,
-                    Gateway = Constants.IncidentGateway,
-                };
-            }
-            else
+            incident.Meta = new
             {
-                incident.Meta = new
-                {
-                    UserAgent = Request.Headers["User-Agent"].ToString(),
-                    RemoteAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    Gateway = Constants.IncidentGateway,
-                };
-            }
+                SessionUser = sessionUser.Id,
+                SessionOrganization = sessionOrganization.Id,
+                Gateway = Constants.IncidentGateway,
+            };
 
             // Act.
             incident = await _incidentUseCase.CreateAsync(incident);

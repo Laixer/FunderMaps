@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types;
 
 namespace FunderMaps.Testing.Faker
 {
@@ -16,7 +17,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.Street, f => f.Address.StreetName());
             RuleFor(f => f.IsActive, f => f.Random.Bool(0.9f));
             RuleFor(f => f.ExternalId, f => $"NL.IMBAG.NUMMERAANDUIDING.{f.Random.ReplaceNumbers("################")}");
-            RuleFor(f => f.ExternalSource, f => "nl_bag");
+            RuleFor(f => f.ExternalSource, f => f.PickRandom<ExternalDataSource>());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
@@ -105,10 +106,10 @@ namespace FunderMaps.Data.Repositories
                 Street = reader.GetSafeString(3),
                 IsActive = reader.GetBoolean(4),
                 ExternalId = reader.GetSafeString(5),
-                ExternalSource = reader.GetSafeString(6),
+                ExternalSource = reader.GetFieldValue<ExternalDataSource>(6),
             };
 
-        public async ValueTask<Address> GetByExternalIdAsync(string id, string source)
+        public async ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
             var sql = @"
                 SELECT  id,

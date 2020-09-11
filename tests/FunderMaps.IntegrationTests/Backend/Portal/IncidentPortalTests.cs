@@ -1,21 +1,27 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
+using FunderMaps.Testing.Faker;
+using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Geocoder
+namespace FunderMaps.IntegrationTests.Backend.Portal
 {
-    // TODO: Use DTO
-    public class AddressTests : IClassFixture<AuthBackendWebApplicationFactory>
+    /// <summary>
+    ///     Anonymous tests for the incident create endpoint.
+    /// </summary>
+    public class IncidentPortalTests : IClassFixture<BackendWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private readonly BackendWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
-        internal static readonly List<Address> Addresses = new List<Address>
+        // FUTURE: Move into common test code
+        internal static readonly IList<Address> Addresses = new List<Address>
         {
             new Address
             {
@@ -109,37 +115,34 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             },
         };
 
-        public AddressTests(AuthBackendWebApplicationFactory factory)
+        public IncidentPortalTests(BackendWebApplicationFactory factory)
         {
             _factory = factory;
             _client = _factory
-                .WithAuthenticationStores()
                 .WithDataStoreList(Addresses)
                 .CreateClient();
         }
 
         [Fact]
-        public async Task GetAddressByIdReturnSingleAddress()
+        public async Task CreateIncidentReturnOk()
         {
-            // Act
-            var response = await _client.GetAsync("api/address/gfm-67f8fd79bf3a461c923e7c24c0fb479f");
-            var returnObject = await response.Content.ReadFromJsonAsync<Address>();
+            // Arrange.
+            var incident = new IncidentDtoFaker().Generate();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("gfm-67f8fd79bf3a461c923e7c24c0fb479f", returnObject.Id);
+            // Act.
+            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+
+            // Assert.
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
         [Theory]
-        [InlineData("kade")]
-        [InlineData("4621E")]
-        [InlineData("5707KM")]
-        [InlineData("straat")]
-        [InlineData("hage")]
+        [InlineData("4621EV")]
+        [InlineData("2271TT")]
         public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
         {
             // Act
-            var response = await _client.GetAsync($"api/address/suggest?query={query}");
+            var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
             var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
             // Assert
@@ -148,15 +151,78 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         }
 
         [Fact]
-        public async Task GetLimitedAddressByQueryReturnMatchingAddressList()
+        public async Task UploadDocumentReturnDocument()
+        {
+            // Arrange
+            // TODO: Test using faker?
+            using var byteArrayContent = new ByteArrayContent(new byte[] { 0x0, 0x0 });
+            byteArrayContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/pdf");
+            using var formContent = new MultipartFormDataContent
+            {
+                { byteArrayContent, "input", "inputfile.pdf" }
+            };
+
+            // Act
+            var response = await _client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Name);
+        }
+
+        [Theory]
+        [InlineData(null, 0, null)]
+        [InlineData("gfm-asdkkgfsljshdf", 0, null)]
+        [InlineData(null, 22, null)]
+        [InlineData(null, 0, "just@email.nl")]
+        [InlineData(null, 19, "email@email.com")]
+        [InlineData("gfm-kdshfjdsfkljdhsf", 0, "valid@valid.nl")]
+        [InlineData("aaa-invalidid", 84, "perfect@mail.com")]
+        [InlineData("gfm-correctid", 1492, "yesyes@disgood.nl")]
+        [InlineData("gfm-correctid", -1000, "actually@right.nl")]
+        [InlineData("gfm-lsdhfdsfajh", 14390, "invalidemail")]
+        public async Task CreateInvalidIncidentReturnBadRequest(string address, int clientId, string email)
+        {
+            // Arrange.
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => address)
+                .RuleFor(f => f.ClientId, f => clientId)
+                .RuleFor(f => f.Email, f => email)
+                .Generate();
+            incident.Address = address;
+            incident.ClientId = clientId;
+            incident.Email = email;
+
+            // Act.
+            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+
+            // Assert.
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CreateEmptyBodyReturnBadRequest()
+        {
+            // Act.
+            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
+
+            // Assert.
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("0000XX")]
+        [InlineData("1111YY")]
+        public async Task GetAllAddressByQueryReturnEmptyList(string query)
         {
             // Act
-            var response = await _client.GetAsync($"api/address/suggest?query=laan&limit=2");
+            var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
             var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(2, returnList.Count);
+            Assert.Empty(returnList);
         }
     }
 }

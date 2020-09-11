@@ -2,9 +2,14 @@ name: FunderMaps Ecosystem
 
 on:
   push:
-    branches: '*'
+    branches:
+      - master
+      - develop
+      - 'feature/**'
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - develop
 
 env:
   DOTNET_VERSION: '3.1.101'
@@ -28,7 +33,7 @@ jobs:
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
     - name: Test
-      run: dotnet test --nologo --no-restore
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
   
   publish:
     name: Publish

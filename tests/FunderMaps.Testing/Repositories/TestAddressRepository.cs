@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public ValueTask<Address> GetByExternalIdAsync(string id, string source)
+        public ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
             return new ValueTask<Address>(DataStore.ItemList.FirstOrDefault(e => e.ExternalId == id && e.ExternalSource == source));
         }
