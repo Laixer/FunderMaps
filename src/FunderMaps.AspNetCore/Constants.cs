@@ -1,21 +1,25 @@
-using System;
 using System.Reflection;
 
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
-    ///     Contains application constants.
+    ///     Application constants.
     /// </summary>
-    public static class Constants
+    internal static class Constants
     {
+        /// <summary>
+        ///     Application name.
+        /// </summary>
+        internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
+
         /// <summary>
         ///     Application revision.
         /// </summary>
-        public static string ApplicationRevision => "@@VERSION@@";
+        internal static string ApplicationVersion => "@@VERSION@@";
 
         /// <summary>
         ///     Application commit.
         /// </summary>
-        public static string ApplicationCommit => "@@COMMIT@@";
+        internal static string ApplicationCommit => "@@COMMIT@@";
     }
 }
