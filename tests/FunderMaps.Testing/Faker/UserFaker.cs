@@ -108,7 +108,7 @@ namespace FunderMaps.Testing.Faker
         };
 
         /// <summary>
-        ///     Creatw new instance.
+        ///     Create new instance.
         /// </summary>
         public UserFaker()
         {
