@@ -111,7 +111,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             incident.Meta = new
             {
                 SessionUser = sessionUser.Id,
-                sessionOrganization = sessionOrganization.Id,
+                SessionOrganization = sessionOrganization.Id,
                 Gateway = Constants.IncidentGateway,
             };
 
