@@ -41,9 +41,9 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var random = new RandomGenerator();
             var client = _factory
                 .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreList(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
-                .WithDataStoreList(sessionOrganization)
-                .WithDataStoreList(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
+                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
+                .WithDataStoreItem(sessionOrganization)
+                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
                 .CreateClient();
 
             // Act

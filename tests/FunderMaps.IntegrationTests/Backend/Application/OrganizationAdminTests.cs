@@ -27,7 +27,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -68,7 +68,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -86,7 +86,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -106,7 +106,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -147,7 +147,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -167,7 +167,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act

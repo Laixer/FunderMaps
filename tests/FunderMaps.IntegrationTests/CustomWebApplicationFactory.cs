@@ -48,27 +48,11 @@ namespace FunderMaps.IntegrationTests
             builder.ConfigureTestServices(ConfigureTestServices);
         }
 
-        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(TItem item)
+        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreItem<TItem>(TItem item)
             where TItem : class
         {
             var dataStore = Services.GetService<DataStore<TItem>>();
             dataStore.Reset(item);
-
-            return this;
-        }
-
-        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(List<TItem> item)
-            where TItem : class
-        {
-            WithDataStoreList(item.AsEnumerable<TItem>());
-
-            return this;
-        }
-
-        public virtual CustomWebApplicationFactory<TStartup> WithDataStoreList<TItem>(TItem[] item)
-            where TItem : class
-        {
-            WithDataStoreList(item.AsEnumerable<TItem>());
 
             return this;
         }

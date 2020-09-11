@@ -28,7 +28,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             statisticsProduct = new StatisticsProductFaker().Generate();
             client = factory
                 .WithAuthenticationStores()
-                .WithDataStoreList(statisticsProduct)
+                .WithDataStoreItem(statisticsProduct)
                 .CreateClient();
         }
 

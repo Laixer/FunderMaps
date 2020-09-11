@@ -49,7 +49,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = organizationUser3 },
                     new UserRecord { User = organizationUser4 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord

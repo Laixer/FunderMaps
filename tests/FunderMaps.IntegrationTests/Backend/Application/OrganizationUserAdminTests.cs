@@ -31,7 +31,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     options.User.Role = ApplicationRole.Administrator;
                 })
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -60,7 +60,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = organizationUser1 },
                     new UserRecord { User = organizationUser2 },
                 })
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -99,9 +99,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 {
                     options.User.Role = ApplicationRole.Administrator;
                 })
-                .WithDataStoreList(new UserRecord { User = organizationUser1 })
-                .WithDataStoreList(organization)
-                .WithDataStoreList(new OrganizationUserRecord
+                .WithDataStoreItem(new UserRecord { User = organizationUser1 })
+                .WithDataStoreItem(organization)
+                .WithDataStoreItem(new OrganizationUserRecord
                 {
                     UserId = organizationUser1.Id,
                     OrganizationId = organization.Id,
@@ -127,9 +127,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 {
                     options.User.Role = ApplicationRole.Administrator;
                 })
-                .WithDataStoreList(new UserRecord { User = organizationUser1 })
-                .WithDataStoreList(organization)
-                .WithDataStoreList(new OrganizationUserRecord
+                .WithDataStoreItem(new UserRecord { User = organizationUser1 })
+                .WithDataStoreItem(organization)
+                .WithDataStoreItem(new OrganizationUserRecord
                 {
                     UserId = organizationUser1.Id,
                     OrganizationId = organization.Id,
@@ -158,7 +158,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     options.User.Role = applicationRole;
                 })
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -187,7 +187,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = organizationUser1 },
                     new UserRecord { User = organizationUser2 },
                 })
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -226,9 +226,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 {
                     options.User.Role = applicationRole;
                 })
-                .WithDataStoreList(new UserRecord { User = organizationUser1 })
-                .WithDataStoreList(organization)
-                .WithDataStoreList(new OrganizationUserRecord
+                .WithDataStoreItem(new UserRecord { User = organizationUser1 })
+                .WithDataStoreItem(organization)
+                .WithDataStoreItem(new OrganizationUserRecord
                 {
                     UserId = organizationUser1.Id,
                     OrganizationId = organization.Id,
@@ -256,9 +256,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 {
                     options.User.Role = applicationRole;
                 })
-                .WithDataStoreList(new UserRecord { User = organizationUser1 })
-                .WithDataStoreList(organization)
-                .WithDataStoreList(new OrganizationUserRecord
+                .WithDataStoreItem(new UserRecord { User = organizationUser1 })
+                .WithDataStoreItem(organization)
+                .WithDataStoreItem(new OrganizationUserRecord
                 {
                     UserId = organizationUser1.Id,
                     OrganizationId = organization.Id,

@@ -21,9 +21,9 @@ namespace FunderMaps.IntegrationTests
         {
             var authPrincipal = Services.GetService<TestAuthenticationSchemeOptions>();
 
-            WithDataStoreList(new UserRecord { User = authPrincipal.User });
-            WithDataStoreList(authPrincipal.Organization);
-            WithDataStoreList(new OrganizationUserRecord
+            WithDataStoreItem(new UserRecord { User = authPrincipal.User });
+            WithDataStoreItem(authPrincipal.Organization);
+            WithDataStoreItem(new OrganizationUserRecord
             {
                 UserId = authPrincipal.User.Id,
                 OrganizationId = authPrincipal.Organization.Id,

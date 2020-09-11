@@ -59,7 +59,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -106,7 +106,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -150,7 +150,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new List<OrganizationUserRecord>
                 {
                     new OrganizationUserRecord
@@ -221,7 +221,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new[]
                 {
                     new OrganizationUserRecord
@@ -268,7 +268,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                     new UserRecord { User = sessionUser },
                     new UserRecord { User = organizationUser1 },
                 })
-                .WithDataStoreList(sessionOrganization)
+                .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreList(new List<OrganizationUserRecord>
                 {
                     new OrganizationUserRecord

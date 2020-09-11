@@ -23,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organization = new OrganizationProposalFaker().Generate();
             var organizationSetup = new OrganizationSetupDtoFaker().Generate();
             var client = _factory
-                .WithDataStoreList(organization)
+                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
