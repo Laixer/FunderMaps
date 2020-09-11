@@ -269,7 +269,7 @@ namespace FunderMaps.Data.Repositories
                 pairs.Add(new FoundationTypePair
                 {
                     FoundationType = reader.GetFieldValue<FoundationType>(1),
-                    TotalCount = reader.GetUInt(2)
+                    Percentage = reader.GetDouble(2)
                 });
             }
 

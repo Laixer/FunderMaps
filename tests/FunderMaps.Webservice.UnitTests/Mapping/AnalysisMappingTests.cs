@@ -254,7 +254,7 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
                 var entityPair = entity.FoundationTypes.ToArray()[i];
                 var modelPair = model.FoundationTypes.ToArray()[i];
                 Assert.Equal(EnumMapperHelper.Map(entityPair.FoundationType), modelPair.FoundationType);
-                Assert.Equal(entityPair.TotalCount, modelPair.TotalCount);
+                Assert.Equal(entityPair.Percentage, modelPair.Percentage);
             }
         }
     }
