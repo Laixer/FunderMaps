@@ -24,7 +24,7 @@ namespace FunderMaps.Testing.Extensions
             return internet.UrlWithPath("https", internet.DomainName(), internet.Random.ArrayElement(fileExt));
         }
 
-        public static List<T> Generate<T>(this Faker<T> faker, int min = int.MinValue, int max = int.MaxValue)
+        public static List<T> GenerateRange<T>(this Faker<T> faker, int min = int.MinValue, int max = int.MaxValue)
              where T : class
         {
             return faker.Generate(new Randomizer().Int(min, max));
