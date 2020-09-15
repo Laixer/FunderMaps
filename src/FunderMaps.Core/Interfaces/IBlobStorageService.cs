@@ -12,19 +12,19 @@ namespace FunderMaps.Core.Interfaces
         /// <summary>
         ///     Check if a file exist in storage.
         /// </summary>
-        /// <param name="store">Storage container.</param>
-        /// <param name="name">File name.</param>
+        /// <param name="containerName">Storage container.</param>
+        /// <param name="fileName">File name.</param>
         /// <returns>True if file exist, false otherwise.</returns>
-        ValueTask<bool> FileExistsAsync(string store, string name);
+        ValueTask<bool> FileExistsAsync(string containerName, string fileName);
 
         /// <summary>
         ///     Retrieve file access link as uri.
         /// </summary>
-        /// <param name="store">Storage container.</param>
-        /// <param name="name">File name.</param>
+        /// <param name="containerName">Storage container.</param>
+        /// <param name="fileName">File name.</param>
         /// <param name="hoursValid">How long the link is valid in hours.</param>
         /// <returns>The generated link.</returns>
-        ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid);
+        ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
 
         /// <summary>
         ///     Store the file in the data store.
