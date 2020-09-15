@@ -3,9 +3,9 @@
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
-    ///     Options for the file storage service.
+    ///     Options for the blob storage service.
     /// </summary>
-    public sealed class FileStorageOptions
+    public sealed class BlobStorageOptions
     {
         /// <summary>
         ///     Configuration section key.

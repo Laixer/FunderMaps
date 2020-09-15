@@ -17,7 +17,7 @@ namespace FunderMaps.Infrastructure.Storage
     /// </summary>
     internal class AzureBlobStorageService : IBlobStorageService
     {
-        private readonly FileStorageOptions _options;
+        private readonly BlobStorageOptions _options;
         private readonly BlobServiceClient _blobServiceClient;
         private readonly StorageSharedKeyCredential _sharedKeyCredential;
 
@@ -26,7 +26,7 @@ namespace FunderMaps.Infrastructure.Storage
         /// </summary>
         /// <param name="options">File service options.</param>
         /// <param name="config">Application configuration.</param>
-        public AzureBlobStorageService(IOptions<FileStorageOptions> options, IConfiguration config)
+        public AzureBlobStorageService(IOptions<BlobStorageOptions> options, IConfiguration config)
         {
             if (options == null)
             {

@@ -43,9 +43,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // Remove all existing file storage services and inject local file stoage service.
             services.RemoveAll<IBlobStorageService>();
             // FUTURE: Is there another way to configure this service?
-            services.Configure<FileStorageOptions>(options =>
+            services.Configure<BlobStorageOptions>(options =>
             {
-                var rootKey = Configuration.GetSection(FileStorageOptions.Section);
+                var rootKey = Configuration.GetSection(BlobStorageOptions.Section);
 
                 // FUTURE: This can be improved.
                 foreach (var item in rootKey?.GetChildren())
