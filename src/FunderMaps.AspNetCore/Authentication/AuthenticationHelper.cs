@@ -59,7 +59,7 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <returns>Security token if the authentication attempt was successful.</returns>
         public async Task<string> RefreshSignInAsync(ClaimsPrincipal principal)
         {
-            var result = await _authManager.SignInAsync(principal, checkIfAuthenticated: true, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
+            var result = await _authManager.SignInAsync(principal, JwtBearerDefaults.AuthenticationScheme).ConfigureAwait(false);
             if (result.Result != AuthResult.Success)
             {
                 throw new AuthenticationException();
