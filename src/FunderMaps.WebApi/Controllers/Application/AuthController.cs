@@ -2,7 +2,6 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Controllers;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,10 +21,8 @@ namespace FunderMaps.WebApi.Controllers.Application
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(AuthenticationHelper authenticationHelper)
-        {
-            _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
-        }
+        public AuthController(AuthenticationHelper authenticationHelper) 
+            => _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
 
         [AllowAnonymous]
         [HttpPost("signin")]

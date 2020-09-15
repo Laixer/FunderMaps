@@ -182,18 +182,12 @@ namespace FunderMaps.Core.Authentication
         ///     Attempts to sign in the specified <paramref name="principal"/>.
         /// </summary>
         /// <param name="principal">The principal to sign in.</param>
-        /// <param name="checkIfAuthenticated">Check if the current principal is authenticated.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
-        public virtual async Task<SignInContext> SignInAsync(ClaimsPrincipal principal, bool checkIfAuthenticated, string authenticationType)
+        public virtual async Task<SignInContext> SignInAsync(ClaimsPrincipal principal, string authenticationType)
         {
             if (principal == null)
             {
                 throw new ArgumentNullException(nameof(principal));
-            }
-
-            if (!IsSignedIn(principal) && checkIfAuthenticated)
-            {
-                return SignInContext.NotAllowed;
             }
 
             User user = await GetUserAsync(principal);

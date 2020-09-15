@@ -62,7 +62,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetAllOrganizationProposalReturnPageOrganizationProposal()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate(0, 10);
+            var organization = new OrganizationProposalFaker().GenerateRange(0, 10);
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
@@ -141,7 +141,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetAllOrganizationProposalReturnForbidden(ApplicationRole role)
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate(0, 10);
+            var organization = new OrganizationProposalFaker().GenerateRange(0, 10);
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
