@@ -18,7 +18,7 @@ namespace FunderMaps.Core.UseCases
     public class InquiryUseCase
     {
         private readonly INotificationService _notificationService;
-        private readonly IFileStorageService _fileStorageService;
+        private readonly IBlobStorageService _fileStorageService;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IInquirySampleRepository _inquirySampleRepository;
 
@@ -27,7 +27,7 @@ namespace FunderMaps.Core.UseCases
         /// </summary>
         public InquiryUseCase(
             INotificationService notificationService,
-            IFileStorageService fileStorageService,
+            IBlobStorageService fileStorageService,
             IInquiryRepository inquiryRepository,
             IInquirySampleRepository inquirySampleRepository)
         {

@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Services
     /// <summary>
     ///     Dummy file storage service.
     /// </summary>
-    internal class NullFileStorageService : IFileStorageService
+    internal class NullFileStorageService : IBlobStorageService
     {
         public ValueTask<bool> FileExistsAsync(string store, string name)
         {

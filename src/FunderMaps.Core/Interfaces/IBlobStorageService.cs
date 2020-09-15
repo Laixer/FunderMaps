@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces
 {
-    // FUTURE: Rename to IBlobStorageService
     /// <summary>
     ///     Store a file contents in a data store.
     /// </summary>
-    public interface IFileStorageService
+    public interface IBlobStorageService
     {
         /// <summary>
         ///     Check if a file exist in storage.

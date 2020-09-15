@@ -41,7 +41,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IEmailService, EmailService>();
 
             // Remove all existing file storage services and inject local file stoage service.
-            services.RemoveAll<IFileStorageService>();
+            services.RemoveAll<IBlobStorageService>();
             // FUTURE: Is there another way to configure this service?
             services.Configure<FileStorageOptions>(options =>
             {
@@ -53,7 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     options.StorageContainers.Add(item.Key, item.Value);
                 }
             });
-            services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+            services.AddScoped<IBlobStorageService, AzureBlobStorageService>();
 
             // Remove all existing notification services and inject local email service.
             services.RemoveAll<INotificationService>();
