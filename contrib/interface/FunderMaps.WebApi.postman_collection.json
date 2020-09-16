@@ -457,6 +457,75 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Portal",
+			"item": [
+				{
+					"name": "Create Incident",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeightborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/submit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Address Suggestions",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/address-suggest?query=2628XG&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"address-suggest"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "2628XG"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Recovery",
 			"item": [
 				{
@@ -998,22 +1067,22 @@
 	],
 	"variable": [
 		{
-			"id": "5974bee5-3f9b-42bd-8b5a-802f2e0a1939",
+			"id": "78e22f6d-1fd0-43a6-a277-fed7cfba22a0",
 			"key": "base_url",
 			"value": "https://localhost:5001"
 		},
 		{
-			"id": "a22867ab-21e9-486b-b2f8-4b28d0546ecc",
+			"id": "886078fa-16ee-485e-98a7-ba87a98b0340",
 			"key": "bearer_token",
 			"value": ""
 		},
 		{
-			"id": "ff783a06-4855-4c0c-b24e-a2da5234fb13",
+			"id": "d0e64bb7-e387-41f0-a6a3-4a0d246c3828",
 			"key": "username",
 			"value": ""
 		},
 		{
-			"id": "9bc9fa82-4b4e-45d8-9a24-41161d94d3b7",
+			"id": "6cc369a9-5f17-48c6-b298-eb278a12ab63",
 			"key": "password",
 			"value": ""
 		}
