@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities.Geocoder;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -37,27 +38,33 @@ namespace FunderMaps.Core.Entities
         public bool IsActive { get; set; } = true;
 
         /// <summary>
-        ///     Address identifier.
+        ///     Geometry.
         /// </summary>
         [Required]
-        public string Address { get; set; }
+        public string Geometry { get; set; }
 
         // TODO: Type, see #211
         /// <summary>
         ///     External data source id.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string ExternalId { get; set; }
 
         /// <summary>
         ///     External data source.
         /// </summary>
         [Required]
-        public string ExternalSource { get; set; }
+        public ExternalDataSource ExternalSource { get; set; }
 
         /// <summary>
-        ///     Address object.
+        ///     Building type.
         /// </summary>
-        public Address AddressNavigation { get; set; }
+        public BuildingType? buildingType { get; set; }
+
+        /// <summary>
+        ///     Neighborhood identifier.
+        /// </summary>
+        [Geocoder]
+        public string NeighborhoodId { get; set; }
     }
 }
