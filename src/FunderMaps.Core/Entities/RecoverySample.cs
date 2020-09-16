@@ -11,6 +11,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class RecoverySample : RecordControl<RecoverySample, int>, IReportEntity<RecoverySample>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public RecoverySample()
             : base(e => e.Id)
         {
@@ -87,6 +90,9 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public Address AddressNavigation { get; set; }
 
+        /// <summary>
+        ///     Initialize properties from another entity.
+        /// </summary>
         public override void InitializeDefaults()
         {
             Id = 0;

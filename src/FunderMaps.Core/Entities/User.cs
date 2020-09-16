@@ -93,6 +93,11 @@ namespace FunderMaps.Core.Entities
             Role = other.Role;
         }
 
+        /// <summary>
+        ///     Check if self is equal to other entity.
+        /// </summary>
+        /// <param name="other">Entity to compare.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public override bool Equals(User other)
             => other != null &&
                 Id == other.Id &&
