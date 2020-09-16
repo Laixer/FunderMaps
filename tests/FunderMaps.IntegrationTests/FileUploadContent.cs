@@ -18,7 +18,7 @@ namespace FunderMaps.IntegrationTests
         /// </summary>
         public FileUploadContent(string mediaType, string fileExtension)
         {
-            byteContent = new ByteArrayContent(faker.Random.Bytes(1024));
+            byteContent = new ByteArrayContent(faker.Random.Bytes(faker.Random.Int(1, 1024)));
             byteContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mediaType);
 
             // Add the byte content to the form data.
