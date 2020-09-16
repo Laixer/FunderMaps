@@ -23,8 +23,7 @@ namespace FunderMaps.Webservice.Handlers
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ProductRequestHandler(IProductService productService,
-            IMappingService mappingService)
+        public ProductRequestHandler(IProductService productService, IMappingService mappingService)
         {
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
             _mappingService = mappingService ?? throw new ArgumentNullException(nameof(mappingService));
@@ -43,7 +42,8 @@ namespace FunderMaps.Webservice.Handlers
             token.ThrowIfCancellationRequested();
 
             // Map product type.
-            var product = ProductTypeMapper.MapAnalysis(inputModel.Product ?? throw new InvalidOperationException(nameof(inputModel.Product)));
+            AnalysisProductType product = ProductTypeMapper.MapAnalysis(inputModel.Product
+                ?? throw new InvalidOperationException(nameof(inputModel.Product)));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.Query))
@@ -79,7 +79,8 @@ namespace FunderMaps.Webservice.Handlers
             token.ThrowIfCancellationRequested();
 
             // Map product type.
-            var product = ProductTypeMapper.MapStatistics(inputModel.Product ?? throw new InvalidOperationException(nameof(inputModel.Product)));
+            StatisticsProductType product = ProductTypeMapper.MapStatistics(inputModel.Product
+                ?? throw new InvalidOperationException(nameof(inputModel.Product)));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.NeighborhoodCode))
