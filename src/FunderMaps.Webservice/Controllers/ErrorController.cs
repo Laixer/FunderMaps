@@ -13,32 +13,29 @@ namespace FunderMaps.Webservice.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : ControllerBase
     {
-        private readonly ILogger<ErrorController> _logger;
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public ErrorController(ILogger<ErrorController> logger)
-            => _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
         /// <summary>
         ///     Returns a <see cref="ProblemDetails"/> based on the <see cref="IExceptionHandlerFeature"/>
         ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
         /// <returns><see cref="ProblemDetails"/></returns>
-        [Route("/error")]
-        public IActionResult Error()
+        [Route("error")]
+        public IActionResult Error(ILogger<ErrorController> logger)
         {
             var feature = HttpContext.Features.Get<IErrorMessage>();
 
-            if (feature == null)
+            if (feature is null)
             {
                 // If we don't have the feature, log and return a generic problem.
-                _logger.LogWarning($"Could not get {nameof(IErrorMessage)} from http context, returning generic problem");
-                return Problem(title: "Internal application error", statusCode: (int)HttpStatusCode.InternalServerError);
+                logger.LogWarning($"Could not get {nameof(IErrorMessage)} from HttpContext, return generic problem");
+
+                return Problem(
+                    title: "Internal application error",
+                    statusCode: (int)HttpStatusCode.InternalServerError);
             }
 
-            return Problem(title: feature.Message, statusCode: feature.StatusCode);
+            return Problem(
+                title: feature.Message,
+                statusCode: feature.StatusCode);
         }
     }
 }
