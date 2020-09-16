@@ -32,6 +32,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0363200012151882",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -42,6 +44,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0794200000077355",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -52,6 +56,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = false,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0074200000377867",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -62,6 +68,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0748200000039597",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -72,6 +80,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0363200012071002",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -82,6 +92,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0363200000423238",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -92,6 +104,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0935200000097589",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -102,6 +116,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0599200000270883",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
             },
             new Address
             {
@@ -112,6 +128,23 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                 IsActive = true,
                 ExternalId = "NL.IMBAG.NUMMERAANDUIDING.1916200000035516",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-47bfe7a54b2344d7a44da341027b89a5",
+            },
+        };
+
+        internal static readonly IList<Building> Buildings = new List<Building>
+        {
+            new Building
+            {
+                Id = "gfm-47bfe7a54b2344d7a44da341027b89a5",
+                BuiltYear = System.DateTime.Now,
+                IsActive = true,
+                Geometry = "7b2274797065223a224d756c7469506f6c79676f6e222c22636f6f7264696e61746573223a5b5b5b5b352e3833333038343731312c35332e3039333332373638385d2c5b352e3833333033393531392c35332e3039333331343130385d2c5b352e3833333031393439362c35332e30393333333832325d2c5b352e3833323938353930392c35332e3039333332383132385d2c5b352e3833333036303236382c35332e3039333233383438355d2c5b352e38333331333930362c35332e3039333236323136365d2c5b352e3833333038343731312c35332e3039333332373638385d5d5d5d7d",
+                ExternalId = "NL.IMBAG.PAND.1916200000035516",
+                ExternalSource = ExternalDataSource.NlBag,
+                buildingType = BuildingType.House,
+                NeighborhoodId  = "gfm-20e90c3481f346d783159332e882afb3",
             },
         };
 
@@ -120,6 +153,7 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             _factory = factory;
             _client = _factory
                 .WithDataStoreList(Addresses)
+                .WithDataStoreList(Buildings)
                 .CreateClient();
         }
 
