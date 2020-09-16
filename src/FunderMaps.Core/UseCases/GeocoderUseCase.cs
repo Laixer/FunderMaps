@@ -15,13 +15,15 @@ namespace FunderMaps.Core.UseCases
     public class GeocoderUseCase
     {
         private readonly IAddressRepository _addressRepository;
+        private readonly IBuildingRepository _buildingRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public GeocoderUseCase(IAddressRepository addressRepository)
+        public GeocoderUseCase(IAddressRepository addressRepository, IBuildingRepository buildingRepository)
         {
             _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
+            _buildingRepository = buildingRepository ?? throw new ArgumentNullException(nameof(buildingRepository));
         }
 
         /// <summary>
@@ -42,5 +44,20 @@ namespace FunderMaps.Core.UseCases
         /// <param name="navigation">Recordset nagivation.</param>
         public virtual IAsyncEnumerable<Address> GetAllBySuggestionAsync(string query, INavigation navigation)
             => _addressRepository.GetBySearchQueryAsync(query, navigation);
+
+        /// <summary>
+        ///     Retrieve all addresses matching search query.
+        /// </summary>
+        /// <param name="query">Search query.</param>
+        /// <param name="navigation">Recordset nagivation.</param>
+        public async virtual IAsyncEnumerable<Address> GetAllBySuggestionWithBuildingAsync(string query, INavigation navigation)
+        {
+            await foreach (var address in GetAllBySuggestionAsync(query, navigation))
+            {
+                // FUTURE: This is a massive performance hit.
+                address.BuildingNavigation = await _buildingRepository.GetByIdAsync(address.BuildingId);
+                yield return address;
+            }
+        }
     }
 }
