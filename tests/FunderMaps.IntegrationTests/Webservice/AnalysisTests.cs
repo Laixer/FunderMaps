@@ -114,7 +114,7 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal((uint)1, returnObject.ModelCount);
+            Assert.Equal(1U, returnObject.ModelCount);
         }
 
         [Theory]
@@ -146,14 +146,14 @@ namespace FunderMaps.IntegrationTests.Webservice
         }
 
         [Theory]
-        [InlineData("id=342ffdsfsd9478&bagid=4289374423")]
-        [InlineData("id=342947dsf8&query=dskljhfkjshf")]
-        [InlineData("bagid=sadfdsaf&query=myquery")]
-        [InlineData("id=487239847&bagid=sadfdsaf&query=myquery")]
-        public async Task GetProductByMultipleRequestMethodsThrows(string queryString)
+        [InlineData(AnalysisProductTypeResponseModel.BuildingData, "id=342ffdsfsd9478&bagid=4289374423")]
+        [InlineData(AnalysisProductTypeResponseModel.BuildingData, "id=342947dsf8&query=dskljhfkjshf")]
+        [InlineData(AnalysisProductTypeResponseModel.BuildingData, "bagid=sadfdsaf&query=myquery")]
+        [InlineData(AnalysisProductTypeResponseModel.BuildingData, "id=487239847&bagid=sadfdsaf&query=myquery")]
+        public async Task GetProductByMultipleRequestMethodsThrows(AnalysisProductTypeResponseModel product, string queryString)
         {
             // Act.
-            var response = await client.GetAsync($"api/analysis/get?product={AnalysisProductTypeResponseModel.BuildingData}&{queryString}");
+            var response = await client.GetAsync($"api/analysis/get?product={product}&{queryString}");
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
@@ -163,7 +163,8 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductWithoutRequestMethodThrows()
         {
             // Act.
-            var response = await client.GetAsync($"api/analysis/get?product={AnalysisProductTypeResponseModel.BuildingData}");
+            var product = AnalysisProductTypeResponseModel.BuildingData;
+            var response = await client.GetAsync($"api/analysis/get?product={product}");
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct

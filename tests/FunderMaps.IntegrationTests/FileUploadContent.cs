@@ -11,7 +11,7 @@ namespace FunderMaps.IntegrationTests
     /// <summary>
     ///     File upload content helper.
     /// </summary>
-    public class FileUploadContent : MultipartFormDataContent, IDisposable
+    public class FileUploadContent : MultipartFormDataContent
     {
         private Faker faker = new Faker();
 

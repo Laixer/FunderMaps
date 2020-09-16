@@ -107,6 +107,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
             if (context.Response.HasStarted)
             {
                 _logger.LogError(edi.SourceException, "Could not do anything, response has already started");
+
                 edi.Throw();
             }
 
@@ -120,7 +121,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
                 context.Features.Set(_mapper.Map(edi.SourceException as TException));
 
                 // Pass back up the chain to reach the error handling controller.
-                context.Request.Path = _options.ErrorControllerPath ?? throw new InvalidOperationException("No error handlign path specified");
+                context.Request.Path = _options.ErrorControllerPath ?? throw new InvalidOperationException("No error handler path specified");
                 await _next(context);
 
                 return;
