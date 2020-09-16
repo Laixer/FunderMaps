@@ -33,7 +33,8 @@ namespace FunderMaps.Webservice.Controllers
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisResponseModelBase>))]
-        public async Task<IActionResult> GetProductAsync([FromQuery] AnalysisInputModel input,
+        public async Task<IActionResult> GetProductAsync(
+            [FromQuery] AnalysisInputModel input,
             [FromServices] ProductRequestHandler productRequestHandler,
             [FromServices] AuthManager authManager)
         {
