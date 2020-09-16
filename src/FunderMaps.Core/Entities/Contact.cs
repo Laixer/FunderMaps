@@ -39,6 +39,11 @@ namespace FunderMaps.Core.Entities
         /// <returns>String representing contact.</returns>
         public override string ToString() => Email;
 
+        /// <summary>
+        ///     Check if self is equal to other entity.
+        /// </summary>
+        /// <param name="other">Entity to compare.</param>
+        /// <returns><c>True</c> on success, false otherwise.</returns>
         public override bool Equals(Contact other)
             => other != null &&
                 Email == other.Email &&

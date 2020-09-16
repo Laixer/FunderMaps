@@ -1,22 +1,22 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Base measurement level.
+    ///     Base measurement level.
     /// </summary>
     public enum BaseMeasurementLevel
     {
         /// <summary>
-        /// NAP.
+        ///     NAP.
         /// </summary>
         NAP,
 
         /// <summary>
-        /// TAW.
+        ///     TAW.
         /// </summary>
         TAW,
 
         /// <summary>
-        /// NN.
+        ///     NN.
         /// </summary>
         NN,
     }

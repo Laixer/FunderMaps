@@ -3,7 +3,7 @@
 namespace FunderMaps.Core.Interfaces.Repositories
 {
     /// <summary>
-    /// Operations for the recovery repository.
+    ///     Operations for the recovery repository.
     /// </summary>
     public interface IRecoveryRepository : IAsyncRepository<Recovery, int>
     {

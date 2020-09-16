@@ -356,6 +356,9 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public decimal SettlementSpeed { get; set; }
 
+        /// <summary>
+        ///     Initialize properties from another entity.
+        /// </summary>
         public override void InitializeDefaults()
         {
             Id = 0;

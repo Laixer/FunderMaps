@@ -1,5 +1,8 @@
 ﻿namespace FunderMaps.Core.Types.Control
 {
+    /// <summary>
+    ///     Record access control.
+    /// </summary>
     public class AccessControl
     {
         /// <summary>
