@@ -54,10 +54,6 @@ namespace FunderMaps.Core.Types.Products
         public double? BuildingHeight { get; set; }
 
         /// <summary>
-        /// Description of the terrain on which this building lies.
-        public string TerrainDescription { get; set; }
-
-        /// <summary>
         /// Represents the ground level (maaiveldniveau) of this building.
         /// </summary>
         public double? GroundLevel { get; set; }
@@ -76,11 +72,6 @@ namespace FunderMaps.Core.Types.Products
         /// Represents the period of drought (droogstand) for this building.
         /// </summary>
         public double? Drystand { get; set; }
-
-        /// <summary>
-        /// Complete description of this building.
-        /// </summary>
-        public string FullDescription { get; set; }
 
         /// <summary>
         /// Represents the reliability of all data about this building.

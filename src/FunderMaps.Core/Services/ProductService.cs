@@ -7,7 +7,6 @@ using FunderMaps.Webservice.Abstractions.Services;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace FunderMaps.Core.Services
 {
     /// <summary>
     ///     Service for retrieving products from our data store. This completes
-    ///     each product, including descriptions for analysis products.
+    ///     each product.
     /// </summary>
     public class ProductService : IProductService
     {
@@ -30,20 +29,13 @@ namespace FunderMaps.Core.Services
         protected readonly IStatisticsRepository _statisticsRepository;
 
         /// <summary>
-        ///     <see cref="IDescriptionService"/>.
-        /// </summary>
-        protected readonly IDescriptionService _descriptionService;
-
-        /// <summary>
         ///     Create new instance.
         /// </summary>
         public ProductService(IAnalysisRepository analysisRepository,
-            IStatisticsRepository statisticsRepository,
-            IDescriptionService descriptionService)
+            IStatisticsRepository statisticsRepository)
         {
             _analysisRepository = analysisRepository ?? throw new ArgumentNullException(nameof(analysisRepository));
             _statisticsRepository = statisticsRepository ?? throw new ArgumentNullException(nameof(statisticsRepository));
-            _descriptionService = descriptionService ?? throw new ArgumentNullException(nameof(descriptionService));
         }
 
         /// <summary>
@@ -142,7 +134,7 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token = default) 
+        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token = default)
             => throw new NotImplementedException();
 
         /// <summary>
@@ -241,9 +233,6 @@ namespace FunderMaps.Core.Services
                 ProcessAnalysisTotalIncidentCountAsync(productType, product, token),
                 ProcessAnalysisTotalReportCountAsync(productType, product, token),
             });
-
-            product.FullDescription = _descriptionService.GenerateFullDescription(product);
-            product.TerrainDescription = _descriptionService.GenerateTerrainDescription(product);
 
             return product;
         }

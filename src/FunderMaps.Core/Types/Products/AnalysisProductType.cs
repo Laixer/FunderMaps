@@ -32,11 +32,6 @@
         Complete,
 
         /// <summary>
-        /// Represents descriptive texts for a given building.
-        /// </summary>
-        BuildingDescription,
-
-        /// <summary>
         /// Represents all data about the risks for a given building.
         /// </summary>
         Risk,

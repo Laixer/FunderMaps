@@ -95,10 +95,6 @@ namespace FunderMaps.Webservice.Services
                 {
                     Models = items.Select(x => _mapper.Map<AnalysisProduct, AnalysisCompleteResponseModel>(x)),
                 },
-                AnalysisProductType.BuildingDescription => new ResponseWrapper<AnalysisBuildingDescriptionResponseModel>
-                {
-                    Models = items.Select(x => _mapper.Map<AnalysisProduct, AnalysisBuildingDescriptionResponseModel>(x))
-                },
                 AnalysisProductType.Risk => new ResponseWrapper<AnalysisRiskResponseModel>
                 {
                     Models = items.Select(x => _mapper.Map<AnalysisProduct, AnalysisRiskResponseModel>(x))

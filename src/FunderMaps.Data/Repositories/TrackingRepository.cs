@@ -109,7 +109,6 @@ namespace FunderMaps.Data.Repositories
                 AnalysisProductType.FoundationPlus => "analysis_foundation_plus",
                 AnalysisProductType.Costs => "analysis_costs",
                 AnalysisProductType.Complete => "analysis_complete",
-                AnalysisProductType.BuildingDescription => "analysis_building_description",
                 AnalysisProductType.Risk => "analysis_risk",
                 _ => throw new InvalidOperationException(nameof(product))
             };

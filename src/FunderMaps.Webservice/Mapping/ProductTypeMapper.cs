@@ -26,7 +26,6 @@ namespace FunderMaps.Webservice.Mapping
                 AnalysisProductTypeResponseModel.FoundationPlus => AnalysisProductType.FoundationPlus,
                 AnalysisProductTypeResponseModel.Costs => AnalysisProductType.Costs,
                 AnalysisProductTypeResponseModel.Complete => AnalysisProductType.Complete,
-                AnalysisProductTypeResponseModel.BuildingDescription => AnalysisProductType.BuildingDescription,
                 AnalysisProductTypeResponseModel.Risk => AnalysisProductType.Risk,
                 _ => throw new InvalidOperationException(nameof(input))
             };
@@ -63,7 +62,6 @@ namespace FunderMaps.Webservice.Mapping
             AnalysisProductType.FoundationPlus => typeof(AnalysisFoundationPlusResponseModel),
             AnalysisProductType.Costs => typeof(AnalysisCostsResponseModel),
             AnalysisProductType.Complete => typeof(AnalysisCompleteResponseModel),
-            AnalysisProductType.BuildingDescription => typeof(AnalysisBuildingDescriptionResponseModel),
             AnalysisProductType.Risk => typeof(AnalysisRiskResponseModel),
             _ => throw new InvalidOperationException(nameof(product)),
         };
