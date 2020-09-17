@@ -27,6 +27,7 @@ namespace FunderMaps.AspNetCore
                 InvalidProductRequestException _ => BuildMessage("Invalid product requested.", HttpStatusCode.BadRequest),
                 ProductNotFoundException _ => BuildMessage("Requested product not found.", HttpStatusCode.Forbidden),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
+                StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError)
             };
     }
