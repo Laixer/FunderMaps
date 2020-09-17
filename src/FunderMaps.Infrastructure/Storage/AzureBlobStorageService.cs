@@ -63,9 +63,11 @@ namespace FunderMaps.Infrastructure.Storage
         /// <returns>The blob block.</returns>
         protected Task<BlobClient> PrepareBlobAsync(string containerName, string blobName)
         {
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(_options.StorageContainers.TryGetValue(containerName, out string store) ? store : containerName);
-            BlobClient blobClient = container.GetBlobClient(blobName);
-            return Task.FromResult(blobClient);
+            //BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(_options.StorageContainers.TryGetValue(containerName, out string store) ? store : containerName);
+            //BlobClient blobClient = container.GetBlobClient(blobName);
+            //return Task.FromResult(blobClient);
+
+            throw new NotImplementedException();
         }
 
         /// <summary>
