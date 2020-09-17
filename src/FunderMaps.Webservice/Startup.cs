@@ -59,14 +59,13 @@ namespace FunderMaps.Webservice
             services.AddTransient<ProductRequestHandler>();
             services.AddTransient<AuthenticationHelper>();
 
-            // Override default product service by tracking variant of product service.
-            var descriptor = new ServiceDescriptor(typeof(IProductService), typeof(ProductTrackingService), ServiceLifetime.Transient);
-            services.Replace(descriptor);
-
             // Configure FunderMaps services.
             services.AddFunderMapsDataServices("FunderMapsConnection");
             services.AddFunderMapsCoreServices();
             services.AddFunderMapsExceptionMapper();
+
+            // Override default product service by tracking variant of product service.
+            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
 
             // Configure AutoMapper.
             services.AddAutoMapper(typeof(AutoMapperProfile));
