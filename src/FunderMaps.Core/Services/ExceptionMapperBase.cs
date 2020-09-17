@@ -21,8 +21,8 @@ namespace FunderMaps.Core.Services
         ///     undesired behaviour, override <see cref="Map(TException)"/>.
         /// </remarks>
         /// <param name="exception"><see cref="Exception"/></param>
-        /// <returns><see cref="IErrorMessage"/></returns>
-        public virtual IErrorMessage Map(TException exception)
+        /// <returns><see cref="ErrorMessage"/></returns>
+        public virtual ErrorMessage Map(TException exception)
             => BuildMessage(exception?.Message, HttpStatusCode.InternalServerError);
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace FunderMaps.Core.Services
         /// <param name="message">Message to display.</param>
         /// <param name="statusCode">Status code to display.</param>
         /// <returns></returns>
-        protected virtual IErrorMessage BuildMessage(string message, HttpStatusCode statusCode)
+        protected virtual ErrorMessage BuildMessage(string message, HttpStatusCode statusCode)
             => new ErrorMessage
             {
                 Message = message,

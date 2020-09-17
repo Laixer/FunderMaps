@@ -72,7 +72,6 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// </summary>
         /// <param name="context"><see cref="HttpContext"/></param>
         /// <param name="task"><see cref="Task"/></param>
-        /// <returns><see cref="Task"/></returns>
         private async Task ProcessAsync(HttpContext context, Task task)
         {
             var edi = null as ExceptionDispatchInfo;
@@ -97,7 +96,6 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// </summary>
         /// <param name="exception"><see cref="TException"/></param>
         /// <param name="context"><see cref="HttpContext"/></param>
-        /// <returns><see cref="Task"/></returns>
         protected virtual async Task HandleExceptionAsync(ExceptionDispatchInfo edi, HttpContext context)
         {
             _logger.LogDebug($"The exception message: {edi.SourceException.Message}");
@@ -147,8 +145,9 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <param name="context"><see cref="HttpContext"/></param>
         private void ClearHttpContext(HttpContext context)
         {
-            _logger.LogDebug($"Clear response");
+            _logger.LogDebug("Clear response");
 
+            // Clear any response properties which have been set.
             context.Response.Clear();
 
             // An endpoint may have already been set. Since we're going to re-

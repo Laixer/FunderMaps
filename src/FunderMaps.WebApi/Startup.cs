@@ -118,7 +118,7 @@ namespace FunderMaps.WebApi
                 app.UseExceptionHandler("/oops");
             }
 
-            app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/oops");
+            app.UseFunderMapsExceptionHandler("/oops");
 
             app.UsePathBase(new PathString("/api"));
             app.UseRouting();
