@@ -40,20 +40,21 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<EmailOptions>(Configuration.GetSection(EmailOptions.Section));
             services.AddSingleton<IEmailService, EmailService>();
 
+            // TODO What do want here?
             // Remove all existing file storage services and inject local file stoage service.
             services.RemoveAll<IBlobStorageService>();
             // FUTURE: Is there another way to configure this service?
-            services.Configure<BlobStorageOptions>(options =>
-            {
-                var rootKey = Configuration.GetSection(BlobStorageOptions.Section);
+            //services.Configure<BlobStorageOptions>(options =>
+            //{
+            //    var rootKey = Configuration.GetSection(BlobStorageOptions.Section);
 
-                // FUTURE: This can be improved.
-                foreach (var item in rootKey?.GetChildren())
-                {
-                    options.StorageContainers.Add(item.Key, item.Value);
-                }
-            });
-            services.AddScoped<IBlobStorageService, AzureBlobStorageService>();
+            //    // FUTURE: This can be improved.
+            //    foreach (var item in rootKey?.GetChildren())
+            //    {
+            //        options.StorageContainers.Add(item.Key, item.Value);
+            //    }
+            //});
+            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
             // Remove all existing notification services and inject local email service.
             services.RemoveAll<INotificationService>();
@@ -72,6 +73,8 @@ namespace Microsoft.Extensions.DependencyInjection
             // Remove all existing notification services and inject local email service.
             services.RemoveAll<INotificationService>();
             services.AddTransient<INotificationService, NotificationHubService>();
+            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
+            services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
         }
 
         /// <summary>
