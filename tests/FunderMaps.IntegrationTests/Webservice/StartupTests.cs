@@ -20,7 +20,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             => _factory = factory;
 
         [Fact]
-        public void ServicesResolvesProductTrackingService()
+        public void ServicesResolveProductTrackingService()
         {
             // Arrange.
             using var scope = _factory.Services.CreateScope();
