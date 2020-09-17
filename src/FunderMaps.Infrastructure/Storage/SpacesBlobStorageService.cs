@@ -189,7 +189,8 @@ namespace FunderMaps.Infrastructure.Storage
                 };
 
                 return new ValueTask(transferUtility.UploadAsync(request));
-            } catch (AmazonS3Exception e)
+            }
+            catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
                 throw new StorageException($"Could not upload file with content type {contentType}");
