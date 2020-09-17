@@ -1,20 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FunderMaps.Infrastructure.Storage
 {
+    // TODO This might be too specific for S3.
     /// <summary>
     ///     Options for the blob storage service.
     /// </summary>
     public sealed class BlobStorageOptions
     {
         /// <summary>
-        ///     Configuration section key.
+        ///     Base service uri for blob storage service.
         /// </summary>
-        public const string Section = "FileStorageContainers";
+        public Uri ServiceUri { get; set; }
 
         /// <summary>
-        ///     Name per storage container.
+        ///     Name of the blob storage.
         /// </summary>
-        public IDictionary<string, string> StorageContainers { get; set; } = new Dictionary<string, string>();
+        public string BlobStorageName { get; set; }
+
+        /// <summary>
+        ///     Public access key.
+        /// </summary>
+        public string AccesKey { get; set; }
+
+        /// <summary>
+        ///     Private secret key.
+        /// </summary>
+        public string SecretKey { get; set; }
     }
 }
