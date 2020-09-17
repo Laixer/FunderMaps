@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {
+    // TODO: Rename to TelemetryRepository
     /// <summary>
     ///     User tracking repository. This has a minimum item count of 1, as
     ///     we also want to track requests that return nothing.
@@ -71,7 +72,6 @@ namespace FunderMaps.Data.Repositories
             itemCount = itemCount == 0U ? 1U : itemCount;
 
             // Build sql.
-            // TODO SQL injection - sort of.
             var sql = @"
                 INSERT INTO application.product_usage AS pu (
                     user_id,
