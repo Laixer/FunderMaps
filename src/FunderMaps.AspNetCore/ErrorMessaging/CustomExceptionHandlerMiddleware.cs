@@ -100,7 +100,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <returns><see cref="Task"/></returns>
         protected virtual async Task HandleExceptionAsync(ExceptionDispatchInfo edi, HttpContext context)
         {
-            _logger.LogDebug($"The received ex message: {edi.SourceException.Message}");
+            _logger.LogDebug($"The exception message: {edi.SourceException.Message}");
 
             // We can't do anything if the response has already started, just abort.
             // This means headers have already been sent to the client.
@@ -145,8 +145,10 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         ///     Prepares the <paramref name="context"/> for re-usage.
         /// </summary>
         /// <param name="context"><see cref="HttpContext"/></param>
-        private static void ClearHttpContext(HttpContext context)
+        private void ClearHttpContext(HttpContext context)
         {
+            _logger.LogDebug($"Clear response");
+
             context.Response.Clear();
 
             // An endpoint may have already been set. Since we're going to re-

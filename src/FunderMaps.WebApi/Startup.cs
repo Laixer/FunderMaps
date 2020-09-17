@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
+using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Extensions;
 using FunderMaps.HealthChecks;
 using FunderMaps.WebApi.Helpers;
@@ -85,6 +86,7 @@ namespace FunderMaps.WebApi
 
             // Register components from reference assemblies.
             services.AddFunderMapsCoreServices();
+            services.AddFunderMapsExceptionMapper();
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
@@ -115,6 +117,8 @@ namespace FunderMaps.WebApi
             {
                 app.UseExceptionHandler("/oops");
             }
+
+            app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/oops");
 
             app.UsePathBase(new PathString("/api"));
             app.UseRouting();

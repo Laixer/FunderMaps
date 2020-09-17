@@ -1,6 +1,8 @@
 ﻿using FunderMaps.Core.Interfaces;
-using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
@@ -9,6 +11,7 @@ namespace FunderMaps.Webservice.Controllers
     /// <summary>
     ///     Controller for handling error responses.
     /// </summary>
+    [AllowAnonymous]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : ControllerBase
     {
@@ -17,24 +20,29 @@ namespace FunderMaps.Webservice.Controllers
         ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
         /// <returns><see cref="ProblemDetails"/></returns>
-        [Route("error")]
-        public IActionResult Error(ILogger<ErrorController> logger)
+        [Route("oops")]
+        public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, [FromServices] ILogger<ErrorController> logger)
         {
-            var feature = HttpContext.Features.Get<IErrorMessage>();
+            var error = HttpContext.Features.Get<IErrorMessage>();
 
-            if (feature is null)
+            // If the error message is not set just return a generic problem.
+            if (error is null)
             {
-                // If we don't have the feature, log and return a generic problem.
-                logger.LogWarning($"Could not get {nameof(IErrorMessage)} from HttpContext, return generic problem");
+                logger.LogWarning($"Cannot return configured error message from exception, return generic problem");
+
+                if (webHostEnvironment.IsDevelopment())
+                {
+                    logger.LogWarning("This should not be invoked in development environments.");
+                }
 
                 return Problem(
-                    title: "Internal application error",
+                    title: "Application was unable to process the request.",
                     statusCode: (int)HttpStatusCode.InternalServerError);
             }
 
             return Problem(
-                title: feature.Message,
-                statusCode: feature.StatusCode);
+                title: error.Message,
+                statusCode: error.StatusCode);
         }
     }
 }
