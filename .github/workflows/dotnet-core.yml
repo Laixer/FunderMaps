@@ -14,8 +14,6 @@ on:
 env:
   DOTNET_VERSION: '3.1.101'
   BUILD_CONFIG: Release
-  ARCHIVE_BACKEND: backend-dist.${{ github.sha }}.tar.gz
-  ARCHIVE_WEBSERVICE: webservice-dist.${{ github.sha }}.tar.gz
 
 jobs:
   build:
@@ -46,6 +44,10 @@ jobs:
   
   publish-backend:
     name: Publish Backend
+    env:
+      DEPLOY_NAME: fundermaps-backend
+      ARCHIVE: fundermaps-backend.${{ github.sha }}.tar.gz
+
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -75,7 +77,7 @@ jobs:
         git rev-parse HEAD > dist/COMMIT
 
     - name: Create archive
-      run: tar -czf ${{ env.ARCHIVE_BACKEND }} -C dist .
+      run: tar -czf ${{ env.ARCHIVE }} -C dist .
 
     - name: Copy archive via scp
       uses: appleboy/scp-action@master
@@ -84,7 +86,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        source: '*.tar.gz'
+        source: ${{ env.ARCHIVE }}
         target: '/var/cache/deployment/tmp'
         
     - name: Running deploy script
@@ -95,12 +97,17 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          rm /var/cache/deployment/current/*.tar.gz
-          mv /var/cache/deployment/tmp/*.tar.gz /var/cache/deployment/current/
-          /var/cache/deployment/deploy.sh
+          mv /var/cache/deployment/current/${{ env.DEPLOY_NAME }}.*.tar.gz /var/cache/deployment/previous/
+          mv /var/cache/deployment/tmp/${{ env.ARCHIVE }} /var/cache/deployment/current/
+          /var/cache/deployment/deploy.sh ${{ env.DEPLOY_NAME }}
+          rm -f $(ls -1t /var/cache/deployment/previous/${{ env.DEPLOY_NAME }}.*.tar.gz | tail -n +5)
 
   publish-webservice:
     name: Publish Webservice
+    env:
+      DEPLOY_NAME: fundermaps-webservice
+      ARCHIVE: fundermaps-webservice.${{ github.sha }}.tar.gz
+
     needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -130,7 +137,7 @@ jobs:
         git rev-parse HEAD > dist/COMMIT
 
     - name: Create archive
-      run: tar -czf ${{ env.ARCHIVE_WEBSERVICE }} -C dist .
+      run: tar -czf ${{ env.ARCHIVE }} -C dist .
 
     - name: Copy archive via scp
       uses: appleboy/scp-action@master
@@ -139,7 +146,7 @@ jobs:
         username: ${{ secrets.SSH_USER }}
         key: ${{ secrets.SSH_KEY }}
         port: 22
-        source: '*.tar.gz'
+        source: ${{ env.ARCHIVE }}
         target: '/var/cache/deployment/tmp'
         
     - name: Running deploy script
@@ -150,6 +157,7 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         port: 22
         script: |
-          rm /var/cache/deployment/current/*.tar.gz
-          mv /var/cache/deployment/tmp/*.tar.gz /var/cache/deployment/current/
-          /var/cache/deployment/deploy.sh
+          mv /var/cache/deployment/current/${{ env.DEPLOY_NAME }}.*.tar.gz /var/cache/deployment/previous/
+          mv /var/cache/deployment/tmp/${{ env.ARCHIVE }} /var/cache/deployment/current/
+          /var/cache/deployment/deploy.sh ${{ env.DEPLOY_NAME }}
+          rm -f $(ls -1t /var/cache/deployment/previous/${{ env.DEPLOY_NAME }}.*.tar.gz | tail -n +5)
