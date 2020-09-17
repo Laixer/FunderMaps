@@ -37,8 +37,10 @@ namespace FunderMaps.Infrastructure.Storage
             {
                 throw new ArgumentNullException(nameof(options));
             }
+
             options.Value.AccesKey.ThrowIfNullOrEmpty();
             options.Value.SecretKey.ThrowIfNullOrEmpty();
+
             if (options.Value.ServiceUri == null)
             {
                 throw new ArgumentNullException(nameof(options));
@@ -94,7 +96,7 @@ namespace FunderMaps.Infrastructure.Storage
 
                 _logger.LogError(e, "Could not check file existence in Spaces using S3");
                 // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
-                throw new StorageException("Could not check file existence");
+                throw new StorageException("Could not check file existence", e);
             }
         }
 
@@ -127,7 +129,7 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not get access link from Spaces using S3");
-                throw new StorageException("Could not get access link");
+                throw new StorageException("Could not get access link", e);
             }
         }
 
@@ -156,7 +158,7 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not store file to Spaces using S3");
-                throw new StorageException("Could not store file");
+                throw new StorageException("Could not store file", e);
             }
         }
 
@@ -193,7 +195,7 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
-                throw new StorageException($"Could not upload file with content type {contentType}");
+                throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
         }
     }

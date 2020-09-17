@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if DEVELOPMENT
+using System.Collections.Generic;
 
 namespace FunderMaps.Infrastructure.Storage
 {
@@ -24,3 +25,4 @@ namespace FunderMaps.Infrastructure.Storage
         public IDictionary<string, string> StorageContainers { get; set; } = new Dictionary<string, string>();
     }
 }
+#endif
