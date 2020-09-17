@@ -2,9 +2,13 @@ name: FunderMaps Package Outdated
 
 on:
   push:
-    branches: '**'
+    branches:
+      - master
+      - develop
   pull_request:
-    branches: '**'
+    branches:
+      - master
+      - develop
 
 env:
   DOTNET_VERSION: '3.1.101'
