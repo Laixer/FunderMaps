@@ -21,6 +21,8 @@ namespace FunderMaps.Core.Tests.Entities
                 IsActive = true,
                 ExternalId = "external-1",
                 ExternalSource = ExternalDataSource.NlOsm,
+                City = "Delft",
+                BuildingId = "gfm-building",
             };
             var entity2 = new Address
             {
@@ -29,6 +31,8 @@ namespace FunderMaps.Core.Tests.Entities
                 IsActive = true,
                 ExternalId = "external-1",
                 ExternalSource = ExternalDataSource.NlCbs,
+                City = "Amsterdam",
+                BuildingId = "gfm-building",
             };
 
             // Act
@@ -52,6 +56,8 @@ namespace FunderMaps.Core.Tests.Entities
                 IsActive = true,
                 ExternalId = "external-1",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-building",
             };
             var entity2 = new Address
             {
@@ -61,6 +67,8 @@ namespace FunderMaps.Core.Tests.Entities
                 IsActive = true,
                 ExternalId = "external-1",
                 ExternalSource = ExternalDataSource.NlBag,
+                City = "Delft",
+                BuildingId = "gfm-building",
             };
             var entity3 = new Address
             {
@@ -70,6 +78,8 @@ namespace FunderMaps.Core.Tests.Entities
                 IsActive = false,
                 ExternalId = "external-2",
                 ExternalSource = ExternalDataSource.NlCbs,
+                City = "Gouda",
+                BuildingId = "gfm-building-2",
             };
 
             // Assert

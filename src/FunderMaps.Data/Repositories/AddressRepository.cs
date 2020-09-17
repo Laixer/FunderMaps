@@ -107,6 +107,8 @@ namespace FunderMaps.Data.Repositories
                 IsActive = reader.GetBoolean(4),
                 ExternalId = reader.GetSafeString(5),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(6),
+                City = reader.GetSafeString(7),
+                BuildingId = reader.GetSafeString(8),
             };
 
         public async ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
@@ -118,7 +120,9 @@ namespace FunderMaps.Data.Repositories
                         street,
                         is_active,
                         external_id,
-                        external_source
+                        external_source,
+                        city,
+                        building_id
                 FROM    geocoder.address
                 WHERE   external_id = @external_id
                 AND     external_source = @external_source
@@ -149,7 +153,9 @@ namespace FunderMaps.Data.Repositories
                         street,
                         is_active,
                         external_id,
-                        external_source
+                        external_source,
+                        city,
+                        building_id
                 FROM    geocoder.address
                 WHERE   id = @id
                 LIMIT   1";
@@ -183,7 +189,9 @@ namespace FunderMaps.Data.Repositories
                         street,
                         is_active,
                         external_id,
-                        external_source
+                        external_source,
+                        city,
+                        building_id
                 FROM    geocoder.search_address(@query)";
 
             ConstructNavigation(ref sql, navigation);

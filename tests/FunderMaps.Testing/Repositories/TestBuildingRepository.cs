@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Testing.Repositories
 {
-    public class TestBuildingRepository : IBuildingRepository
+    public class TestBuildingRepository : TestRepositoryBase<Building, string>, IBuildingRepository
     {
-        public ValueTask<string> AddAsync(Building entity) => throw new NotImplementedException();
-        public ValueTask<ulong> CountAsync() => throw new NotImplementedException();
-        public ValueTask DeleteAsync(string id) => throw new NotImplementedException();
-        public ValueTask<Building> GetByIdAsync(string id) => throw new NotImplementedException();
-        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token) => Task.FromResult(true);
-        public IAsyncEnumerable<Building> ListAllAsync(INavigation navigation) => throw new NotImplementedException();
-        public ValueTask UpdateAsync(Building entity) => throw new NotImplementedException();
+        public TestBuildingRepository(DataStore<Building> dataStore)
+            : base(dataStore, e => e.Id)
+        {
+        }
+
+        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token)
+            => Task.FromResult(true);
     }
 }

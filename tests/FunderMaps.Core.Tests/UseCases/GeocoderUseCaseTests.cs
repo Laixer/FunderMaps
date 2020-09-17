@@ -14,7 +14,8 @@ namespace FunderMaps.Core.Tests.UseCases
         {
             // Arrange
             var addressRepository = new MockAddressRepository().MockGetByIdAsync(new Address());
-            var useCase = new GeocoderUseCase(addressRepository.Object);
+            var buildingRepository = new MockBuildingRepository().MockGetByIdAsync(new Building());
+            var useCase = new GeocoderUseCase(addressRepository.Object, buildingRepository.Object);
 
             // Act
             var address = await useCase.GetAsync("gfm-1af01083838148deb80d62960f1e8f83");
@@ -39,7 +40,8 @@ namespace FunderMaps.Core.Tests.UseCases
             // Arrange
             var navigation = new MockNavigation();
             var addressRepository = new MockAddressRepository().MockGetBySearchQueryAsync(GetAddressAsync());
-            var useCase = new GeocoderUseCase(addressRepository.Object);
+            var buildingRepository = new MockBuildingRepository().MockGetByIdAsync(new Building());
+            var useCase = new GeocoderUseCase(addressRepository.Object, buildingRepository.Object);
 
             // Act
             var asyncEnumerable = useCase.GetAllBySuggestionAsync("gfm-1af01083838148deb80d62960f1e8f83", navigation.Object);

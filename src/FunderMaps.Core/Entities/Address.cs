@@ -60,6 +60,24 @@ namespace FunderMaps.Core.Entities
         public ExternalDataSource ExternalSource { get; set; }
 
         /// <summary>
+        ///     External data source.
+        /// </summary>
+        [Required]
+        public string City { get; set; }
+
+        /// <summary>
+        ///     Building identifier.
+        /// </summary>
+        [Geocoder]
+        public string BuildingId { get; set; }
+
+        // TODO: Obsolete
+        /// <summary>
+        ///     Building identifier.
+        /// </summary>
+        public Building BuildingNavigation { get; set; }
+
+        /// <summary>
         ///     Print object as name.
         /// </summary>
         /// <returns>String representing user.</returns>
