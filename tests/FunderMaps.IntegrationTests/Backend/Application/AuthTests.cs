@@ -69,6 +69,36 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.True(returnObject.TokenValidity > 0);
         }
 
+        [Fact]
+        public async Task SignInInvalidCredentialsReturnError()
+        {
+            // Arrange
+            var sessionUser = new UserFaker().Generate();
+            var sessionOrganization = new OrganizationFaker().Generate();
+            var password = new Randomizer().Password(128);
+            var signIn = new SignInInputModel
+            {
+                Email = sessionUser.Email,
+                Password = password,
+            };
+            using var random = new RandomGenerator();
+            var client = _factory
+                .ConfigureAuthentication(options => options.User = sessionUser)
+                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(new Randomizer().Password(128)) })
+                .WithDataStoreItem(sessionOrganization)
+                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
+                .CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/auth/signin", signIn);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
+            Assert.Contains("Login", returnObject.Title);
+        }
+
         [Theory]
         [InlineData("/")]
         [InlineData("api/user")]
