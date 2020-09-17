@@ -132,10 +132,10 @@ namespace FunderMaps.Webservice
             }
             else
             {
-                app.UseExceptionHandler("/error");
+                app.UseExceptionHandler("/oops");
             }
 
-            app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/error");
+            app.UseFunderMapsExceptionHandler(options => options.ErrorControllerPath = "/oops");
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
