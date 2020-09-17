@@ -59,7 +59,7 @@ namespace FunderMaps.Data.Repositories
                 Geometry = reader.GetString(3),
                 ExternalId = reader.GetSafeString(4),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(5),
-                buildingType = reader.GetFieldValue<BuildingType?>(6),
+                BuildingType = reader.GetFieldValue<BuildingType?>(6),
                 NeighborhoodId = reader.GetSafeString(7),
             };
 

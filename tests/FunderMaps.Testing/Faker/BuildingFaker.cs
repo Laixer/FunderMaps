@@ -18,7 +18,7 @@ namespace FunderMaps.Testing.Faker
             // RuleFor(f => f.Address, f => $"gfm-{f.Random.Hash(32)}");
             RuleFor(f => f.ExternalId, f => $"NL.IMBAG.PAND.{f.Random.ReplaceNumbers("################")}");
             RuleFor(f => f.ExternalSource, f => f.PickRandom<ExternalDataSource>());
-            RuleFor(f => f.buildingType, f => f.PickRandom<BuildingType>());
+            RuleFor(f => f.BuildingType, f => f.PickRandom<BuildingType>());
             RuleFor(f => f.NeighborhoodId, f => $"gfm-{f.Random.Hash(32)}");
         }
     }

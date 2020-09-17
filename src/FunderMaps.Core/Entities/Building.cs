@@ -59,7 +59,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Building type.
         /// </summary>
-        public BuildingType? buildingType { get; set; }
+        public BuildingType? BuildingType { get; set; }
 
         /// <summary>
         ///     Neighborhood identifier.

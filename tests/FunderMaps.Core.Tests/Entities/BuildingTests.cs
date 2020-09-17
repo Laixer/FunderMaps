@@ -21,7 +21,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Geometry = "7b2274797065223a224d756c7469506f6c79676f6e222c22636f6f7264696e61746573223a5b5b5b5b352e3833333038343731312c35332e3039333332373638385d2c5b352e3833333033393531392c35332e3039333331343130385d2c5b352e3833333031393439362c35332e30393333333832325d2c5b352e3833323938353930392c35332e3039333332383132385d2c5b352e3833333036303236382c35332e3039333233383438355d2c5b352e38333331333930362c35332e3039333236323136365d2c5b352e3833333038343731312c35332e3039333332373638385d5d5d5d7d",
                 ExternalId = "external-1",
                 ExternalSource = ExternalDataSource.NlBag,
-                buildingType = BuildingType.HouseBoat,
+                BuildingType = BuildingType.HouseBoat,
                 NeighborhoodId = "gfm-neighborhood",
             };
             var entity2 = new Building
@@ -31,7 +31,7 @@ namespace FunderMaps.Core.Tests.Entities
                 Geometry = "7b2274797065223a224d756c7469506f6c79676f6e222c22636f6f7264696e61746573223a5b5b5b5b342e3438373532373639362c35312e3934353936373435385d2c5b342e3438373433303336392c35312e3934353839323138385d2c5b342e3438373530323836342c35312e3934353835363534355d2c5b342e3438373539393935382c35312e39343539333138345d2c5b342e3438373532373639362c35312e3934353936373435385d5d5d5d7d",
                 ExternalId = "external-1",
                 ExternalSource = ExternalDataSource.NlCbs,
-                buildingType = BuildingType.MobileHome,
+                BuildingType = BuildingType.MobileHome,
                 NeighborhoodId = "gfm-neighborhood",
             };
 
