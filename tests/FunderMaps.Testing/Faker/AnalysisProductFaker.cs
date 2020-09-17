@@ -25,14 +25,12 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.FoundationRiskDistribution, f => null);
             RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>());
             RuleFor(f => f.FoundationTypeDistribution, f => null);
-            RuleFor(f => f.FullDescription, f => f.Random.Words(10));
             RuleFor(f => f.GroundLevel, f => f.Random.Double(-300, 300));
             RuleFor(f => f.GroundWaterLevel, f => f.Random.Double(-100, 0));
             RuleFor(f => f.Id, f => $"gfm-{f.Random.Hash(32)}");
             RuleFor(f => f.NeighborhoodId, f => $"gfm-{f.Random.Hash(32)}");
             RuleFor(f => f.Reliability, f => f.PickRandom<Reliability>());
             RuleFor(f => f.RestorationCosts, f => f.Random.Double(500, 50000));
-            RuleFor(f => f.TerrainDescription, f => f.Random.Words(10));
             RuleFor(f => f.TotalBuildingRestoredCount, f => f.Random.UInt(3, 100));
             RuleFor(f => f.TotalIncidentCount, f => f.Random.UInt(3, 100));
             RuleFor(f => f.TotalReportCount, f => f.Random.UInt(3, 100));

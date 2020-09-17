@@ -25,7 +25,6 @@ namespace FunderMaps.Webservice.Helpers
                 AnalysisProductType.FoundationPlus => typeof(AnalysisFoundationPlusResponseModel),
                 AnalysisProductType.Costs => typeof(AnalysisCostsResponseModel),
                 AnalysisProductType.Complete => typeof(AnalysisCompleteResponseModel),
-                AnalysisProductType.BuildingDescription => typeof(AnalysisBuildingDescriptionResponseModel),
                 AnalysisProductType.Risk => typeof(AnalysisRiskResponseModel),
                 _ => throw new InvalidOperationException(nameof(product)),
             };

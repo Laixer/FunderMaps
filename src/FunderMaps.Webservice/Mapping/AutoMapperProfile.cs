@@ -21,7 +21,6 @@ namespace FunderMaps.Webservice.Mapping
         {
             // All analysis mapping
             CreateMap<AnalysisProduct, AnalysisBuildingDataResponseModel>();
-            CreateMap<AnalysisProduct, AnalysisBuildingDescriptionResponseModel>();
             CreateMap<AnalysisProduct, AnalysisCompleteResponseModel>();
             CreateMap<AnalysisProduct, AnalysisCostsResponseModel>();
             CreateMap<AnalysisProduct, AnalysisFoundationPlusResponseModel>();

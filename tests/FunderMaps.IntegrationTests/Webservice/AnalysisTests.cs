@@ -48,7 +48,6 @@ namespace FunderMaps.IntegrationTests.Webservice
 
         [Theory]
         [InlineData(AnalysisProductTypeResponseModel.BuildingData)]
-        [InlineData(AnalysisProductTypeResponseModel.BuildingDescription)]
         [InlineData(AnalysisProductTypeResponseModel.Complete)]
         [InlineData(AnalysisProductTypeResponseModel.Costs)]
         [InlineData(AnalysisProductTypeResponseModel.Foundation)]
@@ -73,7 +72,6 @@ namespace FunderMaps.IntegrationTests.Webservice
 
         [Theory]
         [InlineData(AnalysisProductTypeResponseModel.BuildingData)]
-        [InlineData(AnalysisProductTypeResponseModel.BuildingDescription)]
         [InlineData(AnalysisProductTypeResponseModel.Complete)]
         [InlineData(AnalysisProductTypeResponseModel.Costs)]
         [InlineData(AnalysisProductTypeResponseModel.Foundation)]
@@ -96,7 +94,6 @@ namespace FunderMaps.IntegrationTests.Webservice
 
         [Theory]
         [InlineData(AnalysisProductTypeResponseModel.BuildingData)]
-        [InlineData(AnalysisProductTypeResponseModel.BuildingDescription)]
         [InlineData(AnalysisProductTypeResponseModel.Complete)]
         [InlineData(AnalysisProductTypeResponseModel.Costs)]
         [InlineData(AnalysisProductTypeResponseModel.Foundation)]

@@ -46,7 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<OrganizationManager>();
 
             // Register core services in DI container.
-            services.AddSingleton<IDescriptionService, DescriptionService>();
             services.AddTransient<IProductService, ProductService>();
 
             return services;

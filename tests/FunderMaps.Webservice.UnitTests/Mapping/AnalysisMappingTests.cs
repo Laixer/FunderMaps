@@ -153,19 +153,6 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
         }
 
         [Fact]
-        public void MapBuildingDescription()
-        {
-            // Act
-            var mapped = _mappingService.MapToAnalysisWrapper(AnalysisProductType.BuildingDescription, new List<AnalysisProduct> { analysisProducts[0] })
-                as ResponseWrapper<AnalysisBuildingDescriptionResponseModel>;
-            var model = mapped.Models.ToArray()[0];
-
-            // Assert.
-            Assert.Equal(analysisProducts[0].Id, model.Id);
-            Assert.Equal(analysisProducts[0].NeighborhoodId, model.NeighborhoodId);
-        }
-
-        [Fact]
         public void MapRisk()
         {
             // Act

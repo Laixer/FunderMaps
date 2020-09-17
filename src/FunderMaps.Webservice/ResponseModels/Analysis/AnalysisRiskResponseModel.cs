@@ -18,11 +18,6 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         public FoundationRiskResponseModel FoundationRisk { get; set; }
 
         /// <summary>
-        /// Description of the terrain on which this building lies.
-        /// </summary>
-        public string TerrainDescription { get; set; }
-
-        /// <summary>
         /// Represents the estimated restoration costs for this building.
         /// </summary>
         public double? RestorationCosts { get; set; }

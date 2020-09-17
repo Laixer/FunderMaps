@@ -16,7 +16,6 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
         [InlineData(AnalysisProductTypeResponseModel.BuildingData, AnalysisProductType.BuildingData)]
         [InlineData(AnalysisProductTypeResponseModel.Complete, AnalysisProductType.Complete)]
         [InlineData(AnalysisProductTypeResponseModel.Costs, AnalysisProductType.Costs)]
-        [InlineData(AnalysisProductTypeResponseModel.BuildingDescription, AnalysisProductType.BuildingDescription)]
         [InlineData(AnalysisProductTypeResponseModel.Foundation, AnalysisProductType.Foundation)]
         [InlineData(AnalysisProductTypeResponseModel.FoundationPlus, AnalysisProductType.FoundationPlus)]
         [InlineData(AnalysisProductTypeResponseModel.Risk, AnalysisProductType.Risk)]
@@ -36,7 +35,6 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
 
         [Theory]
         [InlineData(AnalysisProductType.BuildingData, typeof(AnalysisBuildingDataResponseModel))]
-        [InlineData(AnalysisProductType.BuildingDescription, typeof(AnalysisBuildingDescriptionResponseModel))]
         [InlineData(AnalysisProductType.Complete, typeof(AnalysisCompleteResponseModel))]
         [InlineData(AnalysisProductType.Costs, typeof(AnalysisCostsResponseModel))]
         [InlineData(AnalysisProductType.Foundation, typeof(AnalysisFoundationResponseModel))]
