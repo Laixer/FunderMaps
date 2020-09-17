@@ -1,45 +1,86 @@
-﻿using System;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Entities.Geocoder;
+using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Access entity.
+    ///     Access entity.
     /// </summary>
-    public class Address : BaseEntity
+    public sealed class Address : IdentifiableEntity<Address, string>, IGeocoderEntity<Address>
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Create new instance.
         /// </summary>
-        public Guid Id { get; set; }
+        public Address()
+            : base(e => e.Id)
+        {
+        }
 
         /// <summary>
-        /// Street name.
+        ///     Unique identifier.
+        /// </summary>
+        [Required, Geocoder]
+        public string Id { get; set; }
+
+        /// <summary>
+        ///     Building number.
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string BuildingNumber { get; set; }
+
+        /// <summary>
+        ///     Postcode.
+        /// </summary>
+        public string PostalCode { get; set; }
+
+        /// <summary>
+        ///     Street name.
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string Street { get; set; }
+
+        /// <summary>
+        ///     Address is active or not.
         /// </summary>
         [Required]
-        [MaxLength(128)]
-        public string StreetName { get; set; }
+        public bool IsActive { get; set; } = true;
 
         /// <summary>
-        /// Building number.
+        ///     External data source id.
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string ExternalId { get; set; }
+
+        /// <summary>
+        ///     External data source.
         /// </summary>
         [Required]
-        public short BuildingNumber { get; set; }
+        public ExternalDataSource ExternalSource { get; set; }
 
         /// <summary>
-        /// Building number suffix.
+        ///     City.
         /// </summary>
-        [MaxLength(8)]
-        public string BuildingNumberSuffix { get; set; }
+        [Required]
+        public string City { get; set; }
 
         /// <summary>
-        /// Bag Id.
+        ///     Building identifier.
         /// </summary>
-        public string Bag { get; set; }
+        [Geocoder]
+        public string BuildingId { get; set; }
+
+        // TODO: Obsolete
+        /// <summary>
+        ///     Building identifier.
+        /// </summary>
+        public Building BuildingNavigation { get; set; }
 
         /// <summary>
-        /// Additional data.
+        ///     Print object as name.
         /// </summary>
-        public string AdditionalData { get; set; }
+        /// <returns>String representing user.</returns>
+        public override string ToString() => Id;
     }
 }

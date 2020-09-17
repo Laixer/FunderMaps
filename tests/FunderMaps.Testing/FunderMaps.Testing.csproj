@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="31.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FunderMaps.Core\FunderMaps.Core.csproj" />
+    <ProjectReference Include="..\..\src\FunderMaps.WebApi\FunderMaps.WebApi.csproj" />
+    <ProjectReference Include="..\..\src\FunderMaps.Webservice\FunderMaps.Webservice.csproj" />
+  </ItemGroup>
+
+</Project>

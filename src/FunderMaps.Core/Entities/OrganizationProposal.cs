@@ -1,42 +1,51 @@
-﻿using System;
+﻿using FunderMaps.Core.Entities.Application;
+using System;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
-    /// Organization proposal.
+    ///     Organization proposal.
     /// </summary>
-    public class OrganizationProposal : BaseEntity
+    public sealed class OrganizationProposal : IdentifiableEntity<OrganizationProposal, Guid>, IApplicationEntity<OrganizationProposal>
     {
         /// <summary>
-        /// Unique token.
+        ///     Create new instance.
         /// </summary>
-        public Guid Token { get; set; }
+        public OrganizationProposal()
+            : base(e => e.Id)
+        {
+        }
 
         /// <summary>
-        /// Proposed organization name.
+        ///     Organization identifier.
         /// </summary>
-        [Required]
+        public Guid Id { get; set; }
+
+        /// <summary>
+        ///     Proposed organization name.
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
         public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the normalized name for the organization proposal.
+        ///     Proposed organization email.
         /// </summary>
-        [IgnoreDataMember]
-        public virtual string NormalizedName { get; set; }
-
-        /// <summary>
-        /// Proposed organization email.
-        /// </summary>
-        [Required]
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
-        /// Organization as string.
+        ///     Print object as name.
         /// </summary>
-        /// <returns>String.</returns>
+        /// <returns>String representing organization.</returns>
         public override string ToString() => Name;
+
+        /// <summary>
+        ///     Initialize property defaults.
+        /// </summary>
+        public override void InitializeDefaults()
+        {
+            Id = Guid.Empty;
+        }
     }
 }

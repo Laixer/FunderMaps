@@ -1,25 +1,41 @@
-﻿namespace FunderMaps.Core.Entities
+﻿using FunderMaps.Core.Types;
+using System;
+
+namespace FunderMaps.Core.Entities
 {
+    // TODO: Remove
+    // FUTURE: Remove in the long term.
     /// <summary>
-    /// Record control.
+    ///     Record control.
     /// </summary>
-    public abstract class AccessControl : RecordControl
+    public abstract class AccessControl<TEntity, TEntryIdentifier> : RecordControl<TEntity, TEntryIdentifier>
+        where TEntity : class
+        where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
         /// <summary>
-        /// Record access policy.
+        ///     Create new instance.
         /// </summary>
+        protected AccessControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
+            : base(entryPrimaryKey)
+        {
+        }
+
+        /// <summary>
+        ///     Record access policy.
+        /// </summary>
+        /// <remarks>Default to <see cref="AccessPolicy.Private"/>.</remarks>
         public AccessPolicy AccessPolicy { get; set; } = AccessPolicy.Private;
 
         /// <summary>
-        /// Is record public.
+        ///     Is record public.
         /// </summary>
-        /// <returns>True if public.</returns>
-        public bool IsPublic() => AccessPolicy == AccessPolicy.Public;
+        /// <returns><c>True</c> if public.</returns>
+        public bool IsPublic => AccessPolicy == AccessPolicy.Public;
 
         /// <summary>
-        /// Is record private.
+        ///     Is record private.
         /// </summary>
-        /// <returns>True if private.</returns>
-        public bool IsPrivate() => AccessPolicy == AccessPolicy.Private;
+        /// <returns><c>True</c> if private.</returns>
+        public bool IsPrivate => AccessPolicy == AccessPolicy.Private;
     }
 }

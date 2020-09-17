@@ -1,68 +1,164 @@
-﻿using System;
+﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.Entities.Report;
+using FunderMaps.Core.Types;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
+    // TODO inherit from StateControl?
     /// <summary>
-    /// Indicent entity.
+    ///     Indicent entity.
     /// </summary>
-    public class Incident : BaseEntity
+    public sealed class Incident : RecordControl<Incident, string>, IReportEntity<Incident>
     {
         /// <summary>
-        /// Unique identifier.
+        ///     Create new instance.
         /// </summary>
-        public int Id { get; set; }
+        public Incident()
+            : base(e => e.Id)
+        {
+        }
 
         /// <summary>
-        /// Foundation type.
+        ///     Unique identifier.
+        /// </summary>
+        [Incident]
+        public string Id { get; set; }
+
+        /// <summary>
+        ///     Client identifier.
+        /// </summary>
+        [Required, Range(1, 99)]
+        public int ClientId { get; set; }
+
+        /// <summary>
+        ///     Foundation type.
         /// </summary>
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
-        /// Foundation quality.
+        ///     Building chained to another building.
         /// </summary>
-        public FoundationQuality? FoundationQuality { get; set; }
+        public bool ChainedBuilding { get; set; }
 
         /// <summary>
-        /// Substructure.
+        ///     Whether the contact is an owner of the building.
         /// </summary>
-        public Substructure Substructure { get; set; }
+        public bool Owner { get; set; }
 
         /// <summary>
-        /// Note.
+        ///     Whether foundation was recovered or not.
         /// </summary>
-        public string Note { get; set; }
+        public bool FoundationRecovery { get; set; }
 
         /// <summary>
-        /// Foundation damage cause.
+        ///     Whether neighbor foundation was recovered or not.
+        /// </summary>
+        public bool NeightborRecovery { get; set; }
+
+        /// <summary>
+        ///     Foundation damage cause.
         /// </summary>
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
-        /// Address identifier.
+        ///     Document name.
         /// </summary>
-        public Guid Address { get; set; }
+        //[Url]
+        public string[] DocumentFile { get; set; }
 
         /// <summary>
-        /// Owner user identifier.
+        ///     Note.
         /// </summary>
-        public Guid Owner { get; set; }
+        public string Note { get; set; }
 
         /// <summary>
-        /// Document name.
+        ///     Internal note.
         /// </summary>
-        [MaxLength(256)]
-        public string DocumentName { get; set; }
+        public string InternalNote { get; set; }
 
         /// <summary>
-        /// Address object.
+        ///     Fouindational damage.
+        /// </summary>
+        public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
+
+        /// <summary>
+        ///     Environmental damage.
+        /// </summary>
+        public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
+
+        /// <summary>
+        ///     Contact email.
+        /// </summary>
+        [EmailAddress]
+        public string Email { get; set; }
+
+        /// <summary>
+        ///     Address identifier.
+        /// </summary>
+        [Required, Geocoder]
+        public string Address { get; set; }
+
+        /// <summary>
+        ///     Audit status.
+        /// </summary>
+        public AuditStatus AuditStatus { get; set; }
+
+        /// <summary>
+        ///     Question type.
+        /// </summary>
+        public IncidentQuestionType QuestionType { get; set; }
+
+        /// <summary>
+        ///     Meta data.
+        /// </summary>
+        public object Meta { get; set; }
+
+        /// <summary>
+        ///     Print object as name.
+        /// </summary>
+        /// <returns>String representing incident.</returns>
+        public override string ToString() => Id;
+
+        /// <summary>
+        ///     Initialize property defaults.
+        /// </summary>
+        public override void InitializeDefaults()
+        {
+            Id = null;
+            AuditStatus = AuditStatus.Todo;
+            CreateDate = DateTime.MinValue;
+            UpdateDate = null;
+            DeleteDate = null;
+            AddressNavigation = null;
+        }
+
+        /// <summary>
+        ///     Initialize properties from another entity.
+        /// </summary>
+        public override void InitializeDefaults(Incident other)
+        {
+            if (other == null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
+            Id = other.Id;
+            AuditStatus = other.AuditStatus;
+            CreateDate = other.CreateDate;
+            UpdateDate = other.UpdateDate;
+            DeleteDate = other.DeleteDate;
+        }
+
+        /// <summary>
+        ///     Contact object.
+        /// </summary>
+        public Contact ContactNavigation { get; set; }
+
+        /// <summary>
+        ///     Address object.
         /// </summary>
         public Address AddressNavigation { get; set; }
-
-        // TODO: Replace by user object.
-        /// <summary>
-        /// Owner object.
-        /// </summary>
-        public object OwnerNavigation { get; set; }
     }
 }

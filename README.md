@@ -1,6 +1,6 @@
 # FunderMaps
 
-[![Build Status](https://dev.azure.com/Laixer/FunderMaps/_apis/build/status/Laixer.FunderMaps?branchName=develop)](https://dev.azure.com/Laixer/FunderMaps/_build/latest?definitionId=1&branchName=develop)
+![FunderMaps Ecosystem](https://github.com/Laixer/FunderMaps/workflows/FunderMaps%20Ecosystem/badge.svg)
 
 More and more foundation issues occur and are actively investigated by local government. Gaining insight and acquiring more detailed data, **FunderMaps** enables municipalities and large property owners to register this data at the property level. Enrichment with data from Remote Monitoring or national data layers, various analyzes are performed that provide insight into the risk of foundation damage.
 

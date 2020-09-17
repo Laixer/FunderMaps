@@ -1,20 +1,28 @@
-﻿using System.Linq;
+﻿using System;
 
 namespace FunderMaps.Core.Extensions
 {
     /// <summary>
-    /// String Extensions.
+    ///     Contains extension functionality for <see cref="string"/> types.
     /// </summary>
     public static class StringExtensions
     {
         /// <summary>
-        /// Convert camelCase into snake casing.
+        ///     Throws an <see cref="ArgumentNullException"/> if <paramref name="str"/>
+        ///     is null or empty.
         /// </summary>
-        /// <param name="str">Input string to extend.</param>
-        /// <returns>Converted string.</returns>
-        public static string ToSnakeCase(this string str)
-            => string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x)
-            ? "_" + x.ToString()
-            : x.ToString())).ToLower().Trim();
+        /// <param name="str">The <see cref="string"/> to check</param>
+        public static void ThrowIfNullOrEmpty(this string str)
+        {
+            if (str == null)
+            {
+                throw new ArgumentNullException(nameof(str));
+            }
+
+            if (string.IsNullOrEmpty(str))
+            {
+                throw new ArgumentNullException(nameof(str));
+            }
+        }
     }
 }

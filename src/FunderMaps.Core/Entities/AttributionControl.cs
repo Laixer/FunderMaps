@@ -1,23 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
+﻿using System;
 
 namespace FunderMaps.Core.Entities
 {
+    // FUTURE: This needs to be rewritten.
     /// <summary>
-    /// Attribution control.
+    ///     Attribution control.
     /// </summary>
-    public class AttributionControl : AccessControl
+    public abstract class AttributionControl<TEntity, TEntryIdentifier> : AccessControl<TEntity, TEntryIdentifier>
+        where TEntity : class
+        where TEntryIdentifier : IEquatable<TEntryIdentifier>, IComparable<TEntryIdentifier>
     {
         /// <summary>
-        /// Attribution key.
+        ///     Create new instance.
         /// </summary>
-        [IgnoreDataMember]
-        public int _Attribution { get; set; }
+        protected AttributionControl(Func<TEntity, TEntryIdentifier> entryPrimaryKey)
+            : base(entryPrimaryKey)
+        {
+        }
 
         /// <summary>
-        /// Attribution object.
+        ///     Attribution key.
         /// </summary>
-        [Required]
-        public Attribution Attribution { get; set; }
+        public int Attribution { get; set; }
+
+        /// <summary>
+        ///     Attribution object.
+        /// </summary>
+        public Types.Control.AttributionControl AttributionNavigation { get; set; }
     }
 }

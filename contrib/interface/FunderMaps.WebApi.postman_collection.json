@@ -1,0 +1,1114 @@
+{
+	"info": {
+		"_postman_id": "df2b4864-fb6c-4661-b4ce-1d55e2acbe84",
+		"name": "FunderMaps.WebApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Inquiry",
+			"item": [
+				{
+					"name": "Create Inquiry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"DocumentName\": \"kaas\",\r\n    \"Inspection\": true,\r\n    \"JointMeasurement\": true,\r\n    \"FloorMeasurement\": true,\r\n    \"Note\": \"kaasjes\",\r\n    \"DocumentDate\": \"2019-07-02\",\r\n    \"DocumentFile\": \"https://sjaak.org\",\r\n    \"Type\": 2,\r\n    \"StandardF3o\": false,\r\n    \"Contractor\": \"11cdc51f-3ba6-4e3c-b975-dfed4f054c31\",\r\n    \"Reviewer\": \"9d1b111a-c024-470c-b0b7-6810140924e8\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Inquiry Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "input",
+									"type": "file",
+									"src": "file.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/upload-document",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"upload-document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Inquiry",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/49",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"49"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Inquiries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Inquiry",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 48,\r\n    \"documentName\": \"{{$randomLoremSentence}}\",\r\n    \"inspection\": true,\r\n    \"jointMeasurement\": true,\r\n    \"floorMeasurement\": true,\r\n    \"note\": \"kaasjes\",\r\n    \"documentDate\": \"2019-07-02T00:00:00\",\r\n    \"documentFile\": \"https://sjaak.org\",\r\n    \"auditStatus\": 0,\r\n    \"type\": 2,\r\n    \"standardF3o\": false,\r\n    \"reviewer\": null,\r\n    \"contractor\": \"00000000-0000-0000-0000-000000000001\",\r\n    \"accessPolicy\": 0,\r\n    \"createDate\": \"0001-01-01T00:00:00\",\r\n    \"updateDate\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/48",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"48"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Inquiry",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/status_rejected",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"status_rejected"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Inquiry",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/48",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"48"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Review Inquiry",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/status_review",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"status_review"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Inquiry Sample",
+			"item": [
+				{
+					"name": "Create Inquiry Sample",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Inquiry\": 2,\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"Address\": \"gfm-402824f1236441cb9df3eaecafe2736e\",\r\n    \"BuiltYear\": \"2019-01-04\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/sample",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"sample"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Inquiry Samples",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/sample/17",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"sample",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Samples",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/sample",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"sample"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Inquiry Sample",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 17,\r\n    \"inquiry\": 29,\r\n    \"address\": \"gfm-402824f1236441cb9df3eaecafe2736e\",\r\n    \"note\": \"kaas\",\r\n    \"builtYear\": \"2019-01-04T00:00:00\",\r\n    \"substructure\": 0,\r\n    \"cpt\": null,\r\n    \"monitoringWell\": null,\r\n    \"groundwaterLevelTemp\": 0,\r\n    \"groundLevel\": 0,\r\n    \"groundwaterLevelNet\": 0,\r\n    \"type\": 0,\r\n    \"enforcementTerm\": 0,\r\n    \"recoveryAdvised\": false,\r\n    \"damageCause\": 0,\r\n    \"damageCharacteristics\": 0,\r\n    \"constructionPile\": 0,\r\n    \"woodType\": 0,\r\n    \"woodEncroachement\": 0,\r\n    \"constructionLevel\": 0,\r\n    \"woodLevel\": 0,\r\n    \"pileDiameterTop\": 0,\r\n    \"pileDiameterBottom\": 0,\r\n    \"pileHeadLevel\": 0,\r\n    \"pileTipLevel\": 0,\r\n    \"foundationDepth\": 0,\r\n    \"masonLevel\": 0,\r\n    \"concreteChargerLength\": 0,\r\n    \"pileDistanceLength\": 0,\r\n    \"woodPenetrationDepth\": 0,\r\n    \"overallQuality\": 0,\r\n    \"woodQuality\": 0,\r\n    \"constructionQuality\": 0,\r\n    \"woodCapacityHorizontalQuality\": 0,\r\n    \"pileWoodCapacityVerticalQuality\": 0,\r\n    \"carryingCapacityQuality\": 0,\r\n    \"masonQuality\": 0,\r\n    \"woodQualityNecessity\": false,\r\n    \"crackIndoorRestored\": false,\r\n    \"crackIndoorType\": 0,\r\n    \"crackIndoorSize\": 0,\r\n    \"crackFacadeFrontRestored\": false,\r\n    \"crackFacadeFrontType\": 0,\r\n    \"crackFacadeFrontSize\": 0,\r\n    \"crackFacadeBackRestored\": false,\r\n    \"crackFacadeBackType\": 0,\r\n    \"crackFacadeBackSize\": 0,\r\n    \"crackFacadeLeftRestored\": false,\r\n    \"crackFacadeLeftType\": 0,\r\n    \"crackFacadeLeftkSize\": 0,\r\n    \"crackFacadeRightRestored\": false,\r\n    \"crackFacadeRightType\": 0,\r\n    \"crackFacadeRightkSize\": 0,\r\n    \"deformedFacade\": false,\r\n    \"thresholdUpdownSkewed\": false,\r\n    \"thresholdFrontLevel\": 0,\r\n    \"thresholdBackLevel\": 0,\r\n    \"skewedParallel\": 0,\r\n    \"skewedPerpendicular\": 0,\r\n    \"skewedFacade\": 0,\r\n    \"settlementSpeed\": 0,\r\n    \"createDate\": \"2020-07-15T10:46:35.921235+02:00\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/sample/17",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"sample",
+								"17"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Inquiry Sample",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/29/sample/19",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"29",
+								"sample",
+								"19"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "404f4e41-86de-4c1d-9703-0145319e2de9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "1d45e012-cc43-41c7-b58a-086e48de1e72",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Incident",
+			"item": [
+				{
+					"name": "Create Incident",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeightborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/incident",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Incident",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/incident/FIR122020-12570",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident",
+								"FIR122020-12570"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Incidents",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/incident?limit=5",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Incident",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"FIR032020-12600\",\r\n    \"clientId\": 3,\r\n    \"foundationType\": 5,\r\n    \"chainedBuilding\": {{$randomBoolean}},\r\n    \"owner\": {{$randomBoolean}},\r\n    \"foundationRecovery\": {{$randomBoolean}},\r\n    \"neighborRecovery\": {{$randomBoolean}},\r\n    \"foundationDamageCause\": 6,\r\n    \"documentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"internalNote\": \"{{$randomLoremSentences}}\",\r\n    \"auditStatus\": 0,\r\n    \"questionType\": 0,\r\n    \"foundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"environmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"email\": \"Kaylah.Wehner@yahoo.com\",\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"phoneNumber\": \"06360557722\",\r\n    \"address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"createDate\": \"2020-09-08T13:54:53.269121+00:00\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/incident/FIR122020-12570",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident",
+								"FIR122020-12570"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Portal",
+			"item": [
+				{
+					"name": "Create Incident",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeightborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/submit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Address Suggestions",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/address-suggest?query=2628XG&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"address-suggest"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "2628XG"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Recovery",
+			"item": [
+				{
+					"name": "Create Recovery",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"DocumentDate\": \"2012-03-29\",\r\n    \"DocumentFile\": \"https://sjaak.org\",\r\n    \"Type\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Recovery",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Recovery",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"Another note here\",\r\n    \"type\": 3,\r\n    \"documentFile\": \"https://sjaak.com\",\r\n    \"documentDate\": \"2012-03-28T00:00:00\",\r\n    \"attribution\": 1,\r\n    \"accessPolicy\": 1,\r\n    \"createDate\": \"2020-07-09T15:58:03.64524+02:00\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recovery",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Recovery Sample",
+			"item": [
+				{
+					"name": "Create Recovery Sample",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"Permit\": \"hbfdhkbgf\",\r\n    \"permitDate\": \"2003-05-16\",\r\n    \"recoveryDate\": \"1993-02-08\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery/2/sample",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"2",
+								"sample"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery Sample",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/2/sample/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"2",
+								"sample",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Address",
+			"item": [
+				{
+					"name": "Get Suggestions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b4d949bd-50f1-4b41-9a13-c8a2be833dbd",
+								"exec": [
+									"if (pm.response.json().length > 0) {",
+									"    pm.environment.set(\"address_id\", pm.response.json()[0][\"id\"])",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/address/suggest?query=3123EB&limit=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"address",
+								"suggest"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "3123EB"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/address/{{address_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"address",
+								"{{address_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"407988e2-e80c-4edd-85ab-2469c8beb15d\",\r\n    \"givenName\": \"{{$randomFirstName}}\",\r\n    \"lastName\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{username}}\",\r\n    \"avatar\": null,\r\n    \"jobTitle\": \"{{$randomJobTitle}}\",\r\n    \"phoneNumber\": \"067634283\",\r\n    \"role\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Organization",
+			"item": [
+				{
+					"name": "Organization Setup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/organization/setup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"organization",
+								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Organization [Session]",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"organization"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Current Organization [Session]",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"givenName\": \"{{$randomFirstName}}\",\r\n    \"lastName\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{username}}\",\r\n    \"avatar\": null,\r\n    \"jobTitle\": \"{{$randomJobTitle}}\",\r\n    \"phoneNumber\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/organization/user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"organization",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Organization [Admin]",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Starbucks\",\r\n    \"email\": \"info@starbucks.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/organization",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"organization"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Organization Setup [Anon]",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"{{username}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/organization/11cdc51f-3ba6-4e3c-b975-dfed4f054c31/setup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"organization",
+								"11cdc51f-3ba6-4e3c-b975-dfed4f054c31",
+								"setup"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "SignIn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2aae0c4a-53c2-4b04-8dfe-dcad13fd54fd",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"bearer_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\": \"{{username}}\",\r\n    \"Password\": \"{{password}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/signin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ece63a86-9d2b-4b73-be63-c18201b02c4f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"bearer_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/auth/token-refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"token-refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Get Version",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1a5a1020-c90d-4895-82f7-680e972d80ff",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Your test name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.name).to.eql('FunderMaps');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/api/version",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"version"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "b477f05c-6aaf-4bc0-8c54-08d6ec990e08",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "45ec5638-4758-4482-84b0-1f5e84d6faa5",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "fdeb86b0-5477-4cf1-8fba-3102275909a4",
+			"key": "base_url",
+			"value": ""
+		},
+		{
+			"id": "e32129cc-0a44-499c-b697-11ac932f0c7a",
+			"key": "bearer_token",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
