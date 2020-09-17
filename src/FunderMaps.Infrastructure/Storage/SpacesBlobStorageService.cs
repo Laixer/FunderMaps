@@ -163,17 +163,38 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Stores a file in a Digital Ocean Space.
         /// </summary>
-        /// <remarks>
-        ///     It appears that the <see cref="TransferUtility"/> client handles 
-        ///     the content type by itself.
-        /// </remarks>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="stream">See <see cref="Stream"/>.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
         public ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
-            => StoreFileAsync(containerName, fileName, stream);
+        {
+            fileName.ThrowIfNullOrEmpty();
+            contentType.ThrowIfNullOrEmpty();
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            try
+            {
+                using var transferUtility = new TransferUtility(client);
+                var request = new TransferUtilityUploadRequest
+                {
+                    BucketName = _options.BlobStorageName,
+                    ContentType = contentType,
+                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
+                    InputStream = stream
+                };
+
+                return new ValueTask(transferUtility.UploadAsync(request));
+            } catch (AmazonS3Exception e)
+            {
+                _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
+                throw new StorageException($"Could not upload file with content type {contentType}");
+            }
+        }
     }
 }
 #pragma warning restore CA1812 // Avoid uninstantiated internal classes
