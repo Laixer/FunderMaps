@@ -62,8 +62,6 @@ namespace FunderMaps.IntegrationTests.Webservice
             var response = await client.GetAsync($"api/analysis/get?product={product}&id={expectedAnalysisProduct.Id}");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisCompleteResponseModel>>();
 
-            System.Console.WriteLine($"Expected bagid = {expectedAnalysisProduct.ExternalId}");
-
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1U, returnObject.ModelCount);

@@ -2,9 +2,15 @@
 
 namespace FunderMaps.Infrastructure.Storage
 {
+    // TODO Remove this later.
     /// <summary>
     ///     Options for the file storage service.
     /// </summary>
+    /// <remarks>
+    ///     This exists for backwards compatibility with the Azure Storage service,
+    ///     we have since switched to the Digital Ocean Storage service. The latter
+    ///     requires a completely different form of configuration.
+    /// </remarks>
     public sealed class FileStorageOptions
     {
         /// <summary>

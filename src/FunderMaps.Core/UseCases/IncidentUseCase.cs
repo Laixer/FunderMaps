@@ -16,14 +16,14 @@ namespace FunderMaps.Core.UseCases
     /// </summary>
     public class IncidentUseCase
     {
-        private readonly IFileStorageService _fileStorageService;
+        private readonly IBlobStorageService _fileStorageService;
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentUseCase(IFileStorageService fileStorageService, IContactRepository contactRepository, IIncidentRepository incidentRepository)
+        public IncidentUseCase(IBlobStorageService fileStorageService, IContactRepository contactRepository, IIncidentRepository incidentRepository)
         {
             _fileStorageService = fileStorageService;
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));

@@ -31,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // TODO: AddScoped -> Transient?
             // Register core service fillers in DI container.
             services.AddScoped<IEmailService, NullEmailService>();
-            services.AddScoped<IFileStorageService, NullFileStorageService>();
+            services.AddScoped<IBlobStorageService, NullBlobStorageService>();
             services.AddScoped<INotificationService, NullNotificationService>();
 
             // Register core use cases in DI container.

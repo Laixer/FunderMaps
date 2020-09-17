@@ -10,13 +10,13 @@ namespace FunderMaps.HealthChecks
     /// </summary>
     public class FileStorageCheck : IHealthCheck
     {
-        private readonly IFileStorageService _fileStorageService;
+        private readonly IBlobStorageService _fileStorageService;
 
         /// <summary>
         ///     Create a new instance.
         /// </summary>
         /// <param name="fileStorageService">File storage service.</param>
-        public FileStorageCheck(IFileStorageService fileStorageService) => _fileStorageService = fileStorageService;
+        public FileStorageCheck(IBlobStorageService fileStorageService) => _fileStorageService = fileStorageService;
 
         /// <summary>
         ///     Runs the health check, returning the status of the component being checked.

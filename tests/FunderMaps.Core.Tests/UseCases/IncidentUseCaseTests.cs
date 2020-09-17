@@ -14,7 +14,7 @@ namespace FunderMaps.Core.Tests.UseCases
         public async void GetAsyncReturnsIncident()
         {
             // Arrange
-            var fileStorageService = new Mock<IFileStorageService>();
+            var fileStorageService = new Mock<IBlobStorageService>();
             var contactRepository = new Mock<IContactRepository>();
             var incidentRepository = new MockIncidentRepository().MockGetByIdAsync(new Incident());
             var useCase = new IncidentUseCase(fileStorageService.Object, contactRepository.Object, incidentRepository.Object);

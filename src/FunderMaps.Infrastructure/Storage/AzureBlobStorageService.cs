@@ -15,7 +15,7 @@ namespace FunderMaps.Infrastructure.Storage
     /// <summary>
     ///     Azure Blob Storage service.
     /// </summary>
-    internal class AzureBlobStorageService : IFileStorageService
+    internal class AzureBlobStorageService : IBlobStorageService
     {
         private readonly FileStorageOptions _options;
         private readonly BlobServiceClient _blobServiceClient;
