@@ -80,7 +80,7 @@ namespace FunderMaps.Webservice
             {
                 // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
                 c.SchemaFilter<EnumSchemaFilter>();
-                c.GeneratePolymorphicSchemas();
+                c.GeneratePolymorphicSchemas(); // TODO Obsolete
             });
 
             // Add the authentication layer.
