@@ -10,14 +10,16 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public StorageException(string message) : base(message)
+        public StorageException(string message)
+            : base(message)
         {
         }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public StorageException(string message, Exception innerException) : base(message, innerException)
+        public StorageException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 

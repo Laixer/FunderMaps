@@ -1,5 +1,4 @@
-﻿using FunderMaps.AspNetCore.ErrorMessaging;
-using FunderMaps.Core.Exceptions;
+﻿using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using System.Net;
@@ -20,8 +19,15 @@ namespace FunderMaps.AspNetCore
         public override IErrorMessage Map(FunderMapsCoreException exception)
             => exception switch
             {
-                ProductNotFoundException x => BuildMessage("Could not find product", HttpStatusCode.Conflict),
-                _ => BuildMessage("Unable to process request", HttpStatusCode.InternalServerError)
+                AuthenticationException _ => BuildMessage("Login attempt failed with provided credentials.", HttpStatusCode.Unauthorized),
+                AuthorizationException _ => BuildMessage("Access to resource forbidden.", HttpStatusCode.Forbidden),
+                EntityNotFoundException _ => BuildMessage("Requested entity not found.", HttpStatusCode.NotFound),
+                EntityReadOnlyException _ => BuildMessage("Requested entity is immutable.", HttpStatusCode.Locked),
+                InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
+                InvalidProductRequestException _ => BuildMessage("Invalid product requested.", HttpStatusCode.BadRequest),
+                StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
+                StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
+                _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError)
             };
     }
 }

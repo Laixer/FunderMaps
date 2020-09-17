@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
     ///     All exception in this assembly ought to inherit from this
     ///     exception
     /// </remarks>
-    public class FunderMapsCoreException : Exception
+    public abstract class FunderMapsCoreException : Exception
     {
         /// <summary>
         ///     Create new instance.

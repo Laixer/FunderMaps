@@ -1,48 +1,47 @@
-﻿using FunderMaps.Core.Exceptions;
-using Microsoft.AspNetCore.Diagnostics;
+﻿using FunderMaps.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
+using System.Net;
 
 namespace FunderMaps.WebApi.Controllers
 {
     /// <summary>
     ///     API error handler.
     /// </summary>
+    [AllowAnonymous]
     public class OopsController : ControllerBase
     {
-        // FUTURE: Maybe log the exception?
-
         /// <summary>
-        ///     Wrap exceptions in a response.
+        ///     Returns a <see cref="ProblemDetails"/> based on the <see cref="IExceptionHandlerFeature"/>
+        ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
+        /// <returns><see cref="ProblemDetails"/></returns>
         [Route("oops")]
-        public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, ILogger logger)
+        public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, [FromServices] ILogger<OopsController> logger)
         {
-            if (webHostEnvironment.IsDevelopment())
-            {
-                logger.LogWarning("This should not be invoked in development environments.");
-            }
+            var error = HttpContext.Features.Get<IErrorMessage>();
 
-            var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
-            Exception exception = context?.Error;
+            // If the error message is not set just return a generic problem.
+            if (error is null)
+            {
+                logger.LogWarning($"Cannot return configured error message from exception, return generic problem");
 
-            if (exception is RepositoryException) // TODO: Should be removed.
-            {
-                throw new InvalidOperationException();
-            }
-            else if (exception is EntityNotFoundException)
-            {
+                if (webHostEnvironment.IsDevelopment())
+                {
+                    logger.LogWarning("This should not be invoked in development environments.");
+                }
+
                 return Problem(
-                    statusCode: 404,
-                    title: "Entity was not found.");
+                    title: "Application was unable to process the request.",
+                    statusCode: (int)HttpStatusCode.InternalServerError);
             }
 
             return Problem(
-                statusCode: 500,
-                title: "Application was unable to process request.");
+                title: error.Message,
+                statusCode: error.StatusCode);
         }
     }
 }

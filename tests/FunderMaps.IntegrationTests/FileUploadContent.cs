@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Bogus;
@@ -11,7 +7,7 @@ namespace FunderMaps.IntegrationTests
     /// <summary>
     ///     File upload content helper.
     /// </summary>
-    public class FileUploadContent : MultipartFormDataContent, IDisposable
+    public class FileUploadContent : MultipartFormDataContent
     {
         private Faker faker = new Faker();
 

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
 {
+    // FUTURE: Rename to TelemetryProductService
     /// <summary>
     ///     Retrieves products and tracks user behaviour.
     /// </summary>
@@ -171,7 +172,5 @@ namespace FunderMaps.Core.Services
         /// <returns><see cref="StatisticsProduct"/></returns>
         public override Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token = default)
             => throw new NotImplementedException();
-
-
     }
 }
