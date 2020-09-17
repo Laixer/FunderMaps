@@ -19,8 +19,8 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
         [InlineData(AnalysisProductTypeResponseModel.Foundation, AnalysisProductType.Foundation)]
         [InlineData(AnalysisProductTypeResponseModel.FoundationPlus, AnalysisProductType.FoundationPlus)]
         [InlineData(AnalysisProductTypeResponseModel.Risk, AnalysisProductType.Risk)]
-        public void AnalysisProductTypeMaps(AnalysisProductTypeResponseModel value, AnalysisProductType expected) =>
-            Assert.Equal(expected, ProductTypeMapper.MapAnalysis(value));
+        public void AnalysisProductTypeMaps(AnalysisProductTypeResponseModel value, AnalysisProductType expected)
+            => Assert.Equal(expected, ProductTypeMapper.MapAnalysis(value));
 
         [Theory]
         [InlineData(StatisticsProductTypeResponseModel.BuildingsRestored, StatisticsProductType.BuildingsRestored)]
@@ -30,8 +30,8 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
         [InlineData(StatisticsProductTypeResponseModel.FoundationRisk, StatisticsProductType.FoundationRisk)]
         [InlineData(StatisticsProductTypeResponseModel.Incidents, StatisticsProductType.Incidents)]
         [InlineData(StatisticsProductTypeResponseModel.Reports, StatisticsProductType.Reports)]
-        public void StatisticsProductTypeMaps(StatisticsProductTypeResponseModel value, StatisticsProductType expected) =>
-            Assert.Equal(expected, ProductTypeMapper.MapStatistics(value));
+        public void StatisticsProductTypeMaps(StatisticsProductTypeResponseModel value, StatisticsProductType expected)
+            => Assert.Equal(expected, ProductTypeMapper.MapStatistics(value));
 
         [Theory]
         [InlineData(AnalysisProductType.BuildingData, typeof(AnalysisBuildingDataResponseModel))]
@@ -40,8 +40,8 @@ namespace FunderMaps.Webservice.UnitTests.Mapping
         [InlineData(AnalysisProductType.Foundation, typeof(AnalysisFoundationResponseModel))]
         [InlineData(AnalysisProductType.FoundationPlus, typeof(AnalysisFoundationPlusResponseModel))]
         [InlineData(AnalysisProductType.Risk, typeof(AnalysisRiskResponseModel))]
-        public void AnalysisResponseModelTypeFromProduct(AnalysisProductType value, Type expected) =>
-            Assert.Equal(expected, ProductTypeMapper.MapAnalysisResponseModelType(value));
+        public void AnalysisResponseModelTypeFromProduct(AnalysisProductType value, Type expected)
+            => Assert.Equal(expected, ProductTypeMapper.MapAnalysisResponseModelType(value));
 
         [Fact]
         public void InvalidAnalysisProductTypeThrows()
