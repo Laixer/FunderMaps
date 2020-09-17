@@ -15,7 +15,7 @@ namespace FunderMaps.Core.Exceptions
     ///         specifc derived exception fits the case.
     ///     </para>
     /// </remarks>
-    public class RepositoryException : FunderMapsCoreException
+    public abstract class RepositoryException : FunderMapsCoreException
     {
         /// <summary>
         ///     Create new instance.
