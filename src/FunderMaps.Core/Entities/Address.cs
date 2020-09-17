@@ -60,7 +60,7 @@ namespace FunderMaps.Core.Entities
         public ExternalDataSource ExternalSource { get; set; }
 
         /// <summary>
-        ///     External data source.
+        ///     City.
         /// </summary>
         [Required]
         public string City { get; set; }

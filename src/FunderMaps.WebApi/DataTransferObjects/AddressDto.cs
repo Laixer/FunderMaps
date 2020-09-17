@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.DataAnnotations;
-using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.WebApi.DataTransferObjects
