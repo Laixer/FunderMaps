@@ -3,8 +3,7 @@
 namespace FunderMaps.Core.Types.Control
 {
     /// <summary>
-    ///     Attribution represents a entity partition for user and
-    ///     organizational relations.
+    ///     Attribution represents an entity partition for user and organizational relations.
     /// </summary>
     public class AttributionControl
     {

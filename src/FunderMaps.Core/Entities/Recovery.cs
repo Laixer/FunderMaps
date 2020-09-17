@@ -11,6 +11,9 @@ namespace FunderMaps.Core.Entities
     /// </summary>
     public sealed class Recovery : AttributionControl<Recovery, int>, IReportEntity<Recovery>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public Recovery()
             : base(e => e.Id)
         {

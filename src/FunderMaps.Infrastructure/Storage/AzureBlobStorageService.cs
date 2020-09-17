@@ -134,7 +134,7 @@ namespace FunderMaps.Infrastructure.Storage
             {
                 HttpHeaders = new BlobHttpHeaders
                 {
-                    ContentType = contentType
+                    ContentType = contentType,
                 },
             };
 

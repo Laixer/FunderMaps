@@ -12,6 +12,24 @@ namespace FunderMaps.AspNetCore.Extensions
     public static class CustomExceptionHandlerMiddlewareExtensions
     {
         /// <summary>
+        ///     Add <see cref="CustomExceptionHandlerMiddleware{FunderMapsCoreException}"/> to the builder.
+        /// </summary>
+        /// <param name="builder"><see cref="IApplicationBuilder"/></param>
+        /// <returns><see cref="IApplicationBuilder"/></returns>
+        public static IApplicationBuilder UseFunderMapsExceptionHandler(this IApplicationBuilder builder, string errorControllerPath)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            return builder.UseCustomExceptionHandler<FunderMapsCoreException>(new CustomExceptionHandlerOptions()
+            {
+                ErrorControllerPath = errorControllerPath
+            });
+        }
+
+        /// <summary>
         ///     Add <see cref="CustomExceptionHandlerMiddleware{TException}"/> to the builder.
         /// </summary>
         /// <param name="builder"><see cref="IApplicationBuilder"/></param>
@@ -21,6 +39,10 @@ namespace FunderMaps.AspNetCore.Extensions
         public static IApplicationBuilder UseCustomExceptionHandler<TException>(this IApplicationBuilder builder, CustomExceptionHandlerOptions options)
             where TException : Exception
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
             if (options == null)
             {
                 throw new ArgumentNullException(nameof(options));
@@ -37,6 +59,11 @@ namespace FunderMaps.AspNetCore.Extensions
         /// <returns><see cref="IApplicationBuilder"/></returns>
         public static IApplicationBuilder UseFunderMapsExceptionHandler(this IApplicationBuilder builder, Action<CustomExceptionHandlerOptions> configureOptions)
         {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             var options = new CustomExceptionHandlerOptions();
             configureOptions(options);
             return builder.UseCustomExceptionHandler<FunderMapsCoreException>(options);

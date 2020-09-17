@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Core.Interfaces
+﻿using FunderMaps.Core.Types;
+
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     ///     Contract for mapping exceptions to an error message.
@@ -8,10 +10,10 @@
     {
         /// <summary>
         ///     Maps an <see cref="System.Exception"/> to the 
-        ///     corresponding <see cref="IErrorMessage"/>.
+        ///     corresponding <see cref="ErrorMessage"/>.
         /// </summary>
         /// <param name="exception"><see cref="System.Exception"/></param>
-        /// <returns><see cref="IErrorMessage"/></returns>
-        IErrorMessage Map(TException exception);
+        /// <returns><see cref="ErrorMessage"/></returns>
+        ErrorMessage Map(TException exception);
     }
 }

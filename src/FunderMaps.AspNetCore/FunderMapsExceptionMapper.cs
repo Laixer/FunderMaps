@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
+using FunderMaps.Core.Types;
 using System.Net;
 
 namespace FunderMaps.AspNetCore
@@ -16,7 +16,7 @@ namespace FunderMaps.AspNetCore
         /// </summary>
         /// <param name="exception"><see cref="FunderMapsCoreException"/></param>
         /// <returns><see cref="ErrorMessageFeature"/></returns>
-        public override IErrorMessage Map(FunderMapsCoreException exception)
+        public override ErrorMessage Map(FunderMapsCoreException exception)
             => exception switch
             {
                 AuthenticationException _ => BuildMessage("Login attempt failed with provided credentials.", HttpStatusCode.Unauthorized),

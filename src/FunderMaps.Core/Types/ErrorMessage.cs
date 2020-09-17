@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Types
     /// <summary>
     ///     Default implementation of an error message.
     /// </summary>
-    public class ErrorMessage : IErrorMessage
+    public class ErrorMessage
     {
         /// <summary>
         ///     Error message text message.

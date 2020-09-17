@@ -457,6 +457,75 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Portal",
+			"item": [
+				{
+					"name": "Create Incident",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeightborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/submit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Address Suggestions",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/address-suggest?query=2628XG&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"address-suggest"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "2628XG"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Recovery",
 			"item": [
 				{
@@ -634,6 +703,20 @@
 			"item": [
 				{
 					"name": "Get Suggestions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b4d949bd-50f1-4b41-9a13-c8a2be833dbd",
+								"exec": [
+									"if (pm.response.json().length > 0) {",
+									"    pm.environment.set(\"address_id\", pm.response.json()[0][\"id\"])",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -667,14 +750,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/address/gfm-00000163c7e04fa9a562688df1e077b9",
+							"raw": "{{base_url}}/api/address/{{address_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"address",
-								"gfm-00000163c7e04fa9a562688df1e077b9"
+								"{{address_id}}"
 							]
 						}
 					},
@@ -872,8 +955,11 @@
 							"script": {
 								"id": "2aae0c4a-53c2-4b04-8dfe-dcad13fd54fd",
 								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
 									"var jsonData = JSON.parse(responseBody);",
-									"pm.variables.set(\"bearer_token\", jsonData.token);"
+									"pm.environment.set(\"bearer_token\", jsonData.token);"
 								],
 								"type": "text/javascript"
 							}
@@ -907,6 +993,22 @@
 				},
 				{
 					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ece63a86-9d2b-4b73-be63-c18201b02c4f",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"var jsonData = JSON.parse(responseBody);",
+									"pm.environment.set(\"bearer_token\", jsonData.token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -998,23 +1100,13 @@
 	],
 	"variable": [
 		{
-			"id": "5974bee5-3f9b-42bd-8b5a-802f2e0a1939",
+			"id": "fdeb86b0-5477-4cf1-8fba-3102275909a4",
 			"key": "base_url",
-			"value": "https://localhost:5001"
+			"value": ""
 		},
 		{
-			"id": "a22867ab-21e9-486b-b2f8-4b28d0546ecc",
+			"id": "e32129cc-0a44-499c-b697-11ac932f0c7a",
 			"key": "bearer_token",
-			"value": ""
-		},
-		{
-			"id": "ff783a06-4855-4c0c-b24e-a2da5234fb13",
-			"key": "username",
-			"value": ""
-		},
-		{
-			"id": "9bc9fa82-4b4e-45d8-9a24-41161d94d3b7",
-			"key": "password",
 			"value": ""
 		}
 	],

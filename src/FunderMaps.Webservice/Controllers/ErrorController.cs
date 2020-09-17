@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ namespace FunderMaps.Webservice.Controllers
         [Route("oops")]
         public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, [FromServices] ILogger<ErrorController> logger)
         {
-            var error = HttpContext.Features.Get<IErrorMessage>();
+            var error = HttpContext.Features.Get<ErrorMessage>();
 
             // If the error message is not set just return a generic problem.
             if (error is null)
