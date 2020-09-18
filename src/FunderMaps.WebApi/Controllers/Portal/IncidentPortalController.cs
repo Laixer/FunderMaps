@@ -1,15 +1,15 @@
 using AutoMapper;
 using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.UseCases;
-using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -42,13 +42,20 @@ namespace FunderMaps.WebApi.Controllers.Portal
         /// <param name="input">See <see cref="IFormFile"/>.</param>
         /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
-        public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
             // FUTURE: Replace with validator?
-            var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
-            if (!virtualFile.IsValid)
+
+            if (input.Length == 0)
             {
-                throw new ArgumentException(); // TODO
+                throw new UploadException("File content is empty");
+            }
+
+            // Check if content type is allowed
+            List<string> allowedFileMimes = new List<string>(Constants.AllowedFileMimes);
+            if (!allowedFileMimes.Contains(input.ContentType))
+            {
+                throw new UploadException("File content type is not allowed");
             }
 
             // Act.

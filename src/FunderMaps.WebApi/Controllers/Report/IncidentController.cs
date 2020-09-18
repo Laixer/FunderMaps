@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -55,7 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <param name="input">See <see cref="IFormFile"/>.</param>
         /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
-        public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
             // FUTURE: Replace with validator?
             var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
