@@ -126,7 +126,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("chained_building", entity.ChainedBuilding);
             cmd.AddParameterWithValue("owner", entity.Owner);
             cmd.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
-            cmd.AddParameterWithValue("neightbor_recovery", entity.NeightborRecovery);
+            cmd.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
             cmd.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
             cmd.AddParameterWithValue("document_file", entity.DocumentFile);
             cmd.AddParameterWithValue("note", entity.Note);
@@ -148,7 +148,7 @@ namespace FunderMaps.Data.Repositories
                 ChainedBuilding = reader.GetBoolean(2),
                 Owner = reader.GetBoolean(3),
                 FoundationRecovery = reader.GetBoolean(4),
-                NeightborRecovery = reader.GetBoolean(5),
+                NeighborRecovery = reader.GetBoolean(5),
                 FoundationDamageCause = reader.GetFieldValue<FoundationDamageCause>(6),
                 DocumentFile = reader.GetSafeFieldValue<string[]>(7),
                 Note = reader.GetSafeString(8),

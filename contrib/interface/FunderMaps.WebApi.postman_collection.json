@@ -362,7 +362,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeightborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeighborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -469,7 +469,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeightborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeighborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
