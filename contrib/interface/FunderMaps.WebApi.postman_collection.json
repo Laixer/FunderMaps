@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "df2b4864-fb6c-4661-b4ce-1d55e2acbe84",
+		"_postman_id": "94a99f20-a27a-4a85-8751-bd65c882a649",
 		"name": "FunderMaps.WebApi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -332,7 +332,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "404f4e41-86de-4c1d-9703-0145319e2de9",
+						"id": "2d12aa95-58a3-4d5d-829f-d4ecee76236e",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -342,7 +342,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "1d45e012-cc43-41c7-b58a-086e48de1e72",
+						"id": "bd8cbbc2-10da-4bda-a665-dadff8b666b3",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -517,6 +517,55 @@
 									"key": "limit",
 									"value": "10"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Incident Document",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ae885079-f236-48c8-9ce7-8da6c75bd021",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"name\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "input",
+									"type": "file",
+									"src": "/home/yorick/Downloads/dummy.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/incident-portal/upload-document",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"incident-portal",
+								"upload-document"
 							]
 						}
 					},
@@ -707,7 +756,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b4d949bd-50f1-4b41-9a13-c8a2be833dbd",
+								"id": "b9740bf2-76a2-4046-8379-0afffa992e46",
 								"exec": [
 									"if (pm.response.json().length > 0) {",
 									"    pm.environment.set(\"address_id\", pm.response.json()[0][\"id\"])",
@@ -953,7 +1002,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "2aae0c4a-53c2-4b04-8dfe-dcad13fd54fd",
+								"id": "b08e1d2d-608c-4262-9802-5d38e6f667b8",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -997,7 +1046,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ece63a86-9d2b-4b73-be63-c18201b02c4f",
+								"id": "77457c29-b3f8-49e9-a644-683cd64ead10",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1035,7 +1084,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "1a5a1020-c90d-4895-82f7-680e972d80ff",
+						"id": "5a332756-926b-4276-a3e9-bb9f3ced7fec",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1080,7 +1129,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "b477f05c-6aaf-4bc0-8c54-08d6ec990e08",
+				"id": "a56b1d92-089d-4042-bcb1-c3c3001cae31",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1090,7 +1139,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "45ec5638-4758-4482-84b0-1f5e84d6faa5",
+				"id": "766a67aa-52b2-4af5-84c5-cbfbff07e5be",
 				"type": "text/javascript",
 				"exec": [
 					""
