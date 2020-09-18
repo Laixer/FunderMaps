@@ -38,7 +38,7 @@ namespace FunderMaps.Infrastructure.Storage
                 throw new ArgumentNullException(nameof(options));
             }
 
-            options.Value.AccesKey.ThrowIfNullOrEmpty();
+            options.Value.AccessKey.ThrowIfNullOrEmpty();
             options.Value.SecretKey.ThrowIfNullOrEmpty();
 
             if (options.Value.ServiceUri == null)
@@ -54,7 +54,7 @@ namespace FunderMaps.Infrastructure.Storage
             {
                 ServiceURL = _options.ServiceUri.AbsoluteUri
             };
-            var credentials = new BasicAWSCredentials(_options.AccesKey, _options.SecretKey);
+            var credentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
             client = new AmazonS3Client(credentials, config);
         }
 
