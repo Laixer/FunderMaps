@@ -20,6 +20,9 @@ namespace FunderMaps.WebApi.Controllers.Application
         private readonly IMapper _mapper;
         private readonly OrganizationManager _organizationManager;
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public ProposalController(IMapper mapper, OrganizationManager organizationManager)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
