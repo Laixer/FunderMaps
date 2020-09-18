@@ -33,7 +33,11 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
-        // TODO: This is anon, maybe return nothing?
+        // FUTURE: This is anon, maybe return nothing?
+        // POST: api/organization/{id}/setup
+        /// <summary>
+        ///     Create organization from organization proposal.
+        /// </summary>
         [HttpPost("organization/{id:guid}/setup")]
         public async Task<IActionResult> CreateAsync(Guid id, [FromBody] OrganizationSetupDto input)
         {

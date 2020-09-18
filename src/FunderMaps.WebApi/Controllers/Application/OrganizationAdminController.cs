@@ -39,6 +39,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
+        // GET: api/admin/organization/{id}
+        /// <summary>
+        ///     Return organization by id.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetAsync(Guid id)
         {
@@ -52,6 +56,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // GET: api/admin/organization
+        /// <summary>
+        ///     Return all organizations.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
@@ -65,6 +73,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(result);
         }
 
+        // PUT: api/admin/organization/{id}
+        /// <summary>
+        ///     Update organization by id.
+        /// </summary>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] OrganizationDto input)
         {
@@ -79,6 +91,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return NoContent();
         }
 
+        // DELETE: api/admin/organization/{id}
+        /// <summary>
+        ///     Delete organization by id.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {

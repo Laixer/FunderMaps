@@ -15,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     Endpoint controller for user operations.
     /// </summary>
     /// <remarks>
-    ///     This controller should *only* handle user operations on the current
+    ///     This controller should *only* handle operations on the current
     ///     user session. Therefore the user context must be active.
     /// </remarks>
     [Route("user")]
@@ -35,6 +35,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
+        // GET: api/user
+        /// <summary>
+        ///     Return session user.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
@@ -48,6 +52,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // PUT: api/user
+        /// <summary>
+        ///     Update session user user.
+        /// </summary>
         [HttpPut]
         public async Task<IActionResult> UpdateAsync([FromBody] UserDto input)
         {
@@ -63,6 +71,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return NoContent();
         }
 
+        // PUT: api/change-password
+        /// <summary>
+        ///     Update password for session user.
+        /// </summary>
         [HttpPut("change-password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {

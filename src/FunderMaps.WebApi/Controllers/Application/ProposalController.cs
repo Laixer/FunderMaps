@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 #pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Application
 {
+    /// <summary>
+    ///     Endpoint controller for organization proposal.
+    /// </summary>
     [Authorize(Policy = "AdministratorPolicy")]
     [Route("organization/proposal")]
     public class ProposalController : BaseApiController
@@ -29,6 +32,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
+        // POST: api/organization/proposal
+        /// <summary>
+        ///     Create organization proposal.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] OrganizationProposalDto input)
         {
@@ -45,6 +52,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // GET: api/organization/proposal/{id}
+        /// <summary>
+        ///     Return organization proposal by id.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetAsync(Guid id)
         {
@@ -58,6 +69,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // GET: api/organization/proposal
+        /// <summary>
+        ///     Return all organization proposals.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
@@ -71,6 +86,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(result);
         }
 
+        // DELETE: api/organization/proposal/{id}
+        /// <summary>
+        ///     Delete organization proposal by id.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
