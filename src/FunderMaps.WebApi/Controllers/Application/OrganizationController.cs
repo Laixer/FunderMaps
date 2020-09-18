@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     Endpoint controller for organization operations.
     /// </summary>
     /// <remarks>
-    ///     This controller should *only* handle organization operations on the current
+    ///     This controller should *only* handle operations on the current
     ///     user session. Therefore the user context must be active.
     /// </remarks>
     [Route("organization")]
@@ -36,6 +36,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
+        // GET: api/organization
+        /// <summary>
+        ///     Return session organization.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
@@ -49,6 +53,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // PUT: api/organization
+        /// <summary>
+        ///     Update session organization.
+        /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPut]
         public async Task<IActionResult> UpdateAsync([FromBody] OrganizationDto input)

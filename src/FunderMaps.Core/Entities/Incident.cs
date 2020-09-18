@@ -55,7 +55,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Whether neighbor foundation was recovered or not.
         /// </summary>
-        public bool NeightborRecovery { get; set; }
+        public bool NeighborRecovery { get; set; }
 
         /// <summary>
         ///     Foundation damage cause.

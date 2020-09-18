@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 #pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Application
 {
+    /// <summary>
+    ///     Endpoint controller for application contractors.
+    /// </summary>
     public class ContractorController : BaseApiController
     {
         private readonly IMapper _mapper;
@@ -26,6 +29,13 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
+        // GET: api/contractor
+        /// <summary>
+        ///     Return all contractors.
+        /// </summary>
+        /// <remarks>
+        ///     Cache response for 24 hours. Contractors will not change often.
+        /// </remarks>
         [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 24)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {

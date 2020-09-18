@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -120,8 +121,13 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(result);
         }
 
+        /// <summary>
+        ///     Upload document to the backstore.
+        /// </summary>
+        /// <param name="input">See <see cref="IFormFile"/>.</param>
+        /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
-        public async Task<IActionResult> UploadDocumentAsync(IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
             // FUTURE: Replace with validator?
             var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);

@@ -239,6 +239,41 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        [Fact]
+        public async Task UploadEmptyFormReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new MultipartFormDataContent();
+
+            // Act
+            var response = await _client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title);
+        }
+
+        [Fact]
+        public async Task UploadEmptyDocumentReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(
+                mediaType: "application/pdf",
+                fileExtension: "pdf",
+                byteContentLength: 0);
+
+            // Act
+            var response = await _client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("upload", returnObject.Title);
+        }
+
         [Theory]
         [InlineData("0000XX")]
         [InlineData("1111YY")]

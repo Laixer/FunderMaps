@@ -22,7 +22,7 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Public access key.
         /// </summary>
-        public string AccesKey { get; set; }
+        public string AccessKey { get; set; }
 
         /// <summary>
         ///     Private secret key.
