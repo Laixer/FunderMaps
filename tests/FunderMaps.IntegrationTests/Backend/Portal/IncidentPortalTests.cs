@@ -229,6 +229,49 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        public static IEnumerable<object[]> RegressionCreateInvalidEnumReturnBadRequestData
+            => new List<object[]>
+            {
+                new object[]
+                {
+                    new IncidentDtoFaker()
+                        .RuleFor(f => f.FoundationType, f => (FoundationType)10000)
+                        .Generate()
+                },
+                new object[]
+                {
+                    new IncidentDtoFaker()
+                        .RuleFor(f => f.FoundationDamageCause, f => (FoundationDamageCause)10000)
+                        .Generate()
+                },
+                new object[]
+                {
+                    new IncidentDtoFaker()
+                        .RuleFor(f => f.QuestionType, f => (IncidentQuestionType)10000)
+                        .Generate()
+                },
+                new object[]
+                {
+                    new IncidentDtoFaker()
+                        .RuleFor(f => f.AuditStatus, f => (AuditStatus)10000)
+                        .Generate()
+                },
+            };
+
+        [Theory]
+        [MemberData(nameof(RegressionCreateInvalidEnumReturnBadRequestData))]
+        public async Task RegressionCreateInvalidEnumReturnBadRequest(IncidentDto incident)
+        {
+            // Act.
+            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert.
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title);
+        }
+
         [Fact]
         public async Task CreateEmptyBodyReturnBadRequest()
         {
