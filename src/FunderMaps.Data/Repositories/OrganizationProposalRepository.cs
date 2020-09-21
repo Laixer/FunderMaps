@@ -188,7 +188,7 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
             while (await reader.ReadAsync())
             {
                 yield return MapFromReader(reader);

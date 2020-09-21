@@ -19,15 +19,21 @@ namespace FunderMaps.Core.UseCases
         private readonly IBlobStorageService _fileStorageService;
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
+        private readonly IAddressRepository _addressRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentUseCase(IBlobStorageService fileStorageService, IContactRepository contactRepository, IIncidentRepository incidentRepository)
+        public IncidentUseCase(
+            IBlobStorageService fileStorageService,
+            IContactRepository contactRepository,
+            IIncidentRepository incidentRepository,
+            IAddressRepository addressRepository)
         {
             _fileStorageService = fileStorageService;
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
+            _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
         }
 
         private async ValueTask<Incident> GetAndBuildAsync(string id)
@@ -79,7 +85,7 @@ namespace FunderMaps.Core.UseCases
         /// <param name="stream">FIle stream.</param>
         /// <param name="fileName">Original file name.</param>
         /// <param name="contentType">Original file content type.</param>
-        /// <returns></returns>
+        /// <returns>New document name.</returns>
         public async ValueTask<string> StoreDocumentAsync(Stream stream, string fileName, string contentType)
         {
             string newFileName = IO.Path.GetUniqueName(fileName);
@@ -126,6 +132,10 @@ namespace FunderMaps.Core.UseCases
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
 
+            // FUTURE: Works for now, but may not be the best solution to check
+            //         if input data is valid
+            await _addressRepository.GetByIdAsync(incident.Address);
+            
             var id = await _incidentRepository.AddAsync(incident);
             return await GetAndBuildAsync(id);
         }
