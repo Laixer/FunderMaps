@@ -28,7 +28,7 @@ namespace FunderMaps.Core.DataAnnotations
         }
 
         /// <summary>
-        ///     Returns true if the array is aall valid enum types.
+        ///     Returns true if the array is all valid enum types.
         /// </summary>
         /// <param name="value">The value to test for validity.</param>
         /// <returns><c>true</c> means the <paramref name="value" /> is valid.</returns>
