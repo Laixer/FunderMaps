@@ -335,6 +335,25 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
         }
 
         [Fact]
+        public async Task RegressionCreateInvalidPhoneReturnBadRequest()
+        {
+            // Arrange.
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
+                .Generate();
+
+            // Act.
+            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert.
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title);
+        }
+
+
+        [Fact]
         public async Task CreateEmptyBodyReturnBadRequest()
         {
             // Act.
