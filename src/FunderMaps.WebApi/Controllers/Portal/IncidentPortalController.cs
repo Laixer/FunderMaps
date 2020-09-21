@@ -52,7 +52,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
             }
 
             // Check if content type is allowed
-            List<string> allowedFileMimes = new List<string>(Constants.AllowedFileMimes);
+            var allowedFileMimes = new List<string>(Constants.AllowedFileMimes);
             if (!allowedFileMimes.Contains(input.ContentType))
             {
                 throw new UploadException("File content type is not allowed");
