@@ -58,7 +58,6 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Document name.
         /// </summary>
-        [ArrayUrl]
         public string[] DocumentFile { get; set; }
 
         /// <summary>

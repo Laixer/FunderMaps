@@ -67,7 +67,6 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Document name.
         /// </summary>
-        [ArrayUrl]
         public string[] DocumentFile { get; set; }
 
         /// <summary>

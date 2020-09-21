@@ -23,7 +23,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.FoundationRecovery, f => f.Random.Bool());
             RuleFor(f => f.NeighborRecovery, f => f.Random.Bool());
             RuleFor(f => f.FoundationDamageCause, f => f.PickRandom<FoundationDamageCause>());
-            RuleFor(f => f.DocumentFile, f => Enumerable.Range(0, f.Random.Int(0, 3)).Select(x => f.Internet.RemoteFileWithSecureUrl()).ToArray());
+            RuleFor(f => f.DocumentFile, f => Enumerable.Range(0, f.Random.Int(0, 3)).Select(x => f.System.FileName()).ToArray());
             RuleFor(f => f.Note, f => f.Lorem.Text());
             RuleFor(f => f.InternalNote, f => f.Lorem.Text());
             RuleFor(f => f.AuditStatus, f => f.PickRandom<AuditStatus>());
