@@ -86,11 +86,13 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Foundational damage.
         /// </summary>
+        [ArrayEnumDataTypeAttribute(typeof(FoundationDamageCharacteristics))]
         public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
 
         /// <summary>
         ///     Environmental damage.
         /// </summary>
+        [ArrayEnumDataTypeAttribute(typeof(EnvironmentDamageCharacteristics))]
         public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
 
         /// <summary>

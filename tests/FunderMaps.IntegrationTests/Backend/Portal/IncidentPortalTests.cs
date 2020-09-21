@@ -255,6 +255,25 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
                         .RuleFor(f => f.AuditStatus, f => (AuditStatus)10000)
                         .Generate()
                 },
+                new object[]
+                {
+                    new IncidentDtoFaker()
+                        .RuleFor(f => f.FoundationDamageCharacteristics, f => new FoundationDamageCharacteristics[]
+                        {
+                            FoundationDamageCharacteristics.Crack,
+                            (FoundationDamageCharacteristics)10000
+                        })
+                        .Generate()
+                },
+                new object[]
+                {
+                    new IncidentDtoFaker()
+                        .RuleFor(f => f.EnvironmentDamageCharacteristics, f => new EnvironmentDamageCharacteristics[]
+                        {
+                            (EnvironmentDamageCharacteristics)10000
+                        })
+                        .Generate()
+                },                
             };
 
         [Theory]
