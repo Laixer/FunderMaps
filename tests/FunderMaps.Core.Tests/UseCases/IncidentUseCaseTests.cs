@@ -13,16 +13,21 @@ namespace FunderMaps.Core.Tests.UseCases
         [Fact]
         public async void GetAsyncReturnsIncident()
         {
-            // Arrange
+            // Arrange.
             var fileStorageService = new Mock<IBlobStorageService>();
             var contactRepository = new Mock<IContactRepository>();
             var incidentRepository = new MockIncidentRepository().MockGetByIdAsync(new Incident());
-            var useCase = new IncidentUseCase(fileStorageService.Object, contactRepository.Object, incidentRepository.Object);
+            var addressRepository = new MockAddressRepository().MockGetByIdAsync(new Address());
+            var useCase = new IncidentUseCase(
+                fileStorageService.Object,
+                contactRepository.Object,
+                incidentRepository.Object,
+                addressRepository.Object);
 
-            // Act
+            // Act.
             var incident = await useCase.GetAsync("FIR012020-12345");
 
-            // Assert
+            // Assert.
             Assert.NotNull(incident);
             Assert.IsType<Incident>(incident);
         }

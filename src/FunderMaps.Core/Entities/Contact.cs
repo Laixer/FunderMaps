@@ -31,6 +31,7 @@ namespace FunderMaps.Core.Entities
         ///     Contact phone number.
         /// </summary>
         [Phone]
+        [StringLength(16)]
         public string PhoneNumber { get; set; }
 
         /// <summary>

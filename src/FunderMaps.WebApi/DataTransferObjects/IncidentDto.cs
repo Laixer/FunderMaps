@@ -26,6 +26,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Foundation type.
         /// </summary>
+        [EnumDataType(typeof(FoundationType))]
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
@@ -51,6 +52,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Foundation damage cause.
         /// </summary>
+        [EnumDataType(typeof(FoundationDamageCause))]
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
@@ -71,21 +73,25 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Audit status.
         /// </summary>
+        [EnumDataType(typeof(AuditStatus))]
         public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
         ///     Question type.
         /// </summary>
+        [EnumDataType(typeof(IncidentQuestionType))]
         public IncidentQuestionType QuestionType { get; set; }
 
         /// <summary>
         ///     Foundational damage.
         /// </summary>
+        [ArrayEnumDataTypeAttribute(typeof(FoundationDamageCharacteristics))]
         public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
 
         /// <summary>
         ///     Environmental damage.
         /// </summary>
+        [ArrayEnumDataTypeAttribute(typeof(EnvironmentDamageCharacteristics))]
         public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
 
         /// <summary>
@@ -103,6 +109,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         ///     Contact phone number.
         /// </summary>
         [Phone]
+        [StringLength(16)]
         public string PhoneNumber { get; set; }
 
         /// <summary>
