@@ -39,9 +39,13 @@ namespace FunderMaps.WebApi.Controllers.Portal
         /// <summary>
         ///     Upload document to the backstore.
         /// </summary>
+        /// <remarks>
+        ///     Max file upload size is configured at 128 MB.
+        /// </remarks>
         /// <param name="input">See <see cref="IFormFile"/>.</param>
         /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
+        [RequestSizeLimit(128 * 1024 * 1024)]
         public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
             // FUTURE: Replace with validator?
