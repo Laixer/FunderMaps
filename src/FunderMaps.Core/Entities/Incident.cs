@@ -35,6 +35,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Foundation type.
         /// </summary>
+        [EnumDataType(typeof(FoundationType))]
         public FoundationType FoundationType { get; set; }
 
         /// <summary>
@@ -60,12 +61,13 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Foundation damage cause.
         /// </summary>
+        [EnumDataType(typeof(FoundationDamageCause))]
         public FoundationDamageCause FoundationDamageCause { get; set; }
 
         /// <summary>
         ///     Document name.
         /// </summary>
-        //[Url]
+        [ArrayUrl]
         public string[] DocumentFile { get; set; }
 
         /// <summary>
@@ -103,11 +105,13 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Audit status.
         /// </summary>
+        [EnumDataType(typeof(AuditStatus))]
         public AuditStatus AuditStatus { get; set; }
 
         /// <summary>
         ///     Question type.
         /// </summary>
+        [EnumDataType(typeof(IncidentQuestionType))]
         public IncidentQuestionType QuestionType { get; set; }
 
         /// <summary>
