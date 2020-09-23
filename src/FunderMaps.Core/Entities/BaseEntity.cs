@@ -48,6 +48,7 @@ namespace FunderMaps.Core.Entities
         {
         }
 
+        // FUTURE: validate navigation properties as well
         /// <summary>
         ///     Validate the object data properties. This throws an exception if one or
         ///     more validation rules are voilated.

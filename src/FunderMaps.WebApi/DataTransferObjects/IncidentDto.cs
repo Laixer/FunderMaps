@@ -97,7 +97,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Contact email.
         /// </summary>
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
