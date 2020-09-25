@@ -133,7 +133,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
         /// <param name="id">Address identifier.</param>
         /// <returns>The risk product.</returns>
         [HttpGet("risk")]
-        public async Task<IActionResult> GetAnalysisAsync([Required][Geocoder] string id)
+        public async Task<IActionResult> GetRiskAnalysisAsync([Required][Geocoder] string id)
         {
             // Assign.
             AnalysisProduct product = await _productService.GetAnalysisByIdAsync(Guid.Empty, AnalysisProductType.Risk, id, HttpContext.RequestAborted);

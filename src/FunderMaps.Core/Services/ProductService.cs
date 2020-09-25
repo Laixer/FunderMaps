@@ -79,6 +79,7 @@ namespace FunderMaps.Core.Services
         {
             id.ThrowIfNullOrEmpty();
 
+            // FUTURE: This is a temporary fix, need another call?
             // Get analysis product.
             var product = userId != Guid.Empty
                 ? await _analysisRepository.GetByIdInFenceAsync(userId, id, token)
