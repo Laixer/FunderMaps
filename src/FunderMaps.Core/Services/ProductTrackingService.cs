@@ -22,11 +22,12 @@ namespace FunderMaps.Core.Services
         /// <summary>
         ///     Create new instance and invoke base.
         /// </summary>
-        public ProductTrackingService(IAnalysisRepository analysisRepository,
+        public ProductTrackingService(
+            IAnalysisRepository analysisRepository,
             IStatisticsRepository statisticsRepository,
             ITrackingRepository trackingRepository)
             : base(analysisRepository, statisticsRepository)
-                => _trackingRepository = trackingRepository ?? throw new ArgumentNullException(nameof(trackingRepository));
+            => _trackingRepository = trackingRepository ?? throw new ArgumentNullException(nameof(trackingRepository));
 
         /// <summary>
         ///     Gets a single analysis based on an external id. Also track product
@@ -36,22 +37,20 @@ namespace FunderMaps.Core.Services
         /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="externalId">External building id.</param>
         /// <param name="externalSource">External data source.</param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public override async Task<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId,
-            ExternalDataSource externalSource, INavigation navigation, CancellationToken token = default)
+        public override async Task<AnalysisProduct> GetAnalysisByExternalIdAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            string externalId,
+            ExternalDataSource externalSource,
+            CancellationToken token = default)
         {
-            // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
-            navigation.Validate();
-
-            // Check for cancellation.
-            token.ThrowIfCancellationRequested();
 
             // Perform base call to get the product.
-            var result = await base.GetAnalysisByExternalIdAsync(userId, productType, externalId, externalSource, navigation, token);
+            var result = await base.GetAnalysisByExternalIdAsync(userId, productType, externalId, externalSource, token);
 
             // Track usage for user.
             await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U, token);
@@ -69,19 +68,17 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public override async Task<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id,
-            INavigation navigation, CancellationToken token = default)
+        public override async Task<AnalysisProduct> GetAnalysisByIdAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            string id,
+            CancellationToken token = default)
         {
-            // Validate parameters.
-            userId.ThrowIfNullOrEmpty();
             id.ThrowIfNullOrEmpty();
-            navigation.Validate();
-
-            // Check for cancellation.
-            token.ThrowIfCancellationRequested();
+            userId.ThrowIfNullOrEmpty();
 
             // Perform base call to get the product.
-            var result = await base.GetAnalysisByIdAsync(userId, productType, id, navigation, token);
+            var result = await base.GetAnalysisByIdAsync(userId, productType, id, token);
 
             // Track usage for user.
             await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U, token);
@@ -99,16 +96,17 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public override async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType,
-            string query, INavigation navigation, CancellationToken token = default)
+        public override async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            string query,
+            INavigation navigation,
+            CancellationToken token = default)
         {
-            // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             query.ThrowIfNullOrEmpty();
             navigation.Validate();
 
-            // Check for cancellation.
-            token.ThrowIfCancellationRequested();
             // Perform base call to get the product.
             var result = await base.GetAnalysisByQueryAsync(userId, productType, query, navigation, token);
 
@@ -126,8 +124,14 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public override Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation, CancellationToken token = default)
-            => throw new NotImplementedException();
+        public override Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            INavigation navigation,
+            CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         ///     Gets statistics for a given area code. Also track product usage 
@@ -140,21 +144,19 @@ namespace FunderMaps.Core.Services
         /// <param name="userId">Internal user id.</param>
         /// <param name="productType"><see cref="StatisticsProductType"/></param>
         /// <param name="neighborhoodCode">Neighborhood code.</param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        public override async Task<StatisticsProduct> GetStatisticsByNeighborhoodAsync(Guid userId, StatisticsProductType productType, string neighborhoodCode, INavigation navigation, CancellationToken token = default)
+        public override async Task<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
+            Guid userId,
+            StatisticsProductType productType,
+            string neighborhoodCode,
+            CancellationToken token = default)
         {
-            // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             neighborhoodCode.ThrowIfNullOrEmpty();
-            navigation.Validate();
-
-            // Check for cancellation.
-            token.ThrowIfCancellationRequested();
 
             // Perform base call to get the product.
-            var result = await base.GetStatisticsByNeighborhoodAsync(userId, productType, neighborhoodCode, navigation, token);
+            var result = await base.GetStatisticsByNeighborhoodAsync(userId, productType, neighborhoodCode, token);
 
             // Track usage for user.
             await _trackingRepository.ProcessStatisticsUsageAsync(userId, productType, 1, token);
@@ -170,7 +172,13 @@ namespace FunderMaps.Core.Services
         /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        public override Task<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation, CancellationToken token = default)
-            => throw new NotImplementedException();
+        public override Task<StatisticsProduct> GetStatisticsInFenceAsync(
+            Guid userId,
+            StatisticsProductType productType,
+            INavigation navigation,
+            CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

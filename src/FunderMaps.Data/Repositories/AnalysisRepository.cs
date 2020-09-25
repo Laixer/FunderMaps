@@ -31,7 +31,13 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Scrapped for now.
         /// </summary>
-        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token = default) => throw new NotImplementedException();
+        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(
+            Guid userId,
+            INavigation navigation,
+            CancellationToken token = default)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         ///     Gets an analysis product by its external building id and source.
@@ -45,13 +51,15 @@ namespace FunderMaps.Data.Repositories
         /// <param name="externalSource">External data source</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource, CancellationToken token = default)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(
+            Guid userId,
+            string externalId,
+            ExternalDataSource externalSource,
+            CancellationToken token = default)
         {
-            // Validate parameters.
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
 
-            // Build sql.
             // FUTURE This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
                 SELECT
@@ -71,18 +79,17 @@ namespace FunderMaps.Data.Repositories
                     ac.neighborhood_id
                 FROM data.analysis_product_complete AS ac
                 WHERE
-                    ac.external_id = @ExternalId
+                    ac.external_id = @external_id
                     AND
-                    ac.external_source = @ExternalSource
+                    ac.external_source = @external_source
                     AND 
-                    application.is_geometry_in_fence(@UserId, ac.geom)";
+                    application.is_geometry_in_fence(@user_id, ac.geom)";
 
-            // Execute sql.
             await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("ExternalId", externalId);
-            cmd.AddParameterWithValue("ExternalSource", externalSource);
-            cmd.AddParameterWithValue("UserId", userId);
+            cmd.AddParameterWithValue("external_id", externalId);
+            cmd.AddParameterWithValue("external_source", externalSource);
+            cmd.AddParameterWithValue("user_id", userId);
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync(token);
@@ -97,13 +104,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="id">Internal building id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token = default)
+        public async Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id, CancellationToken token = default)
         {
-            // Validate parameters.
-            userId.ThrowIfNullOrEmpty();
             id.ThrowIfNullOrEmpty();
+            userId.ThrowIfNullOrEmpty();
 
-            // Build sql.
             // FUTURE This always returns EntityNotFoundException when the building is either not-existent or outside the fence.
             var sql = @"
                 SELECT
@@ -123,15 +128,55 @@ namespace FunderMaps.Data.Repositories
                     ac.neighborhood_id
                 FROM data.analysis_product_complete AS ac
                 WHERE
-                    ac.id = @Id
+                    ac.id = @id
                     AND 
-                    application.is_geometry_in_fence(@UserId, ac.geom)";
+                    application.is_geometry_in_fence(@user_id, ac.geom)";
 
-            // Execute sql.
             await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("Id", id);
-            cmd.AddParameterWithValue("UserId", userId);
+            cmd.AddParameterWithValue("id", id);
+            cmd.AddParameterWithValue("user_id", userId);
+
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await reader.ReadAsync(token);
+
+            return MapFromReader(reader);
+        }
+
+        /// <summary>
+        ///     Gets an analysis product by its internal building id.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        /// <param name="token"><see cref="CancellationToken"/></param>
+        /// <returns><see cref="AnalysisProduct"/></returns>
+        public async Task<AnalysisProduct> GetByIdAsync(string id, CancellationToken token = default)
+        {
+            id.ThrowIfNullOrEmpty();
+
+            // FUTURE This always returns EntityNotFoundException when the building is either not-existent.
+            var sql = @"
+                SELECT
+                    ac.id,
+                    ac.external_id,
+                    ac.external_source,
+                    ac.foundation_type,
+                    ac.groundwater_level,
+                    ac.foundation_risk,
+                    ac.construction_year,
+                    ac.building_height,
+                    ac.ground_level,
+                    ac.restoration_costs,
+                    ac.dewatering_depth,
+                    ac.drystand,
+                    ac.reliability,
+                    ac.neighborhood_id
+                FROM data.analysis_product_complete AS ac
+                WHERE
+                    ac.id = @id";
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            cmd.AddParameterWithValue("id", id);
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
             await reader.ReadAsync(token);
@@ -148,17 +193,20 @@ namespace FunderMaps.Data.Repositories
         /// <param name="navigation"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token = default)
+        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(
+            Guid userId,
+            string query,
+            INavigation navigation,
+            CancellationToken token = default)
         {
-            // Validate parameters.
-            userId.ThrowIfNullOrEmpty();
             query.ThrowIfNullOrEmpty();
+            userId.ThrowIfNullOrEmpty();
+
             if (navigation == null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
 
-            // Build sql.
             var sql = @"
                 SELECT
                     ac.id,
@@ -177,19 +225,18 @@ namespace FunderMaps.Data.Repositories
                     ac.neighborhood_id
                 FROM data.analysis_product_complete AS ac
                 WHERE
-                    application.is_geometry_in_fence(@UserId, ac.geom)
+                    application.is_geometry_in_fence(@user_id, ac.geom)
                     AND
-                    ac.address_tsv @@ to_tsquery(@Query)
-                LIMIT @Limit
-                OFFSET @Offset";
+                    ac.address_tsv @@ to_tsquery(@query)
+                LIMIT @limit
+                OFFSET @offset";
 
-            // Execute sql.
             await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("Query", query);
-            cmd.AddParameterWithValue("UserId", userId);
-            cmd.AddParameterWithValue("Limit", (navigation ?? Navigation.DefaultCollection).Limit);
-            cmd.AddParameterWithValue("Offset", (navigation ?? Navigation.DefaultCollection).Offset);
+            cmd.AddParameterWithValue("query", query);
+            cmd.AddParameterWithValue("user_id", userId);
+            cmd.AddParameterWithValue("limit", (navigation ?? Navigation.DefaultCollection).Limit);
+            cmd.AddParameterWithValue("offset", (navigation ?? Navigation.DefaultCollection).Offset);
 
             await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
 
@@ -199,6 +246,7 @@ namespace FunderMaps.Data.Repositories
             {
                 result.Add(MapFromReader(reader));
             }
+
             return result;
         }
 
