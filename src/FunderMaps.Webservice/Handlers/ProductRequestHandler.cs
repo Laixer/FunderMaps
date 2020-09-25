@@ -39,24 +39,24 @@ namespace FunderMaps.Webservice.Handlers
         internal async Task<ResponseWrapper> ProcessAnalysisRequestAsync(Guid userId, AnalysisInputModel inputModel, CancellationToken token)
         {
             // Map product type.
-            AnalysisProductType product = ProductTypeMapper.MapAnalysis(inputModel.Product
+            AnalysisProductType productType = ProductTypeMapper.MapAnalysis(inputModel.Product
                 ?? throw new InvalidOperationException(nameof(inputModel.Product)));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.Query))
             {
-                var result = await _productService.GetAnalysisByQueryAsync(userId, product, inputModel.Query, inputModel.Navigation, token);
-                return _mappingService.MapToAnalysisWrapper(product, result);
+                IEnumerable<AnalysisProduct> product = await _productService.GetAnalysisByQueryAsync(userId, productType, inputModel.Query, inputModel.Navigation, token);
+                return _mappingService.MapToAnalysisWrapper(productType, product);
             }
             else if (!string.IsNullOrEmpty(inputModel.Id))
             {
-                var result = await _productService.GetAnalysisByIdAsync(userId, product, inputModel.Id, token);
-                return _mappingService.MapToAnalysisWrapper(product, new List<AnalysisProduct> { result });
+                AnalysisProduct product = await _productService.GetAnalysisByIdAsync(userId, productType, inputModel.Id, token);
+                return _mappingService.MapToAnalysisWrapper(productType, new List<AnalysisProduct> { product });
             }
             else if (!string.IsNullOrEmpty(inputModel.BagId))
             {
-                var result = await _productService.GetAnalysisByExternalIdAsync(userId, product, inputModel.BagId, ExternalDataSource.NlBag, token);
-                return _mappingService.MapToAnalysisWrapper(product, new List<AnalysisProduct> { result });
+                AnalysisProduct product = await _productService.GetAnalysisByExternalIdAsync(userId, productType, inputModel.BagId, ExternalDataSource.NlBag, token);
+                return _mappingService.MapToAnalysisWrapper(productType, new List<AnalysisProduct> { product });
             }
 
             // If we reach this point we can't process the request.
@@ -73,14 +73,14 @@ namespace FunderMaps.Webservice.Handlers
         internal async Task<ResponseWrapper> ProcessStatisticsRequestAsync(Guid userId, StatisticsInputModel inputModel, CancellationToken token)
         {
             // Map product type.
-            StatisticsProductType product = ProductTypeMapper.MapStatistics(inputModel.Product
+            StatisticsProductType productType = ProductTypeMapper.MapStatistics(inputModel.Product
                 ?? throw new InvalidOperationException(nameof(inputModel.Product)));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.NeighborhoodCode))
             {
-                var result = await _productService.GetStatisticsByNeighborhoodAsync(userId, product, inputModel.NeighborhoodCode, token);
-                return _mappingService.MapToStatisticsWrapper(product, new List<StatisticsProduct> { result });
+                StatisticsProduct product = await _productService.GetStatisticsByNeighborhoodAsync(userId, productType, inputModel.NeighborhoodCode, token);
+                return _mappingService.MapToStatisticsWrapper(productType, new List<StatisticsProduct> { product });
             }
 
             // If we reach this point we can't process the request.

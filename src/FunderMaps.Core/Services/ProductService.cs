@@ -80,7 +80,7 @@ namespace FunderMaps.Core.Services
             id.ThrowIfNullOrEmpty();
 
             // Get analysis product.
-            var product = userId != null
+            var product = userId != Guid.Empty
                 ? await _analysisRepository.GetByIdInFenceAsync(userId, id, token)
                 : await _analysisRepository.GetByIdAsync(id, token);
 
