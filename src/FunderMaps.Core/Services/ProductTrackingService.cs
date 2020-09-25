@@ -65,7 +65,6 @@ namespace FunderMaps.Core.Services
         /// <param name="userId">Internal user id.</param>
         /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="id">Internal building id.</param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
         public override async Task<AnalysisProduct> GetAnalysisByIdAsync(

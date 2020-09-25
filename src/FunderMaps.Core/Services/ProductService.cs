@@ -78,10 +78,11 @@ namespace FunderMaps.Core.Services
             CancellationToken token = default)
         {
             id.ThrowIfNullOrEmpty();
-            userId.ThrowIfNullOrEmpty();
 
             // Get analysis product.
-            var product = await _analysisRepository.GetByIdInFenceAsync(userId, id, token);
+            var product = userId != null
+                ? await _analysisRepository.GetByIdInFenceAsync(userId, id, token)
+                : await _analysisRepository.GetByIdAsync(id, token);
 
             // Process and return.
             return await ProcessAnalysisAsync(productType, product, token);
