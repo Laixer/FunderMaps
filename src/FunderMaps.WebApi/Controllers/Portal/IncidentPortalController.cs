@@ -1,9 +1,12 @@
 using AutoMapper;
 using FunderMaps.Controllers;
+using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Types.Products;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -25,15 +28,21 @@ namespace FunderMaps.WebApi.Controllers.Portal
         private readonly IMapper _mapper;
         private readonly IncidentUseCase _incidentUseCase;
         private readonly GeocoderUseCase _geocoderUseCase;
+        private readonly IProductService _productService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentPortalController(IMapper mapper, IncidentUseCase incidentUseCase, GeocoderUseCase geocoderUseCase)
+        public IncidentPortalController(
+            IMapper mapper,
+            IncidentUseCase incidentUseCase,
+            GeocoderUseCase geocoderUseCase,
+            IProductService productService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _incidentUseCase = incidentUseCase ?? throw new ArgumentNullException(nameof(incidentUseCase));
             _geocoderUseCase = geocoderUseCase ?? throw new ArgumentNullException(nameof(geocoderUseCase));
+            _productService = productService ?? throw new ArgumentNullException(nameof(productService));
         }
 
         /// <summary>
@@ -113,6 +122,24 @@ namespace FunderMaps.WebApi.Controllers.Portal
 
             // Map.
             var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList);
+
+            // Return.
+            return Ok(result);
+        }
+
+        /// <summary>
+        ///     Get the analysis product by buillding identifier.
+        /// </summary>
+        /// <param name="id">Address identifier.</param>
+        /// <returns>The risk product.</returns>
+        [HttpGet("risk")]
+        public async Task<IActionResult> GetRiskAnalysisAsync([Required][Geocoder] string id)
+        {
+            // Assign.
+            AnalysisProduct product = await _productService.GetAnalysisByIdAsync(Guid.Empty, AnalysisProductType.Risk, id, HttpContext.RequestAborted);
+
+            // Map.
+            var result = _mapper.Map<AnalysisProduct, AnalysisRiskDto>(product);
 
             // Return.
             return Ok(result);

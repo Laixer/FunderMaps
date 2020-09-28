@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types.Products;
 using FunderMaps.WebApi.DataTransferObjects;
 
 namespace FunderMaps.WebApi
@@ -20,6 +21,7 @@ namespace FunderMaps.WebApi
                 .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
                 .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
                 .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
+            CreateMap<AnalysisProduct, AnalysisRiskDto>();
             CreateMap<Building, AddressBuildingDto>().ReverseMap();
             CreateMap<Contact, IncidentDto>().ReverseMap();
             CreateMap<Organization, ContractorDto>();

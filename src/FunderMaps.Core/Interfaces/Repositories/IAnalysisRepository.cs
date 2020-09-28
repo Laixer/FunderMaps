@@ -9,7 +9,9 @@ namespace FunderMaps.Core.Interfaces.Repositories
 {
     public interface IAnalysisRepository
     {
-        Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token = default);
+        Task<AnalysisProduct> GetByIdAsync(string id, CancellationToken token = default);
+
+        Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id, CancellationToken token = default);
 
         Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource, CancellationToken token = default);
 

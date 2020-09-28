@@ -7,8 +7,8 @@ using System;
 namespace FunderMaps.Webservice.Mapping
 {
     /// <summary>
-    /// Contains mapping functionality between <see cref="ProductType"/>s 
-    /// and their respective core enums.
+    ///     Contains mapping functionality between <see cref="ProductType"/>s 
+    ///     and their respective core enums.
     /// </summary>
     public static class ProductTypeMapper
     {
@@ -50,7 +50,7 @@ namespace FunderMaps.Webservice.Mapping
             };
 
         /// <summary>
-        /// Maps an <see cref="AnalysisProductType"/> to the corresponding
+        ///     Maps an <see cref="AnalysisProductType"/> to the corresponding
         /// <see cref="AnalysisResponseModelBase"/> implementation.
         /// </summary>
         /// <param name="product"><see cref="AnalysisProductType"/></param>

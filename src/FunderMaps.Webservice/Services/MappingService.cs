@@ -19,9 +19,10 @@ namespace FunderMaps.Webservice.Services
         private readonly IMapper _mapper;
 
         /// <summary>
-        /// Constructor for dependency injection.
+        ///     Create new instance.
         /// </summary>
-        public MappingService(IMapper mapper) => _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        public MappingService(IMapper mapper)
+            => _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
         /// <summary>
         /// Map <paramref name="items"/> to a <see cref="ResponseWrapper{AnalysisResponseModelBase}"/>.
