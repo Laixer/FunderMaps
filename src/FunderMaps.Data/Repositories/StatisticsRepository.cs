@@ -100,14 +100,10 @@ namespace FunderMaps.Data.Repositories
         /// <param name="method"><see cref="IdMethod"/></param>
         /// <param name="identifier">Neighborhood id or code</param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier, CancellationToken token = default)
+        private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier, CancellationToken token)
         {
-            // Validate parameters.
-            identifier.ThrowIfNullOrEmpty();
-
             static string GetTable(StatisticsProductType product)
-            {
-                return product switch
+                => product switch
                 {
                     StatisticsProductType.FoundationRatio => "statistics_product_foundation_type",
                     StatisticsProductType.ConstructionYears => "statistics_product_construction_years",
@@ -118,26 +114,23 @@ namespace FunderMaps.Data.Repositories
                     StatisticsProductType.Reports => "statistics_product_inquiries",
                     _ => throw new InvalidOperationException(nameof(product))
                 };
-            }
 
             static string GetIdColumnName(IdMethod method)
-            {
-                return method switch
+                => method switch
                 {
                     IdMethod.NeighborhoodCode => "external_id",
                     IdMethod.NeighborhoodId => "id",
                     _ => throw new InvalidOperationException(nameof(method))
                 };
-            }
 
-            // TODO SQL injection.
+            // TODO: Write out columns in the select.
             // Build SQL.
             // Note: This uses a CTE for proper index usage. 
             var sql = $@"
                 WITH id_cte AS (
                     SELECT id
                     FROM geocoder.neighborhood
-                    WHERE {GetIdColumnName(method)} = @Identifier
+                    WHERE {GetIdColumnName(method)} = @identifier
                     LIMIT 1
                 )
                 SELECT 
@@ -146,13 +139,13 @@ namespace FunderMaps.Data.Repositories
                 WHERE s.neighborhood_id = (SELECT * FROM id_cte)";
 
             // Execute sql.
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(token).ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            cmd.AddParameterWithValue("Identifier", identifier);
+            cmd.AddParameterWithValue("identifier", identifier);
 
             // TODO Don't throw if nothing is found
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
 
             // Map and return.
             return new StatisticsProduct
