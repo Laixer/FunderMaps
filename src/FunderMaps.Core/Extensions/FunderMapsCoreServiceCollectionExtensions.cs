@@ -1,4 +1,4 @@
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Managers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
@@ -32,6 +32,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IEmailService, NullEmailService>();
             services.AddSingleton<IBlobStorageService, NullBlobStorageService>();
             services.AddSingleton<INotificationService, NullNotificationService>();
+
+            // Register application context in DI container
+            // NOTE: The application context *must* be registered with the container
+            //       in order for core services to be functional. This registration is
+            //       merely a placeholder. The front framework should setup the application
+            //       context.
+            services.AddScoped<FunderMaps.Core.AppContext>();
 
             // Register core use cases in DI container.
             services.AddScoped<GeocoderUseCase>();
