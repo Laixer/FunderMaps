@@ -12,15 +12,6 @@ namespace FunderMaps.Data.Repositories
 {
     internal class OrganizationUserRepository : DataBase, IOrganizationUserRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public OrganizationUserRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         public async ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {
             if (organizationId == Guid.Empty)

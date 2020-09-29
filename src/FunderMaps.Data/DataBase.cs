@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System.Threading.Tasks;
@@ -9,20 +10,19 @@ namespace FunderMaps.Data
     ///     Data abstract base class.
     /// </summary>
     /// <remarks>
-    ///     Most repositories will be able to inherit from this base.
+    ///     Repositories will be able to inherit from this base.
     /// </remarks>
     internal abstract class DataBase
     {
         /// <summary>
         ///     Data provider interface.
         /// </summary>
-        public DbProvider DbProvider { get; }
+        public DbProvider DbProvider { get; set; }
 
         /// <summary>
-        ///     Create a new instance.
+        ///     Application context.
         /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        protected DataBase(DbProvider dbProvider) => DbProvider = dbProvider;
+        public AppContext AppContext { get; set; }
 
         /// <summary>
         ///     Runs the SQL command and return an unsigned long value.
@@ -31,9 +31,10 @@ namespace FunderMaps.Data
         /// <returns>Return value as ulong.</returns>
         public async ValueTask<ulong> ExecuteScalarUnsignedLongCommandAsync(string cmdText)
         {
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(cmdText, connection);
-            return await cmd.ExecuteScalarUnsignedLongAsync();
+
+            return await cmd.ExecuteScalarUnsignedLongAsync(AppContext.CancellationToken);
         }
 
         // FUTURE: Maybe to npgsql specific.
@@ -49,10 +50,12 @@ namespace FunderMaps.Data
             {
                 cmdText += $"\r\n ORDER BY {navigation.SortColumn} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
             }
+
             if (navigation.Offset != 0)
             {
                 cmdText += $"\r\n OFFSET {navigation.Offset}";
             }
+
             if (navigation.Limit != 0)
             {
                 cmdText += $"\r\n LIMIT {navigation.Limit}";

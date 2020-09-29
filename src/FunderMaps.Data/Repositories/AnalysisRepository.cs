@@ -21,20 +21,9 @@ namespace FunderMaps.Data.Repositories
     internal sealed class AnalysisRepository : DataBase, IAnalysisRepository
     {
         /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public AnalysisRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
         ///     Scrapped for now.
         /// </summary>
-        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(
-            Guid userId,
-            INavigation navigation,
-            CancellationToken token = default)
+        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation)
         {
             throw new NotImplementedException();
         }
@@ -49,13 +38,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="userId">Internal user id.</param>
         /// <param name="externalId">External building id.</param>
         /// <param name="externalSource">External data source</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByExternalIdAsync(
-            Guid userId,
-            string externalId,
-            ExternalDataSource externalSource,
-            CancellationToken token = default)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
         {
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
@@ -85,14 +69,15 @@ namespace FunderMaps.Data.Repositories
                     AND 
                     application.is_geometry_in_fence(@user_id, ac.geom)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("external_id", externalId);
             cmd.AddParameterWithValue("external_source", externalSource);
             cmd.AddParameterWithValue("user_id", userId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync(token);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await reader.ReadAsync(AppContext.CancellationToken);
 
             return MapFromReader(reader);
         }
@@ -102,9 +87,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="userId">Internal user id.</param>
         /// <param name="id">Internal building id.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id, CancellationToken token = default)
+        public async Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id)
         {
             id.ThrowIfNullOrEmpty();
             userId.ThrowIfNullOrEmpty();
@@ -132,13 +116,14 @@ namespace FunderMaps.Data.Repositories
                     AND 
                     application.is_geometry_in_fence(@user_id, ac.geom)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
             cmd.AddParameterWithValue("user_id", userId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync(token);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await reader.ReadAsync(AppContext.CancellationToken);
 
             return MapFromReader(reader);
         }
@@ -147,9 +132,8 @@ namespace FunderMaps.Data.Repositories
         ///     Gets an analysis product by its internal building id.
         /// </summary>
         /// <param name="id">Internal building id.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="AnalysisProduct"/></returns>
-        public async Task<AnalysisProduct> GetByIdAsync(string id, CancellationToken token = default)
+        public async Task<AnalysisProduct> GetByIdAsync(string id)
         {
             id.ThrowIfNullOrEmpty();
 
@@ -174,30 +158,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE
                     ac.id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync(token);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await reader.ReadAsync(AppContext.CancellationToken);
 
             return MapFromReader(reader);
         }
 
         // FUTURE Sorting order and sorting column
-        /// <summary>
-        ///     
-        /// </summary>
-        /// <param name="userId">Internal user id.</param>
-        /// <param name="query"></param>
-        /// <param name="navigation"></param>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(
-            Guid userId,
-            string query,
-            INavigation navigation,
-            CancellationToken token = default)
+        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation)
         {
             query.ThrowIfNullOrEmpty();
             userId.ThrowIfNullOrEmpty();
@@ -231,18 +204,19 @@ namespace FunderMaps.Data.Repositories
                 LIMIT @limit
                 OFFSET @offset";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("query", query);
             cmd.AddParameterWithValue("user_id", userId);
             cmd.AddParameterWithValue("limit", (navigation ?? Navigation.DefaultCollection).Limit);
             cmd.AddParameterWithValue("offset", (navigation ?? Navigation.DefaultCollection).Offset);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
 
             // FUTURE: Make async enumerable.
             var result = new List<AnalysisProduct>();
-            while (await reader.ReadAsync(token))
+            while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 result.Add(MapFromReader(reader));
             }

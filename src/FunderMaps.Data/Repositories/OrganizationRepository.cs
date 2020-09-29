@@ -17,15 +17,6 @@ namespace FunderMaps.Data.Repositories
     internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
     {
         /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public OrganizationRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
         ///     Create new <see cref="Organization"/>.
         /// </summary>
         /// <remarks>

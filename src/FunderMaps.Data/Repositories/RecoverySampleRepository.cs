@@ -11,21 +11,12 @@ using System.Threading.Tasks;
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
-    /// Recovery sample repository.
+    ///     Recovery sample repository.
     /// </summary>
     internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, IRecoverySampleRepository
     {
         /// <summary>
-        /// Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public RecoverySampleRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
-        /// Create new <see cref="RecoverySample"/>.
+        ///     Create new <see cref="RecoverySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="RecoverySample"/>.</returns>
@@ -66,6 +57,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("recovery", entity.Recovery);
             cmd.AddParameterWithValue("address", entity.Address);
             cmd.AddParameterWithValue("note", entity.Note);
@@ -77,11 +69,12 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("permit", entity.Permit);
             cmd.AddParameterWithValue("permit_date", entity.PermitDate);
             cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
+
             return await cmd.ExecuteScalarIntAsync();
         }
 
         /// <summary>
-        /// Retrieve number of entities.
+        ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
         public override ValueTask<ulong> CountAsync()
@@ -94,7 +87,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Delete <see cref="RecoverySample"/>.
+        ///     Delete <see cref="RecoverySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
@@ -106,12 +99,14 @@ namespace FunderMaps.Data.Repositories
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
+
             await cmd.ExecuteNonQueryAsync();
         }
 
         /// <summary>
-        /// Retrieve <see cref="RecoverySample"/> by id.
+        ///     Retrieve <see cref="RecoverySample"/> by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="RecoverySample"/>.</returns>
@@ -139,6 +134,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
 
             await using var reader = await cmd.ExecuteReaderAsync();
@@ -165,7 +161,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Retrieve all <see cref="RecoverySample"/>.
+        ///     Retrieve all <see cref="RecoverySample"/>.
         /// </summary>
         /// <returns>List of <see cref="RecoverySample"/>.</returns>
         public override async IAsyncEnumerable<RecoverySample> ListAllAsync(INavigation navigation)
@@ -246,6 +242,7 @@ namespace FunderMaps.Data.Repositories
 
             using var connection = await DbProvider.OpenConnectionScopeAsync();
             using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("recovery", entity.Recovery);
             cmd.AddParameterWithValue("address", entity.Address);
             cmd.AddParameterWithValue("note", entity.Note);
@@ -258,6 +255,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("permit_date", entity.PermitDate);
             cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
             cmd.AddParameterWithValue("id", entity.Id);
+
             await cmd.ExecuteNonQueryAsync();
         }
     }

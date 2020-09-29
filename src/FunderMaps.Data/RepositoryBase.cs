@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -17,15 +16,6 @@ namespace FunderMaps.Data
         where TEntity : IdentifiableEntity<TEntity, TEntryPrimaryKey>
         where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>, IComparable<TEntryPrimaryKey>
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        protected RepositoryBase(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.GetByIdAsync"/>
         /// </summary>

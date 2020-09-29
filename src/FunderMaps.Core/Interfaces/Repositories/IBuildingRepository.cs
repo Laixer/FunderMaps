@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
@@ -15,8 +14,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="userId">Internal user id</param>
         /// <param name="buildingId">Internal building id</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Boolean result</returns>
-        Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token);
+        Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId);
     }
 }
