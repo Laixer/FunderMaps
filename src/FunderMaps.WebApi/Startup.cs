@@ -120,6 +120,16 @@ namespace FunderMaps.WebApi
 
             app.UseFunderMapsExceptionHandler("/oops");
 
+            // FUTURE: Should be created via factory
+            app.Use(async (context, next) =>
+            {
+                var appContext = context.RequestServices.GetRequiredService<Core.AppContext>();
+                appContext.CancellationToken = context.RequestAborted;
+                appContext.Items = new System.Collections.Generic.Dictionary<object, object>(context.Items);
+                appContext.ServiceProvider = context.RequestServices;
+                await next.Invoke();
+            });
+
             app.UsePathBase(new PathString("/api"));
             app.UseRouting();
 
