@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Managers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
@@ -24,15 +24,14 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            // Register core objects in DI container.
+            // Register core components in DI container.
             services.AddSingleton<IRandom, RandomGenerator>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
-            // TODO: AddScoped -> Transient?
             // Register core service fillers in DI container.
-            services.AddScoped<IEmailService, NullEmailService>();
-            services.AddScoped<IBlobStorageService, NullBlobStorageService>();
-            services.AddScoped<INotificationService, NullNotificationService>();
+            services.AddSingleton<IEmailService, NullEmailService>();
+            services.AddSingleton<IBlobStorageService, NullBlobStorageService>();
+            services.AddSingleton<INotificationService, NullNotificationService>();
 
             // Register core use cases in DI container.
             services.AddScoped<GeocoderUseCase>();
@@ -46,7 +45,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<OrganizationManager>();
 
             // Register core services in DI container.
-            services.AddTransient<IProductService, ProductService>();
+            services.AddScoped<IProductService, ProductService>();
 
             return services;
         }

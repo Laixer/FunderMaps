@@ -62,7 +62,8 @@ namespace FunderMaps.Data.Providers
         ///     Create a new Npgsql connection instance.
         /// </summary>
         /// <returns><see cref="DbConnection"/> instance.</returns>
-        public override DbConnection ConnectionScope() => new NpgsqlConnection(ConnectionString);
+        public override DbConnection ConnectionScope()
+            => new NpgsqlConnection(ConnectionString);
 
         /// <summary>
         ///     Create Npgsql command on the database connection.

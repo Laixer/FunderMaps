@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using System;
@@ -45,7 +45,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Adds the data services to the container.
+        ///     Adds the data services and database provider to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <param name="dbConfigName">Database connection string.</param>
@@ -63,7 +63,7 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddFunderMapsDataServices();
-            services.AddScoped<DbProvider, NpgsqlDbProvider>();
+            services.AddSingleton<DbProvider, NpgsqlDbProvider>();
             services.Configure<DbProviderOptions>(options => options.ConnectionStringName = dbConfigName);
 
             return services;
