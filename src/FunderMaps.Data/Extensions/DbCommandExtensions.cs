@@ -2,6 +2,7 @@
 using System;
 using System.Data.Common;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Extensions
@@ -56,70 +57,75 @@ namespace FunderMaps.Data.Extensions
         ///     Executes the query and returns the first column of the first row as integer.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>Integer.</returns>
-        public static async ValueTask<int> ExecuteScalarIntAsync(this DbCommand command)
+        public static async ValueTask<int> ExecuteScalarIntAsync(this DbCommand command, CancellationToken token = default)
         {
             if (command == null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToInt32(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
+            return Convert.ToInt32(await command.ExecuteScalarEnsureRowAsync(token), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         ///     Executes the query and returns the first column of the first row as unsigned integer.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>Unsigned integer.</returns>
-        public static async ValueTask<uint> ExecuteScalarUnsignedIntAsync(this DbCommand command)
+        public static async ValueTask<uint> ExecuteScalarUnsignedIntAsync(this DbCommand command, CancellationToken token = default)
         {
             if (command == null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToUInt32(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
+            return Convert.ToUInt32(await command.ExecuteScalarEnsureRowAsync(token), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         ///     Executes the query and returns the first column of the first row as long integer.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>Long integer.</returns>
-        public static async ValueTask<long> ExecuteScalarLongAsync(this DbCommand command)
+        public static async ValueTask<long> ExecuteScalarLongAsync(this DbCommand command, CancellationToken token = default)
         {
             if (command == null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToInt64(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
+            return Convert.ToInt64(await command.ExecuteScalarEnsureRowAsync(token), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         ///     Executes the query and returns the first column of the first row as unsigned long integer.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>Unsigned long integer.</returns>
-        public static async ValueTask<ulong> ExecuteScalarUnsignedLongAsync(this DbCommand command)
+        public static async ValueTask<ulong> ExecuteScalarUnsignedLongAsync(this DbCommand command, CancellationToken token = default)
         {
             if (command == null)
             {
                 throw new ArgumentNullException(nameof(command));
             }
 
-            return Convert.ToUInt64(await command.ExecuteScalarEnsureRowAsync(), CultureInfo.InvariantCulture);
+            return Convert.ToUInt64(await command.ExecuteScalarEnsureRowAsync(token), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         ///     Execute command and ensure success.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>Scalar result.</returns>
-        public static async ValueTask<object> ExecuteScalarEnsureRowAsync(this DbCommand command)
+        public static async ValueTask<object> ExecuteScalarEnsureRowAsync(this DbCommand command, CancellationToken token = default)
         {
-            var result = await command.ExecuteScalarAsync();
+            var result = await command.ExecuteScalarAsync(token);
             if (result == null)
             {
                 throw new EntityNotFoundException();
@@ -131,10 +137,11 @@ namespace FunderMaps.Data.Extensions
         ///     Execute command and ensure success.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns><see cref="DbDataReader"/>.</returns>
-        public static async ValueTask<DbDataReader> ExecuteReaderAsyncEnsureRowAsync(this DbCommand command)
+        public static async ValueTask<DbDataReader> ExecuteReaderAsyncEnsureRowAsync(this DbCommand command, CancellationToken token = default)
         {
-            DbDataReader reader = await command.ExecuteReaderAsync();
+            DbDataReader reader = await command.ExecuteReaderAsync(token);
             if (!reader.HasRows)
             {
                 throw new EntityNotFoundException();
@@ -146,17 +153,19 @@ namespace FunderMaps.Data.Extensions
         ///     Execute command without requiring success.
         /// </summary>
         /// <param name="command">The command to extend.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns><see cref="DbDataReader"/>.</returns>
-        public static async ValueTask<DbDataReader> ExecuteReaderCanHaveZeroRowsAsync(this DbCommand command)
-            => await command.ExecuteReaderAsync();
+        public static async ValueTask<DbDataReader> ExecuteReaderCanHaveZeroRowsAsync(this DbCommand command, CancellationToken token = default)
+            => await command.ExecuteReaderAsync(token);
 
         /// <summary>
         ///     Execute command and ensure success.
         /// </summary>
         /// <param name="command">The command to extend.</param>
-        public static async ValueTask ExecuteNonQueryEnsureAffectedAsync(this DbCommand command)
+        /// <param name="token">The cancellation instruction.</param>
+        public static async ValueTask ExecuteNonQueryEnsureAffectedAsync(this DbCommand command, CancellationToken token = default)
         {
-            int affected = await command.ExecuteNonQueryAsync();
+            int affected = await command.ExecuteNonQueryAsync(token);
             if (affected <= 0)
             {
                 throw new EntityNotFoundException();
