@@ -50,10 +50,10 @@ namespace FunderMaps.Core.Services
             externalId.ThrowIfNullOrEmpty();
 
             // Perform base call to get the product.
-            var result = await base.GetAnalysisByExternalIdAsync(userId, productType, externalId, externalSource, token);
+            var result = await base.GetAnalysisByExternalIdAsync(userId, productType, externalId, externalSource);
 
             // Track usage for user.
-            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U, token);
+            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U);
 
             return result;
         }
@@ -77,10 +77,10 @@ namespace FunderMaps.Core.Services
             userId.ThrowIfNullOrEmpty();
 
             // Perform base call to get the product.
-            var result = await base.GetAnalysisByIdAsync(userId, productType, id, token);
+            var result = await base.GetAnalysisByIdAsync(userId, productType, id);
 
             // Track usage for user.
-            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U, token);
+            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U);
 
             return result;
         }
@@ -107,10 +107,10 @@ namespace FunderMaps.Core.Services
             navigation.Validate();
 
             // Perform base call to get the product.
-            var result = await base.GetAnalysisByQueryAsync(userId, productType, query, navigation, token);
+            var result = await base.GetAnalysisByQueryAsync(userId, productType, query, navigation);
 
             // Track usage for user.
-            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, (uint)result.Count(), token);
+            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, (uint)result.Count());
 
             return result;
         }
@@ -155,10 +155,10 @@ namespace FunderMaps.Core.Services
             neighborhoodCode.ThrowIfNullOrEmpty();
 
             // Perform base call to get the product.
-            var result = await base.GetStatisticsByNeighborhoodAsync(userId, productType, neighborhoodCode, token);
+            var result = await base.GetStatisticsByNeighborhoodAsync(userId, productType, neighborhoodCode);
 
             // Track usage for user.
-            await _trackingRepository.ProcessStatisticsUsageAsync(userId, productType, 1, token);
+            await _trackingRepository.ProcessStatisticsUsageAsync(userId, productType, 1);
 
             return result;
         }

@@ -57,7 +57,7 @@ namespace FunderMaps.Core.Services
             externalId.ThrowIfNullOrEmpty();
 
             // Get analysis product.
-            var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource, token);
+            var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource);
 
             // Process and return.
             return await ProcessAnalysisAsync(userId, productType, product, token);
@@ -82,11 +82,11 @@ namespace FunderMaps.Core.Services
             // FUTURE: This is a temporary fix, need another call?
             // Get analysis product.
             var product = userId != Guid.Empty
-                ? await _analysisRepository.GetByIdInFenceAsync(userId, id, token)
-                : await _analysisRepository.GetByIdAsync(id, token);
+                ? await _analysisRepository.GetByIdInFenceAsync(userId, id)
+                : await _analysisRepository.GetByIdAsync(id);
 
             // Process and return.
-            return await ProcessAnalysisAsync(userId, productType, product, token);
+            return await ProcessAnalysisAsync(userId, productType, product);
         }
 
         /// <summary>
@@ -113,14 +113,14 @@ namespace FunderMaps.Core.Services
             navigation.Validate();
 
             // Get analysis product.
-            var products = await _analysisRepository.GetByQueryAsync(userId, query, navigation, token);
+            var products = await _analysisRepository.GetByQueryAsync(userId, query, navigation);
 
             // Process and return.
             // FUTURE Clean up, make async foreach or similar.
             var result = new ConcurrentBag<AnalysisProduct>();
             Parallel.ForEach(products, (product) =>
             {
-                result.Add(Task.Run(() => ProcessAnalysisAsync(userId, productType, product, token)).Result);
+                result.Add(Task.Run(() => ProcessAnalysisAsync(userId, productType, product)).Result);
             });
 
             return result;
@@ -171,25 +171,25 @@ namespace FunderMaps.Core.Services
             switch (productType)
             {
                 case StatisticsProductType.FoundationRatio:
-                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.ConstructionYears:
-                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.FoundationRisk:
-                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.DataCollected:
-                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.BuildingsRestored:
-                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.Incidents:
-                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.Reports:
-                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 default:
                     throw new InvalidOperationException(nameof(productType));
@@ -259,7 +259,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByIdAsync(userId, product.NeighborhoodId, token);
+                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
@@ -270,7 +270,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByIdAsync(userId, product.NeighborhoodId, token);
+                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
@@ -281,7 +281,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(userId, product.NeighborhoodId, token);
+                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
@@ -292,7 +292,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByIdAsync(userId, product.NeighborhoodId, token);
+                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
@@ -303,7 +303,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.Costs:
                 case AnalysisProductType.Complete:
-                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(userId, product.NeighborhoodId, token);
+                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
@@ -314,7 +314,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.Costs:
                 case AnalysisProductType.Complete:
-                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(userId, product.NeighborhoodId, token);
+                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
@@ -325,7 +325,7 @@ namespace FunderMaps.Core.Services
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(userId, product.NeighborhoodId, token);
+                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
