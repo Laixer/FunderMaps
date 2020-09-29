@@ -100,20 +100,42 @@ namespace FunderMaps.Data.Repositories
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(6),
                 City = reader.GetSafeString(7),
                 BuildingId = reader.GetSafeString(8),
+                BuildingNavigation = new Building // TODO: Remove in future
+                {
+                    Id = reader.GetSafeString(9),
+                    BuildingType = reader.GetFieldValue<BuildingType?>(10),
+                    BuiltYear = reader.GetDateTime(11),
+                    IsActive = reader.GetBoolean(12),
+                    ExternalId = reader.GetSafeString(13),
+                    ExternalSource = reader.GetFieldValue<ExternalDataSource>(14),
+                    Geometry = reader.GetString(15),
+                    NeighborhoodId = reader.GetSafeString(16),
+                }
             };
 
         public async ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
             var sql = @"
-                SELECT  id,
-                        building_number,
-                        postal_code,
-                        street,
-                        is_active,
-                        external_id,
-                        external_source,
-                        city,
-                        building_id
+                SELECT  -- Address
+                        a.id,
+                        a.building_number,
+                        a.postal_code,
+                        a.street,
+                        a.is_active,
+                        a.external_id,
+                        a.external_source,
+                        a.city,
+                        a.building_id,
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
                 FROM    geocoder.address
                 WHERE   external_id = @external_id
                 AND     external_source = @external_source
@@ -139,15 +161,26 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<Address> GetByIdAsync(string id)
         {
             var sql = @"
-                SELECT  id,
-                        building_number,
-                        postal_code,
-                        street,
-                        is_active,
-                        external_id,
-                        external_source,
-                        city,
-                        building_id
+                SELECT  -- Address
+                        a.id,
+                        a.building_number,
+                        a.postal_code,
+                        a.street,
+                        a.is_active,
+                        a.external_id,
+                        a.external_source,
+                        a.city,
+                        a.building_id,
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
                 FROM    geocoder.address
                 WHERE   id = @id
                 LIMIT   1";
@@ -176,16 +209,28 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        building_number,
-                        postal_code,
-                        street,
-                        is_active,
-                        external_id,
-                        external_source,
-                        city,
-                        building_id
-                FROM    geocoder.search_address(@query)";
+                SELECT  -- Address
+                        a.id,
+                        a.building_number,
+                        a.postal_code,
+                        a.street,
+                        a.is_active,
+                        a.external_id,
+                        a.external_source,
+                        a.city,
+                        a.building_id,
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
+                FROM    geocoder.search_address(@query) AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
 
             ConstructNavigation(ref sql, navigation);
 
@@ -194,7 +239,7 @@ namespace FunderMaps.Data.Repositories
 
             cmd.AddParameterWithValue("query", query);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
+            await using var reader = await cmd.ExecuteReaderAsync(AppContext.CancellationToken);
             while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 yield return MapFromReader(reader);
@@ -213,13 +258,26 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        building_number,
-                        postal_code,
-                        street,
-                        is_active,
-                        external_id,
-                        external_source
+                SELECT  -- Address
+                        a.id,
+                        a.building_number,
+                        a.postal_code,
+                        a.street,
+                        a.is_active,
+                        a.external_id,
+                        a.external_source,
+                        a.city,
+                        a.building_id,
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
                 FROM    geocoder.address";
 
             ConstructNavigation(ref sql, navigation);

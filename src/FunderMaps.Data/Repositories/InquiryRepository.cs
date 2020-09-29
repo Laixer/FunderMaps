@@ -185,7 +185,8 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<InquiryFull> GetByIdAsync(int id)
         {
             var sql = @"
-                SELECT  inquiry.id,
+                SELECT  -- Inquiry
+                        inquiry.id,
                         document_name,
                         inspection,
                         joint_measurement,
@@ -196,19 +197,19 @@ namespace FunderMaps.Data.Repositories
                         type,
                         standard_f3o,
 
-                        -- attribution
+                        -- Attribution
                         attribution.reviewer,
                         attribution.creator,
                         attribution.owner,
                         attribution.contractor,
 
-                        -- state control
+                        -- State control
                         audit_status,
 
-                        -- access control
+                        -- Access control
                         access_policy,
 		                
-                        -- record control
+                        -- Record control
                         create_date,
 		                update_date,
 		                delete_date
@@ -250,7 +251,8 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  inquiry.id,
+                SELECT  -- Inquiry
+                        inquiry.id,
                         document_name,
                         inspection,
                         joint_measurement,
@@ -261,19 +263,19 @@ namespace FunderMaps.Data.Repositories
                         type,
                         standard_f3o,
 
-                        -- attribution
+                        -- Attribution
                         attribution.reviewer,
                         attribution.creator,
                         attribution.owner,
                         attribution.contractor,
 
-                        -- state control
+                        -- State control
                         audit_status,
 
-                        -- access control
+                        -- Access control
                         access_policy,
 		                
-                        -- record control
+                        -- Record control
                         create_date,
 		                update_date,
 		                delete_date
@@ -285,7 +287,7 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
+            await using var reader = await cmd.ExecuteReaderAsync(AppContext.CancellationToken);
             while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 yield return MapFromReader(reader);
