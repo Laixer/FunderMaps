@@ -16,15 +16,6 @@ namespace FunderMaps.Data.Repositories
     internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepository
     {
         /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public ContactRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
         ///     Create new <see cref="Contact"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
@@ -47,13 +38,13 @@ namespace FunderMaps.Data.Repositories
                     @phone_number)
                 ON CONFLICT DO NOTHING";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
             MapToWriter(cmd, entity);
 
             // Cannot ensure affect, row can already exist.
-            await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync(AppContext.CancellationToken);
 
             return entity.Email;
         }
@@ -82,10 +73,12 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("email", email);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
         }
 
         private static void MapToWriter(DbCommand cmd, Contact entity)
@@ -118,12 +111,13 @@ namespace FunderMaps.Data.Repositories
                 WHERE   email = @email
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("email", email);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await reader.ReadAsync(AppContext.CancellationToken);
 
             return MapFromReader(reader);
         }
@@ -147,11 +141,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
+            while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 yield return MapFromReader(reader);
             }
@@ -174,12 +168,12 @@ namespace FunderMaps.Data.Repositories
                             phone_number = @phone_number
                     WHERE   email = @email";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
+            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             using var cmd = DbProvider.CreateCommand(sql, connection);
 
             MapToWriter(cmd, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
         }
     }
 }

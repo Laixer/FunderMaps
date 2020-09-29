@@ -18,15 +18,6 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public BuildingRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         public override ValueTask<string> AddAsync(Building entity)
             => throw new NotImplementedException();
 
@@ -78,12 +69,13 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await reader.ReadAsync(AppContext.CancellationToken);
 
             return MapFromReader(reader);
         }
@@ -99,7 +91,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="buildingId">Internal building id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Boolean result</returns>
-        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token)
+        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
         {
             userId.ThrowIfNullOrEmpty();
             buildingId.ThrowIfNullOrEmpty();

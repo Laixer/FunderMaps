@@ -18,15 +18,6 @@ namespace FunderMaps.Data.Repositories
     internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRepository
     {
         /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public InquiryRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
         ///     Create new <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
@@ -80,8 +71,9 @@ namespace FunderMaps.Data.Repositories
                 FROM attribution
                 RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
             cmd.AddParameterWithValue("creator", entity.Attribution.Creator);
             cmd.AddParameterWithValue("owner", entity.Attribution.Owner);
@@ -89,7 +81,7 @@ namespace FunderMaps.Data.Repositories
 
             MapToWriter(cmd, entity);
 
-            return await cmd.ExecuteScalarIntAsync();
+            return await cmd.ExecuteScalarIntAsync(AppContext.CancellationToken);
         }
 
         public Task<uint> CountAsync(Guid orgId)
@@ -121,10 +113,12 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.inquiry
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
         }
 
         private static void MapToWriter(DbCommand cmd, InquiryFull entity)
@@ -223,12 +217,13 @@ namespace FunderMaps.Data.Repositories
                 WHERE   inquiry.id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+
             cmd.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await reader.ReadAsync(AppContext.CancellationToken);
 
             return MapFromReader(reader);
         }
@@ -287,11 +282,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
+            while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 yield return MapFromReader(reader);
             }
@@ -323,13 +318,13 @@ namespace FunderMaps.Data.Repositories
                             standard_f3o = @standard_f3o
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
+            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
             using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("id", entity.Id);
 
             MapToWriter(cmd, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
         }
     }
 }

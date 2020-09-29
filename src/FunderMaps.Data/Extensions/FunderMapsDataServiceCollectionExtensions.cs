@@ -1,4 +1,5 @@
-using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using System;
@@ -11,6 +12,28 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class FunderMapsDataServiceCollectionExtensions
     {
         /// <summary>
+        ///     Add repository with application context injection to container.
+        /// </summary>
+        /// <remarks>
+        ///     Repositories that obey the DataBase contract can request the application context
+        ///     from inheritance due to the auto injector. Since the application context is per
+        ///     scope the repositories need to be scoped as well.
+        /// </remakrs>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        private static IServiceCollection AddContextRepository<TService, TImplementation>(this IServiceCollection services)
+            where TService : class
+            where TImplementation : class, TService, new()
+            => services.AddScoped<TService, TImplementation>(serviceProvider =>
+            {
+                var repository = new TImplementation();
+                DataBase injectorBase = repository as DataBase;
+                injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
+                injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
+                return repository;
+            });
+
+        /// <summary>
         ///     Adds the data services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
@@ -22,24 +45,25 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            // Keep the order in which they are directory listed
-            services.AddScoped<IAddressRepository, AddressRepository>();
-            services.AddScoped<IAnalysisRepository, AnalysisRepository>();
-            services.AddScoped<IBuildingRepository, BuildingRepository>();
-            services.AddScoped<IContactRepository, ContactRepository>();
-            services.AddScoped<IIncidentRepository, IncidentRepository>();
-            services.AddScoped<IInquiryRepository, InquiryRepository>();
-            services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
-            services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
-            services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-            services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
-            services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddScoped<IProjectSampleRepository, ProjectSampleRepository>();
-            services.AddScoped<IRecoveryRepository, RecoveryRepository>();
-            services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
-            services.AddScoped<IStatisticsRepository, StatisticsRepository>();
-            services.AddScoped<ITrackingRepository, TrackingRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
+            // Register context repositories with the DI container.
+            // NOTE: Keep the order in which they are directory listed
+            services.AddContextRepository<IAddressRepository, AddressRepository>();
+            services.AddContextRepository<IAnalysisRepository, AnalysisRepository>();
+            services.AddContextRepository<IBuildingRepository, BuildingRepository>();
+            services.AddContextRepository<IContactRepository, ContactRepository>();
+            services.AddContextRepository<IIncidentRepository, IncidentRepository>();
+            services.AddContextRepository<IInquiryRepository, InquiryRepository>();
+            services.AddContextRepository<IInquirySampleRepository, InquirySampleRepository>();
+            services.AddContextRepository<IOrganizationProposalRepository, OrganizationProposalRepository>();
+            services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
+            services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();
+            services.AddContextRepository<IProjectRepository, ProjectRepository>();
+            services.AddContextRepository<IProjectSampleRepository, ProjectSampleRepository>();
+            services.AddContextRepository<IRecoveryRepository, RecoveryRepository>();
+            services.AddContextRepository<IRecoverySampleRepository, RecoverySampleRepository>();
+            services.AddContextRepository<IStatisticsRepository, StatisticsRepository>();
+            services.AddContextRepository<ITrackingRepository, TrackingRepository>();
+            services.AddContextRepository<IUserRepository, UserRepository>();
 
             return services;
         }

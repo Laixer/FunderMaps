@@ -16,15 +16,6 @@ namespace FunderMaps.Data.Repositories
     internal class OrganizationProposalRepository : RepositoryBase<OrganizationProposal, Guid>, IOrganizationProposalRepository
     {
         /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public OrganizationProposalRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
         ///     Create new <see cref="OrganizationProposal"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
@@ -44,6 +35,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
+            
             cmd.AddParameterWithValue("name", entity.Name);
             cmd.AddParameterWithValue("email", entity.Email);
 
