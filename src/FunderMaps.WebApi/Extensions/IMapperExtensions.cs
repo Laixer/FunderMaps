@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AutoMapper
@@ -18,8 +19,12 @@ namespace AutoMapper
         /// <typeparam name="TEntity">Source object entity.</typeparam>
         /// <param name="mapper">Mapper to extend.</param>
         /// <param name="enumerable">Source object to map from.</param>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>Mapped destination object.</returns>
-        public static async ValueTask<TDestination> MapAsync<TDestination, TEntity>(this IMapper mapper, IAsyncEnumerable<TEntity> enumerable)
+        public static async ValueTask<TDestination> MapAsync<TDestination, TEntity>(
+            this IMapper mapper,
+            IAsyncEnumerable<TEntity> enumerable,
+            CancellationToken token = default)
             where TDestination : IEnumerable
         {
             if (mapper == null)
@@ -33,7 +38,7 @@ namespace AutoMapper
             }
 
             ICollection<TEntity> entities = new Collection<TEntity>();
-            await foreach (var item in enumerable)
+            await foreach (var item in enumerable.WithCancellation(token))
             {
                 entities.Add(item);
             }

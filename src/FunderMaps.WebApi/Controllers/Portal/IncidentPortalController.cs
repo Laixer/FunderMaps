@@ -118,10 +118,10 @@ namespace FunderMaps.WebApi.Controllers.Portal
         public async Task<IActionResult> GetAllAddressSuggestionAsync([FromQuery] AddressSearchDto input)
         {
             // Assign.
-            IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionWithBuildingAsync(input.Query, input.Navigation);
+            IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList);
+            var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList, HttpContext.RequestAborted);
 
             // Return.
             return Ok(result);
