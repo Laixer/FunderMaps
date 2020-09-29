@@ -149,6 +149,7 @@ namespace FunderMaps.Data.Extensions
             return reader;
         }
 
+        // TODO: Remove
         /// <summary>
         ///     Execute command without requiring success.
         /// </summary>

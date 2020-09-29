@@ -15,6 +15,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         ///     Adds the core services to the container.
         /// </summary>
+        /// <remarks>
+        ///     Add service components with their correct lifetime cycle. An invalid lifetime can
+        ///     block the dependency graph resulting in an underperforming application.
+        /// </remarks>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
@@ -25,13 +29,11 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             // Register core components in DI container.
-            services.AddSingleton<IRandom, RandomGenerator>();
-            services.AddSingleton<IPasswordHasher, PasswordHasher>();
-
-            // Register core service fillers in DI container.
-            services.AddSingleton<IEmailService, NullEmailService>();
-            services.AddSingleton<IBlobStorageService, NullBlobStorageService>();
-            services.AddSingleton<INotificationService, NullNotificationService>();
+            // NOTE: These services are rarely used and should therefore be
+            //       registered as transient. They are re-instantiated on every
+            //       resolve and disposed right after.
+            services.AddTransient<IRandom, RandomGenerator>();
+            services.AddTransient<IPasswordHasher, PasswordHasher>();
 
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container
@@ -53,6 +55,14 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
+
+            // Register core service fillers in DI container.
+            // NOTE: These services take time to initialize are used more often. Registering
+            //       them as a singleton will keep the services alife for the entire application
+            //       lifetime. Beware to add new services as singletons.
+            services.AddSingleton<IEmailService, NullEmailService>();
+            services.AddSingleton<IBlobStorageService, NullBlobStorageService>();
+            services.AddSingleton<INotificationService, NullNotificationService>();
 
             return services;
         }
