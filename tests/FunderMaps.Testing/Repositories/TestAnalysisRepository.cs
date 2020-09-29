@@ -29,29 +29,29 @@ namespace FunderMaps.Testing.Repositories
             DataStore = dataStore;
         }
 
-        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation, CancellationToken token)
+        public Task<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation)
             => throw new NotImplementedException();
 
-        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource, CancellationToken token)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
         {
             // NOTE: We ignore external data source here.
             await Task.CompletedTask;
             return DataStore.ItemList.Where(s => s.ExternalId == externalId).FirstOrDefault() ?? throw new EntityNotFoundException();
         }
 
-        public async Task<AnalysisProduct> GetByIdAsync(string id, CancellationToken token)
+        public async Task<AnalysisProduct> GetByIdAsync(string id)
         {
             await Task.CompletedTask;
             return DataStore.ItemList.Where(x => x.Id == id).First() ?? throw new EntityNotFoundException();
         }
 
-        public async Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id, CancellationToken token)
+        public async Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id)
         {
             await Task.CompletedTask;
             return DataStore.ItemList.Where(x => x.Id == id).First() ?? throw new EntityNotFoundException();
         }
 
-        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation, CancellationToken token)
+        public async Task<IEnumerable<AnalysisProduct>> GetByQueryAsync(Guid userId, string query, INavigation navigation)
         {
             if (DataStore.ItemList.ToList().Count == 0)
             {
