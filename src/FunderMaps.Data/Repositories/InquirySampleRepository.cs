@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -47,7 +46,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             return await context.ScalarAsync<int>();
         }
@@ -56,13 +55,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.inquiry_sample";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         public Task<uint> CountAsync(Guid orgId)
@@ -88,29 +89,29 @@ namespace FunderMaps.Data.Repositories
             await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, InquirySample entity)
+        private static void MapToWriter(DbContext context, InquirySample entity)
         {
-            cmd.AddParameterWithValue("inquiry", entity.Inquiry);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
-            cmd.AddParameterWithValue("built_year", entity.BuiltYear);
-            cmd.AddParameterWithValue("substructure", entity.Substructure);
+            context.AddParameterWithValue("inquiry", entity.Inquiry);
+            context.AddParameterWithValue("address", entity.Address);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
+            context.AddParameterWithValue("built_year", entity.BuiltYear);
+            context.AddParameterWithValue("substructure", entity.Substructure);
         }
 
-        private static InquirySample MapFromReader(DbDataReader reader)
+        private static InquirySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new InquirySample
             {
-                Id = reader.GetInt(0),
-                Inquiry = reader.GetInt(1),
-                Address = reader.GetSafeString(2),
-                Note = reader.GetSafeString(3),
-                CreateDate = reader.GetDateTime(4),
-                UpdateDate = reader.GetSafeDateTime(5),
-                DeleteDate = reader.GetSafeDateTime(6),
-                BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(7),
-                BuiltYear = reader.GetDateTime(8),
-                Substructure = reader.GetFieldValue<Substructure>(9),
+                Id = reader.GetInt(offset + 0),
+                Inquiry = reader.GetInt(offset + 1),
+                Address = reader.GetSafeString(offset + 2),
+                Note = reader.GetSafeString(offset + 3),
+                CreateDate = reader.GetDateTime(offset + 4),
+                UpdateDate = reader.GetSafeDateTime(offset + 5),
+                DeleteDate = reader.GetSafeDateTime(offset + 6),
+                BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(offset + 7),
+                BuiltYear = reader.GetDateTime(offset + 8),
+                Substructure = reader.GetFieldValue<Substructure>(offset + 9),
             };
 
         /// <summary>
@@ -155,7 +156,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        /// Retrieve all <see cref="InquirySample"/>.
+        ///     Retrieve all <see cref="InquirySample"/>.
         /// </summary>
         /// <returns>List of <see cref="InquirySample"/>.</returns>
         public override async IAsyncEnumerable<InquirySample> ListAllAsync(INavigation navigation)
@@ -224,7 +225,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }

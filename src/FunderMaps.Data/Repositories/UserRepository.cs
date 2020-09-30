@@ -52,7 +52,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await using var reader = await context.ReaderAsync();
 
@@ -63,13 +63,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.user";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -90,28 +92,28 @@ namespace FunderMaps.Data.Repositories
             await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, User entity)
+        public static void MapToWriter(DbContext context, User entity)
         {
-            cmd.AddParameterWithValue("given_name", entity.GivenName);
-            cmd.AddParameterWithValue("last_name", entity.LastName);
-            cmd.AddParameterWithValue("email", entity.Email);
-            cmd.AddParameterWithValue("avatar", entity.Avatar);
-            cmd.AddParameterWithValue("job_title", entity.JobTitle);
-            cmd.AddParameterWithValue("phone_number", entity.PhoneNumber);
-            cmd.AddParameterWithValue("role", entity.Role);
+            context.AddParameterWithValue("given_name", entity.GivenName);
+            context.AddParameterWithValue("last_name", entity.LastName);
+            context.AddParameterWithValue("email", entity.Email);
+            context.AddParameterWithValue("avatar", entity.Avatar);
+            context.AddParameterWithValue("job_title", entity.JobTitle);
+            context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+            context.AddParameterWithValue("role", entity.Role);
         }
 
-        private static User MapFromReader(DbDataReader reader)
+        public static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new User
             {
-                Id = reader.GetGuid(0),
-                GivenName = reader.GetSafeString(1),
-                LastName = reader.GetSafeString(2),
-                Email = reader.GetSafeString(3),
-                Avatar = reader.GetSafeString(4),
-                JobTitle = reader.GetSafeString(5),
-                PhoneNumber = reader.GetSafeString(6),
-                Role = reader.GetFieldValue<ApplicationRole>(7),
+                Id = reader.GetGuid(offset + 0),
+                GivenName = reader.GetSafeString(offset + 1),
+                LastName = reader.GetSafeString(offset + 2),
+                Email = reader.GetSafeString(offset + 3),
+                Avatar = reader.GetSafeString(offset + 4),
+                JobTitle = reader.GetSafeString(offset + 5),
+                PhoneNumber = reader.GetSafeString(offset + 6),
+                Role = reader.GetFieldValue<ApplicationRole>(offset + 7),
             };
 
         /// <summary>
@@ -122,16 +124,17 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<User> GetByIdAsync(Guid id)
         {
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user
-                WHERE   id = @id
+                SELECT  -- User
+                        u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.avatar,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u
+                WHERE   u.id = @id
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -151,16 +154,17 @@ namespace FunderMaps.Data.Repositories
         public async ValueTask<User> GetByEmailAsync(string email)
         {
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user
-                WHERE   normalized_email = application.normalize(@email)
+                SELECT  -- User
+                        u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.avatar,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u
+                WHERE   u.normalized_email = application.normalize(@email)
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -184,11 +188,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await context.ReaderAsync();
-
-            return reader.GetUInt(0);
+            return await context.ScalarAsync<uint>();
         }
 
+        // FUTURE: Why nullable return?
         public async ValueTask<uint?> GetLoginCountAsync(User entity)
         {
             var sql = @"
@@ -201,9 +204,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await context.ReaderAsync();
-
-            return reader.GetUInt(0);
+            return await context.ScalarAsync<uint>();
         }
 
         public async ValueTask<DateTime?> GetLastLoginAsync(User entity)
@@ -270,17 +271,17 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user";
+                SELECT  u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.avatar,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "u");
 
             await using var context = await DbContextFactory(sql);
 
@@ -317,7 +318,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }

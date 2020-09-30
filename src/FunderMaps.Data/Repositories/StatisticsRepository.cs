@@ -3,7 +3,6 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
