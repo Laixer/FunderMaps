@@ -77,7 +77,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("owner", entity.Attribution.Owner);
             context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             return await context.ScalarAsync<int>();
         }
@@ -91,13 +91,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.inquiry";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -118,54 +120,54 @@ namespace FunderMaps.Data.Repositories
             await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, InquiryFull entity)
+        public static void MapToWriter(DbContext context, InquiryFull entity)
         {
-            cmd.AddParameterWithValue("document_name", entity.DocumentName);
-            cmd.AddParameterWithValue("inspection", entity.Inspection);
-            cmd.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
-            cmd.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
-            cmd.AddParameterWithValue("audit_status", entity.State.AuditStatus);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("standard_f3o", entity.StandardF3o);
+            context.AddParameterWithValue("document_name", entity.DocumentName);
+            context.AddParameterWithValue("inspection", entity.Inspection);
+            context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
+            context.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("document_date", entity.DocumentDate);
+            context.AddParameterWithValue("document_file", entity.DocumentFile);
+            context.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
+            context.AddParameterWithValue("audit_status", entity.State.AuditStatus);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
         }
 
-        private static InquiryFull MapFromReader(DbDataReader reader)
+        public static InquiryFull MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new InquiryFull
             {
-                Id = reader.GetInt(0),
-                DocumentName = reader.GetSafeString(1),
-                Inspection = reader.GetBoolean(2),
-                JointMeasurement = reader.GetBoolean(3),
-                FloorMeasurement = reader.GetBoolean(4),
-                Note = reader.GetSafeString(5),
-                DocumentDate = reader.GetDateTime(6),
-                DocumentFile = reader.GetSafeString(7),
-                Type = reader.GetFieldValue<InquiryType>(8),
-                StandardF3o = reader.GetBoolean(9),
+                Id = reader.GetInt(offset + 0),
+                DocumentName = reader.GetSafeString(offset + 1),
+                Inspection = reader.GetBoolean(offset + 2),
+                JointMeasurement = reader.GetBoolean(offset + 3),
+                FloorMeasurement = reader.GetBoolean(offset + 4),
+                Note = reader.GetSafeString(offset + 5),
+                DocumentDate = reader.GetDateTime(offset + 6),
+                DocumentFile = reader.GetSafeString(offset + 7),
+                Type = reader.GetFieldValue<InquiryType>(offset + 8),
+                StandardF3o = reader.GetBoolean(offset + 9),
                 Attribution = new AttributionControl
                 {
-                    Reviewer = reader.GetFieldValue<Guid?>(10),
-                    Creator = reader.GetGuid(11),
-                    Owner = reader.GetGuid(12),
-                    Contractor = reader.GetGuid(13),
+                    Reviewer = reader.GetFieldValue<Guid?>(offset + 10),
+                    Creator = reader.GetGuid(offset + 11),
+                    Owner = reader.GetGuid(offset + 12),
+                    Contractor = reader.GetGuid(offset + 13),
                 },
                 State = new StateControl
                 {
-                    AuditStatus = reader.GetFieldValue<AuditStatus>(14),
+                    AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 14),
                 },
                 Access = new AccessControl
                 {
-                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(15),
+                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 15),
                 },
                 Record = new RecordControl
                 {
-                    CreateDate = reader.GetDateTime(16),
-                    UpdateDate = reader.GetSafeDateTime(17),
-                    DeleteDate = reader.GetSafeDateTime(18),
+                    CreateDate = reader.GetDateTime(offset + 16),
+                    UpdateDate = reader.GetSafeDateTime(offset + 17),
+                    DeleteDate = reader.GetSafeDateTime(offset + 18),
                 },
             };
 
@@ -317,7 +319,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }

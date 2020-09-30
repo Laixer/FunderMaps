@@ -26,7 +26,7 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Create the database context.
         /// </summary>
-        public async ValueTask<DbContext> DbContextFactory(string cmdText)
+        public virtual async ValueTask<DbContext> DbContextFactory(string cmdText)
         {
             var context = new DbContext()
             {
@@ -43,22 +43,26 @@ namespace FunderMaps.Data
         /// </summary>
         /// <param name="cmdText">SQL query.</param>
         /// <param name="navigation">Navigation instance of type <see cref="INavigation"/>.</param>
-        protected static void ConstructNavigation(ref string cmdText, INavigation navigation)
+        /// <param name="alias">Datasource alias.</param>
+        protected static void ConstructNavigation(ref string cmdText, INavigation navigation, string alias = null)
         {
+            const string lineFeed = "\r\n";
+
             // FUTURE: Can we improve stability and readability here?
             if (!string.IsNullOrEmpty(navigation.SortColumn))
             {
-                cmdText += $"\r\n ORDER BY {navigation.SortColumn} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
+                var column = alias != null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
+                cmdText += $"{lineFeed} ORDER BY {column} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
             }
 
             if (navigation.Offset != 0)
             {
-                cmdText += $"\r\n OFFSET {navigation.Offset}";
+                cmdText += $"{lineFeed} OFFSET {navigation.Offset}";
             }
 
             if (navigation.Limit != 0)
             {
-                cmdText += $"\r\n LIMIT {navigation.Limit}";
+                cmdText += $"{lineFeed} LIMIT {navigation.Limit}";
             }
         }
     }

@@ -69,13 +69,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.organization";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -96,60 +98,60 @@ namespace FunderMaps.Data.Repositories
             await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, Organization entity)
+        private static void MapToWriter(DbContext context, Organization entity)
         {
-            cmd.AddParameterWithValue("phone_number", entity.PhoneNumber);
-            cmd.AddParameterWithValue("registration_number", entity.RegistrationNumber);
-            cmd.AddParameterWithValue("branding_logo", entity.BrandingLogo);
-            cmd.AddParameterWithValue("invoice_name", entity.InvoiceName);
-            cmd.AddParameterWithValue("invoice_po_box", entity.InvoicePoBox);
-            cmd.AddParameterWithValue("invoice_email", entity.InvoiceEmail);
-            cmd.AddParameterWithValue("home_address", entity.HomeStreet);
-            cmd.AddParameterWithValue("home_address_number", entity.HomeAddressNumber);
-            cmd.AddParameterWithValue("home_address_number_postfix", entity.HomeAddressNumberPostfix);
-            cmd.AddParameterWithValue("home_city", entity.HomeCity);
-            cmd.AddParameterWithValue("home_postbox", entity.HomePostbox);
-            cmd.AddParameterWithValue("home_zipcode", entity.HomeZipcode);
-            cmd.AddParameterWithValue("home_state", entity.HomeState);
-            cmd.AddParameterWithValue("home_country", entity.HomeCountry);
-            cmd.AddParameterWithValue("postal_address", entity.PostalStreet);
-            cmd.AddParameterWithValue("postal_address_number", entity.PostalAddressNumber);
-            cmd.AddParameterWithValue("postal_address_number_postfix", entity.PostalAddressNumberPostfix);
-            cmd.AddParameterWithValue("postal_city", entity.PostalCity);
-            cmd.AddParameterWithValue("postal_postbox", entity.PostalPostbox);
-            cmd.AddParameterWithValue("postal_zipcode", entity.PostalZipcode);
-            cmd.AddParameterWithValue("postal_state", entity.PostalState);
-            cmd.AddParameterWithValue("postal_country", entity.PostalCountry);
+            context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+            context.AddParameterWithValue("registration_number", entity.RegistrationNumber);
+            context.AddParameterWithValue("branding_logo", entity.BrandingLogo);
+            context.AddParameterWithValue("invoice_name", entity.InvoiceName);
+            context.AddParameterWithValue("invoice_po_box", entity.InvoicePoBox);
+            context.AddParameterWithValue("invoice_email", entity.InvoiceEmail);
+            context.AddParameterWithValue("home_address", entity.HomeStreet);
+            context.AddParameterWithValue("home_address_number", entity.HomeAddressNumber);
+            context.AddParameterWithValue("home_address_number_postfix", entity.HomeAddressNumberPostfix);
+            context.AddParameterWithValue("home_city", entity.HomeCity);
+            context.AddParameterWithValue("home_postbox", entity.HomePostbox);
+            context.AddParameterWithValue("home_zipcode", entity.HomeZipcode);
+            context.AddParameterWithValue("home_state", entity.HomeState);
+            context.AddParameterWithValue("home_country", entity.HomeCountry);
+            context.AddParameterWithValue("postal_address", entity.PostalStreet);
+            context.AddParameterWithValue("postal_address_number", entity.PostalAddressNumber);
+            context.AddParameterWithValue("postal_address_number_postfix", entity.PostalAddressNumberPostfix);
+            context.AddParameterWithValue("postal_city", entity.PostalCity);
+            context.AddParameterWithValue("postal_postbox", entity.PostalPostbox);
+            context.AddParameterWithValue("postal_zipcode", entity.PostalZipcode);
+            context.AddParameterWithValue("postal_state", entity.PostalState);
+            context.AddParameterWithValue("postal_country", entity.PostalCountry);
         }
 
-        private static Organization MapFromReader(DbDataReader reader)
+        private static Organization MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new Organization
             {
-                Id = reader.GetGuid(0),
-                Name = reader.GetSafeString(1),
-                Email = reader.GetSafeString(2),
-                PhoneNumber = reader.GetSafeString(3),
-                RegistrationNumber = reader.GetSafeString(4),
-                BrandingLogo = reader.GetSafeString(5),
-                InvoiceName = reader.GetSafeString(6),
-                InvoicePoBox = reader.GetSafeString(7),
-                InvoiceEmail = reader.GetSafeString(8),
-                HomeStreet = reader.GetSafeString(9),
-                HomeAddressNumber = reader.GetSafeInt(10),
-                HomeAddressNumberPostfix = reader.GetSafeString(11),
-                HomeCity = reader.GetSafeString(12),
-                HomePostbox = reader.GetSafeString(13),
-                HomeZipcode = reader.GetSafeString(14),
-                HomeState = reader.GetSafeString(15),
-                HomeCountry = reader.GetSafeString(16),
-                PostalStreet = reader.GetSafeString(17),
-                PostalAddressNumber = reader.GetSafeInt(18),
-                PostalAddressNumberPostfix = reader.GetSafeString(19),
-                PostalCity = reader.GetSafeString(20),
-                PostalPostbox = reader.GetSafeString(21),
-                PostalZipcode = reader.GetSafeString(22),
-                PostalState = reader.GetSafeString(23),
-                PostalCountry = reader.GetSafeString(24),
+                Id = reader.GetGuid(offset + 0),
+                Name = reader.GetSafeString(offset + 1),
+                Email = reader.GetSafeString(offset + 2),
+                PhoneNumber = reader.GetSafeString(offset + 3),
+                RegistrationNumber = reader.GetSafeString(offset + 4),
+                BrandingLogo = reader.GetSafeString(offset + 5),
+                InvoiceName = reader.GetSafeString(offset + 6),
+                InvoicePoBox = reader.GetSafeString(offset + 7),
+                InvoiceEmail = reader.GetSafeString(offset + 8),
+                HomeStreet = reader.GetSafeString(offset + 9),
+                HomeAddressNumber = reader.GetSafeInt(offset + 10),
+                HomeAddressNumberPostfix = reader.GetSafeString(offset + 11),
+                HomeCity = reader.GetSafeString(offset + 12),
+                HomePostbox = reader.GetSafeString(offset + 13),
+                HomeZipcode = reader.GetSafeString(offset + 14),
+                HomeState = reader.GetSafeString(offset + 15),
+                HomeCountry = reader.GetSafeString(offset + 16),
+                PostalStreet = reader.GetSafeString(offset + 17),
+                PostalAddressNumber = reader.GetSafeInt(offset + 18),
+                PostalAddressNumberPostfix = reader.GetSafeString(offset + 19),
+                PostalCity = reader.GetSafeString(offset + 20),
+                PostalPostbox = reader.GetSafeString(offset + 21),
+                PostalZipcode = reader.GetSafeString(offset + 22),
+                PostalState = reader.GetSafeString(offset + 23),
+                PostalCountry = reader.GetSafeString(offset + 24),
             };
 
         /// <summary>
@@ -397,7 +399,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }

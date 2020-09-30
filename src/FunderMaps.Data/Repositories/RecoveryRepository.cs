@@ -5,6 +5,7 @@ using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -14,6 +15,31 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepository
     {
+        public static void MapToWriter(DbContext context, Recovery entity)
+        {
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("attribution", entity.Attribution);
+            context.AddParameterWithValue("access_policy", entity.AccessPolicy);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("document_date", entity.DocumentDate);
+            context.AddParameterWithValue("document_file", entity.DocumentFile);
+        }
+
+        public static Recovery MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+            => new Recovery
+            {
+                Id = reader.GetInt(offset + 0),
+                Note = reader.GetSafeString(offset + 1),
+                CreateDate = reader.GetDateTime(offset + 2),
+                UpdateDate = reader.GetSafeDateTime(offset + 3),
+                DeleteDate = reader.GetSafeDateTime(offset + 4),
+                Attribution = reader.GetInt(offset + 5),
+                AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 6),
+                Type = reader.GetFieldValue<RecoveryDocumentType>(offset + 7),
+                DocumentDate = reader.GetDateTime(offset + 8),
+                DocumentFile = reader.GetSafeString(offset + 9),
+            };
+
         /// <summary>
         ///     Create new <see cref="Recovery"/>.
         /// </summary>
@@ -45,12 +71,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("note", entity.Note);
-            context.AddParameterWithValue("attribution", entity.Attribution);
-            context.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            context.AddParameterWithValue("type", entity.Type);
-            context.AddParameterWithValue("document_date", entity.DocumentDate);
-            context.AddParameterWithValue("document_file", entity.DocumentFile);
+            MapToWriter(context, entity);
 
             return await context.ScalarAsync<int>();
         }
@@ -59,13 +80,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.recovery";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -94,18 +117,19 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<Recovery> GetByIdAsync(int id)
         {
             var sql = @"
-                SELECT  id,
-                        note,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        attribution,
-                        access_policy,
-                        type,
-                        document_date,
-                        document_file
-                FROM    report.recovery
-                WHERE   id = @id
+                SELECT  -- Recovery
+                        r.id,
+                        r.note,
+                        r.create_date,
+                        r.update_date,
+                        r.delete_date,
+                        r.attribution,
+                        r.access_policy,
+                        r.type,
+                        r.document_date,
+                        r.document_file
+                FROM    report.recovery AS r
+                WHERE   r.id = @id
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -114,19 +138,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return new Recovery
-            {
-                Id = reader.GetInt(0),
-                Note = reader.GetSafeString(1),
-                CreateDate = reader.GetDateTime(2),
-                UpdateDate = reader.GetSafeDateTime(3),
-                DeleteDate = reader.GetSafeDateTime(4),
-                Attribution = reader.GetInt(5),
-                AccessPolicy = reader.GetFieldValue<AccessPolicy>(6),
-                Type = reader.GetFieldValue<RecoveryDocumentType>(7),
-                DocumentDate = reader.GetDateTime(8),
-                DocumentFile = reader.GetSafeString(9),
-            };
+            return MapFromReader(reader);
         }
 
         /// <summary>
@@ -141,37 +153,26 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        note,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        attribution,
-                        access_policy,
-                        type,
-                        document_date,
-                        document_file
-                FROM    report.recovery";
+                SELECT  -- Recovery
+                        r.id,
+                        r.note,
+                        r.create_date,
+                        r.update_date,
+                        r.delete_date,
+                        r.attribution,
+                        r.access_policy,
+                        r.type,
+                        r.document_date,
+                        r.document_file
+                FROM    report.recovery AS r";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "r");
 
             await using var context = await DbContextFactory(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return new Recovery
-                {
-                    Id = reader.GetInt(0),
-                    Note = reader.GetSafeString(1),
-                    CreateDate = reader.GetDateTime(2),
-                    UpdateDate = reader.GetSafeDateTime(3),
-                    DeleteDate = reader.GetSafeDateTime(4),
-                    Attribution = reader.GetInt(5),
-                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(6),
-                    Type = reader.GetFieldValue<RecoveryDocumentType>(7),
-                    DocumentDate = reader.GetDateTime(8),
-                    DocumentFile = reader.GetSafeString(9),
-                };
+                yield return MapFromReader(reader);
             }
         }
 
@@ -197,12 +198,9 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("note", entity.Note);
-            context.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            context.AddParameterWithValue("type", entity.Type);
-            context.AddParameterWithValue("document_date", entity.DocumentDate);
-            context.AddParameterWithValue("document_file", entity.DocumentFile);
             context.AddParameterWithValue("id", entity.Id);
+
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }

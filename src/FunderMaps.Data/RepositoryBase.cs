@@ -16,28 +16,6 @@ namespace FunderMaps.Data
         where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
-        // protected virtual void MapToWriter(DbCommand cmd, TEntity entity)
-        // {
-        // }
-
-        // protected virtual TEntity MapFromReader(DbDataReader reader)
-        // {
-        //     return default(TEntity);
-        // }
-
-        // TODO: Remove
-        /// <summary>
-        ///     Runs the SQL command and return an unsigned long value.
-        /// </summary>
-        /// <param name="cmdText">SQL query.</param>
-        /// <returns>Return value as ulong.</returns>
-        public async ValueTask<ulong> ExecuteScalarUnsignedLongCommandAsync(string cmdText)
-        {
-            await using var context = await DbContextFactory(cmdText);
-
-            return await context.ScalarAsync<ulong>();
-        }
-
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
         /// </summary>

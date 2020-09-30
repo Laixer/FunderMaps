@@ -2,7 +2,6 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -47,13 +46,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.create_organization_proposal";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -74,12 +75,12 @@ namespace FunderMaps.Data.Repositories
             await context.NonQueryAsync();
         }
 
-        private static OrganizationProposal MapFromReader(DbDataReader reader)
+        private static OrganizationProposal MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new OrganizationProposal
             {
-                Id = reader.GetGuid(0),
-                Name = reader.GetSafeString(1),
-                Email = reader.GetSafeString(2),
+                Id = reader.GetGuid(offset + 0),
+                Name = reader.GetSafeString(offset + 1),
+                Email = reader.GetSafeString(offset + 2),
             };
 
         /// <summary>
@@ -90,11 +91,12 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<OrganizationProposal> GetByIdAsync(Guid id)
         {
             var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   id = @id
+                SELECT  -- OrganizationProposal
+                        op.id,
+                        op.name,
+                        op.email
+                FROM    application.organization_proposal AS op
+                WHERE   op.id = @id
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -114,11 +116,12 @@ namespace FunderMaps.Data.Repositories
         public async ValueTask<OrganizationProposal> GetByNameAsync(string name)
         {
             var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   normalized_name = application.normalize(@name)
+                SELECT  -- OrganizationProposal
+                        op.id,
+                        op.name,
+                        op.email
+                FROM    application.organization_proposal AS op
+                WHERE   op.normalized_name = application.normalize(@name)
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);

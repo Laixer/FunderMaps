@@ -39,7 +39,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync(affectedGuard: false);
 
@@ -50,13 +50,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.contact";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -77,19 +79,19 @@ namespace FunderMaps.Data.Repositories
             await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, Contact entity)
+        public static void MapToWriter(DbContext context, Contact entity)
         {
-            cmd.AddParameterWithValue("email", entity.Email);
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("phone_number", entity.PhoneNumber);
+            context.AddParameterWithValue("email", entity.Email);
+            context.AddParameterWithValue("name", entity.Name);
+            context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         }
 
-        private static Contact MapFromReader(DbDataReader reader)
+        public static Contact MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new Contact
             {
-                Email = reader.GetSafeString(0),
-                Name = reader.GetSafeString(1),
-                PhoneNumber = reader.GetSafeString(2),
+                Email = reader.GetSafeString(offset + 0),
+                Name = reader.GetSafeString(offset + 1),
+                PhoneNumber = reader.GetSafeString(offset + 2),
             };
 
         /// <summary>
@@ -100,11 +102,12 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<Contact> GetByIdAsync(string email)
         {
             var sql = @"
-                SELECT  email,
-                        name,
-                        phone_number
-                FROM    application.contact
-                WHERE   email = @email
+                SELECT  -- Contact
+                        c.email,
+                        c.name,
+                        c.phone_number
+                FROM    application.contact AS c
+                WHERE   c.email = @email
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -128,12 +131,13 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  email,
-                        name,
-                        phone_number
-                FROM    application.contact";
+                SELECT  -- Contact
+                        c.email,
+                        c.name,
+                        c.phone_number
+                FROM    application.contact AS c";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "c");
 
             await using var context = await DbContextFactory(sql);
 
@@ -162,7 +166,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }

@@ -24,13 +24,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    geocoder.building";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -40,32 +42,33 @@ namespace FunderMaps.Data.Repositories
         public override ValueTask DeleteAsync(string id)
             => throw new NotImplementedException();
 
-        private static Building MapFromReader(DbDataReader reader)
+        public static Building MapFromReader(DbDataReader reader, int offset = 0)
             => new Building
             {
-                Id = reader.GetSafeString(0),
-                BuildingType = reader.GetFieldValue<BuildingType?>(1),
-                BuiltYear = reader.GetDateTime(1),
-                IsActive = reader.GetBoolean(3),
-                ExternalId = reader.GetSafeString(4),
-                ExternalSource = reader.GetFieldValue<ExternalDataSource>(5),
-                Geometry = reader.GetString(6),
-                NeighborhoodId = reader.GetSafeString(7),
+                Id = reader.GetSafeString(offset + 0),
+                BuildingType = reader.GetFieldValue<BuildingType?>(offset + 1),
+                BuiltYear = reader.GetDateTime(offset + 2),
+                IsActive = reader.GetBoolean(offset + 3),
+                ExternalId = reader.GetSafeString(offset + 4),
+                ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset + 5),
+                Geometry = reader.GetString(offset + 6),
+                NeighborhoodId = reader.GetSafeString(offset + 7),
             };
 
         public override async ValueTask<Building> GetByIdAsync(string id)
         {
             var sql = @"
-                SELECT  id,
-                        building_type,
-                        built_year,
-                        is_active,
-                        external_id,
-                        external_source,
-                        geom,
-                        neighborhood_id
-                FROM    geocoder.building_encoded_geom
-                WHERE   id = @id
+                SELECT  -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id,
+                        b.external_source,
+                        b.geom,
+                        b.neighborhood_id
+                FROM    geocoder.building_encoded_geom AS b
+                WHERE   b.id = @id
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);

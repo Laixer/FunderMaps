@@ -16,6 +16,31 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
     {
+        public static void MapToWriter(DbContext context, Address entity)
+        {
+            context.AddParameterWithValue("building_number", entity.BuildingNumber);
+            context.AddParameterWithValue("postal_code", entity.PostalCode);
+            context.AddParameterWithValue("street", entity.Street);
+            context.AddParameterWithValue("is_active", entity.IsActive);
+            context.AddParameterWithValue("external_id", entity.ExternalId);
+            context.AddParameterWithValue("external_source", entity.ExternalSource);
+        }
+
+        public static Address MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+            => new Address
+            {
+                Id = reader.GetSafeString(offset + 0),
+                BuildingNumber = reader.GetSafeString(offset + 1),
+                PostalCode = reader.GetSafeString(offset + 2),
+                Street = reader.GetSafeString(offset + 3),
+                IsActive = reader.GetBoolean(offset + 4),
+                ExternalId = reader.GetSafeString(offset + 5),
+                ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset + 6),
+                City = reader.GetSafeString(offset + 7),
+                BuildingId = reader.GetSafeString(offset + 8),
+                BuildingNavigation = fullMap ? null : BuildingRepository.MapFromReader(reader, offset + 9)
+            };
+
         /// <summary>
         ///     Create new <see cref="Address"/>.
         /// </summary>
@@ -48,7 +73,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await using var reader = await context.ReaderAsync();
 
@@ -59,13 +84,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<ulong> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    geocoder.address";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -74,41 +101,6 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override ValueTask DeleteAsync(string id)
             => throw new InvalidOperationException();
-
-        public void MapToWriter(DbCommand cmd, Address entity)
-        {
-            cmd.AddParameterWithValue("building_number", entity.BuildingNumber);
-            cmd.AddParameterWithValue("postal_code", entity.PostalCode);
-            cmd.AddParameterWithValue("street", entity.Street);
-            cmd.AddParameterWithValue("is_active", entity.IsActive);
-            cmd.AddParameterWithValue("external_id", entity.ExternalId);
-            cmd.AddParameterWithValue("external_source", entity.ExternalSource);
-        }
-
-        public Address MapFromReader(DbDataReader reader)
-            => new Address
-            {
-                Id = reader.GetSafeString(0),
-                BuildingNumber = reader.GetSafeString(1),
-                PostalCode = reader.GetSafeString(2),
-                Street = reader.GetSafeString(3),
-                IsActive = reader.GetBoolean(4),
-                ExternalId = reader.GetSafeString(5),
-                ExternalSource = reader.GetFieldValue<ExternalDataSource>(6),
-                City = reader.GetSafeString(7),
-                BuildingId = reader.GetSafeString(8),
-                BuildingNavigation = new Building // TODO: Remove in future
-                {
-                    Id = reader.GetSafeString(9),
-                    BuildingType = reader.GetFieldValue<BuildingType?>(10),
-                    BuiltYear = reader.GetDateTime(11),
-                    IsActive = reader.GetBoolean(12),
-                    ExternalId = reader.GetSafeString(13),
-                    ExternalSource = reader.GetFieldValue<ExternalDataSource>(14),
-                    Geometry = reader.GetString(15),
-                    NeighborhoodId = reader.GetSafeString(16),
-                }
-            };
 
         public async ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
@@ -123,18 +115,7 @@ namespace FunderMaps.Data.Repositories
                         a.external_source,
                         a.city,
                         a.building_id,
-
-                        -- Building
-                        b.id,
-                        b.building_type,
-                        b.built_year,
-                        b.is_active,
-                        b.external_id, 
-                        b.external_source, 
-                        b.geom,
-                        b.neighborhood_id
                 FROM    geocoder.address AS a
-                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
                 WHERE   a.external_id = @external_id
                 AND     a.external_source = @external_source
                 LIMIT   1";
@@ -167,18 +148,7 @@ namespace FunderMaps.Data.Repositories
                         a.external_source,
                         a.city,
                         a.building_id,
-
-                        -- Building
-                        b.id,
-                        b.building_type,
-                        b.built_year,
-                        b.is_active,
-                        b.external_id, 
-                        b.external_source, 
-                        b.geom,
-                        b.neighborhood_id
                 FROM    geocoder.address AS a
-                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
                 WHERE   a.id = @id
                 LIMIT   1";
 
@@ -227,7 +197,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    geocoder.search_address(@query) AS a
                 JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "a");
 
             await using var context = await DbContextFactory(sql);
 
@@ -235,7 +205,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return MapFromReader(reader, fullMap: true);
             }
         }
 
@@ -261,20 +231,9 @@ namespace FunderMaps.Data.Repositories
                         a.external_source,
                         a.city,
                         a.building_id,
+                FROM    geocoder.address AS a";
 
-                        -- Building
-                        b.id,
-                        b.building_type,
-                        b.built_year,
-                        b.is_active,
-                        b.external_id, 
-                        b.external_source, 
-                        b.geom,
-                        b.neighborhood_id
-                FROM    geocoder.address AS a
-                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
-
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "a");
 
             await using var context = await DbContextFactory(sql);
 
@@ -309,7 +268,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(context.Command, entity);
+            MapToWriter(context, entity);
 
             await context.NonQueryAsync();
         }
