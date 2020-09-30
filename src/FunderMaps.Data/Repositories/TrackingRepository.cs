@@ -1,8 +1,6 @@
 ﻿using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Threading.Tasks;
 
@@ -54,7 +52,6 @@ namespace FunderMaps.Data.Repositories
             // If a product returned 0 items, we still queried the DB. Mark this as 1.
             itemCount = itemCount == 0U ? 1U : itemCount;
 
-            // Build sql.
             var sql = @"
                 INSERT INTO application.product_usage AS pu (
                     user_id,
@@ -68,15 +65,13 @@ namespace FunderMaps.Data.Repositories
                 DO UPDATE SET
                     count = pu.count + EXCLUDED.count";
 
-            // Execute sql.
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("user_id", userId);
-            cmd.AddParameterWithValue("product", productMapped);
-            cmd.AddParameterWithValue("count", (int)itemCount);
+            context.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("product", productMapped);
+            context.AddParameterWithValue("count", (int)itemCount);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         /// <summary>

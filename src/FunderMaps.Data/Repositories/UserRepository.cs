@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -51,13 +50,11 @@ namespace FunderMaps.Data.Repositories
                     @role)
                 RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetGuid(0);
         }
@@ -86,12 +83,11 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.user
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         private static void MapToWriter(DbCommand cmd, User entity)
@@ -138,13 +134,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -169,13 +163,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("email", email);
+            context.AddParameterWithValue("email", email);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -188,13 +180,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetUInt(0);
         }
@@ -207,13 +197,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetUInt(0);
         }
@@ -226,13 +214,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeDateTime(0);
         }
@@ -245,13 +231,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeString(0);
         }
@@ -267,12 +251,11 @@ namespace FunderMaps.Data.Repositories
                     LIMIT   1
                 ) AS is_locked";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            return (bool)await cmd.ExecuteScalarEnsureRowAsync(AppContext.CancellationToken);
+            return await context.ScalarAsync<bool>();
         }
 
         /// <summary>
@@ -299,11 +282,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
-            while (await reader.ReadAsync(AppContext.CancellationToken))
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -332,14 +313,13 @@ namespace FunderMaps.Data.Repositories
                         role = @role
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -358,13 +338,12 @@ namespace FunderMaps.Data.Repositories
                 SET     password_hash = @password_hash
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
-            cmd.AddParameterWithValue("password_hash", passwordHash);
+            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("password_hash", passwordHash);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -378,12 +357,11 @@ namespace FunderMaps.Data.Repositories
                 SET     access_failed_count = access_failed_count + 1
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -397,12 +375,11 @@ namespace FunderMaps.Data.Repositories
                 SET     access_failed_count = 0
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -419,12 +396,11 @@ namespace FunderMaps.Data.Repositories
                         last_login = CURRENT_TIMESTAMP
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
     }
 }

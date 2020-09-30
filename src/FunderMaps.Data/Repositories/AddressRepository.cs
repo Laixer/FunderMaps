@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -47,13 +46,11 @@ namespace FunderMaps.Data.Repositories
                     ON CONFLICT DO NOTHING
                     RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeString(0);
         }
@@ -78,7 +75,7 @@ namespace FunderMaps.Data.Repositories
         public override ValueTask DeleteAsync(string id)
             => throw new InvalidOperationException();
 
-        private static void MapToWriter(DbCommand cmd, Address entity)
+        public void MapToWriter(DbCommand cmd, Address entity)
         {
             cmd.AddParameterWithValue("building_number", entity.BuildingNumber);
             cmd.AddParameterWithValue("postal_code", entity.PostalCode);
@@ -88,7 +85,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("external_source", entity.ExternalSource);
         }
 
-        private static Address MapFromReader(DbDataReader reader)
+        public Address MapFromReader(DbDataReader reader)
             => new Address
             {
                 Id = reader.GetSafeString(0),
@@ -136,19 +133,18 @@ namespace FunderMaps.Data.Repositories
                         b.external_source, 
                         b.geom,
                         b.neighborhood_id
-                FROM    geocoder.address
-                WHERE   external_id = @external_id
-                AND     external_source = @external_source
+                FROM    geocoder.address AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
+                WHERE   a.external_id = @external_id
+                AND     a.external_source = @external_source
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("external_id", id);
-            cmd.AddParameterWithValue("external_source", source);
+            context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("external_source", source);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -181,17 +177,16 @@ namespace FunderMaps.Data.Repositories
                         b.external_source, 
                         b.geom,
                         b.neighborhood_id
-                FROM    geocoder.address
-                WHERE   id = @id
+                FROM    geocoder.address AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
+                WHERE   a.id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -234,13 +229,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("query", query);
+            context.AddParameterWithValue("query", query);
 
-            await using var reader = await cmd.ExecuteReaderAsync(AppContext.CancellationToken);
-            while (await reader.ReadAsync(AppContext.CancellationToken))
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -278,15 +271,14 @@ namespace FunderMaps.Data.Repositories
                         b.external_source, 
                         b.geom,
                         b.neighborhood_id
-                FROM    geocoder.address";
+                FROM    geocoder.address AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
-            while (await reader.ReadAsync(AppContext.CancellationToken))
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -313,14 +305,13 @@ namespace FunderMaps.Data.Repositories
                             external_source = @external_source
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", entity.Id);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
     }
 }

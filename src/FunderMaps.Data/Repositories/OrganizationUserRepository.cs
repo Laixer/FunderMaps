@@ -1,8 +1,6 @@
 ﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -10,6 +8,9 @@ using System.Threading.Tasks;
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
+    /// <summary>
+    ///     Organization user repository.
+    /// </summary>
     internal class OrganizationUserRepository : DataBase, IOrganizationUserRepository
     {
         public async ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
@@ -34,20 +35,19 @@ namespace FunderMaps.Data.Repositories
                     @organization_id,
                     @role)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("user_id", userId);
-            cmd.AddParameterWithValue("organization_id", organizationId);
-            cmd.AddParameterWithValue("role", role);
+            await using var context = await DbContextFactory(sql);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            context.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("organization_id", organizationId);
+            context.AddParameterWithValue("role", role);
+
+            await context.NonQueryAsync();
         }
 
         /// <summary>
         ///     Retrieve all users by organization.
         /// </summary>
         /// <returns>List of user identifiers.</returns>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
         {
             var sql = @"
@@ -57,12 +57,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("organization_id", organizationId);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            context.AddParameterWithValue("organization_id", organizationId);
+
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return reader.GetGuid(0);
             }
@@ -78,13 +77,12 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("organization_id", organizationId);
-            cmd.AddParameterWithValue("role", role);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            context.AddParameterWithValue("organization_id", organizationId);
+            context.AddParameterWithValue("role", role);
+
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return reader.GetGuid(0);
             }
@@ -112,14 +110,12 @@ namespace FunderMaps.Data.Repositories
                     LIMIT   1
                 )";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("user_id", userId);
-            cmd.AddParameterWithValue("organization_id", organizationId);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
-            return reader.GetBoolean(0);
+            context.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("organization_id", organizationId);
+
+            return await context.ScalarAsync<bool>();
         }
 
         public async ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
@@ -129,12 +125,12 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   user_id = @user_id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("user_id", userId);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("user_id", userId);
+
+            await using var reader = await context.ReaderAsync();
+
             return reader.GetGuid(0);
         }
 
@@ -145,12 +141,12 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   user_id = @user_id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("user_id", userId);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("user_id", userId);
+
+            await using var reader = await context.ReaderAsync();
+
             return reader.GetFieldValue<OrganizationRole>(0);
         }
     }

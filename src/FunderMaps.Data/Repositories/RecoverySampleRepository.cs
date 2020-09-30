@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -55,22 +54,21 @@ namespace FunderMaps.Data.Repositories
                 RETURNING id;
             ";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("recovery", entity.Recovery);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("status", entity.Status);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("pile_type", entity.PileType);
-            cmd.AddParameterWithValue("contractor", entity.Contractor);
-            cmd.AddParameterWithValue("facade", entity.Facade);
-            cmd.AddParameterWithValue("permit", entity.Permit);
-            cmd.AddParameterWithValue("permit_date", entity.PermitDate);
-            cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
+            context.AddParameterWithValue("recovery", entity.Recovery);
+            context.AddParameterWithValue("address", entity.Address);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("status", entity.Status);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("pile_type", entity.PileType);
+            context.AddParameterWithValue("contractor", entity.Contractor);
+            context.AddParameterWithValue("facade", entity.Facade);
+            context.AddParameterWithValue("permit", entity.Permit);
+            context.AddParameterWithValue("permit_date", entity.PermitDate);
+            context.AddParameterWithValue("recovery_date", entity.RecoveryDate);
 
-            return await cmd.ExecuteScalarIntAsync();
+            return await context.ScalarAsync<int>();
         }
 
         /// <summary>
@@ -97,12 +95,11 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.recovery_sample
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await cmd.ExecuteNonQueryAsync();
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -132,13 +129,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            await reader.ReadAsync();
+            await using var reader = await context.ReaderAsync();
 
             return new RecoverySample
             {
@@ -191,11 +186,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return new RecoverySample
                 {
@@ -240,23 +233,22 @@ namespace FunderMaps.Data.Repositories
                             recovery_date = @recovery_date,
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("recovery", entity.Recovery);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("status", entity.Status);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("pile_type", entity.PileType);
-            cmd.AddParameterWithValue("contractor", entity.Contractor);
-            cmd.AddParameterWithValue("facade", entity.Facade);
-            cmd.AddParameterWithValue("permit", entity.Permit);
-            cmd.AddParameterWithValue("permit_date", entity.PermitDate);
-            cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("recovery", entity.Recovery);
+            context.AddParameterWithValue("address", entity.Address);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("status", entity.Status);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("pile_type", entity.PileType);
+            context.AddParameterWithValue("contractor", entity.Contractor);
+            context.AddParameterWithValue("facade", entity.Facade);
+            context.AddParameterWithValue("permit", entity.Permit);
+            context.AddParameterWithValue("permit_date", entity.PermitDate);
+            context.AddParameterWithValue("recovery_date", entity.RecoveryDate);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryAsync();
+            await context.NonQueryAsync();
         }
     }
 }

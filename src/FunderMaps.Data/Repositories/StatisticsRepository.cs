@@ -112,7 +112,6 @@ namespace FunderMaps.Data.Repositories
                 };
 
             // TODO: Write out columns in the select.
-            // Build SQL.
             // Note: This uses a CTE for proper index usage. 
             var sql = $@"
                 WITH id_cte AS (
@@ -127,15 +126,12 @@ namespace FunderMaps.Data.Repositories
                 FROM data.{GetTable(product)} AS s
                 WHERE s.neighborhood_id = (SELECT * FROM id_cte)";
 
-            // Execute sql.
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("identifier", identifier);
-            cmd.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("identifier", identifier);
+            context.AddParameterWithValue("user_id", userId);
 
-            // TODO Don't throw if nothing is found
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
 
             // Map and return.
             return new StatisticsProduct

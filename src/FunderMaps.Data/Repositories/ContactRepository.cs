@@ -2,7 +2,6 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -38,13 +37,11 @@ namespace FunderMaps.Data.Repositories
                     @phone_number)
                 ON CONFLICT DO NOTHING";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            // Cannot ensure affect, row can already exist.
-            await cmd.ExecuteNonQueryAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync(affectedGuard: false);
 
             return entity.Email;
         }
@@ -73,12 +70,11 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("email", email);
+            context.AddParameterWithValue("email", email);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         private static void MapToWriter(DbCommand cmd, Contact entity)
@@ -111,13 +107,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   email = @email
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("email", email);
+            context.AddParameterWithValue("email", email);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -141,11 +135,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
-            while (await reader.ReadAsync(AppContext.CancellationToken))
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -168,12 +160,11 @@ namespace FunderMaps.Data.Repositories
                             phone_number = @phone_number
                     WHERE   email = @email";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
     }
 }

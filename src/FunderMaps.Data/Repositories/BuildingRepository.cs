@@ -4,7 +4,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -45,12 +44,12 @@ namespace FunderMaps.Data.Repositories
             => new Building
             {
                 Id = reader.GetSafeString(0),
+                BuildingType = reader.GetFieldValue<BuildingType?>(1),
                 BuiltYear = reader.GetDateTime(1),
-                IsActive = reader.GetBoolean(2),
-                Geometry = reader.GetString(3),
+                IsActive = reader.GetBoolean(3),
                 ExternalId = reader.GetSafeString(4),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(5),
-                BuildingType = reader.GetFieldValue<BuildingType?>(6),
+                Geometry = reader.GetString(6),
                 NeighborhoodId = reader.GetSafeString(7),
             };
 
@@ -58,24 +57,22 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 SELECT  id,
+                        building_type,
                         built_year,
                         is_active,
-                        geom,
                         external_id,
                         external_source,
-                        building_type,
+                        geom,
                         neighborhood_id
                 FROM    geocoder.building_encoded_geom
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
