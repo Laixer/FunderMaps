@@ -45,12 +45,11 @@ namespace FunderMaps.Data.Repositories
                     @substructure)
                 RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context.Command, entity);
 
-            return await cmd.ExecuteScalarIntAsync();
+            return await context.ScalarAsync<int>();
         }
 
         /// <summary>
@@ -82,12 +81,11 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.inquiry_sample
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            await context.NonQueryAsync();
         }
 
         private static void MapToWriter(DbCommand cmd, InquirySample entity)
@@ -137,12 +135,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -183,11 +180,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync(AppContext.CancellationToken);
-            while (await reader.ReadAsync(AppContext.CancellationToken))
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -225,13 +220,13 @@ namespace FunderMaps.Data.Repositories
                             substructure = @substructure
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync(AppContext.CancellationToken);
+            MapToWriter(context.Command, entity);
+
+            await context.NonQueryAsync();
         }
     }
 }

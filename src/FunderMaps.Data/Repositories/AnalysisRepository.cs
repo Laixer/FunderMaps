@@ -5,11 +5,9 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -69,15 +67,13 @@ namespace FunderMaps.Data.Repositories
                     AND 
                     application.is_geometry_in_fence(@user_id, ac.geom)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("external_id", externalId);
-            cmd.AddParameterWithValue("external_source", externalSource);
-            cmd.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("external_id", externalId);
+            context.AddParameterWithValue("external_source", externalSource);
+            context.AddParameterWithValue("user_id", userId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -116,14 +112,12 @@ namespace FunderMaps.Data.Repositories
                     AND 
                     application.is_geometry_in_fence(@user_id, ac.geom)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
-            cmd.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("user_id", userId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -140,31 +134,29 @@ namespace FunderMaps.Data.Repositories
             // FUTURE This always returns EntityNotFoundException when the building is either not-existent.
             var sql = @"
                 SELECT
-                    ac.id,
-                    ac.external_id,
-                    ac.external_source,
-                    ac.foundation_type,
-                    ac.groundwater_level,
-                    ac.foundation_risk,
-                    ac.construction_year,
-                    ac.building_height,
-                    ac.ground_level,
-                    ac.restoration_costs,
-                    ac.dewatering_depth,
-                    ac.drystand,
-                    ac.reliability,
-                    ac.neighborhood_id
-                FROM data.analysis_product_complete AS ac
+                    id,
+                    external_id,
+                    external_source,
+                    foundation_type,
+                    groundwater_level,
+                    foundation_risk,
+                    construction_year,
+                    building_height,
+                    ground_level,
+                    restoration_costs,
+                    dewatering_depth,
+                    drystand,
+                    reliability,
+                    neighborhood_id
+                FROM data.analysis_product_complete
                 WHERE
-                    ac.id = @id";
+                    id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -204,15 +196,14 @@ namespace FunderMaps.Data.Repositories
                 LIMIT @limit
                 OFFSET @offset";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("query", query);
-            cmd.AddParameterWithValue("user_id", userId);
-            cmd.AddParameterWithValue("limit", (navigation ?? Navigation.DefaultCollection).Limit);
-            cmd.AddParameterWithValue("offset", (navigation ?? Navigation.DefaultCollection).Offset);
+            context.AddParameterWithValue("query", query);
+            context.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("limit", (navigation ?? Navigation.DefaultCollection).Limit);
+            context.AddParameterWithValue("offset", (navigation ?? Navigation.DefaultCollection).Offset);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync(readAhead: false);
 
             // FUTURE: Make async enumerable.
             var result = new List<AnalysisProduct>();

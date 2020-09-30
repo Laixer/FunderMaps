@@ -33,14 +33,12 @@ namespace FunderMaps.Data.Repositories
                     @name,
                     @email)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("email", entity.Email);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("name", entity.Name);
+            context.AddParameterWithValue("email", entity.Email);
+
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetGuid(0);
         }
@@ -69,10 +67,11 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_proposal
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
         private static OrganizationProposal MapFromReader(DbDataReader reader)
@@ -98,12 +97,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -123,12 +121,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_name = application.normalize(@name)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("@name", name);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("@name", name);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -148,12 +145,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("email", email);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -177,11 +173,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }

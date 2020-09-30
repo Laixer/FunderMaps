@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -42,20 +41,18 @@ namespace FunderMaps.Data.Repositories
                     @type,
                     @document_date,
                     @document_file)
-                RETURNING id;
-            ";
+                RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("attribution", entity.Attribution);
-            cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("attribution", entity.Attribution);
+            context.AddParameterWithValue("access_policy", entity.AccessPolicy);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("document_date", entity.DocumentDate);
+            context.AddParameterWithValue("document_file", entity.DocumentFile);
 
-            return await cmd.ExecuteScalarIntAsync();
+            return await context.ScalarAsync<int>();
         }
 
         /// <summary>
@@ -82,12 +79,11 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.recovery
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await cmd.ExecuteNonQueryAsync();
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -112,13 +108,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            await reader.ReadAsync();
+            await using var reader = await context.ReaderAsync();
 
             return new Recovery
             {
@@ -161,11 +155,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return new Recovery
                 {
@@ -203,17 +195,16 @@ namespace FunderMaps.Data.Repositories
                             document_file = @document_file
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("access_policy", entity.AccessPolicy);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("access_policy", entity.AccessPolicy);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("document_date", entity.DocumentDate);
+            context.AddParameterWithValue("document_file", entity.DocumentFile);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryAsync();
+            await context.NonQueryAsync();
         }
     }
 }
