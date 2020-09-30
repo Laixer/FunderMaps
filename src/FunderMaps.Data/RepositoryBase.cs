@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
@@ -17,32 +17,32 @@ namespace FunderMaps.Data
         where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>, IComparable<TEntryPrimaryKey>
     {
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.GetByIdAsync"/>
+        ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntity> GetByIdAsync(TEntryPrimaryKey id);
+        public abstract ValueTask<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.ListAllAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
         /// </summary>
         public abstract IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.AddAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntryPrimaryKey> AddAsync(TEntity entity);
+        public abstract ValueTask<TEntityPrimaryKey> AddAsync(TEntity entity);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.UpdateAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
         /// </summary>
         public abstract ValueTask UpdateAsync(TEntity entity);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.DeleteAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
         /// </summary>
-        public abstract ValueTask DeleteAsync(TEntryPrimaryKey id);
+        public abstract ValueTask DeleteAsync(TEntityPrimaryKey id);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.CountAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
         /// </summary>
         public abstract ValueTask<ulong> CountAsync();
     }

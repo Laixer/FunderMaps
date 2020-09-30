@@ -1,8 +1,7 @@
-﻿using FunderMaps.Core;
+﻿using System.Threading.Tasks;
+using FunderMaps.Core;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Data
 {
@@ -25,16 +24,17 @@ namespace FunderMaps.Data
         public AppContext AppContext { get; set; }
 
         /// <summary>
-        ///     Runs the SQL command and return an unsigned long value.
+        ///     Create the database context.
         /// </summary>
-        /// <param name="cmdText">SQL query.</param>
-        /// <returns>Return value as ulong.</returns>
-        public async ValueTask<ulong> ExecuteScalarUnsignedLongCommandAsync(string cmdText)
+        public async ValueTask<DbContext> DbContextFactory(string cmdText)
         {
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-            await using var cmd = DbProvider.CreateCommand(cmdText, connection);
-
-            return await cmd.ExecuteScalarUnsignedLongAsync(AppContext.CancellationToken);
+            var context = new DbContext()
+            {
+                DbProvider = DbProvider,
+                AppContext = AppContext,
+            };
+            await context.InitializeAsync(cmdText);
+            return context;
         }
 
         // FUTURE: Maybe to npgsql specific.
