@@ -52,7 +52,8 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddFunderMapsAssembly();
 
             // Configure project specific services.
             services.AddTransient<IMappingService, MappingService>();
