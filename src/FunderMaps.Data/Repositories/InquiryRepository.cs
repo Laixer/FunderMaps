@@ -8,6 +8,7 @@ using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -92,10 +93,7 @@ namespace FunderMaps.Data.Repositories
             return await cmd.ExecuteScalarIntAsync();
         }
 
-        public Task<uint> CountAsync(Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<uint> CountAsync(Guid orgId) => throw new NotImplementedException();
 
         /// <summary>
         ///     Retrieve number of entities.
@@ -178,10 +176,7 @@ namespace FunderMaps.Data.Repositories
                 },
             };
 
-        public Task<InquiryFull> GetByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<InquiryFull> GetByIdAsync(int id, Guid orgId) => throw new NotImplementedException();
 
         /// <summary>
         ///     Retrieve <see cref="InquiryFull"/> by id.
@@ -233,15 +228,9 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId) => throw new NotImplementedException();
 
-        public Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation) => throw new NotImplementedException();
 
         /// <summary>
         ///     Retrieve all <see cref="InquiryFull"/>.
