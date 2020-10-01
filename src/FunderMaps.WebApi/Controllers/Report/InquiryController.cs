@@ -2,6 +2,7 @@
 using FunderMaps.Controllers;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
 using FunderMaps.Core.UseCases;
@@ -49,6 +50,8 @@ namespace FunderMaps.WebApi.Controllers.Report
             result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
             result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
             result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
+            result.Creator = await _inquiryUseCase.GetCreatorAsync(result.Id);
+            result.Owner = await _inquiryUseCase.GetOwnerAsync(result.Id);
             result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
             result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
 
@@ -80,13 +83,11 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpGet("recent")]
-        public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
-        {
+        public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination) =>
             // FUTURE: _inquiryUseCase.GetAllRecentAsync
 
             // Return.
-            return Ok(await GetAllAsync(pagination));
-        }
+            Ok(await GetAllAsync(pagination));
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
