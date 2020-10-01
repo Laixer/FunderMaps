@@ -36,7 +36,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// Retrieve all entities and filter on report.
         /// </summary>
         /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, INavigation navigation);
+        IAsyncEnumerable<InquirySample> ListAllReportAsync(int report, INavigation navigation);
 
         /// <summary>
         /// Retrieve all entities and filter on report and organization id.
