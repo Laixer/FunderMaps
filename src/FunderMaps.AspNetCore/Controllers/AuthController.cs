@@ -1,27 +1,26 @@
-﻿using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Application
+namespace FunderMaps.AspNetCore.Controllers
 {
     /// <summary>
     ///     Endpoint controller for application authentication.
     /// </summary>
     [Route("auth")]
-    public class AuthController : BaseApiController
+    public class AuthController : ControllerBase
     {
         private readonly AuthenticationHelper _authenticationHelper;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(AuthenticationHelper authenticationHelper) 
+        public AuthController(AuthenticationHelper authenticationHelper)
             => _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
 
         /// <summary>

@@ -77,7 +77,8 @@ namespace FunderMaps.WebApi
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddFunderMapsAssembly();
 
             services.AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("api_health_check")

@@ -1,16 +1,15 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Controllers;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Application
+namespace FunderMaps.AspNetCore.Controllers
 {
     /// <summary>
     ///     Return application versioning information.
     /// </summary>
     [AllowAnonymous]
-    public class VersionController : BaseApiController
+    public class VersionController : ControllerBase
     {
         // GET: api/version
         /// <summary>
