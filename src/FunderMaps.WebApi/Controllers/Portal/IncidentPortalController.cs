@@ -136,7 +136,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
         public async Task<IActionResult> GetRiskAnalysisAsync([Required][Geocoder] string id)
         {
             // Assign.
-            AnalysisProduct product = await _productService.GetAnalysisByIdAsync(Guid.Empty, AnalysisProductType.Risk, id, HttpContext.RequestAborted);
+            AnalysisProduct product = await _productService.GetAnalysisByIdAsync(Guid.Empty, AnalysisProductType.Risk, id);
 
             // Map.
             var result = _mapper.Map<AnalysisProduct, AnalysisRiskDto>(product);

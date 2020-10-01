@@ -56,7 +56,7 @@ namespace FunderMaps.Webservice
 
             // Configure project specific services.
             services.AddTransient<IMappingService, MappingService>();
-            services.AddTransient<ProductRequestHandler>();
+            services.AddTransient<ProductHandler>();
             services.AddTransient<AuthenticationHelper>();
 
             // Configure FunderMaps services.

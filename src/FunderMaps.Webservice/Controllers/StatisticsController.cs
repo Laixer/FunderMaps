@@ -3,7 +3,6 @@ using FunderMaps.Webservice.Handlers;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -29,20 +28,21 @@ namespace FunderMaps.Webservice.Controllers
         ///     <paramref name="input"/> is validated through <see cref="ApiControllerAttribute"/>.
         /// </remarks>
         /// <param name="input"><see cref="StatisticsInputModel"/></param>
-        /// <param name="productRequestHandler"><see cref="ProductRequestHandler"/></param>
+        /// <param name="productRequestHandler"><see cref="ProductHandler"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
-        public async Task<IActionResult> GetProductAsync([FromQuery] StatisticsInputModel input, 
-            [FromServices] ProductRequestHandler productRequestHandler,
+        public async Task<IActionResult> GetProductAsync(
+            [FromQuery] StatisticsInputModel input,
+            [FromServices] ProductHandler productRequestHandler,
             [FromServices] AuthManager authManager)
         {
-            // Get user id.
+            // Act.
             var user = await authManager.GetUserAsync(User);
 
-            // Process request and return.
-            var result = await productRequestHandler.ProcessStatisticsRequestAsync(user.Id, input, HttpContext.RequestAborted);
+            // Act.
+            var result = await productRequestHandler.ProcessStatisticsRequestAsync(user.Id, input);
 
-            // Return in ok result.
+            // Return.
             return Ok(result);
         }
     }

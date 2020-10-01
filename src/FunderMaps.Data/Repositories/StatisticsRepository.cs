@@ -5,8 +5,6 @@ using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -130,20 +128,20 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("identifier", identifier);
             context.AddParameterWithValue("user_id", userId);
 
-            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
+            // await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
 
             // Map and return.
             return new StatisticsProduct
             {
-                ConstructionYearDistribution = product == StatisticsProductType.ConstructionYears ? await MapConstructionYearDistributionAsync(reader) : null,
-                DataCollectedPercentage = product == StatisticsProductType.DataCollected ? await MapDataCollectedAsync(reader) : (double?)null,
-                FoundationRiskDistribution = product == StatisticsProductType.FoundationRisk ? await MapFoundationRiskDistributionAsync(reader) : null,
-                FoundationTypeDistribution = product == StatisticsProductType.FoundationRatio ? await MapFoundationTypeDistributionAsync(reader) : null,
+                ConstructionYearDistribution = product == StatisticsProductType.ConstructionYears ? await MapConstructionYearDistributionAsync(context) : null,
+                DataCollectedPercentage = product == StatisticsProductType.DataCollected ? await MapDataCollectedAsync(context) : (double?)null,
+                FoundationRiskDistribution = product == StatisticsProductType.FoundationRisk ? await MapFoundationRiskDistributionAsync(context) : null,
+                FoundationTypeDistribution = product == StatisticsProductType.FoundationRatio ? await MapFoundationTypeDistributionAsync(context) : null,
                 NeighborhoodCode = method == IdMethod.NeighborhoodCode ? identifier : null,
                 NeighborhoodId = method == IdMethod.NeighborhoodId ? identifier : null,
-                TotalBuildingRestoredCount = product == StatisticsProductType.BuildingsRestored ? await MapBuildingsRestoredAsync(reader) : (uint?)null,
-                TotalIncidentCount = product == StatisticsProductType.Incidents ? await MapIncidentsAsync(reader) : (uint?)null,
-                TotalReportCount = product == StatisticsProductType.Reports ? await MapInquiriesAsync(reader) : (uint?)null,
+                TotalBuildingRestoredCount = product == StatisticsProductType.BuildingsRestored ? await MapBuildingsRestoredAsync(context) : (uint?)null,
+                TotalIncidentCount = product == StatisticsProductType.Incidents ? await MapIncidentsAsync(context) : (uint?)null,
+                TotalReportCount = product == StatisticsProductType.Reports ? await MapInquiriesAsync(context) : (uint?)null,
             };
         }
 
@@ -152,11 +150,12 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets a <see cref="ConstructionYearDistribution"/> from a <paramref name="reader"/>.
         /// </summary>
-        private async Task<ConstructionYearDistribution> MapConstructionYearDistributionAsync(DbDataReader reader)
+        private async Task<ConstructionYearDistribution> MapConstructionYearDistributionAsync(DbContext context)
         {
             // FUTURE: Make functional
             var pairs = new List<ConstructionYearPair>();
 
+            await using var reader = await context.ReaderAsync(readAhead: false, hasRowsGuard: false);
             while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 pairs.Add(new ConstructionYearPair
@@ -176,9 +175,9 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of buildings restored from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Amount of buildings restored.</returns>
-        private static async Task<uint> MapBuildingsRestoredAsync(DbDataReader reader, CancellationToken token = default)
+        private static async Task<uint> MapBuildingsRestoredAsync(DbContext context)
         {
-            await reader.ReadAsync(token);
+            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
             return reader.GetUInt(1);
         }
 
@@ -186,9 +185,9 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of data collected from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Percentage of data collected.</returns>
-        private async Task<double> MapDataCollectedAsync(DbDataReader reader)
+        private async Task<double> MapDataCollectedAsync(DbContext context)
         {
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
             return reader.GetDouble(1);
         }
 
@@ -196,7 +195,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets a <see cref="FoundationRiskDistribution"/> from a <paramref name="reader"/>.
         /// </summary>
-        private async Task<FoundationRiskDistribution> MapFoundationRiskDistributionAsync(DbDataReader reader)
+        private async Task<FoundationRiskDistribution> MapFoundationRiskDistributionAsync(DbContext context)
         {
             var map = new Dictionary<FoundationRisk, double>
             {
@@ -207,6 +206,7 @@ namespace FunderMaps.Data.Repositories
                 { FoundationRisk.E, 0 }
             };
 
+            await using var reader = await context.ReaderAsync(readAhead: false, hasRowsGuard: false);
             while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 map[reader.GetFieldValue<FoundationRisk>(1)] = reader.GetDouble(2);
@@ -225,11 +225,12 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets a <see cref="FoundationTypeDistribution"/> from a <paramref name="reader"/>.
         /// </summary>
-        private async Task<FoundationTypeDistribution> MapFoundationTypeDistributionAsync(DbDataReader reader)
+        private async Task<FoundationTypeDistribution> MapFoundationTypeDistributionAsync(DbContext context)
         {
             // FUTURE: Make functional
             var pairs = new List<FoundationTypePair>();
 
+            await using var reader = await context.ReaderAsync(readAhead: false, hasRowsGuard: false);
             while (await reader.ReadAsync(AppContext.CancellationToken))
             {
                 pairs.Add(new FoundationTypePair
@@ -249,9 +250,9 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of incidents from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Amount of incidents.</returns>
-        private async Task<uint> MapIncidentsAsync(DbDataReader reader)
+        private async Task<uint> MapIncidentsAsync(DbContext context)
         {
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
             return reader.GetUInt(1);
         }
 
@@ -259,9 +260,9 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of inquiries from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Amount of inquiries.</returns>
-        private async Task<uint> MapInquiriesAsync(DbDataReader reader)
+        private async Task<uint> MapInquiriesAsync(DbContext context)
         {
-            await reader.ReadAsync(AppContext.CancellationToken);
+            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
             return reader.GetUInt(1);
         }
 

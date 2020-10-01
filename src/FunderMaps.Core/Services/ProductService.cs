@@ -5,7 +5,6 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,38 +43,30 @@ namespace FunderMaps.Core.Services
         /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="externalId">External building id.</param>
         /// <param name="externalDataSource">External data source.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
-        public virtual async Task<AnalysisProduct> GetAnalysisByExternalIdAsync(
+        public virtual async ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(
             Guid userId,
             AnalysisProductType productType,
             string externalId,
-            ExternalDataSource externalDataSource,
-            CancellationToken token = default)
+            ExternalDataSource externalDataSource)
         {
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
 
-            // Get analysis product.
             var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource);
 
-            // Process and return.
-            return await ProcessAnalysisAsync(userId, productType, product, token);
+            await ProcessAnalysisAsync(userId, productType, product);
+            return product;
         }
 
         /// <summary>
         ///     Gets a single analysis based on an internal id.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="id">Internal building id.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
-        public virtual async Task<AnalysisProduct> GetAnalysisByIdAsync(
+        public virtual async ValueTask<AnalysisProduct> GetAnalysisByIdAsync(
             Guid userId,
             AnalysisProductType productType,
-            string id,
-            CancellationToken token = default)
+            string id)
         {
             id.ThrowIfNullOrEmpty();
 
@@ -85,8 +76,8 @@ namespace FunderMaps.Core.Services
                 ? await _analysisRepository.GetByIdInFenceAsync(userId, id)
                 : await _analysisRepository.GetByIdAsync(id);
 
-            // Process and return.
-            return await ProcessAnalysisAsync(userId, productType, product);
+            await ProcessAnalysisAsync(userId, productType, product);
+            return product;
         }
 
         /// <summary>
@@ -96,49 +87,33 @@ namespace FunderMaps.Core.Services
         ///     All items outside the geofence get removed from the result set.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="query">Query search string.</param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public virtual async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(
+        public virtual async IAsyncEnumerable<AnalysisProduct> GetAnalysisByQueryAsync(
             Guid userId,
             AnalysisProductType productType,
             string query,
-            INavigation navigation,
-            CancellationToken token = default)
+            INavigation navigation)
         {
             userId.ThrowIfNullOrEmpty();
             query.ThrowIfNullOrEmpty();
+
             navigation.Validate();
 
-            // Get analysis product.
-            var products = await _analysisRepository.GetByQueryAsync(userId, query, navigation);
-
-            // Process and return.
-            // FUTURE Clean up, make async foreach or similar.
-            var result = new ConcurrentBag<AnalysisProduct>();
-            Parallel.ForEach(products, (product) =>
+            await foreach (var product in _analysisRepository.GetBySearchQueryAsync(userId, query, navigation))
             {
-                result.Add(Task.Run(() => ProcessAnalysisAsync(userId, productType, product)).Result);
-            });
-
-            return result;
+                await ProcessAnalysisAsync(userId, productType, product);
+                yield return product;
+            }
         }
 
         /// <summary>
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(
+        public virtual IAsyncEnumerable<AnalysisProduct> GetAnalysisInFenceAsync(
             Guid userId,
             AnalysisProductType productType,
-            INavigation navigation,
-            CancellationToken token = default)
+            INavigation navigation)
         {
             throw new NotImplementedException();
         }
@@ -152,22 +127,16 @@ namespace FunderMaps.Core.Services
         ///     based on the <paramref name="productType"/>.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="StatisticsProductType"/></param>
         /// <param name="neighborhoodCode">Neighborhood code.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="StatisticsProduct"/></returns>
-        public virtual async Task<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
+        public virtual async ValueTask<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
             Guid userId,
             StatisticsProductType productType,
-            string neighborhoodCode,
-            CancellationToken token = default)
+            string neighborhoodCode)
         {
             neighborhoodCode.ThrowIfNullOrEmpty();
 
-            // Create and assign.
             var product = new StatisticsProduct();
 
-            // Get statistics operation.
             switch (productType)
             {
                 case StatisticsProductType.FoundationRatio:
@@ -202,19 +171,15 @@ namespace FunderMaps.Core.Services
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="StatisticsProductType"/></param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="StatisticsProduct"/></returns>
-        public virtual Task<StatisticsProduct> GetStatisticsInFenceAsync(
+        public virtual ValueTask<StatisticsProduct> GetStatisticsInFenceAsync(
             Guid userId,
             StatisticsProductType productType,
-            INavigation navigation,
-            CancellationToken token = default)
+            INavigation navigation)
         {
             throw new NotImplementedException();
         }
 
+        // FUTURE: Parallel
         /// <summary>
         ///     This function does the following:
         ///     <list type="bullet">
@@ -227,28 +192,18 @@ namespace FunderMaps.Core.Services
         ///     If a statistic addon property should not be populated, it will
         ///     remain as it was (null).
         /// </remarks>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
-        /// <param name="product"><see cref="AnalysisProduct"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="Task"/></returns>
-        private async Task<AnalysisProduct> ProcessAnalysisAsync(
+        private async Task ProcessAnalysisAsync(
             Guid userId,
             AnalysisProductType productType,
-            AnalysisProduct product,
-            CancellationToken token = default)
+            AnalysisProduct product)
         {
-            await Task.WhenAll(new Task[]
-            {
-                ProcessAnalysisFoundationTypeDistributionAsync(userId, productType, product, token),
-                ProcessAnalysisConstructionYearDistributionAsync(userId, productType, product, token),
-                ProcessAnalysisFoundationRiskDistributionAsync(userId, productType, product, token),
-                ProcessAnalysisDataCollectedPercentageAsync(userId, productType, product, token),
-                ProcessAnalysisTotalBuildingsRestoredCountAsync(userId, productType, product, token),
-                ProcessAnalysisTotalIncidentCountAsync(userId, productType, product, token),
-                ProcessAnalysisTotalReportCountAsync(userId, productType, product, token),
-            });
-
-            return product;
+            await ProcessAnalysisFoundationTypeDistributionAsync(userId, productType, product);
+            await ProcessAnalysisConstructionYearDistributionAsync(userId, productType, product);
+            await ProcessAnalysisFoundationRiskDistributionAsync(userId, productType, product);
+            await ProcessAnalysisDataCollectedPercentageAsync(userId, productType, product);
+            await ProcessAnalysisTotalBuildingsRestoredCountAsync(userId, productType, product);
+            await ProcessAnalysisTotalIncidentCountAsync(userId, productType, product);
+            await ProcessAnalysisTotalReportCountAsync(userId, productType, product);
         }
 
         #region Process statistic part of analysis
