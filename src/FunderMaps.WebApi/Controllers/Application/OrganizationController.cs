@@ -53,6 +53,23 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // GET: api/organization/{id}
+        /// <summary>
+        ///     Return organization by id.
+        /// </summary>
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetAsync(Guid id)
+        {
+            // Act.
+            Organization organization = await _organizationManager.GetAsync(id);
+
+            // Map.
+            var output = _mapper.Map<OrganizationDto>(organization);
+
+            // Return.
+            return Ok(output);
+        }
+
         // PUT: api/organization
         /// <summary>
         ///     Update session organization.
