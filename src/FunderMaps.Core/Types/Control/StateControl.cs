@@ -16,7 +16,7 @@ namespace FunderMaps.Core.Types.Control
         ///     Is write allowed in entry state.
         /// </summary>
         /// <returns><c>True</c> if allowed.</returns>
-        public bool AllowWrite => AuditStatus == AuditStatus.Todo || AuditStatus == AuditStatus.Pending;
+        public bool AllowWrite => AuditStatus == AuditStatus.Todo || AuditStatus == AuditStatus.Pending || AuditStatus == AuditStatus.Rejected;
 
         /// <summary>
         ///     Move to next state.
