@@ -18,6 +18,11 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Client document identifier.
         /// </summary>
+        /// <remarks>
+        ///     This is the document file name as the user gave it, NOT 
+        ///     the filename under which the document is stored. For that,
+        ///     see <see cref="DocumentFile"/>.
+        /// </remarks>
         [Required(AllowEmptyStrings = false)]
         public string DocumentName { get; set; }
 
@@ -49,11 +54,15 @@ namespace FunderMaps.WebApi.DataTransferObjects
         [Required, Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
         public DateTime DocumentDate { get; set; }
 
-        // TODO: Check if starts with https://
+        // TODO This is confusing, maybe rename this to DocumentFileName.
         /// <summary>
         ///     Document file name.
         /// </summary>
-        [Required, Url]
+        /// <remarks>
+        ///     This is the document file name as it is stored, NOT the document
+        ///     name that the user gave it (<see cref="DocumentName"/>).
+        /// </remarks>
+        [Required]
         public string DocumentFile { get; set; }
 
         /// <summary>
@@ -81,6 +90,16 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [Guid]
         public Guid Contractor { get; set; }
+
+        /// <summary>
+        ///     Creator identifier.
+        /// </summary>
+        public Guid Creator { get; set; }
+
+        /// <summary>
+        ///     Owner identifier.
+        /// </summary>
+        public Guid Owner { get; set; }
 
         /// <summary>
         ///     Record access policy.
