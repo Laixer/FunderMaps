@@ -43,7 +43,7 @@ namespace FunderMaps.Data.Repositories
                     address,
                     note,
                     base_measurement_level,
-                    building_year,
+                    built_year,
                     substructure)
                 VALUES (
                     @inquiry,
@@ -205,9 +205,39 @@ namespace FunderMaps.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, INavigation navigation)
+        public async IAsyncEnumerable<InquirySample> ListAllReportAsync(int report, INavigation navigation)
         {
-            throw new NotImplementedException();
+            if(navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
+            var sql = @"
+                SELECT  id,
+                        inquiry,
+                        address,
+                        note,
+                        create_date,
+                        update_date,
+                        delete_date,
+                        base_measurement_level,
+                        built_year,
+                        substructure
+                FROM    report.inquiry_sample
+                WHERE   inquiry = @InquiryId";
+
+            ConstructNavigation(ref sql, navigation);
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            cmd.AddParameterWithValue("InquiryId", report);
+
+            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
+            while (await reader.ReadAsync())
+            {
+                yield return MapFromReader(reader);
+            }
         }
 
         public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, Guid orgId, INavigation navigation)
