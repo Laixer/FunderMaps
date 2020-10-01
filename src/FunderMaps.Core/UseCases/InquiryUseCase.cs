@@ -5,6 +5,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,21 +19,27 @@ namespace FunderMaps.Core.UseCases
     public class InquiryUseCase
     {
         private readonly INotificationService _notificationService;
-        private readonly IBlobStorageService _fileStorageService;
+        private readonly IBlobStorageService _blobStorageService;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IInquirySampleRepository _inquirySampleRepository;
+
+        // TODO Move to some constant file.
+        /// <summary>
+        ///     Inquiry storage destination folder name.
+        /// </summary>
+        internal const string InquiryStorageFolderName = "inquiry-report";
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
         public InquiryUseCase(
             INotificationService notificationService,
-            IBlobStorageService fileStorageService,
+            IBlobStorageService blobStorageService,
             IInquiryRepository inquiryRepository,
             IInquirySampleRepository inquirySampleRepository)
         {
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
-            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
@@ -48,7 +55,28 @@ namespace FunderMaps.Core.UseCases
             var config = new MapperConfiguration(cfg => cfg.CreateMap<InquiryFull, Inquiry>());
             var mapper = config.CreateMapper();
 
-            return mapper.Map<Inquiry>(await _inquiryRepository.GetByIdAsync(id));
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            return mapper.Map<Inquiry>(inquiry);
+        }
+
+        /// <summary>
+        ///     Get inquiry creator.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        public virtual async ValueTask<Guid> GetCreatorAsync(int id)
+        {
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            return inquiry.Attribution.Creator;
+        }
+
+        /// <summary>
+        ///     Get inquiry owner.
+        /// </summary>
+        /// <param name="id">Entity id.</param>
+        public virtual async ValueTask<Guid> GetOwnerAsync(int id)
+        {
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            return inquiry.Attribution.Owner;
         }
 
         /// <summary>
@@ -121,8 +149,19 @@ namespace FunderMaps.Core.UseCases
         public async ValueTask<string> StoreDocumentAsync(Stream stream, string fileName, string contentType)
         {
             string newFileName = IO.Path.GetUniqueName(fileName);
-            await _fileStorageService.StoreFileAsync("inquiry-report", newFileName, contentType, stream); // TODO: store?
+            await _blobStorageService.StoreFileAsync(InquiryStorageFolderName, newFileName, contentType, stream); // TODO: store?
             return newFileName;
+        }
+
+        /// <summary>
+        ///     Gets an access uri for an inquiry document.
+        /// </summary>
+        /// <param name="inquiryId">Internal inquiry id.</param>
+        /// <returns>Access uri.</returns>
+        public async ValueTask<Uri> GetDocumentAccessUriAsync(int inquiryId)
+        {
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquiryId);
+            return await _blobStorageService.GetAccessLinkAsync(InquiryStorageFolderName, inquiry.DocumentFile, 1);
         }
 
         /// <summary>
@@ -301,10 +340,11 @@ namespace FunderMaps.Core.UseCases
         /// <summary>
         ///     Retrieve all inquiry samples.
         /// </summary>
+        /// <param name="inquiryId">Internal inquiry id.</param>
         /// <param name="navigation">Recordset nagivation.</param>
-        public virtual IAsyncEnumerable<InquirySample> GetAllSampleAsync(INavigation navigation)
+        public virtual IAsyncEnumerable<InquirySample> GetAllSampleAsync(int inquiryId, INavigation navigation)
         {
-            return _inquirySampleRepository.ListAllAsync(navigation);
+            return _inquirySampleRepository.ListAllReportAsync(inquiryId, navigation);
         }
 
         /// <summary>
