@@ -39,7 +39,7 @@ namespace FunderMaps.WebApi.Controllers.Application
 
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync([FromBody] UserDto input)
+        public async Task<IActionResult> AddUserAsync([FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -56,7 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllUsersAsync([FromQuery] PaginationModel pagination)
         {
             // Act.
             Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
@@ -71,7 +71,7 @@ namespace FunderMaps.WebApi.Controllers.Application
 
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
