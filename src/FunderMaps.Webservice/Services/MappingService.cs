@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace FunderMaps.Webservice.Services
 {
-    // FUTURE Do we need to add the product to the response?
+    // FUTURE: Remove
     /// <summary>
     ///     Manages all our mapping operations.
     /// </summary>

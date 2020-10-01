@@ -104,7 +104,7 @@ namespace FunderMaps.Data
         /// </summary>
         /// <param name="readAhead">Read to first row.</param>
         /// <param name="hasRowsGuard">Throw if no rows returned.</param>
-        public async ValueTask<DbDataReader> ReaderAsync(bool readAhead = true, bool hasRowsGuard = true)
+        public async Task<DbDataReader> ReaderAsync(bool readAhead = true, bool hasRowsGuard = true)
         {
             Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
             if (!Reader.HasRows && hasRowsGuard)
@@ -142,7 +142,7 @@ namespace FunderMaps.Data
         ///     Execute command.
         /// </summary>
         /// <param name="affectedGuard">Throw if no rows were affected.</param>
-        public async ValueTask NonQueryAsync(bool affectedGuard = true)
+        public async Task NonQueryAsync(bool affectedGuard = true)
         {
             var affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
             if (affected <= 0 && affectedGuard)
@@ -155,7 +155,7 @@ namespace FunderMaps.Data
         ///     Execute command and return scalar result.
         /// </summary>
         /// <param name="resultGuard">Throw if no result was returned.</param>
-        public async ValueTask<TResult> ScalarAsync<TResult>(bool resultGuard = true)
+        public async Task<TResult> ScalarAsync<TResult>(bool resultGuard = true)
         {
             var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
             if (result == null && resultGuard)

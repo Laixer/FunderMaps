@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +21,7 @@ namespace AutoMapper
         /// <param name="enumerable">Source object to map from.</param>
         /// <param name="token">The cancellation instruction.</param>
         /// <returns>Mapped destination object.</returns>
-        public static async ValueTask<TDestination> MapAsync<TDestination, TEntity>(
+        public static async Task<TDestination> MapAsync<TDestination, TEntity>(
             this IMapper mapper,
             IAsyncEnumerable<TEntity> enumerable,
             CancellationToken token = default)
