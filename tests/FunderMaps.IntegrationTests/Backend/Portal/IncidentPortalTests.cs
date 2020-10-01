@@ -198,6 +198,24 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             Assert.NotNull(returnObject.Name);
         }
 
+        [Fact]
+        public async Task GetRiskAnalysisReturnAnalysis()
+        {
+            // Arrange
+            var analysisProducts = new AnalysisProductFaker().Generate();
+            var client = _factory
+                .WithDataStoreItem(analysisProducts)
+                .CreateClient();
+
+            // Act.
+            var response = await client.GetAsync($"api/incident-portal/risk?id={analysisProducts.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisRiskDto>();
+
+            // Assert.
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.NeighborhoodId);
+        }
+
         [Theory]
         [InlineData(null, 0, null)]
         [InlineData("gfm-asdkkgfsljshdf", 0, null)]

@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Types.Distributions;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="FoundationTypeDistribution"/></returns>
-        Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets a <see cref="ConstructionYearDistribution"/> by neighborhood.
@@ -23,7 +24,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="ConstructionYearDistribution"/></returns>
-        Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets a <see cref="FoundationRiskDistribution"/> by neighborhood.
@@ -31,7 +32,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="FoundationRiskDistribution"/></returns>
-        Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the collected data percentage by neighborhood.
@@ -39,7 +40,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Percentage</returns>
-        Task<double> GetDataCollectedPercentageByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<double> GetDataCollectedPercentageByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the amount of buildings restored by neighborhood.
@@ -47,7 +48,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Count</returns>
-        Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<uint> GetTotalBuildingRestoredCountByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the amount of incidents by neighborhood.
@@ -55,7 +56,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Count</returns>
-        Task<uint> GetTotalIncidentCountByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<uint> GetTotalIncidentCountByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the amount of reports by neighborhood.
@@ -63,7 +64,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodId">Internal neighborhood id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Count</returns>
-        Task<uint> GetTotalReportCountByIdAsync(string neighborhoodId, CancellationToken token = default);
+        Task<uint> GetTotalReportCountByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default);
 
         /// <summary>
         ///     Gets a <see cref="FoundationTypeDistribution"/> by neighborhood.
@@ -71,7 +72,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="FoundationTypeDistribution"/></returns>
-        Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
 
         /// <summary>
         ///     Gets a <see cref="ConstructionYearDistribution"/> by neighborhood.
@@ -79,7 +80,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="ConstructionYearDistribution"/></returns>
-        Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
 
         /// <summary>
         ///     Gets a <see cref="FoundationRiskDistribution"/> by neighborhood.
@@ -87,7 +88,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns><see cref="FoundationRiskDistribution"/></returns>
-        Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the collected data percentage by neighborhood.
@@ -95,7 +96,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Percentage</returns>
-        Task<double> GetDataCollectedPercentageByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<double> GetDataCollectedPercentageByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the amount of buildings restored by neighborhood.
@@ -103,7 +104,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Count</returns>
-        Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the amount of incidents by neighborhood.
@@ -111,7 +112,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Count</returns>
-        Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<uint> GetTotalIncidentCountByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
 
         /// <summary>
         ///     Gets the amount of reports by neighborhood.
@@ -119,6 +120,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="neighborhoodCode">External neighborhood code.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Count</returns>
-        Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default);
+        Task<uint> GetTotalReportCountByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default);
     }
 }

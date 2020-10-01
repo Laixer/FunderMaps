@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
@@ -45,47 +44,47 @@ namespace FunderMaps.Data.Repositories
             NeighborhoodId
         }
 
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (await ProcessAsync(StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodCode, neighborhoodCode, token)).ConstructionYearDistribution;
+        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (await ProcessAsync(userId, StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodCode, neighborhoodCode, token)).ConstructionYearDistribution;
 
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (await ProcessAsync(StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodId, neighborhoodId, token)).ConstructionYearDistribution;
+        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (await ProcessAsync(userId, StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodId, neighborhoodId, token)).ConstructionYearDistribution;
 
-        public async Task<double> GetDataCollectedPercentageByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (double)(await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodCode, neighborhoodCode, token)).DataCollectedPercentage;
+        public async Task<double> GetDataCollectedPercentageByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (double)(await ProcessAsync(userId, StatisticsProductType.DataCollected, IdMethod.NeighborhoodCode, neighborhoodCode, token)).DataCollectedPercentage;
 
-        public async Task<double> GetDataCollectedPercentageByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (double)(await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodId, neighborhoodId, token)).DataCollectedPercentage;
+        public async Task<double> GetDataCollectedPercentageByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (double)(await ProcessAsync(userId, StatisticsProductType.DataCollected, IdMethod.NeighborhoodId, neighborhoodId, token)).DataCollectedPercentage;
 
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (await ProcessAsync(StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodCode, neighborhoodCode, token)).FoundationRiskDistribution;
+        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (await ProcessAsync(userId, StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodCode, neighborhoodCode, token)).FoundationRiskDistribution;
 
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (await ProcessAsync(StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationRiskDistribution;
+        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (await ProcessAsync(userId, StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationRiskDistribution;
 
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodCode, neighborhoodCode, token)).FoundationTypeDistribution;
+        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (await ProcessAsync(userId, StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodCode, neighborhoodCode, token)).FoundationTypeDistribution;
 
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationTypeDistribution;
+        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (await ProcessAsync(userId, StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodId, neighborhoodId, token)).FoundationTypeDistribution;
 
-        public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (uint)(await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalBuildingRestoredCount;
+        public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (uint)(await ProcessAsync(userId, StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalBuildingRestoredCount;
 
-        public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (uint)(await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalBuildingRestoredCount;
+        public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (uint)(await ProcessAsync(userId, StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalBuildingRestoredCount;
 
-        public async Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (uint)(await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalIncidentCount;
+        public async Task<uint> GetTotalIncidentCountByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (uint)(await ProcessAsync(userId, StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalIncidentCount;
 
-        public async Task<uint> GetTotalIncidentCountByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (uint)(await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalIncidentCount;
+        public async Task<uint> GetTotalIncidentCountByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (uint)(await ProcessAsync(userId, StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalIncidentCount;
 
-        public async Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode, CancellationToken token = default)
-            => (uint)(await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalReportCount;
+        public async Task<uint> GetTotalReportCountByExternalIdAsync(Guid userId, string neighborhoodCode, CancellationToken token = default)
+            => (uint)(await ProcessAsync(userId, StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode, token)).TotalReportCount;
 
-        public async Task<uint> GetTotalReportCountByIdAsync(string neighborhoodId, CancellationToken token = default)
-            => (uint)(await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalReportCount;
+        public async Task<uint> GetTotalReportCountByIdAsync(Guid userId, string neighborhoodId, CancellationToken token = default)
+            => (uint)(await ProcessAsync(userId, StatisticsProductType.Reports, IdMethod.NeighborhoodId, neighborhoodId, token)).TotalReportCount;
 
 
         // TODO This seems a bit hacky. The format might change in the future when we decide to change the process of getting the data.
@@ -100,14 +99,10 @@ namespace FunderMaps.Data.Repositories
         /// <param name="method"><see cref="IdMethod"/></param>
         /// <param name="identifier">Neighborhood id or code</param>
         /// <returns><see cref="StatisticsProduct"/></returns>
-        private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier, CancellationToken token = default)
+        private async Task<StatisticsProduct> ProcessAsync(Guid userId, StatisticsProductType product, IdMethod method, string identifier, CancellationToken token)
         {
-            // Validate parameters.
-            identifier.ThrowIfNullOrEmpty();
-
             static string GetTable(StatisticsProductType product)
-            {
-                return product switch
+                => product switch
                 {
                     StatisticsProductType.FoundationRatio => "statistics_product_foundation_type",
                     StatisticsProductType.ConstructionYears => "statistics_product_construction_years",
@@ -118,26 +113,24 @@ namespace FunderMaps.Data.Repositories
                     StatisticsProductType.Reports => "statistics_product_inquiries",
                     _ => throw new InvalidOperationException(nameof(product))
                 };
-            }
 
             static string GetIdColumnName(IdMethod method)
-            {
-                return method switch
+                => method switch
                 {
                     IdMethod.NeighborhoodCode => "external_id",
                     IdMethod.NeighborhoodId => "id",
                     _ => throw new InvalidOperationException(nameof(method))
                 };
-            }
 
-            // TODO SQL injection.
+            // TODO: Write out columns in the select.
             // Build SQL.
             // Note: This uses a CTE for proper index usage. 
             var sql = $@"
                 WITH id_cte AS (
                     SELECT id
                     FROM geocoder.neighborhood
-                    WHERE {GetIdColumnName(method)} = @Identifier
+                    WHERE {GetIdColumnName(method)} = @identifier
+                    AND application.is_geometry_in_fence(@user_id, geom)
                     LIMIT 1
                 )
                 SELECT 
@@ -146,13 +139,14 @@ namespace FunderMaps.Data.Repositories
                 WHERE s.neighborhood_id = (SELECT * FROM id_cte)";
 
             // Execute sql.
-            await using var connection = await DbProvider.OpenConnectionScopeAsync(token).ConfigureAwait(false);
+            await using var connection = await DbProvider.OpenConnectionScopeAsync(token);
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            cmd.AddParameterWithValue("Identifier", identifier);
+            cmd.AddParameterWithValue("identifier", identifier);
+            cmd.AddParameterWithValue("user_id", userId);
 
             // TODO Don't throw if nothing is found
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync().ConfigureAwait(false);
+            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
 
             // Map and return.
             return new StatisticsProduct

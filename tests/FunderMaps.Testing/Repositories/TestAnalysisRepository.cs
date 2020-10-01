@@ -39,7 +39,13 @@ namespace FunderMaps.Testing.Repositories
             return DataStore.ItemList.Where(s => s.ExternalId == externalId).FirstOrDefault() ?? throw new EntityNotFoundException();
         }
 
-        public async Task<AnalysisProduct> GetByIdAsync(Guid userId, string id, CancellationToken token)
+        public async Task<AnalysisProduct> GetByIdAsync(string id, CancellationToken token)
+        {
+            await Task.CompletedTask;
+            return DataStore.ItemList.Where(x => x.Id == id).First() ?? throw new EntityNotFoundException();
+        }
+
+        public async Task<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id, CancellationToken token)
         {
             await Task.CompletedTask;
             return DataStore.ItemList.Where(x => x.Id == id).First() ?? throw new EntityNotFoundException();
