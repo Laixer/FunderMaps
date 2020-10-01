@@ -23,6 +23,7 @@ namespace FunderMaps.Data
         /// </summary>
         public AppContext AppContext { get; set; }
 
+        // FUTURE: Move into DI.
         /// <summary>
         ///     Create the database context.
         /// </summary>
