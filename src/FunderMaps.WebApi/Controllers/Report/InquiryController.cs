@@ -204,6 +204,23 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Return.
             return NoContent();
         }
+
+        [HttpGet("{id:int}/download_uri")]
+        public async Task<IActionResult> GetDownloadUriAsync(int id)
+        {
+            // Act.
+            var uri = await _inquiryUseCase.GetDocumentAccessUriAsync(id);
+
+            // Map.
+            var result = new InquiryDownloadDto
+            {
+                Id = id,
+                DownloadUri = uri
+            };
+
+            // Return.
+            return Ok(result);
+        }
     }
 }
 #pragma warning restore CA1062 // Validate arguments of public methods
