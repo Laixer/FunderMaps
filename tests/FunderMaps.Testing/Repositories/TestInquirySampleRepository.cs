@@ -52,5 +52,10 @@ namespace FunderMaps.Testing.Repositories
         {
             throw new NotImplementedException();
         }
+
+        IAsyncEnumerable<InquirySample> IInquirySampleRepository.ListAllReportAsync(int report, INavigation navigation)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
