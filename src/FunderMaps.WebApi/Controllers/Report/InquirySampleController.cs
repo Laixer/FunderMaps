@@ -39,14 +39,14 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync([FromRoute] int inquiryId, [FromQuery] PaginationModel pagination)
         {
             if (pagination == null)
             {
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(pagination.Navigation))
+            var result = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(inquiryId, pagination.Navigation))
                 .ConfigureAwait(false);
 
             return Ok(result);
