@@ -30,5 +30,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [Required(AllowEmptyStrings = false)]
         public string Street { get; set; }
+
+        /// <summary>
+        ///     City name.
+        /// </summary>
+        public string City { get; set; }
     }
 }
