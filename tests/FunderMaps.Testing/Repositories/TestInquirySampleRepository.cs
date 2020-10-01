@@ -44,17 +44,12 @@ namespace FunderMaps.Testing.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, Guid orgId, INavigation navigation)
         {
             throw new NotImplementedException();
         }
 
-        IAsyncEnumerable<InquirySample> IInquirySampleRepository.ListAllReportAsync(int report, INavigation navigation)
+        public IAsyncEnumerable<InquirySample> ListAllReportAsync(int report, INavigation navigation)
         {
             var result = DataStore.ItemList.Where(e => e.Inquiry == report);
             return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(result, navigation));
