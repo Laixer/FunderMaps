@@ -238,6 +238,12 @@ namespace FunderMaps.Core.UseCases
             }
 
             await _inquiryRepository.UpdateAsync(inquiryFull);
+
+            // The update call never touches the audit status. We have to explicitly
+            // set the audit status to pending whenver we update an inquiry.
+            // TODO What to do with the message?
+            // TODO Make this a DB trigger?
+            await UpdateStatusAsync(inquiryFull.Id, AuditStatus.Pending, "");
         }
 
         /// <summary>
@@ -334,6 +340,11 @@ namespace FunderMaps.Core.UseCases
             inquiry.State.TransitionToPending();
             await _inquiryRepository.UpdateAsync(inquiry);
 
+            // Also mark the indirectly-updated inquiry as pending.
+            // TODO What to do with the message?
+            // TODO Make this a DB trigger?
+            await UpdateStatusAsync(inquiry.Id, AuditStatus.Pending, "");
+
             return inquirySample;
         }
 
@@ -397,6 +408,11 @@ namespace FunderMaps.Core.UseCases
 
             inquiry.State.TransitionToPending();
             await _inquiryRepository.UpdateAsync(inquiry);
+
+            // Also mark the indirectly-updated inquiry as pending.
+            // TODO What to do with the message?
+            // TODO Make this a DB trigger?
+            await UpdateStatusAsync(inquiry.Id, AuditStatus.Pending, "");
         }
 
         #endregion
