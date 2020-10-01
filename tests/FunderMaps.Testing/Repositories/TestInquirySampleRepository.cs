@@ -4,6 +4,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Testing.Repositories
@@ -55,7 +56,8 @@ namespace FunderMaps.Testing.Repositories
 
         IAsyncEnumerable<InquirySample> IInquirySampleRepository.ListAllReportAsync(int report, INavigation navigation)
         {
-            throw new NotImplementedException();
+            var result = DataStore.ItemList.Where(e => e.Inquiry == report);
+            return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(result, navigation));
         }
     }
 }
