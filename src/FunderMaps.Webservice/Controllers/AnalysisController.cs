@@ -29,22 +29,22 @@ namespace FunderMaps.Webservice.Controllers
         ///     <paramref name="input"/> is validated through <see cref="ApiControllerAttribute"/>.
         /// </remarks>
         /// <param name="input"><see cref="AnalysisInputModel"/></param>
-        /// <param name="productRequestHandler"><see cref="ProductRequestHandler"/></param>
+        /// <param name="productRequestHandler"><see cref="ProductHandler"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisResponseModelBase>))]
         public async Task<IActionResult> GetProductAsync(
             [FromQuery] AnalysisInputModel input,
-            [FromServices] ProductRequestHandler productRequestHandler,
+            [FromServices] ProductHandler productRequestHandler,
             [FromServices] AuthManager authManager)
         {
-            // Get signed in user.
+            // Act.
             var user = await authManager.GetUserAsync(User);
 
-            // Process request.
-            var result = await productRequestHandler.ProcessAnalysisRequestAsync(user.Id, input, HttpContext.RequestAborted);
+            // Act.
+            var result = await productRequestHandler.ProcessAnalysisRequestAsync(user.Id, input);
 
-            // Return in ok result.
+            // Return.
             return Ok(result);
         }
     }
