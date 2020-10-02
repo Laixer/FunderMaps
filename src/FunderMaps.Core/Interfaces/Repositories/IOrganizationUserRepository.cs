@@ -52,9 +52,9 @@ namespace FunderMaps.Core.Interfaces.Repositories
         ///     List all organization members per role.
         /// </summary>
         /// <param name="organizationId">Organization identifier.</param>
-        /// <param name="organizationRole">Organization role.</param>
+        /// <param name="organizationRole">Organization roles.</param>
         /// <param name="navigation">Recordset nagivation.</param>
         /// <returns>List of user identifiers.</returns>
-        IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole organizationRole, INavigation navigation);
+        IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, INavigation navigation);
     }
 }

@@ -77,18 +77,13 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        /// <summary>
-        ///     Retrieve all <see cref="Incident"/>.
-        /// </summary>
-        /// <returns>List of <see cref="Incident"/>.</returns>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
-        public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole role, INavigation navigation)
+        public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, INavigation navigation)
         {
             var sql = @"
                 SELECT  user_id
                 FROM    application.organization_user
                 WHERE   organization_id = @organization_id
-                AND     role = @role";
+                AND     role = ANY(@role)";
 
             ConstructNavigation(ref sql, navigation);
 

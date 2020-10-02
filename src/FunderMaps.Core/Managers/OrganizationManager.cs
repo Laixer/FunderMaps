@@ -298,9 +298,9 @@ namespace FunderMaps.Core.Managers
         ///     Retrieve all users by organization and their role.
         /// </summary>
         /// <param name="id">Organization id.</param>
-        /// <param name="organizationRole">The role to filter on.<paramref name="organizationRole"/>
+        /// <param name="organizationRole">The roles to filter on.<paramref name="organizationRole"/>
         /// <param name="navigation">Recordset nagivation.</param>
-        public virtual async IAsyncEnumerable<User> GetAllUserByRoleAsync(Guid id, OrganizationRole organizationRole, INavigation navigation)
+        public virtual async IAsyncEnumerable<User> GetAllUserByRoleAsync(Guid id, OrganizationRole[] organizationRole, INavigation navigation)
         {
             await foreach (var user in _organizationUserRepository.ListAllByRoleAsync(id, organizationRole, navigation))
             {
