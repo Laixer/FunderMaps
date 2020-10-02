@@ -52,6 +52,8 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(AutoMapperProfile));
+
             services.AddControllers()
                 .AddFunderMapsAssembly();
 
@@ -62,14 +64,9 @@ namespace FunderMaps.Webservice
 
             // Configure FunderMaps services.
             services.AddFunderMapsDataServices("FunderMapsConnection");
-            services.AddFunderMapsCoreServices();
-            services.AddFunderMapsExceptionMapper();
 
             // Override default product service by tracking variant of product service.
             services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
-
-            // Configure AutoMapper.
-            services.AddAutoMapper(typeof(AutoMapperProfile));
 
             // Configure health checks.
             services.AddHealthChecks()
