@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace FunderMaps
+﻿namespace FunderMaps
 {
     /// <summary>
     ///     Application constants.
@@ -33,33 +31,8 @@ namespace FunderMaps
         };
 
         /// <summary>
-        ///     Application name.
-        /// </summary>
-        internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
-
-        /// <summary>
-        ///     Application revision.
-        /// </summary>
-        internal static string ApplicationVersion => "@@VERSION@@";
-
-        /// <summary>
-        ///     Application commit.
-        /// </summary>
-        internal static string ApplicationCommit => "@@COMMIT@@";
-
-        /// <summary>
         ///     Incident gateway name.
         /// </summary>
         internal const string IncidentGateway = "FunderMaps.WebApi";
-
-        /// <summary>
-        ///     Report storage destination.
-        /// </summary>
-        internal const string ReportStorage = "report";
-
-        /// <summary>
-        ///     Evidence storage destination.
-        /// </summary>
-        internal const string EvidenceStorage = "evidence";
     }
 }
