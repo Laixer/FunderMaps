@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
-using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +24,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     /// </remarks>
     [Authorize(Policy = "AdministratorPolicy")]
     [Route("admin/organization/{id:guid}/user")]
-    public class OrganizationUserAdminController : BaseApiController
+    public class OrganizationUserAdminController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly OrganizationManager _organizationManager;

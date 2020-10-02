@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -15,7 +14,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     /// <summary>
     ///     Endpoint controller for application contractors.
     /// </summary>
-    public class ContractorController : BaseApiController
+    public class ContractorController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly OrganizationManager _organizationManager;

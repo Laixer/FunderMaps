@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -16,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     ///     Endpoint controller for recovery sample operations.
     /// </summary>
     [Route("recovery/{recoveryId}/sample")]
-    public class RecoverySampleController : BaseApiController
+    public class RecoverySampleController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly RecoveryUseCase _recoveryUseCase;

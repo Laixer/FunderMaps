@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
@@ -16,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
     ///     Endpoint controller for address operations.
     /// </summary>
     [Route("address")]
-    public class AddressController : BaseApiController
+    public class AddressController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly GeocoderUseCase _geocoderUseCase;

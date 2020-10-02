@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
@@ -22,7 +21,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     ///     Endpoint controller for incident operations.
     /// </summary>
     [Route("incident")]
-    public class IncidentController : BaseApiController
+    public class IncidentController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly AuthManager _authManager;

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -19,7 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     proposal into a full organization.
     /// </remarks>
     [AllowAnonymous]
-    public class OrganizationSetupController : BaseApiController
+    public class OrganizationSetupController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly OrganizationManager _organizationManager;

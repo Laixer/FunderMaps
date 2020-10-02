@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -16,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     /// Endpoint controller for inquiry sample operations.
     /// </summary>
     [Route("inquiry/{inquiryId}/sample")]
-    public class InquirySampleController : BaseApiController
+    public class InquirySampleController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly InquiryUseCase _inquiryUseCase;
