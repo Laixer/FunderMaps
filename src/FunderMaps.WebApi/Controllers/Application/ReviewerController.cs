@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
@@ -23,7 +22,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     user session. Therefore the user context must be active.
     /// </remarks>
     [Authorize(Policy = "WriterPolicy")]
-    public class ReviewerController : BaseApiController
+    public class ReviewerController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly AuthManager _authManager;

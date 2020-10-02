@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -18,7 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     ///     Endpoint controller for project operations.
     /// </summary>
     [Route("project")]
-    public class ProjectController : BaseApiController
+    public class ProjectController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly ProjectUseCase _projectUseCase;

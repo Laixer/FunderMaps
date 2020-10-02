@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
@@ -22,7 +21,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     ///     Endpoint controller for inquiry operations.
     /// </summary>
     [Route("inquiry")]
-    public class InquiryController : BaseApiController
+    public class InquiryController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly AuthManager _authManager;

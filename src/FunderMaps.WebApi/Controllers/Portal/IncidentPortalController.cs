@@ -1,5 +1,4 @@
 using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -23,7 +22,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
     /// </summary>
     [AllowAnonymous]
     [Route("incident-portal")]
-    public class IncidentPortalController : BaseApiController
+    public class IncidentPortalController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IncidentUseCase _incidentUseCase;
