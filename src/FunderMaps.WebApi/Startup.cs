@@ -77,17 +77,12 @@ namespace FunderMaps.WebApi
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddControllers()
-                .AddFunderMapsAssembly();
-
             services.AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("api_health_check")
                 //.AddCheck<DatabaseHealthCheck>("db_health_check")
                 .AddCheck<FileStorageCheck>("file_health_check");
 
             // Register components from reference assemblies.
-            services.AddFunderMapsCoreServices();
-            services.AddFunderMapsExceptionMapper();
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
