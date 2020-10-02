@@ -1,9 +1,8 @@
-﻿using AutoMapper;
-using FunderMaps.Controllers;
+using AutoMapper;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Managers;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,7 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     user session. Therefore the user context must be active.
     /// </remarks>
     [Route("organization")]
-    public class OrganizationController : BaseApiController
+    public class OrganizationController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly AuthManager _authManager;
