@@ -27,11 +27,6 @@ namespace FunderMaps.Core.Authentication
         public OrganizationManager OrganizationManager { get; }
 
         /// <summary>
-        ///     The <see cref="AuthenticationOptions"/> used.
-        /// </summary>
-        public AuthenticationOptions Options { get; set; }
-
-        /// <summary>
         ///     Gets the <see cref="ILogger"/> used to log messages from the manager.
         /// </summary>
         protected ILogger Logger { get; }
@@ -42,12 +37,10 @@ namespace FunderMaps.Core.Authentication
         public AuthManager(
             UserManager userManager,
             OrganizationManager organizationManager,
-            IOptions<AuthenticationOptions> optionsAccessor,
             ILogger<AuthManager> logger)
         {
             UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             OrganizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
-            Options = optionsAccessor?.Value ?? new AuthenticationOptions();
             Logger = logger ?? throw new ArgumentNullException(nameof(organizationManager));
         }
 
