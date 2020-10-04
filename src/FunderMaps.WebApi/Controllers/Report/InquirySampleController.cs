@@ -32,7 +32,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var inquirySample = await _inquiryUseCase.GetSampleAsync(id).ConfigureAwait(false);
+            var inquirySample = await _inquiryUseCase.GetSampleAsync(id);
 
             return Ok(_mapper.Map<InquirySampleDto>(inquirySample));
         }
@@ -45,8 +45,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(pagination.Navigation));
 
             return Ok(result);
         }
@@ -62,7 +61,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var inquirySample = _mapper.Map<InquirySample>(input);
             inquirySample.Inquiry = inquiryId;
 
-            inquirySample = await _inquiryUseCase.CreateSampleAsync(inquirySample).ConfigureAwait(false);
+            inquirySample = await _inquiryUseCase.CreateSampleAsync(inquirySample);
 
             return Ok(_mapper.Map<InquirySampleDto>(inquirySample));
         }
@@ -79,7 +78,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             inquirySample.Id = id;
             inquirySample.Inquiry = inquiryId;
 
-            await _inquiryUseCase.UpdateSampleAsync(inquirySample).ConfigureAwait(false);
+            await _inquiryUseCase.UpdateSampleAsync(inquirySample);
 
             return NoContent();
         }
@@ -87,7 +86,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _inquiryUseCase.DeleteSampleAsync(id).ConfigureAwait(false);
+            await _inquiryUseCase.DeleteSampleAsync(id);
 
             return NoContent();
         }
