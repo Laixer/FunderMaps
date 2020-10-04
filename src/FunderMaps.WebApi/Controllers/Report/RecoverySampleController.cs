@@ -32,7 +32,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var recoverySample = await _recoveryUseCase.GetSampleAsync(id).ConfigureAwait(false);
+            var recoverySample = await _recoveryUseCase.GetSampleAsync(id);
 
             return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
@@ -45,8 +45,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation));
 
             return Ok(result);
         }
@@ -62,7 +61,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var recoverySample = _mapper.Map<RecoverySample>(input);
             recoverySample.Recovery = recoveryId;
 
-            recoverySample = await _recoveryUseCase.CreateSampleAsync(recoverySample).ConfigureAwait(false);
+            recoverySample = await _recoveryUseCase.CreateSampleAsync(recoverySample);
 
             return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
@@ -79,7 +78,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             recoverySample.Id = id;
             recoverySample.Recovery = recoveryId;
 
-            await _recoveryUseCase.UpdateSampleAsync(recoverySample).ConfigureAwait(false);
+            await _recoveryUseCase.UpdateSampleAsync(recoverySample);
 
             return NoContent();
         }
@@ -87,7 +86,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _recoveryUseCase.DeleteSampleAsync(id).ConfigureAwait(false);
+            await _recoveryUseCase.DeleteSampleAsync(id);
 
             return NoContent();
         }

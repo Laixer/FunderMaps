@@ -2,7 +2,6 @@
 using FunderMaps.Core.Managers;
 using FunderMaps.Core.Types;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;

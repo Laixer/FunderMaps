@@ -34,7 +34,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var project = await _projectUseCase.GetAsync(id).ConfigureAwait(false);
+            var project = await _projectUseCase.GetAsync(id);
 
             return Ok(_mapper.Map<ProjectDto>(project));
         }
@@ -47,8 +47,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<ProjectDto>, Project>(_projectUseCase.GetAllAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<ProjectDto>, Project>(_projectUseCase.GetAllAsync(pagination.Navigation));
 
             return Ok(result);
         }
@@ -61,7 +60,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new ArgumentNullException(nameof(input));
             }
 
-            var project = await _projectUseCase.CreateAsync(_mapper.Map<Project>(input)).ConfigureAwait(false);
+            var project = await _projectUseCase.CreateAsync(_mapper.Map<Project>(input));
 
             return Ok(_mapper.Map<ProjectDto>(project));
         }
@@ -77,7 +76,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var project = _mapper.Map<Project>(input);
             project.Id = id;
 
-            await _projectUseCase.UpdateAsync(project).ConfigureAwait(false);
+            await _projectUseCase.UpdateAsync(project);
 
             return NoContent();
         }
@@ -85,7 +84,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _projectUseCase.DeleteAsync(id).ConfigureAwait(false);
+            await _projectUseCase.DeleteAsync(id);
 
             return NoContent();
         }

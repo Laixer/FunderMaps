@@ -15,8 +15,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            // TODO: AddScoped -> Transient?s
-
             services.AddScoped<AuthManager>();
 
             return services;

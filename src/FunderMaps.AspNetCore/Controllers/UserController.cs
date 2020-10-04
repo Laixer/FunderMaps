@@ -64,7 +64,7 @@ namespace FunderMaps.AspNetCore.Controllers
             user.Id = sessionUser.Id;
 
             // Act.
-            await _userManager.UpdateAsync(user).ConfigureAwait(false);
+            await _userManager.UpdateAsync(user);
 
             // Return.
             return NoContent();
@@ -81,7 +81,7 @@ namespace FunderMaps.AspNetCore.Controllers
             User sessionUser = await _authManager.GetUserAsync(User);
 
             // Act.
-            await _userManager.ChangePasswordAsync(sessionUser, input.OldPassword, input.NewPassword).ConfigureAwait(false);
+            await _userManager.ChangePasswordAsync(sessionUser, input.OldPassword, input.NewPassword);
 
             // Return.
             return NoContent();
