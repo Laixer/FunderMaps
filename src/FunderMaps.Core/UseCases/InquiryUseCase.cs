@@ -176,8 +176,21 @@ namespace FunderMaps.Core.UseCases
                 throw new ArgumentNullException(nameof(inquiry));
             }
 
+            // TODO Is this correct?
+            if (attribution == null)
+            {
+                throw new ArgumentNullException(nameof(attribution));
+            }
+
             inquiry.InitializeDefaults();
             inquiry.Validate();
+
+            // TODO A user should never be able to review his own inquiry.
+            // Maybe we want this in some attribution validate function?
+            if (attribution.Creator == attribution.Reviewer)
+            {
+                throw new SelfReviewException();
+            }
 
             var config = new MapperConfiguration(cfg => cfg.CreateMap<Inquiry, InquiryFull>());
             var mapper = config.CreateMapper();
