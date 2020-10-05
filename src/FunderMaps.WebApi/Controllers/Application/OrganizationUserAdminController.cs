@@ -40,7 +40,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserDto input)
+        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -69,7 +69,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpPut("{userId:guid}")]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] UserDto input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
