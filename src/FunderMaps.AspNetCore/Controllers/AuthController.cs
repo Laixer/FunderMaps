@@ -15,12 +15,12 @@ namespace FunderMaps.AspNetCore.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthenticationHelper _authenticationHelper;
+        private readonly SignInHandler _authenticationHelper;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(AuthenticationHelper authenticationHelper)
+        public AuthController(SignInHandler authenticationHelper)
             => _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FunderMaps.AspNetCore.Controllers
             var output = new SignInSecurityTokenDto
             {
                 Token = token,
-                TokenValidity = 2400,
+                TokenValidity = 2400, // TODO
             };
 
             // Return.

@@ -10,13 +10,13 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     User current password.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string OldPassword { get; set; }
 
         /// <summary>
         ///     User new password.
         /// </summary>
-        [Required]
+        [Required(AllowEmptyStrings = false)]
         public string NewPassword { get; set; }
     }
 }

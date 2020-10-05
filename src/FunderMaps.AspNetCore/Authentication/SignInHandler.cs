@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.AspNetCore.Authentication
 {
-    // TODO: Terrible name.
     /// <summary>
     ///     Helper for the signing process. Consolidates different authentication
     ///     services and provides a single facade.
@@ -17,17 +16,21 @@ namespace FunderMaps.AspNetCore.Authentication
     ///     This is the only object which shpuld handle authentication and signing requests
     ///     for the entire web framework.
     /// </remarks>
-    public class AuthenticationHelper
+    public class SignInHandler
     {
-        private readonly SignInService _authManager;
         private readonly ISecurityTokenProvider _tokenProvider;
+
+        /// <summary>
+        ///     The <see cref="SignInService"/> used.
+        /// </summary>
+        public SignInService SignInService { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthenticationHelper(SignInService authManager, ISecurityTokenProvider tokenProvider)
+        public SignInHandler(SignInService signInService, ISecurityTokenProvider tokenProvider)
         {
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
+            SignInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
 
@@ -39,7 +42,7 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <returns>Security token if the authentication attempt was successful.</returns>
         public async Task<string> SignInAsync(string email, string password)
         {
-            var result = await _authManager.PasswordSignInAsync(email, password, JwtBearerDefaults.AuthenticationScheme);
+            var result = await SignInService.PasswordSignInAsync(email, password, JwtBearerDefaults.AuthenticationScheme);
             if (result.Result != AuthResult.Success)
             {
                 throw new AuthenticationException();
@@ -59,7 +62,7 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <returns>Security token if the authentication attempt was successful.</returns>
         public async Task<string> RefreshSignInAsync(ClaimsPrincipal principal)
         {
-            var result = await _authManager.SignInAsync(principal, JwtBearerDefaults.AuthenticationScheme);
+            var result = await SignInService.SignInAsync(principal, JwtBearerDefaults.AuthenticationScheme);
             if (result.Result != AuthResult.Success)
             {
                 throw new AuthenticationException();
