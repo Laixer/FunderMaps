@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -36,11 +35,14 @@ namespace FunderMaps.WebApi.Controllers.Application
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }
 
-        // FUTURE: This is anon, maybe return nothing?
         // POST: api/organization/{id}/setup
         /// <summary>
         ///     Create organization from organization proposal.
         /// </summary>
+        /// <remarks>
+        ///     This is an unauthorized call, therefore this this
+        ///     call deliberately returns nothing.
+        /// </remarks>
         [HttpPost("organization/{id:guid}/setup")]
         public async Task<IActionResult> CreateAsync(Guid id, [FromBody] OrganizationSetupDto input)
         {
@@ -50,13 +52,9 @@ namespace FunderMaps.WebApi.Controllers.Application
             // Act.
             var passwordHash = _passwordHasher.HashPassword(input.Password);
             await _organizationRepository.AddFromProposalAsync(id, user.Email, passwordHash);
-            Organization organization = await _organizationRepository.GetByIdAsync(id);
-
-            // Map.
-            var output = _mapper.Map<OrganizationDto>(organization);
 
             // Return.
-            return Ok(output);
+            return NoContent();
         }
     }
 }

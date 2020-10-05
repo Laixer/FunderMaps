@@ -34,6 +34,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         /// </summary>
         /// <remarks>
         ///     Cache response for 24 hours. Contractors will not change often.
+        ///     Contractors are tenant independent.
         /// </remarks>
         [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 24)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
