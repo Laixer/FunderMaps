@@ -64,6 +64,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
         {
             // Act.
+            // TODO: Single call
             var userList = new List<User>();
             await foreach (var user in _organizationUserRepository.ListAllAsync(_appContext.TenantId, pagination.Navigation))
             {

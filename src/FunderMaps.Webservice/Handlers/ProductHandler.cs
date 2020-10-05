@@ -5,7 +5,6 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;
-using FunderMaps.Webservice.Mapping;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
@@ -26,7 +25,7 @@ namespace FunderMaps.Webservice.Handlers
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ProductHandler(IMapper mapper, IProductService productService, IMappingService mappingService)
+        public ProductHandler(IMapper mapper, IProductService productService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
@@ -78,8 +77,7 @@ namespace FunderMaps.Webservice.Handlers
         /// <param name="userId">Internal user id</param>
         internal async Task<ResponseWrapper> ProcessAnalysisRequestAsync(Guid userId, AnalysisInputModel inputModel)
         {
-            AnalysisProductType productType = ProductTypeMapper.MapAnalysis(inputModel.Product
-                ?? throw new InvalidOperationException(nameof(inputModel.Product)));
+            AnalysisProductType productType = inputModel.Product ?? throw new InvalidProductRequestException(nameof(inputModel.Product));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.Query))
@@ -108,8 +106,7 @@ namespace FunderMaps.Webservice.Handlers
         /// <param name="userId">Internal user id</param>
         internal async Task<ResponseWrapper> ProcessStatisticsRequestAsync(Guid userId, StatisticsInputModel inputModel)
         {
-            StatisticsProductType productType = ProductTypeMapper.MapStatistics(inputModel.Product
-                ?? throw new InvalidOperationException(nameof(inputModel.Product)));
+            StatisticsProductType productType = inputModel.Product ?? throw new InvalidProductRequestException(nameof(inputModel.Product));
 
             // Process according to specified parameters
             if (!string.IsNullOrEmpty(inputModel.NeighborhoodCode))

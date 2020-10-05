@@ -8,7 +8,6 @@ using FunderMaps.Webservice.Handlers;
 using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Webservice.HealthChecks;
 using FunderMaps.Webservice.Mapping;
-using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -58,7 +57,6 @@ namespace FunderMaps.Webservice
                 .AddFunderMapsAssembly();
 
             // Configure project specific services.
-            services.AddTransient<IMappingService, MappingService>();
             services.AddTransient<ProductHandler>();
             services.AddTransient<SignInHandler>();
 

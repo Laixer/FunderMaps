@@ -1,5 +1,5 @@
 ﻿using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Webservice.ResponseModels.Types;
+using FunderMaps.Core.Types.Products;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.InputModels
@@ -13,7 +13,7 @@ namespace FunderMaps.Webservice.InputModels
         ///     Product type.
         /// </summary>
         [Required]
-        public StatisticsProductTypeResponseModel? Product { get; set; }
+        public StatisticsProductType? Product { get; set; }
 
         /// <summary>
         ///     Incidates the area code for the calculations.

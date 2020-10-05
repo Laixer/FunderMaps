@@ -2,7 +2,6 @@
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Core.Types.Regions;
 using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
 using FunderMaps.Webservice.ResponseModels.Types;
@@ -10,12 +9,12 @@ using FunderMaps.Webservice.ResponseModels.Types;
 namespace FunderMaps.Webservice.Mapping
 {
     /// <summary>
-    /// Contains an AutoMapper profile for proper DTO mapping.
+    ///     Contains an AutoMapper profile for proper DTO mapping.
     /// </summary>
     public sealed class AutoMapperProfile : Profile
     {
         /// <summary>
-        /// Sets up our mapping profiles for analysis.
+        ///     Sets up our mapping profiles for analysis.
         /// </summary>
         public AutoMapperProfile()
         {
@@ -43,14 +42,6 @@ namespace FunderMaps.Webservice.Mapping
             CreateMap<FoundationRiskDistribution, FoundationRiskDistributionResponseModel>();
             CreateMap<FoundationTypeDistribution, FoundationTypeDistributionResponseModel>();
             CreateMap<FoundationTypePair, FoundationTypePairResponseModel>();
-            CreateMap<Region, RegionResponseModel>();
-
-            // All enums
-            CreateMap<AnalysisProductType, AnalysisProductTypeResponseModel>();
-            CreateMap<FoundationRisk, FoundationRiskResponseModel>();
-            CreateMap<FoundationType, FoundationTypeResponseModel>();
-            CreateMap<Reliability, ReliabilityResponseModel>();
-            CreateMap<StatisticsProductType, StatisticsProductTypeResponseModel>();
         }
     }
 }

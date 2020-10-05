@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.Webservice.HealthChecks
 {
     /// <summary>
-    /// Implements health checks for the webservice.
+    ///     Implements health checks for the webservice.
     /// </summary>
     public sealed class WebserviceHealthCheck : IHealthCheck
     {
