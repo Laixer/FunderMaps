@@ -26,10 +26,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IAnalysisRepository, AnalysisRepository>();
             services.AddScoped<IBuildingRepository, BuildingRepository>();
+            services.AddScoped<IBundleRepository, BundleRepository>();
             services.AddScoped<IContactRepository, ContactRepository>();
             services.AddScoped<IIncidentRepository, IncidentRepository>();
             services.AddScoped<IInquiryRepository, InquiryRepository>();
             services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
+            services.AddScoped<ILayerRepository, LayerRepository>();
             services.AddScoped<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddScoped<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
