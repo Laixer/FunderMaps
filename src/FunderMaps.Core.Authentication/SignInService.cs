@@ -109,19 +109,19 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(principal));
             }
 
-            var (user, organization) = PrincipalProvider.GetTenantUser<User, Organization>(principal);
-            if (user == null || organization == null)
+            var (user, tenant) = PrincipalProvider.GetTenantUser<User, Organization>(principal);
+            if (user == null || tenant == null)
             {
                 return SignInContext.Failed;
             }
 
-            var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.OrganizationRole);
+            var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.TenantRole);
             if (claim == null)
             {
                 return SignInContext.Failed;
             }
 
-            return await SignInAsync(user, organization, Enum.Parse<OrganizationRole>(claim.Value), authenticationType);
+            return await SignInAsync(user, tenant, Enum.Parse<OrganizationRole>(claim.Value), authenticationType);
         }
 
         /// <summary>
@@ -129,16 +129,16 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="user">The user to sign in.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
-        public virtual async Task<SignInContext> SignInAsync(IUser user, ITenant organization, OrganizationRole organizationRole, string authenticationType)
+        public virtual async Task<SignInContext> SignInAsync(IUser user, ITenant tenant, OrganizationRole organizationRole, string authenticationType)
         {
             if (user == null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (organization == null)
+            if (tenant == null)
             {
-                throw new ArgumentNullException(nameof(organization));
+                throw new ArgumentNullException(nameof(tenant));
             }
 
             var result = await CanSignInAsync(user.Id);
@@ -151,7 +151,7 @@ namespace FunderMaps.Core.Authentication
 
             return new SignInContext(
                 result: AuthResult.Success,
-                principal: PrincipalProvider.CreateTenantUserPrincipal(user, organization, organizationRole, authenticationType));
+                principal: PrincipalProvider.CreateTenantUserPrincipal(user, tenant, organizationRole, authenticationType));
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace FunderMaps.Core.Authentication
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> PasswordSignInAsync(
             IUser user,
-            ITenant organization,
+            ITenant tenant,
             OrganizationRole organizationRole,
             string password,
             string authenticationType)
@@ -193,9 +193,9 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (organization == null)
+            if (tenant == null)
             {
-                throw new ArgumentNullException(nameof(organization));
+                throw new ArgumentNullException(nameof(tenant));
             }
 
             var result = await CanSignInAsync(user.Id);
@@ -213,7 +213,7 @@ namespace FunderMaps.Core.Authentication
 
                 return new SignInContext(
                     result: AuthResult.Success,
-                    principal: PrincipalProvider.CreateTenantUserPrincipal(user, organization, organizationRole, authenticationType));
+                    principal: PrincipalProvider.CreateTenantUserPrincipal(user, tenant, organizationRole, authenticationType));
             }
 
             Logger.LogWarning(2, $"User {user} failed to provide the correct password.");

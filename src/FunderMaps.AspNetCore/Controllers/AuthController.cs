@@ -23,6 +23,7 @@ namespace FunderMaps.AspNetCore.Controllers
         public AuthController(SignInHandler authenticationHelper)
             => _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
 
+        // POST: api/auth/signin
         /// <summary>
         ///     User sign in endpoint.
         /// </summary>
@@ -46,6 +47,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return Ok(output);
         }
 
+        // GET: api/auth/token-refresh
         /// <summary>
         ///     Refresh access token for user.
         /// </summary>
@@ -60,7 +62,7 @@ namespace FunderMaps.AspNetCore.Controllers
             var output = new SignInSecurityTokenDto
             {
                 Token = token,
-                TokenValidity = 2400,
+                TokenValidity = 2400, // TODO
             };
 
             // Return.

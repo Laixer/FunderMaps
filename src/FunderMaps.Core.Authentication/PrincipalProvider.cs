@@ -14,14 +14,14 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="user">The tenant user to create the principal for.</param>
         /// <param name="tenant">The tenant which the user is a member of.</param>
-        /// <param name="organizationRole">The user role within the tenant.</param>
+        /// <param name="tenantRole">The user role within the tenant.</param>
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
         /// <returns><see cref="ClaimsIdentity"/>.</returns>
         public static ClaimsIdentity CreateTenantUserIdentity(
             IUser user,
             ITenant tenant,
-            OrganizationRole organizationRole,
+            OrganizationRole tenantRole,
             string authenticationType)
         {
             if (user == null)
@@ -38,8 +38,8 @@ namespace FunderMaps.Core.Authentication
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.Organization, tenant.Id.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.OrganizationRole, organizationRole.ToString()),
+                new Claim(FunderMapsAuthenticationClaimTypes.Tenant, tenant.Id.ToString()),
+                new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, tenantRole.ToString()),
             };
 
             return new ClaimsIdentity(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
@@ -50,18 +50,18 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="user">The tenant user to create the principal for.</param>
         /// <param name="tenant">The tenant which the user is a member of.</param>
-        /// <param name="organizationRole">The user role within the tenant.</param>
+        /// <param name="tenantRole">The user role within the tenant.</param>
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
         /// <returns><see cref="ClaimsPrincipal"/>.</returns>
         public static ClaimsPrincipal CreateTenantUserPrincipal(
             IUser user,
             ITenant tenant,
-            OrganizationRole organizationRole,
+            OrganizationRole tenantRole,
             string authenticationType,
             IEnumerable<Claim> additionalClaims = null)
         {
-            ClaimsIdentity identity = CreateTenantUserIdentity(user, tenant, organizationRole, authenticationType);
+            ClaimsIdentity identity = CreateTenantUserIdentity(user, tenant, tenantRole, authenticationType);
 
             if (additionalClaims != null)
             {
@@ -122,7 +122,7 @@ namespace FunderMaps.Core.Authentication
 
             var tenant = new TTenant
             {
-                Id = Guid.Parse(GetValueOrThrow(FunderMapsAuthenticationClaimTypes.Organization)),
+                Id = Guid.Parse(GetValueOrThrow(FunderMapsAuthenticationClaimTypes.Tenant)),
             };
 
             return (user, tenant);
