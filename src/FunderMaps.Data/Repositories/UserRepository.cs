@@ -77,7 +77,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="User"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity identifier.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
             var sql = @"
@@ -119,7 +119,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Retrieve <see cref="User"/> by id.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="id">Entity identifier.</param>
         /// <returns><see cref="User"/>.</returns>
         public override async ValueTask<User> GetByIdAsync(Guid id)
         {
@@ -176,7 +176,12 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        public async ValueTask<uint> GetAccessFailedCountAsync(User entity)
+        /// <summary>
+        ///     Get signin faillure count.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Number of failed signins.</returns>
+        public async ValueTask<uint> GetAccessFailedCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  access_failed_count
@@ -186,13 +191,17 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             return await context.ScalarAsync<uint>();
         }
 
-        // FUTURE: Why nullable return?
-        public async ValueTask<uint?> GetLoginCountAsync(User entity)
+        /// <summary>
+        ///     Get signin count.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Number of signins.</returns>
+        public async ValueTask<uint> GetLoginCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  login_count
@@ -202,12 +211,17 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             return await context.ScalarAsync<uint>();
         }
 
-        public async ValueTask<DateTime?> GetLastLoginAsync(User entity)
+        /// <summary>
+        ///     Get last sign in.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Datetime of last signin.</returns>
+        public async ValueTask<DateTime?> GetLastLoginAsync(Guid id)
         {
             var sql = @"
                 SELECT  last_login
@@ -217,14 +231,19 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeDateTime(0);
         }
 
-        public async ValueTask<string> GetPasswordHashAsync(User entity)
+        /// <summary>
+        ///     Get password hash.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Password hash as string.</returns>
+        public async ValueTask<string> GetPasswordHashAsync(Guid id)
         {
             var sql = @"
                 SELECT  password_hash
@@ -234,14 +253,19 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeString(0);
         }
 
-        public async ValueTask<bool> IsLockedOutAsync(User entity)
+        /// <summary>
+        ///     Whether or not user is locked out.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>True if locked out, false otherwise.</returns>
+        public async ValueTask<bool> IsLockedOutAsync(Guid id)
         {
             var sql = @"
                 SELECT EXISTS (
@@ -254,7 +278,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             return await context.ScalarAsync<bool>();
         }
@@ -324,16 +348,12 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> password hash.
+        ///     Update user password.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
-        public async ValueTask SetPasswordHashAsync(User entity, string passwordHash)
+        /// <param name="id">Entity identifier.</param>
+        /// <param name="passwordHash">New password hash.</param>
+        public async ValueTask SetPasswordHashAsync(Guid id, string passwordHash)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 UPDATE  application.user
                 SET     password_hash = @password_hash
@@ -341,17 +361,17 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("password_hash", passwordHash);
 
             await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> access failed count.
+        ///     Increase signin failure count.
         /// </summary>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask BumpAccessFailed(User entity)
+        /// <param name="id">Entity identifier.</param>
+        public async ValueTask BumpAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
@@ -360,16 +380,16 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> access failed count.
+        ///     Reset signin failure count.
         /// </summary>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask ResetAccessFailed(User entity)
+        /// <param name="id">Entity identifier.</param>
+        public async ValueTask ResetAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
@@ -378,16 +398,16 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> access.
+        ///     Register a new user login.
         /// </summary>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask RegisterAccess(User entity)
+        /// <param name="id">Entity identifier.</param>
+        public async ValueTask RegisterAccess(Guid id)
         {
             // FUTURE: db func
             // FUTURE: db trigger to update last_login
@@ -399,7 +419,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("id", id);
 
             await context.NonQueryAsync();
         }
