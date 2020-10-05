@@ -116,6 +116,12 @@ namespace FunderMaps.WebApi
 
             app.UseFunderMapsExceptionHandler("/oops");
 
+            app.UsePathBase(new PathString("/api"));
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             // FUTURE: Should be created via factory
             app.Use(async (context, next) =>
             {
@@ -123,14 +129,10 @@ namespace FunderMaps.WebApi
                 appContext.CancellationToken = context.RequestAborted;
                 appContext.Items = new System.Collections.Generic.Dictionary<object, object>(context.Items);
                 appContext.ServiceProvider = context.RequestServices;
+                appContext.User = Core.Authentication.PrincipalProvider.IsSignedIn(context.User) ? Core.Authentication.PrincipalProvider.GetTenantUser<Core.Entities.User, Core.Entities.Organization>(context.User).Item1 : null;
+                appContext.Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(context.User) ? Core.Authentication.PrincipalProvider.GetTenantUser<Core.Entities.User, Core.Entities.Organization>(context.User).Item2 : null;
                 await next.Invoke();
             });
-
-            app.UsePathBase(new PathString("/api"));
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

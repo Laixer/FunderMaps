@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using FunderMaps.Core.Identity;
 
 namespace FunderMaps.Core
 {
@@ -24,9 +25,27 @@ namespace FunderMaps.Core
         /// </summary>
         public Dictionary<object, object> Items { get; set; }
 
+        /// <summary>
+        ///     User identity.
+        /// </summary>
+        public IUser User { get; set; }
+
+        /// <summary>
+        ///     Tenant identity.
+        /// </summary>
+        public ITenant Tenant { get; set; }
+
+        /// <summary>
+        ///     User identifier.
+        /// </summary>
+        public Guid UserId => User.Id;
+
+        /// <summary>
+        ///     Tenant identifier.
+        /// </summary>
+        public Guid TenantId => Tenant.Id;
+
         // TODO:
-        // - User
-        // - Org
         // - Culture
     }
 }
