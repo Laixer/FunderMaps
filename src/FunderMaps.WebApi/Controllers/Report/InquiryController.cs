@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
@@ -24,16 +23,16 @@ namespace FunderMaps.WebApi.Controllers.Report
     public class InquiryController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly AuthManager _authManager;
+        private readonly Core.AppContext _appContext;
         private readonly InquiryUseCase _inquiryUseCase;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public InquiryController(IMapper mapper, AuthManager authManager, InquiryUseCase inquiryUseCase)
+        public InquiryController(IMapper mapper, Core.AppContext appContext, InquiryUseCase inquiryUseCase)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(mapper));
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _inquiryUseCase = inquiryUseCase ?? throw new ArgumentNullException(nameof(inquiryUseCase));
         }
 
@@ -93,14 +92,11 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Map.
             var inquiry = _mapper.Map<Inquiry>(input);
 
-            User sessionUser = await _authManager.GetUserAsync(User);
-            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
-
             var attribution = new AttributionControl
             {
                 Reviewer = input.Reviewer,
-                Creator = sessionUser.Id,
-                Owner = sessionOrganization.Id,
+                Creator = _appContext.UserId,
+                Owner = _appContext.TenantId,
                 Contractor = input.Contractor,
             };
 

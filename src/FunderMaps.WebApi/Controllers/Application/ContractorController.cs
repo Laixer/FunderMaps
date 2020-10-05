@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -17,15 +17,15 @@ namespace FunderMaps.WebApi.Controllers.Application
     public class ContractorController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly OrganizationManager _organizationManager;
+        private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ContractorController(IMapper mapper, OrganizationManager organizationManager)
+        public ContractorController(IMapper mapper, IOrganizationRepository organizationRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         }
 
         // GET: api/contractor
@@ -39,7 +39,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
             // Assign.
-            IAsyncEnumerable<Organization> organizationList = _organizationManager.GetAllAsync(pagination.Navigation);
+            IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<ContractorDto>, Organization>(organizationList);

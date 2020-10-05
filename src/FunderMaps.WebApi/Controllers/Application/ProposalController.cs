@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -20,15 +20,15 @@ namespace FunderMaps.WebApi.Controllers.Application
     public class ProposalController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly OrganizationManager _organizationManager;
+        private readonly IOrganizationProposalRepository _organizationProposalRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ProposalController(IMapper mapper, OrganizationManager organizationManager)
+        public ProposalController(IMapper mapper, IOrganizationProposalRepository organizationProposalRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _organizationProposalRepository = organizationProposalRepository ?? throw new ArgumentNullException(nameof(organizationProposalRepository));
         }
 
         // POST: api/organization/proposal
@@ -42,7 +42,8 @@ namespace FunderMaps.WebApi.Controllers.Application
             var organization = _mapper.Map<OrganizationProposal>(input);
 
             // Act.
-            organization = await _organizationManager.CreateProposalAsync(organization);
+            var id = await _organizationProposalRepository.AddAsync(organization);
+            organization = await _organizationProposalRepository.GetByIdAsync(id);
 
             // Map.
             var output = _mapper.Map<OrganizationProposalDto>(organization);
@@ -59,7 +60,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync(Guid id)
         {
             // Act.
-            OrganizationProposal organization = await _organizationManager.GetProposalAsync(id);
+            OrganizationProposal organization = await _organizationProposalRepository.GetByIdAsync(id);
 
             // Map.
             var output = _mapper.Map<OrganizationProposalDto>(organization);
@@ -76,7 +77,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
             // Act.
-            IAsyncEnumerable<OrganizationProposal> organizationList = _organizationManager.GetAllProposalAsync(pagination.Navigation);
+            IAsyncEnumerable<OrganizationProposal> organizationList = _organizationProposalRepository.ListAllAsync(pagination.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<OrganizationProposalDto>, OrganizationProposal>(organizationList);
@@ -93,7 +94,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             // Act.
-            await _organizationManager.DeleteProposalAsync(id);
+            await _organizationProposalRepository.DeleteAsync(id);
 
             // Return.
             return NoContent();

@@ -2,7 +2,8 @@ using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -21,17 +22,19 @@ namespace FunderMaps.AspNetCore.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly AuthManager _authManager;
-        private readonly UserManager _userManager;
+        private readonly Core.AppContext _appContext;
+        private readonly IUserRepository _userRepository;
+        private readonly SignInService _signinService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public UserController(IMapper mapper, AuthManager authManager, UserManager userManager)
+        public UserController(IMapper mapper, Core.AppContext appContext, IUserRepository userRepository, SignInService signinService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
         }
 
         // GET: api/user
@@ -42,7 +45,7 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> GetAsync()
         {
             // Act.
-            User sessionUser = await _authManager.GetUserAsync(User);
+            User sessionUser = await _userRepository.GetByIdAsync(_appContext.UserId);
 
             // Map.
             var output = _mapper.Map<UserDto>(sessionUser);
@@ -60,11 +63,10 @@ namespace FunderMaps.AspNetCore.Controllers
         {
             // Map.
             var user = _mapper.Map<User>(input);
-            User sessionUser = await _authManager.GetUserAsync(User);
-            user.Id = sessionUser.Id;
+            user.Id = _appContext.UserId;
 
             // Act.
-            await _userManager.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user);
 
             // Return.
             return NoContent();
@@ -78,10 +80,12 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
             // Act.
-            User sessionUser = await _authManager.GetUserAsync(User);
+            if (!await _signinService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
+            {
+                throw new InvalidCredentialException();
+            }
 
-            // Act.
-            await _userManager.ChangePasswordAsync(sessionUser, input.OldPassword, input.NewPassword);
+            await _signinService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
 
             // Return.
             return NoContent();

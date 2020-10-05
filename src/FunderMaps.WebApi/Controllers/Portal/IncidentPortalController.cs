@@ -2,8 +2,9 @@ using AutoMapper;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,23 +26,29 @@ namespace FunderMaps.WebApi.Controllers.Portal
     public class IncidentPortalController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IncidentUseCase _incidentUseCase;
-        private readonly GeocoderUseCase _geocoderUseCase;
+        private readonly IContactRepository _contactRepository;
+        private readonly IIncidentRepository _incidentRepository;
+        private readonly IAddressRepository _addressRepository;
         private readonly IProductService _productService;
+        private readonly IBlobStorageService _fileStorageService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
         public IncidentPortalController(
             IMapper mapper,
-            IncidentUseCase incidentUseCase,
-            GeocoderUseCase geocoderUseCase,
-            IProductService productService)
+            IContactRepository contactRepository,
+            IIncidentRepository incidentRepository,
+            IAddressRepository addressRepository,
+            IProductService productService,
+            IBlobStorageService fileStorageService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _incidentUseCase = incidentUseCase ?? throw new ArgumentNullException(nameof(incidentUseCase));
-            _geocoderUseCase = geocoderUseCase ?? throw new ArgumentNullException(nameof(geocoderUseCase));
+            _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
+            _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
+            _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
+            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
         }
 
         /// <summary>
@@ -71,14 +78,16 @@ namespace FunderMaps.WebApi.Controllers.Portal
             }
 
             // Act.
-            var fileName = await _incidentUseCase.StoreDocumentAsync(
-                input.OpenReadStream(),
-                input.FileName,
-                input.ContentType);
+            var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
+            await _fileStorageService.StoreFileAsync(
+                containerName: "incident-report",
+                fileName: storeFileName,
+                contentType: input.ContentType,
+                stream: input.OpenReadStream());
 
             var output = new DocumentDto
             {
-                Name = fileName,
+                Name = storeFileName,
             };
 
             // Return.
@@ -102,7 +111,16 @@ namespace FunderMaps.WebApi.Controllers.Portal
             };
 
             // Act.
-            await _incidentUseCase.CreateAsync(incident);
+            // There does not have to be a contact, but if it exists we'll save it.
+            if (incident.ContactNavigation != null)
+            {
+                await _contactRepository.AddAsync(incident.ContactNavigation);
+            }
+
+            // FUTURE: Works for now, but may not be the best solution to check
+            //         if input data is valid
+            await _addressRepository.GetByIdAsync(incident.Address);
+            await _incidentRepository.AddAsync(incident);
 
             // Return.
             return NoContent();
@@ -117,7 +135,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
         public async Task<IActionResult> GetAllAddressSuggestionAsync([FromQuery] AddressSearchDto input)
         {
             // Assign.
-            IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation);
+            IAsyncEnumerable<Address> addressList = _addressRepository.GetBySearchQueryAsync(input.Query, input.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList, HttpContext.RequestAborted);

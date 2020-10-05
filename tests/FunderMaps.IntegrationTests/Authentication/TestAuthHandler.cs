@@ -39,8 +39,8 @@ namespace FunderMaps.IntegrationTests.Authentication
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.Organization, organization.Id.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.OrganizationRole, organizationRole.ToString()),
+                new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organization.Id.ToString()),
+                new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()),
             };
 
             var identity = new ClaimsIdentity(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);

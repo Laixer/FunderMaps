@@ -1,8 +1,7 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,17 +21,17 @@ namespace FunderMaps.WebApi.Controllers.Application
     public class OrganizationController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly AuthManager _authManager;
-        private readonly OrganizationManager _organizationManager;
+        private readonly Core.AppContext _appContext;
+        private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationController(IMapper mapper, AuthManager authManager, OrganizationManager organizationManager)
+        public OrganizationController(IMapper mapper, Core.AppContext appContext, IOrganizationRepository organizationRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         }
 
         // GET: api/organization
@@ -43,10 +42,10 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync()
         {
             // Act.
-            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
 
             // Map.
-            var output = _mapper.Map<OrganizationDto>(sessionOrganization);
+            var output = _mapper.Map<OrganizationDto>(organization);
 
             // Return.
             return Ok(output);
@@ -62,11 +61,10 @@ namespace FunderMaps.WebApi.Controllers.Application
         {
             // Map.
             var organization = _mapper.Map<Organization>(input);
-            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
-            organization.Id = sessionOrganization.Id;
+            organization.Id = _appContext.TenantId;
 
             // Act.
-            await _organizationManager.UpdateAsync(organization);
+            await _organizationRepository.UpdateAsync(organization);
 
             // Return.
             return NoContent();

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,15 +27,15 @@ namespace FunderMaps.WebApi.Controllers.Application
     public class OrganizationAdminController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly OrganizationManager _organizationManager;
+        private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationAdminController(IMapper mapper, OrganizationManager organizationManager)
+        public OrganizationAdminController(IMapper mapper, IOrganizationRepository organizationRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         }
 
         // GET: api/admin/organization/{id}
@@ -46,7 +46,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAsync(Guid id)
         {
             // Act.
-            Organization organization = await _organizationManager.GetAsync(id);
+            Organization organization = await _organizationRepository.GetByIdAsync(id);
 
             // Map.
             var output = _mapper.Map<OrganizationDto>(organization);
@@ -63,7 +63,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
             // Act.
-            IAsyncEnumerable<Organization> organizationList = _organizationManager.GetAllAsync(pagination.Navigation);
+            IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<OrganizationDto>, Organization>(organizationList);
@@ -84,7 +84,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             organization.Id = id;
 
             // Act.
-            await _organizationManager.UpdateAsync(organization);
+            await _organizationRepository.UpdateAsync(organization);
 
             // Return.
             return NoContent();
@@ -98,7 +98,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> DeleteAsync(Guid id)
         {
             // Act.
-            await _organizationManager.DeleteAsync(id);
+            await _organizationRepository.DeleteAsync(id);
 
             // Return.
             return NoContent();

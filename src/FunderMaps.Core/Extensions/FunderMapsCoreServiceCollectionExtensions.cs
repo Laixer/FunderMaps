@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Managers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
@@ -43,15 +42,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<FunderMaps.Core.AppContext>();
 
             // Register core use cases in DI container.
-            services.AddScoped<GeocoderUseCase>();
-            services.AddScoped<IncidentUseCase>();
             services.AddScoped<InquiryUseCase>();
             services.AddScoped<ProjectUseCase>();
             services.AddScoped<RecoveryUseCase>();
-
-            // Register core managers in DI container.
-            services.AddScoped<UserManager>();
-            services.AddScoped<OrganizationManager>();
 
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();

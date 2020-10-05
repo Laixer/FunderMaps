@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.UseCases;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,15 +18,15 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
     public class AddressController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly GeocoderUseCase _geocoderUseCase;
+        private readonly IAddressRepository _addressRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AddressController(IMapper mapper, GeocoderUseCase geocoderUseCase)
+        public AddressController(IMapper mapper, IAddressRepository addressRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _geocoderUseCase = geocoderUseCase ?? throw new ArgumentNullException(nameof(geocoderUseCase));
+            _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         public async Task<IActionResult> GetAsync([Geocoder] string id)
         {
             // Assign.
-            Address address = await _geocoderUseCase.GetAsync(id);
+            Address address = await _addressRepository.GetByIdAsync(id);
 
             // Map.
             var output = _mapper.Map<AddressDto>(address);
@@ -56,7 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         public async Task<IActionResult> GetAllSuggestionAsync([FromQuery] AddressSearchDto input)
         {
             // Assign.
-            IAsyncEnumerable<Address> addressList = _geocoderUseCase.GetAllBySuggestionAsync(input.Query, input.Navigation);
+            IAsyncEnumerable<Address> addressList = _addressRepository.GetBySearchQueryAsync(input.Query, input.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList);
