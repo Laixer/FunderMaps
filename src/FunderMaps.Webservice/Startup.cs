@@ -7,7 +7,6 @@ using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
 using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Webservice.HealthChecks;
-using FunderMaps.Webservice.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -51,7 +50,7 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(AutoMapperProfile));
+            services.AddAutoMapper(typeof(MapperProfile));
 
             services.AddControllers()
                 .AddFunderMapsAssembly();
@@ -70,6 +69,7 @@ namespace FunderMaps.Webservice
             services.AddHealthChecks()
                 .AddCheck<WebserviceHealthCheck>("webservice_health_check");
 
+            // TODO: Only in staging/dev
             // Configure Swagger.
             services.AddSwaggerGen(c =>
             {
@@ -133,6 +133,7 @@ namespace FunderMaps.Webservice
 
             app.UseFunderMapsExceptionHandler("/oops");
 
+            // TODO: Only in staging/dev
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

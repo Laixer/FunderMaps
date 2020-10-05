@@ -6,17 +6,17 @@ using FunderMaps.Webservice.ResponseModels.Analysis;
 using FunderMaps.Webservice.ResponseModels.Statistics;
 using FunderMaps.Webservice.ResponseModels.Types;
 
-namespace FunderMaps.Webservice.Mapping
+namespace FunderMaps.Webservice
 {
     /// <summary>
     ///     Contains an AutoMapper profile for proper DTO mapping.
     /// </summary>
-    public sealed class AutoMapperProfile : Profile
+    public sealed class MapperProfile : Profile
     {
         /// <summary>
         ///     Sets up our mapping profiles for analysis.
         /// </summary>
-        public AutoMapperProfile()
+        public MapperProfile()
         {
             // All analysis mapping
             CreateMap<AnalysisProduct, AnalysisBuildingDataResponseModel>();
