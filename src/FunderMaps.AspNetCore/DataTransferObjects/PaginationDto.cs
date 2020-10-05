@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Data;
 
-namespace FunderMaps.WebApi.ViewModels
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
     ///     Pagination model.
@@ -9,7 +9,7 @@ namespace FunderMaps.WebApi.ViewModels
     /// <remarks>
     ///     Used to paginate datasets.
     /// </remarks>
-    public class PaginationModel
+    public class PaginationDto
     {
         /// <summary>
         ///     Recordset offset.

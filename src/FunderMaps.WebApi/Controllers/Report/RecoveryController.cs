@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -45,7 +45,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             if (pagination == null)
             {
@@ -58,7 +58,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
 
         [HttpGet("recent")]
-        public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationDto pagination)
         {
             if (pagination == null)
             {

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -47,7 +47,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Cache response for 1 hour.
         /// </remarks>
         [HttpGet("reviewer"), ResponseCache(Duration = 60 * 60)]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
             // TODO: Single call

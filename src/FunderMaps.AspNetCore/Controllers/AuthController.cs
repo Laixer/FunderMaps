@@ -27,8 +27,6 @@ namespace FunderMaps.AspNetCore.Controllers
         /// <summary>
         ///     User sign in endpoint.
         /// </summary>
-        /// <param name="input"><see cref="SignInInputModel"/></param>
-        /// <returns><see cref="OkObjectResult"/></returns>
         [AllowAnonymous]
         [HttpPost("signin")]
         public async Task<IActionResult> SignInAsync([FromBody] SignInInputModel input)
@@ -51,7 +49,6 @@ namespace FunderMaps.AspNetCore.Controllers
         /// <summary>
         ///     Refresh access token for user.
         /// </summary>
-        /// <returns><see cref="OkObjectResult"/></returns>
         [HttpGet("token-refresh")]
         public async Task<IActionResult> RefreshSignInAsync()
         {

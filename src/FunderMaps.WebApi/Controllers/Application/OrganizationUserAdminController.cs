@@ -4,7 +4,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -63,7 +62,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
         {
             // Act.
             // TODO: Single call

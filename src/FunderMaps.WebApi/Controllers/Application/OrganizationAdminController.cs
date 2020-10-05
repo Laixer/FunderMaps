@@ -2,7 +2,6 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,7 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     This controller provides organization administration.
     ///     <para>
     ///         For the variant based on the current session see 
-    ///         <see cref="OrganizationController"/>.
+    ///         <see cref="FunderMaps.AspNetCore.Controllers.OrganizationController"/>.
     ///     </para>
     /// </remarks>
     [Authorize(Policy = "AdministratorPolicy")]
@@ -60,7 +59,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Return all organizations.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
             IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);

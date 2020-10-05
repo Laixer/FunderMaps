@@ -8,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Application
+namespace FunderMaps.AspNetCore.Controllers
 {
     /// <summary>
     ///     Endpoint controller for organization operations.

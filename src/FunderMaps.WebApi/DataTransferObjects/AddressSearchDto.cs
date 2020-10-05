@@ -1,4 +1,4 @@
-﻿using FunderMaps.WebApi.ViewModels;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.WebApi.DataTransferObjects
@@ -6,7 +6,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
     /// <summary>
     ///     Address search DTO.
     /// </summary>
-    public sealed class AddressSearchDto : PaginationModel
+    public sealed class AddressSearchDto : PaginationDto
     {
         /// <summary>
         ///     Search query.

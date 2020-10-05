@@ -1,17 +1,17 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FunderMaps.WebApi.Controllers.Application
+#pragma warning disable CA1062 // Validate arguments of public methods
+namespace FunderMaps.AspNetCore.Controllers
 {
     /// <summary>
     ///     Endpoint controller for organization user operations.
@@ -61,7 +61,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
             // TODO: Single call
@@ -115,3 +115,4 @@ namespace FunderMaps.WebApi.Controllers.Application
         }
     }
 }
+#pragma warning restore CA1062 // Validate arguments of public methods
