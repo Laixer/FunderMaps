@@ -19,13 +19,13 @@ namespace FunderMaps.AspNetCore.Authentication
     /// </remarks>
     public class AuthenticationHelper
     {
-        private readonly AuthManager _authManager;
+        private readonly SignInService _authManager;
         private readonly ISecurityTokenProvider _tokenProvider;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthenticationHelper(AuthManager authManager, ISecurityTokenProvider tokenProvider)
+        public AuthenticationHelper(SignInService authManager, ISecurityTokenProvider tokenProvider)
         {
             _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
             _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
