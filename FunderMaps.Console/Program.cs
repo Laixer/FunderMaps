@@ -1,12 +1,20 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Console
 {
-    class Program
+    /// <summary>
+    ///     Main entry class.
+    /// </summary>
+    public class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        ///     Application entry point.
+        /// </summary>
+        /// <param name="args">Command line arguments.</param>
+        public static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // Console.WriteLine("Hello World!");
         }
     }
 }
