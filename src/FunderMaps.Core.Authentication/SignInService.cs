@@ -60,26 +60,41 @@ namespace FunderMaps.Core.Authentication
         /// <summary>
         ///     Returns a flag indicating whether the specified user can sign in.
         /// </summary>
-        /// <param name="user">The user whose sign-in status should be returned.</param>
-        /// <returns>
-        ///     The task object representing the asynchronous operation, containing a flag that is true
-        ///     if the specified user can sign-in, otherwise false.
-        /// </returns>
-        public virtual async Task<SignInContext> CanSignInAsync(IUser user)
+        /// <param name="id">The user id whose sign-in status should be returned.</param>
+        /// <returns><c>True</c> if the specified user can sign-in, otherwise false.</returns>
+        public virtual async Task<SignInContext> CanSignInAsync(Guid id)
         {
-            if (user == null)
+            if (await UserRepository.IsLockedOutAsync(id))
             {
-                throw new ArgumentNullException(nameof(user));
-            }
-
-            if (await UserRepository.IsLockedOutAsync(user.Id))
-            {
-                Logger.LogWarning(3, $"User {user} is currently locked out.");
+                Logger.LogWarning(3, $"User {id} is currently locked out.");
 
                 return SignInContext.LockedOut;
             }
 
             return SignInContext.Success;
+        }
+
+        /// <summary>
+        ///     Test if the provided password is valid for the user.
+        /// </summary>
+        /// <param name="id">The user id whose password should be checked.</param>
+        /// <param name="password">The password to be checked against the user.</param>
+        /// <returns><c>True</c> if the specified password is valid for the user, otherwise false.</returns>
+        public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
+        {
+            var passwordHash = await UserRepository.GetPasswordHashAsync(id);
+            return PasswordHasher.IsPasswordValid(passwordHash, password);
+        }
+
+        /// <summary>
+        ///     Set the password for the user.
+        /// </summary>
+        /// <param name="id">The user id whose password should be set.</param>
+        /// <param name="password">The password to be set on the user.</param>
+        public virtual async Task SetPasswordAsync(Guid id, string password)
+        {
+            var passwordHash = PasswordHasher.HashPassword(password);
+            await UserRepository.SetPasswordHashAsync(id, passwordHash);
         }
 
         /// <summary>
@@ -126,7 +141,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(organization));
             }
 
-            var result = await CanSignInAsync(user);
+            var result = await CanSignInAsync(user.Id);
             if (result != SignInContext.Success)
             {
                 return result;
@@ -183,14 +198,13 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(organization));
             }
 
-            var result = await CanSignInAsync(user);
+            var result = await CanSignInAsync(user.Id);
             if (result != SignInContext.Success)
             {
                 return result;
             }
 
-            var currentPasswordHash = await UserRepository.GetPasswordHashAsync(user.Id);
-            if (PasswordHasher.IsPasswordValid(currentPasswordHash, password))
+            if (await CheckPasswordAsync(user.Id, password))
             {
                 await UserRepository.ResetAccessFailed(user.Id);
                 await UserRepository.RegisterAccess(user.Id);

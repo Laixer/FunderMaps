@@ -86,7 +86,7 @@ namespace FunderMaps.WebApi
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
-            services.AddTransient<AuthenticationHelper>();
+            services.AddTransient<SignInHandler>();
         }
 
         /// <summary>
