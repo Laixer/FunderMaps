@@ -70,7 +70,7 @@ namespace FunderMaps.Data.Repositories
             await using var cmd = DbProvider.CreateCommand(sql, connection);
             cmd.AddParameterWithValue("organization_id", organizationId);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
+            await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 yield return reader.GetGuid(0);
@@ -92,7 +92,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("organization_id", organizationId);
             cmd.AddParameterWithValue("role", role);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
+            await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 yield return reader.GetGuid(0);
