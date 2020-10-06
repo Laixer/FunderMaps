@@ -150,7 +150,7 @@ namespace FunderMaps.Data.Repositories
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
             await using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
+            await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 yield return MapFromReader(reader);

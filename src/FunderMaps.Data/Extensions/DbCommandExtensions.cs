@@ -143,14 +143,6 @@ namespace FunderMaps.Data.Extensions
         }
 
         /// <summary>
-        ///     Execute command without requiring success.
-        /// </summary>
-        /// <param name="command">The command to extend.</param>
-        /// <returns><see cref="DbDataReader"/>.</returns>
-        public static async ValueTask<DbDataReader> ExecuteReaderCanHaveZeroRowsAsync(this DbCommand command)
-            => await command.ExecuteReaderAsync();
-
-        /// <summary>
         ///     Execute command and ensure success.
         /// </summary>
         /// <param name="command">The command to extend.</param>
