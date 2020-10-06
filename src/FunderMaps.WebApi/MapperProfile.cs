@@ -29,6 +29,14 @@ namespace FunderMaps.WebApi
                 .IncludeMembers(src => src.ContactNavigation)
                 .ReverseMap();
             CreateMap<Inquiry, InquiryDto>().ReverseMap();
+            CreateMap<InquiryFull, InquiryDto>()
+                .ForMember(dest => dest.AuditStatus, o => o.MapFrom(src => src.State.AuditStatus))
+                .ForMember(dest => dest.Reviewer, o => o.MapFrom(src => src.Attribution.Reviewer))
+                .ForMember(dest => dest.Contractor, o => o.MapFrom(src => src.Attribution.Contractor))
+                .ForMember(dest => dest.AccessPolicy, o => o.MapFrom(src => src.Access.AccessPolicy))
+                .ForMember(dest => dest.CreateDate, o => o.MapFrom(src => src.Record.CreateDate))
+                .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
+                .ReverseMap();
             CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
             CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
             CreateMap<Project, ProjectDto>().ReverseMap();

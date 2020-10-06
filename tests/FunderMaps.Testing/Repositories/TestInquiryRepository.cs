@@ -28,17 +28,12 @@ namespace FunderMaps.Testing.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<InquiryFull> GetByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation)
+        public Task SetAuditStatusAsync(int id, InquiryFull entity)
         {
             throw new NotImplementedException();
         }
