@@ -80,10 +80,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             IAsyncEnumerable<OrganizationProposal> organizationList = _organizationProposalRepository.ListAllAsync(pagination.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<OrganizationProposalDto>, OrganizationProposal>(organizationList);
+            var output = await _mapper.MapAsync<IList<OrganizationProposalDto>, OrganizationProposal>(organizationList);
 
             // Return.
-            return Ok(result);
+            return Ok(output);
         }
 
         // DELETE: api/organization/proposal/{id}

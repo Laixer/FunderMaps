@@ -49,6 +49,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
         }
 
+        // GET: api/incident/{id}
+        /// <summary>
+        ///     Return incident by id.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync([Incident] string id)
         {
@@ -63,11 +67,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // POST: api/incident/upload-document
         /// <summary>
         ///     Upload document to the backstore.
         /// </summary>
-        /// <param name="input">See <see cref="IFormFile"/>.</param>
-        /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
@@ -95,6 +98,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // GET: api/incident
+        /// <summary>
+        ///     Return all incidents.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
@@ -107,17 +114,16 @@ namespace FunderMaps.WebApi.Controllers.Report
             }
 
             // Map.
-            var result = _mapper.Map<IList<IncidentDto>>(incidentList);
+            var output = _mapper.Map<IList<IncidentDto>>(incidentList);
 
             // Return.
-            return Ok(result);
+            return Ok(output);
         }
 
+        // POST: api/incident
         /// <summary>
-        ///     Post a new incident to the backend.
+        ///     Create incident.
         /// </summary>
-        /// <param name="input"><see cref="IncidentDto"/></param>
-        /// <returns><see cref="OkObjectResult"/></returns>
         [HttpPost]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input)
@@ -154,6 +160,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // PUT: api/incident/{id}
+        /// <summary>
+        ///     Update incident by id.
+        /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync([Incident] string id, [FromBody] IncidentDto input)
         {
@@ -168,6 +178,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
+        // DELETE: api/incident/{id}
+        /// <summary>
+        ///     Delete incident by id.
+        /// </summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync([Incident] string id)
         {

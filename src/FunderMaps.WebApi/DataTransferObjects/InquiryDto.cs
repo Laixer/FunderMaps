@@ -49,11 +49,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         [Required, Range(typeof(DateTime), "01/01/1000", "01/01/2100")]
         public DateTime DocumentDate { get; set; }
 
-        // TODO: Check if starts with https://
         /// <summary>
         ///     Document file name.
         /// </summary>
-        [Required, Url]
+        [Required]
         public string DocumentFile { get; set; }
 
         /// <summary>
