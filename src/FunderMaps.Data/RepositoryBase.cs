@@ -17,6 +17,15 @@ namespace FunderMaps.Data
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
         /// <summary>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
+        /// </summary>
+        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+        {
+            TEntityPrimaryKey primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
+        }
+
+        /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
         /// </summary>
         public abstract ValueTask<TEntity> GetByIdAsync(TEntityPrimaryKey id);

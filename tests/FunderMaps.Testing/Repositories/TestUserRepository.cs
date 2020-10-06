@@ -33,6 +33,12 @@ namespace FunderMaps.Testing.Repositories
             DataStore = dataStore;
         }
 
+        public virtual async Task<User> AddGetAsync(User entity)
+        {
+            Guid primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
+        }
+
         protected virtual UserRecord FindEntityById(Guid id)
             => DataStore.ItemList.FirstOrDefault(e => e.User.Id == id);
 

@@ -34,6 +34,12 @@ namespace FunderMaps.Testing.Repositories
             EntityPrimaryKey = entryPrimaryKey;
         }
 
+        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+        {
+            TEntryPrimaryKey primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
+        }
+
         protected virtual TEntity FindEntityById(TEntryPrimaryKey id)
             => DataStore.ItemList.FirstOrDefault(e => EntityPrimaryKey(e).Equals(id));
 

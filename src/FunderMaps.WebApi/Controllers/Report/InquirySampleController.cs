@@ -97,8 +97,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 throw new EntityReadOnlyException();
             }
 
-            var id = await _inquirySampleRepository.AddAsync(inquirySample);
-            inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+            inquirySample = await _inquirySampleRepository.AddGetAsync(inquirySample);
 
             inquiry.State.TransitionToPending();
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);

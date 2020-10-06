@@ -89,8 +89,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var inquiry = _mapper.Map<InquiryFull>(input);
 
             // Act.
-            var id = await _inquiryRepository.AddAsync(inquiry);
-            inquiry = await _inquiryRepository.GetByIdAsync(id);
+            inquiry = await _inquiryRepository.AddGetAsync(inquiry);
 
             // Map.
             var output = _mapper.Map<InquiryDto>(inquiry);
@@ -141,8 +140,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             var inquiry = _mapper.Map<InquiryFull>(input);
             inquiry.Id = id;
 
-            // FUTURE: Check audit_status
-
             // Act.
             await _inquiryRepository.UpdateAsync(inquiry);
 
@@ -159,7 +156,11 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
             inquiry.State.TransitionToReview();
+
+            // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
             await _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, input.Message);
 
@@ -176,7 +177,11 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
             inquiry.State.TransitionToRejected();
+
+            // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
             await _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, input.Message);
 
@@ -193,7 +198,11 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
             inquiry.State.TransitionToDone();
+
+            // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
             // Return.

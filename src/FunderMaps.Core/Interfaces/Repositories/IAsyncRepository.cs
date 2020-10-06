@@ -15,9 +15,16 @@ namespace FunderMaps.Core.Interfaces.Repositories
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
         /// <summary>
+        ///     Create and return <typeparamref name="TEntity"/>.
+        /// </summary>
+        /// <param name="entity">Entity object.</param>
+        /// <returns>Created <typeparamref name="TEntity"/>.</returns>
+        Task<TEntity> AddGetAsync(TEntity entity);
+
+        /// <summary>
         ///     Retrieve <typeparamref name="TEntity"/> by id.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="id">Entity identifier.</param>
         /// <returns><typeparamref name="TEntity"/>.</returns>
         ValueTask<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
@@ -31,7 +38,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         ///     Create new <typeparamref name="TEntity"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        /// <returns>Created <typeparamref name="TEntity"/>.</returns>
+        /// <returns>Entity identifier.</returns>
         ValueTask<TEntityPrimaryKey> AddAsync(TEntity entity);
 
         /// <summary>
@@ -44,7 +51,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <summary>
         ///     Delete <typeparamref name="TEntity"/>.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="id">Entity identifier.</param>
         ValueTask DeleteAsync(TEntityPrimaryKey id);
 
         /// <summary>
