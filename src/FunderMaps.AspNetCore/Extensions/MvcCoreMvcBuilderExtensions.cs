@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class MvcCoreMvcBuilderExtensions
     {
         /// <summary>
-        ///     Adds the FunderMaps AspNetCore application part to the application parts.
+        ///     Adds the FunderMaps AspNetCore application part to the MVC application.
         /// </summary>
         /// <param name="builder">The <see cref="IMvcBuilder"/>.</param>
         /// <returns>The <see cref="IMvcBuilder"/>.</returns>

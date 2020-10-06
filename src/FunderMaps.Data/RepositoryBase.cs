@@ -12,7 +12,7 @@ namespace FunderMaps.Data
     /// </summary>
     /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
     /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
-    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DataBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
+    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbContextBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
         where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {

@@ -20,7 +20,7 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     This controller provides organization administration.
     ///     <para>
     ///         For the variant based on the current session see 
-    ///         <see cref="OrganizationUserController"/>.
+    ///         <see cref="FunderMaps.AspNetCore.Controllers.OrganizationUserController"/>.
     ///     </para>
     /// </remarks>
     [Authorize(Policy = "AdministratorPolicy")]
@@ -41,6 +41,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
         }
 
+        // POST: api/admin/organization/{id}/user
+        /// <summary>
+        ///     Add user to organization.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserDto input)
         {
@@ -61,6 +65,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // GET: api/admin/organization/{id}/user
+        /// <summary>
+        ///     Get all users in the organization.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
         {
@@ -79,6 +87,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(result);
         }
 
+        // PUT: api/admin/organization/{id}/user/{id}
+        /// <summary>
+        ///     Update user in the organization.
+        /// </summary>
         [HttpPut("{userId:guid}")]
         public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] UserDto input)
         {
@@ -98,6 +110,10 @@ namespace FunderMaps.WebApi.Controllers.Application
             return NoContent();
         }
 
+        // DELETE: api/admin/organization/{id}/user/{id}
+        /// <summary>
+        ///     Delete user in the organization.
+        /// </summary>
         [HttpDelete("{userId:guid}")]
         public async Task<IActionResult> DeleteUserAsync(Guid id, Guid userId)
         {

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FunderMaps.Core;
+using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Data.Providers;
 
@@ -11,19 +12,14 @@ namespace FunderMaps.Data
     /// <remarks>
     ///     Repositories will be able to inherit from this base.
     /// </remarks>
-    internal abstract class DataBase
+    internal abstract class DbContextBase : AppServiceBase
     {
         /// <summary>
         ///     Data provider interface.
         /// </summary>
         public DbProvider DbProvider { get; set; }
 
-        /// <summary>
-        ///     Application context.
-        /// </summary>
-        public AppContext AppContext { get; set; }
-
-        // FUTURE: Move into DI.
+        // FUTURE: Move into DI. This becomes the DbContext DbContext
         /// <summary>
         ///     Create the database context.
         /// </summary>

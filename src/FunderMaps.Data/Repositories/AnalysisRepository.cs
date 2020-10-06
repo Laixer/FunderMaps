@@ -16,7 +16,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Repository for analysis products.
     /// </summary>
-    internal sealed class AnalysisRepository : DataBase, IAnalysisRepository
+    internal sealed class AnalysisRepository : DbContextBase, IAnalysisRepository
     {
         /// <summary>
         ///     Scrapped for now.

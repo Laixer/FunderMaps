@@ -15,7 +15,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Repository for statistics.
     /// </summary>
-    internal sealed class StatisticsRepository : DataBase, IStatisticsRepository
+    internal sealed class StatisticsRepository : DbContextBase, IStatisticsRepository
     {
         /// <summary>
         ///     Built-in enum to indicate our id method.

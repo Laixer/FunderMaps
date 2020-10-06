@@ -11,7 +11,7 @@ namespace FunderMaps.Data.Repositories
     ///     User tracking repository. This has a minimum item count of 1, as
     ///     we also want to track requests that return nothing.
     /// </summary>
-    internal class TrackingRepository : DataBase, ITrackingRepository
+    internal class TrackingRepository : DbContextBase, ITrackingRepository
     {
         /// <summary>
         ///     Process analysis product usage. The minimum item count is 1,

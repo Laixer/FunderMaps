@@ -47,7 +47,6 @@ namespace FunderMaps.WebApi
         {
             services.AddAutoMapper(typeof(Startup));
 
-            // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -62,15 +61,14 @@ namespace FunderMaps.WebApi
                 })
                 .AddJwtBearerTokenProvider();
 
-            // Add the authorization layer.
             services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
+                {
+                    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
 
-                options.AddFunderMapsPolicy();
-            });
+                    options.AddFunderMapsPolicy();
+                });
 
             services.AddLocalization(options =>
             {
@@ -121,18 +119,6 @@ namespace FunderMaps.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            // FUTURE: Should be created via factory
-            app.Use(async (context, next) =>
-            {
-                var appContext = context.RequestServices.GetRequiredService<Core.AppContext>();
-                appContext.CancellationToken = context.RequestAborted;
-                appContext.Items = new System.Collections.Generic.Dictionary<object, object>(context.Items);
-                appContext.ServiceProvider = context.RequestServices;
-                appContext.User = Core.Authentication.PrincipalProvider.IsSignedIn(context.User) ? Core.Authentication.PrincipalProvider.GetTenantUser<Core.Entities.User, Core.Entities.Organization>(context.User).Item1 : null;
-                appContext.Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(context.User) ? Core.Authentication.PrincipalProvider.GetTenantUser<Core.Entities.User, Core.Entities.Organization>(context.User).Item2 : null;
-                await next.Invoke();
-            });
 
             app.UseEndpoints(endpoints =>
             {

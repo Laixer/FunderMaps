@@ -2,6 +2,7 @@
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -39,7 +40,7 @@ namespace Microsoft.Extensions.DependencyInjection
             //       in order for core services to be functional. This registration is
             //       merely a placeholder. The front framework should setup the application
             //       context.
-            services.AddScoped<FunderMaps.Core.AppContext>();
+            services.TryAddScoped<FunderMaps.Core.AppContext>();
 
             // Register core use cases in DI container.
             services.AddScoped<InquiryUseCase>();
@@ -53,9 +54,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // NOTE: These services take time to initialize are used more often. Registering
             //       them as a singleton will keep the services alife for the entire application
             //       lifetime. Beware to add new services as singletons.
-            services.AddSingleton<IEmailService, NullEmailService>();
-            services.AddSingleton<IBlobStorageService, NullBlobStorageService>();
-            services.AddSingleton<INotificationService, NullNotificationService>();
+            services.TryAddSingleton<IEmailService, NullEmailService>();
+            services.TryAddSingleton<IBlobStorageService, NullBlobStorageService>();
+            services.TryAddSingleton<INotificationService, NullNotificationService>();
 
             return services;
         }

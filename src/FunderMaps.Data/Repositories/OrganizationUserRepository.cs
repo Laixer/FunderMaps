@@ -11,7 +11,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Organization user repository.
     /// </summary>
-    internal class OrganizationUserRepository : DataBase, IOrganizationUserRepository
+    internal class OrganizationUserRepository : DbContextBase, IOrganizationUserRepository
     {
         public async ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {

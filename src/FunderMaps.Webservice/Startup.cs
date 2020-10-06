@@ -52,33 +52,6 @@ namespace FunderMaps.Webservice
         {
             services.AddAutoMapper(typeof(MapperProfile));
 
-            services.AddControllers()
-                .AddFunderMapsAssembly();
-
-            // Configure project specific services.
-            services.AddTransient<ProductHandler>();
-            services.AddTransient<SignInHandler>();
-
-            // Configure FunderMaps services.
-            services.AddFunderMapsDataServices("FunderMapsConnection");
-
-            // Override default product service by tracking variant of product service.
-            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
-
-            // Configure health checks.
-            services.AddHealthChecks()
-                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
-
-            // TODO: Only in staging/dev
-            // Configure Swagger.
-            services.AddSwaggerGen(c =>
-            {
-                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                c.SchemaFilter<EnumSchemaFilter>();
-                // FUTURE: This call is obsolete.
-                c.GeneratePolymorphicSchemas();
-            });
-
             // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -104,6 +77,29 @@ namespace FunderMaps.Webservice
                 options.AddFunderMapsPolicy();
             });
 
+            // Configure project specific services.
+            services.AddTransient<ProductHandler>();
+            services.AddTransient<SignInHandler>();
+
+            // Configure FunderMaps services.
+            services.AddFunderMapsDataServices("FunderMapsConnection");
+
+            // Override default product service by tracking variant of product service.
+            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
+
+            // Configure health checks.
+            services.AddHealthChecks()
+                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
+
+            // TODO: Only in staging/dev
+            // Configure Swagger.
+            services.AddSwaggerGen(c =>
+            {
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                c.SchemaFilter<EnumSchemaFilter>();
+                // FUTURE: This call is obsolete.
+                c.GeneratePolymorphicSchemas();
+            });
         }
 
         /// <summary>

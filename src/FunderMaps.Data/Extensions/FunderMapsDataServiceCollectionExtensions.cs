@@ -15,21 +15,25 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Add repository with application context injection to container.
         /// </summary>
         /// <remarks>
-        ///     Repositories that obey the DataBase contract can request the application context
-        ///     from inheritance due to the auto injector. Since the application context is per
-        ///     scope the repositories need to be scoped as well.
+        ///     This service factory create the repository service and initializes the context.
+        ///     <para>
+        ///         Repositories that obey the <see cref="DbContextBase"/> contract can request the application context
+        ///         from inheritance. The application context is per scope so repositories need to be scoped as well.
+        ///     </para>
         /// </remakrs>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         private static IServiceCollection AddContextRepository<TService, TImplementation>(this IServiceCollection services)
             where TService : class
-            where TImplementation : class, TService, new()
+            where TImplementation : DbContextBase, TService, new()
             => services.AddScoped<TService, TImplementation>(serviceProvider =>
             {
                 var repository = new TImplementation();
-                DataBase injectorBase = repository as DataBase;
+                DbContextBase injectorBase = repository as DbContextBase;
                 injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
                 injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
+                // TODO: 
+                // injectorBase.DbContext = serviceProvider.GetRequiredService<DbContextFactory>()
                 return repository;
             });
 
