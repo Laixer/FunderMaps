@@ -2,7 +2,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace FunderMaps.Core.Services
+namespace FunderMaps.Core.Components
 {
     /// <summary>
     ///     Random value generator.
@@ -63,12 +63,9 @@ namespace FunderMaps.Core.Services
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
                     _rng.Dispose();
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposedValue = true;
             }
         }

@@ -3,7 +3,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-namespace FunderMaps.Core.Services
+namespace FunderMaps.Core.Components
 {
     /// <summary>
     ///     Password hasher.
@@ -21,7 +21,6 @@ namespace FunderMaps.Core.Services
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        /// <param name="random"></param>
         public PasswordHasher(IRandom random)
         {
             _random = random;
@@ -83,7 +82,7 @@ namespace FunderMaps.Core.Services
         ///     Hash plaintext paassword and return the password hash.
         /// </summary>
         /// <param name="password">Plaintext password.</param>
-        /// <returns></returns>
+        /// <returns>Returns hashed password</returns>
         public string HashPassword(string password)
         {
             if (password == null)

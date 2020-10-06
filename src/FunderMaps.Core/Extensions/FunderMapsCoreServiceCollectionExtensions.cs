@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;

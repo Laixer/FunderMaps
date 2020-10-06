@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Services;
+﻿using FunderMaps.Core.Components;
 using Xunit;
 
 namespace FunderMaps.Core.Tests.Services

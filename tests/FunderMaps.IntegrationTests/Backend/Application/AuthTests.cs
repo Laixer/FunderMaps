@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Core.Services;
+using FunderMaps.Core.Components;
 using FunderMaps.Testing.Extensions;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Testing.Repositories;
