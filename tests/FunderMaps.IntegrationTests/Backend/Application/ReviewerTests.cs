@@ -22,9 +22,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Theory]
-        [InlineData(OrganizationRole.Superuser, 2)]
-        [InlineData(OrganizationRole.Verifier, 3)]
-        [InlineData(OrganizationRole.Writer, 2)]
+        [InlineData(OrganizationRole.Superuser, 4)]
+        [InlineData(OrganizationRole.Verifier, 4)]
+        [InlineData(OrganizationRole.Writer, 3)]
         public async Task GetAllReviewerReturnAllReviewer(OrganizationRole role, int expectedCount)
         {
             // Arrange

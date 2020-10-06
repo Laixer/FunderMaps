@@ -50,8 +50,9 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
         {
             // Assign.
+            var roles = new OrganizationRole[]{ OrganizationRole.Verifier, OrganizationRole.Superuser };
             Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
-            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserByRoleAsync(sessionOrganization.Id, OrganizationRole.Verifier, pagination.Navigation);
+            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserByRoleAsync(sessionOrganization.Id, roles, pagination.Navigation);
 
             // Map.
             var result = await _mapper.MapAsync<IList<ReviewerDto>, User>(userList);
