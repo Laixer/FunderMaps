@@ -197,9 +197,46 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, INavigation navigation)
+        /// <summary>
+        ///     Retrieve all entities and filter on report.
+        /// </summary>
+        /// <returns>List of entities.</returns>
+        public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, INavigation navigation)
         {
-            throw new NotImplementedException();
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
+            var sql = @"
+                SELECT  -- InquirySample
+                        s.id,
+                        s.inquiry,
+                        s.address,
+                        s.note,
+                        s.create_date,
+                        s.update_date,
+                        s.delete_date,
+                        s.base_measurement_level,
+                        s.built_year,
+                        s.substructure
+                FROM    report.inquiry_sample AS s
+                JOIN 	report.inquiry AS i ON i.id = s.inquiry
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   a.owner = @tenant
+                AND     i.id = @id";
+
+            ConstructNavigation(ref sql, navigation);
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", report);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                yield return MapFromReader(reader);
+            }
         }
 
         public override async ValueTask UpdateAsync(InquirySample entity)
