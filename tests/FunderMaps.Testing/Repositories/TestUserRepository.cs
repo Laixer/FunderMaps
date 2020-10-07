@@ -63,8 +63,8 @@ namespace FunderMaps.Testing.Repositories
         ///     Count items in datastore.
         /// </summary>
         /// <returns>Number of items in data store.</returns>
-        public ValueTask<ulong> CountAsync()
-            => new ValueTask<ulong>((ulong)DataStore.Count);
+        public ValueTask<long> CountAsync()
+            => new ValueTask<long>(DataStore.Count);
 
         public ValueTask BumpAccessFailed(Guid id)
         {

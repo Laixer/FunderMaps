@@ -58,6 +58,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         ///     Count number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        ValueTask<ulong> CountAsync();
+        ValueTask<long> CountAsync();
     }
 }

@@ -53,6 +53,6 @@ namespace FunderMaps.Data
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
         /// </summary>
-        public abstract ValueTask<ulong> CountAsync();
+        public abstract ValueTask<long> CountAsync();
     }
 }

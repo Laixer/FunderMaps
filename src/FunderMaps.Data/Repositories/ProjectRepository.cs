@@ -18,7 +18,7 @@ namespace FunderMaps.Data.Repositories
             throw new NotImplementedException();
         }
 
-        public override ValueTask<ulong> CountAsync()
+        public override ValueTask<long> CountAsync()
         {
             throw new NotImplementedException();
         }
