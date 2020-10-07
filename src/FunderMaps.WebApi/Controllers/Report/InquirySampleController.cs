@@ -87,7 +87,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Map.
             var inquirySample = _mapper.Map<InquirySample>(input);
             inquirySample.Inquiry = inquiryId;
-            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP; // TODO
 
             // Act.
             // FUTURE: Too much logic
@@ -120,7 +119,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             var inquirySample = _mapper.Map<InquirySample>(input);
             inquirySample.Id = id;
             inquirySample.Inquiry = inquiryId;
-            inquirySample.BaseMeasurementLevel = BaseMeasurementLevel.NAP; // TODO
 
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);

@@ -108,8 +108,9 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 DELETE
                 FROM    report.inquiry AS i
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   i.id = @id
+                USING 	application.attribution AS a
+                WHERE   a.id = i.attribution
+                AND     i.id = @id
                 AND     a.owner = @tenant";
 
             await using var context = await DbContextFactory(sql);

@@ -32,14 +32,12 @@ namespace FunderMaps.Data.Repositories
                     inquiry,
                     address,
                     note,
-                    base_measurement_level,
-                    building_year,
+                    built_year,
                     substructure)
                 VALUES (
                     @inquiry,
                     @address,
                     @note,
-                    @base_measurement_level,
                     @built_year,
                     @substructure)
                 RETURNING id";
@@ -59,16 +57,16 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 SELECT  COUNT(*)
-                FROM    report.inquiry_sample";
+                FROM    report.inquiry_sample AS s
+                JOIN 	report.inquiry AS i ON i.id = s.inquiry
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   a.owner = @tenant";
 
             await using var context = await DbContextFactory(sql);
 
-            return await context.ScalarAsync<ulong>();
-        }
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
-        public Task<uint> CountAsync(Guid orgId)
-        {
-            throw new NotImplementedException();
+            return await context.ScalarAsync<ulong>();
         }
 
         /// <summary>
@@ -79,12 +77,16 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 DELETE
-                FROM    report.inquiry_sample
-                WHERE   id = @id";
+                FROM    report.inquiry_sample AS s
+                JOIN 	report.inquiry AS i ON i.id = s.inquiry
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   s.id = @id
+                AND     a.owner = @tenant";
 
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await context.NonQueryAsync();
         }
@@ -94,7 +96,6 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("inquiry", entity.Inquiry);
             context.AddParameterWithValue("address", entity.Address);
             context.AddParameterWithValue("note", entity.Note);
-            context.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
             context.AddParameterWithValue("built_year", entity.BuiltYear);
             context.AddParameterWithValue("substructure", entity.Substructure);
         }
@@ -122,32 +123,32 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<InquirySample> GetByIdAsync(int id)
         {
             var sql = @"
-                SELECT  id,
-                        inquiry,
-                        address,
-                        note,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        base_measurement_level,
-                        built_year,
-                        substructure
-                FROM    report.inquiry_sample
-                WHERE   id = @id
+                SELECT  -- InquirySample
+                        s.id,
+                        s.inquiry,
+                        s.address,
+                        s.note,
+                        s.create_date,
+                        s.update_date,
+                        s.delete_date,
+                        s.base_measurement_level,
+                        s.built_year,
+                        s.substructure
+                FROM    report.inquiry_sample AS s
+                JOIN 	report.inquiry AS i ON i.id = s.inquiry
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   s.id = @id
+                AND     a.owner = @tenant
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
-        }
-
-        public Task<InquirySample> GetByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId)
@@ -167,21 +168,27 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        inquiry,
-                        address,
-                        note,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        base_measurement_level,
-                        built_year,
-                        substructure
-                FROM    report.inquiry_sample";
+                SELECT  -- InquirySample
+                        s.id,
+                        s.inquiry,
+                        s.address,
+                        s.note,
+                        s.create_date,
+                        s.update_date,
+                        s.delete_date,
+                        s.base_measurement_level,
+                        s.built_year,
+                        s.substructure
+                FROM    report.inquiry_sample AS s
+                JOIN 	report.inquiry AS i ON i.id = s.inquiry
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   a.owner = @tenant";
 
             ConstructNavigation(ref sql, navigation);
 
             await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -189,17 +196,7 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public Task<IReadOnlyList<InquirySample>> ListAllAsync(Guid orgId, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, Guid orgId, INavigation navigation)
         {
             throw new NotImplementedException();
         }
@@ -212,18 +209,22 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                    UPDATE  report.inquiry_sample
+                    UPDATE  report.inquiry_sample AS s
                     SET     inquiry = @inquiry,
                             address = @address,
                             note = @note,
-                            base_measurement_level = @base_measurement_level,
                             built_year = @built_year,
                             substructure = @substructure
-                    WHERE   id = @id";
+                    FROM 	application.attribution AS a, report.inquiry AS i
+                    WHERE   i.id = s.inquiry
+                    AND     a.id = i.attribution
+                    AND     s.id = @id
+                    AND     a.owner = @tenant";
 
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             MapToWriter(context, entity);
 
