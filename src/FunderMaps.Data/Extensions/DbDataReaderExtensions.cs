@@ -136,6 +136,39 @@ namespace FunderMaps.Data.Extensions
         }
 
         /// <summary>
+        ///     Return value as nullable boolean.
+        /// </summary>
+        /// <param name="reader">Input reader to extend.</param>
+        /// <param name="ordinal">Column ordinal.</param>
+        /// <returns>Boolean or null.</returns>
+        public static bool? GetSafeBoolean(this DbDataReader reader, int ordinal)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            return reader.IsDBNull(ordinal) ? null : (bool?)reader.GetBoolean(ordinal);
+        }
+
+        /// <summary>
+        ///     Return value as nullable decimal.
+        /// </summary>
+        /// <param name="reader">Input reader to extend.</param>
+        /// <param name="ordinal">Column ordinal.</param>
+        /// <returns>decimal or null.</returns>
+        public static decimal? GetSafeDecimal(this DbDataReader reader, int ordinal)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            return reader.IsDBNull(ordinal) ? null : (decimal?)reader.GetDecimal(ordinal);
+        }
+
+
+        /// <summary>
         ///     Return value as nullable <typeparamref name="TFieldType"/>.
         /// </summary>
         /// <typeparam name="TFieldType">Type to return value to.</typeparam>

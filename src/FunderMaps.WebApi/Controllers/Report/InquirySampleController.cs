@@ -3,8 +3,6 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
-using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
