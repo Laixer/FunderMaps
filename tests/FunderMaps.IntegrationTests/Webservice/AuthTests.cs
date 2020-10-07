@@ -6,6 +6,7 @@ using FunderMaps.IntegrationTests.Backend;
 using FunderMaps.Testing.Extensions;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Testing.Repositories;
+using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -101,7 +102,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
-            Assert.Contains("Login", returnObject.Title);
+            Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Theory]
