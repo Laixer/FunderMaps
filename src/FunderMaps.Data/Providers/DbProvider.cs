@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Data.Common;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -64,5 +65,11 @@ namespace FunderMaps.Data.Providers
             cmd.CommandText = cmdText;
             return cmd;
         }
+
+        /// <summary>
+        ///     Handle database exception.
+        /// </summary>
+        /// <param name="edi">Captured exception.</param>
+        internal virtual void HandleException(ExceptionDispatchInfo edi) => edi.Throw();
     }
 }

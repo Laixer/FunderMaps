@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using FunderMaps.Core;
 using FunderMaps.Core.Exceptions;
@@ -45,6 +46,28 @@ namespace FunderMaps.Data
                 }
                 reader = value;
             }
+        }
+
+        /// <summary>
+        ///     Dispatch the exception to the databse provider.
+        /// </summary>
+        /// <remarks>
+        ///     This method should not be called directly but only in the context
+        ///     of a caught exception. The exception block should still re-throw
+        ///     the exception since this handler *cannot* guarantee end of execution.
+        ///     <para>
+        ///         The exception is captured first before its send to a remote
+        ///         handler. The <see cref="ExceptionDispatchInfo"/> preserves
+        ///         the stacktrace and other location properties when the exception
+        ///         is re-thrown.
+        ///     </para>
+        /// </remarks>
+        /// <param name="edi">Captured exception.</param>
+        private void HandleException(ExceptionDispatchInfo edi)
+        {
+            // FUTURE: Log debug
+
+            DbProvider.HandleException(edi);
         }
 
         /// <summary>
@@ -106,18 +129,26 @@ namespace FunderMaps.Data
         /// <param name="hasRowsGuard">Throw if no rows returned.</param>
         public async Task<DbDataReader> ReaderAsync(bool readAhead = true, bool hasRowsGuard = true)
         {
-            Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
-            if (!Reader.HasRows && hasRowsGuard)
+            try
             {
-                throw new EntityNotFoundException();
-            }
+                Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
+                if (!Reader.HasRows && hasRowsGuard)
+                {
+                    throw new EntityNotFoundException();
+                }
 
-            if (readAhead)
+                if (readAhead)
+                {
+                    await Reader.ReadAsync(AppContext.CancellationToken);
+                }
+
+                return Reader;
+            }
+            catch (DbException exception)
             {
-                await Reader.ReadAsync(AppContext.CancellationToken);
+                HandleException(ExceptionDispatchInfo.Capture(exception));
+                throw;
             }
-
-            return Reader;
         }
 
         /// <summary>
@@ -126,12 +157,23 @@ namespace FunderMaps.Data
         /// <param name="hasRowsGuard">Throw if no rows returned.</param>
         public async IAsyncEnumerable<DbDataReader> EnumerableReaderAsync(bool hasRowsGuard = false)
         {
-            Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
-            if (!Reader.HasRows && hasRowsGuard)
+            try
             {
-                throw new EntityNotFoundException();
+                Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
+                if (!Reader.HasRows && hasRowsGuard)
+                {
+                    throw new EntityNotFoundException();
+                }
+            }
+            catch (DbException exception)
+            {
+                HandleException(ExceptionDispatchInfo.Capture(exception));
+                throw;
             }
 
+            // NOTE: An unfortunate consequence of the yield return is the incapability
+            //       of running inside a try-catch block. It should be rare for an exception
+            //       to occur after the command has been executed, but not impossible.
             while (await Reader.ReadAsync(AppContext.CancellationToken))
             {
                 yield return Reader;
@@ -144,10 +186,18 @@ namespace FunderMaps.Data
         /// <param name="affectedGuard">Throw if no rows were affected.</param>
         public async Task NonQueryAsync(bool affectedGuard = true)
         {
-            var affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
-            if (affected <= 0 && affectedGuard)
+            try
             {
-                throw new EntityNotFoundException();
+                var affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
+                if (affected <= 0 && affectedGuard)
+                {
+                    throw new EntityNotFoundException();
+                }
+            }
+            catch (DbException exception)
+            {
+                HandleException(ExceptionDispatchInfo.Capture(exception));
+                throw;
             }
         }
 
@@ -157,13 +207,21 @@ namespace FunderMaps.Data
         /// <param name="resultGuard">Throw if no result was returned.</param>
         public async Task<TResult> ScalarAsync<TResult>(bool resultGuard = true)
         {
-            var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
-            if (result == null && resultGuard)
+            try
             {
-                throw new EntityNotFoundException();
-            }
+                var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
+                if (result == null && resultGuard)
+                {
+                    throw new EntityNotFoundException();
+                }
 
-            return (TResult)result;
+                return (TResult)result;
+            }
+            catch (DbException exception)
+            {
+                HandleException(ExceptionDispatchInfo.Capture(exception));
+                throw;
+            }
         }
 
         /// <summary>
