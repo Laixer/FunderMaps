@@ -208,7 +208,7 @@ namespace FunderMaps.Core.Services
 
         #region Process statistic part of analysis
 
-        private async Task ProcessAnalysisFoundationTypeDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisFoundationTypeDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
@@ -219,7 +219,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisConstructionYearDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisConstructionYearDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
@@ -230,7 +230,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisFoundationRiskDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisFoundationRiskDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
@@ -241,7 +241,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisDataCollectedPercentageAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisDataCollectedPercentageAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
@@ -252,7 +252,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisTotalBuildingsRestoredCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisTotalBuildingsRestoredCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
@@ -263,7 +263,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisTotalIncidentCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisTotalIncidentCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
@@ -274,7 +274,7 @@ namespace FunderMaps.Core.Services
             };
         }
 
-        private async Task ProcessAnalysisTotalReportCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisTotalReportCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {

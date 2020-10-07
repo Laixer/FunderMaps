@@ -44,7 +44,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddScoped<FunderMaps.Core.AppContext>();
 
             // Register core use cases in DI container.
-            services.AddScoped<InquiryUseCase>();
             services.AddScoped<ProjectUseCase>();
             services.AddScoped<RecoveryUseCase>();
 

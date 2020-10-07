@@ -22,7 +22,6 @@ namespace FunderMaps.WebApi.Controllers.Report
     {
         private readonly IMapper _mapper;
         private readonly Core.AppContext _appContext;
-        private readonly InquiryUseCase _inquiryUseCase;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IInquirySampleRepository _inquirySampleRepository;
 
@@ -32,13 +31,11 @@ namespace FunderMaps.WebApi.Controllers.Report
         public InquirySampleController(
             IMapper mapper,
             Core.AppContext appContext,
-            InquiryUseCase inquiryUseCase,
             IInquiryRepository inquiryRepository,
             IInquirySampleRepository inquirySampleRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
-            _inquiryUseCase = inquiryUseCase ?? throw new ArgumentNullException(nameof(inquiryUseCase));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
@@ -65,10 +62,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Return all inquiry samples.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
+        public async Task<IActionResult> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
         {
             // Act.
-            IAsyncEnumerable<InquirySample> inquirySampleList = _inquirySampleRepository.ListAllAsync(pagination.Navigation);
+            IAsyncEnumerable<InquirySample> inquirySampleList = _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation);
 
             // Map.
             var output = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(inquirySampleList);
@@ -154,7 +151,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             await _inquirySampleRepository.DeleteAsync(id);
 
             // FUTURE: Should only select inquiry
-            if (await _inquiryRepository.CountAsync() == 0)
+            if (await _inquirySampleRepository.CountAsync() == 0)
             {
                 inquiry.State.TransitionToTodo();
                 await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);

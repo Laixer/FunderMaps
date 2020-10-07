@@ -95,6 +95,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             }
 
             // FUTURE
+            await Task.CompletedTask;
 
             // Return.
             return NoContent();
@@ -122,6 +123,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             recovery.Id = id;
 
             // FUTURE
+            await Task.CompletedTask;
 
             // Return.
             return NoContent();

@@ -17,7 +17,6 @@ namespace FunderMaps.Infrastructure.Storage
     /// </summary>
     internal class AzureBlobStorageService : IBlobStorageService
     {
-        private readonly FileStorageOptions _options;
         private readonly BlobServiceClient _blobServiceClient;
         private readonly StorageSharedKeyCredential _sharedKeyCredential;
 
@@ -26,14 +25,8 @@ namespace FunderMaps.Infrastructure.Storage
         /// </summary>
         /// <param name="options">File service options.</param>
         /// <param name="config">Application configuration.</param>
-        public AzureBlobStorageService(IOptions<FileStorageOptions> options, IConfiguration config)
+        public AzureBlobStorageService(IConfiguration config)
         {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _sharedKeyCredential = StorageSharedKeyCredentialFromConnectionString(config.GetConnectionString("AzureStorageConnectionString"));
             _blobServiceClient = new BlobServiceClient(config.GetConnectionString("AzureStorageConnectionString"));
         }
@@ -63,7 +56,7 @@ namespace FunderMaps.Infrastructure.Storage
         /// <returns>The blob block.</returns>
         protected Task<BlobClient> PrepareBlobAsync(string containerName, string blobName)
         {
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(_options.StorageContainers.TryGetValue(containerName, out string store) ? store : containerName);
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(containerName);
             BlobClient blobClient = container.GetBlobClient(blobName);
             return Task.FromResult(blobClient);
         }
