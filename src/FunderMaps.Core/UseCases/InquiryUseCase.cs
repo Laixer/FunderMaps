@@ -5,7 +5,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -58,6 +57,13 @@ namespace FunderMaps.Core.UseCases
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
             return mapper.Map<Inquiry>(inquiry);
         }
+
+        /// <summary>
+        ///     Gets the total inquiry count from the data store.
+        /// </summary>
+        /// <returns>Total inquiry count.</returns>
+        public virtual ValueTask<ulong> GetCountAsync() 
+            => _inquiryRepository.CountAsync();
 
         /// <summary>
         ///     Get inquiry creator.
@@ -307,10 +313,7 @@ namespace FunderMaps.Core.UseCases
         ///     Delete inquiry.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public virtual async ValueTask DeleteAsync(int id)
-        {
-            await _inquiryRepository.DeleteAsync(id);
-        }
+        public virtual async ValueTask DeleteAsync(int id) => await _inquiryRepository.DeleteAsync(id);
 
         #endregion
 
@@ -320,10 +323,8 @@ namespace FunderMaps.Core.UseCases
         ///     Get inquiry sample.
         /// </summary>
         /// <param name="id">Entity sample id.</param>
-        public virtual async ValueTask<InquirySample> GetSampleAsync(int id)
-        {
-            return await _inquirySampleRepository.GetByIdAsync(id);
-        }
+        public virtual async ValueTask<InquirySample> GetSampleAsync(int id) 
+            => await _inquirySampleRepository.GetByIdAsync(id);
 
         /// <summary>
         ///     Create new inquiry sample.
@@ -366,10 +367,8 @@ namespace FunderMaps.Core.UseCases
         /// </summary>
         /// <param name="inquiryId">Internal inquiry id.</param>
         /// <param name="navigation">Recordset nagivation.</param>
-        public virtual IAsyncEnumerable<InquirySample> GetAllSampleAsync(int inquiryId, INavigation navigation)
-        {
-            return _inquirySampleRepository.ListAllReportAsync(inquiryId, navigation);
-        }
+        public virtual IAsyncEnumerable<InquirySample> GetAllSampleAsync(int inquiryId, INavigation navigation) 
+            => _inquirySampleRepository.ListAllReportAsync(inquiryId, navigation);
 
         /// <summary>
         ///     Delete inquiry sample.
