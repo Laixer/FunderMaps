@@ -167,7 +167,6 @@ namespace FunderMaps.Data.Extensions
             return reader.IsDBNull(ordinal) ? null : (decimal?)reader.GetDecimal(ordinal);
         }
 
-
         /// <summary>
         ///     Return value as nullable <typeparamref name="TFieldType"/>.
         /// </summary>

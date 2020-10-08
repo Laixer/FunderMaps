@@ -78,17 +78,17 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Groundwater level temp.
         /// </summary>
-        public decimal GroundwaterLevelTemp { get; set; }
+        public decimal? GroundwaterLevelTemp { get; set; }
 
         /// <summary>
         ///     Ground level.
         /// </summary>
-        public decimal GroundLevel { get; set; }
+        public decimal? GroundLevel { get; set; }
 
         /// <summary>
         ///     Groundwater level net.
         /// </summary>
-        public decimal GroundwaterLevelNet { get; set; }
+        public decimal? GroundwaterLevelNet { get; set; }
 
         //
         // Foundation
@@ -97,17 +97,17 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Foundation type.
         /// </summary>
-        public FoundationType Type { get; set; }
+        public FoundationType? Type { get; set; }
 
         /// <summary>
         ///     Enforcement term.
         /// </summary>
-        public EnforcementTerm EnforcementTerm { get; set; }
+        public EnforcementTerm? EnforcementTerm { get; set; }
 
         /// <summary>
         ///     Recovery advised.
         /// </summary>
-        public bool RecoveryAdvised { get; set; }
+        public bool? RecoveryAdvised { get; set; }
 
         /// <summary>
         ///     Damage cause.
@@ -117,22 +117,22 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Damage cause.
         /// </summary>
-        public FoundationDamageCharacteristics DamageCharacteristics { get; set; }
+        public FoundationDamageCharacteristics? DamageCharacteristics { get; set; }
 
         /// <summary>
         ///     Construction pile.
         /// </summary>
-        public ConstructionPile ConstructionPile { get; set; }
+        public ConstructionPile? ConstructionPile { get; set; }
 
         /// <summary>
         ///     Wood type.
         /// </summary>
-        public WoodType WoodType { get; set; }
+        public WoodType? WoodType { get; set; }
 
         /// <summary>
         ///     Wood encroachement.
         /// </summary>
-        public WoodEncroachement WoodEncroachement { get; set; }
+        public WoodEncroachement? WoodEncroachement { get; set; }
 
         //
         // Foundation Measurement
@@ -141,57 +141,57 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Construction level.
         /// </summary>
-        public decimal ConstructionLevel { get; set; }
+        public decimal? ConstructionLevel { get; set; }
 
         /// <summary>
         ///     Wood level.
         /// </summary>
-        public decimal WoodLevel { get; set; }
+        public decimal? WoodLevel { get; set; }
 
         /// <summary>
         ///     Pile diameter top.
         /// </summary>
-        public decimal PileDiameterTop { get; set; }
+        public decimal? PileDiameterTop { get; set; }
 
         /// <summary>
         ///     Pile diameter bottom.
         /// </summary>
-        public decimal PileDiameterBottom { get; set; }
+        public decimal? PileDiameterBottom { get; set; }
 
         /// <summary>
         ///     Pile head level.
         /// </summary>
-        public decimal PileHeadLevel { get; set; }
+        public decimal? PileHeadLevel { get; set; }
 
         /// <summary>
         ///     Pile tip level.
         /// </summary>
-        public decimal PileTipLevel { get; set; }
+        public decimal? PileTipLevel { get; set; }
 
         /// <summary>
         ///     Foundation depth.
         /// </summary>
-        public decimal FoundationDepth { get; set; }
+        public decimal? FoundationDepth { get; set; }
 
         /// <summary>
         ///     Mason level.
         /// </summary>
-        public decimal MasonLevel { get; set; }
+        public decimal? MasonLevel { get; set; }
 
         /// <summary>
         ///     Concrete charger length.
         /// </summary>
-        public decimal ConcreteChargerLength { get; set; }
+        public decimal? ConcreteChargerLength { get; set; }
 
         /// <summary>
         ///     Pile distance length.
         /// </summary>
-        public decimal PileDistanceLength { get; set; }
+        public decimal? PileDistanceLength { get; set; }
 
         /// <summary>
         ///     Wood penetration depth.
         /// </summary>
-        public decimal WoodPenetrationDepth { get; set; }
+        public decimal? WoodPenetrationDepth { get; set; }
 
         //
         // Foundation Assessment
@@ -200,42 +200,42 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Overall quality.
         /// </summary>
-        public FoundationQuality OverallQuality { get; set; }
+        public FoundationQuality? OverallQuality { get; set; }
 
         /// <summary>
         ///     Wood quality.
         /// </summary>
-        public WoodQuality WoodQuality { get; set; }
+        public WoodQuality? WoodQuality { get; set; }
 
         /// <summary>
         ///     Construction quality.
         /// </summary>
-        public Quality ConstructionQuality { get; set; }
+        public Quality? ConstructionQuality { get; set; }
 
         /// <summary>
         ///     Wood capacity horizontal quality.
         /// </summary>
-        public Quality WoodCapacityHorizontalQuality { get; set; }
+        public Quality? WoodCapacityHorizontalQuality { get; set; }
 
         /// <summary>
         ///     Pile wood capacity vertical quality.
         /// </summary>
-        public Quality PileWoodCapacityVerticalQuality { get; set; }
+        public Quality? PileWoodCapacityVerticalQuality { get; set; }
 
         /// <summary>
         ///     Carrying capacity quality.
         /// </summary>
-        public Quality CarryingCapacityQuality { get; set; }
+        public Quality? CarryingCapacityQuality { get; set; }
 
         /// <summary>
         ///     Mason quality.
         /// </summary>
-        public Quality MasonQuality { get; set; }
+        public Quality? MasonQuality { get; set; }
 
         /// <summary>
         ///     Wood quality necessity.
         /// </summary>
-        public bool WoodQualityNecessity { get; set; }
+        public bool? WoodQualityNecessity { get; set; }
 
         //
         // Building
@@ -244,117 +244,117 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Crack indoor restored.
         /// </summary>
-        public bool CrackIndoorRestored { get; set; }
+        public bool? CrackIndoorRestored { get; set; }
 
         /// <summary>
         ///     Crack indoor type.
         /// </summary>
-        public CrackType CrackIndoorType { get; set; }
+        public CrackType? CrackIndoorType { get; set; }
 
         /// <summary>
         ///     Crack indoor size.
         /// </summary>
-        public decimal CrackIndoorSize { get; set; }
+        public decimal? CrackIndoorSize { get; set; }
 
         /// <summary>
         ///     Crack facade front size.
         /// </summary>
-        public bool CrackFacadeFrontRestored { get; set; }
+        public bool? CrackFacadeFrontRestored { get; set; }
 
         /// <summary>
         ///     Crack facade front type.
         /// </summary>
-        public CrackType CrackFacadeFrontType { get; set; }
+        public CrackType? CrackFacadeFrontType { get; set; }
 
         /// <summary>
         ///     Crack facade front size.
         /// </summary>
-        public decimal CrackFacadeFrontSize { get; set; }
+        public decimal? CrackFacadeFrontSize { get; set; }
 
         /// <summary>
         ///     Crack facade back size.
         /// </summary>
-        public bool CrackFacadeBackRestored { get; set; }
+        public bool? CrackFacadeBackRestored { get; set; }
 
         /// <summary>
         ///     Crack facade back type.
         /// </summary>
-        public CrackType CrackFacadeBackType { get; set; }
+        public CrackType? CrackFacadeBackType { get; set; }
 
         /// <summary>
         ///     Crack facade back size.
         /// </summary>
-        public decimal CrackFacadeBackSize { get; set; }
+        public decimal? CrackFacadeBackSize { get; set; }
 
         /// <summary>
         ///     Crack facade left size.
         /// </summary>
-        public bool CrackFacadeLeftRestored { get; set; }
+        public bool? CrackFacadeLeftRestored { get; set; }
 
         /// <summary>
         ///     Crack facade left type.
         /// </summary>
-        public CrackType CrackFacadeLeftType { get; set; }
+        public CrackType? CrackFacadeLeftType { get; set; }
 
         /// <summary>
         ///     Crack facade left size.
         /// </summary>
-        public decimal CrackFacadeLeftSize { get; set; }
+        public decimal? CrackFacadeLeftSize { get; set; }
 
         /// <summary>
         ///     Crack facade right size.
         /// </summary>
-        public bool CrackFacadeRightRestored { get; set; }
+        public bool? CrackFacadeRightRestored { get; set; }
 
         /// <summary>
         ///     Crack facade right type.
         /// </summary>
-        public CrackType CrackFacadeRightType { get; set; }
+        public CrackType? CrackFacadeRightType { get; set; }
 
         /// <summary>
         ///     Crack facade right size.
         /// </summary>
-        public decimal CrackFacadeRightSize { get; set; }
+        public decimal? CrackFacadeRightSize { get; set; }
 
         /// <summary>
         ///     Deformed facade.
         /// </summary>
-        public bool DeformedFacade { get; set; }
+        public bool? DeformedFacade { get; set; }
 
         /// <summary>
         ///     Threshold updown skewed.
         /// </summary>
-        public bool ThresholdUpdownSkewed { get; set; }
+        public bool? ThresholdUpdownSkewed { get; set; }
 
         /// <summary>
         ///     Threshold front level.
         /// </summary>
-        public decimal ThresholdFrontLevel { get; set; }
+        public decimal? ThresholdFrontLevel { get; set; }
 
         /// <summary>
         ///     Threshold back level.
         /// </summary>
-        public decimal ThresholdBackLevel { get; set; }
+        public decimal? ThresholdBackLevel { get; set; }
 
         /// <summary>
         ///     Skewed parallel.
         /// </summary>
-        public decimal SkewedParallel { get; set; }
+        public decimal? SkewedParallel { get; set; }
 
         /// <summary>
         ///     Skewed perpendicular.
         /// </summary>
-        public decimal SkewedPerpendicular { get; set; }
+        public decimal? SkewedPerpendicular { get; set; }
 
         /// <summary>
         ///     Skewed facade.
         /// </summary>
-        public RotationType SkewedFacade { get; set; }
+        public RotationType? SkewedFacade { get; set; }
 
         /// <summary>
         ///     Settlement speed.
         /// </summary>
-        public decimal SettlementSpeed { get; set; }
+        public double? SettlementSpeed { get; set; }
 
         /// <summary>
         ///     Initialize properties from another entity.
