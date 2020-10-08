@@ -10,13 +10,15 @@ namespace FunderMaps.Core.Types.Control
         /// <summary>
         ///     Enitity status.
         /// </summary>
-        public AuditStatus AuditStatus { get; set; } = AuditStatus.Todo;
+        public AuditStatus AuditStatus { get; set; } = AudOrganizationRole.csitStatus.Todo;
 
         /// <summary>
         ///     Is write allowed in entry state.
         /// </summary>
         /// <returns><c>True</c> if allowed.</returns>
-        public bool AllowWrite => AuditStatus == AuditStatus.Todo || AuditStatus == AuditStatus.Pending;
+        public bool AllowWrite => AuditStatus == AuditStatus.Todo
+            || AuditStatus == AuditStatus.Pending
+            || AuditStatus == AuditStatus.Rejected;
 
         /// <summary>
         ///     Move to next state.

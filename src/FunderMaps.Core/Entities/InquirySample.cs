@@ -50,10 +50,10 @@ namespace FunderMaps.Core.Entities
         [Required]
         public BaseMeasurementLevel BaseMeasurementLevel { get; set; } = BaseMeasurementLevel.NAP;
 
-        // TODO: Constraint, see #203
         /// <summary>
         ///     Built year.
         /// </summary>
+        [Required]
         public DateTime BuiltYear { get; set; }
 
         /// <summary>

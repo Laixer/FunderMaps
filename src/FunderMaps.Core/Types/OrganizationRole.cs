@@ -1,7 +1,7 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    ///     Organization role.
+    ///     Organization user role.
     /// </summary>
     public enum OrganizationRole
     {

@@ -1,9 +1,7 @@
 ﻿using Bogus;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Testing.Repositories

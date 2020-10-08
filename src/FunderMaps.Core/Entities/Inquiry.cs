@@ -62,7 +62,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Document file name.
         /// </summary>
-        [Required, Url]
+        [Required]
         public string DocumentFile { get; set; }
 
         /// <summary>
