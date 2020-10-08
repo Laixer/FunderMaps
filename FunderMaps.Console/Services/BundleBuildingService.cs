@@ -113,7 +113,7 @@ namespace FunderMaps.Console.Services
             var currentExportedVersion = await _bundleStorageService.GetCurrentExportedVersionAsync(bundle.OrganizationId, bundleId);
             var currentExportedFormats = (currentExportedVersion == null)
                 ? new List<GeometryExportFormat>()
-                : await _bundleStorageService.GetExportedFormatsAsync(bundleId, (uint)currentExportedVersion);
+                : await _bundleStorageService.GetExportedFormatsAsync(bundle.OrganizationId, bundleId, (uint)currentExportedVersion);
 
             // Compare the exported formats and the desired formats.
             var missingFormats = formats.Except(currentExportedFormats);
