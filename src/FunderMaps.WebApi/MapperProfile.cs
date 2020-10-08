@@ -34,13 +34,12 @@ namespace FunderMaps.WebApi
             CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
             CreateMap<Organization, OrganizationDto>().ReverseMap();
             CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
+            CreateMap<OrganizationUserDto, User>();
             CreateMap<Project, ProjectDto>().ReverseMap();
             CreateMap<Recovery, RecoveryDto>().ReverseMap();
             CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
-
-            CreateMap<OrganizationUserDto, User>(); // TODO Remove
         }
     }
 }
