@@ -117,14 +117,14 @@ namespace FunderMaps.Infrastructure.Storage
                     throw new ArgumentOutOfRangeException(nameof(hoursValid));
                 }
 
-                var uri = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
+                var url = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = _options.BlobStorageName,
                     Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
                     Expires = DateTime.UtcNow.AddHours(hoursValid)
                 }));
 
-                return new ValueTask<Uri>(uri);
+                return new ValueTask<Uri>(url);
             }
             catch (AmazonS3Exception e)
             {

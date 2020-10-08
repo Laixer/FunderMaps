@@ -18,6 +18,11 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Client document identifier.
         /// </summary>
+        /// <remarks>
+        ///     This is the document file name as the user gave it, *not* 
+        ///     the filename under which the document is stored. For that,
+        ///     see <see cref="DocumentFile"/>.
+        /// </remarks>
         [Required(AllowEmptyStrings = false)]
         public string DocumentName { get; set; }
 
@@ -52,6 +57,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Document file name.
         /// </summary>
+        /// <remarks>
+        ///     This is the document file name as it is stored, NOT the document
+        ///     name that the user gave it. <seealso cref="DocumentName"/>.
+        /// </remarks>
         [Required]
         public string DocumentFile { get; set; }
 

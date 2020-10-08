@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
@@ -26,6 +26,12 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IBlobStorageService _fileStorageService;
         private readonly INotificationService _notificationService;
+
+        // TODO Move to some constant file.
+        /// <summary>
+        ///     Inquiry storage destination folder name.
+        /// </summary>
+        internal const string InquiryStorageFolderName = "inquiry-report";
 
         /// <summary>
         ///     Create new instance.
@@ -132,7 +138,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _fileStorageService.StoreFileAsync(
-                containerName: "inquiry-report",
+                containerName: InquiryStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
@@ -144,6 +150,30 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Return.
             return Ok(output);
+        }
+
+        // GET: api/inquiry/download
+        /// <summary>
+        ///     Retrieve document access link.
+        /// </summary>
+        [HttpGet("{id:int}/download")]
+        public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
+        {
+            // Act.
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            var link = await _fileStorageService.GetAccessLinkAsync(
+                containerName: InquiryStorageFolderName,
+                fileName: inquiry.DocumentFile,
+                hoursValid: 1);
+
+            // Map.
+            var result = new BlobAccessLinkDto
+            {
+                AccessLink = link
+            };
+
+            // Return.
+            return Ok(result);
         }
 
         // PUT: api/inquiry/{id}

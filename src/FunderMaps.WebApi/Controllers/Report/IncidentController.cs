@@ -30,6 +30,12 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly IAddressRepository _addressRepository;
         private readonly IBlobStorageService _fileStorageService;
 
+        // TODO Move to some constant file.
+        /// <summary>
+        ///     Incident storage destination folder name.
+        /// </summary>
+        internal const string IncidentStorageFolderName = "incident-report";
+
         /// <summary>
         ///     Create new instance.
         /// </summary>
@@ -101,7 +107,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _fileStorageService.StoreFileAsync(
-                containerName: "incident-report",
+                containerName: IncidentStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
@@ -113,6 +119,30 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Return.
             return Ok(output);
+        }
+
+        // GET: api/inquiry/download
+        /// <summary>
+        ///     Retrieve document access link.
+        /// </summary>
+        [HttpGet("{id:int}/download")]
+        public async Task<IActionResult> GetDocumentAccessLinkAsync([Incident] string id)
+        {
+            // Act.
+            var incident = await _incidentRepository.GetByIdAsync(id);
+            var link = await _fileStorageService.GetAccessLinkAsync(
+                containerName: IncidentStorageFolderName,
+                fileName: incident.DocumentFile[0], // TODO
+                hoursValid: 1);
+
+            // Map.
+            var result = new BlobAccessLinkDto
+            {
+                AccessLink = link
+            };
+
+            // Return.
+            return Ok(result);
         }
 
         // GET: api/incident
