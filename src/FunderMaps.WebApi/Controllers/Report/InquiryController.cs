@@ -82,6 +82,16 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(resultList);
         }
 
+        [HttpGet("count")]
+        public async Task<IActionResult> GetCountAsync()
+        {
+            // Act.
+            var result = await _inquiryUseCase.GetCountAsync();
+
+            // Return.
+            return Ok(result);
+        }
+
         [HttpGet("recent")]
         public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination) =>
             // FUTURE: _inquiryUseCase.GetAllRecentAsync
