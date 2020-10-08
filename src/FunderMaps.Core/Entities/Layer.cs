@@ -23,9 +23,15 @@ namespace FunderMaps.Core.Entities
         public Guid Id { get; set; }
 
         /// <summary>
-        ///     The layer name.
+        ///     The schema name of the table referenced by this layer.
         /// </summary>
         [Required]
-        public string Name { get; set; }
+        public string SchemaName { get; set; }
+
+        /// <summary>
+        ///     The name of the table referenced by this layer.
+        /// </summary>
+        [Required]
+        public string TableName { get; set; }
     }
 }

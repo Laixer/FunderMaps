@@ -37,7 +37,8 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                 SELECT  id,
-                        name
+                        schema_name,
+                        table_name
                 FROM    maplayer.layer
                 WHERE   id = @id
                 LIMIT   1";
@@ -65,10 +66,19 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
+                WITH layer_ids AS (
+	                SELECT (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
+	                FROM maplayer.bundle b 
+                    WHERE b.id = @bundle_id
+                )
                 SELECT  l.id,
-                        l.name
+                        l.schema_name,
+                        l.table_name
                 FROM    maplayer.layer AS l
-                JOIN    maplayer.bundle AS b ON l.id = ANY(b.layers)
+                JOIN    maplayer.bundle AS b ON l.id = ANY(
+                            SELECT  layer_id 
+                            FROM    layer_ids
+                        )
                 WHERE   b.id = @bundle_id";
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
@@ -96,7 +106,8 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                 SELECT  id,
-                        name
+                        schema_name,
+                        table_name
                 FROM    maplayer.layer";
 
             ConstructNavigation(ref sql, navigation);
@@ -120,7 +131,8 @@ namespace FunderMaps.Data.Repositories
             => new Layer
             {
                 Id = reader.GetGuid(0),
-                Name = reader.GetString(1)
+                SchemaName = reader.GetString(1),
+                TableName = reader.GetString(2)
             };
     }
 }
