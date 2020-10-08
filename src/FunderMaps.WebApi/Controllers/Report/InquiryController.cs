@@ -1,8 +1,9 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Http;
@@ -189,6 +190,18 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.UpdateAsync(inquiry);
+
+            // FUTURE: Does this make sense?
+            // Only when this item was rejected can we move into
+            // a pending state after update.
+            if (inquiry.State.AuditStatus == AuditStatus.Rejected)
+            {
+                // Transition.
+                inquiry.State.TransitionToPending();
+
+                // Act.
+                await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+            }
 
             // Return.
             return NoContent();
