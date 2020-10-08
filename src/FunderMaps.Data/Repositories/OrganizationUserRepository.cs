@@ -86,12 +86,6 @@ namespace FunderMaps.Data.Repositories
                 WHERE   organization_id = @organization_id
                 AND     role = ANY(@role)";
 
-            // TODO Hardcode
-            if (role == OrganizationRole.Verifier)
-            {
-                sql += " OR (organization_id = @organization_id AND role = 'superuser')";
-            }
-
             ConstructNavigation(ref sql, navigation);
 
             await using var connection = await DbProvider.OpenConnectionScopeAsync();
