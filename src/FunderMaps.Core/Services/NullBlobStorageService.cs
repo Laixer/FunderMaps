@@ -18,7 +18,7 @@ namespace FunderMaps.Core.Services
 
         public ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid)
         {
-            return new ValueTask<Uri>(new Uri("http://localhost/blob"));
+            return new ValueTask<Uri>(new Uri("https://localhost/blob"));
         }
 
         public ValueTask StoreFileAsync(string store, string name, Stream stream)

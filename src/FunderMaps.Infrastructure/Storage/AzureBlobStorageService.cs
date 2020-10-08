@@ -21,10 +21,8 @@ namespace FunderMaps.Infrastructure.Storage
         private readonly StorageSharedKeyCredential _sharedKeyCredential;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
-        /// <param name="options">File service options.</param>
-        /// <param name="config">Application configuration.</param>
         public AzureBlobStorageService(IConfiguration config)
         {
             _sharedKeyCredential = StorageSharedKeyCredentialFromConnectionString(config.GetConnectionString("AzureStorageConnectionString"));

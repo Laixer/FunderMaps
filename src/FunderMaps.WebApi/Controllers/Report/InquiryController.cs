@@ -25,7 +25,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly IMapper _mapper;
         private readonly Core.AppContext _appContext;
         private readonly IInquiryRepository _inquiryRepository;
-        private readonly IBlobStorageService _fileStorageService;
+        private readonly IBlobStorageService _blobStorageService;
         private readonly INotificationService _notificationService;
 
         // TODO Move to some constant file.
@@ -41,13 +41,13 @@ namespace FunderMaps.WebApi.Controllers.Report
             IMapper mapper,
             Core.AppContext appContext,
             IInquiryRepository inquiryRepository,
-            IBlobStorageService fileStorageService,
+            IBlobStorageService blobStorageService,
             INotificationService notificationService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
-            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
@@ -138,7 +138,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
-            await _fileStorageService.StoreFileAsync(
+            await _blobStorageService.StoreFileAsync(
                 containerName: InquiryStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
@@ -162,7 +162,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
-            var link = await _fileStorageService.GetAccessLinkAsync(
+            var link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: InquiryStorageFolderName,
                 fileName: inquiry.DocumentFile,
                 hoursValid: 1);

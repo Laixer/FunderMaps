@@ -30,7 +30,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
         private readonly IIncidentRepository _incidentRepository;
         private readonly IAddressRepository _addressRepository;
         private readonly IProductService _productService;
-        private readonly IBlobStorageService _fileStorageService;
+        private readonly IBlobStorageService _blobStorageService;
 
         /// <summary>
         ///     Create new instance.
@@ -41,14 +41,14 @@ namespace FunderMaps.WebApi.Controllers.Portal
             IIncidentRepository incidentRepository,
             IAddressRepository addressRepository,
             IProductService productService,
-            IBlobStorageService fileStorageService)
+            IBlobStorageService blobStorageService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
-            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
 
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
-            await _fileStorageService.StoreFileAsync(
+            await _blobStorageService.StoreFileAsync(
                 containerName: "incident-report",
                 fileName: storeFileName,
                 contentType: input.ContentType,

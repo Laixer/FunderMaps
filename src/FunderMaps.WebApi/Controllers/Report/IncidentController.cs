@@ -28,7 +28,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
         private readonly IAddressRepository _addressRepository;
-        private readonly IBlobStorageService _fileStorageService;
+        private readonly IBlobStorageService _blobStorageService;
 
         // TODO Move to some constant file.
         /// <summary>
@@ -45,14 +45,14 @@ namespace FunderMaps.WebApi.Controllers.Report
             IContactRepository contactRepository,
             IIncidentRepository incidentRepository,
             IAddressRepository addressRepository,
-            IBlobStorageService fileStorageService)
+            IBlobStorageService blobStorageService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
-            _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
         }
 
         // GET: api/incident/stats
@@ -106,7 +106,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
-            await _fileStorageService.StoreFileAsync(
+            await _blobStorageService.StoreFileAsync(
                 containerName: IncidentStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
@@ -130,7 +130,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Act.
             var incident = await _incidentRepository.GetByIdAsync(id);
-            var link = await _fileStorageService.GetAccessLinkAsync(
+            var link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: IncidentStorageFolderName,
                 fileName: incident.DocumentFile[0], // TODO
                 hoursValid: 1);
