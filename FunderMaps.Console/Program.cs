@@ -57,7 +57,7 @@ namespace FunderMaps.Console
 
             // TODO Remove this, debug
             var ss = provider.GetRequiredService<BundleStorageService>();
-            var exportedFormats = await ss.GetExportedFormatsAsync(BundleId, 53);
+            var exportedFormats = await ss.GetExportedFormatsAsync(OrganizationId, BundleId, 53);
             var currentVersion = await ss.GetCurrentExportedVersionAsync(OrganizationId, BundleId);
 
             var service = provider.GetRequiredService<BundleBuildingService>();
