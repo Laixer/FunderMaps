@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Types.Control
         /// <summary>
         ///     Enitity status.
         /// </summary>
-        public AuditStatus AuditStatus { get; set; } = AudOrganizationRole.csitStatus.Todo;
+        public AuditStatus AuditStatus { get; set; } = AuditStatus.Todo;
 
         /// <summary>
         ///     Is write allowed in entry state.
