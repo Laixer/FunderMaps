@@ -3,9 +3,11 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Threading.Tasks;
@@ -83,11 +85,15 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Retrieve file access link.
         /// </summary>
+        /// <remarks>
+        ///     This does not implement the <paramref name="accessType"/> at this moment.
+        /// </remarks>
         /// <param name="containerName">Storage container.</param>
         /// <param name="fileName">File name.</param>
         /// <param name="hoursValid">How long the link is valid in hours.</param>
+        /// <param name="accessType">Indicates what we want to do with the link.</param>
         /// <returns>The generated link.</returns>
-        public async ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid = 1)
+        public async ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid = 1, AccessType accessType = AccessType.Read)
         {
             BlobClient blobClient = await PrepareBlobAsync(containerName, fileName);
 
@@ -140,5 +146,7 @@ namespace FunderMaps.Infrastructure.Storage
 
             await blobClient.UploadAsync(stream, uploadOptions);
         }
+
+        public ValueTask<IEnumerable<string>> ListSubcontainerNamesAsync(string containerName) => throw new NotImplementedException();
     }
 }

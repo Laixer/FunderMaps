@@ -5,10 +5,13 @@ using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Avoid uninstantiated internal classes
@@ -63,6 +66,38 @@ namespace FunderMaps.Infrastructure.Storage
         /// </summary>
         public void Dispose() => client.Dispose();
 
+        /// <summary>
+        ///     Lists all names of subdirectories in a given container.
+        /// </summary>
+        /// <remarks>
+        ///     All container names are returned without trailing slash.
+        /// </remarks>
+        /// <param name="containerName">The container to check.</param>
+        /// <returns></returns>
+        public async ValueTask<IEnumerable<string>> ListSubcontainerNamesAsync(string containerName)
+        {
+            containerName.ThrowIfNullOrEmpty();
+
+            try
+            {
+                // Note: using a delimiter of '/' is used to group results. TODO Understand.
+                var result = await client.ListObjectsAsync(new ListObjectsRequest
+                {
+                    BucketName = _options.BlobStorageName,
+                    Prefix = WithTrailingSlash(containerName),
+                    Delimiter = "/"
+                });
+
+                var basePath = $"{WithoutTrailingSlash(containerName)}/";
+                return result.CommonPrefixes.Select(x => WithoutTrailingSlash(x.Replace(basePath, "", StringComparison.InvariantCulture)));
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError(e, "Could not list subdirectories in spaces using S3");
+                throw new StorageException("Could not list subdirectories", e);
+            }
+        }
+
         // TODO Amazon has no clean way to check for object existence.
         /// <summary>
         ///     Checks if a file exists or not.
@@ -72,6 +107,22 @@ namespace FunderMaps.Infrastructure.Storage
         /// <returns>Boolean result.</returns>
         public async ValueTask<bool> FileExistsAsync(string containerName, string fileName)
         {
+            // TODO Remove
+            try
+            {
+                var obj = await client.ListObjectsAsync(new ListObjectsRequest
+                {
+                    BucketName = _options.BlobStorageName,
+                    Prefix = "doesnotexist",
+                    Delimiter = "/"
+                });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            // END remove
+
             fileName.ThrowIfNullOrEmpty();
 
             try
@@ -81,7 +132,7 @@ namespace FunderMaps.Infrastructure.Storage
                 var result = await client.GetObjectAsync(new GetObjectRequest
                 {
                     BucketName = _options.BlobStorageName,
-                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}"
+                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}"
                 });
 
                 return true;
@@ -103,25 +154,35 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Gets an access uri for a given file.
         /// </summary>
+        /// <remarks>
+        ///     The default <paramref name="accessType"/> is read.
+        /// </remarks>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <param name="hoursValid">How many hours the link should be valid.</param>
+        /// <param name="accessType">Indicates what we want to do with the link.</param>
         /// <returns>Access <see cref="Uri"/>.</returns>
-        public ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
+        public ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid, AccessType accessType = AccessType.Read)
         {
+            fileName.ThrowIfNullOrEmpty();
+            if (hoursValid <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(hoursValid));
+            }
+
             try
             {
-                fileName.ThrowIfNullOrEmpty();
-                if (hoursValid <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(hoursValid));
-                }
-
                 var uri = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = _options.BlobStorageName,
-                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
-                    Expires = DateTime.UtcNow.AddHours(hoursValid)
+                    //Key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}",
+                    Expires = DateTime.UtcNow.AddHours(hoursValid),
+                    Verb = accessType switch
+                    {
+                        AccessType.Read => HttpVerb.GET,
+                        AccessType.Write => HttpVerb.PUT,
+                        _ => throw new InvalidOperationException(nameof(accessType))
+                    }
                 }));
 
                 return new ValueTask<Uri>(uri);
@@ -150,7 +211,7 @@ namespace FunderMaps.Infrastructure.Storage
                     throw new ArgumentNullException(nameof(stream));
                 }
 
-                var key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}";
+                var key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}";
                 using var transferUtility = new TransferUtility(client);
 
                 return new ValueTask(transferUtility.UploadAsync(stream, _options.BlobStorageName, key));
@@ -186,7 +247,7 @@ namespace FunderMaps.Infrastructure.Storage
                 {
                     BucketName = _options.BlobStorageName,
                     ContentType = contentType,
-                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
+                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}",
                     InputStream = stream
                 };
 
@@ -198,6 +259,34 @@ namespace FunderMaps.Infrastructure.Storage
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
         }
+
+        /// <summary>
+        ///     Removes a / or \ from the end of a string if present.
+        /// </summary>
+        /// <param name="input">The string to check.</param>
+        /// <returns>The string without trailing slash.</returns>
+        private static string WithoutTrailingSlash(string input)
+        {
+            if (input.EndsWith("\\", StringComparison.InvariantCulture))
+            {
+                return input[0..^1];
+            }
+
+            if (input.EndsWith("/", StringComparison.InvariantCulture))
+            {
+                return input[0..^1];
+            }
+
+            return input;
+        }
+
+        /// <summary>
+        ///     Ensures a / at the end of a string.
+        /// </summary>
+        /// <param name="input">The string to check.</param>
+        /// <returns>The string with trailing slash.</returns>
+        private static string WithTrailingSlash(string input)
+            => $"{WithoutTrailingSlash(input)}/";
     }
 }
 #pragma warning restore CA1812 // Avoid uninstantiated internal classes
