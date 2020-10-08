@@ -5,6 +5,7 @@ using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -84,12 +85,6 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   organization_id = @organization_id
                 AND     role = ANY(@role)";
-
-            // TODO Hardcode
-            if (role == OrganizationRole.Verifier)
-            {
-                sql += " OR (organization_id = @organization_id AND role = 'superuser')";
-            }
 
             ConstructNavigation(ref sql, navigation);
 
