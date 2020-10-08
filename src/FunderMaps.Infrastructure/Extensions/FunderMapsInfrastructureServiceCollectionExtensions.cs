@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Extensions;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Notification;
 using FunderMaps.Infrastructure.Storage;
@@ -88,6 +89,31 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 ConfigureServices(services);
             }
+            return services;
+        }
+
+        /// <summary>
+        ///     Explicitly add <see cref="IBlobStorageService"/> to the services.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="configuration">Configuration collection.</param>
+        /// <param name="configurationSection">The name of the configuration section.</param>
+        /// <returns>Chained <paramref name="services"/>.</returns>
+        public static IServiceCollection AddSpacesBlobStorageServices(this IServiceCollection services, IConfiguration configuration, string configurationSection)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            configurationSection.ThrowIfNullOrEmpty();
+
+            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
+            services.Configure<BlobStorageOptions>(options => configuration.GetSection(configurationSection).Bind(options));
+
             return services;
         }
     }

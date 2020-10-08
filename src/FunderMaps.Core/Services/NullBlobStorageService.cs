@@ -1,5 +1,7 @@
 ﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -16,10 +18,13 @@ namespace FunderMaps.Core.Services
             return new ValueTask<bool>(false);
         }
 
-        public ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid)
+        public ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid, AccessType accessType = AccessType.Read)
         {
             return new ValueTask<Uri>(new Uri("http://localhost/blob"));
         }
+
+        public ValueTask<IEnumerable<string>> ListSubcontainerNamesAsync(string containerName) 
+            => throw new NotImplementedException();
 
         public ValueTask StoreFileAsync(string store, string name, Stream stream)
         {
