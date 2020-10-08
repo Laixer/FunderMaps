@@ -115,7 +115,18 @@ namespace FunderMaps.Data.Repositories
                         a.external_source,
                         a.city,
                         a.building_id,
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
                 FROM    geocoder.address AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
                 WHERE   a.external_id = @external_id
                 AND     a.external_source = @external_source
                 LIMIT   1";
@@ -148,7 +159,18 @@ namespace FunderMaps.Data.Repositories
                         a.external_source,
                         a.city,
                         a.building_id,
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
                 FROM    geocoder.address AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
                 WHERE   a.id = @id
                 LIMIT   1";
 
@@ -231,7 +253,18 @@ namespace FunderMaps.Data.Repositories
                         a.external_source,
                         a.city,
                         a.building_id,
-                FROM    geocoder.address AS a";
+
+                        -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id, 
+                        b.external_source, 
+                        b.geom,
+                        b.neighborhood_id
+                FROM    geocoder.address AS a
+                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
 
             ConstructNavigation(ref sql, navigation, "a");
 
