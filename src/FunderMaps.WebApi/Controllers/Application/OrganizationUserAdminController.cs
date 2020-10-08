@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
@@ -170,7 +170,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             {
                 throw new AuthorizationException();
             }
-            await _userRepository.DeleteAsync(id);
+            await _userRepository.DeleteAsync(userId);
 
             // Return.
             return NoContent();
