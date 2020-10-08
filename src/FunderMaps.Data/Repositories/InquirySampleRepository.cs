@@ -120,7 +120,7 @@ namespace FunderMaps.Data.Repositories
                     @groundlevel,
                     @groundwater_level_net,
                     @foundation_type,
-                    NULL,
+                    @enforcement_term,
                     @recovery_adviced,
                     @damage_cause,
                     @damage_characteristics,
