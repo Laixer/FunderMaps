@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Testing", "tests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{1E81C4AC-BAE1-4DED-8084-546E29D8A365}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Console", "FunderMaps.Console\FunderMaps.Console.csproj", "{1BCEAA73-4B06-460F-B8E7-EA2E2CDE8D2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Console", "FunderMaps.Console\FunderMaps.Console.csproj", "{1BCEAA73-4B06-460F-B8E7-EA2E2CDE8D2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
