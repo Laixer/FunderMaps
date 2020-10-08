@@ -76,6 +76,16 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public Guid? Reviewer { get; set; }
 
         /// <summary>
+        ///     Creator identifier.
+        /// </summary>
+        public Guid Creator { get; set; }
+
+        /// <summary>
+        ///     Owner identifier.
+        /// </summary>
+        public Guid Owner { get; set; }
+
+        /// <summary>
         ///     Contractor identifier.
         /// </summary>
         [Guid]
