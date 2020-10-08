@@ -330,8 +330,6 @@ namespace FunderMaps.Data.Repositories
                 UPDATE  application.user
                 SET     given_name = @given_name,
                         last_name = @last_name,
-                        email = @email,
-                        normalized_email = application.normalize(@email),
                         avatar = @avatar,
                         job_title = @job_title,
                         phone_number = @phone_number,
