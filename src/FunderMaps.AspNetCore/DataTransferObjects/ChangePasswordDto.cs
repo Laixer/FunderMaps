@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
-    ///     Change password DTO.
+    ///     Change user password DTO.
     /// </summary>
     public sealed class ChangePasswordDto
     {

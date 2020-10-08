@@ -59,6 +59,7 @@ namespace FunderMaps.AspNetCore
                 {
                     mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
                     mapper.CreateMap<User, UserDto>().ReverseMap();
+                    mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
                 });
 
                 // FUTURE: Only load specific parts.

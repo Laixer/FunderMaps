@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -30,15 +30,21 @@ namespace FunderMaps.WebApi.Controllers.Application
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationUserRepository _organizationUserRepository;
+        private readonly SignInService _signinService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationUserAdminController(IMapper mapper, IUserRepository userRepository, IOrganizationUserRepository organizationUserRepository)
+        public OrganizationUserAdminController(
+            IMapper mapper,
+            IUserRepository userRepository,
+            IOrganizationUserRepository organizationUserRepository,
+            SignInService signinService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+            _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
         }
 
         // POST: api/admin/organization/{id}/user
@@ -46,7 +52,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Add user to organization.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserDto input)
+        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -56,7 +62,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             var userId = await _userRepository.AddAsync(user);
             // var passwordHash = _passwordHasher.HashPassword(plainPassword);
             // await _userRepository.SetPasswordHashAsync(user, passwordHash);
-            await _organizationUserRepository.AddAsync(id, userId, OrganizationRole.Reader);
+            await _organizationUserRepository.AddAsync(id, userId, input.OrganizationRole);
 
             // Map.
             var output = _mapper.Map<UserDto>(user);
@@ -73,18 +79,18 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
         {
             // Act.
+            // TODO: FIX: This is ugly.
             // TODO: Single call
-            var userList = new List<User>();
+            var output = new List<OrganizationUserDto>();
             await foreach (var user in _organizationUserRepository.ListAllAsync(id, pagination.Navigation))
             {
-                userList.Add(await _userRepository.GetByIdAsync(user));
+                var result = _mapper.Map<OrganizationUserDto>(await _userRepository.GetByIdAsync(user));
+                result.OrganizationRole = await _organizationUserRepository.GetOrganizationRoleByUserIdAsync(user);
+                output.Add(result);
             }
 
-            // Map.
-            var result = _mapper.Map<IList<UserDto>>(userList);
-
             // Return.
-            return Ok(result);
+            return Ok(output);
         }
 
         // PUT: api/admin/organization/{id}/user/{id}
@@ -92,7 +98,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Update user in the organization.
         /// </summary>
         [HttpPut("{userId:guid}")]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] UserDto input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -105,6 +111,47 @@ namespace FunderMaps.WebApi.Controllers.Application
                 throw new AuthorizationException();
             }
             await _userRepository.UpdateAsync(user);
+
+            // Return.
+            return NoContent();
+        }
+
+        // POST: api/organization/user/{id}/change-organization-role
+        /// <summary>
+        ///     Set user organization role in the session organization.
+        /// </summary>
+        [HttpPost("{userId:guid}/change-organization-role")]
+        public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, Guid userId, [FromBody] ChangeOrganizationRoleDto input)
+        {
+            // Act.
+            // TODO: Move to db
+            if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+            {
+                throw new AuthorizationException();
+            }
+            await _organizationUserRepository.SetOrganizationRoleByUserIdAsync(userId, input.Role);
+
+            // Return.
+            return NoContent();
+        }
+
+        // FUTURE: Remove old password
+        // POST: api/organization/user/{id}/change-password
+        /// <summary>
+        ///     Set user password in the session organization.
+        /// </summary>
+        [HttpPost("{userId:guid}/change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(Guid id, Guid userId, [FromBody] ChangePasswordDto input)
+        {
+            // Act.
+            // TODO: Move to db
+            if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+            {
+                throw new AuthorizationException();
+            }
+
+            // Act.
+            await _signinService.SetPasswordAsync(userId, input.NewPassword);
 
             // Return.
             return NoContent();

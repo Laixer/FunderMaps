@@ -72,11 +72,11 @@ namespace FunderMaps.AspNetCore.Controllers
             return NoContent();
         }
 
-        // PUT: api/change-password
+        // POST: api/user/change-password
         /// <summary>
-        ///     Update password for session user.
+        ///     Set password for session user.
         /// </summary>
-        [HttpPut("change-password")]
+        [HttpPost("change-password")]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
             // Act.
@@ -90,7 +90,6 @@ namespace FunderMaps.AspNetCore.Controllers
             // Return.
             return NoContent();
         }
-
     }
 }
 #pragma warning restore CA1062 // Validate arguments of public methods

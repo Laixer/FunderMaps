@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
-    ///     Incident DTO.
+    ///     User DTO.
     /// </summary>
-    public sealed class UserDto
+    public class UserDto
     {
         /// <summary>
         ///     Unique identifier.

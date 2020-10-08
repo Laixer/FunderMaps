@@ -149,6 +149,21 @@ namespace FunderMaps.Data.Repositories
 
             return reader.GetFieldValue<OrganizationRole>(0);
         }
+
+        public async Task SetOrganizationRoleByUserIdAsync(Guid userId, OrganizationRole role)
+        {
+            var sql = @"
+                UPDATE  application.organization_user
+                SET     role = @role
+                WHERE   user_id = @user_id";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("user_id", userId);
+            context.AddParameterWithValue("role", role);
+
+            await context.NonQueryAsync();
+        }
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
