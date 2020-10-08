@@ -1,11 +1,13 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types.BundleLayers;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -64,6 +66,34 @@ namespace FunderMaps.Data.Repositories
         public ValueTask DeleteAsync(Guid id) => throw new NotImplementedException();
 
         /// <summary>
+        ///     Forces a bundles version id to be refreshed. This should be used
+        ///     to force bundle recalculations without messing up versions.
+        /// </summary>
+        /// <param name="bundleId">The bundle id.</param>
+        /// <returns>The new version id.</returns>
+        public async Task<uint> ForceUpdateBundleVersionAsync(Guid bundleId)
+        {
+            if (bundleId == null || bundleId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(bundleId));
+            }
+
+            var sql = @"
+                    UPDATE      maplayer.bundle
+                    SET         version_id = version_id + 1
+                    WHERE       id = @id
+                    RETURNING   version_id";
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            cmd.AddParameterWithValue("id", bundleId);
+
+            var result = (int) await cmd.ExecuteScalarEnsureRowAsync();
+            return Convert.ToUInt32(result);
+        }
+
+        /// <summary>
         ///     Gets a <see cref="Bundle"/> by its id.
         /// </summary>
         /// <param name="id">Internal bundle id.</param>
@@ -83,8 +113,8 @@ namespace FunderMaps.Data.Repositories
                         update_date,
                         delete_date,
                         user_id,
-                        version_id,
-                        layers
+                        layer_configuration,
+                        version_id
                 FROM    maplayer.bundle
                 WHERE   id = @id";
 
@@ -99,7 +129,41 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        public IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation) => throw new NotImplementedException();
+        /// <summary>
+        ///     Get all existing bundles in our database.
+        /// </summary>
+        /// <param name="navigation">The navigation parameters.</param>
+        /// <returns>Collection of bundles.</returns>
+        public async IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation)
+        {
+            if (navigation == null)
+            {
+                throw new ArgumentNullException(nameof(navigation));
+            }
+
+            var sql = @"
+                SELECT  id,
+                        organization_id,
+                        name,
+                        create_date,
+                        update_date,
+                        delete_date,
+                        user_id,
+                        layer_configuration,
+                        version_id
+                FROM    maplayer.bundle";
+
+            ConstructNavigation(ref sql, navigation);
+
+            await using var connection = await DbProvider.OpenConnectionScopeAsync();
+            await using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                yield return MapFromReader(reader);
+            }
+        }
 
         /// <summary>
         ///     Get all bundles for a given organization.
@@ -126,8 +190,8 @@ namespace FunderMaps.Data.Repositories
                         update_date,
                         delete_date,
                         user_id,
-                        version_id,
-                        layers
+                        layer_configuration,
+                        version_id
                 FROM    maplayer.bundle
                 WHERE   organization_id = @organization_id";
 
@@ -138,7 +202,7 @@ namespace FunderMaps.Data.Repositories
 
             cmd.AddParameterWithValue("organization_id", organizationId);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
+            await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
                 yield return MapFromReader(reader);
@@ -160,17 +224,17 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                     UPDATE  maplayer.bundle
                     SET     name = @name,
-                            layers = @layers
+                            layer_configuration = @layer_configuration::jsonb
                     WHERE   id = @id";
+
 
             using var connection = await DbProvider.OpenConnectionScopeAsync();
             using var cmd = DbProvider.CreateCommand(sql, connection);
 
-            // TODO This uses only name and layers for updating,
-            // so calling the MapToWriter function seemed obsolete.
             cmd.AddParameterWithValue("id", entity.Id);
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("layers", entity.LayersIds);
+            MapToWriter(cmd, entity);
+
+            var ser = JsonSerializer.Serialize(entity.LayerConfiguration);
 
             await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
@@ -190,8 +254,8 @@ namespace FunderMaps.Data.Repositories
                 UpdateDate = reader.GetSafeDateTime(4),
                 DeleteDate = reader.GetSafeDateTime(5),
                 UserId = reader.GetGuid(6),
-                VersionId = reader.GetGuid(7),
-                LayersIds = reader.GetFieldValue<List<Guid>>(8)
+                LayerConfiguration = reader.GetFieldValue<LayerConfiguration>(7),
+                VersionId = reader.GetUInt(8) // TODO Is uint correct? DB = int4
             };
 
         /// <summary>
@@ -204,8 +268,7 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("organization_id", entity.OrganizationId);
             cmd.AddParameterWithValue("name", entity.Name);
             cmd.AddParameterWithValue("user_id", entity.UserId);
-            cmd.AddParameterWithValue("layers", entity.LayersIds);
+            cmd.AddParameterWithValue("layer_configuration", JsonSerializer.Serialize(entity.LayerConfiguration));
         }
-
     }
 }

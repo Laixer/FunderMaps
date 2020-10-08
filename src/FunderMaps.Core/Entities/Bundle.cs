@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FunderMaps.Core.Types.BundleLayers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -39,7 +40,7 @@ namespace FunderMaps.Core.Entities
         ///     Unique identifier for this bundle version.
         /// </summary>
         [Required]
-        public Guid VersionId { get; set; }
+        public uint VersionId { get; set; }
 
         /// <summary>
         ///     Name of this bundle.
@@ -64,9 +65,8 @@ namespace FunderMaps.Core.Entities
         public DateTimeOffset? DeleteDate { get; set; }
 
         /// <summary>
-        ///     All ids of layers belonging to this bundle.
+        ///     Configuration of the selected layers.
         /// </summary>
-        [Required]
-        public IEnumerable<Guid> LayersIds { get; set; }
+        public LayerConfiguration LayerConfiguration { get; set; }
     }
 }
