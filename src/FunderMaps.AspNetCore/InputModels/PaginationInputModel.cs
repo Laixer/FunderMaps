@@ -6,7 +6,6 @@ namespace FunderMaps.AspNetCore.InputModels
 {
     /// <summary>
     ///     DTO for pagination.
-    ///     TODO This is a direct copy from the WebApi, implement there as well.
     /// </summary>
     public class PaginationInputModel
     {

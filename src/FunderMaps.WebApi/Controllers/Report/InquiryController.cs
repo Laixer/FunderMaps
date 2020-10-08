@@ -44,6 +44,23 @@ namespace FunderMaps.WebApi.Controllers.Report
             _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
+        // GET: api/inquiry/stats
+        /// <summary>
+        ///     Return inquiry statistics.
+        /// </summary>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetCountAsync()
+        {
+            // Map.
+            var output = new DatasetStatsDto
+            {
+                Count = await _inquiryRepository.CountAsync(),
+            };
+
+            // Return.
+            return Ok(output);
+        }
+
         // GET: api/inquiry/{id}
         /// <summary>
         ///     Return inquiry by id.

@@ -49,6 +49,23 @@ namespace FunderMaps.WebApi.Controllers.Report
             _fileStorageService = fileStorageService ?? throw new ArgumentNullException(nameof(fileStorageService));
         }
 
+        // GET: api/incident/stats
+        /// <summary>
+        ///     Return incident statistics.
+        /// </summary>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetCountAsync()
+        {
+            // Map.
+            var output = new DatasetStatsDto
+            {
+                Count = await _incidentRepository.CountAsync(),
+            };
+
+            // Return.
+            return Ok(output);
+        }
+
         // GET: api/incident/{id}
         /// <summary>
         ///     Return incident by id.

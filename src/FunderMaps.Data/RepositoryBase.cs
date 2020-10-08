@@ -16,6 +16,7 @@ namespace FunderMaps.Data
         where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
+        // FUTURE: Single transaction
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
         /// </summary>
