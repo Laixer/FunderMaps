@@ -48,8 +48,8 @@ namespace FunderMaps.Testing.Repositories
         public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
             => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Select(s => s.UserId), navigation));
 
-        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole organizationRole, INavigation navigation)
-            => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Where(s => s.OrganizationRole == organizationRole).Select(s => s.UserId), navigation));
+        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, INavigation navigation)
+            => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Where(s => organizationRole.Contains(s.OrganizationRole)).Select(s => s.UserId), navigation));
 
         public ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
             => new ValueTask<Guid>(DataStore.ItemList.First(e => e.UserId == userId).OrganizationId);
