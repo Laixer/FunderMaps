@@ -68,6 +68,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.DeformedFacade, f => f.Random.Bool());
             RuleFor(f => f.ThresholdUpdownSkewed, f => f.Random.Bool());
             RuleFor(f => f.ThresholdFrontLevel, f => f.Random.Decimal(-50, 50));
+            RuleFor(f => f.ThresholdBackLevel, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedParallel, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedPerpendicular, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedFacade, f => f.PickRandom<RotationType>());
