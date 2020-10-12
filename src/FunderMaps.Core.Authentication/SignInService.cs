@@ -66,7 +66,7 @@ namespace FunderMaps.Core.Authentication
         {
             if (await UserRepository.IsLockedOutAsync(id))
             {
-                Logger.LogWarning(3, $"User {id} is currently locked out.");
+                Logger.LogWarning($"User {id} is currently locked out.");
 
                 return SignInContext.LockedOut;
             }
@@ -147,7 +147,7 @@ namespace FunderMaps.Core.Authentication
                 return result;
             }
 
-            Logger.LogInformation(1, $"User {user} sign in was successful.");
+            Logger.LogInformation($"User {user} sign in was successful.");
 
             return new SignInContext(
                 result: AuthResult.Success,
@@ -209,14 +209,14 @@ namespace FunderMaps.Core.Authentication
                 await UserRepository.ResetAccessFailed(user.Id);
                 await UserRepository.RegisterAccess(user.Id);
 
-                Logger.LogInformation(1, $"User {user} password sign in was successful.");
+                Logger.LogInformation($"User {user} password sign in was successful.");
 
                 return new SignInContext(
                     result: AuthResult.Success,
                     principal: PrincipalProvider.CreateTenantUserPrincipal(user, tenant, organizationRole, authenticationType));
             }
 
-            Logger.LogWarning(2, $"User {user} failed to provide the correct password.");
+            Logger.LogWarning($"User {user} failed to provide the correct password.");
 
             await UserRepository.BumpAccessFailed(user.Id);
 
