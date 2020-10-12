@@ -1,0 +1,32 @@
+name: FunderMaps Docker Container
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'feature/**'
+  pull_request:
+    branches:
+      - master
+      - develop
+
+env:
+  DOTNET_VERSION: '3.1.101'
+  BUILD_CONFIG: Release
+
+jobs:
+  build:
+    name: Build Container
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Print version
+      run: |
+        find src -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/" {} +
+        find src -type f -exec sed -i "s/@@COMMIT@@/$(git rev-parse HEAD)/" {} +
+
+    - name: Build
+      run: docker build . --file Dockerfile
