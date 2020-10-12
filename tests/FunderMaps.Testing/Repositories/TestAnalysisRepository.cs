@@ -28,23 +28,14 @@ namespace FunderMaps.Testing.Repositories
             DataStore = dataStore;
         }
 
-        public ValueTask<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation)
-            => throw new NotImplementedException();
-
-        public async ValueTask<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
         {
             // NOTE: We ignore external data source here.
             await Task.CompletedTask;
             return DataStore.ItemList.Where(s => s.ExternalId == externalId).FirstOrDefault() ?? throw new EntityNotFoundException();
         }
 
-        public async ValueTask<AnalysisProduct> GetByIdAsync(string id)
-        {
-            await Task.CompletedTask;
-            return DataStore.ItemList.Where(x => x.Id == id).First() ?? throw new EntityNotFoundException();
-        }
-
-        public async ValueTask<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id)
+        public async Task<AnalysisProduct> GetByIdAsync(string id)
         {
             await Task.CompletedTask;
             return DataStore.ItemList.Where(x => x.Id == id).First() ?? throw new EntityNotFoundException();
