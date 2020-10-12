@@ -76,6 +76,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Create inquiry sample.
         /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Inquiry"/> into state pending if a <see cref="InquirySample"/>
+        ///     was successfully created within this <see cref="Inquiry"/>.
+        /// </remarks>
         [HttpPost]
         public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input)
         {
@@ -107,6 +111,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Update inquiry by id.
         /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Inquiry"/> into state pending if a <see cref="InquirySample"/>
+        ///     was successfully updated within this <see cref="Inquiry"/>.
+        /// </remarks>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySampleDto input)
         {
@@ -135,6 +143,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Delete inquiry sample by id.
         /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Inquiry"/> into state todo if all <see cref="InquirySample"/>
+        ///     within this <see cref="Inquiry"/> are deleted.
+        /// </remarks>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int inquiryId, int id)
         {
