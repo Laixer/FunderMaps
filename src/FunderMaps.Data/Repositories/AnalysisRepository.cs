@@ -36,7 +36,6 @@ namespace FunderMaps.Data.Repositories
         /// <param name="userId">Internal user id.</param>
         /// <param name="externalId">External building id.</param>
         /// <param name="externalSource">External data source</param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
         public async ValueTask<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
         {
             userId.ThrowIfNullOrEmpty();
@@ -78,49 +77,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets an analysis product by its internal building id.
         /// </summary>
-        /// <param name="userId">Internal user id.</param>
         /// <param name="id">Internal building id.</param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
-        public async ValueTask<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id)
-        {
-            id.ThrowIfNullOrEmpty();
-            userId.ThrowIfNullOrEmpty();
-
-            var sql = @"
-                SELECT  -- AnalysisProduct
-                        ac.id,
-                        ac.external_id,
-                        ac.external_source,
-                        ac.foundation_type,
-                        ac.groundwater_level,
-                        ac.foundation_risk,
-                        ac.construction_year,
-                        ac.building_height,
-                        ac.ground_level,
-                        ac.restoration_costs,
-                        ac.dewatering_depth,
-                        ac.drystand,
-                        ac.reliability,
-                        ac.neighborhood_id
-                FROM    data.analysis_product_complete AS ac
-                WHERE   ac.id = @id
-                AND     application.is_geometry_in_fence(@user_id, ac.geom)";
-
-            await using var context = await DbContextFactory(sql);
-
-            context.AddParameterWithValue("id", id);
-            context.AddParameterWithValue("user_id", userId);
-
-            await using var reader = await context.ReaderAsync();
-
-            return MapFromReader(reader);
-        }
-
-        /// <summary>
-        ///     Gets an analysis product by its internal building id.
-        /// </summary>
-        /// <param name="id">Internal building id.</param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
         public async ValueTask<AnalysisProduct> GetByIdAsync(string id)
         {
             id.ThrowIfNullOrEmpty();
@@ -142,12 +99,24 @@ namespace FunderMaps.Data.Repositories
                         ac.reliability,
                         ac.neighborhood_id
                 FROM    data.analysis_product_complete AS ac
-                WHERE   id = @id
-                LIMIT   1";
+                WHERE   id = @id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, ac.geom)";
+            }
+
+            sql += $"\r\n LIMIT 1";
 
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("id", id);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
 
             await using var reader = await context.ReaderAsync();
 
@@ -200,8 +169,6 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Maps a reader to an <see cref="AnalysisProduct"/>.
         /// </summary>
-        /// <param name="reader"><see cref="DbDataReader"/></param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
         public static AnalysisProduct MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new AnalysisProduct
             {

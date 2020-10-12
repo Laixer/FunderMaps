@@ -13,8 +13,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
     {
         ValueTask<AnalysisProduct> GetByIdAsync(string id);
 
-        ValueTask<AnalysisProduct> GetByIdInFenceAsync(Guid userId, string id);
-
         ValueTask<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource);
 
         /// <summary>
