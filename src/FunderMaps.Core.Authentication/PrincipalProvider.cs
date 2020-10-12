@@ -17,7 +17,7 @@ namespace FunderMaps.Core.Authentication
         /// <param name="tenantRole">The user role within the tenant.</param>
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
-        /// <returns><see cref="ClaimsIdentity"/>.</returns>
+        /// <returns>Instance of <see cref="ClaimsIdentity"/>.</returns>
         public static ClaimsIdentity CreateTenantUserIdentity(
             IUser user,
             ITenant tenant,
@@ -53,7 +53,7 @@ namespace FunderMaps.Core.Authentication
         /// <param name="tenantRole">The user role within the tenant.</param>
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
-        /// <returns><see cref="ClaimsPrincipal"/>.</returns>
+        /// <returns>Instance of <see cref="ClaimsPrincipal"/>.</returns>
         public static ClaimsPrincipal CreateTenantUserPrincipal(
             IUser user,
             ITenant tenant,
@@ -94,7 +94,7 @@ namespace FunderMaps.Core.Authentication
         /// </summary>
         /// <param name="principal">The <see cref="ClaimsPrincipal"/> instance.</param>
         /// <returns>Tuple of <see cref="IUser"/> and <see cref="ITenant"/.</returns>
-        public static (IUser, ITenant) GetTenantUser<TUser, TTenant>(ClaimsPrincipal principal)
+        public static (IUser, ITenant) GetUserAndTenant<TUser, TTenant>(ClaimsPrincipal principal)
             where TUser : IUser, new()
             where TTenant : ITenant, new()
         {

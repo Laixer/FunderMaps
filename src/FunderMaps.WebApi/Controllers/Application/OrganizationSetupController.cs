@@ -40,7 +40,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Create organization from organization proposal.
         /// </summary>
         /// <remarks>
-        ///     This is an unauthorized call, therefore this this
+        ///     This is an unauthorized call, therefore this
         ///     call deliberately returns nothing.
         /// </remarks>
         [HttpPost("organization/{id:guid}/setup")]

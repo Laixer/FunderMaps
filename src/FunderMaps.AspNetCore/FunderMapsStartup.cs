@@ -68,8 +68,8 @@ namespace FunderMaps.AspNetCore
                     CancellationToken = httpContext.RequestAborted,
                     Items = new System.Collections.Generic.Dictionary<object, object>(httpContext.Items),
                     ServiceProvider = httpContext.RequestServices,
-                    User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetTenantUser<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
-                    Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetTenantUser<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
+                    User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
+                    Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
                 };
             }
 

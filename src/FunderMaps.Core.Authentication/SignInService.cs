@@ -109,7 +109,7 @@ namespace FunderMaps.Core.Authentication
                 throw new ArgumentNullException(nameof(principal));
             }
 
-            var (user, tenant) = PrincipalProvider.GetTenantUser<User, Organization>(principal);
+            var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(principal);
             if (user == null || tenant == null)
             {
                 return SignInContext.Failed;
