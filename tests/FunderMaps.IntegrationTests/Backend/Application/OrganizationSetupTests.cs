@@ -1,5 +1,4 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Testing.Faker;
+﻿using FunderMaps.Testing.Faker;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;

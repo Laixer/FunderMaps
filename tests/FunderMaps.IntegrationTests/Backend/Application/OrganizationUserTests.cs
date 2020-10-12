@@ -23,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task CreateOrganizationUserFromSessionReturnOrganizationUser()
         {
             // Arrange
-            var newOrganizationUser = new UserFaker().Generate();
+            var newOrganizationUser = new OrganizationUserPasswordDtoFaker().Generate();
             var client = _factory
                 .ConfigureAuthentication(options =>
                 {

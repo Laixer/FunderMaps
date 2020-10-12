@@ -12,7 +12,7 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class UserFaker : Faker<User>
     {
-        private readonly IEnumerable<string> jobs = new List<string>
+        public static readonly IEnumerable<string> jobs = new List<string>
         {
             "accountant",
             "actor",
