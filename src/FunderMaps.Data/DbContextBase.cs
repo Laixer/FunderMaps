@@ -34,7 +34,7 @@ namespace FunderMaps.Data
             return context;
         }
 
-        // FUTURE: Maybe to npgsql specific.
+        // FUTURE: Maybe too npgsql specific.
         /// <summary>
         ///     Convert navigation to query.
         /// </summary>
