@@ -80,7 +80,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(
-                containerName: "incident-report",
+                containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());

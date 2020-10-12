@@ -28,12 +28,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly IBlobStorageService _blobStorageService;
         private readonly INotificationService _notificationService;
 
-        // TODO Move to some constant file.
-        /// <summary>
-        ///     Inquiry storage destination folder name.
-        /// </summary>
-        internal const string InquiryStorageFolderName = "inquiry-report";
-
         /// <summary>
         ///     Create new instance.
         /// </summary>
@@ -139,7 +133,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(
-                containerName: InquiryStorageFolderName,
+                containerName: Core.Constants.InquiryStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
@@ -163,7 +157,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
             var link = await _blobStorageService.GetAccessLinkAsync(
-                containerName: InquiryStorageFolderName,
+                containerName: Core.Constants.InquiryStorageFolderName,
                 fileName: inquiry.DocumentFile,
                 hoursValid: 1);
 

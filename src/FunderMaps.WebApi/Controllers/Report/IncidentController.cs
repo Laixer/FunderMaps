@@ -30,12 +30,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly IAddressRepository _addressRepository;
         private readonly IBlobStorageService _blobStorageService;
 
-        // TODO Move to some constant file.
-        /// <summary>
-        ///     Incident storage destination folder name.
-        /// </summary>
-        internal const string IncidentStorageFolderName = "incident-report";
-
         /// <summary>
         ///     Create new instance.
         /// </summary>
@@ -107,7 +101,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(
-                containerName: IncidentStorageFolderName,
+                containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: storeFileName,
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
@@ -131,7 +125,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             var incident = await _incidentRepository.GetByIdAsync(id);
             var link = await _blobStorageService.GetAccessLinkAsync(
-                containerName: IncidentStorageFolderName,
+                containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: incident.DocumentFile[0], // TODO
                 hoursValid: 1);
 
