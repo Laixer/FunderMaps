@@ -38,7 +38,7 @@ namespace FunderMaps.Data.Repositories
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset + 6),
                 City = reader.GetSafeString(offset + 7),
                 BuildingId = reader.GetSafeString(offset + 8),
-                BuildingNavigation = fullMap ? null : BuildingRepository.MapFromReader(reader, offset + 9)
+                BuildingNavigation = fullMap ? BuildingRepository.MapFromReader(reader, offset + 9) : null,
             };
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return MapFromReader(reader, fullMap: true);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return MapFromReader(reader, fullMap: true);
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return MapFromReader(reader, fullMap: true);
             }
         }
 
