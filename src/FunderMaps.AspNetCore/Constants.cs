@@ -15,11 +15,11 @@ namespace FunderMaps.AspNetCore
         /// <summary>
         ///     Application revision.
         /// </summary>
-        internal static string ApplicationVersion => "@@VERSION@@";
+        internal const string ApplicationVersion = "@@VERSION@@";
 
         /// <summary>
         ///     Application commit.
         /// </summary>
-        internal static string ApplicationCommit => "@@COMMIT@@";
+        internal const string ApplicationCommit = "@@COMMIT@@";
     }
 }
