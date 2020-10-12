@@ -90,7 +90,7 @@ namespace FunderMaps.Core.Authentication
         ///     Set the password for the user.
         /// </summary>
         /// <param name="id">The user id whose password should be set.</param>
-        /// <param name="password">The password to be set on the user.</param>
+        /// <param name="password">The plaintext password to be set on the user.</param>
         public virtual async Task SetPasswordAsync(Guid id, string password)
         {
             var passwordHash = PasswordHasher.HashPassword(password);

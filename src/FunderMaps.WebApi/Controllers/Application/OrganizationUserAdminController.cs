@@ -52,7 +52,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         ///     Add user to organization.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] OrganizationUserDto input)
+        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] OrganizationUserPasswordDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -60,8 +60,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             // Act.
             // FUTURE: Do in 1 call.
             var userId = await _userRepository.AddAsync(user);
-            // var passwordHash = _passwordHasher.HashPassword(plainPassword);
-            // await _userRepository.SetPasswordHashAsync(user, passwordHash);
+            await _signinService.SetPasswordAsync(userId, input.Password);
             await _organizationUserRepository.AddAsync(id, userId, input.OrganizationRole);
 
             // Map.

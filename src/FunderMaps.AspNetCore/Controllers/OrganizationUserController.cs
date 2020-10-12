@@ -52,7 +52,7 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync([FromBody] OrganizationUserDto input)
+        public async Task<IActionResult> AddUserAsync([FromBody] OrganizationUserPasswordDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -60,8 +60,7 @@ namespace FunderMaps.AspNetCore.Controllers
             // Act.
             // FUTURE: Do in 1 call.
             var userId = await _userRepository.AddAsync(user);
-            // var passwordHash = _passwordHasher.HashPassword(plainPassword);
-            // await _userRepository.SetPasswordHashAsync(user, passwordHash);
+            await _signinService.SetPasswordAsync(userId, input.Password);
             await _organizationUserRepository.AddAsync(_appContext.TenantId, userId, input.OrganizationRole);
 
             // Map.
