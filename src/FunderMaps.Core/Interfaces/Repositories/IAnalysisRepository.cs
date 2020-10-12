@@ -11,15 +11,13 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// </summary>
     public interface IAnalysisRepository
     {
-        ValueTask<AnalysisProduct> GetByIdAsync(string id);
+        Task<AnalysisProduct> GetByIdAsync(string id);
 
-        ValueTask<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource);
+        Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource);
 
         /// <summary>
         ///     Retrieve <see cref="AnalysisProduct"/> by search query.
         /// </summary>
         IAsyncEnumerable<AnalysisProduct> GetBySearchQueryAsync(Guid userId, string query, INavigation navigation);
-
-        ValueTask<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation);
     }
 }

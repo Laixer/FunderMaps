@@ -19,14 +19,6 @@ namespace FunderMaps.Data.Repositories
     internal sealed class AnalysisRepository : DbContextBase, IAnalysisRepository
     {
         /// <summary>
-        ///     Scrapped for now.
-        /// </summary>
-        public ValueTask<IEnumerable<AnalysisProduct>> GetAllInFenceAsync(Guid userId, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         ///     Gets an analysis product by its external building id and source.
         /// </summary>
         /// <remarks>
@@ -36,7 +28,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="userId">Internal user id.</param>
         /// <param name="externalId">External building id.</param>
         /// <param name="externalSource">External data source</param>
-        public async ValueTask<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
         {
             userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
@@ -78,7 +70,7 @@ namespace FunderMaps.Data.Repositories
         ///     Gets an analysis product by its internal building id.
         /// </summary>
         /// <param name="id">Internal building id.</param>
-        public async ValueTask<AnalysisProduct> GetByIdAsync(string id)
+        public async Task<AnalysisProduct> GetByIdAsync(string id)
         {
             id.ThrowIfNullOrEmpty();
 
