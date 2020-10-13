@@ -134,7 +134,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             return NoContent();
         }
 
-        // FUTURE: Remove old password
+        // FUTURE: Remove old password from DTO
         // POST: api/organization/user/{id}/change-password
         /// <summary>
         ///     Set user password in the session organization.
