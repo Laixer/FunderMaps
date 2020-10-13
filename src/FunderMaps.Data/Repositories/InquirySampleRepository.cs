@@ -233,7 +233,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("groundwater_level_temp", entity.GroundwaterLevelTemp);
             context.AddParameterWithValue("groundlevel", entity.GroundLevel);
             context.AddParameterWithValue("groundwater_level_net", entity.GroundwaterLevelNet);
-            context.AddParameterWithValue("foundation_type", entity.Type);
+            context.AddParameterWithValue("foundation_type", entity.FoundationType);
             context.AddParameterWithValue("enforcement_term", entity.EnforcementTerm);
             context.AddParameterWithValue("recovery_adviced", entity.RecoveryAdvised);
             context.AddParameterWithValue("damage_cause", entity.DamageCause);
@@ -303,7 +303,7 @@ namespace FunderMaps.Data.Repositories
                 GroundwaterLevelTemp = reader.GetSafeDecimal(offset + 31),
                 GroundLevel = reader.GetSafeDecimal(offset + 32),
                 GroundwaterLevelNet = reader.GetSafeDecimal(offset + 33),
-                Type = reader.GetFieldValue<FoundationType?>(offset + 34),
+                FoundationType = reader.GetFieldValue<FoundationType?>(offset + 34),
                 EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(offset + 35),
                 RecoveryAdvised = reader.GetSafeBoolean(offset + 36),
                 DamageCause = reader.GetFieldValue<FoundationDamageCause>(offset + 37),
@@ -663,11 +663,80 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                     UPDATE  report.inquiry_sample AS s
-                    SET     inquiry = @inquiry,
-                            address = @address,
-                            note = @note,
-                            built_year = @built_year,
-                            substructure = @substructure
+                    SET     
+                        -- InquirySample
+                        inquiry = @inquiry,
+                        address = @address,
+                        note = @note,
+                        built_year = @built_year,
+                        substructure = @substructure,
+
+                        -- Foundation Assessment
+                        overall_quality = @overall_quality,
+                        wood_quality = @wood_quality,
+                        construction_quality = @construction_quality,
+                        wood_capacity_horizontal_quality = @wood_capacity_horizontal_quality,
+                        pile_wood_capacity_vertical_quality = @pile_wood_capacity_vertical_quality,
+                        carrying_capacity_quality = @carrying_capacity_quality,
+                        mason_quality = @mason_quality,
+                        wood_quality_necessity = @wood_quality_necessity,
+
+                        -- Foundation Measurement
+                        construction_level = @construction_level,
+                        wood_level = @wood_level,
+                        pile_diameter_top = @pile_diameter_top,
+                        pile_diameter_bottom = @pile_diameter_bottom,
+                        pile_head_level = @pile_head_level,
+                        pile_tip_level = @pile_tip_level,
+                        foundation_depth = @foundation_depth,
+                        mason_level = @mason_level,
+                        concrete_charger_length = @concrete_charger_length,
+                        pile_distance_length = @pile_distance_length,
+                        wood_penetration_depth = @wood_penetration_depth,
+
+                        -- Surrounding
+                        cpt = @cpt,
+                        monitoring_well = @monitoring_well,
+                        groundwater_level_temp = @groundwater_level_temp,
+                        groundlevel = @groundlevel,
+                        groundwater_level_net = @groundwater_level_net,
+                        
+                        -- Foundation
+                        foundation_type = @foundation_type,
+                        enforcement_term = @enforcement_term,
+                        recovery_adviced = @recovery_adviced,
+                        damage_cause = @damage_cause,
+                        damage_characteristics = @damage_characteristics,
+                        construction_pile = @construction_pile,
+                        wood_type = @wood_type,
+                        wood_encroachement = @wood_encroachement,
+
+                        -- Building
+                        crack_indoor_restored = @crack_indoor_restored,
+                        crack_indoor_type = @crack_indoor_type,
+                        crack_indoor_size = @crack_indoor_size,
+                        crack_facade_front_restored = @crack_facade_front_restored,
+                        crack_facade_front_type = @crack_facade_front_type,
+                        crack_facade_front_size = @crack_facade_front_size,
+                        crack_facade_back_restored = @crack_facade_back_restored,
+                        crack_facade_back_type = @crack_facade_back_type,
+                        crack_facade_back_size = @crack_facade_back_size,
+                        crack_facade_left_restored = @crack_facade_left_restored,
+                        crack_facade_left_type = @crack_facade_left_type,
+                        crack_facade_left_size = @crack_facade_left_size,
+                        crack_facade_right_restored = @crack_facade_right_restored,
+                        crack_facade_right_type = @crack_facade_right_type,
+                        crack_facade_right_size = @crack_facade_right_size,
+                        deformed_facade = @deformed_facade,
+                        threshold_updown_skewed = @threshold_updown_skewed,
+                        threshold_front_level = @threshold_front_level,
+                        threshold_back_level = @threshold_back_level,
+                        skewed_parallel = @skewed_parallel,
+                        skewed_perpendicular = @skewed_perpendicular,
+                        skewed_facade = @skewed_facade,
+                        settlement_speed = @settlement_speed
+
+
                     FROM 	application.attribution AS a, report.inquiry AS i
                     WHERE   i.id = s.inquiry
                     AND     a.id = i.attribution
