@@ -1,15 +1,14 @@
 ﻿using FunderMaps.Core.Entities.Application;
+using FunderMaps.Core.Identity;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
-    // TODO: Impl some sort of OrgAuth interface
-
     /// <summary>
     ///     Organization entity.
     /// </summary>
-    public sealed class Organization : IdentifiableEntity<Organization, Guid>, IApplicationEntity<Organization>
+    public sealed class Organization : IdentifiableEntity<Organization, Guid>, IApplicationEntity<Organization>, ITenant
     {
         /// <summary>
         ///     Create new instance.
@@ -20,7 +19,7 @@ namespace FunderMaps.Core.Entities
         }
 
         /// <summary>
-        ///     Organization identifier.
+        ///     Unique identifier.
         /// </summary>
         public Guid Id { get; set; }
 

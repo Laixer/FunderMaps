@@ -42,7 +42,7 @@ namespace FunderMaps.AspNetCore.Authorization
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
@@ -50,15 +50,15 @@ namespace FunderMaps.AspNetCore.Authorization
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString());
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString());
                 }));
 
             options.AddPolicy(AuthorizationPolicy.VerifierAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
@@ -66,17 +66,17 @@ namespace FunderMaps.AspNetCore.Authorization
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString());
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString());
                 }));
 
             options.AddPolicy(AuthorizationPolicy.WriterAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Writer.ToString()) ||
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString()) ||
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
@@ -84,19 +84,19 @@ namespace FunderMaps.AspNetCore.Authorization
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Writer.ToString());
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString());
                 }));
 
             options.AddPolicy(AuthorizationPolicy.ReaderAdministratorPolicy, policy => policy
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Writer.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Reader.ToString()) ||
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Reader.ToString()) ||
                            context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
                 }));
 
@@ -104,10 +104,10 @@ namespace FunderMaps.AspNetCore.Authorization
                 .RequireAuthenticatedUser()
                 .RequireAssertion(context =>
                 {
-                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Writer.ToString()) ||
-                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.OrganizationRole, Core.Types.OrganizationRole.Reader.ToString());
+                    return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString()) ||
+                           context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Reader.ToString());
                 }));
         }
     }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using System;
 using System.Data.Common;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,20 +39,9 @@ namespace FunderMaps.Data.Providers
         /// <summary>
         ///     Open database connection.
         /// </summary>
+        /// <param name="token">The cancellation instruction.</param>
         /// <returns>See <see cref="DbConnection"/>.</returns>
-        public virtual async Task<DbConnection> OpenConnectionScopeAsync()
-        {
-            var connection = ConnectionScope();
-            await connection.OpenAsync();
-            return connection;
-        }
-
-        /// <summary>
-        ///     Open database connection with cancellation options.
-        /// </summary>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns>See <see cref="DbConnection"/>.</returns>
-        public virtual async Task<DbConnection> OpenConnectionScopeAsync(CancellationToken token)
+        public virtual async Task<DbConnection> OpenConnectionScopeAsync(CancellationToken token = default)
         {
             var connection = ConnectionScope();
             await connection.OpenAsync(token);
@@ -75,5 +65,11 @@ namespace FunderMaps.Data.Providers
             cmd.CommandText = cmdText;
             return cmd;
         }
+
+        /// <summary>
+        ///     Handle database exception.
+        /// </summary>
+        /// <param name="edi">Captured exception.</param>
+        internal virtual void HandleException(ExceptionDispatchInfo edi) => edi.Throw();
     }
 }

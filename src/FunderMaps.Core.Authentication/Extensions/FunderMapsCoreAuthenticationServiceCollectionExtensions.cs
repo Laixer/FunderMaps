@@ -15,26 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddFunderMapsCoreAuthentication(setupAction: null);
-
-            return services;
-        }
-
-        public static IServiceCollection AddFunderMapsCoreAuthentication(this IServiceCollection services, Action<AuthenticationOptions> setupAction)
-        {
-            if (services == null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-
-            // TODO: AddScoped -> Transient?s
-
-            services.AddScoped<AuthManager>();
-
-            if (setupAction != null)
-            {
-                services.Configure(setupAction);
-            }
+            services.AddScoped<SignInService>();
 
             return services;
         }

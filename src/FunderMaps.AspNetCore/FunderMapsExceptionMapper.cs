@@ -6,16 +6,15 @@ using System.Net;
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
-    ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessageFeature"/>.
+    ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
     /// </summary>
     public sealed class FunderMapsExceptionMapper : ExceptionMapperBase<FunderMapsCoreException>
     {
         /// <summary>
-        ///     Maps a <see cref="FunderMapsCoreException"/> to the 
-        ///     corresponding <see cref="ErrorMessageFeature"/>.
+        ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
         /// </summary>
-        /// <param name="exception"><see cref="FunderMapsCoreException"/></param>
-        /// <returns><see cref="ErrorMessageFeature"/></returns>
+        /// <param name="exception">An instance of <see cref="FunderMapsCoreException"/>.</param>
+        /// <returns><see cref="ErrorMessage"/></returns>
         public override ErrorMessage Map(FunderMapsCoreException exception)
             => exception switch
             {
@@ -25,6 +24,7 @@ namespace FunderMaps.AspNetCore
                 EntityReadOnlyException _ => BuildMessage("Requested entity is immutable.", HttpStatusCode.Locked),
                 InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
                 InvalidProductRequestException _ => BuildMessage("Invalid product requested.", HttpStatusCode.BadRequest),
+                ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
                 StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 UploadException _ => BuildMessage("File upload failed.", HttpStatusCode.BadRequest),

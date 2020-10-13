@@ -1,9 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Testing.Repositories
@@ -15,7 +12,7 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token)
+        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
             => Task.FromResult(true);
     }
 }

@@ -1,4 +1,5 @@
-﻿using FunderMaps.Webservice.ResponseModels.Types;
+﻿using FunderMaps.Core.Types;
+using FunderMaps.Webservice.ResponseModels.Types;
 using System;
 
 namespace FunderMaps.Webservice.ResponseModels.Analysis
@@ -11,7 +12,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the foundation type of this building.
         /// </summary>
-        public FoundationTypeResponseModel FoundationType { get; set; }
+        public FoundationType FoundationType { get; set; }
 
         /// <summary>
         /// Represents the ground water level.
@@ -21,7 +22,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the foundation risk for this building.
         /// </summary>
-        public FoundationRiskResponseModel FoundationRisk { get; set; }
+        public FoundationRisk FoundationRisk { get; set; }
 
         /// <summary>
         /// Represents the <see cref="Year"/> in which this building was built.
@@ -56,7 +57,7 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// <summary>
         /// Represents the reliability of all data about this building.
         /// </summary>
-        public ReliabilityResponseModel? Reliability { get; set; }
+        public Reliability? Reliability { get; set; }
 
         /// <summary>
         /// Represents the distribution of foundation types.

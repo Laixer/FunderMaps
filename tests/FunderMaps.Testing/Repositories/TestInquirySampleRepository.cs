@@ -4,6 +4,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Testing.Repositories
@@ -23,32 +24,13 @@ namespace FunderMaps.Testing.Repositories
             return base.AddAsync(entity);
         }
 
-        public Task<uint> CountAsync(Guid orgId)
+        public IAsyncEnumerable<InquirySample> ListAllAsync(int report, INavigation navigation)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<InquirySample> GetByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
+            var result = DataStore.ItemList.Where(e => e.Inquiry == report);
+            return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(result, navigation));
         }
 
         public Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<InquirySample>> ListAllAsync(Guid orgId, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, INavigation navigation)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<InquirySample>> ListAllReportAsync(int report, Guid orgId, INavigation navigation)
         {
             throw new NotImplementedException();
         }

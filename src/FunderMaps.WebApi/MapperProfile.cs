@@ -29,13 +29,21 @@ namespace FunderMaps.WebApi
                 .IncludeMembers(src => src.ContactNavigation)
                 .ReverseMap();
             CreateMap<Inquiry, InquiryDto>().ReverseMap();
+            CreateMap<InquiryFull, InquiryDto>()
+                .ForMember(dest => dest.AuditStatus, o => o.MapFrom(src => src.State.AuditStatus))
+                .ForMember(dest => dest.Reviewer, o => o.MapFrom(src => src.Attribution.Reviewer))
+                .ForMember(dest => dest.Creator, o => o.MapFrom(src => src.Attribution.Creator))
+                .ForMember(dest => dest.Owner, o => o.MapFrom(src => src.Attribution.Owner))
+                .ForMember(dest => dest.Contractor, o => o.MapFrom(src => src.Attribution.Contractor))
+                .ForMember(dest => dest.AccessPolicy, o => o.MapFrom(src => src.Access.AccessPolicy))
+                .ForMember(dest => dest.CreateDate, o => o.MapFrom(src => src.Record.CreateDate))
+                .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
+                .ReverseMap();
             CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
-            CreateMap<Organization, OrganizationDto>().ReverseMap();
             CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
             CreateMap<Project, ProjectDto>().ReverseMap();
             CreateMap<Recovery, RecoveryDto>().ReverseMap();
             CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
-            CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
         }
     }

@@ -6,13 +6,13 @@
     public static class FunderMapsAuthenticationClaimTypes
     {
         /// <summary>
-        ///     FunderMaps organization claim type.
+        ///     FunderMaps tenant claim type.
         /// </summary>
-        public const string Organization = "cfo";
+        public const string Tenant = "cfo";
 
         /// <summary>
-        ///     FunderMaps Organization role claim type.
+        ///     FunderMaps tenant role claim type.
         /// </summary>
-        public const string OrganizationRole = "cfor";
+        public const string TenantRole = "cfor";
     }
 }

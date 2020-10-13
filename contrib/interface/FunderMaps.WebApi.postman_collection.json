@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "94a99f20-a27a-4a85-8751-bd65c882a649",
+		"_postman_id": "6a40b18c-a809-4e79-b65e-1c2402ba7e79",
 		"name": "FunderMaps.WebApi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -10,12 +10,25 @@
 			"item": [
 				{
 					"name": "Create Inquiry",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "597b6f45-a65f-4f22-8404-a244ecfd283d",
+								"exec": [
+									"pm.environment.set(\"inquiry_id\", pm.response.json()[\"id\"])",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"DocumentName\": \"kaas\",\r\n    \"Inspection\": true,\r\n    \"JointMeasurement\": true,\r\n    \"FloorMeasurement\": true,\r\n    \"Note\": \"kaasjes\",\r\n    \"DocumentDate\": \"2019-07-02\",\r\n    \"DocumentFile\": \"https://sjaak.org\",\r\n    \"Type\": 2,\r\n    \"StandardF3o\": false,\r\n    \"Contractor\": \"11cdc51f-3ba6-4e3c-b975-dfed4f054c31\",\r\n    \"Reviewer\": \"9d1b111a-c024-470c-b0b7-6810140924e8\"\r\n}",
+							"raw": "{\r\n    \"DocumentName\": \"{{$randomFileName}}\",\r\n    \"Inspection\": {{$randomBoolean}},\r\n    \"JointMeasurement\": {{$randomBoolean}},\r\n    \"FloorMeasurement\": {{$randomBoolean}},\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"DocumentDate\": \"{{$isoTimestamp}}\",\r\n    \"DocumentFile\": \"{{$randomFileName}}\",\r\n    \"Type\": 2,\r\n    \"StandardF3o\": {{$randomBoolean}},\r\n    \"Contractor\": \"11cdc51f-3ba6-4e3c-b975-dfed4f054c31\",\r\n    \"Reviewer\": \"9d1b111a-c024-470c-b0b7-6810140924e8\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -70,14 +83,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/49",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"49"
+								"{{inquiry_id}}"
 							]
 						}
 					},
@@ -108,7 +121,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 48,\r\n    \"documentName\": \"{{$randomLoremSentence}}\",\r\n    \"inspection\": true,\r\n    \"jointMeasurement\": true,\r\n    \"floorMeasurement\": true,\r\n    \"note\": \"kaasjes\",\r\n    \"documentDate\": \"2019-07-02T00:00:00\",\r\n    \"documentFile\": \"https://sjaak.org\",\r\n    \"auditStatus\": 0,\r\n    \"type\": 2,\r\n    \"standardF3o\": false,\r\n    \"reviewer\": null,\r\n    \"contractor\": \"00000000-0000-0000-0000-000000000001\",\r\n    \"accessPolicy\": 0,\r\n    \"createDate\": \"0001-01-01T00:00:00\",\r\n    \"updateDate\": null\r\n}",
+							"raw": "{\r\n    \"documentName\": \"{{$randomFileName}}\",\r\n    \"inspection\": {{$randomBoolean}},\r\n    \"jointMeasurement\": {{$randomBoolean}},\r\n    \"floorMeasurement\": {{$randomBoolean}},\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"documentDate\": \"{{$isoTimestamp}}\",\r\n    \"documentFile\": \"{{$randomFileName}}\",\r\n    \"type\": 2,\r\n    \"standardF3o\": {{$randomBoolean}},\r\n    \"auditStatus\": 0,\r\n    \"reviewer\": \"9d1b111a-c024-470c-b0b7-6810140924e8\",\r\n    \"contractor\": \"11cdc51f-3ba6-4e3c-b975-dfed4f054c31\",\r\n    \"accessPolicy\": 0,\r\n    \"createDate\": \"2020-10-07T14:50:57.970056+02:00\",\r\n    \"updateDate\": null\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -116,14 +129,43 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/48",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"48"
+								"{{inquiry_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Review Inquiry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Message\": \"{{$randomLoremSentences}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/status_review",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"{{inquiry_id}}",
+								"status_review"
 							]
 						}
 					},
@@ -132,18 +174,56 @@
 				{
 					"name": "Reject Inquiry",
 					"request": {
-						"method": "PUT",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Message\": \"{{$randomLoremSentences}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/status_rejected",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/status_rejected",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"29",
+								"{{inquiry_id}}",
 								"status_rejected"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Inquiry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"Message\": \"{{$randomLoremSentences}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/status_approved",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"inquiry",
+								"{{inquiry_id}}",
+								"status_approved"
 							]
 						}
 					},
@@ -155,34 +235,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/48",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"48"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Review Inquiry",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/status_review",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"inquiry",
-								"29",
-								"status_review"
+								"{{inquiry_id}}"
 							]
 						}
 					},
@@ -196,12 +256,25 @@
 			"item": [
 				{
 					"name": "Create Inquiry Sample",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e6df0981-98c3-4318-85c9-c7c71d2e6e85",
+								"exec": [
+									"pm.environment.set(\"inquiry_sample_id\", pm.response.json()[\"id\"])",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Inquiry\": 2,\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"Address\": \"gfm-402824f1236441cb9df3eaecafe2736e\",\r\n    \"BuiltYear\": \"2019-01-04\"\r\n}",
+							"raw": "{\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"Address\": \"{{address_id}}\",\r\n    \"BuiltYear\": \"{{$isoTimestamp}}\",\r\n    \"Cpt\": \"{{$randomFileName}}\",\r\n    \"MonitoringWell\": \"{{$randomFileName}}\",\r\n    \"EnforcementTerm\": 9,\r\n    \"RecoveryAdvised\": {{$randomBoolean}},\r\n    \"WoodQualityNecessity\": {{$randomBoolean}},\r\n    \"CrackIndoorRestored\": {{$randomBoolean}},\r\n    \"CrackFacadeFrontRestored\": {{$randomBoolean}},\r\n    \"CrackFacadeLeftRestored\": {{$randomBoolean}},\r\n    \"CrackFacadeRightRestored\": {{$randomBoolean}},\r\n    \"DeformedFacade\": {{$randomBoolean}},\r\n    \"ThresholdUpdownSkewed\": {{$randomBoolean}}\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -209,14 +282,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/sample",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/sample",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"29",
+								"{{inquiry_id}}",
 								"sample"
 							]
 						}
@@ -241,16 +314,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/sample/17",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/sample/{{inquiry_sample_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"29",
+								"{{inquiry_id}}",
 								"sample",
-								"17"
+								"{{inquiry_sample_id}}"
 							]
 						}
 					},
@@ -262,14 +335,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/sample",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/sample",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"29",
+								"{{inquiry_id}}",
 								"sample"
 							]
 						}
@@ -283,7 +356,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 17,\r\n    \"inquiry\": 29,\r\n    \"address\": \"gfm-402824f1236441cb9df3eaecafe2736e\",\r\n    \"note\": \"kaas\",\r\n    \"builtYear\": \"2019-01-04T00:00:00\",\r\n    \"substructure\": 0,\r\n    \"cpt\": null,\r\n    \"monitoringWell\": null,\r\n    \"groundwaterLevelTemp\": 0,\r\n    \"groundLevel\": 0,\r\n    \"groundwaterLevelNet\": 0,\r\n    \"type\": 0,\r\n    \"enforcementTerm\": 0,\r\n    \"recoveryAdvised\": false,\r\n    \"damageCause\": 0,\r\n    \"damageCharacteristics\": 0,\r\n    \"constructionPile\": 0,\r\n    \"woodType\": 0,\r\n    \"woodEncroachement\": 0,\r\n    \"constructionLevel\": 0,\r\n    \"woodLevel\": 0,\r\n    \"pileDiameterTop\": 0,\r\n    \"pileDiameterBottom\": 0,\r\n    \"pileHeadLevel\": 0,\r\n    \"pileTipLevel\": 0,\r\n    \"foundationDepth\": 0,\r\n    \"masonLevel\": 0,\r\n    \"concreteChargerLength\": 0,\r\n    \"pileDistanceLength\": 0,\r\n    \"woodPenetrationDepth\": 0,\r\n    \"overallQuality\": 0,\r\n    \"woodQuality\": 0,\r\n    \"constructionQuality\": 0,\r\n    \"woodCapacityHorizontalQuality\": 0,\r\n    \"pileWoodCapacityVerticalQuality\": 0,\r\n    \"carryingCapacityQuality\": 0,\r\n    \"masonQuality\": 0,\r\n    \"woodQualityNecessity\": false,\r\n    \"crackIndoorRestored\": false,\r\n    \"crackIndoorType\": 0,\r\n    \"crackIndoorSize\": 0,\r\n    \"crackFacadeFrontRestored\": false,\r\n    \"crackFacadeFrontType\": 0,\r\n    \"crackFacadeFrontSize\": 0,\r\n    \"crackFacadeBackRestored\": false,\r\n    \"crackFacadeBackType\": 0,\r\n    \"crackFacadeBackSize\": 0,\r\n    \"crackFacadeLeftRestored\": false,\r\n    \"crackFacadeLeftType\": 0,\r\n    \"crackFacadeLeftkSize\": 0,\r\n    \"crackFacadeRightRestored\": false,\r\n    \"crackFacadeRightType\": 0,\r\n    \"crackFacadeRightkSize\": 0,\r\n    \"deformedFacade\": false,\r\n    \"thresholdUpdownSkewed\": false,\r\n    \"thresholdFrontLevel\": 0,\r\n    \"thresholdBackLevel\": 0,\r\n    \"skewedParallel\": 0,\r\n    \"skewedPerpendicular\": 0,\r\n    \"skewedFacade\": 0,\r\n    \"settlementSpeed\": 0,\r\n    \"createDate\": \"2020-07-15T10:46:35.921235+02:00\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
+							"raw": "{\r\n    \"address\": \"{{address_id}}\",\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"builtYear\": \"{{$isoTimestamp}}\",\r\n    \"substructure\": 0,\r\n    \"cpt\": null,\r\n    \"monitoringWell\": null,\r\n    \"groundwaterLevelTemp\": 0,\r\n    \"groundLevel\": 0,\r\n    \"groundwaterLevelNet\": 0,\r\n    \"type\": 0,\r\n    \"enforcementTerm\": 0,\r\n    \"recoveryAdvised\": false,\r\n    \"damageCause\": 0,\r\n    \"damageCharacteristics\": 0,\r\n    \"constructionPile\": 0,\r\n    \"woodType\": 0,\r\n    \"woodEncroachement\": 0,\r\n    \"constructionLevel\": 0,\r\n    \"woodLevel\": 0,\r\n    \"pileDiameterTop\": 0,\r\n    \"pileDiameterBottom\": 0,\r\n    \"pileHeadLevel\": 0,\r\n    \"pileTipLevel\": 0,\r\n    \"foundationDepth\": 0,\r\n    \"masonLevel\": 0,\r\n    \"concreteChargerLength\": 0,\r\n    \"pileDistanceLength\": 0,\r\n    \"woodPenetrationDepth\": 0,\r\n    \"overallQuality\": 0,\r\n    \"woodQuality\": 0,\r\n    \"constructionQuality\": 0,\r\n    \"woodCapacityHorizontalQuality\": 0,\r\n    \"pileWoodCapacityVerticalQuality\": 0,\r\n    \"carryingCapacityQuality\": 0,\r\n    \"masonQuality\": 0,\r\n    \"woodQualityNecessity\": false,\r\n    \"crackIndoorRestored\": false,\r\n    \"crackIndoorType\": 0,\r\n    \"crackIndoorSize\": 0,\r\n    \"crackFacadeFrontRestored\": false,\r\n    \"crackFacadeFrontType\": 0,\r\n    \"crackFacadeFrontSize\": 0,\r\n    \"crackFacadeBackRestored\": false,\r\n    \"crackFacadeBackType\": 0,\r\n    \"crackFacadeBackSize\": 0,\r\n    \"crackFacadeLeftRestored\": false,\r\n    \"crackFacadeLeftType\": 0,\r\n    \"crackFacadeLeftSize\": 0,\r\n    \"crackFacadeRightRestored\": false,\r\n    \"crackFacadeRightType\": 0,\r\n    \"crackFacadeRightSize\": 0,\r\n    \"deformedFacade\": false,\r\n    \"thresholdUpdownSkewed\": false,\r\n    \"thresholdFrontLevel\": 0,\r\n    \"thresholdBackLevel\": 0,\r\n    \"skewedParallel\": 0,\r\n    \"skewedPerpendicular\": 0,\r\n    \"skewedFacade\": 0,\r\n    \"settlementSpeed\": 0,\r\n    \"createDate\": \"2020-10-07T15:33:17.709187+02:00\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -291,16 +364,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/sample/17",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/sample/{{inquiry_sample_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"29",
+								"{{inquiry_id}}",
 								"sample",
-								"17"
+								"{{inquiry_sample_id}}"
 							]
 						}
 					},
@@ -312,16 +385,16 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/inquiry/29/sample/19",
+							"raw": "{{base_url}}/api/inquiry/{{inquiry_id}}/sample/{{inquiry_sample_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"inquiry",
-								"29",
+								"{{inquiry_id}}",
 								"sample",
-								"19"
+								"{{inquiry_sample_id}}"
 							]
 						}
 					},
@@ -332,7 +405,7 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "2d12aa95-58a3-4d5d-829f-d4ecee76236e",
+						"id": "6390e9c8-b672-4f90-b637-0c45ed32cf2a",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -342,7 +415,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "bd8cbbc2-10da-4bda-a665-dadff8b666b3",
+						"id": "c0f5d9a9-027c-4c92-8e84-6c9030e3d3b4",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -362,7 +435,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeighborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"https://somefile.ext\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
+							"raw": "{\r\n    \"Name\": \"{{$randomFullName}}\",\r\n    \"ClientId\": 3,\r\n    \"Email\": \"{{$randomEmail}}\",\r\n    \"PhoneNumber\": \"06360557722\",\r\n    \"FoundationType\": 5,\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"FoundationDamageCharacteristics\": [\r\n        1,\r\n        3\r\n    ],\r\n    \"EnvironmentDamageCharacteristics\": [\r\n        1\r\n    ],\r\n    \"Owner\": {{$randomBoolean}},\r\n    \"FoundationRecovery\": {{$randomBoolean}},\r\n    \"NeighborRecovery\": {{$randomBoolean}},\r\n    \"FoundationDamageCause\": 6,\r\n    \"DocumentFile\": [\r\n        \"{{$randomFileName}}\"\r\n    ],\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"InternalNote\": \"{{$randomLoremSentences}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -528,7 +601,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ae885079-f236-48c8-9ce7-8da6c75bd021",
+								"id": "e797d256-94e5-4105-a4e5-3db4fcd08fec",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -756,7 +829,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b9740bf2-76a2-4046-8379-0afffa992e46",
+								"id": "6c1ebdf2-db3a-4a77-9fa9-5d369aec5233",
 								"exec": [
 									"if (pm.response.json().length > 0) {",
 									"    pm.environment.set(\"address_id\", pm.response.json()[0][\"id\"])",
@@ -1002,7 +1075,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b08e1d2d-608c-4262-9802-5d38e6f667b8",
+								"id": "8ebf073e-4565-404f-899b-45141809fa72",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1046,7 +1119,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "77457c29-b3f8-49e9-a644-683cd64ead10",
+								"id": "b0b413d2-c9dd-41b9-a31a-f63e6df5e31f",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1084,7 +1157,7 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "5a332756-926b-4276-a3e9-bb9f3ced7fec",
+						"id": "078c21a2-1c5d-46a6-be23-512ea17660a7",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1129,7 +1202,7 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "a56b1d92-089d-4042-bcb1-c3c3001cae31",
+				"id": "3ebcc69f-221f-4b22-a15e-ec01715380eb",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1139,7 +1212,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "766a67aa-52b2-4af5-84c5-cbfbff07e5be",
+				"id": "0fd6968f-d16c-43c5-b8fa-62944bef5b84",
 				"type": "text/javascript",
 				"exec": [
 					""

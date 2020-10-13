@@ -1,16 +1,15 @@
 ﻿using FunderMaps.Core.Entities.Application;
+using FunderMaps.Core.Identity;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
-    // TODO: Impl some sort of UserAuth interface
-
     /// <summary>
     ///     User entity.
     /// </summary>
-    public sealed class User : IdentifiableEntity<User, Guid>, IApplicationEntity<User>
+    public sealed class User : IdentifiableEntity<User, Guid>, IApplicationEntity<User>, IUser
     {
         /// <summary>
         ///     Create new instance.

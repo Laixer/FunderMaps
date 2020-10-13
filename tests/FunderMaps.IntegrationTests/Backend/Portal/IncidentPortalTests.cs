@@ -2,6 +2,7 @@
 using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -305,7 +306,7 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Fact]
@@ -323,9 +324,8 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
-
 
         [Fact]
         public async Task CreateEmptyBodyReturnBadRequest()
@@ -350,7 +350,7 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Fact]
@@ -369,7 +369,7 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("upload", returnObject.Title);
+            Assert.Contains("upload", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Theory]

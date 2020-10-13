@@ -12,8 +12,8 @@ namespace FunderMaps.AspNetCore.Extensions
         /// <summary>
         ///     Add <see cref="FunderMapsExceptionMapper"/> to the services.
         /// </summary>
-        /// <param name="services"><see cref="IServiceCollection"/></param>
-        /// <returns><see cref="IServiceCollection"/></returns>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
         public static IServiceCollection AddFunderMapsExceptionMapper(this IServiceCollection services)
             => services.AddSingleton<IExceptionMapper<FunderMapsCoreException>, FunderMapsExceptionMapper>();
     }

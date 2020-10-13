@@ -5,6 +5,7 @@ using System.Net;
 
 namespace FunderMaps.Core.Services
 {
+    // FUTURE: This is not a service.
     /// <summary>
     ///     Base exception mapper.
     /// </summary>

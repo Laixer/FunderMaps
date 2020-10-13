@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,25 +19,30 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     proposal into a full organization.
     /// </remarks>
     [AllowAnonymous]
-    public class OrganizationSetupController : BaseApiController
+    public class OrganizationSetupController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly OrganizationManager _organizationManager;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IPasswordHasher _passwordHasher;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationSetupController(IMapper mapper, OrganizationManager organizationManager)
+        public OrganizationSetupController(IMapper mapper, IOrganizationRepository organizationRepository, IPasswordHasher passwordHasher)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+            _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }
 
-        // FUTURE: This is anon, maybe return nothing?
         // POST: api/organization/{id}/setup
         /// <summary>
         ///     Create organization from organization proposal.
         /// </summary>
+        /// <remarks>
+        ///     This is an unauthorized call, therefore this
+        ///     call deliberately returns nothing.
+        /// </remarks>
         [HttpPost("organization/{id:guid}/setup")]
         public async Task<IActionResult> CreateAsync(Guid id, [FromBody] OrganizationSetupDto input)
         {
@@ -45,13 +50,11 @@ namespace FunderMaps.WebApi.Controllers.Application
             var user = new User { Email = input.Email };
 
             // Act.
-            Organization organization = await _organizationManager.CreateFromProposalAsync(id, user, input.Password);
-
-            // Map.
-            var output = _mapper.Map<OrganizationDto>(organization);
+            var passwordHash = _passwordHasher.HashPassword(input.Password);
+            await _organizationRepository.AddFromProposalAsync(id, user.Email, passwordHash);
 
             // Return.
-            return Ok(output);
+            return NoContent();
         }
     }
 }
