@@ -80,7 +80,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Foundation type.
         /// </summary>
-        public FoundationType Type { get; set; }
+        public FoundationType FoundationType { get; set; }
 
         /// <summary>
         ///     Enforcement term.
