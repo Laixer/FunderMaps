@@ -23,7 +23,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.GroundwaterLevelTemp, f => f.Random.Decimal(-100, 200));
             RuleFor(f => f.GroundLevel, f => f.Random.Decimal(-300, 500));
             RuleFor(f => f.GroundwaterLevelNet, f => f.Random.Decimal(-100, 200));
-            RuleFor(f => f.Type, f => f.PickRandom<FoundationType>());
+            RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>());
             RuleFor(f => f.EnforcementTerm, f => f.PickRandom<EnforcementTerm>());
             RuleFor(f => f.RecoveryAdvised, f => f.Random.Bool());
             RuleFor(f => f.DamageCause, f => f.PickRandom<FoundationDamageCause>());
