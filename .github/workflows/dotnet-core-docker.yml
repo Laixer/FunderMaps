@@ -1,18 +1,9 @@
 name: FunderMaps Docker Container
 
 on:
-  push:
-    branches:
-      - master
-      - develop
   pull_request:
     branches:
-      - master
       - develop
-
-env:
-  DOTNET_VERSION: '3.1.101'
-  BUILD_CONFIG: Release
 
 jobs:
   build:
