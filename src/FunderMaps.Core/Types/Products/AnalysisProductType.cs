@@ -8,37 +8,39 @@
         /// <summary>
         ///     Represents all data about a given building itself.
         /// </summary>
-        BuildingData,
+        BuildingData = 0,
 
         /// <summary>
         ///     Represents all data about a foundation for a given building.
         /// </summary>
-        Foundation,
+        Foundation = 1,
 
         /// <summary>
         ///     Represents all data about a foundation for a given building, including 
         ///     the details on which the data is based.
         /// </summary>
-        FoundationPlus,
+        FoundationPlus = 2,
 
         /// <summary>
         ///     Represents all data about foundation restoration costs for a given building.
         /// </summary>
-        Costs,
+        Costs = 3,
 
         /// <summary>
         ///     Represents a call with all possible data combined for a given building.
         /// </summary>
-        Complete,
-
-        /// <summary>
-        ///     Represents descriptive texts for a given building.
-        /// </summary>
-        BuildingDescription,
+        Complete = 4,
 
         /// <summary>
         ///     Represents all data about the risks for a given building.
         /// </summary>
-        Risk,
+        Risk = 5,
+
+#if DEBUGY || USE_BUILDINGDESCRIPTION // NOTE: This is a future feature.
+        /// <summary>
+        ///     Represents descriptive texts for a given building.
+        /// </summary>
+        BuildingDescription = 6,
+#endif
     }
 }
