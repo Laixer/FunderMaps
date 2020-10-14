@@ -14,9 +14,10 @@ namespace FunderMaps.Core.Services
         /// </summary>
         /// <param name="address">Array of recipients.</param>
         /// <param name="content">Message content.</param>
-        public ValueTask NotifyByEmailAsync(string[] address, string content)
+        /// <param name="subject">Message subject.</param>
+        public Task NotifyByEmailAsync(string[] address, string content, string subject)
         {
-            return new ValueTask();
+            return Task.CompletedTask;
         }
     }
 }

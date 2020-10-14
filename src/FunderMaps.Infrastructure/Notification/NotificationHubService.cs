@@ -15,12 +15,22 @@ namespace FunderMaps.Infrastructure.Notification
             _emailService = emailService;
         }
 
+        // FUTURE: Write more generic helper for this problem
+        private async void DispatchTask(EmailMessage message)
+        {
+            await _emailService.SendAsync(message);
+
+            // TODO: Log on faillure.
+        }
+
+        // FUTURE: Wrap params in generic notification message
         // NOTE: For now we just redirect this call to the email service.
-        public async ValueTask NotifyByEmailAsync(string[] addresses, string content)
+        public async Task NotifyByEmailAsync(string[] addresses, string content, string subject)
         {
             var message = new EmailMessage
             {
                 Content = content,
+                Subject = subject,
             };
 
             message.ToAddresses = addresses.Select(address => new EmailAddress
@@ -28,7 +38,8 @@ namespace FunderMaps.Infrastructure.Notification
                 Address = address,
             });
 
-            await _emailService.SendAsync(message);
+            await Task.CompletedTask;
+            DispatchTask(message);
         }
     }
 }
