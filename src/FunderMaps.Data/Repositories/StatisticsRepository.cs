@@ -177,7 +177,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Amount of buildings restored.</returns>
         private static async Task<uint> MapBuildingsRestoredAsync(DbContext context)
         {
-            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
+            await using var reader = await context.ReaderAsync();
             return reader.GetUInt(1);
         }
 
@@ -187,7 +187,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Percentage of data collected.</returns>
         private async Task<double> MapDataCollectedAsync(DbContext context)
         {
-            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
+            await using var reader = await context.ReaderAsync();
             return reader.GetDouble(1);
         }
 
@@ -252,7 +252,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Amount of incidents.</returns>
         private async Task<uint> MapIncidentsAsync(DbContext context)
         {
-            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
+            await using var reader = await context.ReaderAsync();
             return reader.GetUInt(1);
         }
 
@@ -262,7 +262,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Amount of inquiries.</returns>
         private async Task<uint> MapInquiriesAsync(DbContext context)
         {
-            await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
+            await using var reader = await context.ReaderAsync();
             return reader.GetUInt(1);
         }
 
