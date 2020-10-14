@@ -47,8 +47,8 @@ namespace FunderMaps.AspNetCore.Authentication
             /// </summary>
             /// <remarks>
             ///     Discrepanties in the input can lead to different behaviour further down
-            ///     the call tree, possibly leaking information.
-            ///     If any <see cref="FunderMapsCoreException"/> in thrown after this point
+            ///     the call tree, possibly leaking information on exceptional cases.
+            ///     If any <see cref="FunderMapsCoreException"/> is thrown after this point
             ///     we must consider it an authentication failure.
             /// </remarks>
             async Task<SignInContext> PasswordSignInAsync()
@@ -88,8 +88,8 @@ namespace FunderMaps.AspNetCore.Authentication
             /// </summary>
             /// <remarks>
             ///     Discrepanties in the input can lead to different behaviour further down
-            ///     the call tree, possibly leaking information.
-            ///     If any <see cref="FunderMapsCoreException"/> in thrown after this point
+            ///     the call tree, possibly leaking information on exceptional cases.
+            ///     If any <see cref="FunderMapsCoreException"/> is thrown after this point
             ///     we must consider it an authentication failure.
             /// </remarks>
             async Task<SignInContext> SignInAsync()

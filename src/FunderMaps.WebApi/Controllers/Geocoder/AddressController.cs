@@ -41,7 +41,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             Address address = await _addressRepository.GetByIdAsync(id);
 
             // Map.
-            var output = _mapper.Map<AddressDto>(address);
+            var output = _mapper.Map<AddressBuildingDto>(address);
 
             // Return.
             return Ok(output);
@@ -59,7 +59,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             IAsyncEnumerable<Address> addressList = _addressRepository.GetBySearchQueryAsync(input.Query, input.Navigation);
 
             // Map.
-            var result = await _mapper.MapAsync<IList<AddressDto>, Address>(addressList);
+            var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList);
 
             // Return.
             return Ok(result);
