@@ -36,7 +36,7 @@
         /// </summary>
         Risk = 5,
 
-#if DEBUGY || USE_BUILDINGDESCRIPTION // NOTE: This is a future feature.
+#if DEBUG || USE_BUILDINGDESCRIPTION // NOTE: This is a future feature.
         /// <summary>
         ///     Represents descriptive texts for a given building.
         /// </summary>
