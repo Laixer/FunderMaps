@@ -266,7 +266,6 @@ namespace FunderMaps.Data.Repositories
                             document_file = @document_file,
                             note = @note,
                             internal_note = @internal_note,
-                            contact = @email,
                             foundation_damage_characteristics = @foundation_damage_characteristics,
                             environment_damage_characteristics = @environment_damage_characteristics,
                             address = @address,
