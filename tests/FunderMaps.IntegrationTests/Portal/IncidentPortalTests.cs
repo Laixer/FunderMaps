@@ -1,7 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -10,14 +10,14 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Portal
+namespace FunderMaps.IntegrationTests.Portal
 {
     /// <summary>
     ///     Anonymous tests for the incident create endpoint.
     /// </summary>
-    public class IncidentPortalTests : IClassFixture<BackendWebApplicationFactory>
+    public class IncidentPortalTests : IClassFixture<PortalWebApplicationFactory>
     {
-        private readonly BackendWebApplicationFactory _factory;
+        private readonly PortalWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
         // FUTURE: Move into common test code
@@ -148,7 +148,7 @@ namespace FunderMaps.IntegrationTests.Backend.Portal
             },
         };
 
-        public IncidentPortalTests(BackendWebApplicationFactory factory)
+        public IncidentPortalTests(PortalWebApplicationFactory factory)
         {
             _factory = factory;
             _client = _factory
