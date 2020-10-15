@@ -1,7 +1,6 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.WebApi.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
     ///     Address search DTO.

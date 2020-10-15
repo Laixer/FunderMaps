@@ -1,6 +1,6 @@
 using FunderMaps.Core.Types;
 
-namespace FunderMaps.WebApi.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     // FUTURE: This is a copy of FunderMaps.Webservice.ResponseModels.Analysis.AnalysisRiskResponseModel, maybe move?
     /// <summary>
