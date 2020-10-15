@@ -14,7 +14,7 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="address">Recipient mail adresses.</param>
         /// <param name="content">Message content.</param>
-        /// <returns></returns>
-        public abstract ValueTask NotifyByEmailAsync(string[] address, string content);
+        /// <param name="subject">Message subject.</param>
+        public abstract Task NotifyByEmailAsync(string[] address, string content, string subject);
     }
 }

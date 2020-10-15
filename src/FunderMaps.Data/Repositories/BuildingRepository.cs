@@ -47,7 +47,7 @@ namespace FunderMaps.Data.Repositories
             {
                 Id = reader.GetSafeString(offset + 0),
                 BuildingType = reader.GetFieldValue<BuildingType?>(offset + 1),
-                BuiltYear = reader.GetDateTime(offset + 2),
+                BuiltYear = reader.GetSafeDateTime(offset + 2),
                 IsActive = reader.GetBoolean(offset + 3),
                 ExternalId = reader.GetSafeString(offset + 4),
                 ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset + 5),

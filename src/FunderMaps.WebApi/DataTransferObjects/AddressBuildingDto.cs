@@ -47,7 +47,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Building Built year.
         /// </summary>
-        public DateTime BuiltYear { get; set; }
+        public DateTime? BuiltYear { get; set; }
 
         /// <summary>
         ///     Building Geometry.

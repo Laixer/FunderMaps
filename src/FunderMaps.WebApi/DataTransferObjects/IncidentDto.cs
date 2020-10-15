@@ -16,6 +16,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         [Incident]
         public string Id { get; set; }
 
+        // TODO: Remove this from this DTO. This is only when creating.
         /// <summary>
         ///     Client identifier.
         /// </summary>

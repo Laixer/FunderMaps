@@ -216,7 +216,10 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, input.Message);
+            await _notificationService.NotifyByEmailAsync(
+                address: new string[] { "info@example.com" }, // TODO:
+                content: input.Message,
+                subject: "FunderMaps - Rapportage ter review");
 
             // Return.
             return NoContent();
@@ -237,7 +240,10 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notificationService.NotifyByEmailAsync(new string[] { "info@example.com" }, input.Message);
+            await _notificationService.NotifyByEmailAsync(
+                address: new string[] { "info@example.com" }, // TODO:
+                content: input.Message,
+                subject: "FunderMaps - Rapportage afgekeurd");
 
             // Return.
             return NoContent();
