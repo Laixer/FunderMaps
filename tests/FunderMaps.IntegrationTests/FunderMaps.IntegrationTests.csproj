@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\FunderMaps.WebApi\FunderMaps.WebApi.csproj" />
+    <ProjectReference Include="..\..\src\FunderMaps.Portal\FunderMaps.Portal.csproj" />
     <ProjectReference Include="..\..\src\FunderMaps.Webservice\FunderMaps.Webservice.csproj" />
     <ProjectReference Include="..\FunderMaps.Testing\FunderMaps.Testing.csproj" />
   </ItemGroup>

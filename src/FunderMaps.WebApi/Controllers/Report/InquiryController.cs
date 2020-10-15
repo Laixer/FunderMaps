@@ -124,7 +124,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
             // FUTURE: Replace with validator?
-            var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
+            var virtualFile = new ApplicationFileWrapper(input, Core.IO.File.AllowedFileMimes);
             if (!virtualFile.IsValid)
             {
                 throw new ArgumentException(); // TODO

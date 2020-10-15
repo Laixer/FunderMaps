@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UserSecretsId>0fffba0d-f307-443e-a70d-f0841e04f02f</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
+    <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
+    <ProjectReference Include="..\FunderMaps.Data\FunderMaps.Data.csproj" />
+    <ProjectReference Include="..\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,6 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.DataTransferObjects;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;

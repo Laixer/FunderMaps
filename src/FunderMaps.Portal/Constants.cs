@@ -1,4 +1,4 @@
-﻿namespace FunderMaps
+namespace FunderMaps
 {
     /// <summary>
     ///     Application constants.
@@ -8,6 +8,6 @@
         /// <summary>
         ///     Incident gateway name.
         /// </summary>
-        internal const string IncidentGateway = "FunderMaps.WebApi";
+        internal const string IncidentGateway = "FunderMaps.Portal";
     }
 }

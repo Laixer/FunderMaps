@@ -1,9 +1,9 @@
-﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.WebApi.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
     ///     Incident DTO.

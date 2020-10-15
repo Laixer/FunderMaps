@@ -1,27 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Exceptions\**" />
-    <Content Remove="Exceptions\**" />
-    <EmbeddedResource Remove="Exceptions\**" />
-    <None Remove="Exceptions\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.0.0" />
-    <PackageReference Include="AutoMapper.Extensions.EnumMapping" Version="1.0.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.1.8" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="5.6.3" />
   </ItemGroup>

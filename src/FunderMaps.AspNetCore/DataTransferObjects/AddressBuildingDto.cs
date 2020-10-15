@@ -1,18 +1,25 @@
-﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.DataAnnotations;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.WebApi.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
-    ///     Address DTO.
+    ///     Address with building DTO.
     /// </summary>
-    public sealed class AddressDto
+    public sealed class AddressBuildingDto
     {
         /// <summary>
-        ///     Unique identifier.
+        ///     Address identifier.
         /// </summary>
         [Geocoder]
-        public string Id { get; set; }
+        public string AddressId { get; set; }
+
+        /// <summary>
+        ///     Building identifier.
+        /// </summary>
+        [Geocoder]
+        public string BuildingId { get; set; }
 
         /// <summary>
         ///     Building number.
@@ -36,5 +43,16 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [Required]
         public string City { get; set; }
+
+        /// <summary>
+        ///     Building Built year.
+        /// </summary>
+        public DateTime? BuiltYear { get; set; }
+
+        /// <summary>
+        ///     Building Geometry.
+        /// </summary>
+        [Required]
+        public string BuildingGeometry { get; set; }
     }
 }

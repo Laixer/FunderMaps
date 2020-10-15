@@ -1,11 +1,11 @@
 using AutoMapper;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,8 +16,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Portal
+namespace FunderMaps.Portal.Controllers
 {
+    // TODO: Rename and refactor controller
     /// <summary>
     ///     Endpoint controller for incident operations.
     /// </summary>
@@ -72,7 +73,7 @@ namespace FunderMaps.WebApi.Controllers.Portal
             }
 
             // Check if content type is allowed
-            var allowedFileMimes = new List<string>(Constants.AllowedFileMimes);
+            var allowedFileMimes = new List<string>(Core.IO.File.AllowedFileMimes);
             if (!allowedFileMimes.Contains(input.ContentType))
             {
                 throw new UploadException("File content type is not allowed");

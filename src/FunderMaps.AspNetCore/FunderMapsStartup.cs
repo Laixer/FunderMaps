@@ -4,13 +4,13 @@ using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
-
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
@@ -31,6 +31,17 @@ namespace FunderMaps.AspNetCore
             {
                 services.AddAutoMapper(mapper =>
                 {
+                    mapper.CreateMap<Address, AddressBuildingDto>()
+                        .IncludeMembers(src => src.BuildingNavigation)
+                        .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
+                        .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
+                        .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
+                    mapper.CreateMap<AnalysisProduct, AnalysisRiskDto>();
+                    mapper.CreateMap<Building, AddressBuildingDto>().ReverseMap();
+                    mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
+                    mapper.CreateMap<Incident, IncidentDto>()
+                        .IncludeMembers(src => src.ContactNavigation)
+                        .ReverseMap();
                     mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
                     mapper.CreateMap<User, UserDto>().ReverseMap();
                     mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();

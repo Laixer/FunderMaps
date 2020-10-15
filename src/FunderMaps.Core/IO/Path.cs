@@ -4,7 +4,7 @@ using SystemPath = System.IO.Path;
 namespace FunderMaps.Core.IO
 {
     /// <summary>
-    ///     System.IO.Path extensions.
+    ///     <see cref="System.IO.Path"/> extensions.
     /// </summary>
     public static class Path
     {
