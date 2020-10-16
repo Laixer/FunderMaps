@@ -121,6 +121,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Upload document to the backstore.
         /// </summary>
         [HttpPost("upload-document")]
+        [RequestSizeLimit(128 * 1024 * 1024)]
         public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
             // FUTURE: Replace with validator?
