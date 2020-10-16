@@ -19,6 +19,27 @@ namespace FunderMaps.AspNetCore
     public class FunderMapsStartup : IHostingStartup
     {
         /// <summary>
+        ///     Use this method to add entity and object mapping configurations.
+        /// </summary>
+        private void ConfigureMapper(IMapperConfigurationExpression mapper)
+        {
+            mapper.CreateMap<Address, AddressBuildingDto>()
+                .IncludeMembers(src => src.BuildingNavigation)
+                .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
+                .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
+                .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
+            mapper.CreateMap<AnalysisProduct, AnalysisRiskDto>();
+            mapper.CreateMap<Building, AddressBuildingDto>().ReverseMap();
+            mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
+            mapper.CreateMap<Incident, IncidentDto>()
+                .IncludeMembers(src => src.ContactNavigation)
+                .ReverseMap();
+            mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
+            mapper.CreateMap<User, UserDto>().ReverseMap();
+            mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
+        }
+
+        /// <summary>
         ///     This method gets called by the runtime. Use this method to add services to the container.
         /// </summary>
         /// <remarks>
@@ -29,23 +50,7 @@ namespace FunderMaps.AspNetCore
         {
             builder.ConfigureServices(services =>
             {
-                services.AddAutoMapper(mapper =>
-                {
-                    mapper.CreateMap<Address, AddressBuildingDto>()
-                        .IncludeMembers(src => src.BuildingNavigation)
-                        .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
-                        .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
-                        .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
-                    mapper.CreateMap<AnalysisProduct, AnalysisRiskDto>();
-                    mapper.CreateMap<Building, AddressBuildingDto>().ReverseMap();
-                    mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
-                    mapper.CreateMap<Incident, IncidentDto>()
-                        .IncludeMembers(src => src.ContactNavigation)
-                        .ReverseMap();
-                    mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
-                    mapper.CreateMap<User, UserDto>().ReverseMap();
-                    mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
-                });
+                services.AddAutoMapper(mapper => ConfigureMapper(mapper));
 
                 // FUTURE: Only load specific parts.
                 // NOTE: This will register all controllers in the FunderMaps.AspNetCore

@@ -4,6 +4,7 @@ using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace FunderMaps.AspNetCore.Controllers
     ///     This controller should *only* handle operations on the current
     ///     user session. Therefore the user context must be active.
     /// </remarks>
-    [Route("user")]
+    [Authorize, Route("user")]
     public class UserController : ControllerBase
     {
         private readonly IMapper _mapper;
