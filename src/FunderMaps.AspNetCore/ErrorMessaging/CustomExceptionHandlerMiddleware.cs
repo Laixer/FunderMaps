@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -51,12 +52,23 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <returns><see cref="Task"/></returns>
         public virtual Task InvokeAsync(HttpContext context)
         {
-            var edi = null as ExceptionDispatchInfo;
+            ExceptionDispatchInfo edi;
 
             try
             {
                 var task = _next(context);
-                return task.IsCompletedSuccessfully ? Task.CompletedTask : ProcessAsync(context, task);
+                if (task.IsCompletedSuccessfully)
+                {
+                    return Task.CompletedTask;
+                }
+                else if (task.IsCanceled)
+                {
+                    edi = ExceptionDispatchInfo.Capture(new OperationAbortedException());
+                }
+                else
+                {
+                    return ProcessAsync(context, task);
+                }
             }
             catch (TException e)
             {
