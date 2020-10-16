@@ -88,6 +88,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Upload document to the backstore.
         /// </summary>
         [HttpPost("upload-document")]
+        [RequestSizeLimit(128 * 1024 * 1024)]
         public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
         {
             // Act.
