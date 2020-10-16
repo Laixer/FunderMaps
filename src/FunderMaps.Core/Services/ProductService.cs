@@ -16,15 +16,8 @@ namespace FunderMaps.Core.Services
     /// </summary>
     public class ProductService : IProductService
     {
-        /// <summary>
-        ///     <see cref="IAnalysisRepository"/>.
-        /// </summary>
-        protected readonly IAnalysisRepository _analysisRepository;
-
-        /// <summary>
-        ///     <see cref="IStatisticsRepository"/>.
-        /// </summary>
-        protected readonly IStatisticsRepository _statisticsRepository;
+        private readonly IAnalysisRepository _analysisRepository;
+        private readonly IStatisticsRepository _statisticsRepository;
 
         /// <summary>
         ///     Create new instance.
