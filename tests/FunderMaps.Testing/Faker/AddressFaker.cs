@@ -9,6 +9,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class AddressFaker : Faker<Address>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public AddressFaker()
         {
             RuleFor(f => f.Id, f => $"gfm-{f.Random.Hash(32)}");

@@ -1,8 +1,7 @@
 ﻿using Bogus;
 using Bogus.Extensions;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
-using FunderMaps.Testing.Extensions;
-using FunderMaps.WebApi.DataTransferObjects;
 using System;
 using System.Linq;
 

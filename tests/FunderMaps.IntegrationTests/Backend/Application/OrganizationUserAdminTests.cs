@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Testing.Repositories;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -23,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task CreateOrganizationUserReturnOrganizationUser()
         {
             // Arrange
-            var newOrganizationUser = new UserFaker().Generate();
+            var newOrganizationUser = new OrganizationUserPasswordDtoFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var client = _factory
                 .ConfigureAuthentication(options =>
@@ -44,7 +44,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task GetAllOrganizationUserFromSessionReturnAllOrganizationUser()
+        public async Task GetAllOrganizationUserReturnAllOrganizationUser()
         {
             // Arrange
             var organization = new OrganizationFaker().Generate();
@@ -88,10 +88,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task UpdateOrganizationUserFromSessionReturnNoContent()
+        public async Task UpdateOrganizationUserReturnNoContent()
         {
             // Arrange
-            var newOrganizationUser = new UserFaker().Generate();
+            var newOrganizationUser = new UserDtoFaker().Generate();
             var organization = new OrganizationFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var client = _factory
@@ -116,8 +116,68 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
+//
         [Fact]
-        public async Task DeleteOrganizationUserFromSessionReturnNoContent()
+        public async Task ChangeOrganizationUserRoleReturnNoContent()
+        {
+            // Arrange
+            var newOrganizationUserRole = new ChangeOrganizationRoleDtoFaker().Generate();
+            var organization = new OrganizationFaker().Generate();
+            var organizationUser1 = new UserFaker().Generate();
+            var client = _factory
+                .ConfigureAuthentication(options =>
+                {
+                    options.User.Role = ApplicationRole.Administrator;
+                })
+                .WithDataStoreItem(new UserRecord { User = organizationUser1 })
+                .WithDataStoreItem(organization)
+                .WithDataStoreItem(new OrganizationUserRecord
+                {
+                    UserId = organizationUser1.Id,
+                    OrganizationId = organization.Id,
+                    OrganizationRole = new Bogus.Faker().PickRandom<OrganizationRole>(),
+                })
+                .CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser1.Id}/change-organization-role", newOrganizationUserRole);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ChangeOrganizationUserPasswordReturnNoContent()
+        {
+            // Arrange
+            var newOrganizationUserPassword = new ChangePasswordDtoFaker().Generate();
+            var organization = new OrganizationFaker().Generate();
+            var organizationUser1 = new UserFaker().Generate();
+            var client = _factory
+                .ConfigureAuthentication(options =>
+                {
+                    options.User.Role = ApplicationRole.Administrator;
+                })
+                .WithDataStoreItem(new UserRecord { User = organizationUser1 })
+                .WithDataStoreItem(organization)
+                .WithDataStoreItem(new OrganizationUserRecord
+                {
+                    UserId = organizationUser1.Id,
+                    OrganizationId = organization.Id,
+                    OrganizationRole = new Bogus.Faker().PickRandom<OrganizationRole>(),
+                })
+                .CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser1.Id}/change-password", newOrganizationUserPassword);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+//
+
+        [Fact]
+        public async Task DeleteOrganizationUserReturnNoContent()
         {
             // Arrange
             var organization = new OrganizationFaker().Generate();

@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,48 +11,49 @@ namespace FunderMaps.Data
     ///     Generic repository base.
     /// </summary>
     /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
-    /// <typeparam name="TEntryPrimaryKey">Primary key of entity.</typeparam>
-    internal abstract class RepositoryBase<TEntity, TEntryPrimaryKey> : DataBase, IAsyncRepository<TEntity, TEntryPrimaryKey>
-        where TEntity : IdentifiableEntity<TEntity, TEntryPrimaryKey>
-        where TEntryPrimaryKey : IEquatable<TEntryPrimaryKey>, IComparable<TEntryPrimaryKey>
+    /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
+    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbContextBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
+        where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
+        where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
+        // FUTURE: Single transaction
         /// <summary>
-        ///     Create a new instance.
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
         /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        protected RepositoryBase(DbProvider dbProvider)
-            : base(dbProvider)
+        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
         {
+            TEntityPrimaryKey primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
         }
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.GetByIdAsync"/>
+        ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntity> GetByIdAsync(TEntryPrimaryKey id);
+        public abstract ValueTask<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.ListAllAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
         /// </summary>
         public abstract IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.AddAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntryPrimaryKey> AddAsync(TEntity entity);
+        public abstract ValueTask<TEntityPrimaryKey> AddAsync(TEntity entity);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.UpdateAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
         /// </summary>
         public abstract ValueTask UpdateAsync(TEntity entity);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.DeleteAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
         /// </summary>
-        public abstract ValueTask DeleteAsync(TEntryPrimaryKey id);
+        public abstract ValueTask DeleteAsync(TEntityPrimaryKey id);
 
         /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntryPrimaryKey}.CountAsync"/>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
         /// </summary>
-        public abstract ValueTask<ulong> CountAsync();
+        public abstract ValueTask<long> CountAsync();
     }
 }

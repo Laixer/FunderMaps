@@ -34,6 +34,12 @@ namespace FunderMaps.Testing.Repositories
             EntityPrimaryKey = entryPrimaryKey;
         }
 
+        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+        {
+            TEntryPrimaryKey primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
+        }
+
         protected virtual TEntity FindEntityById(TEntryPrimaryKey id)
             => DataStore.ItemList.FirstOrDefault(e => EntityPrimaryKey(e).Equals(id));
 
@@ -55,8 +61,8 @@ namespace FunderMaps.Testing.Repositories
         ///     Count items in datastore.
         /// </summary>
         /// <returns>Number of items in data store.</returns>
-        public virtual ValueTask<ulong> CountAsync()
-            => new ValueTask<ulong>((ulong)DataStore.Count);
+        public virtual ValueTask<long> CountAsync()
+            => new ValueTask<long>(DataStore.Count);
 
         /// <summary>
         ///     Remove entity from data store.

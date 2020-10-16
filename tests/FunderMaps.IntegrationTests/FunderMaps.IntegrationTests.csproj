@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="31.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.8" />
+    <PackageReference Include="Bogus" Version="31.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.9" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\FunderMaps.WebApi\FunderMaps.WebApi.csproj" />
+    <ProjectReference Include="..\..\src\FunderMaps.Portal\FunderMaps.Portal.csproj" />
     <ProjectReference Include="..\..\src\FunderMaps.Webservice\FunderMaps.Webservice.csproj" />
     <ProjectReference Include="..\FunderMaps.Testing\FunderMaps.Testing.csproj" />
   </ItemGroup>

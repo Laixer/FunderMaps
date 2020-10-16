@@ -35,8 +35,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Built year.
         /// </summary>
+        [Required]
         public DateTime BuiltYear { get; set; }
 
+        // TODO: Question should this be nullable? Along with other enum values?
         /// <summary>
         ///     Substructure.
         /// </summary>
@@ -78,7 +80,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Foundation type.
         /// </summary>
-        public FoundationType Type { get; set; }
+        public FoundationType FoundationType { get; set; }
 
         /// <summary>
         ///     Enforcement term.

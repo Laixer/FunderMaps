@@ -1,9 +1,8 @@
 ﻿using Bogus;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Testing.Repositories
@@ -20,17 +19,10 @@ namespace FunderMaps.Testing.Repositories
         public override ValueTask<int> AddAsync(InquiryFull entity)
         {
             entity.Id = randomizer.Int(0, int.MaxValue);
+            entity.State.AuditStatus = AuditStatus.Todo;
+            entity.Record.UpdateDate = null;
+            entity.Record.DeleteDate = null;
             return base.AddAsync(entity);
-        }
-
-        public Task<uint> CountAsync(Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<InquiryFull> GetByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
@@ -38,9 +30,10 @@ namespace FunderMaps.Testing.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation)
+        public Task SetAuditStatusAsync(int id, InquiryFull entity)
         {
-            throw new NotImplementedException();
+            DataStore.ItemList[FindIndexById(EntityPrimaryKey(entity))].State.AuditStatus = entity.State.AuditStatus;
+            return Task.CompletedTask;
         }
     }
 }

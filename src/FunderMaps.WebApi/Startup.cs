@@ -47,7 +47,6 @@ namespace FunderMaps.WebApi
         {
             services.AddAutoMapper(typeof(Startup));
 
-            // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -62,22 +61,19 @@ namespace FunderMaps.WebApi
                 })
                 .AddJwtBearerTokenProvider();
 
-            // Add the authorization layer.
             services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
+                {
+                    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                        .RequireAuthenticatedUser()
+                        .Build();
 
-                options.AddFunderMapsPolicy();
-            });
+                    options.AddFunderMapsPolicy();
+                });
 
             services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Resources";
             });
-
-            services.AddControllers();
 
             services.AddHealthChecks()
                 .AddCheck<ApiHealthCheck>("api_health_check")
@@ -85,16 +81,14 @@ namespace FunderMaps.WebApi
                 .AddCheck<FileStorageCheck>("file_health_check");
 
             // Register components from reference assemblies.
-            services.AddFunderMapsCoreServices();
-            services.AddFunderMapsExceptionMapper();
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
-            services.AddTransient<AuthenticationHelper>();
+            services.AddTransient<SignInHandler>();
         }
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
+        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.

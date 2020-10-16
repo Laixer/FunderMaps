@@ -23,7 +23,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.GroundwaterLevelTemp, f => f.Random.Decimal(-100, 200));
             RuleFor(f => f.GroundLevel, f => f.Random.Decimal(-300, 500));
             RuleFor(f => f.GroundwaterLevelNet, f => f.Random.Decimal(-100, 200));
-            RuleFor(f => f.Type, f => f.PickRandom<FoundationType>());
+            RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>());
             RuleFor(f => f.EnforcementTerm, f => f.PickRandom<EnforcementTerm>());
             RuleFor(f => f.RecoveryAdvised, f => f.Random.Bool());
             RuleFor(f => f.DamageCause, f => f.PickRandom<FoundationDamageCause>());
@@ -68,10 +68,11 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.DeformedFacade, f => f.Random.Bool());
             RuleFor(f => f.ThresholdUpdownSkewed, f => f.Random.Bool());
             RuleFor(f => f.ThresholdFrontLevel, f => f.Random.Decimal(-50, 50));
+            RuleFor(f => f.ThresholdBackLevel, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedParallel, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedPerpendicular, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedFacade, f => f.PickRandom<RotationType>());
-            RuleFor(f => f.SettlementSpeed, f => f.Random.Decimal(-50, 50));
+            RuleFor(f => f.SettlementSpeed, f => f.Random.Double(-50, 50));
         }
     }
 }

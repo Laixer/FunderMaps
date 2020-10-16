@@ -14,7 +14,7 @@ namespace FunderMaps.WebApi.Helpers
 
             // FUTURE: Write warning to log
             // FUTURE: Using IRandom
-            using var rng = new Core.Services.RandomGenerator();
+            using var rng = new Core.Components.RandomGenerator();
             return new SymmetricSecurityKey(rng.GetRandomByteArray(32));
         }
     }

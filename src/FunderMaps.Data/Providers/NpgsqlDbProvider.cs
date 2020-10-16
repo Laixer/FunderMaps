@@ -1,8 +1,10 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data.Common;
+using System.Runtime.ExceptionServices;
 
 namespace FunderMaps.Data.Providers
 {
@@ -59,18 +61,32 @@ namespace FunderMaps.Data.Providers
         }
 
         /// <summary>
-        ///     Create a new Npgsql connection instance.
+        ///     <see cref="DbProvider.ConnectionScope"/>
         /// </summary>
-        /// <returns><see cref="DbConnection"/> instance.</returns>
-        public override DbConnection ConnectionScope() => new NpgsqlConnection(ConnectionString);
+        public override DbConnection ConnectionScope()
+            => new NpgsqlConnection(ConnectionString);
 
         /// <summary>
-        ///     Create Npgsql command on the database connection.
+        ///     <see cref="DbProvider.CreateCommand(string, DbConnection)"/>
         /// </summary>
-        /// <param name="cmdText">The text of the query.</param>
-        /// <param name="connection">Database connection, see <see cref="DbConnection"/>.</param>
-        /// <returns>See <see cref="DbCommand"/>.</returns>
         public override DbCommand CreateCommand(string cmdText, DbConnection connection)
             => new NpgsqlCommand(cmdText, connection as NpgsqlConnection);
+
+        /// <summary>
+        ///     <see cref="DbProvider.HandleException(ExceptionDispatchInfo)"/>
+        /// </summary>
+        internal override void HandleException(ExceptionDispatchInfo edi)
+        {
+            if (edi.SourceException is PostgresException exception)
+            {
+                switch (exception.SqlState)
+                {
+                    case Npgsql.PostgresErrorCodes.ForeignKeyViolation:
+                        throw new ReferenceNotFoundException(exception.Message, exception);
+                }
+            }
+
+            base.HandleException(edi);
+        }
     }
 }

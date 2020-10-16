@@ -4,7 +4,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -18,15 +17,6 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public BuildingRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         public override ValueTask<string> AddAsync(Building entity)
             => throw new NotImplementedException();
 
@@ -34,13 +24,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    geocoder.building";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
@@ -50,40 +42,40 @@ namespace FunderMaps.Data.Repositories
         public override ValueTask DeleteAsync(string id)
             => throw new NotImplementedException();
 
-        private static Building MapFromReader(DbDataReader reader)
+        public static Building MapFromReader(DbDataReader reader, int offset = 0)
             => new Building
             {
-                Id = reader.GetSafeString(0),
-                BuiltYear = reader.GetDateTime(1),
-                IsActive = reader.GetBoolean(2),
-                Geometry = reader.GetString(3),
-                ExternalId = reader.GetSafeString(4),
-                ExternalSource = reader.GetFieldValue<ExternalDataSource>(5),
-                BuildingType = reader.GetFieldValue<BuildingType?>(6),
-                NeighborhoodId = reader.GetSafeString(7),
+                Id = reader.GetSafeString(offset + 0),
+                BuildingType = reader.GetFieldValue<BuildingType?>(offset + 1),
+                BuiltYear = reader.GetSafeDateTime(offset + 2),
+                IsActive = reader.GetBoolean(offset + 3),
+                ExternalId = reader.GetSafeString(offset + 4),
+                ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset + 5),
+                Geometry = reader.GetString(offset + 6),
+                NeighborhoodId = reader.GetSafeString(offset + 7),
             };
 
         public override async ValueTask<Building> GetByIdAsync(string id)
         {
             var sql = @"
-                SELECT  id,
-                        built_year,
-                        is_active,
-                        geom,
-                        external_id,
-                        external_source,
-                        building_type,
-                        neighborhood_id
-                FROM    geocoder.building_encoded_geom
-                WHERE   id = @id
+                SELECT  -- Building
+                        b.id,
+                        b.building_type,
+                        b.built_year,
+                        b.is_active,
+                        b.external_id,
+                        b.external_source,
+                        b.geom,
+                        b.neighborhood_id
+                FROM    geocoder.building_encoded_geom AS b
+                WHERE   b.id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -99,7 +91,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="buildingId">Internal building id.</param>
         /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Boolean result</returns>
-        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId, CancellationToken token)
+        public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
         {
             userId.ThrowIfNullOrEmpty();
             buildingId.ThrowIfNullOrEmpty();

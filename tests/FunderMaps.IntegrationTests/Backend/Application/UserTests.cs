@@ -1,6 +1,6 @@
-﻿using FunderMaps.Core.Entities;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;

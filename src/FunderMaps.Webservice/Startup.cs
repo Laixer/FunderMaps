@@ -7,8 +7,6 @@ using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
 using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Webservice.HealthChecks;
-using FunderMaps.Webservice.Mapping;
-using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -52,36 +50,7 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
-            // Configure project specific services.
-            services.AddTransient<IMappingService, MappingService>();
-            services.AddTransient<ProductRequestHandler>();
-            services.AddTransient<AuthenticationHelper>();
-
-            // Configure FunderMaps services.
-            services.AddFunderMapsDataServices("FunderMapsConnection");
-            services.AddFunderMapsCoreServices();
-            services.AddFunderMapsExceptionMapper();
-
-            // Override default product service by tracking variant of product service.
-            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
-
-            // Configure AutoMapper.
-            services.AddAutoMapper(typeof(AutoMapperProfile));
-
-            // Configure health checks.
-            services.AddHealthChecks()
-                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
-
-            // Configure Swagger.
-            services.AddSwaggerGen(c =>
-            {
-                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                c.SchemaFilter<EnumSchemaFilter>();
-                // FUTURE: This call is obsolete.
-                c.GeneratePolymorphicSchemas();
-            });
+            services.AddAutoMapper(typeof(MapperProfile));
 
             // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
@@ -108,6 +77,29 @@ namespace FunderMaps.Webservice
                 options.AddFunderMapsPolicy();
             });
 
+            // Configure project specific services.
+            services.AddTransient<ProductHandler>();
+            services.AddTransient<SignInHandler>();
+
+            // Configure FunderMaps services.
+            services.AddFunderMapsDataServices("FunderMapsConnection");
+
+            // Override default product service by tracking variant of product service.
+            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
+
+            // Configure health checks.
+            services.AddHealthChecks()
+                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
+
+            // TODO: Only in staging/dev
+            // Configure Swagger.
+            services.AddSwaggerGen(c =>
+            {
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                c.SchemaFilter<EnumSchemaFilter>();
+                // FUTURE: This call is obsolete.
+                c.GeneratePolymorphicSchemas();
+            });
         }
 
         /// <summary>
@@ -137,6 +129,7 @@ namespace FunderMaps.Webservice
 
             app.UseFunderMapsExceptionHandler("/oops");
 
+            // TODO: Only in staging/dev
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

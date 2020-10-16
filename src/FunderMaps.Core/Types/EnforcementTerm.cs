@@ -8,17 +8,17 @@
         /// <summary>
         ///     Between 0 - 5 years.
         /// </summary>
-        Term0_5,
+        Term05,
 
         /// <summary>
         ///     Between 5 - 10 years.
         /// </summary>
-        Term5_10,
+        Term510,
 
         /// <summary>
         ///     Between 10 - 20 years.
         /// </summary>
-        Term10_20,
+        Term1020,
 
         /// <summary>
         ///     5 years.

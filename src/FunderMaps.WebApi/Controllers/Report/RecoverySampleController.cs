@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.UseCases;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     ///     Endpoint controller for recovery sample operations.
     /// </summary>
     [Route("recovery/{recoveryId}/sample")]
-    public class RecoverySampleController : BaseApiController
+    public class RecoverySampleController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly RecoveryUseCase _recoveryUseCase;
@@ -33,21 +32,20 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var recoverySample = await _recoveryUseCase.GetSampleAsync(id).ConfigureAwait(false);
+            var recoverySample = await _recoveryUseCase.GetSampleAsync(id);
 
             return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             if (pagination == null)
             {
                 throw new ArgumentNullException(nameof(pagination));
             }
 
-            var result = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            var result = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(_recoveryUseCase.GetAllSampleAsync(pagination.Navigation));
 
             return Ok(result);
         }
@@ -63,7 +61,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             var recoverySample = _mapper.Map<RecoverySample>(input);
             recoverySample.Recovery = recoveryId;
 
-            recoverySample = await _recoveryUseCase.CreateSampleAsync(recoverySample).ConfigureAwait(false);
+            recoverySample = await _recoveryUseCase.CreateSampleAsync(recoverySample);
 
             return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
@@ -80,7 +78,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             recoverySample.Id = id;
             recoverySample.Recovery = recoveryId;
 
-            await _recoveryUseCase.UpdateSampleAsync(recoverySample).ConfigureAwait(false);
+            await _recoveryUseCase.UpdateSampleAsync(recoverySample);
 
             return NoContent();
         }
@@ -88,7 +86,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            await _recoveryUseCase.DeleteSampleAsync(id).ConfigureAwait(false);
+            await _recoveryUseCase.DeleteSampleAsync(id);
 
             return NoContent();
         }

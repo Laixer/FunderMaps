@@ -74,7 +74,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <param name="task"><see cref="Task"/></param>
         private async Task ProcessAsync(HttpContext context, Task task)
         {
-            var edi = null as ExceptionDispatchInfo;
+            ExceptionDispatchInfo edi;
 
             try
             {

@@ -1,8 +1,8 @@
-﻿using FunderMaps.Core.Authentication;
-using FunderMaps.Webservice.Handlers;
+﻿using FunderMaps.Webservice.Handlers;
 using FunderMaps.Webservice.InputModels;
 using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -15,6 +15,18 @@ namespace FunderMaps.Webservice.Controllers
     [Route("analysis")]
     public sealed class AnalysisController : ControllerBase
     {
+        private readonly Core.AppContext _appContext;
+        private readonly ProductHandler _productHandler;
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public AnalysisController(Core.AppContext appContext, ProductHandler productHandler)
+        {
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _productHandler = productHandler ?? throw new ArgumentNullException(nameof(productHandler));
+        }
+
         /// <summary>
         ///     Gets one or more <see cref="ResponseModelBase"/> items in a wrapper. 
         ///     Specify one of the following:
@@ -29,22 +41,16 @@ namespace FunderMaps.Webservice.Controllers
         ///     <paramref name="input"/> is validated through <see cref="ApiControllerAttribute"/>.
         /// </remarks>
         /// <param name="input"><see cref="AnalysisInputModel"/></param>
-        /// <param name="productRequestHandler"><see cref="ProductRequestHandler"/></param>
+        /// <param name="productRequestHandler"><see cref="ProductHandler"/></param>
         /// <returns><see cref="ResponseWrapper{TResponseModel}"/></returns>
         [HttpGet("get")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisResponseModelBase>))]
-        public async Task<IActionResult> GetProductAsync(
-            [FromQuery] AnalysisInputModel input,
-            [FromServices] ProductRequestHandler productRequestHandler,
-            [FromServices] AuthManager authManager)
+        public async Task<IActionResult> GetProductAsync([FromQuery] AnalysisInputModel input)
         {
-            // Get signed in user.
-            var user = await authManager.GetUserAsync(User);
+            // Act.
+            var result = await _productHandler.ProcessAnalysisRequestAsync(_appContext.UserId, input);
 
-            // Process request.
-            var result = await productRequestHandler.ProcessAnalysisRequestAsync(user.Id, input, HttpContext.RequestAborted);
-
-            // Return in ok result.
+            // Return.
             return Ok(result);
         }
     }

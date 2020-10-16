@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,20 +16,10 @@ namespace FunderMaps.Data.Repositories
     internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentRepository
     {
         /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public IncidentRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
-        /// <summary>
         ///     Create new <see cref="Incident"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Incident"/>.</returns>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public override async ValueTask<string> AddAsync(Incident entity)
         {
             if (entity == null)
@@ -75,17 +64,16 @@ namespace FunderMaps.Data.Repositories
                     @audit_status,
                     @question_type,
                     @meta)
-                RETURNING id;
-            ";
+                RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("client_id", entity.ClientId);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            context.AddParameterWithValue("client_id", entity.ClientId);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            MapToWriter(context, entity);
+
+            await using var reader = await context.ReaderAsync();
+
             return reader.GetSafeString(0);
         }
 
@@ -93,13 +81,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.incident";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
@@ -114,55 +104,56 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.incident
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, Incident entity)
+        public static void MapToWriter(DbContext context, Incident entity)
         {
-            cmd.AddParameterWithValue("foundation_type", entity.FoundationType);
-            cmd.AddParameterWithValue("chained_building", entity.ChainedBuilding);
-            cmd.AddParameterWithValue("owner", entity.Owner);
-            cmd.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
-            cmd.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
-            cmd.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("internal_note", entity.InternalNote);
-            cmd.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
-            cmd.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
-            cmd.AddParameterWithValue("email", entity.Email);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("audit_status", entity.AuditStatus);
-            cmd.AddParameterWithValue("question_type", entity.QuestionType);
-            cmd.AddJsonParameterWithValue("meta", entity.Meta);
+            context.AddParameterWithValue("foundation_type", entity.FoundationType);
+            context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
+            context.AddParameterWithValue("owner", entity.Owner);
+            context.AddParameterWithValue("foundation_recovery", entity.FoundationRecovery);
+            context.AddParameterWithValue("neightbor_recovery", entity.NeighborRecovery);
+            context.AddParameterWithValue("foundation_damage_cause", entity.FoundationDamageCause);
+            context.AddParameterWithValue("document_file", entity.DocumentFile);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("internal_note", entity.InternalNote);
+            context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
+            context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
+            context.AddParameterWithValue("email", entity.Email);
+            context.AddParameterWithValue("address", entity.Address);
+            context.AddParameterWithValue("audit_status", entity.AuditStatus);
+            context.AddParameterWithValue("question_type", entity.QuestionType);
+            context.AddJsonParameterWithValue("meta", entity.Meta);
         }
 
-        private static Incident MapFromReader(DbDataReader reader)
+        public static Incident MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new Incident
             {
-                Id = reader.GetSafeString(0),
-                FoundationType = reader.GetFieldValue<FoundationType>(1),
-                ChainedBuilding = reader.GetBoolean(2),
-                Owner = reader.GetBoolean(3),
-                FoundationRecovery = reader.GetBoolean(4),
-                NeighborRecovery = reader.GetBoolean(5),
-                FoundationDamageCause = reader.GetFieldValue<FoundationDamageCause>(6),
-                DocumentFile = reader.GetSafeFieldValue<string[]>(7),
-                Note = reader.GetSafeString(8),
-                InternalNote = reader.GetSafeString(9),
-                Email = reader.GetSafeString(10),
-                CreateDate = reader.GetDateTime(11),
-                UpdateDate = reader.GetSafeDateTime(12),
-                DeleteDate = reader.GetSafeDateTime(13),
-                FoundationDamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics[]>(14),
-                EnvironmentDamageCharacteristics = reader.GetFieldValue<EnvironmentDamageCharacteristics[]>(15),
-                Address = reader.GetSafeString(16),
-                AuditStatus = reader.GetFieldValue<AuditStatus>(17),
-                QuestionType = reader.GetFieldValue<IncidentQuestionType>(18),
-                Meta = reader.GetFieldValue<object>(19),
+                Id = reader.GetSafeString(offset + 0),
+                FoundationType = reader.GetFieldValue<FoundationType>(offset + 1),
+                ChainedBuilding = reader.GetBoolean(offset + 2),
+                Owner = reader.GetBoolean(offset + 3),
+                FoundationRecovery = reader.GetBoolean(offset + 4),
+                NeighborRecovery = reader.GetBoolean(offset + 5),
+                FoundationDamageCause = reader.GetFieldValue<FoundationDamageCause>(offset + 6),
+                DocumentFile = reader.GetSafeFieldValue<string[]>(offset + 7),
+                Note = reader.GetSafeString(offset + 8),
+                InternalNote = reader.GetSafeString(offset + 9),
+                Email = reader.GetSafeString(offset + 10),
+                CreateDate = reader.GetDateTime(offset + 11),
+                UpdateDate = reader.GetSafeDateTime(offset + 12),
+                DeleteDate = reader.GetSafeDateTime(offset + 13),
+                FoundationDamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics[]>(offset + 14),
+                EnvironmentDamageCharacteristics = reader.GetFieldValue<EnvironmentDamageCharacteristics[]>(offset + 15),
+                Address = reader.GetSafeString(offset + 16),
+                AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 17),
+                QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset + 18),
+                Meta = reader.GetFieldValue<object>(offset + 19),
             };
 
         /// <summary>
@@ -198,12 +189,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -245,11 +235,9 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -278,7 +266,6 @@ namespace FunderMaps.Data.Repositories
                             document_file = @document_file,
                             note = @note,
                             internal_note = @internal_note,
-                            contact = @email,
                             foundation_damage_characteristics = @foundation_damage_characteristics,
                             environment_damage_characteristics = @environment_damage_characteristics,
                             address = @address,
@@ -287,13 +274,13 @@ namespace FunderMaps.Data.Repositories
                             meta = @meta
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            MapToWriter(context, entity);
+
+            await context.NonQueryAsync();
         }
     }
 }

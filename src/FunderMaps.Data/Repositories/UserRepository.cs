@@ -3,7 +3,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,15 +16,6 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public UserRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     Create new <see cref="User"/>.
         /// </summary>
@@ -60,13 +50,11 @@ namespace FunderMaps.Data.Repositories
                     @role)
                 RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context, entity);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetGuid(0);
         }
@@ -75,19 +63,21 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.user";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
         ///     Delete <see cref="User"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity identifier.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
             var sql = @"
@@ -95,62 +85,63 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.user
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, User entity)
+        public static void MapToWriter(DbContext context, User entity)
         {
-            cmd.AddParameterWithValue("given_name", entity.GivenName);
-            cmd.AddParameterWithValue("last_name", entity.LastName);
-            cmd.AddParameterWithValue("email", entity.Email);
-            cmd.AddParameterWithValue("avatar", entity.Avatar);
-            cmd.AddParameterWithValue("job_title", entity.JobTitle);
-            cmd.AddParameterWithValue("phone_number", entity.PhoneNumber);
-            cmd.AddParameterWithValue("role", entity.Role);
+            context.AddParameterWithValue("given_name", entity.GivenName);
+            context.AddParameterWithValue("last_name", entity.LastName);
+            context.AddParameterWithValue("email", entity.Email);
+            context.AddParameterWithValue("avatar", entity.Avatar);
+            context.AddParameterWithValue("job_title", entity.JobTitle);
+            context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+            context.AddParameterWithValue("role", entity.Role);
         }
 
-        private static User MapFromReader(DbDataReader reader)
+        public static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new User
             {
-                Id = reader.GetGuid(0),
-                GivenName = reader.GetSafeString(1),
-                LastName = reader.GetSafeString(2),
-                Email = reader.GetSafeString(3),
-                Avatar = reader.GetSafeString(4),
-                JobTitle = reader.GetSafeString(5),
-                PhoneNumber = reader.GetSafeString(6),
-                Role = reader.GetFieldValue<ApplicationRole>(7),
+                Id = reader.GetGuid(offset + 0),
+                GivenName = reader.GetSafeString(offset + 1),
+                LastName = reader.GetSafeString(offset + 2),
+                Email = reader.GetSafeString(offset + 3),
+                Avatar = reader.GetSafeString(offset + 4),
+                JobTitle = reader.GetSafeString(offset + 5),
+                PhoneNumber = reader.GetSafeString(offset + 6),
+                Role = reader.GetFieldValue<ApplicationRole>(offset + 7),
             };
 
         /// <summary>
         ///     Retrieve <see cref="User"/> by id.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="id">Entity identifier.</param>
         /// <returns><see cref="User"/>.</returns>
         public override async ValueTask<User> GetByIdAsync(Guid id)
         {
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user
-                WHERE   id = @id
+                SELECT  -- User
+                        u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.avatar,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u
+                WHERE   u.id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -163,29 +154,34 @@ namespace FunderMaps.Data.Repositories
         public async ValueTask<User> GetByEmailAsync(string email)
         {
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user
-                WHERE   normalized_email = application.normalize(@email)
+                SELECT  -- User
+                        u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.avatar,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u
+                WHERE   u.normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("email", email);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
 
-        public async ValueTask<uint> GetAccessFailedCountAsync(User entity)
+        /// <summary>
+        ///     Get signin faillure count.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Number of failed signins.</returns>
+        public async ValueTask<uint> GetAccessFailedCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  access_failed_count
@@ -193,17 +189,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
 
-            return reader.GetUInt(0);
+            return await context.ScalarAsync<uint>();
         }
 
-        public async ValueTask<uint?> GetLoginCountAsync(User entity)
+        /// <summary>
+        ///     Get signin count.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Number of signins.</returns>
+        public async ValueTask<uint> GetLoginCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  login_count
@@ -211,17 +209,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
 
-            return reader.GetUInt(0);
+            return await context.ScalarAsync<uint>();
         }
 
-        public async ValueTask<DateTime?> GetLastLoginAsync(User entity)
+        /// <summary>
+        ///     Get last sign in.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Datetime of last signin.</returns>
+        public async ValueTask<DateTime?> GetLastLoginAsync(Guid id)
         {
             var sql = @"
                 SELECT  last_login
@@ -229,17 +229,21 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeDateTime(0);
         }
 
-        public async ValueTask<string> GetPasswordHashAsync(User entity)
+        /// <summary>
+        ///     Get password hash.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Password hash as string.</returns>
+        public async ValueTask<string> GetPasswordHashAsync(Guid id)
         {
             var sql = @"
                 SELECT  password_hash
@@ -247,17 +251,21 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetSafeString(0);
         }
 
-        public async ValueTask<bool> IsLockedOutAsync(User entity)
+        /// <summary>
+        ///     Whether or not user is locked out.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>True if locked out, false otherwise.</returns>
+        public async ValueTask<bool> IsLockedOutAsync(Guid id)
         {
             var sql = @"
                 SELECT EXISTS (
@@ -268,11 +276,11 @@ namespace FunderMaps.Data.Repositories
                     LIMIT   1
                 ) AS is_locked";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            return (bool)await cmd.ExecuteScalarEnsureRowAsync();
+            context.AddParameterWithValue("id", id);
+
+            return await context.ScalarAsync<bool>();
         }
 
         /// <summary>
@@ -287,23 +295,21 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        given_name,
-                        last_name,
-                        email,
-                        avatar,
-                        job_title,
-                        phone_number,
-                        role
-                FROM    application.user";
+                SELECT  u.id,
+                        u.given_name,
+                        u.last_name,
+                        u.email,
+                        u.avatar,
+                        u.job_title,
+                        u.phone_number,
+                        u.role
+                FROM    application.user AS u";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "u");
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -324,88 +330,82 @@ namespace FunderMaps.Data.Repositories
                 UPDATE  application.user
                 SET     given_name = @given_name,
                         last_name = @last_name,
-                        email = @email,
-                        normalized_email = application.normalize(@email),
                         avatar = @avatar,
                         job_title = @job_title,
                         phone_number = @phone_number,
                         role = @role
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            context.AddParameterWithValue("id", entity.Id);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            MapToWriter(context, entity);
+
+            await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> password hash.
+        ///     Update user password.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
-        public async ValueTask SetPasswordHashAsync(User entity, string passwordHash)
+        /// <param name="id">Entity identifier.</param>
+        /// <param name="passwordHash">New password hash.</param>
+        public async ValueTask SetPasswordHashAsync(Guid id, string passwordHash)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 UPDATE  application.user
                 SET     password_hash = @password_hash
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
-            cmd.AddParameterWithValue("password_hash", passwordHash);
+            await using var context = await DbContextFactory(sql);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("password_hash", passwordHash);
+
+            await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> access failed count.
+        ///     Increase signin failure count.
         /// </summary>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask BumpAccessFailed(User entity)
+        /// <param name="id">Entity identifier.</param>
+        public async ValueTask BumpAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
                 SET     access_failed_count = access_failed_count + 1
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> access failed count.
+        ///     Reset signin failure count.
         /// </summary>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask ResetAccessFailed(User entity)
+        /// <param name="id">Entity identifier.</param>
+        public async ValueTask ResetAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
                 SET     access_failed_count = 0
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
         /// <summary>
-        ///     Update <see cref="User"/> access.
+        ///     Register a new user login.
         /// </summary>
-        /// <returns><see cref="User"/>.</returns>
-        public async ValueTask RegisterAccess(User entity)
+        /// <param name="id">Entity identifier.</param>
+        public async ValueTask RegisterAccess(Guid id)
         {
             // FUTURE: db func
             // FUTURE: db trigger to update last_login
@@ -415,11 +415,11 @@ namespace FunderMaps.Data.Repositories
                         last_login = CURRENT_TIMESTAMP
                 WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
     }
 }

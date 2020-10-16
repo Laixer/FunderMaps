@@ -1,6 +1,6 @@
 ﻿using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Core.Helpers;
-using FunderMaps.Webservice.ResponseModels.Types;
+using FunderMaps.Core.Types.Products;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,7 +15,7 @@ namespace FunderMaps.Webservice.InputModels
         ///     Product type.
         /// </summary>
         [Required]
-        public AnalysisProductTypeResponseModel? Product { get; set; }
+        public AnalysisProductType? Product { get; set; }
 
         /// <summary>
         ///     Query search string.

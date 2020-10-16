@@ -56,5 +56,11 @@ namespace FunderMaps.Testing.Repositories
 
         public ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
             => new ValueTask<OrganizationRole>(DataStore.ItemList.First(e => e.UserId == userId).OrganizationRole);
+
+        public Task SetOrganizationRoleByUserIdAsync(Guid userId, OrganizationRole role)
+        {
+            DataStore.ItemList.First(e => e.UserId == userId).OrganizationRole = role;
+            return Task.CompletedTask;
+        }
     }
 }

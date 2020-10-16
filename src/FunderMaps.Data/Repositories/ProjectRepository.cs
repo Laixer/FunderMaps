@@ -9,22 +9,16 @@ using System.Threading.Tasks;
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
-    /// Project repository.
+    ///     Project repository.
     /// </summary>
     internal class ProjectRepository : RepositoryBase<Project, int>, IProjectRepository
     {
-        /// <summary>
-        /// Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public ProjectRepository(DbProvider dbProvider) : base(dbProvider) { }
-
         public override ValueTask<int> AddAsync(Project entity)
         {
             throw new NotImplementedException();
         }
 
-        public override ValueTask<ulong> CountAsync()
+        public override ValueTask<long> CountAsync()
         {
             throw new NotImplementedException();
         }

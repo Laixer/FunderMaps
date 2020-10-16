@@ -29,7 +29,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Built year.
         /// </summary>
-        public DateTime BuiltYear { get; set; }
+        public DateTime? BuiltYear { get; set; }
 
         /// <summary>
         ///     Building is active or not.

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.UseCases;
+using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,83 +13,161 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
-    /// Endpoint controller for inquiry sample operations.
+    ///     Endpoint controller for inquiry sample operations.
     /// </summary>
     [Route("inquiry/{inquiryId}/sample")]
-    public class InquirySampleController : BaseApiController
+    public class InquirySampleController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly InquiryUseCase _inquiryUseCase;
+        private readonly Core.AppContext _appContext;
+        private readonly IInquiryRepository _inquiryRepository;
+        private readonly IInquirySampleRepository _inquirySampleRepository;
 
         /// <summary>
-        /// Create new instance.
+        ///     Create new instance.
         /// </summary>
-        public InquirySampleController(IMapper mapper, InquiryUseCase inquiryUseCase)
+        public InquirySampleController(
+            IMapper mapper,
+            Core.AppContext appContext,
+            IInquiryRepository inquiryRepository,
+            IInquirySampleRepository inquirySampleRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _inquiryUseCase = inquiryUseCase ?? throw new ArgumentNullException(nameof(inquiryUseCase));
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
+            _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
 
+        // GET: api/inquiry/{id}/sample/{id}
+        /// <summary>
+        ///     Return inquiry sample by id.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
-            var inquirySample = await _inquiryUseCase.GetSampleAsync(id).ConfigureAwait(false);
+            // Act.
+            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
 
-            return Ok(_mapper.Map<InquirySampleDto>(inquirySample));
+            // Map.
+            var output = _mapper.Map<InquirySampleDto>(inquirySample);
+
+            // Return.
+            return Ok(output);
         }
 
+        // GET: api/inquiry/{id}/sample
+        /// <summary>
+        ///     Return all inquiry samples.
+        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
         {
-            if (pagination == null)
-            {
-                throw new ArgumentNullException(nameof(pagination));
-            }
+            // Act.
+            IAsyncEnumerable<InquirySample> inquirySampleList = _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation);
 
-            var result = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(_inquiryUseCase.GetAllSampleAsync(pagination.Navigation))
-                .ConfigureAwait(false);
+            // Map.
+            var output = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(inquirySampleList);
 
-            return Ok(result);
+            // Return.
+            return Ok(output);
         }
 
+        // POST: api/inquiry/{id}/sample/{id}
+        /// <summary>
+        ///     Create inquiry sample.
+        /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Inquiry"/> into state pending if a <see cref="InquirySample"/>
+        ///     was successfully created within this <see cref="Inquiry"/>.
+        /// </remarks>
         [HttpPost]
         public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var inquirySample = _mapper.Map<InquirySample>(input);
             inquirySample.Inquiry = inquiryId;
 
-            inquirySample = await _inquiryUseCase.CreateSampleAsync(inquirySample).ConfigureAwait(false);
+            // Act.
+            // FUTURE: Too much logic
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+            if (!inquiry.State.AllowWrite)
+            {
+                throw new EntityReadOnlyException();
+            }
 
-            return Ok(_mapper.Map<InquirySampleDto>(inquirySample));
+            inquirySample = await _inquirySampleRepository.AddGetAsync(inquirySample);
+
+            inquiry.State.TransitionToPending();
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+            // Map.
+            var output = _mapper.Map<InquirySampleDto>(inquirySample);
+
+            // Return.
+            return Ok(output);
         }
 
+        // PUT: api/inquiry/{id}/sample/{id}
+        /// <summary>
+        ///     Update inquiry by id.
+        /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Inquiry"/> into state pending if a <see cref="InquirySample"/>
+        ///     was successfully updated within this <see cref="Inquiry"/>.
+        /// </remarks>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySampleDto input)
         {
-            if (input == null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
-
+            // Map.
             var inquirySample = _mapper.Map<InquirySample>(input);
             inquirySample.Id = id;
             inquirySample.Inquiry = inquiryId;
 
-            await _inquiryUseCase.UpdateSampleAsync(inquirySample).ConfigureAwait(false);
+            // Act.
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+            if (!inquiry.State.AllowWrite)
+            {
+                throw new EntityReadOnlyException();
+            }
 
+            await _inquirySampleRepository.UpdateAsync(inquirySample);
+
+            inquiry.State.TransitionToPending();
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+            // Return.
             return NoContent();
         }
 
+        // DELETE: api/inquiry/{id}/sample/{id}
+        /// <summary>
+        ///     Delete inquiry sample by id.
+        /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Inquiry"/> into state todo if all <see cref="InquirySample"/>
+        ///     within this <see cref="Inquiry"/> are deleted.
+        /// </remarks>
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(int inquiryId, int id)
         {
-            await _inquiryUseCase.DeleteSampleAsync(id).ConfigureAwait(false);
+            // Act.
+            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+            if (!inquiry.State.AllowWrite)
+            {
+                throw new EntityReadOnlyException();
+            }
 
+            await _inquirySampleRepository.DeleteAsync(id);
+
+            // FUTURE: Should only select inquiry
+            if (await _inquirySampleRepository.CountAsync() == 0)
+            {
+                inquiry.State.TransitionToTodo();
+                await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+            }
+
+            // Return.
             return NoContent();
         }
     }

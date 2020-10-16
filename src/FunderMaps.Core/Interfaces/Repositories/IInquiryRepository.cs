@@ -6,20 +6,12 @@ using System.Threading.Tasks;
 namespace FunderMaps.Core.Interfaces.Repositories
 {
     /// <summary>
-    /// Operations for the inquiry repository.
+    ///     Operations for the inquiry repository.
     /// </summary>
     public interface IInquiryRepository : IAsyncRepository<InquiryFull, int>
     {
         /// <summary>
-        /// Retrieve entity by id and document_id and organization.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <param name="orgId">Organization identifier.</param>
-        /// <returns>Entity.</returns>
-        Task<InquiryFull> GetByIdAsync(int id, Guid orgId);
-
-        /// <summary>
-        /// Retrieve entity by id and document_id and organization or public record.
+        ///     Retrieve entity by id and document_id and organization or public record.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <param name="orgId">Organization identifier.</param>
@@ -27,15 +19,10 @@ namespace FunderMaps.Core.Interfaces.Repositories
         Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId);
 
         /// <summary>
-        /// Retrieve all entities and filter on organization id.
+        ///     Set <see cref="InquiryFull"/> audit status.
         /// </summary>
-        /// <returns>List of entities.</returns>
-        Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation);
-
-        /// <summary>
-        /// Retrieve number of entities and filter on organization id.
-        /// </summary>
-        /// <returns>Number of entities.</returns>
-        Task<uint> CountAsync(Guid orgId);
+        /// <param name="id">Entity identifier.</param>
+        /// <param name="entity">Entity object.</param>
+        Task SetAuditStatusAsync(int id, InquiryFull entity);
     }
 }

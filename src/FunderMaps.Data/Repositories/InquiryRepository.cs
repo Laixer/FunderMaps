@@ -4,7 +4,6 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,15 +16,6 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public InquiryRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     Create new <see cref="InquiryFull"/>.
         /// </summary>
@@ -47,8 +37,8 @@ namespace FunderMaps.Data.Repositories
                         contractor)
 		            VALUES (
                         @reviewer,
-                        @creator,
-                        @owner,
+                        @user,
+                        @tenant,
                         @contractor)
 	                RETURNING id AS attribution_id
                 )
@@ -62,7 +52,6 @@ namespace FunderMaps.Data.Repositories
 	                document_file,
 	                attribution,
                     access_policy,
-                    audit_status,
 	                type,
 	                standard_f3o)
                 SELECT @document_name,
@@ -74,40 +63,40 @@ namespace FunderMaps.Data.Repositories
                     @document_file,
 	                attribution_id,
                     @access_policy,
-                    @audit_status,
 	                @type,
                     @standard_f3o
                 FROM attribution
                 RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
-            cmd.AddParameterWithValue("creator", entity.Attribution.Creator);
-            cmd.AddParameterWithValue("owner", entity.Attribution.Owner);
-            cmd.AddParameterWithValue("contractor", entity.Attribution.Contractor);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+            context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
-            return await cmd.ExecuteScalarIntAsync();
-        }
+            MapToWriter(context, entity);
 
-        public Task<uint> CountAsync(Guid orgId)
-        {
-            throw new NotImplementedException();
+            return await context.ScalarAsync<int>();
         }
 
         /// <summary>
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.inquiry";
+				SELECT  COUNT(*)
+                FROM    report.inquiry AS i
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+				WHERE   a.owner = @tenant";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
@@ -118,70 +107,69 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 DELETE
-                FROM    report.inquiry
-                WHERE   id = @id";
+                FROM    report.inquiry AS i
+                USING 	application.attribution AS a
+                WHERE   a.id = i.attribution
+                AND     i.id = @id
+                AND     a.owner = @tenant";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, InquiryFull entity)
+        public static void MapToWriter(DbContext context, InquiryFull entity)
         {
-            cmd.AddParameterWithValue("document_name", entity.DocumentName);
-            cmd.AddParameterWithValue("inspection", entity.Inspection);
-            cmd.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
-            cmd.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("document_date", entity.DocumentDate);
-            cmd.AddParameterWithValue("document_file", entity.DocumentFile);
-            cmd.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
-            cmd.AddParameterWithValue("audit_status", entity.State.AuditStatus);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("standard_f3o", entity.StandardF3o);
+            context.AddParameterWithValue("document_name", entity.DocumentName);
+            context.AddParameterWithValue("inspection", entity.Inspection);
+            context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
+            context.AddParameterWithValue("floor_measurement", entity.FloorMeasurement);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("document_date", entity.DocumentDate);
+            context.AddParameterWithValue("document_file", entity.DocumentFile);
+            context.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
         }
 
-        private static InquiryFull MapFromReader(DbDataReader reader)
+        public static InquiryFull MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new InquiryFull
             {
-                Id = reader.GetInt(0),
-                DocumentName = reader.GetSafeString(1),
-                Inspection = reader.GetBoolean(2),
-                JointMeasurement = reader.GetBoolean(3),
-                FloorMeasurement = reader.GetBoolean(4),
-                Note = reader.GetSafeString(5),
-                DocumentDate = reader.GetDateTime(6),
-                DocumentFile = reader.GetSafeString(7),
-                Type = reader.GetFieldValue<InquiryType>(8),
-                StandardF3o = reader.GetBoolean(9),
+                Id = reader.GetInt(offset + 0),
+                DocumentName = reader.GetSafeString(offset + 1),
+                Inspection = reader.GetBoolean(offset + 2),
+                JointMeasurement = reader.GetBoolean(offset + 3),
+                FloorMeasurement = reader.GetBoolean(offset + 4),
+                Note = reader.GetSafeString(offset + 5),
+                DocumentDate = reader.GetDateTime(offset + 6),
+                DocumentFile = reader.GetSafeString(offset + 7),
+                Type = reader.GetFieldValue<InquiryType>(offset + 8),
+                StandardF3o = reader.GetBoolean(offset + 9),
                 Attribution = new AttributionControl
                 {
-                    Reviewer = reader.GetFieldValue<Guid?>(10),
-                    Creator = reader.GetGuid(11),
-                    Owner = reader.GetGuid(12),
-                    Contractor = reader.GetGuid(13),
+                    Reviewer = reader.GetFieldValue<Guid?>(offset + 10),
+                    Creator = reader.GetGuid(offset + 11),
+                    Owner = reader.GetGuid(offset + 12),
+                    Contractor = reader.GetGuid(offset + 13),
                 },
                 State = new StateControl
                 {
-                    AuditStatus = reader.GetFieldValue<AuditStatus>(14),
+                    AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 14),
                 },
                 Access = new AccessControl
                 {
-                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(15),
+                    AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 15),
                 },
                 Record = new RecordControl
                 {
-                    CreateDate = reader.GetDateTime(16),
-                    UpdateDate = reader.GetSafeDateTime(17),
-                    DeleteDate = reader.GetSafeDateTime(18),
+                    CreateDate = reader.GetDateTime(offset + 16),
+                    UpdateDate = reader.GetSafeDateTime(offset + 17),
+                    DeleteDate = reader.GetSafeDateTime(offset + 18),
                 },
             };
-
-        public Task<InquiryFull> GetByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         ///     Retrieve <see cref="InquiryFull"/> by id.
@@ -191,54 +179,51 @@ namespace FunderMaps.Data.Repositories
         public override async ValueTask<InquiryFull> GetByIdAsync(int id)
         {
             var sql = @"
-                SELECT  inquiry.id,
-                        document_name,
-                        inspection,
-                        joint_measurement,
-                        floor_measurement,
-                        note,
-                        document_date,
-                        document_file,
-                        type,
-                        standard_f3o,
+                SELECT  -- Inquiry
+                        i.id,
+                        i.document_name,
+                        i.inspection,
+                        i.joint_measurement,
+                        i.floor_measurement,
+                        i.note,
+                        i.document_date,
+                        i.document_file,
+                        i.type,
+                        i.standard_f3o,
 
-                        -- attribution
-                        attribution.reviewer,
-                        attribution.creator,
-                        attribution.owner,
-                        attribution.contractor,
+                        -- Attribution
+                        a.reviewer,
+                        a.creator,
+                        a.owner,
+                        a.contractor,
 
-                        -- state control
-                        audit_status,
+                        -- State control
+                        i.audit_status,
 
-                        -- access control
-                        access_policy,
+                        -- Access control
+                        i.access_policy,
 		                
-                        -- record control
-                        create_date,
-		                update_date,
-		                delete_date
-                FROM    report.inquiry
-                JOIN 	application.attribution ON attribution.id = inquiry.attribution
-                WHERE   inquiry.id = @id
+                        -- Record control
+                        i.create_date,
+		                i.update_date,
+		                i.delete_date
+                FROM    report.inquiry AS i
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   i.id = @id
+                AND     a.owner = @tenant
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
 
         public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IReadOnlyList<InquiryFull>> ListAllAsync(Guid orgId, INavigation navigation)
         {
             throw new NotImplementedException();
         }
@@ -255,43 +240,45 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  inquiry.id,
-                        document_name,
-                        inspection,
-                        joint_measurement,
-                        floor_measurement,
-                        note,
-                        document_date,
-                        document_file,
-                        type,
-                        standard_f3o,
+                SELECT  -- Inquiry
+                        i.id,
+                        i.document_name,
+                        i.inspection,
+                        i.joint_measurement,
+                        i.floor_measurement,
+                        i.note,
+                        i.document_date,
+                        i.document_file,
+                        i.type,
+                        i.standard_f3o,
 
-                        -- attribution
-                        attribution.reviewer,
-                        attribution.creator,
-                        attribution.owner,
-                        attribution.contractor,
+                        -- Attribution
+                        a.reviewer,
+                        a.creator,
+                        a.owner,
+                        a.contractor,
 
-                        -- state control
-                        audit_status,
+                        -- State control
+                        i.audit_status,
 
-                        -- access control
-                        access_policy,
+                        -- Access control
+                        i.access_policy,
 		                
-                        -- record control
-                        create_date,
-		                update_date,
-		                delete_date
-                FROM    report.inquiry
-                JOIN 	application.attribution ON attribution.id = inquiry.attribution";
+                        -- Record control
+                        i.create_date,
+		                i.update_date,
+		                i.delete_date
+                FROM    report.inquiry AS i
+                JOIN 	application.attribution AS a ON a.id = i.attribution
+                WHERE   a.owner = @tenant";
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderCanHaveZeroRowsAsync();
-            while (await reader.ReadAsync())
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -309,7 +296,7 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                    UPDATE  report.inquiry
+                    UPDATE  report.inquiry AS i
                     SET     document_name = @document_name,
                             inspection = @inspection,
                             joint_measurement = @joint_measurement,
@@ -318,18 +305,50 @@ namespace FunderMaps.Data.Repositories
                             document_date = @document_date,
                             document_file = @document_file,
                             access_policy = @access_policy,
-                            audit_status = @audit_status,
                             type = @type,
                             standard_f3o = @standard_f3o
-                    WHERE   id = @id";
+                    FROM 	application.attribution AS a
+                    WHERE   a.id = i.attribution
+                    AND     i.id = @id
+                    AND     a.owner = @tenant";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", entity.Id);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            MapToWriter(context, entity);
+
+            await context.NonQueryAsync();
+        }
+
+        /// <summary>
+        ///     Set <see cref="InquiryFull"/> audit status.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <param name="entity">Entity object.</param>
+        public async Task SetAuditStatusAsync(int id, InquiryFull entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            var sql = @"
+                    UPDATE  report.inquiry AS i
+                    SET     audit_status = @status
+                    FROM 	application.attribution AS a
+                    WHERE   a.id = i.attribution
+                    AND     i.id = @id
+                    AND     a.owner = @tenant";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+            context.AddParameterWithValue("status", entity.State.AuditStatus);
+
+            await context.NonQueryAsync();
         }
     }
 }

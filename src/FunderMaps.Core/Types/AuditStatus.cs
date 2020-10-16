@@ -8,31 +8,31 @@
         /// <summary>
         ///     Needs to be done.
         /// </summary>
-        Todo,
+        Todo = 0,
 
         /// <summary>
         ///     Pending.
         /// </summary>
-        Pending,
+        Pending = 1,
 
         /// <summary>
         ///     Done.
         /// </summary>
-        Done,
+        Done = 2,
 
         /// <summary>
         ///     Discarded.
         /// </summary>
-        Discarded,
+        Discarded = 3,
 
         /// <summary>
         ///     Pending review.
         /// </summary>
-        PendingReview,
+        PendingReview = 4,
 
         /// <summary>
         ///     Rejected.
         /// </summary>
-        Rejected,
+        Rejected = 5,
     }
 }
