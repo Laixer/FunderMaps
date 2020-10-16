@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/netcoreapp3.1/FunderMaps",
+            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/netcoreapp3.1/FunderMaps.WebApi",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.WebApi",
             "stopAtEntry": false,
