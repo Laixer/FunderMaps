@@ -12,7 +12,7 @@ namespace FunderMaps.AspNetCore.Controllers
     /// <summary>
     ///     Endpoint controller for application authentication.
     /// </summary>
-    [Route("auth")]
+    [Authorize, Route("auth")]
     public class AuthController : ControllerBase
     {
         private readonly SignInHandler _authenticationHelper;

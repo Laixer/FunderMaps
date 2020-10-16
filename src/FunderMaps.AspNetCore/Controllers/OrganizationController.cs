@@ -17,7 +17,7 @@ namespace FunderMaps.AspNetCore.Controllers
     ///     This controller should *only* handle operations on the current
     ///     user session. Therefore the user context must be active.
     /// </remarks>
-    [Route("organization")]
+    [Authorize, Route("organization")]
     public class OrganizationController : ControllerBase
     {
         private readonly IMapper _mapper;
