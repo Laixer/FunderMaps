@@ -1,21 +1,34 @@
 ﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Services;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types;
 using System.Net;
 
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
-    ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
+    ///     Maps an <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
     /// </summary>
-    public sealed class FunderMapsExceptionMapper : ExceptionMapperBase<FunderMapsCoreException>
+    public class FunderMapsExceptionMapper : IExceptionMapper<FunderMapsCoreException>
     {
+        /// <summary>
+        ///     Builds an <see cref="ErrorMessage"/>.
+        /// </summary>
+        /// <param name="message">Message to display.</param>
+        /// <param name="statusCode">Status code to display.</param>
+        /// <returns>Instance of<see cref="ErrorMessage"/>.</returns>
+        protected static ErrorMessage BuildMessage(string message, HttpStatusCode statusCode)
+            => new ErrorMessage
+            {
+                Message = message,
+                StatusCode = (int)statusCode
+            };
+
         /// <summary>
         ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
         /// </summary>
         /// <param name="exception">An instance of <see cref="FunderMapsCoreException"/>.</param>
-        /// <returns><see cref="ErrorMessage"/></returns>
-        public override ErrorMessage Map(FunderMapsCoreException exception)
+        /// <returns>Instance of<see cref="ErrorMessage"/>.</returns>
+        public ErrorMessage Map(FunderMapsCoreException exception)
             => exception switch
             {
                 AuthenticationException _ => BuildMessage("Login attempt failed with provided credentials.", HttpStatusCode.Unauthorized),
