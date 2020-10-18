@@ -20,7 +20,7 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
         /// <returns>Instance of <see cref="ProblemDetails"/>.</returns>
-        [HttpGet("oops")]
+        [Route("oops")]
         [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, [FromServices] ILogger<OopsController> logger)
         {
