@@ -19,8 +19,9 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     Returns a <see cref="ProblemDetails"/> based on the <see cref="IExceptionHandlerFeature"/>
         ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
-        /// <returns><see cref="ProblemDetails"/></returns>
-        [Route("oops")]
+        /// <returns>Instance of <see cref="ProblemDetails"/>.</returns>
+        [HttpGet("oops")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, [FromServices] ILogger<OopsController> logger)
         {
             var error = HttpContext.Features.Get<ErrorMessage>();
