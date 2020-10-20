@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using FunderMaps.Core;
 using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Data.Providers;

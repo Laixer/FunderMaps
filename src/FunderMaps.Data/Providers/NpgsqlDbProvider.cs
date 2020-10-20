@@ -13,14 +13,27 @@ namespace FunderMaps.Data.Providers
     /// </summary>
     internal class NpgsqlDbProvider : DbProvider
     {
+        private string _connectionString;
+
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        /// <param name="configuration">Application configuration.</param>
-        /// <param name="options">Configuration options.</param>
         public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
             : base(configuration, options)
         {
+            var connectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString(_options.ConnectionStringName));
+
+            connectionStringBuilder.Timeout = _options.ConnectionTimeout > 0 ? _options.ConnectionTimeout : connectionStringBuilder.Timeout;
+            connectionStringBuilder.MinPoolSize = _options.MinPoolSize > 0 ? _options.MinPoolSize : connectionStringBuilder.MinPoolSize;
+            connectionStringBuilder.MaxPoolSize = _options.MaxPoolSize > 0 ? _options.MaxPoolSize : connectionStringBuilder.MaxPoolSize;
+            connectionStringBuilder.CommandTimeout = _options.CommandTimeout > 0 ? _options.CommandTimeout : connectionStringBuilder.CommandTimeout;
+
+            if (!string.IsNullOrEmpty(_options.ApplicationName))
+            {
+                connectionStringBuilder.ApplicationName = _options.ApplicationName;
+            }
+
+            _connectionString = connectionStringBuilder.ConnectionString;
         }
 
         // FUTURE: Move somewhere. Too npgsql specific
@@ -64,7 +77,7 @@ namespace FunderMaps.Data.Providers
         ///     <see cref="DbProvider.ConnectionScope"/>
         /// </summary>
         public override DbConnection ConnectionScope()
-            => new NpgsqlConnection(ConnectionString);
+            => new NpgsqlConnection(_connectionString);
 
         /// <summary>
         ///     <see cref="DbProvider.CreateCommand(string, DbConnection)"/>
