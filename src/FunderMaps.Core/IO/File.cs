@@ -11,23 +11,15 @@ namespace FunderMaps.Core.IO
         /// <remarks>
         ///     These mime types are whitelisted. Every other
         ///     file type is not allowed in the application.
-        ///     <para>
-        ///         Controllers can take a subset of this list
-        ///         for specific methods.
-        ///     </para>
         /// </remarks>
-        public static readonly string[] AllowedFileMimes =
-        {
-            "application/pdf",
-
-            "image/png",
-            "image/jpeg",
-            "image/gif",
-            "image/bmp",
-            "image/tiff",
-            "image/webp",
-
-            "text/plain",
-        };
+        public const string AllowedFileMimes = @"
+            application/pdf,
+            image/png,
+            image/jpeg,
+            image/gif,
+            image/bmp,
+            image/tiff,
+            image/webp,
+            text/plain";
     }
 }
