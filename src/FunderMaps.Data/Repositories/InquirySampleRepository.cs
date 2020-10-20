@@ -188,8 +188,8 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.inquiry_sample AS s
-                JOIN 	report.inquiry AS i ON i.id = s.inquiry
-                JOIN 	application.attribution AS a ON a.id = i.attribution
+                JOIN    report.inquiry AS i ON i.id = s.inquiry
+                JOIN    application.attribution AS a ON a.id = i.attribution
                 WHERE   a.owner = @tenant
                 AND     i.id = @id";
 
