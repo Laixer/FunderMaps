@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
 namespace FunderMaps.Data.Providers
@@ -76,12 +77,14 @@ namespace FunderMaps.Data.Providers
         /// <summary>
         ///     <see cref="DbProvider.ConnectionScope"/>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DbConnection ConnectionScope()
             => new NpgsqlConnection(_connectionString);
 
         /// <summary>
         ///     <see cref="DbProvider.CreateCommand(string, DbConnection)"/>
         /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DbCommand CreateCommand(string cmdText, DbConnection connection)
             => new NpgsqlCommand(cmdText, connection as NpgsqlConnection);
 
