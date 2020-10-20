@@ -1,11 +1,8 @@
 using AutoMapper;
-using FunderMaps.AspNetCore.Authorization;
-using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Services;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
-using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Webservice.HealthChecks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,8 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using FunderMaps.Extensions;
-using FunderMaps.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -93,13 +90,37 @@ namespace FunderMaps.Webservice
 
             // TODO: Only in staging/dev
             // Configure Swagger.
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
+                options.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "FunderMaps Webservice",
+                        Version = "v1",
+                        Description = "FunderMaps REST API",
+                    }
+                );
+                options.DocumentFilter<BasePathFilter>();
+
                 // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                c.SchemaFilter<EnumSchemaFilter>();
+                options.SchemaFilter<EnumSchemaFilter>();
                 // FUTURE: This call is obsolete.
-                c.GeneratePolymorphicSchemas();
+                options.GeneratePolymorphicSchemas();
             });
+        }
+
+        // FUTURE: Hardcoded url. error prone.
+        public class BasePathFilter : Swashbuckle.AspNetCore.SwaggerGen.IDocumentFilter
+        {
+            public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+            {
+                OpenApiPaths paths = new OpenApiPaths();
+                foreach (var path in swaggerDoc.Paths)
+                {
+                    paths.Add($"/api{path.Key}", path.Value);
+                }
+                swaggerDoc.Paths = paths;
+            }
         }
 
         /// <summary>
@@ -129,13 +150,15 @@ namespace FunderMaps.Webservice
 
             app.UseFunderMapsExceptionHandler("/oops");
 
-            // TODO: Only in staging/dev
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            if (env.IsStaging() || env.IsDevelopment())
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-                c.RoutePrefix = string.Empty;
-            });
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
+                    options.RoutePrefix = string.Empty;
+                });
+            }
 
             app.UsePathBase(new PathString("/api"));
             app.UseRouting();
