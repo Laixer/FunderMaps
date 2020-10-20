@@ -15,19 +15,14 @@ namespace FunderMaps.Data.Providers
     /// </summary>
     internal abstract class DbProvider
     {
-        private readonly DbProviderOptions _options;
-
-        public string ConnectionString { get; }
+        protected readonly DbProviderOptions _options;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        /// <param name="configuration">Application configuration.</param>
-        /// <param name="options">Configuration options.</param>
         public DbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
         {
             _options = options?.Value;
-            ConnectionString = configuration.GetConnectionString(_options.ConnectionStringName);
         }
 
         /// <summary>

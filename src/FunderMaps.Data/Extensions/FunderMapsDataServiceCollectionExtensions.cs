@@ -92,7 +92,14 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddFunderMapsDataServices();
             services.AddSingleton<DbProvider, NpgsqlDbProvider>();
-            services.Configure<DbProviderOptions>(options => options.ConnectionStringName = dbConfigName);
+            services.Configure<DbProviderOptions>(options =>
+            {
+                options.ConnectionStringName = dbConfigName;
+                options.ConnectionTimeout = 5; // in seconds
+                options.CommandTimeout = 5; // in seconds
+                options.MinPoolSize = 0;
+                options.MaxPoolSize = 25;
+            });
 
             return services;
         }
