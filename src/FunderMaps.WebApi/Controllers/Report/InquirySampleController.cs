@@ -38,6 +38,23 @@ namespace FunderMaps.WebApi.Controllers.Report
             _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
 
+        // GET: api/inquiry/{id}/sample/stats
+        /// <summary>
+        ///     Return inquiry report sample statistics.
+        /// </summary>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStatsAsync(int inquiryId)
+        {
+            // Map.
+            var output = new DatasetStatsDto
+            {
+                Count = await _inquirySampleRepository.CountAsync(inquiryId),
+            };
+
+            // Return.
+            return Ok(output);
+        }
+
         // GET: api/inquiry/{id}/sample/{id}
         /// <summary>
         ///     Return inquiry sample by id.
