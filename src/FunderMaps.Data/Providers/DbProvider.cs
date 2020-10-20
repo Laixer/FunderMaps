@@ -21,9 +21,7 @@ namespace FunderMaps.Data.Providers
         ///     Create new instance.
         /// </summary>
         public DbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
-        {
-            _options = options?.Value;
-        }
+            => _options = options?.Value ?? throw new ArgumentNullException(nameof(_options));
 
         /// <summary>
         ///     Create a new connection instance.
