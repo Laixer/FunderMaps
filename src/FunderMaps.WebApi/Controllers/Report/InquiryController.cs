@@ -50,7 +50,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Return inquiry statistics.
         /// </summary>
         [HttpGet("stats")]
-        public async Task<IActionResult> GetCountAsync()
+        public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
             var output = new DatasetStatsDto

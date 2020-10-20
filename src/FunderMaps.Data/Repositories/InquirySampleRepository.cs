@@ -180,6 +180,28 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Retrieve number of entities.
+        /// </summary>
+        /// <returns>Number of entities.</returns>
+        public async Task<long> CountAsync(int report)
+        {
+            var sql = @"
+                SELECT  COUNT(*)
+                FROM    report.inquiry_sample AS s
+                JOIN    report.inquiry AS i ON i.id = s.inquiry
+                JOIN    application.attribution AS a ON a.id = i.attribution
+                WHERE   a.owner = @tenant
+                AND     i.id = @id";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", report);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            return await context.ScalarAsync<long>();
+        }
+
+        /// <summary>
         ///     Delete <see cref="InquirySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>

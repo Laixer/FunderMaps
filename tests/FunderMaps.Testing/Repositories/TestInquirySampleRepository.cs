@@ -34,5 +34,11 @@ namespace FunderMaps.Testing.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Task<long> CountAsync(int report)
+        {
+            var result = DataStore.ItemList.Where(e => e.Inquiry == report);
+            return Task.FromResult((long)result.Count());
+        }
     }
 }

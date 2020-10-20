@@ -37,6 +37,23 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         }
 
+        // GET: api/admin/organization/stats
+        /// <summary>
+        ///     Return organization statistics.
+        /// </summary>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStatsAsync()
+        {
+            // Map.
+            var output = new DatasetStatsDto
+            {
+                Count = await _organizationRepository.CountAsync(),
+            };
+
+            // Return.
+            return Ok(output);
+        }
+
         // GET: api/admin/organization/{id}
         /// <summary>
         ///     Return organization by id.
