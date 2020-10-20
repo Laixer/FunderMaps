@@ -1,38 +1,38 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Recovery type.
+    ///     Recovery type.
     /// </summary>
     public enum RecoveryType
     {
         /// <summary>
-        /// Table.
+        ///     Table.
         /// </summary>
-        Table,
+        Table = 0,
 
         /// <summary>
-        /// Beam on pile.
+        ///     Beam on pile.
         /// </summary>
-        BeamOnPile,
+        BeamOnPile = 1,
 
         /// <summary>
-        /// Pile lowering.
+        ///     Pile lowering.
         /// </summary>
-        PileLowering,
+        PileLowering = 2,
 
         /// <summary>
-        /// Pile in wall.
+        ///     Pile in wall.
         /// </summary>
-        PileInWall,
+        PileInWall = 3,
 
         /// <summary>
-        /// Injection.
+        ///     Injection.
         /// </summary>
-        Injection,
+        Injection = 4,
 
         /// <summary>
-        /// Unknown.
+        ///     Unknown.
         /// </summary>
-        Unknown
+        Unknown = 5,
     }
 }

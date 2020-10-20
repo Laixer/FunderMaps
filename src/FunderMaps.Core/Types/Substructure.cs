@@ -1,28 +1,28 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Substructure.
+    ///     Substructure.
     /// </summary>
     public enum Substructure
     {
         /// <summary>
-        /// Cellar.
+        ///     Cellar.
         /// </summary>
-        Cellar,
+        Cellar = 0,
 
         /// <summary>
-        /// Basement.
+        ///     Basement.
         /// </summary>
-        Basement,
+        Basement = 1,
 
         /// <summary>
-        /// Crawlspace.
+        ///     Crawlspace.
         /// </summary>
-        Crawlspace,
+        Crawlspace = 2,
 
         /// <summary>
-        /// None.
+        ///     None.
         /// </summary>
-        None,
+        None = 3,
     }
 }

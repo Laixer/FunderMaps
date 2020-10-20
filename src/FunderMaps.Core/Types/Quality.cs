@@ -1,28 +1,28 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Quality.
+    ///     Quality.
     /// </summary>
     public enum Quality
     {
         /// <summary>
-        /// Nil.
+        ///     Nil.
         /// </summary>
-        Nil,
+        Nil = 0,
 
         /// <summary>
-        /// Small.
+        ///     Small.
         /// </summary>
-        Small,
+        Small = 1,
 
         /// <summary>
-        /// Mediocre.
+        ///     Mediocre.
         /// </summary>
-        Mediocre,
+        Mediocre = 2,
 
         /// <summary>
-        /// Large.
+        ///     Large.
         /// </summary>
-        Large,
+        Large = 3,
     }
 }

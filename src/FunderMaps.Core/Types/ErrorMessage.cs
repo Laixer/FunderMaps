@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
-
-namespace FunderMaps.Core.Types
+﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
     ///     Default implementation of an error message.

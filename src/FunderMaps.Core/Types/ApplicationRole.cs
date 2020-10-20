@@ -8,16 +8,16 @@
         /// <summary>
         ///     Administrator.
         /// </summary>
-        Administrator,
+        Administrator = 0,
 
         /// <summary>
         ///     User.
         /// </summary>
-        User,
+        User = 1,
 
         /// <summary>
         ///     Guest.
         /// </summary>
-        Guest,
+        Guest = 2,
     }
 }
