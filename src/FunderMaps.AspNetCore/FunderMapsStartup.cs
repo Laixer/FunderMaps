@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using AutoMapper;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Entities;
@@ -35,6 +36,12 @@ namespace FunderMaps.AspNetCore
                 .IncludeMembers(src => src.ContactNavigation)
                 .ReverseMap();
             mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
+            mapper.CreateMap<TokenContext, SignInSecurityTokenDto>()
+                .ForMember(dest => dest.Id, o => o.MapFrom(src => src.Token.Id))
+                .ForMember(dest => dest.Issuer, o => o.MapFrom(src => src.Token.Issuer))
+                .ForMember(dest => dest.Token, o => o.MapFrom(src => src.TokenString))
+                .ForMember(dest => dest.ValidFrom, o => o.MapFrom(src => src.Token.ValidFrom))
+                .ForMember(dest => dest.ValidTo, o => o.MapFrom(src => src.Token.ValidTo));
             mapper.CreateMap<User, UserDto>().ReverseMap();
             mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
         }
