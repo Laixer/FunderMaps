@@ -1,8 +1,8 @@
 using AutoMapper;
+using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
@@ -59,26 +59,10 @@ namespace FunderMaps.Portal.Controllers
         /// <remarks>
         ///     Max file upload size is configured at 128 MB.
         /// </remarks>
-        /// <param name="input">See <see cref="IFormFile"/>.</param>
-        /// <returns>See <see cref="DocumentDto"/>.</returns>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
-        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
         {
-            // FUTURE: Replace with validator?
-
-            if (input.Length == 0)
-            {
-                throw new UploadException("File content is empty");
-            }
-
-            // Check if content type is allowed
-            var allowedFileMimes = new List<string>(Core.IO.File.AllowedFileMimes);
-            if (!allowedFileMimes.Contains(input.ContentType))
-            {
-                throw new UploadException("File content type is not allowed");
-            }
-
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(

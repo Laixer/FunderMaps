@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
+using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Helpers;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -54,7 +53,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Return incident statistics.
         /// </summary>
         [HttpGet("stats")]
-        public async Task<IActionResult> GetCountAsync()
+        public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
             var output = new DatasetStatsDto
@@ -90,15 +89,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
-        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
         {
-            // FUTURE: Replace with validator?
-            var virtualFile = new ApplicationFileWrapper(input, Core.IO.File.AllowedFileMimes);
-            if (!virtualFile.IsValid)
-            {
-                throw new ArgumentException(); // TODO
-            }
-
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(

@@ -19,6 +19,12 @@ namespace FunderMaps.Core.Interfaces.Repositories
         Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId);
 
         /// <summary>
+        ///     Retrieve number of entities and filter on report.
+        /// </summary>
+        /// <returns>Number of entities.</returns>
+        Task<long> CountAsync(int report);
+
+        /// <summary>
         ///     Retrieve all entities and filter on report.
         /// </summary>
         /// <returns>List of entities.</returns>
