@@ -8,8 +8,14 @@ WORKDIR /source
 COPY . .
 RUN dotnet restore
 
+# Print version
+RUN find . -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/" {} +
+RUN find . -type f -exec sed -i "s/@@COMMIT@@/$(git rev-parse HEAD)/" {} +
+
 # Publish app and libraries
 RUN dotnet publish -c release -o /app --no-restore
+RUN git describe --long --always > /app/VERSION
+RUN git rev-parse HEAD > /app/COMMIT
 
 # Build runtime image
 #
