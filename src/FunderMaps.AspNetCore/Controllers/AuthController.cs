@@ -1,3 +1,4 @@
+using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
@@ -15,13 +16,17 @@ namespace FunderMaps.AspNetCore.Controllers
     [Authorize, Route("auth")]
     public class AuthController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly SignInHandler _authenticationHelper;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(SignInHandler authenticationHelper)
-            => _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
+        public AuthController(IMapper mapper, SignInHandler authenticationHelper)
+        {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
+        }
 
         // POST: api/auth/signin
         /// <summary>
@@ -32,14 +37,10 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> SignInAsync([FromBody] SignInInputModel input)
         {
             // Act.
-            string token = await _authenticationHelper.SignInAsync(input.Email, input.Password);
+            TokenContext context = await _authenticationHelper.SignInAsync(input.Email, input.Password);
 
             // Map.
-            var output = new SignInSecurityTokenDto
-            {
-                Token = token,
-                TokenValidity = 2400, // TODO
-            };
+            var output = _mapper.Map<SignInSecurityTokenDto>(context);
 
             // Return.
             return Ok(output);
@@ -53,14 +54,10 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> RefreshSignInAsync()
         {
             // Act.
-            string token = await _authenticationHelper.RefreshSignInAsync(User);
+            TokenContext context = await _authenticationHelper.RefreshSignInAsync(User);
 
             // Map.
-            var output = new SignInSecurityTokenDto
-            {
-                Token = token,
-                TokenValidity = 2400, // TODO
-            };
+            var output = _mapper.Map<SignInSecurityTokenDto>(context);
 
             // Return.
             return Ok(output);

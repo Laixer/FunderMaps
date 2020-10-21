@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using System.Security.Claims;
@@ -40,7 +39,7 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <param name="email">User email.</param>
         /// <param name="password">User password.</param>
         /// <returns>Security token if the authentication attempt was successful.</returns>
-        public async Task<string> SignInAsync(string email, string password)
+        public async Task<TokenContext> SignInAsync(string email, string password)
         {
             /// <summary>
             ///     Secure the backend signin call.
@@ -73,7 +72,7 @@ namespace FunderMaps.AspNetCore.Authentication
             {
                 throw new AuthenticationException();
             }
-            return await _tokenProvider.GetTokenAsStringAsync(result.Principal);
+            return _tokenProvider.GetTokenContext(result.Principal);
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace FunderMaps.AspNetCore.Authentication
         /// </summary>
         /// <param name="principal">Context principal.</param>
         /// <returns>Security token if the authentication attempt was successful.</returns>
-        public async Task<string> RefreshSignInAsync(ClaimsPrincipal principal)
+        public async Task<TokenContext> RefreshSignInAsync(ClaimsPrincipal principal)
         {
             /// <summary>
             ///     Secure the backend signin call.
@@ -114,7 +113,7 @@ namespace FunderMaps.AspNetCore.Authentication
             {
                 throw new AuthenticationException();
             }
-            return await _tokenProvider.GetTokenAsStringAsync(result.Principal);
+            return _tokenProvider.GetTokenContext(result.Principal);
         }
     }
 }

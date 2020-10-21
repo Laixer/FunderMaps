@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -8,15 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
     ///     Jwt bearer token provider.
     /// </summary>
-    public class JwtBearerTokenProvider : ISecurityTokenProvider
+    internal class JwtBearerTokenProvider : ISecurityTokenProvider
     {
         /// <summary>
         ///     The <see cref="JwtBearerOptions"/> used.
@@ -49,9 +48,9 @@ namespace FunderMaps.AspNetCore.Authentication
         }
 
         private SecurityTokenHandler Handler
-            => (SecurityTokenHandler)Options
-                .SecurityTokenValidators
-                .FirstOrDefault(s => (s as SecurityTokenHandler).CanValidateToken);
+                    => (SecurityTokenHandler)Options
+                        .SecurityTokenValidators
+                        .FirstOrDefault(s => (s as SecurityTokenHandler).CanValidateToken);
 
         protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
         {
@@ -62,7 +61,8 @@ namespace FunderMaps.AspNetCore.Authentication
 
             var properties = new AuthenticationProperties();
 
-            var issuerSigningKey = Options.TokenValidationParameters.IssuerSigningKey;
+            var JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters;
+            var issuerSigningKey = JwtTokenValidationParameters.IssuerSigningKey;
             var SigningCredentials = new SigningCredentials(issuerSigningKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>(principal.Claims)
@@ -87,14 +87,14 @@ namespace FunderMaps.AspNetCore.Authentication
                 properties.IssuedUtc = issuedUtc;
             }
 
-            if (!properties.ExpiresUtc.HasValue)
+            if (!properties.ExpiresUtc.HasValue && JwtTokenValidationParameters.Valid != TimeSpan.Zero)
             {
-                properties.ExpiresUtc = issuedUtc.Add(TimeSpan.FromHours(2)); // issuedUtc.Add(Options.ExpireTimeSpan);
+                properties.ExpiresUtc = issuedUtc.Add(JwtTokenValidationParameters.Valid);
             }
 
             return new JwtSecurityToken(
-                issuer: Options.TokenValidationParameters.ValidIssuer,
-                audience: Options.TokenValidationParameters.ValidAudience,
+                issuer: JwtTokenValidationParameters.ValidIssuer,
+                audience: JwtTokenValidationParameters.ValidAudience,
                 claims: claims,
                 notBefore: properties.IssuedUtc?.LocalDateTime,
                 expires: properties.ExpiresUtc?.LocalDateTime,
@@ -105,23 +105,29 @@ namespace FunderMaps.AspNetCore.Authentication
         ///     Generate token.
         /// </summary>
         /// <param name="principal">Claims principal.</param>
-        /// <returns>Returns token as <see cref="SecurityToken"/>.</returns>
-        public virtual Task<SecurityToken> GetToken(ClaimsPrincipal principal)
-            => Task.FromResult(GenerateSecurityToken(principal));
+        /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public virtual SecurityToken GetToken(ClaimsPrincipal principal)
+            => GenerateSecurityToken(principal);
 
         /// <summary>
-        ///     Generate token and return as string.
+        ///     Generate token.
         /// </summary>
         /// <param name="principal">Claims principal.</param>
-        /// <returns>Returns token as string.</returns>
-        public virtual async Task<string> GetTokenAsStringAsync(ClaimsPrincipal principal)
+        /// <returns>Instance of <see cref="TokenContext"/>.</returns>
+        public virtual TokenContext GetTokenContext(ClaimsPrincipal principal)
         {
             if (Handler == null)
             {
                 throw new InvalidOperationException();
             }
 
-            return Handler.WriteToken(await GetToken(principal));
+            var token = GetToken(principal);
+            return new TokenContext
+            {
+                TokenString = Handler.WriteToken(token),
+                Token = token,
+            };
         }
     }
 }

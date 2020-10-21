@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 
 [assembly: ApiController]
 namespace FunderMaps.WebApi
@@ -52,11 +51,12 @@ namespace FunderMaps.WebApi
                 .AddJwtBearer(options =>
                 {
                     options.SaveToken = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new JwtTokenValidationParameters
                     {
                         ValidIssuer = Configuration.GetJwtIssuer(),
                         ValidAudience = Configuration.GetJwtAudience(),
                         IssuerSigningKey = JwtHelper.CreateSecurityKey(Configuration.GetJwtSigningKey()), // TODO: Only for testing
+                        Valid = Configuration.GetJwtTokenExpirationInMinutes(),
                     };
                 })
                 .AddJwtBearerTokenProvider();

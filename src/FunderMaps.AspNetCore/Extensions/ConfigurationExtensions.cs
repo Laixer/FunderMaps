@@ -55,14 +55,14 @@ namespace FunderMaps.Extensions
         ///     Get the token expiration time in minutes from the configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public static int GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
+        public static TimeSpan GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
         {
             if (configuration == null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            return int.Parse(configuration["Jwt:TokenValidity"], NumberFormatInfo.InvariantInfo);
+            return TimeSpan.FromMinutes(double.Parse(configuration["Jwt:TokenValidity"], NumberFormatInfo.InvariantInfo));
         }
     }
 }
