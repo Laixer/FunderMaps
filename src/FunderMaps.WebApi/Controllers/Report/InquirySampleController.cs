@@ -148,7 +148,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     within this <see cref="Inquiry"/> are deleted.
         /// </remarks>
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteAsync(int inquiryId, int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.
             var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
