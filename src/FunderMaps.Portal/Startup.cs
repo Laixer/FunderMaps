@@ -48,7 +48,7 @@ namespace FunderMaps.Portal
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

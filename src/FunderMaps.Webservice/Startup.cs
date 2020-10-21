@@ -114,12 +114,12 @@ namespace FunderMaps.Webservice
         }
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
+        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsProduction())
             {

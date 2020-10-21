@@ -248,7 +248,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set inquiry status to done by id.
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id, StatusChangeDto input)
+        public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
