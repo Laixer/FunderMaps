@@ -22,7 +22,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -112,20 +111,6 @@ namespace FunderMaps.Webservice
                 // FUTURE: This call is obsolete.
                 options.GeneratePolymorphicSchemas();
             });
-        }
-
-        // FUTURE: Hardcoded url. error prone.
-        public class BasePathFilter : Swashbuckle.AspNetCore.SwaggerGen.IDocumentFilter
-        {
-            public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
-            {
-                OpenApiPaths paths = new OpenApiPaths();
-                foreach (var path in swaggerDoc.Paths)
-                {
-                    paths.Add($"/api{path.Key}", path.Value);
-                }
-                swaggerDoc.Paths = paths;
-            }
         }
 
         /// <summary>
