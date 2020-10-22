@@ -4,6 +4,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -17,6 +18,14 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
     {
+        protected override void SetCacheItem(KeyPair key, Building value, MemoryCacheEntryOptions options)
+        {
+            options.SlidingExpiration *= 2;
+            options.AbsoluteExpirationRelativeToNow *= 2;
+
+            base.SetCacheItem(key, value, options);
+        }
+
         public override ValueTask<string> AddAsync(Building entity)
             => throw new NotImplementedException();
 
@@ -57,6 +66,11 @@ namespace FunderMaps.Data.Repositories
 
         public override async ValueTask<Building> GetByIdAsync(string id)
         {
+            if (TryGetEntity(id, out Building entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- Building
                         b.id,
@@ -77,7 +91,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>

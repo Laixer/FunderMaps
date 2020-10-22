@@ -207,6 +207,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    report.inquiry_sample AS s
@@ -365,6 +367,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="InquirySample"/>.</returns>
         public override async ValueTask<InquirySample> GetByIdAsync(int id)
         {
+            if (TryGetEntity(id, out InquirySample entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- InquirySample
                         s.id,
@@ -456,7 +463,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         public Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId)
@@ -565,7 +572,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -672,7 +679,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -683,82 +690,81 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            ResetCacheEntity(entity);
+
             var sql = @"
                     UPDATE  report.inquiry_sample AS s
-                    SET     
-                        -- InquirySample
-                        inquiry = @inquiry,
-                        address = @address,
-                        note = @note,
-                        built_year = @built_year,
-                        substructure = @substructure,
+                    SET     -- InquirySample
+                            inquiry = @inquiry,
+                            address = @address,
+                            note = @note,
+                            built_year = @built_year,
+                            substructure = @substructure,
 
-                        -- Foundation Assessment
-                        overall_quality = @overall_quality,
-                        wood_quality = @wood_quality,
-                        construction_quality = @construction_quality,
-                        wood_capacity_horizontal_quality = @wood_capacity_horizontal_quality,
-                        pile_wood_capacity_vertical_quality = @pile_wood_capacity_vertical_quality,
-                        carrying_capacity_quality = @carrying_capacity_quality,
-                        mason_quality = @mason_quality,
-                        wood_quality_necessity = @wood_quality_necessity,
+                            -- Foundation Assessment
+                            overall_quality = @overall_quality,
+                            wood_quality = @wood_quality,
+                            construction_quality = @construction_quality,
+                            wood_capacity_horizontal_quality = @wood_capacity_horizontal_quality,
+                            pile_wood_capacity_vertical_quality = @pile_wood_capacity_vertical_quality,
+                            carrying_capacity_quality = @carrying_capacity_quality,
+                            mason_quality = @mason_quality,
+                            wood_quality_necessity = @wood_quality_necessity,
 
-                        -- Foundation Measurement
-                        construction_level = @construction_level,
-                        wood_level = @wood_level,
-                        pile_diameter_top = @pile_diameter_top,
-                        pile_diameter_bottom = @pile_diameter_bottom,
-                        pile_head_level = @pile_head_level,
-                        pile_tip_level = @pile_tip_level,
-                        foundation_depth = @foundation_depth,
-                        mason_level = @mason_level,
-                        concrete_charger_length = @concrete_charger_length,
-                        pile_distance_length = @pile_distance_length,
-                        wood_penetration_depth = @wood_penetration_depth,
+                            -- Foundation Measurement
+                            construction_level = @construction_level,
+                            wood_level = @wood_level,
+                            pile_diameter_top = @pile_diameter_top,
+                            pile_diameter_bottom = @pile_diameter_bottom,
+                            pile_head_level = @pile_head_level,
+                            pile_tip_level = @pile_tip_level,
+                            foundation_depth = @foundation_depth,
+                            mason_level = @mason_level,
+                            concrete_charger_length = @concrete_charger_length,
+                            pile_distance_length = @pile_distance_length,
+                            wood_penetration_depth = @wood_penetration_depth,
 
-                        -- Surrounding
-                        cpt = @cpt,
-                        monitoring_well = @monitoring_well,
-                        groundwater_level_temp = @groundwater_level_temp,
-                        groundlevel = @groundlevel,
-                        groundwater_level_net = @groundwater_level_net,
+                            -- Surrounding
+                            cpt = @cpt,
+                            monitoring_well = @monitoring_well,
+                            groundwater_level_temp = @groundwater_level_temp,
+                            groundlevel = @groundlevel,
+                            groundwater_level_net = @groundwater_level_net,
                         
-                        -- Foundation
-                        foundation_type = @foundation_type,
-                        enforcement_term = @enforcement_term,
-                        recovery_adviced = @recovery_adviced,
-                        damage_cause = @damage_cause,
-                        damage_characteristics = @damage_characteristics,
-                        construction_pile = @construction_pile,
-                        wood_type = @wood_type,
-                        wood_encroachement = @wood_encroachement,
+                            -- Foundation
+                            foundation_type = @foundation_type,
+                            enforcement_term = @enforcement_term,
+                            recovery_adviced = @recovery_adviced,
+                            damage_cause = @damage_cause,
+                            damage_characteristics = @damage_characteristics,
+                            construction_pile = @construction_pile,
+                            wood_type = @wood_type,
+                            wood_encroachement = @wood_encroachement,
 
-                        -- Building
-                        crack_indoor_restored = @crack_indoor_restored,
-                        crack_indoor_type = @crack_indoor_type,
-                        crack_indoor_size = @crack_indoor_size,
-                        crack_facade_front_restored = @crack_facade_front_restored,
-                        crack_facade_front_type = @crack_facade_front_type,
-                        crack_facade_front_size = @crack_facade_front_size,
-                        crack_facade_back_restored = @crack_facade_back_restored,
-                        crack_facade_back_type = @crack_facade_back_type,
-                        crack_facade_back_size = @crack_facade_back_size,
-                        crack_facade_left_restored = @crack_facade_left_restored,
-                        crack_facade_left_type = @crack_facade_left_type,
-                        crack_facade_left_size = @crack_facade_left_size,
-                        crack_facade_right_restored = @crack_facade_right_restored,
-                        crack_facade_right_type = @crack_facade_right_type,
-                        crack_facade_right_size = @crack_facade_right_size,
-                        deformed_facade = @deformed_facade,
-                        threshold_updown_skewed = @threshold_updown_skewed,
-                        threshold_front_level = @threshold_front_level,
-                        threshold_back_level = @threshold_back_level,
-                        skewed_parallel = @skewed_parallel,
-                        skewed_perpendicular = @skewed_perpendicular,
-                        skewed_facade = @skewed_facade,
-                        settlement_speed = @settlement_speed
-
-
+                            -- Building
+                            crack_indoor_restored = @crack_indoor_restored,
+                            crack_indoor_type = @crack_indoor_type,
+                            crack_indoor_size = @crack_indoor_size,
+                            crack_facade_front_restored = @crack_facade_front_restored,
+                            crack_facade_front_type = @crack_facade_front_type,
+                            crack_facade_front_size = @crack_facade_front_size,
+                            crack_facade_back_restored = @crack_facade_back_restored,
+                            crack_facade_back_type = @crack_facade_back_type,
+                            crack_facade_back_size = @crack_facade_back_size,
+                            crack_facade_left_restored = @crack_facade_left_restored,
+                            crack_facade_left_type = @crack_facade_left_type,
+                            crack_facade_left_size = @crack_facade_left_size,
+                            crack_facade_right_restored = @crack_facade_right_restored,
+                            crack_facade_right_type = @crack_facade_right_type,
+                            crack_facade_right_size = @crack_facade_right_size,
+                            deformed_facade = @deformed_facade,
+                            threshold_updown_skewed = @threshold_updown_skewed,
+                            threshold_front_level = @threshold_front_level,
+                            threshold_back_level = @threshold_back_level,
+                            skewed_parallel = @skewed_parallel,
+                            skewed_perpendicular = @skewed_perpendicular,
+                            skewed_facade = @skewed_facade,
+                            settlement_speed = @settlement_speed
                     FROM 	application.attribution AS a, report.inquiry AS i
                     WHERE   i.id = s.inquiry
                     AND     a.id = i.attribution
