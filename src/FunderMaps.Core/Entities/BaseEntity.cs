@@ -161,11 +161,17 @@ namespace FunderMaps.Core.Entities
             => EntityIdentifier = entryPrimaryKey;
 
         /// <summary>
-        ///     Print object as primary key.
+        ///     <typeparamref name="TEntity"/> identifier.
         /// </summary>
-        /// <returns>String representing entity primary key.</returns>
+        public TEntryIdentifier Identifier
+            => EntityIdentifier(DerivedEntity);
+
+        /// <summary>
+        ///     Print object as identifier.
+        /// </summary>
+        /// <returns>String representing entity identifier.</returns>
         public override string ToString()
-            => EntityIdentifier(DerivedEntity).ToString();
+            => Identifier.ToString();
 
         /// <summary>
         ///     Check if self is equal to other entity.
@@ -173,7 +179,7 @@ namespace FunderMaps.Core.Entities
         /// <param name="other">Entity to compare.</param>
         /// <returns><c>True</c> on success, false otherwise.</returns>
         public override bool Equals(TEntity other)
-            => other != null && EntityIdentifier(DerivedEntity).Equals(EntityIdentifier(other));
+            => other != null && Identifier.Equals(EntityIdentifier(other));
 
         /// <summary>
         ///     Compare self to other entity.
@@ -181,6 +187,6 @@ namespace FunderMaps.Core.Entities
         /// <param name="other">Entity to compare.</param>
         /// <returns>The Levenshtein distance between objects.</returns>
         public override int CompareTo(TEntity other)
-            => other == null ? 1 : EntityIdentifier(DerivedEntity).CompareTo(EntityIdentifier(other));
+            => other == null ? 1 : Identifier.CompareTo(EntityIdentifier(other));
     }
 }
