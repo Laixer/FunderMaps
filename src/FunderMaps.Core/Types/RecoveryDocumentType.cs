@@ -1,33 +1,33 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Recovery document type.
+    ///     Recovery document type.
     /// </summary>
     public enum RecoveryDocumentType
     {
         /// <summary>
-        /// Permit.
+        ///     Permit.
         /// </summary>
-        Permit,
+        Permit = 0,
 
         /// <summary>
-        /// Foundation report
+        ///     Foundation report
         /// </summary>
-        FoundationReport,
+        FoundationReport = 1,
 
         /// <summary>
-        /// Archive report.
+        ///     Archive report.
         /// </summary>
-        ArchiveReport,
+        ArchiveReport = 2,
 
         /// <summary>
-        /// Owner evidence.
+        ///     Owner evidence.
         /// </summary>
-        OwnerEvidence,
+        OwnerEvidence = 3,
 
         /// <summary>
-        /// Unknown.
+        ///     Unknown.
         /// </summary>
-        Unknown,
+        Unknown = 4,
     }
 }

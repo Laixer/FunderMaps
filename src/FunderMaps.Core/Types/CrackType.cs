@@ -1,28 +1,28 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Crack.
+    ///     Crack.
     /// </summary>
     public enum CrackType
     {
         /// <summary>
-        /// Very mall.
+        ///     Very mall.
         /// </summary>
-        VerySmall,
+        VerySmall = 0,
 
         /// <summary>
-        /// 
+        ///     Small.
         /// </summary>
-        Small,
+        Small = 1,
 
         /// <summary>
-        /// Mediocre.
+        ///     Mediocre.
         /// </summary>
-        Mediocre,
+        Mediocre = 2,
 
         /// <summary>
-        /// Big.
+        ///     Big.
         /// </summary>
-        Big,
+        Big = 3,
     }
 }

@@ -8,11 +8,11 @@
         /// <summary>
         ///     When our model was used.
         /// </summary>
-        Indicative,
+        Indicative = 0,
 
         /// <summary>
         ///     When a report is present.
         /// </summary>
-        Established,
+        Established = 1,
     }
 }

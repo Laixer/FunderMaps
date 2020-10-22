@@ -8,11 +8,11 @@
         /// <summary>
         ///     Public.
         /// </summary>
-        Public,
+        Public = 0,
 
         /// <summary>
         ///     Private.
         /// </summary>
-        Private,
+        Private = 1,
     }
 }
