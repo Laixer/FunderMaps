@@ -229,6 +229,7 @@ namespace FunderMaps.Data
         /// </summary>
         public async ValueTask DisposeAsync()
         {
+            // NOTE: Cannot dispose async with nullable (?.) check.
             if (Reader != null)
             {
                 await Reader.DisposeAsync();

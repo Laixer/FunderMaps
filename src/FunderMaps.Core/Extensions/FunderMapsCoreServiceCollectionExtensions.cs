@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
@@ -57,6 +57,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IEmailService, NullEmailService>();
             services.TryAddSingleton<IBlobStorageService, NullBlobStorageService>();
             services.TryAddSingleton<INotificationService, NullNotificationService>();
+
+            // The application core (as well as many other components) depends upon the ability to cache
+            // to objects memory. The memory cache may have already been registered with the container
+            // by some other package, however we cannot expect this to be.
+            services.AddMemoryCache();
 
             return services;
         }
