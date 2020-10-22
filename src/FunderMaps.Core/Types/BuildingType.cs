@@ -8,21 +8,21 @@ namespace FunderMaps.Core.Types
         /// <summary>
         ///     House.
         /// </summary>
-        House,
+        House = 0,
 
         /// <summary>
         ///     Shed.
         /// </summary>
-        Shed,
+        Shed = 1,
 
         /// <summary>
         ///     House boat.
         /// </summary>
-        HouseBoat,
+        HouseBoat = 2,
 
         /// <summary>
         ///     Mobile home.
         /// </summary>
-        MobileHome,
+        MobileHome = 3,
     }
 }

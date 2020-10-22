@@ -25,12 +25,12 @@ namespace FunderMaps.Data.Repositories
             /// <summary>
             ///     Use the code.
             /// </summary>
-            NeighborhoodCode,
+            NeighborhoodCode = 0,
 
             /// <summary>
             ///     Use the id.
             /// </summary>
-            NeighborhoodId
+            NeighborhoodId = 1,
         }
 
         public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(Guid userId, string neighborhoodCode)

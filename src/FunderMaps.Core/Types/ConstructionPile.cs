@@ -1,43 +1,43 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Construction pile.
+    ///     Construction pile.
     /// </summary>
     public enum ConstructionPile
     {
         /// <summary>
-        /// Punched.
+        ///     Punched.
         /// </summary>
-        Punched,
+        Punched = 0,
 
         /// <summary>
-        /// Broken.
+        ///     Broken.
         /// </summary>
-        Broken,
+        Broken = 1,
 
         /// <summary>
-        /// Pinched.
+        ///     Pinched.
         /// </summary>
-        Pinched,
+        Pinched = 2,
 
         /// <summary>
-        /// Pressed.
+        ///     Pressed.
         /// </summary>
-        Pressed,
+        Pressed = 3,
 
         /// <summary>
-        /// Perished.
+        ///     Perished.
         /// </summary>
-        Perished,
+        Perished = 4,
 
         /// <summary>
-        /// Decay.
+        ///     Decay.
         /// </summary>
-        Decay,
+        Decay = 5,
 
         /// <summary>
-        /// RootGrowth.
+        ///     Root growth.
         /// </summary>
-        RootGrowth,
+        RootGrowth = 6,
     }
 }

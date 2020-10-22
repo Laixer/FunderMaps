@@ -1,23 +1,23 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Pile type.
+    ///     Pile type.
     /// </summary>
     public enum PileType
     {
         /// <summary>
-        /// Press.
+        ///     Press.
         /// </summary>
-        Press,
+        Press = 0,
 
         /// <summary>
-        /// Intgernally driven.
+        ///     Intgernally driven.
         /// </summary>
-        IntgernallyDriven,
+        IntgernallyDriven = 1,
 
         /// <summary>
-        /// Segment.
+        ///     Segment.
         /// </summary>
-        Segment
+        Segment = 2,
     }
 }

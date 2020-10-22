@@ -1,38 +1,38 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Foundation quality.
+    ///     Foundation quality.
     /// </summary>
     public enum FoundationQuality
     {
         /// <summary>
-        /// Bad.
+        ///     Bad.
         /// </summary>
-        Bad,
+        Bad = 0,
 
         /// <summary>
-        /// Mediocre.
+        ///     Mediocre.
         /// </summary>
-        Mediocre,
+        Mediocre = 1,
 
         /// <summary>
-        /// Tolerable.
+        ///     Tolerable.
         /// </summary>
-        Tolerable,
+        Tolerable = 2,
 
         /// <summary>
-        /// Good.
+        ///     Good.
         /// </summary>
-        Good,
+        Good = 3,
 
         /// <summary>
-        /// Mediocre good.
+        ///     Mediocre good.
         /// </summary>
-        MediocreGood,
+        MediocreGood = 4,
 
         /// <summary>
-        /// Mediocre bad.
+        ///     Mediocre bad.
         /// </summary>
-        MediocreBad,
+        MediocreBad = 5,
     }
 }

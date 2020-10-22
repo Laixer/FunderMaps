@@ -8,11 +8,11 @@
         /// <summary>
         ///     Pine.
         /// </summary>
-        Pine,
+        Pine = 0,
 
         /// <summary>
         ///     Spruce.
         /// </summary>
-        Spruce,
+        Spruce = 1,
     }
 }

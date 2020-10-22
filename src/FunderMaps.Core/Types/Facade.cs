@@ -1,28 +1,28 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Facade.
+    ///     Facade.
     /// </summary>
     public enum Facade
     {
         /// <summary>
-        /// Front.
+        ///     Front.
         /// </summary>
-        Front,
+        Front = 0,
 
         /// <summary>
-        /// Sidewall left.
+        ///     Sidewall left.
         /// </summary>
-        SidewallLeft,
+        SidewallLeft = 1,
 
         /// <summary>
-        /// Sidewall right.
+        ///     Sidewall right.
         /// </summary>
-        SidewallRight,
+        SidewallRight = 2,
 
         /// <summary>
-        /// Rear.
+        ///     Rear.
         /// </summary>
-        Rear
+        Rear = 3,
     }
 }

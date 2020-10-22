@@ -1,63 +1,63 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Environment damage characteristics.
+    ///     Environment damage characteristics.
     /// </summary>
     public enum EnvironmentDamageCharacteristics
     {
         /// <summary>
-        /// Subsidence.
+        ///     Subsidence.
         /// </summary>
-        Subsidence,
+        Subsidence = 0,
 
         /// <summary>
-        /// Sagging cewer connections.
+        ///     Sagging cewer connections.
         /// </summary>
-        SaggingSewerConnection,
+        SaggingSewerConnection = 1,
 
         /// <summary>
-        /// Sagging cables and pipes.
+        ///     Sagging cables and pipes.
         /// </summary>
-        SaggingCablesPipes,
+        SaggingCablesPipes = 2,
 
         /// <summary>
-        /// Flooding.
+        ///     Flooding.
         /// </summary>
-        Flooding,
+        Flooding = 3,
 
         /// <summary>
-        /// Foundation damage nearby.
+        ///     Foundation damage nearby.
         /// </summary>
-        FoundationDamageNearby,
+        FoundationDamageNearby = 4,
 
         /// <summary>
-        /// Elevation.
+        ///     Elevation.
         /// </summary>
-        Elevation,
+        Elevation = 5,
 
         /// <summary>
-        /// Increasing traffic.
+        ///     Increasing traffic.
         /// </summary>
-        IncreasingTraffic,
+        IncreasingTraffic = 6,
 
         /// <summary>
-        /// Construction nearby.
+        ///     Construction nearby.
         /// </summary>
-        ConstructionNearby,
+        ConstructionNearby = 7,
 
         /// <summary>
-        /// Vegetation nearby.
+        ///     Vegetation nearby.
         /// </summary>
-        VegetationNearby,
+        VegetationNearby = 8,
 
         /// <summary>
-        /// Sewage leakage.
+        ///     Sewage leakage.
         /// </summary>
-        SewageLeakage,
+        SewageLeakage = 9,
 
         /// <summary>
-        /// Low ground water.
+        ///     Low ground water.
         /// </summary>
-        LowGroundWater,
+        LowGroundWater = 10,
     }
 }

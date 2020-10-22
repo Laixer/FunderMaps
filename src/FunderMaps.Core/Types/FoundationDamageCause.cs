@@ -1,93 +1,93 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Foundation damage cause.
+    ///     Foundation damage cause.
     /// </summary>
     public enum FoundationDamageCause
     {
         /// <summary>
-        /// Drainage.
+        ///     Drainage.
         /// </summary>
-        Drainage,
+        Drainage = 0,
 
         /// <summary>
-        /// Construction flaw.
+        ///     Construction flaw.
         /// </summary>
-        ConstructionFlaw,
+        ConstructionFlaw = 1,
 
         /// <summary>
-        /// Drystand.
+        ///     Drystand.
         /// </summary>
-        Drystand,
+        Drystand = 2,
 
         /// <summary>
-        /// Overcharge.
+        ///     Overcharge.
         /// </summary>
-        Overcharge,
+        Overcharge = 3,
 
         /// <summary>
-        /// Overcharge and negative cling.
+        ///     Overcharge and negative cling.
         /// </summary>
-        OverchargeNegativeCling,
+        OverchargeNegativeCling = 4,
 
         /// <summary>
-        /// Negative cling.
+        ///     Negative cling.
         /// </summary>
-        NegativeCling,
+        NegativeCling = 5,
 
         /// <summary>
-        /// Bio infection.
+        ///     Bio infection.
         /// </summary>
-        BioInfection,
+        BioInfection = 6,
 
         /// <summary>
-        /// Unknown.
+        ///     Unknown.
         /// </summary>
-        Unknown,
+        Unknown = 7,
 
         /// <summary>
-        /// Fungus infection.
+        ///     Fungus infection.
         /// </summary>
-        FungusInfection,
+        FungusInfection = 8,
 
         /// <summary>
-        /// Bio and fungus infection.
+        ///     Bio and fungus infection.
         /// </summary>
-        BioFungusInfection,
+        BioFungusInfection = 9,
 
         /// <summary>
-        /// Foundation flaw.
+        ///     Foundation flaw.
         /// </summary>
-        FoundationFlaw,
+        FoundationFlaw = 10,
 
         /// <summary>
-        /// Construnction heave.
+        ///     Construnction heave.
         /// </summary>
-        ConstructionHeave,
+        ConstructionHeave = 11,
 
         /// <summary>
-        /// Subsidence.
+        ///     Subsidence.
         /// </summary>
-        Subsidence,
+        Subsidence = 12,
 
         /// <summary>
-        /// Vegetation.
+        ///     Vegetation.
         /// </summary>
-        Vegetation,
+        Vegetation = 13,
 
         /// <summary>
-        /// Gas.
+        ///     Gas.
         /// </summary>
-        Gas,
+        Gas = 14,
 
         /// <summary>
-        /// Vibrations.
+        ///     Vibrations.
         /// </summary>
-        Vibrations,
+        Vibrations = 15,
 
         /// <summary>
-        /// Foundation was partially recovered.
+        ///     Foundation was partially recovered.
         /// </summary>
-        PartialFoundationRecovery,
+        PartialFoundationRecovery = 16,
     }
 }
