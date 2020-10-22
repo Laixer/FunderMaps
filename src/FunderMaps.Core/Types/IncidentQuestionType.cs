@@ -1,48 +1,48 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Indicent question type.
+    ///     Indicent question type.
     /// </summary>
     public enum IncidentQuestionType
     {
         /// <summary>
-        /// Buy or sell.
+        ///     Buy or sell.
         /// </summary>
-        BuySell,
+        BuySell = 0,
 
         /// <summary>
-        /// Registration.
+        ///     Registration.
         /// </summary>
-        Registration,
+        Registration = 1,
 
         /// <summary>
-        /// Legal.
+        ///     Legal.
         /// </summary>
-        Legal,
+        Legal = 2,
 
         /// <summary>
-        /// Financial.
+        ///     Financial.
         /// </summary>
-        Financial,
+        Financial = 3,
 
         /// <summary>
-        /// Guidance.
+        ///     Guidance.
         /// </summary>
-        Guidance,
+        Guidance = 4,
 
         /// <summary>
-        /// Recovery.
+        ///     Recovery.
         /// </summary>
-        Recovery,
+        Recovery = 5,
 
         /// <summary>
-        /// Research.
+        ///     Research.
         /// </summary>
-        Research,
+        Research = 6,
 
         /// <summary>
-        /// Other.
+        ///     Other.
         /// </summary>
-        Other,
+        Other = 7,
     }
 }

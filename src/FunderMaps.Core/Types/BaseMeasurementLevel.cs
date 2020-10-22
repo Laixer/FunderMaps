@@ -8,16 +8,16 @@
         /// <summary>
         ///     NAP.
         /// </summary>
-        NAP,
+        NAP = 0,
 
         /// <summary>
         ///     TAW.
         /// </summary>
-        TAW,
+        TAW = 1,
 
         /// <summary>
         ///     NN.
         /// </summary>
-        NN,
+        NN = 2,
     }
 }

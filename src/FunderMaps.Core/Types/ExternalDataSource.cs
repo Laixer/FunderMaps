@@ -8,16 +8,16 @@
         /// <summary>
         ///     Basis Registratie Gebouwen.
         /// </summary>
-        NlBag,
+        NlBag = 0,
 
         /// <summary>
         ///     Open Street Maps.
         /// </summary>
-        NlOsm,
+        NlOsm = 1,
 
         /// <summary>
         ///     Centraal Bureau Statistiek.
         /// </summary>
-        NlCbs,
+        NlCbs = 2,
     }
 }

@@ -1,33 +1,33 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Rotation type.
+    ///     Rotation type.
     /// </summary>
     public enum RotationType
     {
         /// <summary>
-        /// Nil.
+        ///     Nil.
         /// </summary>
-        Nil,
+        Nil = 0,
 
         /// <summary>
-        /// Very small.
+        ///     Very small.
         /// </summary>
-        VerySmall,
+        VerySmall = 1,
 
         /// <summary>
-        /// Small.
+        ///     Small.
         /// </summary>
-        Small,
+        Small = 2,
 
         /// <summary>
-        /// Mediocre.
+        ///     Mediocre.
         /// </summary>
-        Mediocre,
+        Mediocre = 3,
 
         /// <summary>
-        /// Big.
+        ///     Big.
         /// </summary>
-        Big,
+        Big = 4,
     }
 }
