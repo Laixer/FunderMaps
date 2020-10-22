@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using System.Security.Claims;
@@ -37,84 +36,68 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <summary>
         ///     Signin the user by email and password.
         /// </summary>
+        /// <remarks>
+        ///     Discrepanties in the input can lead to different behaviour further down
+        ///     the call tree, possibly leaking information on exceptional cases.
+        ///     If any <see cref="FunderMapsCoreException"/> is thrown we must consider
+        ///     it an authentication failure.
+        /// </remarks>
         /// <param name="email">User email.</param>
         /// <param name="password">User password.</param>
         /// <returns>Security token if the authentication attempt was successful.</returns>
-        public async Task<string> SignInAsync(string email, string password)
+        public async Task<TokenContext> SignInAsync(string email, string password)
         {
-            /// <summary>
-            ///     Secure the backend signin call.
-            /// </summary>
-            /// <remarks>
-            ///     Discrepanties in the input can lead to different behaviour further down
-            ///     the call tree, possibly leaking information on exceptional cases.
-            ///     If any <see cref="FunderMapsCoreException"/> is thrown after this point
-            ///     we must consider it an authentication failure.
-            /// </remarks>
-            async Task<SignInContext> PasswordSignInAsync()
+            try
             {
-                try
-                {
-                    return await SignInService.PasswordSignInAsync(email, password, JwtBearerDefaults.AuthenticationScheme);
-                }
-                catch (FunderMapsCoreException)
+                var result = await SignInService.PasswordSignInAsync(email, password, JwtBearerDefaults.AuthenticationScheme);
+                if (result.Result != AuthResult.Success)
                 {
                     throw new AuthenticationException();
                 }
-            }
 
-            var result = await PasswordSignInAsync();
-            if (result.Result != AuthResult.Success)
+                if (result.Principal == null)
+                {
+                    throw new AuthenticationException();
+                }
+                return _tokenProvider.GetTokenContext(result.Principal);
+            }
+            catch (FunderMapsCoreException)
             {
                 throw new AuthenticationException();
             }
-
-            if (result.Principal == null)
-            {
-                throw new AuthenticationException();
-            }
-            return await _tokenProvider.GetTokenAsStringAsync(result.Principal);
         }
 
         /// <summary>
         ///     Signin the user by active session.
         /// </summary>
+        /// <remarks>
+        ///     Discrepanties in the input can lead to different behaviour further down
+        ///     the call tree, possibly leaking information on exceptional cases.
+        ///     If any <see cref="FunderMapsCoreException"/> is thrown we must consider
+        ///     it an authentication failure.
+        /// </remarks>
         /// <param name="principal">Context principal.</param>
         /// <returns>Security token if the authentication attempt was successful.</returns>
-        public async Task<string> RefreshSignInAsync(ClaimsPrincipal principal)
+        public async Task<TokenContext> RefreshSignInAsync(ClaimsPrincipal principal)
         {
-            /// <summary>
-            ///     Secure the backend signin call.
-            /// </summary>
-            /// <remarks>
-            ///     Discrepanties in the input can lead to different behaviour further down
-            ///     the call tree, possibly leaking information on exceptional cases.
-            ///     If any <see cref="FunderMapsCoreException"/> is thrown after this point
-            ///     we must consider it an authentication failure.
-            /// </remarks>
-            async Task<SignInContext> SignInAsync()
+            try
             {
-                try
-                {
-                    return await SignInService.SignInAsync(principal, JwtBearerDefaults.AuthenticationScheme);
-                }
-                catch (FunderMapsCoreException)
+                var result = await SignInService.SignInAsync(principal, JwtBearerDefaults.AuthenticationScheme);
+                if (result.Result != AuthResult.Success)
                 {
                     throw new AuthenticationException();
                 }
-            }
 
-            var result = await SignInAsync();
-            if (result.Result != AuthResult.Success)
+                if (result.Principal == null)
+                {
+                    throw new AuthenticationException();
+                }
+                return _tokenProvider.GetTokenContext(result.Principal);
+            }
+            catch (FunderMapsCoreException)
             {
                 throw new AuthenticationException();
             }
-
-            if (result.Principal == null)
-            {
-                throw new AuthenticationException();
-            }
-            return await _tokenProvider.GetTokenAsStringAsync(result.Principal);
         }
     }
 }

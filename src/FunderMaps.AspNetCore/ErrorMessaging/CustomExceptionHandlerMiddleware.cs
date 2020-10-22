@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
@@ -51,12 +52,27 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <returns><see cref="Task"/></returns>
         public virtual Task InvokeAsync(HttpContext context)
         {
-            var edi = null as ExceptionDispatchInfo;
+            ExceptionDispatchInfo edi;
 
             try
             {
                 var task = _next(context);
-                return task.IsCompletedSuccessfully ? Task.CompletedTask : ProcessAsync(context, task);
+                if (task.IsCompletedSuccessfully)
+                {
+                    return Task.CompletedTask;
+                }
+                else if (task.IsCanceled)
+                {
+                    edi = ExceptionDispatchInfo.Capture(new OperationAbortedException());
+                }
+                else if (task.IsFaulted)
+                {
+                    edi = ExceptionDispatchInfo.Capture(task.Exception);
+                }
+                else
+                {
+                    return ProcessAsync(context, task);
+                }
             }
             catch (TException e)
             {
@@ -98,7 +114,22 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <param name="context"><see cref="HttpContext"/></param>
         protected virtual async Task HandleExceptionAsync(ExceptionDispatchInfo edi, HttpContext context)
         {
+            // We're only interested in the root cause of the exception, so if we're dealing with an
+            // aggregate then unpack the exception stack and replace the exception dispatcher with the
+            // exception base.
+            if (edi.SourceException is AggregateException)
+            {
+                edi = ExceptionDispatchInfo.Capture((edi.SourceException as AggregateException).GetBaseException());
+            }
+
             _logger.LogDebug($"The exception message: {edi.SourceException.Message}");
+
+            // If we conclude the exception as not one of TException then abort and
+            // throw the exception upwards.
+            if (!(edi.SourceException is TException))
+            {
+                edi.Throw();
+            }
 
             // We can't do anything if the response has already started, just abort.
             // This means headers have already been sent to the client.

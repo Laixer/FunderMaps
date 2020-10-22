@@ -121,6 +121,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Upload document to the backstore.
         /// </summary>
         [HttpPost("upload-document")]
+        [RequestSizeLimit(128 * 1024 * 1024)]
         public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
         {
             // Act.
@@ -247,7 +248,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set inquiry status to done by id.
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id, StatusChangeDto input)
+        public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);

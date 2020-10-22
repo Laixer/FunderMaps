@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {
@@ -8,15 +9,31 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     public class SignInSecurityTokenDto
     {
         /// <summary>
+        ///     Authentication token identifier.
+        /// </summary>
+        [Required]
+        public string Id { get; set; }
+
+        /// <summary>
+        ///     Authentication issuer.
+        /// </summary>
+        [Required]
+        public string Issuer { get; set; }
+
+        /// <summary>
         ///     Authentication token.
         /// </summary>
         [Required]
         public string Token { get; set; }
 
         /// <summary>
-        ///     Authentication token validity.
+        ///     Authentication token valid from datetime.
         /// </summary>
-        [Required]
-        public int TokenValidity { get; set; }
+        public DateTime ValidFrom { get; set; }
+
+        /// <summary>
+        ///     Authentication token valid until datetime.
+        /// </summary>
+        public DateTime ValidTo { get; set; }
     }
 }
