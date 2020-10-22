@@ -12,7 +12,7 @@ namespace FunderMaps.Data
     /// <summary>
     ///     Database context.
     /// </summary>
-    internal class DbContext : IAsyncDisposable
+    internal class DbContext : IAsyncDisposable // TODO: Inherit from AppContext?
     {
         /// <summary>
         ///     Data provider interface.

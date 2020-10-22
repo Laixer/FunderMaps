@@ -6,6 +6,8 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Core
 {
+    // TODO:
+    // - Culture
     /// <summary>
     ///     Application context.
     /// </summary>
@@ -59,8 +61,5 @@ namespace FunderMaps.Core
         /// </summary>
         /// <remarks>If <see cref="User"/> exists, then <see cref="Tenant"/> exists.</remarks>
         public bool HasIdentity => User != null;
-
-        // TODO:
-        // - Culture
     }
 }
