@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Types.Products;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,7 +12,9 @@ namespace FunderMaps.Core.Interfaces.Repositories
     {
         Task<AnalysisProduct> GetByIdAsync(string id);
 
-        Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalDataSource);
+        Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId);
+
+        Task<AnalysisProduct> GetByAddressExternalIdAsync(Guid userId, string externalId);
 
         /// <summary>
         ///     Retrieve <see cref="AnalysisProduct"/> by search query.

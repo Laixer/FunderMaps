@@ -92,7 +92,7 @@ namespace FunderMaps.Webservice.Handlers
             }
             else if (!string.IsNullOrEmpty(inputModel.BagId))
             {
-                AnalysisProduct product = await _productService.GetAnalysisByExternalIdAsync(userId, productType, inputModel.BagId, ExternalDataSource.NlBag);
+                AnalysisProduct product = await _productService.GetAnalysisByExternalIdAsync(userId, productType, inputModel.BagId);
                 return await AnalysisWrapperFactoryAsync(productType, AsyncEnumerableHelper.AsEnumerable(product));
             }
 

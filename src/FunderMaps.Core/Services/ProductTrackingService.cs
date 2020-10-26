@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using System;
 using System.Collections.Generic;
@@ -37,13 +36,32 @@ namespace FunderMaps.Core.Services
         public override async ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(
             Guid userId,
             AnalysisProductType productType,
-            string externalId,
-            ExternalDataSource externalSource)
+            string externalId)
         {
-            userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
 
-            var result = await base.GetAnalysisByExternalIdAsync(userId, productType, externalId, externalSource);
+            var result = await base.GetAnalysisByExternalIdAsync(userId, productType, externalId);
+
+            await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U);
+
+            return result;
+        }
+
+        /// <summary>
+        ///     Gets a single analysis based on an external id. Also track product
+        ///     usage in the data store.
+        /// </summary>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="externalId">External address id.</param>
+        /// <param name="externalSource">External data source.</param>
+        public override async ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            string externalId)
+        {
+            externalId.ThrowIfNullOrEmpty();
+
+            var result = await base.GetAnalysisByAddressExternalIdAsync(userId, productType, externalId);
 
             await _trackingRepository.ProcessAnalysisUsageAsync(userId, productType, 1U);
 
@@ -62,7 +80,6 @@ namespace FunderMaps.Core.Services
             string id)
         {
             id.ThrowIfNullOrEmpty();
-            userId.ThrowIfNullOrEmpty();
 
             try
             {

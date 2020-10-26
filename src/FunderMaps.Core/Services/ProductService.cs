@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using System;
@@ -34,17 +33,33 @@ namespace FunderMaps.Core.Services
         /// <param name="userId">Internal user id.</param>
         /// <param name="productType"><see cref="AnalysisProductType"/></param>
         /// <param name="externalId">External building id.</param>
-        /// <param name="externalDataSource">External data source.</param>
         public virtual async ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(
             Guid userId,
             AnalysisProductType productType,
-            string externalId,
-            ExternalDataSource externalDataSource)
+            string externalId)
         {
-            userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
 
-            var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource);
+            var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId);
+
+            await ProcessAnalysisAsync(userId, productType, product);
+            return product;
+        }
+
+        /// <summary>
+        ///     Gets a single analysis based on an external id.
+        /// </summary>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="externalId">External address id.</param>
+        public virtual async ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            string externalId)
+        {
+            externalId.ThrowIfNullOrEmpty();
+
+            var product = await _analysisRepository.GetByAddressExternalIdAsync(userId, externalId);
 
             await ProcessAnalysisAsync(userId, productType, product);
             return product;
