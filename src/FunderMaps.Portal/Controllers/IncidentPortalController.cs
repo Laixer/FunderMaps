@@ -136,10 +136,10 @@ namespace FunderMaps.Portal.Controllers
         /// <param name="id">Address identifier.</param>
         /// <returns>The risk product.</returns>
         [HttpGet("risk")]
-        public async Task<IActionResult> GetRiskAnalysisAsync([Required][Geocoder] string id)
+        public async Task<IActionResult> GetRiskAnalysisAsync([Required] string id)
         {
             // Assign.
-            AnalysisProduct product = await _productService.GetAnalysisByIdAsync(Guid.Empty, AnalysisProductType.Risk, id);
+            AnalysisProduct product = await _productService.GetAnalysisByAddressExternalIdAsync(Guid.Empty, AnalysisProductType.Risk, id);
 
             // Map.
             var result = _mapper.Map<AnalysisProduct, AnalysisRiskDto>(product);
