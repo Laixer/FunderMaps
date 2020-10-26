@@ -31,6 +31,23 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationProposalRepository = organizationProposalRepository ?? throw new ArgumentNullException(nameof(organizationProposalRepository));
         }
 
+        // GET: api/organization/stats
+        /// <summary>
+        ///     Return organization proposal statistics.
+        /// </summary>
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStatsAsync()
+        {
+            // Map.
+            var output = new DatasetStatsDto
+            {
+                Count = await _organizationProposalRepository.CountAsync(),
+            };
+
+            // Return.
+            return Ok(output);
+        }
+
         // POST: api/organization/proposal
         /// <summary>
         ///     Create organization proposal.
@@ -42,8 +59,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             var organization = _mapper.Map<OrganizationProposal>(input);
 
             // Act.
-            var id = await _organizationProposalRepository.AddAsync(organization);
-            organization = await _organizationProposalRepository.GetByIdAsync(id);
+            organization = await _organizationProposalRepository.AddGetAsync(organization);
 
             // Map.
             var output = _mapper.Map<OrganizationProposalDto>(organization);

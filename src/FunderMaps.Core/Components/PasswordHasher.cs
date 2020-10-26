@@ -16,14 +16,17 @@ namespace FunderMaps.Core.Components
         private const int saltSize = 128 / 8; // 128 bits
         private const byte formatMarker = 0x01;
 
-        private readonly IRandom _random;
+        /// <summary>
+        ///     Gets the <see cref="IRandom"/> used.
+        /// </summary>
+        public IRandom Random { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
         public PasswordHasher(IRandom random)
         {
-            _random = random;
+            Random = random;
         }
 
         // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
@@ -50,7 +53,7 @@ namespace FunderMaps.Core.Components
         private byte[] GeneratePasswordHash(string password)
         {
             byte[] salt = new byte[saltSize];
-            _random.WriteBytes(salt);
+            Random.WriteBytes(salt);
             //_rng.GetBytes(salt);
 
             using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterRounds, hashAlgorithm);
@@ -82,7 +85,7 @@ namespace FunderMaps.Core.Components
         ///     Hash plaintext paassword and return the password hash.
         /// </summary>
         /// <param name="password">Plaintext password.</param>
-        /// <returns>Returns hashed password</returns>
+        /// <returns>Returns hashed password.</returns>
         public string HashPassword(string password)
         {
             if (password == null)
@@ -101,6 +104,10 @@ namespace FunderMaps.Core.Components
         /// <summary>
         ///     Check if password is valid.
         /// </summary>
+        /// <remarks>
+        ///     If anything fails in the process this method will return as if
+        ///     the password validation failed.
+        /// </remarks>
         /// <param name="hashedPassword">Password hash.</param>
         /// <param name="providedPassword">Plaintext password to test.</param>
         /// <returns>Returns <c>true</c> if passwords match, false otherwise.</returns>
@@ -116,13 +123,22 @@ namespace FunderMaps.Core.Components
                 throw new ArgumentNullException(nameof(providedPassword));
             }
 
-            byte[] decodedHashedPassword = Convert.FromBase64String(hashedPassword);
-            if (decodedHashedPassword[0] != formatMarker)
+            try
             {
+                byte[] decodedHashedPassword = Convert.FromBase64String(hashedPassword);
+                if (decodedHashedPassword[0] != formatMarker)
+                {
+                    return false;
+                }
+
+                return VerifyHashedPassword(decodedHashedPassword, providedPassword);
+            }
+            catch (Exception)
+            {
+                // TODO: Log
+
                 return false;
             }
-
-            return VerifyHashedPassword(decodedHashedPassword, providedPassword);
         }
     }
 }

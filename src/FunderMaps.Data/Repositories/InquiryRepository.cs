@@ -105,6 +105,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    report.inquiry AS i
@@ -178,6 +180,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="InquiryFull"/>.</returns>
         public override async ValueTask<InquiryFull> GetByIdAsync(int id)
         {
+            if (TryGetEntity(id, out InquiryFull entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- Inquiry
                         i.id,
@@ -220,7 +227,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
@@ -280,7 +287,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -294,6 +301,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(entity);
 
             var sql = @"
                     UPDATE  report.inquiry AS i
@@ -333,6 +342,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(id);
 
             var sql = @"
                     UPDATE  report.inquiry AS i

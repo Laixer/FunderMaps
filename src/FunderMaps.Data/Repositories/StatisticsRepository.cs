@@ -25,12 +25,12 @@ namespace FunderMaps.Data.Repositories
             /// <summary>
             ///     Use the code.
             /// </summary>
-            NeighborhoodCode,
+            NeighborhoodCode = 0,
 
             /// <summary>
             ///     Use the id.
             /// </summary>
-            NeighborhoodId
+            NeighborhoodId = 1,
         }
 
         public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(Guid userId, string neighborhoodCode)
@@ -185,7 +185,7 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of data collected from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Percentage of data collected.</returns>
-        private async Task<double> MapDataCollectedAsync(DbContext context)
+        private static async Task<double> MapDataCollectedAsync(DbContext context)
         {
             await using var reader = await context.ReaderAsync();
             return reader.GetDouble(1);
@@ -250,7 +250,7 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of incidents from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Amount of incidents.</returns>
-        private async Task<uint> MapIncidentsAsync(DbContext context)
+        private static async Task<uint> MapIncidentsAsync(DbContext context)
         {
             await using var reader = await context.ReaderAsync();
             return reader.GetUInt(1);
@@ -260,7 +260,7 @@ namespace FunderMaps.Data.Repositories
         ///     Gets the amount of inquiries from a <paramref name="reader"/>.
         /// </summary>
         /// <returns>Amount of inquiries.</returns>
-        private async Task<uint> MapInquiriesAsync(DbContext context)
+        private static async Task<uint> MapInquiriesAsync(DbContext context)
         {
             await using var reader = await context.ReaderAsync();
             return reader.GetUInt(1);

@@ -12,7 +12,7 @@ namespace FunderMaps.Data
     /// <summary>
     ///     Database context.
     /// </summary>
-    internal class DbContext : IAsyncDisposable
+    internal class DbContext : IAsyncDisposable // TODO: Inherit from AppContext?
     {
         /// <summary>
         ///     Data provider interface.
@@ -229,6 +229,7 @@ namespace FunderMaps.Data
         /// </summary>
         public async ValueTask DisposeAsync()
         {
+            // NOTE: Cannot dispose async with nullable (?.) check.
             if (Reader != null)
             {
                 await Reader.DisposeAsync();

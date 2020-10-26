@@ -1,73 +1,73 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Inquiry type.
+    ///     Inquiry type.
     /// </summary>
     public enum InquiryType
     {
         /// <summary>
-        /// Additional research.
+        ///     Additional research.
         /// </summary>
-        AdditionalResearch,
+        AdditionalResearch = 0,
 
         /// <summary>
-        /// Monitoring.
+        ///     Monitoring.
         /// </summary>
-        Monitoring,
+        Monitoring = 1,
 
         /// <summary>
-        /// Note.
+        ///     Note.
         /// </summary>
-        Note,
+        Note = 2,
 
         /// <summary>
-        /// Quickscan.
+        ///     Quickscan.
         /// </summary>
-        Quickscan,
+        Quickscan = 3,
 
         /// <summary>
-        /// Unknown.
+        ///     Unknown.
         /// </summary>
-        Unknown,
+        Unknown = 4,
 
         /// <summary>
-        /// Demolition research.
+        ///     Demolition research.
         /// </summary>
-        DemolitionResearch,
+        DemolitionResearch = 5,
 
         /// <summary>
-        /// Second opinion.
+        ///     Second opinion.
         /// </summary>
-        SecondOpinion,
+        SecondOpinion = 6,
 
         /// <summary>
-        /// Archieve research.
+        ///     Archieve research.
         /// </summary>
-        ArchieveResearch,
+        ArchieveResearch = 7,
 
         /// <summary>
-        /// Architectural research.
+        ///     Architectural research.
         /// </summary>
-        ArchitecturalResearch,
+        ArchitecturalResearch = 8,
 
         /// <summary>
-        /// Foundation advice.
+        ///     Foundation advice.
         /// </summary>
-        FoundationAdvice,
+        FoundationAdvice = 9,
 
         /// <summary>
-        /// Inspectionpit.
+        ///     Inspectionpit.
         /// </summary>
-        Inspectionpit,
+        Inspectionpit = 10,
 
         /// <summary>
-        /// Foundation research.
+        ///     Foundation research.
         /// </summary>
-        FoundationResearch,
+        FoundationResearch = 11,
 
         /// <summary>
-        /// Groundwaterlevel research
+        ///     Groundwaterlevel research
         /// </summary>
-        GroundWaterLevelResearch,
+        GroundWaterLevelResearch = 12,
     }
 }

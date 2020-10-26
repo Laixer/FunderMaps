@@ -80,6 +80,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="id">Entity identifier.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    application.user
@@ -123,6 +125,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="User"/>.</returns>
         public override async ValueTask<User> GetByIdAsync(Guid id)
         {
+            if (TryGetEntity(id, out User entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- User
                         u.id,
@@ -143,7 +150,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -173,7 +180,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -311,7 +318,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -325,6 +332,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(entity);
 
             var sql = @"
                 UPDATE  application.user

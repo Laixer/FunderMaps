@@ -50,23 +50,5 @@ namespace FunderMaps.AspNetCore.Extensions
 
             return builder.UseMiddleware<CustomExceptionHandlerMiddleware<TException>>(Options.Create(options));
         }
-
-        /// <summary>
-        ///     Add <see cref="CustomExceptionHandlerMiddleware{FunderMapsCoreException}"/> to the builder.
-        /// </summary>
-        /// <param name="builder">The <see cref="IApplicationBuilder"/> instance.</param>
-        /// <param name="options"><see cref="CustomExceptionHandlerOptions"/></param>
-        /// <returns>The <see cref="IApplicationBuilder"/> instance.</returns>
-        public static IApplicationBuilder UseFunderMapsExceptionHandler(this IApplicationBuilder builder, Action<CustomExceptionHandlerOptions> configureOptions)
-        {
-            if (builder == null)
-            {
-                throw new ArgumentNullException(nameof(builder));
-            }
-
-            var options = new CustomExceptionHandlerOptions();
-            configureOptions(options);
-            return builder.UseCustomExceptionHandler<FunderMapsCoreException>(options);
-        }
     }
 }

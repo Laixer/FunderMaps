@@ -8,21 +8,21 @@
         /// <summary>
         ///     Area 1.
         /// </summary>
-        Area1,
+        Area1 = 0,
 
         /// <summary>
         ///     Area 2.
         /// </summary>
-        Area2,
+        Area2 = 1,
 
         /// <summary>
         ///     Area 3.
         /// </summary>
-        Area3,
+        Area3 = 2,
 
         /// <summary>
         ///     Area 4.k
         /// </summary>
-        Area4,
+        Area4 = 3,
     }
 }

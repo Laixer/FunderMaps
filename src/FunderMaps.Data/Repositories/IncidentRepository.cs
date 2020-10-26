@@ -99,6 +99,8 @@ namespace FunderMaps.Data.Repositories
         /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public override async ValueTask DeleteAsync(string id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    report.incident
@@ -164,6 +166,11 @@ namespace FunderMaps.Data.Repositories
         /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public override async ValueTask<Incident> GetByIdAsync(string id)
         {
+            if (TryGetEntity(id, out Incident entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  id,
                         foundation_type,
@@ -195,7 +202,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -239,7 +246,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -254,6 +261,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(entity);
 
             var sql = @"
                     UPDATE  report.incident

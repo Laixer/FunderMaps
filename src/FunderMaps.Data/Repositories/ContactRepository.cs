@@ -67,6 +67,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(string email)
         {
+            ResetCacheEntity(email);
+
             var sql = @"
                 DELETE
                 FROM    application.contact
@@ -101,6 +103,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Contact"/>.</returns>
         public override async ValueTask<Contact> GetByIdAsync(string email)
         {
+            if (TryGetEntity(email, out Contact entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- Contact
                         c.email,
@@ -116,7 +123,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -143,7 +150,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -157,6 +164,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(entity);
 
             var sql = @"
                     UPDATE  application.contact

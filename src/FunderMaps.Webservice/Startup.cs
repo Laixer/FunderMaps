@@ -1,11 +1,13 @@
 using AutoMapper;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Core.Services;
+using FunderMaps.Extensions;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
-using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Webservice.HealthChecks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,9 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using FunderMaps.Extensions;
-using FunderMaps.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -58,11 +58,12 @@ namespace FunderMaps.Webservice
                 .AddJwtBearer(options =>
                 {
                     options.SaveToken = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new JwtTokenValidationParameters
                     {
                         ValidIssuer = Configuration.GetJwtIssuer(),
                         ValidAudience = Configuration.GetJwtAudience(),
                         IssuerSigningKey = JwtHelper.CreateSecurityKey(Configuration.GetJwtSigningKey()), // TODO: Only for testing
+                        Valid = Configuration.GetJwtTokenExpirationInMinutes(),
                     };
                 })
                 .AddJwtBearerTokenProvider();
@@ -93,22 +94,32 @@ namespace FunderMaps.Webservice
 
             // TODO: Only in staging/dev
             // Configure Swagger.
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
+                options.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "FunderMaps Webservice",
+                        Version = "v1",
+                        Description = "FunderMaps REST API",
+                    }
+                );
+                options.DocumentFilter<BasePathFilter>();
+
                 // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                c.SchemaFilter<EnumSchemaFilter>();
+                options.SchemaFilter<EnumSchemaFilter>();
                 // FUTURE: This call is obsolete.
-                c.GeneratePolymorphicSchemas();
+                options.GeneratePolymorphicSchemas();
             });
         }
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
+        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsProduction())
             {
@@ -129,13 +140,15 @@ namespace FunderMaps.Webservice
 
             app.UseFunderMapsExceptionHandler("/oops");
 
-            // TODO: Only in staging/dev
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            if (env.IsStaging() || env.IsDevelopment())
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-                c.RoutePrefix = string.Empty;
-            });
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
+                    options.RoutePrefix = string.Empty;
+                });
+            }
 
             app.UsePathBase(new PathString("/api"));
             app.UseRouting();

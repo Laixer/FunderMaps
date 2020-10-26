@@ -1,24 +1,27 @@
 using FunderMaps.Core.Types;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
 
-namespace FunderMaps.Portal.Controllers
+namespace FunderMaps.AspNetCore.Controllers
 {
-    // FUTURE: This is copied from FunderMaps.WebApi.Controllers.OopsController maybe move to FunderMaps.AspNetCore?
     /// <summary>
     ///     API error handler.
     /// </summary>
+    [AllowAnonymous]
     public class OopsController : ControllerBase
     {
+        // GET: oops
         /// <summary>
         ///     Returns a <see cref="ProblemDetails"/> based on the <see cref="IExceptionHandlerFeature"/>
         ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
-        /// <returns><see cref="ProblemDetails"/></returns>
+        /// <returns>Instance of <see cref="ProblemDetails"/>.</returns>
         [Route("oops")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error([FromServices] IWebHostEnvironment webHostEnvironment, [FromServices] ILogger<OopsController> logger)
         {
             var error = HttpContext.Features.Get<ErrorMessage>();

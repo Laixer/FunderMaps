@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Bogus.Extensions;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 
@@ -17,7 +18,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.Note, f => f.Lorem.Text());
             RuleFor(f => f.BaseMeasurementLevel, f => f.PickRandom<BaseMeasurementLevel>());
             RuleFor(f => f.BuiltYear, f => f.Date.Recent());
-            RuleFor(f => f.Substructure, f => f.PickRandom<Substructure>());
+            RuleFor(f => f.Substructure, f => f.PickRandom<Substructure>().OrNull(f));
             RuleFor(f => f.Cpt, f => f.Commerce.Product());
             RuleFor(f => f.MonitoringWell, f => f.Commerce.Product());
             RuleFor(f => f.GroundwaterLevelTemp, f => f.Random.Decimal(-100, 200));

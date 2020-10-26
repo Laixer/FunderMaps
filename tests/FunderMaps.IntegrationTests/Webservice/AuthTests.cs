@@ -53,8 +53,9 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
-            Assert.True(returnObject.TokenValidity > 0);
+            Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
         [Fact]
@@ -71,8 +72,9 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
-            Assert.True(returnObject.TokenValidity > 0);
+            Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
         [Fact]

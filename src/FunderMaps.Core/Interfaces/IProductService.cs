@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using System;
 using System.Collections.Generic;
@@ -21,13 +20,20 @@ namespace FunderMaps.Webservice.Abstractions.Services
         ValueTask<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id);
 
         /// <summary>
-        ///  Gets an analysis product by external building id.
+        ///     Gets an analysis product by external building id.
         /// </summary>
         /// <param name="userId">User identifier.</param>
         /// <param name="productType">Product type.</param>
         /// <param name="externalId">External building id.</param>
-        /// <param name="externalSource">External data source.</param>
-        ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId, ExternalDataSource externalSource);
+        ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId);
+
+        /// <summary>
+        ///     Gets an analysis product by external address id.
+        /// </summary>
+        /// <param name="userId">User identifier.</param>
+        /// <param name="productType">Product type.</param>
+        /// <param name="externalId">External address id.</param>
+        ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId);
 
         /// <summary>
         ///     Gets a collection of analysis products by a query.

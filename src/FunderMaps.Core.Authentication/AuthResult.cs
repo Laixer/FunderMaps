@@ -8,23 +8,23 @@
         /// <summary>
         ///     Successful operation.
         /// </summary>
-        Success,
+        Success = 0,
 
         /// <summary>
         ///     Failed operation.
         /// </summary>
-        Failed,
+        Failed = 1,
 
         /// <summary>
         ///     Operation failed because the
         ///     user was locked out.
         /// </summary>
-        LockedOut,
+        LockedOut = 2,
 
         /// <summary>
         ///     Operation failed because the user
         ///     is not allowed to sign-in.
         /// </summary>
-        NotAllowed,
+        NotAllowed = 3,
     }
 }

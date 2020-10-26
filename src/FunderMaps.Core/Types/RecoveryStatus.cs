@@ -1,23 +1,23 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Recovery status.
+    ///     Recovery status.
     /// </summary>
     public enum RecoveryStatus
     {
         /// <summary>
-        /// Planned.
+        ///     Planned.
         /// </summary>
-        Planned,
+        Planned = 0,
 
         /// <summary>
-        /// Requested.
+        ///     Requested.
         /// </summary>
-        Requested,
+        Requested = 1,
 
         /// <summary>
-        /// Executed.
+        ///     Executed.
         /// </summary>
-        Executed
+        Executed = 2,
     }
 }

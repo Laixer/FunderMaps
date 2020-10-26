@@ -1,33 +1,33 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Represents the foundation risk.
+    ///     Represents the foundation risk.
     /// </summary>
     public enum FoundationRisk
     {
         /// <summary>
-        /// Risk level A.
+        ///     Risk level A.
         /// </summary>
-        A,
+        A = 0,
 
         /// <summary>
-        /// Risk level B.
+        ///     Risk level B.
         /// </summary>
-        B,
+        B = 1,
 
         /// <summary>
-        /// Risk level C.
+        ///     Risk level C.
         /// </summary>
-        C,
+        C = 2,
 
         /// <summary>
-        /// Risk level D.
+        ///     Risk level D.
         /// </summary>
-        D,
+        D = 3,
 
         /// <summary>
-        /// Risk level E.
+        ///     Risk level E.
         /// </summary>
-        E
+        E = 4,
     }
 }

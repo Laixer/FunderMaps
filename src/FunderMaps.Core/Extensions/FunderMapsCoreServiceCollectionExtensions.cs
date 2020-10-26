@@ -58,6 +58,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddSingleton<IBlobStorageService, NullBlobStorageService>();
             services.TryAddSingleton<INotificationService, NullNotificationService>();
 
+            // The application core (as well as many other components) depends upon the ability to cache
+            // objects to memory. The memory cache may have already been registered with the container
+            // by some other package, however we cannot expect this to be.
+            services.AddMemoryCache();
+
             return services;
         }
     }

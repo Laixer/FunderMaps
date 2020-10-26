@@ -27,10 +27,8 @@ namespace FunderMaps.Data.Repositories
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
         /// <param name="externalId">External building id.</param>
-        /// <param name="externalSource">External data source</param>
-        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId, ExternalDataSource externalSource)
+        public async Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId)
         {
-            userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
 
             var sql = @"
@@ -50,16 +48,78 @@ namespace FunderMaps.Data.Repositories
                         ac.reliability,
                         ac.neighborhood_id
                 FROM    data.analysis_product_complete AS ac
-                WHERE   ac.external_id = @external_id
-                AND     ac.external_source = @external_source
-                AND     application.is_geometry_in_fence(@user_id, ac.geom)
-                LIMIT   1";
+                WHERE   ac.external_id = @external_id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, ac.geom)";
+            }
+
+            sql += $"\r\n LIMIT 1";
 
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("external_id", externalId);
-            context.AddParameterWithValue("external_source", externalSource);
-            context.AddParameterWithValue("user_id", userId);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
+
+            await using var reader = await context.ReaderAsync();
+
+            return MapFromReader(reader);
+        }
+
+        /// <summary>
+        ///     Gets an analysis product by its external address id and source.
+        /// </summary>
+        /// <remarks>
+        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
+        ///     is thrown. Check this condition before calling this function.
+        /// </remarks>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="externalId">External address id.</param>
+        public async Task<AnalysisProduct> GetByAddressExternalIdAsync(Guid userId, string externalId)
+        {
+            externalId.ThrowIfNullOrEmpty();
+
+            var sql = @"
+                SELECT  -- AnalysisProduct
+                        apcb.id,
+                        apcb.external_id,
+                        apcb.external_source,
+                        apcb.foundation_type,
+                        apcb.groundwater_level,
+                        apcb.foundation_risk,
+                        apcb.construction_year,
+                        apcb.building_height,
+                        apcb.ground_level,
+                        apcb.restoration_costs,
+                        apcb.dewatering_depth,
+                        apcb.drystand,
+                        apcb.reliability,
+                        apcb.neighborhood_id
+                FROM    data.analysis_product_complete_address AS apcb
+                WHERE   apcb.address_external_id = @external_id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, apcb.geom)";
+            }
+
+            sql += $"\r\n LIMIT 1";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("external_id", externalId);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
 
             await using var reader = await context.ReaderAsync();
 

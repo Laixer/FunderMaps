@@ -7,6 +7,9 @@ using System.Security.Claims;
 
 namespace FunderMaps.Core.Authentication
 {
+    /// <summary>
+    ///     Provides APIs for principal binder and unbinders.
+    /// </summary>
     public static class PrincipalProvider
     {
         /// <summary>

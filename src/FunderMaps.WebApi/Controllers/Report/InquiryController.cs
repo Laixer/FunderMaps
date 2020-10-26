@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
+using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -50,7 +50,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Return inquiry statistics.
         /// </summary>
         [HttpGet("stats")]
-        public async Task<IActionResult> GetCountAsync()
+        public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
             var output = new DatasetStatsDto
@@ -121,15 +121,9 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Upload document to the backstore.
         /// </summary>
         [HttpPost("upload-document")]
-        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
+        [RequestSizeLimit(128 * 1024 * 1024)]
+        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
         {
-            // FUTURE: Replace with validator?
-            var virtualFile = new ApplicationFileWrapper(input, Core.IO.File.AllowedFileMimes);
-            if (!virtualFile.IsValid)
-            {
-                throw new ArgumentException(); // TODO
-            }
-
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(
@@ -254,7 +248,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set inquiry status to done by id.
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id, StatusChangeDto input)
+        public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
             var inquiry = await _inquiryRepository.GetByIdAsync(id);
