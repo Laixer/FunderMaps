@@ -302,7 +302,7 @@ namespace FunderMaps.Data.Repositories
                 DeleteDate = reader.GetSafeDateTime(offset + 6),
                 BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(offset + 7),
                 BuiltYear = reader.GetDateTime(offset + 8),
-                Substructure = reader.GetFieldValue<Substructure>(offset + 9),
+                Substructure = reader.GetFieldValue<Substructure?>(offset + 9),
                 OverallQuality = reader.GetFieldValue<FoundationQuality?>(offset + 10),
                 WoodQuality = reader.GetFieldValue<WoodQuality?>(offset + 11),
                 ConstructionQuality = reader.GetFieldValue<Quality?>(offset + 12),

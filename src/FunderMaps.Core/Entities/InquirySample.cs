@@ -59,7 +59,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Substructure.
         /// </summary>
-        public Substructure Substructure { get; set; }
+        public Substructure? Substructure { get; set; }
 
         //
         // Surrounding
