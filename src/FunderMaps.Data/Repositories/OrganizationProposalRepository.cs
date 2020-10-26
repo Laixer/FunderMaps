@@ -63,6 +63,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    application.organization_proposal
@@ -90,6 +92,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="OrganizationProposal"/>.</returns>
         public override async ValueTask<OrganizationProposal> GetByIdAsync(Guid id)
         {
+            if (TryGetEntity(id, out OrganizationProposal entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- OrganizationProposal
                         op.id,
@@ -105,7 +112,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -130,7 +137,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -154,7 +161,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -180,7 +187,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 

@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
                 injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
                 // TODO: 
-                // injectorBase.DbContext = serviceProvider.GetRequiredService<DbContextFactory>()
+                // injectorBase.DbContextFactory = serviceProvider.GetRequiredService<DbContextFactory>()
                 return repository;
             });
 

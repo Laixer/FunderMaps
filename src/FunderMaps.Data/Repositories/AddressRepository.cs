@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -16,6 +17,14 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
     {
+        protected override void SetCacheItem(KeyPair key, Address value, MemoryCacheEntryOptions options)
+        {
+            options.SlidingExpiration *= 2;
+            options.AbsoluteExpirationRelativeToNow *= 2;
+
+            base.SetCacheItem(key, value, options);
+        }
+
         public static void MapToWriter(DbContext context, Address entity)
         {
             context.AddParameterWithValue("building_number", entity.BuildingNumber);
@@ -138,7 +147,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader, fullMap: true);
+            return CacheEntity(MapFromReader(reader, fullMap: true));
         }
 
         /// <summary>
@@ -148,6 +157,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Address"/>.</returns>
         public override async ValueTask<Address> GetByIdAsync(string id)
         {
+            if (TryGetEntity(id, out Address entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  -- Address
                         a.id,
@@ -180,7 +194,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader, fullMap: true);
+            return CacheEntity(MapFromReader(reader, fullMap: true));
         }
 
         /// <summary>
@@ -227,7 +241,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader, fullMap: true);
+                yield return CacheEntity(MapFromReader(reader, fullMap: true));
             }
         }
 
@@ -272,7 +286,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader, fullMap: true);
+                yield return CacheEntity(MapFromReader(reader, fullMap: true));
             }
         }
 
@@ -286,6 +300,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(entity);
 
             var sql = @"
                     UPDATE  geocoder.address

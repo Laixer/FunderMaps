@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using FunderMaps.Core.Identity;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Core
 {
+    // TODO:
+    // - Culture
     /// <summary>
     ///     Application context.
     /// </summary>
@@ -24,6 +27,11 @@ namespace FunderMaps.Core
         ///     Gets or sets a key/value collection that can be used to share data within this scope.
         /// </summary>
         public Dictionary<object, object> Items { get; set; }
+
+        /// <summary>
+        ///     Memory cache.
+        /// </summary>
+        public IMemoryCache Cache { get; set; }
 
         /// <summary>
         ///     User identity.
@@ -53,8 +61,5 @@ namespace FunderMaps.Core
         /// </summary>
         /// <remarks>If <see cref="User"/> exists, then <see cref="Tenant"/> exists.</remarks>
         public bool HasIdentity => User != null;
-
-        // TODO:
-        // - Culture
     }
 }

@@ -8,6 +8,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -80,23 +81,25 @@ namespace FunderMaps.AspNetCore
             });
         }
 
+        // TODO: Move this into a singleton service.
         private Core.AppContext AppContextFactory(IServiceProvider serviceProvider)
         {
             var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            if (httpContextAccessor.HttpContext != null)
+            if (httpContextAccessor.HttpContext is null)
             {
-                HttpContext httpContext = httpContextAccessor.HttpContext;
-                return new Core.AppContext
-                {
-                    CancellationToken = httpContext.RequestAborted,
-                    Items = new System.Collections.Generic.Dictionary<object, object>(httpContext.Items),
-                    ServiceProvider = httpContext.RequestServices,
-                    User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
-                    Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
-                };
+                return new Core.AppContext();
             }
 
-            return new Core.AppContext();
+            HttpContext httpContext = httpContextAccessor.HttpContext;
+            return new Core.AppContext
+            {
+                CancellationToken = httpContext.RequestAborted,
+                Items = new System.Collections.Generic.Dictionary<object, object>(httpContext.Items),
+                Cache = httpContext.RequestServices.GetRequiredService<IMemoryCache>(),
+                ServiceProvider = httpContext.RequestServices,
+                User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
+                Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
+            };
         }
 
         // FUTURE: Create a service replace method from this stub.

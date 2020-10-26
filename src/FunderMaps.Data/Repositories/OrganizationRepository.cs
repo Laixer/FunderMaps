@@ -2,7 +2,6 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -86,6 +85,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    application.organization
@@ -161,6 +162,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Organization"/>.</returns>
         public override async ValueTask<Organization> GetByIdAsync(Guid id)
         {
+            if (TryGetEntity(id, out Organization entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  id,
                         name,
@@ -197,7 +203,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -243,7 +249,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -289,7 +295,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         public async ValueTask<string> GetFenceAsync(Organization entity)
@@ -354,7 +360,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -368,6 +374,8 @@ namespace FunderMaps.Data.Repositories
             {
                 throw new ArgumentNullException(nameof(entity));
             }
+
+            ResetCacheEntity(entity);
 
             var sql = @"
                 UPDATE  application.organization
