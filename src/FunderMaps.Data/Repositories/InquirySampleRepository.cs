@@ -60,7 +60,7 @@ namespace FunderMaps.Data.Repositories
                     groundwater_level_net,
                     foundation_type,
                     enforcement_term,
-                    recovery_adviced,
+                    recovery_advised,
                     damage_cause,
                     damage_characteristics,
                     construction_pile,
@@ -121,7 +121,7 @@ namespace FunderMaps.Data.Repositories
                     @groundwater_level_net,
                     @foundation_type,
                     @enforcement_term,
-                    @recovery_adviced,
+                    @recovery_advised,
                     @damage_cause,
                     @damage_characteristics,
                     @construction_pile,
@@ -259,7 +259,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("groundwater_level_net", entity.GroundwaterLevelNet);
             context.AddParameterWithValue("foundation_type", entity.FoundationType);
             context.AddParameterWithValue("enforcement_term", entity.EnforcementTerm);
-            context.AddParameterWithValue("recovery_adviced", entity.RecoveryAdvised);
+            context.AddParameterWithValue("recovery_advised", entity.RecoveryAdvised);
             context.AddParameterWithValue("damage_cause", entity.DamageCause);
             context.AddParameterWithValue("damage_characteristics", entity.DamageCharacteristics);
             context.AddParameterWithValue("construction_pile", entity.ConstructionPile);
@@ -418,7 +418,7 @@ namespace FunderMaps.Data.Repositories
                         -- Foundation
                         s.foundation_type,
                         s.enforcement_term,
-                        s.recovery_adviced,
+                        s.recovery_advised,
                         s.damage_cause,
                         s.damage_characteristics,
                         s.construction_pile,
@@ -528,7 +528,7 @@ namespace FunderMaps.Data.Repositories
                         -- Foundation
                         s.foundation_type,
                         s.enforcement_term,
-                        s.recovery_adviced,
+                        s.recovery_advised,
                         s.damage_cause,
                         s.damage_characteristics,
                         s.construction_pile,
@@ -633,7 +633,7 @@ namespace FunderMaps.Data.Repositories
                         -- Foundation
                         s.foundation_type,
                         s.enforcement_term,
-                        s.recovery_adviced,
+                        s.recovery_advised,
                         s.damage_cause,
                         s.damage_characteristics,
                         s.construction_pile,
@@ -734,7 +734,7 @@ namespace FunderMaps.Data.Repositories
                             -- Foundation
                             foundation_type = @foundation_type,
                             enforcement_term = @enforcement_term,
-                            recovery_adviced = @recovery_adviced,
+                            recovery_advised = @recovery_advised,
                             damage_cause = @damage_cause,
                             damage_characteristics = @damage_characteristics,
                             construction_pile = @construction_pile,
