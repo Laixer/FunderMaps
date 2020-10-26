@@ -55,7 +55,7 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Build entity hash key.
         /// </summary>
-        protected KeyPair EntityHashKey(object key)
+        protected static KeyPair EntityHashKey(object key)
             => new KeyPair
             {
                 EntityKey = typeof(TEntity).GetHashCode(),
