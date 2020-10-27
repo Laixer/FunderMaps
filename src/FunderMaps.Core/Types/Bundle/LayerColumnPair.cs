@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Core.Types.BundleLayers
+namespace FunderMaps.Core.Types.MapLayer
 {
     /// <summary>
     ///     Wrapper around a layer and it's columns.

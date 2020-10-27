@@ -1,6 +1,5 @@
-﻿using FunderMaps.Core.Types.BundleLayers;
+﻿using FunderMaps.Core.Types.MapLayer;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -68,5 +67,10 @@ namespace FunderMaps.Core.Entities
         ///     Configuration of the selected layers.
         /// </summary>
         public LayerConfiguration LayerConfiguration { get; set; }
+
+        /// <summary>
+        ///     Indicates the status of this bundle.
+        /// </summary>
+        public BundleStatus BundleStatus { get; set; }
     }
 }
