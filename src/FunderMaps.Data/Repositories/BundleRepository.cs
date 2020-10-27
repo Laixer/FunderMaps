@@ -1,7 +1,8 @@
 ﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types.BundleLayers;
+using FunderMaps.Core.Types.MapLayer;
 using FunderMaps.Data.Extensions;
 using FunderMaps.Data.Providers;
 using System;
@@ -66,34 +67,6 @@ namespace FunderMaps.Data.Repositories
         public ValueTask DeleteAsync(Guid id) => throw new NotImplementedException();
 
         /// <summary>
-        ///     Forces a bundles version id to be refreshed. This should be used
-        ///     to force bundle recalculations without messing up versions.
-        /// </summary>
-        /// <param name="bundleId">The bundle id.</param>
-        /// <returns>The new version id.</returns>
-        public async Task<uint> ForceUpdateBundleVersionAsync(Guid bundleId)
-        {
-            if (bundleId == null || bundleId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(bundleId));
-            }
-
-            var sql = @"
-                    UPDATE      maplayer.bundle
-                    SET         version_id = version_id + 1
-                    WHERE       id = @id
-                    RETURNING   version_id";
-
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-
-            cmd.AddParameterWithValue("id", bundleId);
-
-            var result = (int) await cmd.ExecuteScalarEnsureRowAsync();
-            return Convert.ToUInt32(result);
-        }
-
-        /// <summary>
         ///     Gets a <see cref="Bundle"/> by its id.
         /// </summary>
         /// <param name="id">Internal bundle id.</param>
@@ -114,7 +87,8 @@ namespace FunderMaps.Data.Repositories
                         delete_date,
                         user_id,
                         layer_configuration,
-                        version_id
+                        version_id,
+                        bundle_status
                 FROM    maplayer.bundle
                 WHERE   id = @id";
 
@@ -150,7 +124,8 @@ namespace FunderMaps.Data.Repositories
                         delete_date,
                         user_id,
                         layer_configuration,
-                        version_id
+                        version_id,
+                        bundle_status
                 FROM    maplayer.bundle";
 
             ConstructNavigation(ref sql, navigation);
@@ -191,7 +166,8 @@ namespace FunderMaps.Data.Repositories
                         delete_date,
                         user_id,
                         layer_configuration,
-                        version_id
+                        version_id,
+                        bundle_status
                 FROM    maplayer.bundle
                 WHERE   organization_id = @organization_id";
 
@@ -207,6 +183,26 @@ namespace FunderMaps.Data.Repositories
             {
                 yield return MapFromReader(reader);
             }
+        }
+
+        /// <summary>
+        ///     Marks a bundle as processing.
+        /// </summary>
+        /// <param name="bundleId">The bundle id to mark.</param>
+        public Task MarkAsProcessingAsync(Guid bundleId)
+        {
+            bundleId.ThrowIfNullOrEmpty();
+            return MarkAsStatusAsync(bundleId, BundleStatus.Processing);
+        }
+
+        /// <summary>
+        ///     Marks a bundle as up to date.
+        /// </summary>
+        /// <param name="bundleId">The bundle id to mark.</param>
+        public Task MarkAsUpToDateAsync(Guid bundleId)
+        {
+            bundleId.ThrowIfNullOrEmpty();
+            return MarkAsStatusAsync(bundleId, BundleStatus.UpToDate);
         }
 
         /// <summary>
@@ -234,8 +230,6 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("id", entity.Id);
             MapToWriter(cmd, entity);
 
-            var ser = JsonSerializer.Serialize(entity.LayerConfiguration);
-
             await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
@@ -255,7 +249,8 @@ namespace FunderMaps.Data.Repositories
                 DeleteDate = reader.GetSafeDateTime(5),
                 UserId = reader.GetGuid(6),
                 LayerConfiguration = reader.GetFieldValue<LayerConfiguration>(7),
-                VersionId = reader.GetUInt(8) // TODO Is uint correct? DB = int4
+                VersionId = reader.GetUInt(8), // TODO Is uint correct? DB = int4
+                BundleStatus = reader.GetFieldValue<BundleStatus>(9)
             };
 
         /// <summary>
@@ -269,6 +264,28 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("name", entity.Name);
             cmd.AddParameterWithValue("user_id", entity.UserId);
             cmd.AddParameterWithValue("layer_configuration", JsonSerializer.Serialize(entity.LayerConfiguration));
+        }
+
+        /// <summary>
+        ///     Marks a bundle with a given status.
+        /// </summary>
+        /// <param name="bundleId">The bundle id to mark.</param>
+        /// <param name="bundleStatus">The new bundle status.</param>
+        private async Task MarkAsStatusAsync(Guid bundleId, BundleStatus bundleStatus)
+        {
+            var sql = @"
+                    UPDATE  maplayer.bundle
+                    SET     bundle_status = @bundle_status
+                    WHERE   id = @id";
+
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            cmd.AddParameterWithValue("id", bundleId);
+            cmd.AddParameterWithValue("bundle_status", bundleStatus);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
     }
 }

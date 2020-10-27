@@ -19,11 +19,15 @@ namespace FunderMaps.Core.Interfaces.Repositories
         IAsyncEnumerable<Bundle> GetAllByOrganizationAsync(Guid organizationId, INavigation navigation);
 
         /// <summary>
-        ///     Forces a bundles version id to be refreshed. This should be used
-        ///     to force bundle recalculations without messing up versions.
+        ///     Marks a bundle as processing.
         /// </summary>
-        /// <param name="bundleId">The bundle id.</param>
-        /// <returns>The new version id.</returns>
-        Task<uint> ForceUpdateBundleVersionAsync(Guid bundleId);
+        /// <param name="bundleId">The bundle id to mark.</param>
+        Task MarkAsProcessingAsync(Guid bundleId);
+
+        /// <summary>
+        ///     Marks a bundle as up to date.
+        /// </summary>
+        /// <param name="bundleId">The bundle id to mark.</param>
+        Task MarkAsUpToDateAsync(Guid bundleId);
     }
 }
