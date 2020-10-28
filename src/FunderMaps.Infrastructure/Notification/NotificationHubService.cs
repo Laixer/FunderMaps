@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Notification
 {
     // FUTURE: Move this to the core when rebuilding.
@@ -43,3 +44,4 @@ namespace FunderMaps.Infrastructure.Notification
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

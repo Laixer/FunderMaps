@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Email
 {
     // FUTURE: Catch ex.
@@ -55,7 +56,7 @@ namespace FunderMaps.Infrastructure.Email
             return message;
         }
 
-        protected MimeMessage BuildBody(MimeMessage message, EmailMessage emailMessage)
+        protected static MimeMessage BuildBody(MimeMessage message, EmailMessage emailMessage)
         {
             message.Body = new TextPart(TextFormat.Html)
             {
@@ -112,3 +113,4 @@ namespace FunderMaps.Infrastructure.Email
         #endregion Disposable Pattern
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated
