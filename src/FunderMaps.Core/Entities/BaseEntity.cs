@@ -76,6 +76,13 @@ namespace FunderMaps.Core.Entities
         #region Operator Overloading
 
         /// <summary>
+        ///     Serves as the default hash function.
+        /// </summary>
+        /// <returns>A hash code for the current object.</returns>
+        public override int GetHashCode()
+            => base.GetHashCode();
+
+        /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
         /// <param name="obj">An object to compare with this object.</param>
