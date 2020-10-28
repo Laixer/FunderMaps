@@ -31,6 +31,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             _projectUseCase = projectUseCase ?? throw new ArgumentNullException(nameof(projectUseCase));
         }
 
+        // GET: api/project/{id}
+        /// <summary>
+        ///     Return project by id.
+        /// </summary>
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -39,6 +43,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(_mapper.Map<ProjectDto>(project));
         }
 
+        // GET: api/project
+        /// <summary>
+        ///     Return all projects.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
@@ -52,6 +60,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(result);
         }
 
+        // POST: api/project
+        /// <summary>
+        ///     Create project.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] ProjectDto input)
         {
@@ -65,6 +77,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(_mapper.Map<ProjectDto>(project));
         }
 
+        // PUT: api/project
+        /// <summary>
+        ///     Create project.
+        /// </summary>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] ProjectDto input)
         {
@@ -81,6 +97,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
+        // DELETE: api/project/{id}
+        /// <summary>
+        ///     Delete project by id.
+        /// </summary>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {

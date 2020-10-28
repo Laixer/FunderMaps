@@ -29,6 +29,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             _recoveryUseCase = recoveryUseCase ?? throw new ArgumentNullException(nameof(recoveryUseCase));
         }
 
+        // GET: api/recovery/{id}/sample
+        /// <summary>
+        ///     Return recovery sample by id.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -37,6 +41,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
 
+        // GET: api/recovery/{id}/sample
+        /// <summary>
+        ///     Return all recovery samples.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
@@ -50,6 +58,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(result);
         }
 
+        // POST: api/recovery/{id}/sample/{id}
+        /// <summary>
+        ///     Create recovery sample.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateAsync(int recoveryId, [FromBody] RecoverySampleDto input)
         {
@@ -66,6 +78,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(_mapper.Map<RecoverySampleDto>(recoverySample));
         }
 
+        // PUT: api/recovery/{id}/sample/{id}
+        /// <summary>
+        ///     Update recovery sample by id.
+        /// </summary>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDto input)
         {
@@ -83,6 +99,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
+        // DELETE: api/recovery/{id}/sample/{id}
+        /// <summary>
+        ///     Delete recovery sample by id.
+        /// </summary>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {

@@ -126,7 +126,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
         // PUT: api/inquiry/{id}/sample/{id}
         /// <summary>
-        ///     Update inquiry by id.
+        ///     Update inquiry sample by id.
         /// </summary>
         /// <remarks>
         ///     Transition <see cref="Inquiry"/> into state pending if a <see cref="InquirySample"/>

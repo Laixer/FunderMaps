@@ -35,7 +35,7 @@ namespace FunderMaps.Testing.Repositories
             return DataStore.ItemList.Where(s => s.ExternalId == externalId).FirstOrDefault() ?? throw new EntityNotFoundException();
         }
 
-        public async Task<AnalysisProduct> GetByAddressExternalIdAsync(Guid userId, string externalId)
+        public Task<AnalysisProduct> GetByAddressExternalIdAsync(Guid userId, string externalId)
         {
             throw new NotImplementedException();
         }
