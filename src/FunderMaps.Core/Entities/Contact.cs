@@ -1,12 +1,11 @@
-﻿using FunderMaps.Core.Entities.Application;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
     /// <summary>
     ///     Contact information.
     /// </summary>
-    public sealed class Contact : IdentifiableEntity<Contact, string>, IApplicationEntity<Contact>
+    public sealed class Contact : IdentifiableEntity<Contact, string>
     {
         /// <summary>
         ///     Create new instance.
