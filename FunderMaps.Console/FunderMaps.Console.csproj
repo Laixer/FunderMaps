@@ -23,7 +23,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.8" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.8" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.Linq.Async" Version="4.1.1" />
   </ItemGroup>
 
@@ -31,6 +33,10 @@
     <ProjectReference Include="..\src\FunderMaps.Core\FunderMaps.Core.csproj" />
     <ProjectReference Include="..\src\FunderMaps.Data\FunderMaps.Data.csproj" />
     <ProjectReference Include="..\src\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Workers\" />
   </ItemGroup>
 
 </Project>

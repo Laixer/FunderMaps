@@ -35,11 +35,12 @@ namespace FunderMaps.Console
             var parsedCommandText = commandText.Replace("\"", "\\\"");
 
             // TODO This is hardcoded for linux.
-            var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{parsedCommandText}\"")
+            var processInfo = new ProcessStartInfo("/bin/bash", $"-c \"{parsedCommandText}\"") // TODO > err?
             {
                 CreateNoWindow = true,
-                UseShellExecute = false,
+                UseShellExecute = false, // TODO What does this imply?
 
+                // TODO Missing messages
                 RedirectStandardError = true,
                 RedirectStandardOutput = true
             };
@@ -69,7 +70,7 @@ namespace FunderMaps.Console
             if (process.ExitCode != 0)
             {
                 System.Console.WriteLine("Process failed, error log:");
-                System.Console.WriteLine(sbError.ToString());
+                System.Console.WriteLine(sbError.ToString()); // TODO This doesnt print anything, bash eats the errors
                 System.Console.WriteLine("End of error log");
                 throw new BundleExportException($"Process failed for {commandText}");
             }

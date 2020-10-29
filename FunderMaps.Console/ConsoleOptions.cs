@@ -5,8 +5,15 @@
     /// </summary>
     public sealed class ConsoleOptions
     {
-        // TODO We already have these properties in the connection string, might be a bit too double?
+        /// <summary>
+        ///     Defines the maximum items in our queue.
+        /// </summary>
+        /// <remarks>
+        ///     Defaults to 128.
+        /// </remarks>
+        public uint MaxQueueSize { get; set; } = 128;
 
+        // TODO We already have these properties in the connection string, might be a bit too double?
         /// <summary>
         ///     The database host address.
         /// </summary>

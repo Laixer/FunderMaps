@@ -4,7 +4,6 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.Data;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Console.Services
+namespace FunderMaps.Console.BundleServices
 {
     ///
-    /// TODO 
+    /// TODO:
     ///     - We need to build mvt from gpkg because we can't add specific layers to an
     ///       mvt file command. We also can't enforce the geofence.
     ///     - Build gpkg first
@@ -46,46 +45,13 @@ namespace FunderMaps.Console.Services
         }
 
         /// <summary>
-        ///     Builds all existing bundles.
-        /// </summary>
-        /// <param name="formats">The desired export formats.</param>
-        /// <param name="force">Force export override for all.</param>
-        /// <returns>See <see cref="Task"/>.</returns>
-        public async Task BuildAllBundlesAsync(IList<GeometryExportFormat> formats, bool force = false)
-        {
-            if (formats == null || !formats.Any())
-            {
-                throw new ArgumentNullException(nameof(formats));
-            }
-
-            await foreach (var bundle in _bundleRepository.ListAllAsync(Navigation.All))
-            {
-                if (force)
-                {
-                    await ForceBuildBundleAsync(bundle.Id, formats);
-                }
-                else
-                {
-                    await BuildBundleAsync(bundle.Id, formats);
-                }
-            }
-        }
-
-        // TODO If we have GPKG exported but not selected on the SAME version id,
-        // our job will fail because we expect the GPKG to be on the local drive.
-        // This is a bug! Either always recompute or download the GPKG.
-
-        // TODO Maybe this is too complex with the missing formats.
-        /// <summary>
         ///     Builds a single bundle into it's most up-to-date desired formats.
         /// </summary>
         /// <remarks>
-        ///     If the currently exported version id is equal to the bundles stored
-        ///     version id in the data store, this function simply returns.
+        ///     This will always recompute all formats.
         /// </remarks>
         /// <param name="bundleId">The bundle id.</param>
         /// <param name="formats">The formats to export the bundle to.</param>
-        /// <returns></returns>
         public async Task BuildBundleAsync(Guid bundleId, IList<GeometryExportFormat> formats)
         {
             if (bundleId == null || bundleId == Guid.Empty)
@@ -110,53 +76,10 @@ namespace FunderMaps.Console.Services
             var bundle = await _bundleRepository.GetByIdAsync(bundleId);
             var layers = await _layerRepository.ListAllFromBundleIdAsync(bundleId).ToListAsync();
 
-            var currentExportedVersion = await _bundleStorageService.GetCurrentExportedVersionAsync(bundle.OrganizationId, bundleId);
-            var currentExportedFormats = (currentExportedVersion == null)
-                ? new List<GeometryExportFormat>()
-                : await _bundleStorageService.GetExportedFormatsAsync(bundle.OrganizationId, bundleId, (uint)currentExportedVersion);
-
-            // Compare the exported formats and the desired formats.
-            var missingFormats = formats.Except(currentExportedFormats);
-
-            if (currentExportedVersion == bundle.VersionId)
-            {
-                // If our exported version is equal to our current version and no
-                // formats are missing, we will always be up to date.
-                if (!missingFormats.Any())
-                {
-                    return;
-                }
-
-                await ExportFormatsAsync(bundle, layers, missingFormats.ToList());
-            }
-            else
-            {
-                await ExportFormatsAsync(bundle, layers, formats.ToList());
-
-                // TODO Do we want to remove any old data?
-                // TODO Do we want to schedule this?
-                if (currentExportedVersion != null)
-                {
-                    await _bundleStorageService.CleanupBundleVersionAsync(bundleId, (uint)currentExportedVersion);
-                }
-            }
-
-            // TODO Clean up? foreach format rm?
+            ExportFormats(bundle, layers, formats);
         }
 
-        /// <summary>
-        ///     This will force a version id refresh and will then call
-        ///     <see cref="BuildBundleAsync(Guid, IList{GeometryExportFormat})"/>.
-        /// </summary>
-        /// <param name="bundleId">The bundle id.</param>
-        /// <param name="formats">The desired export formats.</param>
-        /// <returns>See <see cref="Task"/>.</returns>
-        public async Task ForceBuildBundleAsync(Guid bundleId, IList<GeometryExportFormat> formats)
-        {
-            await _bundleRepository.ForceUpdateBundleVersionAsync(bundleId);
-            await BuildBundleAsync(bundleId, formats);
-        }
-
+        // TODO Parallel?
         /// <summary>
         ///     Exports a bundle to a list of <see cref="GeometryExportFormat"/>s.
         /// </summary>
@@ -168,18 +91,18 @@ namespace FunderMaps.Console.Services
         /// <param name="layers">The bundles layers.</param>
         /// <param name="formats">All desired export formats.</param>
         /// <returns>See <see cref="Task"/>.</returns>
-        private async Task ExportFormatsAsync(Bundle bundle, IEnumerable<Layer> layers, IList<GeometryExportFormat> formats)
+        private void ExportFormats(Bundle bundle, IEnumerable<Layer> layers, IList<GeometryExportFormat> formats)
         {
             // Always start with the .gpkg if we have it
             if (formats.Contains(GeometryExportFormat.Gpkg))
             {
-                await ExportAsync(bundle, layers, GeometryExportFormat.Gpkg);
+                Export(bundle, layers, GeometryExportFormat.Gpkg);
                 formats.Remove(GeometryExportFormat.Gpkg);
             }
 
             foreach (var format in formats)
             {
-                await ExportAsync(bundle, layers, format);
+                Export(bundle, layers, format);
             }
         }
 
@@ -190,13 +113,22 @@ namespace FunderMaps.Console.Services
         /// <param name="layers">The bundles layers.</param>
         /// <param name="format">The desired export format.</param>
         /// <returns>See <see cref="Task"/>.</returns>
-        private Task ExportAsync(Bundle bundle, IEnumerable<Layer> layers, GeometryExportFormat format)
-            => format switch
+        private void Export(Bundle bundle, IEnumerable<Layer> layers, GeometryExportFormat format)
+        {
+            switch (format)
             {
-                GeometryExportFormat.Gpkg => ExportGpkgAsync(bundle, layers.ToList()),
-                GeometryExportFormat.Mvt => ExportMvtAsync(bundle, layers),
-                _ => throw new InvalidOperationException(nameof(format))
-            };
+                case GeometryExportFormat.Mvt:
+                    ExportMvtFromExistingGpkg(bundle);
+                    break;
+                case GeometryExportFormat.Gpkg:
+                    ExportGpkg(bundle, layers.ToList());
+                    break;
+                case GeometryExportFormat.Shp:
+                    throw new NotImplementedException(nameof(format));
+                default:
+                    throw new InvalidOperationException(nameof(format));
+            }
+        }
 
         /// <summary>
         ///     Exports a bundle and all its layers to MVT format.
@@ -204,27 +136,26 @@ namespace FunderMaps.Console.Services
         /// <param name="bundle">The bundle to export.</param>
         /// <param name="layers">Collection of the bundles layers.</param>
         /// <returns>See <see cref="Task"/>.</returns>
-        private async Task ExportGpkgAsync(Bundle bundle, IList<Layer> layers)
+        private void ExportGpkg(Bundle bundle, IList<Layer> layers)
         {
-            var sqlStatements = layers.Select(layer => GetSqlFromLayer(bundle, layer)).ToList();
-
             // Process the first layer, then append.
             ProcessLayer(layers[0], false);
 
             // Append the rest of the layers
-            for (int i = 0; i < layers.Count; i++)
+            for (int i = 1; i < layers.Count; i++)
             {
                 ProcessLayer(layers[i], true);
             }
 
             // When all layers are appended we can upload to storage.
-            await _bundleStorageService.UploadExportAsync(bundle.OrganizationId, bundle.Id, bundle.VersionId, GeometryExportFormat.Gpkg);
+            _bundleStorageService.UploadExport(bundle.OrganizationId, bundle.Id, bundle.VersionId, GeometryExportFormat.Gpkg);
 
             // Nested function that exports an sql statement into a GPKG.
             void ProcessLayer(Layer layer, bool append)
             {
                 var sql = GetSqlFromLayer(bundle, layer);
 
+                // TODO Name thing already exists?
                 var fileName = $"{BundleNameHelper.GetName(bundle, GeometryExportFormat.Gpkg)}";
                 var commandText = $"ogr2ogr -f GPKG {fileName} {BuildPGString()} {(append ? "-append " : "")}-sql \"{sql}\" -nln \"{layer.SchemaName}.{layer.TableName}\"";
 
@@ -240,26 +171,26 @@ namespace FunderMaps.Console.Services
         ///     The MVT files will be stored to a directory, not to a file.
         /// </remarks>
         /// <param name="bundle">The bundle to export.</param>
-        /// <param name="layers">Collection of the bundles layers.</param>
-        /// <returns>See <see cref="Task"/>.</returns>
-        private async Task ExportMvtAsync(Bundle bundle, IEnumerable<Layer> layers)
+        private void ExportMvtFromExistingGpkg(Bundle bundle)
         {
+            // TODO Validate gpkg has the same layers as param layers?
+
             var sourceFile = $"{BundleNameHelper.GetName(bundle, GeometryExportFormat.Gpkg)}";
             var targetDirectory = $"{StorageConstants.ExportMvtDirectoryName}";
-            var mvtOptions = $"MINZOOM={_options.MvtMinZoom} MAXZOOM={_options.MvtMaxZoom}";
+            var mvtOptions = $"-dsco MINZOOM={_options.MvtMinZoom} -dsco MAXZOOM={_options.MvtMaxZoom}";
 
             var commandText = $"ogr2ogr -f MVT {targetDirectory} {sourceFile} {mvtOptions}";
 
             CommandExecuter.ExecuteCommand(commandText);
 
-            await _bundleStorageService.UploadExportDirectoryAsync(bundle.OrganizationId, bundle.Id, bundle.VersionId, GeometryExportFormat.Mvt);
+            _bundleStorageService.UploadExportDirectory(bundle.OrganizationId, bundle.Id, bundle.VersionId, GeometryExportFormat.Mvt);
         }
 
         /// <summary>
         ///     Builds an SQL statement based on the specified layer.
         /// </summary>
         /// <remarks>
-        ///     This also takes the <see cref="Bundle.OrganizationId"/> fence
+        ///     This also takes the <see cref="BundleServices.OrganizationId"/> fence
         ///     into account when mapping all the geometries.
         /// </remarks>
         /// <param name="bundle">The bundle to export for.</param>
