@@ -41,6 +41,7 @@ namespace FunderMaps.Webservice.Abstractions.Services
         /// <param name="userId">User identifier.</param>
         /// <param name="productType">Product type.</param>
         /// <param name="query">Query string to search by.</param>
+        /// <param name="navigation">Return set by navigation.</param>
         IAsyncEnumerable<AnalysisProduct> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation);
 
         /// <summary>
@@ -48,6 +49,7 @@ namespace FunderMaps.Webservice.Abstractions.Services
         /// </summary>
         /// <param name="userId">User identifier.</param>
         /// <param name="productType">Product type.</param>
+        /// <param name="navigation">Return set by navigation.</param>
         IAsyncEnumerable<AnalysisProduct> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation);
 
         /// <summary>
@@ -63,6 +65,7 @@ namespace FunderMaps.Webservice.Abstractions.Services
         /// </summary>
         /// <param name="userId">User identifier.</param>
         /// <param name="productType">Product type.</param>
+        /// <param name="navigation">Return set by navigation.</param>
         ValueTask<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation);
     }
 }
