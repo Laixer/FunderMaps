@@ -91,7 +91,10 @@ namespace FunderMaps.Data
             var hasItem = AppContext.Cache.TryGetValue(key.KeyPairIdentity, out value);
             if (hasItem)
             {
-                AppContext.Items.Add("cachehit", 1);
+                if (!AppContext.Items.ContainsKey("cachehit"))
+                {
+                    AppContext.Items.Add("cachehit", 1);
+                }
             }
             return hasItem;
         }

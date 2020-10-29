@@ -31,6 +31,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             _recoveryUseCase = recoveryUseCase ?? throw new ArgumentNullException(nameof(recoveryUseCase));
         }
 
+        // GET: api/recovery/{id}
+        /// <summary>
+        ///     Return recovery by id.
+        /// </summary>
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAsync(int id)
         {
@@ -44,6 +48,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // GET: api/recovery
+        /// <summary>
+        ///     Return all recoveries.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
@@ -57,19 +65,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(result);
         }
 
-        [HttpGet("recent")]
-        public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationDto pagination)
-        {
-            if (pagination == null)
-            {
-                throw new ArgumentNullException(nameof(pagination));
-            }
-
-            var result = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(_recoveryUseCase.GetAllAsync(pagination.Navigation));
-
-            return Ok(result);
-        }
-
+        // POST: api/recovery
+        /// <summary>
+        ///     Create recovery.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
         {
@@ -86,6 +85,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // GET: api/recovery/download
+        /// <summary>
+        ///     Retrieve document access link.
+        /// </summary>
         [HttpPost("upload-document")]
         public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
         {
@@ -101,6 +104,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
+        // PUT: api/recovery/{id}
+        /// <summary>
+        ///     Update recovery by id.
+        /// </summary>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
         {
@@ -115,20 +122,10 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
-        [HttpPut("{id:int}/status")]
-        public async Task<IActionResult> SetStatusAsync(int id, [FromBody] RecoveryDto input)
-        {
-            // Map.
-            var recovery = _mapper.Map<Recovery>(input);
-            recovery.Id = id;
-
-            // FUTURE
-            await Task.CompletedTask;
-
-            // Return.
-            return NoContent();
-        }
-
+        // DELETE: api/recovery/{id}
+        /// <summary>
+        ///     Delete recovery by id.
+        /// </summary>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
