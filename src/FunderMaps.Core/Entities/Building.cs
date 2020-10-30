@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.DataAnnotations;
-using FunderMaps.Core.Entities.Geocoder;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +8,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Building entity.
     /// </summary>
-    public sealed class Building : IdentifiableEntity<Building, string>, IGeocoderEntity<Building>
+    public sealed class Building : IdentifiableEntity<Building, string>
     {
         /// <summary>
         ///     Create new instance.

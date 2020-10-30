@@ -27,13 +27,13 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IHostEnvironment HostEnvironment { get; set; }
 
         /// <summary>
-        ///     Use this method to add production services to the container.
+        ///     Use this method to add external services to the container.
         /// </summary>
         /// <remarks>
         ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public static void ConfigureProductionServices(IServiceCollection services)
+        private static void ConfigureExternalServices(IServiceCollection services)
         {
             // Remove all existing email services and inject local email service.
             services.RemoveAll<IEmailService>();
@@ -44,10 +44,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RemoveAll<IBlobStorageService>();
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
             services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
-
-            // Remove all existing notification services and inject local email service.
-            services.RemoveAll<INotificationService>();
-            services.AddTransient<INotificationService, NotificationHubService>();
         }
 
         /// <summary>
@@ -80,14 +76,13 @@ namespace Microsoft.Extensions.DependencyInjection
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            if (HostEnvironment.IsProduction())
+            ConfigureServices(services);
+
+            if (!HostEnvironment.IsDevelopment())
             {
-                ConfigureProductionServices(services);
+                ConfigureExternalServices(services);
             }
-            else
-            {
-                ConfigureServices(services);
-            }
+
             return services;
         }
     }

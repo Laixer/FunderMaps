@@ -1,4 +1,5 @@
-﻿namespace FunderMaps.Data.Providers
+﻿#pragma warning disable CA1812 // Internal class is never instantiated
+namespace FunderMaps.Data.Providers
 {
     /// <summary>
     ///     Database provider options.
@@ -36,3 +37,4 @@
         public int CommandTimeout { get; set; }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

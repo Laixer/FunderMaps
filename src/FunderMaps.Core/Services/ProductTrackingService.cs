@@ -31,8 +31,8 @@ namespace FunderMaps.Core.Services
         ///     usage in the data store.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="externalId">External building id.</param>
-        /// <param name="externalSource">External data source.</param>
         public override async ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(
             Guid userId,
             AnalysisProductType productType,
@@ -52,8 +52,8 @@ namespace FunderMaps.Core.Services
         ///     usage in the data store.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="externalId">External address id.</param>
-        /// <param name="externalSource">External data source.</param>
         public override async ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(
             Guid userId,
             AnalysisProductType productType,
@@ -73,6 +73,7 @@ namespace FunderMaps.Core.Services
         ///     usage in the data store.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="id">Internal building id.</param>
         public override async ValueTask<AnalysisProduct> GetAnalysisByIdAsync(
             Guid userId,
@@ -96,7 +97,9 @@ namespace FunderMaps.Core.Services
         ///     product usage in the data store.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="query">Query search string.</param>
+        /// <param name="navigation">Return set by navigation.</param>
         public override async IAsyncEnumerable<AnalysisProduct> GetAnalysisByQueryAsync(
             Guid userId,
             AnalysisProductType productType,
@@ -128,6 +131,8 @@ namespace FunderMaps.Core.Services
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id</param>
+        /// <param name="productType">Requested product type</param>
+        /// <param name="navigation">Return set by navigation.</param>
         public override IAsyncEnumerable<AnalysisProduct> GetAnalysisInFenceAsync(
             Guid userId,
             AnalysisProductType productType,
@@ -145,6 +150,7 @@ namespace FunderMaps.Core.Services
         ///     based on the <paramref name="productType"/>.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="neighborhoodCode">Neighborhood code.</param>
         public override async ValueTask<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
             Guid userId,
@@ -168,6 +174,8 @@ namespace FunderMaps.Core.Services
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
+        /// <param name="navigation">Return set by navigation.</param>
         public override async ValueTask<StatisticsProduct> GetStatisticsInFenceAsync(
             Guid userId,
             StatisticsProductType productType,

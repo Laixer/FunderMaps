@@ -31,7 +31,7 @@ namespace FunderMaps.Core.Services
         ///     Gets a single analysis based on an external id.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="externalId">External building id.</param>
         public virtual async ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(
             Guid userId,
@@ -50,7 +50,7 @@ namespace FunderMaps.Core.Services
         ///     Gets a single analysis based on an external id.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="externalId">External address id.</param>
         public virtual async ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(
             Guid userId,
@@ -69,6 +69,7 @@ namespace FunderMaps.Core.Services
         ///     Gets a single analysis based on an internal id.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="id">Internal building id.</param>
         public virtual async ValueTask<AnalysisProduct> GetAnalysisByIdAsync(
             Guid userId,
@@ -90,7 +91,9 @@ namespace FunderMaps.Core.Services
         ///     All items outside the geofence get removed from the result set.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="query">Query search string.</param>
+        /// <param name="navigation">Return set by navigation.</param>
         public virtual async IAsyncEnumerable<AnalysisProduct> GetAnalysisByQueryAsync(
             Guid userId,
             AnalysisProductType productType,
@@ -113,6 +116,8 @@ namespace FunderMaps.Core.Services
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id</param>
+        /// <param name="productType">Requested product type</param>
+        /// <param name="navigation">Return set by navigation.</param>
         public virtual IAsyncEnumerable<AnalysisProduct> GetAnalysisInFenceAsync(
             Guid userId,
             AnalysisProductType productType,
@@ -130,6 +135,7 @@ namespace FunderMaps.Core.Services
         ///     based on the <paramref name="productType"/>.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="neighborhoodCode">Neighborhood code.</param>
         public virtual async ValueTask<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
             Guid userId,
@@ -174,6 +180,8 @@ namespace FunderMaps.Core.Services
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
+        /// <param name="navigation">Return set by navigation.</param>
         public virtual ValueTask<StatisticsProduct> GetStatisticsInFenceAsync(
             Guid userId,
             StatisticsProductType productType,

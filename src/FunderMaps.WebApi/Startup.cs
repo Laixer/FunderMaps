@@ -8,13 +8,11 @@ using FunderMaps.WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 [assembly: ApiController]
 namespace FunderMaps.WebApi
@@ -36,16 +34,17 @@ namespace FunderMaps.WebApi
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this method to add services to the container.
+        ///     Use this method to add services to the container regardless of the environment.
         /// </summary>
         /// <remarks>
         ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public void ConfigureServices(IServiceCollection services)
+        private void StartupConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
 
+            // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -61,6 +60,7 @@ namespace FunderMaps.WebApi
                 })
                 .AddJwtBearerTokenProvider();
 
+            // Add the authorization layer.
             services.AddAuthorization(options =>
                 {
                     options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -75,42 +75,88 @@ namespace FunderMaps.WebApi
                 options.ResourcesPath = "Resources";
             });
 
-            services.AddHealthChecks()
-                .AddCheck<ApiHealthCheck>("api_health_check")
-                //.AddCheck<DatabaseHealthCheck>("db_health_check")
-                .AddCheck<FileStorageCheck>("file_health_check");
-
             // Register components from reference assemblies.
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
+            // Configure project specific services.
             services.AddTransient<SignInHandler>();
         }
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        ///     This method gets called by the runtime if no environment is set.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureServices(IServiceCollection services)
+        {
+            StartupConfigureServices(services);
+
+            services.AddHealthChecks()
+                .AddCheck<ApiHealthCheck>("api_health_check")
+                //.AddCheck<DatabaseHealthCheck>("db_health_check")
+                .AddCheck<FileStorageCheck>("file_health_check");
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime if environment is set to development.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            StartupConfigureServices(services);
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyOrigin();
+                });
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP
+        ///     request pipeline if environment is set to development.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void ConfigureDevelopment(IApplicationBuilder app)
         {
-            if (env.IsProduction())
-            {
-                app.UseForwardedHeaders(new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-                });
-            }
+            app.UseDeveloperExceptionPage();
+            app.UseCors();
 
-            if (env.IsDevelopment())
+            app.UseFunderMapsExceptionHandler("/oops");
+
+            app.UsePathBase(new PathString("/api"));
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+                endpoints.MapControllers();
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP
+        ///     request pipeline if no environment is set.
+        /// </summary>
+        /// <remarks>
+        ///     The order in which the pipeline handles request is of importance.
+        /// </remarks>
+        public static void Configure(IApplicationBuilder app)
+        {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                app.UseExceptionHandler("/oops");
-            }
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            });
+
+            app.UseExceptionHandler("/oops");
 
             app.UseFunderMapsExceptionHandler("/oops");
 

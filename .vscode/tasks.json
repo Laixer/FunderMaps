@@ -11,14 +11,6 @@
             ],
             "problemMatcher": "$msCompile",
             "promptOnClose": true,
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            },
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -32,15 +24,17 @@
                 "test"
             ],
             "problemMatcher": "$msCompile",
-            "promptOnClose": true,
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            }
-        }
+            "promptOnClose": true
+        },
+        {
+            "label": "clean",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean"
+            ],
+            "problemMatcher": "$msCompile",
+            "promptOnClose": true
+        },
     ]
 }
