@@ -137,13 +137,43 @@ namespace FunderMaps.Webservice
         }
 
         /// <summary>
+        ///     This method gets called by the runtime if environment is set to staging.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureStagingServices(IServiceCollection services)
+        {
+            StartupConfigureServices(services);
+
+            services.AddHealthChecks()
+                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "FunderMaps Webservice",
+                        Version = "v1",
+                        Description = "FunderMaps REST API",
+                    }
+                );
+                options.DocumentFilter<BasePathFilter>();
+
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                options.SchemaFilter<EnumSchemaFilter>();
+                // FUTURE: This call is obsolete.
+                options.GeneratePolymorphicSchemas();
+            });
+        }
+
+        /// <summary>
         ///     This method gets called by the runtime. Use this method to configure the HTTP
-        ///     request pipeline if no environment is set.
+        ///     request pipeline if environment is set to development.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public static void Configure(IApplicationBuilder app)
+        public static void ConfigureDevelopment(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
             app.UseCors();
@@ -171,12 +201,50 @@ namespace FunderMaps.Webservice
 
         /// <summary>
         ///     This method gets called by the runtime. Use this method to configure the HTTP
-        ///     request pipeline if environment is set to production.
+        ///     request pipeline if environment is set to staging.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public static void ConfigureProduction(IApplicationBuilder app)
+        public static void ConfigureStaging(IApplicationBuilder app)
+        {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            });
+
+            app.UseExceptionHandler("/oops");
+
+            app.UseFunderMapsExceptionHandler("/oops");
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
+                options.RoutePrefix = string.Empty;
+            });
+
+            app.UsePathBase(new PathString("/api"));
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health");
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP
+        ///     request pipeline if no environment is set.
+        /// </summary>
+        /// <remarks>
+        ///     The order in which the pipeline handles request is of importance.
+        /// </remarks>
+        public static void Configure(IApplicationBuilder app)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {

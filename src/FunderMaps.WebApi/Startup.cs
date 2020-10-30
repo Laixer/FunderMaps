@@ -118,12 +118,12 @@ namespace FunderMaps.WebApi
 
         /// <summary>
         ///     This method gets called by the runtime. Use this method to configure the HTTP
-        ///     request pipeline if no environment is set.
+        ///     request pipeline if environment is set to development.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public static void Configure(IApplicationBuilder app)
+        public static void ConfigureDevelopment(IApplicationBuilder app)
         {
             app.UseDeveloperExceptionPage();
             app.UseCors();
@@ -144,12 +144,12 @@ namespace FunderMaps.WebApi
 
         /// <summary>
         ///     This method gets called by the runtime. Use this method to configure the HTTP
-        ///     request pipeline if environment is set to production.
+        ///     request pipeline if no environment is set.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public static void ConfigureProduction(IApplicationBuilder app)
+        public static void Configure(IApplicationBuilder app)
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
