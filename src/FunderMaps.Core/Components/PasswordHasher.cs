@@ -133,7 +133,7 @@ namespace FunderMaps.Core.Components
 
                 return VerifyHashedPassword(decodedHashedPassword, providedPassword);
             }
-            catch (Exception)
+            catch (SystemException)
             {
                 // TODO: Log
 

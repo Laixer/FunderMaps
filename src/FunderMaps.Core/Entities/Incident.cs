@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.DataAnnotations;
-using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +9,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Indicent entity.
     /// </summary>
-    public sealed class Incident : RecordControl<Incident, string>, IReportEntity<Incident>
+    public sealed class Incident : RecordControl<Incident, string>
     {
         /// <summary>
         ///     Create new instance.
