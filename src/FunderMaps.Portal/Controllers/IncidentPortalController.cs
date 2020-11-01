@@ -102,10 +102,9 @@ namespace FunderMaps.Portal.Controllers
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
 
-            // FUTURE: Works for now, but may not be the best solution to check
-            //         if input data is valid
-            await _addressRepository.GetByIdAsync(incident.Address);
             await _incidentRepository.AddAsync(incident);
+
+            // TODO: Dispatch notification
 
             // Return.
             return NoContent();
