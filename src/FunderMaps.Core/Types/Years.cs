@@ -11,7 +11,9 @@ namespace FunderMaps.Core.Types
         /// <summary>
         ///     Empty constructor.
         /// </summary>
-        public Years() { }
+        public Years()
+        {
+        }
 
         /// <summary>
         ///     Constructor based on two years.

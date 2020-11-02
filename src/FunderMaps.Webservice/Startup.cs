@@ -1,28 +1,23 @@
 using AutoMapper;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.Helpers;
 using FunderMaps.Core.Services;
+using FunderMaps.Extensions;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
-using FunderMaps.AspNetCore.Helpers;
-using FunderMaps.Webservice.HealthChecks;
-using FunderMaps.Webservice.Mapping;
-using FunderMaps.Webservice.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using FunderMaps.Extensions;
-using FunderMaps.AspNetCore.Authentication;
+using Microsoft.OpenApi.Models;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -44,44 +39,15 @@ namespace FunderMaps.Webservice
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this method to add services to the container.
+        ///     Use this method to add services to the container regardless of the environment.
         /// </summary>
         /// <remarks>
         ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public void ConfigureServices(IServiceCollection services)
+        private void StartupConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
-            // Configure project specific services.
-            services.AddTransient<IMappingService, MappingService>();
-            services.AddTransient<ProductRequestHandler>();
-            services.AddTransient<AuthenticationHelper>();
-
-            // Configure FunderMaps services.
-            services.AddFunderMapsDataServices("FunderMapsConnection");
-            services.AddFunderMapsCoreServices();
-            services.AddFunderMapsExceptionMapper();
-
-            // Override default product service by tracking variant of product service.
-            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
-
-            // Configure AutoMapper.
-            services.AddAutoMapper(typeof(AutoMapperProfile));
-
-            // Configure health checks.
-            services.AddHealthChecks()
-                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
-
-            // Configure Swagger.
-            services.AddSwaggerGen(c =>
-            {
-                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                c.SchemaFilter<EnumSchemaFilter>();
-                // FUTURE: This call is obsolete.
-                c.GeneratePolymorphicSchemas();
-            });
+            services.AddAutoMapper(typeof(MapperProfile));
 
             // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
@@ -89,11 +55,12 @@ namespace FunderMaps.Webservice
                 .AddJwtBearer(options =>
                 {
                     options.SaveToken = false;
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    options.TokenValidationParameters = new JwtTokenValidationParameters
                     {
                         ValidIssuer = Configuration.GetJwtIssuer(),
                         ValidAudience = Configuration.GetJwtAudience(),
                         IssuerSigningKey = JwtHelper.CreateSecurityKey(Configuration.GetJwtSigningKey()), // TODO: Only for testing
+                        Valid = Configuration.GetJwtTokenExpirationInMinutes(),
                     };
                 })
                 .AddJwtBearerTokenProvider();
@@ -108,40 +75,109 @@ namespace FunderMaps.Webservice
                 options.AddFunderMapsPolicy();
             });
 
+            // Register components from reference assemblies.
+            services.AddFunderMapsDataServices("FunderMapsConnection");
+
+            // Configure project specific services.
+            services.AddTransient<ProductHandler>();
+            services.AddTransient<SignInHandler>();
+
+            // Override default product service by tracking variant of product service.
+            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
         }
 
         /// <summary>
-        ///     This method gets called by the runtime. Use this  method to configure the HTTP request pipeline.
+        ///     This method gets called by the runtime if no environment is set.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureServices(IServiceCollection services)
+        {
+            StartupConfigureServices(services);
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime if environment is set to development.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureDevelopmentServices(IServiceCollection services)
+        {
+            StartupConfigureServices(services);
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "FunderMaps Webservice",
+                        Version = "v1",
+                        Description = "FunderMaps REST API",
+                    }
+                );
+                options.DocumentFilter<BasePathFilter>();
+
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                options.SchemaFilter<EnumSchemaFilter>();
+                // FUTURE: This call is obsolete.
+                options.GeneratePolymorphicSchemas();
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.AllowAnyOrigin();
+                });
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime if environment is set to staging.
+        /// </summary>
+        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
+        public void ConfigureStagingServices(IServiceCollection services)
+        {
+            StartupConfigureServices(services);
+
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1",
+                    new OpenApiInfo
+                    {
+                        Title = "FunderMaps Webservice",
+                        Version = "v1",
+                        Description = "FunderMaps REST API",
+                    }
+                );
+                options.DocumentFilter<BasePathFilter>();
+
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                options.SchemaFilter<EnumSchemaFilter>();
+                // FUTURE: This call is obsolete.
+                options.GeneratePolymorphicSchemas();
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP
+        ///     request pipeline if environment is set to development.
         /// </summary>
         /// <remarks>
         ///     The order in which the pipeline handles request is of importance.
         /// </remarks>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public static void ConfigureDevelopment(IApplicationBuilder app)
         {
-            if (env.IsProduction())
-            {
-                app.UseForwardedHeaders(new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-                });
-            }
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/oops");
-            }
+            app.UseDeveloperExceptionPage();
+            app.UseCors();
 
             app.UseFunderMapsExceptionHandler("/oops");
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            app.UseSwaggerUI(options =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-                c.RoutePrefix = string.Empty;
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
+                options.RoutePrefix = string.Empty;
             });
 
             app.UsePathBase(new PathString("/api"));
@@ -153,7 +189,75 @@ namespace FunderMaps.Webservice
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP
+        ///     request pipeline if environment is set to staging.
+        /// </summary>
+        /// <remarks>
+        ///     The order in which the pipeline handles request is of importance.
+        /// </remarks>
+        public static void ConfigureStaging(IApplicationBuilder app)
+        {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            });
+
+            app.UseExceptionHandler("/oops");
+
+            app.UseFunderMapsExceptionHandler("/oops");
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
+                options.RoutePrefix = string.Empty;
+            });
+
+            app.UsePathBase(new PathString("/api"));
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+            });
+        }
+
+        /// <summary>
+        ///     This method gets called by the runtime. Use this method to configure the HTTP
+        ///     request pipeline if no environment is set.
+        /// </summary>
+        /// <remarks>
+        ///     The order in which the pipeline handles request is of importance.
+        /// </remarks>
+        public static void Configure(IApplicationBuilder app)
+        {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+            });
+
+            app.UseExceptionHandler("/oops");
+
+            app.UseFunderMapsExceptionHandler("/oops");
+
+            app.UsePathBase(new PathString("/api"));
+            app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }

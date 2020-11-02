@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Webservice.ResponseModels.Types
+﻿using FunderMaps.Core.Types;
+
+namespace FunderMaps.Webservice.ResponseModels.Types
 {
     /// <summary>
     ///     Response model containing the amount of buildings which have a given
@@ -9,7 +11,7 @@
         /// <summary>
         ///     The type of foundation.
         /// </summary>
-        public FoundationTypeResponseModel FoundationType { get; set; }
+        public FoundationType FoundationType { get; set; }
 
         /// <summary>
         ///     The percentage of buildings having this foundation type.

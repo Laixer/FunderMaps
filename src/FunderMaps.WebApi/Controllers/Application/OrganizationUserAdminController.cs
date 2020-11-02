@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
+using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
-using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
+using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,33 +20,48 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     This controller provides organization administration.
     ///     <para>
     ///         For the variant based on the current session see 
-    ///         <see cref="OrganizationUserController"/>.
+    ///         <see cref="FunderMaps.AspNetCore.Controllers.OrganizationUserController"/>.
     ///     </para>
     /// </remarks>
     [Authorize(Policy = "AdministratorPolicy")]
     [Route("admin/organization/{id:guid}/user")]
-    public class OrganizationUserAdminController : BaseApiController
+    public class OrganizationUserAdminController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly OrganizationManager _organizationManager;
+        private readonly IUserRepository _userRepository;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
+        private readonly SignInService _signinService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationUserAdminController(IMapper mapper, OrganizationManager organizationManager)
+        public OrganizationUserAdminController(
+            IMapper mapper,
+            IUserRepository userRepository,
+            IOrganizationUserRepository organizationUserRepository,
+            SignInService signinService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+            _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
         }
 
+        // POST: api/admin/organization/{id}/user
+        /// <summary>
+        ///     Add user to organization.
+        /// </summary>
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] UserDto input)
+        public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] OrganizationUserPasswordDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
 
             // Act.
-            user = await _organizationManager.AddUserAsync(id, user);
+            // FUTURE: Do in 1 call.
+            var userId = await _userRepository.AddAsync(user);
+            await _signinService.SetPasswordAsync(userId, input.Password);
+            await _organizationUserRepository.AddAsync(id, userId, input.OrganizationRole);
 
             // Map.
             var output = _mapper.Map<UserDto>(user);
@@ -55,38 +70,106 @@ namespace FunderMaps.WebApi.Controllers.Application
             return Ok(output);
         }
 
+        // GET: api/admin/organization/{id}/user
+        /// <summary>
+        ///     Get all users in the organization.
+        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
         {
-            // Assign.
-            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserAsync(id, pagination.Navigation);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<UserDto>, User>(userList);
+            // Act.
+            // TODO: FIX: This is ugly.
+            // TODO: Single call
+            var output = new List<OrganizationUserDto>();
+            await foreach (var user in _organizationUserRepository.ListAllAsync(id, pagination.Navigation))
+            {
+                var result = _mapper.Map<OrganizationUserDto>(await _userRepository.GetByIdAsync(user));
+                result.OrganizationRole = await _organizationUserRepository.GetOrganizationRoleByUserIdAsync(user);
+                output.Add(result);
+            }
 
             // Return.
-            return Ok(result);
+            return Ok(output);
         }
 
+        // PUT: api/admin/organization/{id}/user/{id}
+        /// <summary>
+        ///     Update user in the organization.
+        /// </summary>
         [HttpPut("{userId:guid}")]
-        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] UserDto input)
+        public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] OrganizationUserDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
             user.Id = userId;
 
             // Act.
-            await _organizationManager.UpdateUserAsync(id, user);
+            // TODO: Move to db
+            if (!await _organizationUserRepository.IsUserInOrganization(id, user.Id))
+            {
+                throw new AuthorizationException();
+            }
+            await _userRepository.UpdateAsync(user);
 
             // Return.
             return NoContent();
         }
 
+        // POST: api/organization/user/{id}/change-organization-role
+        /// <summary>
+        ///     Set user organization role in the session organization.
+        /// </summary>
+        [HttpPost("{userId:guid}/change-organization-role")]
+        public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, Guid userId, [FromBody] ChangeOrganizationRoleDto input)
+        {
+            // Act.
+            // TODO: Move to db
+            if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+            {
+                throw new AuthorizationException();
+            }
+            await _organizationUserRepository.SetOrganizationRoleByUserIdAsync(userId, input.Role);
+
+            // Return.
+            return NoContent();
+        }
+
+        // FUTURE: Remove old password from DTO
+        // POST: api/organization/user/{id}/change-password
+        /// <summary>
+        ///     Set user password in the session organization.
+        /// </summary>
+        [HttpPost("{userId:guid}/change-password")]
+        public async Task<IActionResult> ChangePasswordAsync(Guid id, Guid userId, [FromBody] ChangePasswordDto input)
+        {
+            // Act.
+            // TODO: Move to db
+            if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+            {
+                throw new AuthorizationException();
+            }
+
+            // Act.
+            await _signinService.SetPasswordAsync(userId, input.NewPassword);
+
+            // Return.
+            return NoContent();
+        }
+
+        // DELETE: api/admin/organization/{id}/user/{id}
+        /// <summary>
+        ///     Delete user in the organization.
+        /// </summary>
         [HttpDelete("{userId:guid}")]
         public async Task<IActionResult> DeleteUserAsync(Guid id, Guid userId)
         {
             // Act.
-            await _organizationManager.DeleteUserAsync(id, userId);
+            // TODO: Move to db
+            if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+            {
+                throw new AuthorizationException();
+            }
+            await _userRepository.DeleteAsync(userId);
 
             // Return.
             return NoContent();

@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Entities.Report;
-using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +8,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Inquiry base entity.
     /// </summary>
-    public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>, IReportEntity<TParent>
+    public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>
         where TParent : class
     {
         /// <summary>
@@ -62,7 +61,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Document file name.
         /// </summary>
-        [Required, Url]
+        [Required]
         public string DocumentFile { get; set; }
 
         /// <summary>

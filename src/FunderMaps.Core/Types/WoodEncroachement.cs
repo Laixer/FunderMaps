@@ -8,16 +8,16 @@
         /// <summary>
         ///     Fungus infection.
         /// </summary>
-        FungusInfection,
+        FungusInfection = 0,
 
         /// <summary>
         ///     Bio fungus infection.
         /// </summary>
-        BioFungusInfection,
+        BioFungusInfection = 1,
 
         /// <summary>
         ///     Bio infection.
         /// </summary>
-        BioInfection
+        BioInfection = 2,
     }
 }

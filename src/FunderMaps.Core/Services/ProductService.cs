@@ -1,13 +1,10 @@
 ﻿using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
@@ -18,15 +15,8 @@ namespace FunderMaps.Core.Services
     /// </summary>
     public class ProductService : IProductService
     {
-        /// <summary>
-        ///     <see cref="IAnalysisRepository"/>.
-        /// </summary>
-        protected readonly IAnalysisRepository _analysisRepository;
-
-        /// <summary>
-        ///     <see cref="IStatisticsRepository"/>.
-        /// </summary>
-        protected readonly IStatisticsRepository _statisticsRepository;
+        private readonly IAnalysisRepository _analysisRepository;
+        private readonly IStatisticsRepository _statisticsRepository;
 
         /// <summary>
         ///     Create new instance.
@@ -41,52 +31,57 @@ namespace FunderMaps.Core.Services
         ///     Gets a single analysis based on an external id.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="externalId">External building id.</param>
-        /// <param name="externalDataSource">External data source.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
-        public virtual async Task<AnalysisProduct> GetAnalysisByExternalIdAsync(
+        public virtual async ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(
             Guid userId,
             AnalysisProductType productType,
-            string externalId,
-            ExternalDataSource externalDataSource,
-            CancellationToken token = default)
+            string externalId)
         {
-            userId.ThrowIfNullOrEmpty();
             externalId.ThrowIfNullOrEmpty();
 
-            // Get analysis product.
-            var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId, externalDataSource, token);
+            var product = await _analysisRepository.GetByExternalIdAsync(userId, externalId);
 
-            // Process and return.
-            return await ProcessAnalysisAsync(userId, productType, product, token);
+            await ProcessAnalysisAsync(userId, productType, product);
+            return product;
+        }
+
+        /// <summary>
+        ///     Gets a single analysis based on an external id.
+        /// </summary>
+        /// <param name="userId">Internal user id.</param>
+        /// <param name="productType">Requested product type</param>
+        /// <param name="externalId">External address id.</param>
+        public virtual async ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(
+            Guid userId,
+            AnalysisProductType productType,
+            string externalId)
+        {
+            externalId.ThrowIfNullOrEmpty();
+
+            var product = await _analysisRepository.GetByAddressExternalIdAsync(userId, externalId);
+
+            await ProcessAnalysisAsync(userId, productType, product);
+            return product;
         }
 
         /// <summary>
         ///     Gets a single analysis based on an internal id.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="id">Internal building id.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="AnalysisProduct"/></returns>
-        public virtual async Task<AnalysisProduct> GetAnalysisByIdAsync(
+        public virtual async ValueTask<AnalysisProduct> GetAnalysisByIdAsync(
             Guid userId,
             AnalysisProductType productType,
-            string id,
-            CancellationToken token = default)
+            string id)
         {
             id.ThrowIfNullOrEmpty();
 
-            // FUTURE: This is a temporary fix, need another call?
-            // Get analysis product.
-            var product = userId != Guid.Empty
-                ? await _analysisRepository.GetByIdInFenceAsync(userId, id, token)
-                : await _analysisRepository.GetByIdAsync(id, token);
+            var product = await _analysisRepository.GetByIdAsync(id);
 
-            // Process and return.
-            return await ProcessAnalysisAsync(userId, productType, product, token);
+            await ProcessAnalysisAsync(userId, productType, product);
+            return product;
         }
 
         /// <summary>
@@ -96,49 +91,37 @@ namespace FunderMaps.Core.Services
         ///     All items outside the geofence get removed from the result set.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="query">Query search string.</param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public virtual async Task<IEnumerable<AnalysisProduct>> GetAnalysisByQueryAsync(
+        /// <param name="navigation">Return set by navigation.</param>
+        public virtual async IAsyncEnumerable<AnalysisProduct> GetAnalysisByQueryAsync(
             Guid userId,
             AnalysisProductType productType,
             string query,
-            INavigation navigation,
-            CancellationToken token = default)
+            INavigation navigation)
         {
             userId.ThrowIfNullOrEmpty();
             query.ThrowIfNullOrEmpty();
+
             navigation.Validate();
 
-            // Get analysis product.
-            var products = await _analysisRepository.GetByQueryAsync(userId, query, navigation, token);
-
-            // Process and return.
-            // FUTURE Clean up, make async foreach or similar.
-            var result = new ConcurrentBag<AnalysisProduct>();
-            Parallel.ForEach(products, (product) =>
+            await foreach (var product in _analysisRepository.GetBySearchQueryAsync(userId, query, navigation))
             {
-                result.Add(Task.Run(() => ProcessAnalysisAsync(userId, productType, product, token)).Result);
-            });
-
-            return result;
+                await ProcessAnalysisAsync(userId, productType, product);
+                yield return product;
+            }
         }
 
         /// <summary>
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id</param>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="IEnumerable{AnalysisProduct}"/></returns>
-        public virtual Task<IEnumerable<AnalysisProduct>> GetAnalysisInFenceAsync(
+        /// <param name="productType">Requested product type</param>
+        /// <param name="navigation">Return set by navigation.</param>
+        public virtual IAsyncEnumerable<AnalysisProduct> GetAnalysisInFenceAsync(
             Guid userId,
             AnalysisProductType productType,
-            INavigation navigation,
-            CancellationToken token = default)
+            INavigation navigation)
         {
             throw new NotImplementedException();
         }
@@ -152,44 +135,39 @@ namespace FunderMaps.Core.Services
         ///     based on the <paramref name="productType"/>.
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="StatisticsProductType"/></param>
+        /// <param name="productType">Requested product type</param>
         /// <param name="neighborhoodCode">Neighborhood code.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="StatisticsProduct"/></returns>
-        public virtual async Task<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
+        public virtual async ValueTask<StatisticsProduct> GetStatisticsByNeighborhoodAsync(
             Guid userId,
             StatisticsProductType productType,
-            string neighborhoodCode,
-            CancellationToken token = default)
+            string neighborhoodCode)
         {
             neighborhoodCode.ThrowIfNullOrEmpty();
 
-            // Create and assign.
             var product = new StatisticsProduct();
 
-            // Get statistics operation.
             switch (productType)
             {
                 case StatisticsProductType.FoundationRatio:
-                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.ConstructionYears:
-                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.FoundationRisk:
-                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.DataCollected:
-                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.BuildingsRestored:
-                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.Incidents:
-                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 case StatisticsProductType.Reports:
-                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(userId, neighborhoodCode, token);
+                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(userId, neighborhoodCode);
                     break;
                 default:
                     throw new InvalidOperationException(nameof(productType));
@@ -202,19 +180,17 @@ namespace FunderMaps.Core.Services
         ///     Scrapped for now.
         /// </summary>
         /// <param name="userId">Internal user id.</param>
-        /// <param name="productType"><see cref="StatisticsProductType"/></param>
-        /// <param name="navigation"><see cref="INavigation"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="StatisticsProduct"/></returns>
-        public virtual Task<StatisticsProduct> GetStatisticsInFenceAsync(
+        /// <param name="productType">Requested product type</param>
+        /// <param name="navigation">Return set by navigation.</param>
+        public virtual ValueTask<StatisticsProduct> GetStatisticsInFenceAsync(
             Guid userId,
             StatisticsProductType productType,
-            INavigation navigation,
-            CancellationToken token = default)
+            INavigation navigation)
         {
             throw new NotImplementedException();
         }
 
+        // FUTURE: Parallel
         /// <summary>
         ///     This function does the following:
         ///     <list type="bullet">
@@ -227,105 +203,95 @@ namespace FunderMaps.Core.Services
         ///     If a statistic addon property should not be populated, it will
         ///     remain as it was (null).
         /// </remarks>
-        /// <param name="productType"><see cref="AnalysisProductType"/></param>
-        /// <param name="product"><see cref="AnalysisProduct"/></param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
-        /// <returns><see cref="Task"/></returns>
-        private async Task<AnalysisProduct> ProcessAnalysisAsync(
+        private async Task ProcessAnalysisAsync(
             Guid userId,
             AnalysisProductType productType,
-            AnalysisProduct product,
-            CancellationToken token = default)
+            AnalysisProduct product)
         {
-            await Task.WhenAll(new Task[]
-            {
-                ProcessAnalysisFoundationTypeDistributionAsync(userId, productType, product, token),
-                ProcessAnalysisConstructionYearDistributionAsync(userId, productType, product, token),
-                ProcessAnalysisFoundationRiskDistributionAsync(userId, productType, product, token),
-                ProcessAnalysisDataCollectedPercentageAsync(userId, productType, product, token),
-                ProcessAnalysisTotalBuildingsRestoredCountAsync(userId, productType, product, token),
-                ProcessAnalysisTotalIncidentCountAsync(userId, productType, product, token),
-                ProcessAnalysisTotalReportCountAsync(userId, productType, product, token),
-            });
-
-            return product;
+            await ProcessAnalysisFoundationTypeDistributionAsync(userId, productType, product);
+            await ProcessAnalysisConstructionYearDistributionAsync(userId, productType, product);
+            await ProcessAnalysisFoundationRiskDistributionAsync(userId, productType, product);
+            await ProcessAnalysisDataCollectedPercentageAsync(userId, productType, product);
+            await ProcessAnalysisTotalBuildingsRestoredCountAsync(userId, productType, product);
+            await ProcessAnalysisTotalIncidentCountAsync(userId, productType, product);
+            await ProcessAnalysisTotalReportCountAsync(userId, productType, product);
         }
 
         #region Process statistic part of analysis
 
-        private async Task ProcessAnalysisFoundationTypeDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisFoundationTypeDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByIdAsync(userId, product.NeighborhoodId, token);
+                    product.FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
 
-        private async Task ProcessAnalysisConstructionYearDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisConstructionYearDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByIdAsync(userId, product.NeighborhoodId, token);
+                    product.ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
 
-        private async Task ProcessAnalysisFoundationRiskDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisFoundationRiskDistributionAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(userId, product.NeighborhoodId, token);
+                    product.FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
 
-        private async Task ProcessAnalysisDataCollectedPercentageAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisDataCollectedPercentageAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByIdAsync(userId, product.NeighborhoodId, token);
+                    product.DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
 
-        private async Task ProcessAnalysisTotalBuildingsRestoredCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisTotalBuildingsRestoredCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.Costs:
                 case AnalysisProductType.Complete:
-                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(userId, product.NeighborhoodId, token);
+                    product.TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
 
-        private async Task ProcessAnalysisTotalIncidentCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisTotalIncidentCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.Costs:
                 case AnalysisProductType.Complete:
-                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(userId, product.NeighborhoodId, token);
+                    product.TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }
 
-        private async Task ProcessAnalysisTotalReportCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product, CancellationToken token = default)
+        private async Task ProcessAnalysisTotalReportCountAsync(Guid userId, AnalysisProductType productType, AnalysisProduct product)
         {
             switch (productType)
             {
                 case AnalysisProductType.FoundationPlus:
                 case AnalysisProductType.Complete:
-                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(userId, product.NeighborhoodId, token);
+                    product.TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(userId, product.NeighborhoodId);
                     break;
             };
         }

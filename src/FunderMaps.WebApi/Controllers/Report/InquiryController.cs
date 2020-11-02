@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
-using FunderMaps.Core.Authentication;
+using FunderMaps.AspNetCore.DataAnnotations;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Control;
-using FunderMaps.Core.UseCases;
-using FunderMaps.Helpers;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -22,184 +21,264 @@ namespace FunderMaps.WebApi.Controllers.Report
     ///     Endpoint controller for inquiry operations.
     /// </summary>
     [Route("inquiry")]
-    public class InquiryController : BaseApiController
+    public class InquiryController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly AuthManager _authManager;
-        private readonly InquiryUseCase _inquiryUseCase;
+        private readonly Core.AppContext _appContext;
+        private readonly IInquiryRepository _inquiryRepository;
+        private readonly IBlobStorageService _blobStorageService;
+        private readonly INotifyService _notifyService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public InquiryController(IMapper mapper, AuthManager authManager, InquiryUseCase inquiryUseCase)
+        public InquiryController(
+            IMapper mapper,
+            Core.AppContext appContext,
+            IInquiryRepository inquiryRepository,
+            IBlobStorageService blobStorageService,
+            INotifyService notificationService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(mapper));
-            _inquiryUseCase = inquiryUseCase ?? throw new ArgumentNullException(nameof(inquiryUseCase));
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+            _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetAsync(int id)
-        {
-            // Act.
-            var inquiry = await _inquiryUseCase.GetAsync(id);
-
-            // Map.
-            var result = _mapper.Map<InquiryDto>(inquiry);
-            result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
-            result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
-            result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
-            result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
-            result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
-
-            // Return.
-            return Ok(result);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
-        {
-            // Act.
-            IAsyncEnumerable<Inquiry> inquiryList = _inquiryUseCase.GetAllAsync(pagination.Navigation);
-
-            // Map.
-            var resultList = new List<InquiryDto>();
-            await foreach (var inquiry in inquiryList)
-            {
-                var result = _mapper.Map<InquiryDto>(inquiry);
-                result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
-                result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
-                result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
-                result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
-                result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
-                resultList.Add(result);
-            }
-
-            // Return.
-            return Ok(resultList);
-        }
-
-        [HttpGet("recent")]
-        public async Task<IActionResult> GetRecentAsync([FromQuery] PaginationModel pagination)
-        {
-            // FUTURE: _inquiryUseCase.GetAllRecentAsync
-
-            // Return.
-            return Ok(await GetAllAsync(pagination));
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
-        {
-            // Map.
-            var inquiry = _mapper.Map<Inquiry>(input);
-
-            User sessionUser = await _authManager.GetUserAsync(User);
-            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
-
-            var attribution = new AttributionControl
-            {
-                Reviewer = input.Reviewer,
-                Creator = sessionUser.Id,
-                Owner = sessionOrganization.Id,
-                Contractor = input.Contractor,
-            };
-
-            // Act.
-            inquiry = await _inquiryUseCase.CreateAsync(attribution, inquiry);
-
-            // Map.
-            var result = _mapper.Map<InquiryDto>(inquiry);
-            result.AuditStatus = await _inquiryUseCase.GetStateAsync(result.Id);
-            result.Reviewer = await _inquiryUseCase.GetReviewerAsync(result.Id);
-            result.Contractor = await _inquiryUseCase.GetContractorAsync(result.Id);
-            result.AccessPolicy = await _inquiryUseCase.GetAccessPolicyAsync(result.Id);
-            result.CreateDate = await _inquiryUseCase.GetRecordCreateDateAsync(result.Id);
-            result.UpdateDate = await _inquiryUseCase.GetRecordUpdateDateAsync(result.Id);
-
-            // Return.
-            return Ok(result);
-        }
-
+        // GET: api/inquiry/stats
         /// <summary>
-        ///     Upload document to the backstore.
+        ///     Return inquiry statistics.
         /// </summary>
-        /// <param name="input">See <see cref="IFormFile"/>.</param>
-        /// <returns>See <see cref="DocumentDto"/>.</returns>
-        [HttpPost("upload-document")]
-        public async Task<IActionResult> UploadDocumentAsync([Required] IFormFile input)
+        [HttpGet("stats")]
+        public async Task<IActionResult> GetStatsAsync()
         {
-            // FUTURE: Replace with validator?
-            var virtualFile = new ApplicationFileWrapper(input, Constants.AllowedFileMimes);
-            if (!virtualFile.IsValid)
+            // Map.
+            var output = new DatasetStatsDto
             {
-                throw new ArgumentException(); // TODO
-            }
-
-            // Act.
-            var fileName = await _inquiryUseCase.StoreDocumentAsync(
-                input.OpenReadStream(),
-                input.FileName,
-                input.ContentType);
-
-            var output = new DocumentDto
-            {
-                Name = fileName,
+                Count = await _inquiryRepository.CountAsync(),
             };
 
             // Return.
             return Ok(output);
         }
 
+        // GET: api/inquiry/{id}
+        /// <summary>
+        ///     Return inquiry by id.
+        /// </summary>
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetAsync(int id)
+        {
+            // Act.
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Map.
+            var output = _mapper.Map<InquiryDto>(inquiry);
+
+            // Return.
+            return Ok(output);
+        }
+
+        // GET: api/inquiry
+        /// <summary>
+        ///     Return all inquiries.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
+        {
+            // Act.
+            IAsyncEnumerable<InquiryFull> organizationList = _inquiryRepository.ListAllAsync(pagination.Navigation);
+
+            // Map.
+            var output = await _mapper.MapAsync<IList<InquiryDto>, InquiryFull>(organizationList);
+
+            // Return.
+            return Ok(output);
+        }
+
+        // POST: api/inquiry
+        /// <summary>
+        ///     Create inquiry.
+        /// </summary>
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
+        {
+            // Map.
+            var inquiry = _mapper.Map<InquiryFull>(input);
+
+            // Act.
+            inquiry = await _inquiryRepository.AddGetAsync(inquiry);
+
+            // Map.
+            var output = _mapper.Map<InquiryDto>(inquiry);
+
+            // Return.
+            return Ok(output);
+        }
+
+        // POST: api/inquiry/upload-document
+        /// <summary>
+        ///     Upload document to the backstore.
+        /// </summary>
+        [HttpPost("upload-document")]
+        [RequestSizeLimit(128 * 1024 * 1024)]
+        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
+        {
+            // Act.
+            var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
+            await _blobStorageService.StoreFileAsync(
+                containerName: Core.Constants.InquiryStorageFolderName,
+                fileName: storeFileName,
+                contentType: input.ContentType,
+                stream: input.OpenReadStream());
+
+            var output = new DocumentDto
+            {
+                Name = storeFileName,
+            };
+
+            // Return.
+            return Ok(output);
+        }
+
+        // GET: api/inquiry/download
+        /// <summary>
+        ///     Retrieve document access link.
+        /// </summary>
+        [HttpGet("{id:int}/download")]
+        public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
+        {
+            // Act.
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            var link = await _blobStorageService.GetAccessLinkAsync(
+                containerName: Core.Constants.InquiryStorageFolderName,
+                fileName: inquiry.DocumentFile,
+                hoursValid: 1);
+
+            // Map.
+            var result = new BlobAccessLinkDto
+            {
+                AccessLink = link
+            };
+
+            // Return.
+            return Ok(result);
+        }
+
+        // PUT: api/inquiry/{id}
+        /// <summary>
+        ///     Update inquiry by id.
+        /// </summary>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDto input)
         {
             // Map.
-            var inquiry = _mapper.Map<Inquiry>(input);
+            var inquiry = _mapper.Map<InquiryFull>(input);
             inquiry.Id = id;
 
             // Act.
-            await _inquiryUseCase.UpdateAsync(inquiry);
+            await _inquiryRepository.UpdateAsync(inquiry);
+
+            // FUTURE: Does this make sense?
+            // Only when this item was rejected can we move into
+            // a pending state after update.
+            if (inquiry.State.AuditStatus == AuditStatus.Rejected)
+            {
+                // Transition.
+                inquiry.State.TransitionToPending();
+
+                // Act.
+                await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+            }
 
             // Return.
             return NoContent();
         }
 
+        // POST: api/inquiry/{id}/status_review
+        /// <summary>
+        ///     Set inquiry status to review by id.
+        /// </summary>
         [HttpPost("{id:int}/status_review")]
         public async Task<IActionResult> SetStatusReviewAsync(int id, StatusChangeDto input)
         {
             // Act.
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.PendingReview, input.Message);
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
+            inquiry.State.TransitionToReview();
+
+            // Act.
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+            _notifyService.DispatchNotify(new Envelope(
+               recipient: "info@example.com", // TODO:
+               content: input.Message)
+            {
+                Subject = "FunderMaps - Rapportage ter review",
+            });
 
             // Return.
             return NoContent();
         }
 
+        // POST: api/inquiry/{id}/status_rejected
+        /// <summary>
+        ///     Set inquiry status to rejected by id.
+        /// </summary>
         [HttpPost("{id:int}/status_rejected")]
         public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
         {
             // Act.
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Rejected, input.Message);
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
+            inquiry.State.TransitionToRejected();
+
+            // Act.
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+            _notifyService.DispatchNotify(new Envelope(
+               recipient: "info@example.com", // TODO:
+               content: input.Message)
+            {
+                Subject = "FunderMaps - Rapportage afgekeurd",
+            });
 
             // Return.
             return NoContent();
         }
 
+        // POST: api/inquiry/{id}/status_approved
+        /// <summary>
+        ///     Set inquiry status to done by id.
+        /// </summary>
         [HttpPost("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id, StatusChangeDto input)
+        public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
-            await _inquiryUseCase.UpdateStatusAsync(id, AuditStatus.Done, input.Message);
+            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
+            inquiry.State.TransitionToDone();
+
+            // Act.
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
             // Return.
             return NoContent();
         }
 
+        // DELETE: api/inquiry/{id}
+        /// <summary>
+        ///     Delete inquiry by id.
+        /// </summary>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.
-            await _inquiryUseCase.DeleteAsync(id);
+            await _inquiryRepository.DeleteAsync(id);
 
             // Return.
             return NoContent();

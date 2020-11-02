@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Entities.Report;
-using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,7 +8,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Foundation recovery entity.
     /// </summary>
-    public sealed class Recovery : AttributionControl<Recovery, int>, IReportEntity<Recovery>
+    public sealed class Recovery : AttributionControl<Recovery, int>
     {
         /// <summary>
         ///     Create new instance.

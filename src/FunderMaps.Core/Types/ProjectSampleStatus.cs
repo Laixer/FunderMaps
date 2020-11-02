@@ -1,63 +1,63 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Project sample status.
+    ///     Project sample status.
     /// </summary>
     public enum ProjectSampleStatus
     {
         /// <summary>
-        /// Contacted.
+        ///     Contacted.
         /// </summary>
-        Contacted,
+        Contacted = 0,
 
         /// <summary>
-        /// Quotation reserach.
+        ///     Quotation reserach.
         /// </summary>
-        QuotationReserach,
+        QuotationReserach = 1,
 
         /// <summary>
-        /// Research in progress.
+        ///     Research in progress.
         /// </summary>
-        ResearchInProgress,
+        ResearchInProgress = 2,
 
         /// <summary>
-        /// Research pending.
+        ///     Research pending.
         /// </summary>
-        ResearchPending,
+        ResearchPending = 3,
 
         /// <summary>
-        /// Research canceled.
+        ///     Research canceled.
         /// </summary>
-        ResearchCanceled,
+        ResearchCanceled = 4,
 
         /// <summary>
-        /// Quotation recovery.
+        ///     Quotation recovery.
         /// </summary>
-        QuotationRecovery,
+        QuotationRecovery = 5,
 
         /// <summary>
-        /// Waiting on permit.
+        ///     Waiting on permit.
         /// </summary>
-        WaitingOnPermit,
+        WaitingOnPermit = 6,
 
         /// <summary>
-        /// Recovery in progress.
+        ///     Recovery in progress.
         /// </summary>
-        RecoveryInProgress,
+        RecoveryInProgress = 7,
 
         /// <summary>
-        /// Recovery pending.
+        ///     Recovery pending.
         /// </summary>
-        RecoveryPending,
+        RecoveryPending = 8,
 
         /// <summary>
-        /// Recovery canceled.
+        ///     Recovery canceled.
         /// </summary>
-        RecoveryCanceled,
+        RecoveryCanceled = 9,
 
         /// <summary>
-        /// None.
+        ///     None.
         /// </summary>
-        None
+        None = 10,
     }
 }

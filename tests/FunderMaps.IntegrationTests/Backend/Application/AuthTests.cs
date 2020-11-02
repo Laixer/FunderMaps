@@ -1,10 +1,11 @@
 ﻿using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Core.Services;
+using FunderMaps.Core.Components;
 using FunderMaps.Testing.Extensions;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Testing.Repositories;
+using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -47,8 +48,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
-            Assert.True(returnObject.TokenValidity > 0);
+            Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
         [Fact]
@@ -65,8 +67,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
-            Assert.True(returnObject.TokenValidity > 0);
+            Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
         [Fact]
@@ -96,7 +99,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
-            Assert.Contains("Login", returnObject.Title);
+            Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Theory]

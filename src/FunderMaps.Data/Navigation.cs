@@ -13,12 +13,12 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Offset in list.
         /// </summary>
-        public TOffset Offset { get; set; } = default;
+        public TOffset Offset { get; set; }
 
         /// <summary>
         ///     Limit of items in list.
         /// </summary>
-        public TLimit Limit { get; set; } = default;
+        public TLimit Limit { get; set; }
 
         /// <summary>
         ///     Column to sort on.

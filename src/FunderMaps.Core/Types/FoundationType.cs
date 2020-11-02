@@ -1,88 +1,88 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Foundation type.
+    ///     Foundation type.
     /// </summary>
     public enum FoundationType
     {
         /// <summary>
-        /// Wood.
+        ///     Wood.
         /// </summary>
-        Wood,
+        Wood = 0,
 
         /// <summary>
-        /// Wood foundation accoring to Amsterdam.
+        ///     Wood foundation accoring to Amsterdam.
         /// </summary>
-        WoodAmsterdam,
+        WoodAmsterdam = 1,
 
         /// <summary>
-        /// Wood foundation accoring to Rotterdam.
+        ///     Wood foundation accoring to Rotterdam.
         /// </summary>
-        WoodRotterdam,
+        WoodRotterdam = 2,
 
         /// <summary>
-        /// Concrete.
+        ///     Concrete.
         /// </summary>
-        Concrete,
+        Concrete = 3,
 
         /// <summary>
-        /// No pile.
+        ///     No pile.
         /// </summary>
-        NoPile,
+        NoPile = 4,
 
         /// <summary>
-        /// No pile and no masonry.
+        ///     No pile and no masonry.
         /// </summary>
-        NoPileMasonry,
+        NoPileMasonry = 5,
 
         /// <summary>
-        /// No pile strips.
+        ///     No pile strips.
         /// </summary>
-        NoPileStrips,
+        NoPileStrips = 6,
 
         /// <summary>
-        /// No pile and no bearing floor.
+        ///     No pile and no bearing floor.
         /// </summary>
-        NoPileBearingFloor,
+        NoPileBearingFloor = 7,
 
         /// <summary>
-        /// No pile and no concrete floor.
+        ///     No pile and no concrete floor.
         /// </summary>
-        NoPileConcreteFloor,
+        NoPileConcreteFloor = 8,
 
         /// <summary>
-        /// No pile and no slit.
+        ///     No pile and no slit.
         /// </summary>
-        NoPileSlit,
+        NoPileSlit = 9,
 
         /// <summary>
-        /// Wood charger.
+        ///     Wood charger.
         /// </summary>
-        WoodCharger,
+        WoodCharger = 10,
 
         /// <summary>
-        /// Weighted pile.
+        ///     Weighted pile.
         /// </summary>
-        WeightedPile,
+        WeightedPile = 11,
 
         /// <summary>
-        /// Combined.
+        ///     Combined.
         /// </summary>
-        Combined,
+        Combined = 12,
 
         /// <summary>
-        /// Steel pile.
+        ///     Steel pile.
         /// </summary>
-        SteelPile,
+        SteelPile = 13,
 
         /// <summary>
-        /// Other.
+        ///     Other.
         /// </summary>
-        Other,
+        Other = 14,
 
         /// <summary>
-        /// Unknown.
+        ///     Unknown.
         /// </summary>
-        Unknown,
+        Unknown = 15,
     }
 }

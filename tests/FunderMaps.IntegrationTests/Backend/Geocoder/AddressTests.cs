@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -123,11 +124,11 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         {
             // Act
             var response = await _client.GetAsync("api/address/gfm-67f8fd79bf3a461c923e7c24c0fb479f");
-            var returnObject = await response.Content.ReadFromJsonAsync<Address>();
+            var returnObject = await response.Content.ReadFromJsonAsync<AddressBuildingDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("gfm-67f8fd79bf3a461c923e7c24c0fb479f", returnObject.Id);
+            Assert.Equal("gfm-67f8fd79bf3a461c923e7c24c0fb479f", returnObject.AddressId);
         }
 
         [Theory]
@@ -140,7 +141,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         {
             // Act
             var response = await _client.GetAsync($"api/address/suggest?query={query}");
-            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
+            var returnList = await response.Content.ReadFromJsonAsync<List<AddressBuildingDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -152,7 +153,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         {
             // Act
             var response = await _client.GetAsync($"api/address/suggest?query=laan&limit=2");
-            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
+            var returnList = await response.Content.ReadFromJsonAsync<List<AddressBuildingDto>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

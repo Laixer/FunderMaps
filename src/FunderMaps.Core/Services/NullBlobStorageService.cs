@@ -20,7 +20,7 @@ namespace FunderMaps.Core.Services
 
         public ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid, AccessType accessType = AccessType.Read)
         {
-            return new ValueTask<Uri>(new Uri("http://localhost/blob"));
+            return new ValueTask<Uri>(new Uri("https://localhost/blob"));
         }
 
         public ValueTask<IEnumerable<string>> ListSubcontainerNamesAsync(string containerName) 
@@ -34,6 +34,11 @@ namespace FunderMaps.Core.Services
         public ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
         {
             return new ValueTask();
+        }
+
+        public Task TestService()
+        {
+            return Task.CompletedTask;
         }
     }
 }

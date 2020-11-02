@@ -1,4 +1,4 @@
-﻿using FunderMaps.Webservice.ResponseModels.Types;
+﻿using FunderMaps.Core.Types;
 
 namespace FunderMaps.Webservice.ResponseModels.Analysis
 {
@@ -7,17 +7,15 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
     /// </summary>
     public sealed class AnalysisRiskResponseModel : AnalysisResponseModelBase
     {
-        // TODO: Replace with core type.
         /// <summary>
         ///     Represents the foundation type of this building.
         /// </summary>
-        public FoundationTypeResponseModel FoundationType { get; set; }
+        public FoundationType FoundationType { get; set; }
 
-        // TODO: Replace with core type.
         /// <summary>
         ///     Represents the foundation risk for this building.
         /// </summary>
-        public FoundationRiskResponseModel FoundationRisk { get; set; }
+        public FoundationRisk FoundationRisk { get; set; }
 
         /// <summary>
         ///     Represents the estimated restoration costs for this building.
@@ -34,10 +32,9 @@ namespace FunderMaps.Webservice.ResponseModels.Analysis
         /// </summary>
         public double? Drystand { get; set; }
 
-        // TODO: Replace with core type.
         /// <summary>
         ///     Represents the reliability of all data about this building.
         /// </summary>
-        public ReliabilityResponseModel Reliability { get; set; }
+        public Reliability Reliability { get; set; }
     }
 }

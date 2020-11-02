@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/netcoreapp3.1/FunderMaps",
+            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/netcoreapp3.1/FunderMaps.WebApi",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.WebApi",
             "stopAtEntry": false,
@@ -42,6 +42,35 @@
             "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/netcoreapp3.1/FunderMaps.Webservice",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Webservice",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "launchBrowser": {
+                "enabled": false,
+                "args": "${auto-detect-url}",
+                "windows": {
+                    "command": "cmd.exe",
+                    "args": "/C start ${auto-detect-url}"
+                },
+                "osx": {
+                    "command": "open"
+                },
+                "linux": {
+                    "command": "xdg-open"
+                }
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "FunderMaps.Portal",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/netcoreapp3.1/FunderMaps.Portal",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FunderMaps.Portal",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {

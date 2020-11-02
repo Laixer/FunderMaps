@@ -3,29 +3,55 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
-    /// Recovery sample repository.
+    ///     Recovery sample repository.
     /// </summary>
     internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, IRecoverySampleRepository
     {
-        /// <summary>
-        /// Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public RecoverySampleRepository(DbProvider dbProvider)
-            : base(dbProvider)
+        public static void MapToWriter(DbContext context, RecoverySample entity)
         {
+            context.AddParameterWithValue("recovery", entity.Recovery);
+            context.AddParameterWithValue("address", entity.Address);
+            context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("status", entity.Status);
+            context.AddParameterWithValue("type", entity.Type);
+            context.AddParameterWithValue("pile_type", entity.PileType);
+            context.AddParameterWithValue("contractor", entity.Contractor);
+            context.AddParameterWithValue("facade", entity.Facade);
+            context.AddParameterWithValue("permit", entity.Permit);
+            context.AddParameterWithValue("permit_date", entity.PermitDate);
+            context.AddParameterWithValue("recovery_date", entity.RecoveryDate);
         }
 
+        public static RecoverySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+            => new RecoverySample
+            {
+                Id = reader.GetInt(offset + 0),
+                Recovery = reader.GetInt(offset + 1),
+                Address = reader.GetSafeString(offset + 2),
+                CreateDate = reader.GetDateTime(offset + 3),
+                UpdateDate = reader.GetSafeDateTime(offset + 4),
+                DeleteDate = reader.GetSafeDateTime(offset + 5),
+                Note = reader.GetSafeString(offset + 6),
+                Status = reader.GetFieldValue<RecoveryStatus>(offset + 7),
+                Type = reader.GetFieldValue<RecoveryType>(offset + 8),
+                PileType = reader.GetFieldValue<PileType>(offset + 9),
+                Contractor = reader.GetFieldValue<Guid?>(offset + 10),
+                Facade = reader.GetFieldValue<Facade[]>(offset + 11),
+                Permit = reader.GetSafeString(offset + 12),
+                PermitDate = reader.GetDateTime(offset + 13),
+                RecoveryDate = reader.GetDateTime(offset + 14),
+            };
+
         /// <summary>
-        /// Create new <see cref="RecoverySample"/>.
+        ///     Create new <see cref="RecoverySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="RecoverySample"/>.</returns>
@@ -64,37 +90,30 @@ namespace FunderMaps.Data.Repositories
                 RETURNING id;
             ";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("recovery", entity.Recovery);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("status", entity.Status);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("pile_type", entity.PileType);
-            cmd.AddParameterWithValue("contractor", entity.Contractor);
-            cmd.AddParameterWithValue("facade", entity.Facade);
-            cmd.AddParameterWithValue("permit", entity.Permit);
-            cmd.AddParameterWithValue("permit_date", entity.PermitDate);
-            cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
-            return await cmd.ExecuteScalarIntAsync();
+            await using var context = await DbContextFactory(sql);
+
+            MapToWriter(context, entity);
+
+            return await context.ScalarAsync<int>();
         }
 
         /// <summary>
-        /// Retrieve number of entities.
+        ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.recovery_sample";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
-        /// Delete <see cref="RecoverySample"/>.
+        ///     Delete <see cref="RecoverySample"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
@@ -104,14 +123,15 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.recovery_sample
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
         /// <summary>
-        /// Retrieve <see cref="RecoverySample"/> by id.
+        ///     Retrieve <see cref="RecoverySample"/> by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="RecoverySample"/>.</returns>
@@ -137,35 +157,17 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
 
-            return new RecoverySample
-            {
-                Id = reader.GetInt(0),
-                Recovery = reader.GetInt(1),
-                Address = reader.GetSafeString(2),
-                CreateDate = reader.GetDateTime(3),
-                UpdateDate = reader.GetSafeDateTime(4),
-                DeleteDate = reader.GetSafeDateTime(5),
-                Note = reader.GetSafeString(6),
-                Status = reader.GetFieldValue<RecoveryStatus>(7),
-                Type = reader.GetFieldValue<RecoveryType>(8),
-                PileType = reader.GetFieldValue<PileType>(9),
-                Contractor = reader.GetFieldValue<Guid?>(10),
-                Facade = reader.GetFieldValue<Facade[]>(11),
-                Permit = reader.GetSafeString(12),
-                PermitDate = reader.GetDateTime(13),
-                RecoveryDate = reader.GetDateTime(14),
-            };
+            await using var reader = await context.ReaderAsync();
+
+            return MapFromReader(reader);
         }
 
         /// <summary>
-        /// Retrieve all <see cref="RecoverySample"/>.
+        ///     Retrieve all <see cref="RecoverySample"/>.
         /// </summary>
         /// <returns>List of <see cref="RecoverySample"/>.</returns>
         public override async IAsyncEnumerable<RecoverySample> ListAllAsync(INavigation navigation)
@@ -195,30 +197,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return new RecoverySample
-                {
-                    Id = reader.GetInt(0),
-                    Recovery = reader.GetInt(1),
-                    Address = reader.GetSafeString(2),
-                    CreateDate = reader.GetDateTime(3),
-                    UpdateDate = reader.GetSafeDateTime(4),
-                    DeleteDate = reader.GetSafeDateTime(5),
-                    Note = reader.GetSafeString(6),
-                    Status = reader.GetFieldValue<RecoveryStatus>(7),
-                    Type = reader.GetFieldValue<RecoveryType>(8),
-                    PileType = reader.GetFieldValue<PileType>(9),
-                    Contractor = reader.GetFieldValue<Guid>(10),
-                    Facade = reader.GetFieldValue<Facade[]>(11),
-                    Permit = reader.GetSafeString(12),
-                    PermitDate = reader.GetDateTime(13),
-                    RecoveryDate = reader.GetDateTime(14),
-                };
+                yield return MapFromReader(reader);
             }
         }
 
@@ -244,21 +227,13 @@ namespace FunderMaps.Data.Repositories
                             recovery_date = @recovery_date,
                     WHERE   id = @id";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("recovery", entity.Recovery);
-            cmd.AddParameterWithValue("address", entity.Address);
-            cmd.AddParameterWithValue("note", entity.Note);
-            cmd.AddParameterWithValue("status", entity.Status);
-            cmd.AddParameterWithValue("type", entity.Type);
-            cmd.AddParameterWithValue("pile_type", entity.PileType);
-            cmd.AddParameterWithValue("contractor", entity.Contractor);
-            cmd.AddParameterWithValue("facade", entity.Facade);
-            cmd.AddParameterWithValue("permit", entity.Permit);
-            cmd.AddParameterWithValue("permit_date", entity.PermitDate);
-            cmd.AddParameterWithValue("recovery_date", entity.RecoveryDate);
-            cmd.AddParameterWithValue("id", entity.Id);
-            await cmd.ExecuteNonQueryAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", entity.Id);
+
+            MapToWriter(context, entity);
+
+            await context.NonQueryAsync();
         }
     }
 }

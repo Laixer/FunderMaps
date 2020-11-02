@@ -1,22 +1,34 @@
 ﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Services;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types;
 using System.Net;
 
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
-    ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessageFeature"/>.
+    ///     Maps an <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
     /// </summary>
-    public sealed class FunderMapsExceptionMapper : ExceptionMapperBase<FunderMapsCoreException>
+    public class FunderMapsExceptionMapper : IExceptionMapper<FunderMapsCoreException>
     {
         /// <summary>
-        ///     Maps a <see cref="FunderMapsCoreException"/> to the 
-        ///     corresponding <see cref="ErrorMessageFeature"/>.
+        ///     Builds an <see cref="ErrorMessage"/>.
         /// </summary>
-        /// <param name="exception"><see cref="FunderMapsCoreException"/></param>
-        /// <returns><see cref="ErrorMessageFeature"/></returns>
-        public override ErrorMessage Map(FunderMapsCoreException exception)
+        /// <param name="message">Message to display.</param>
+        /// <param name="statusCode">Status code to display.</param>
+        /// <returns>Instance of<see cref="ErrorMessage"/>.</returns>
+        protected static ErrorMessage BuildMessage(string message, HttpStatusCode statusCode)
+            => new ErrorMessage
+            {
+                Message = message,
+                StatusCode = (int)statusCode
+            };
+
+        /// <summary>
+        ///     Maps a <see cref="FunderMapsCoreException"/> to an <see cref="ErrorMessage"/>.
+        /// </summary>
+        /// <param name="exception">An instance of <see cref="FunderMapsCoreException"/>.</param>
+        /// <returns>Instance of<see cref="ErrorMessage"/>.</returns>
+        public ErrorMessage Map(FunderMapsCoreException exception)
             => exception switch
             {
                 AuthenticationException _ => BuildMessage("Login attempt failed with provided credentials.", HttpStatusCode.Unauthorized),
@@ -25,6 +37,8 @@ namespace FunderMaps.AspNetCore
                 EntityReadOnlyException _ => BuildMessage("Requested entity is immutable.", HttpStatusCode.Locked),
                 InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
                 InvalidProductRequestException _ => BuildMessage("Invalid product requested.", HttpStatusCode.BadRequest),
+                OperationAbortedException _ => BuildMessage("Operation was aborted by client.", HttpStatusCode.BadRequest),
+                ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
                 StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 UploadException _ => BuildMessage("File upload failed.", HttpStatusCode.BadRequest),

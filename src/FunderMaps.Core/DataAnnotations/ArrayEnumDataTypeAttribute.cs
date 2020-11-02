@@ -13,7 +13,6 @@ namespace FunderMaps.Core.DataAnnotations
         /// <summary>
         ///     Gets or sets the enumeration type.
         /// </summary>
-        /// <returns>The enumeration type.</returns>
         public Type EnumType { get; }
 
         private EnumDataTypeAttribute validator;

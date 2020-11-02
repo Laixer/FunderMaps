@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -28,11 +27,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Act
             var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", organizationSetup);
-            var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(organization.Id, returnObject.Id);
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
     }
 }

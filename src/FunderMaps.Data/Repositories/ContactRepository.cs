@@ -2,7 +2,6 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -15,15 +14,6 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public ContactRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     Create new <see cref="Contact"/>.
         /// </summary>
@@ -47,13 +37,11 @@ namespace FunderMaps.Data.Repositories
                     @phone_number)
                 ON CONFLICT DO NOTHING";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context, entity);
 
-            // Cannot ensure affect, row can already exist.
-            await cmd.ExecuteNonQueryAsync();
+            await context.NonQueryAsync(affectedGuard: false);
 
             return entity.Email;
         }
@@ -62,13 +50,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.contact";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
@@ -77,30 +67,33 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(string email)
         {
+            ResetCacheEntity(email);
+
             var sql = @"
                 DELETE
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("email", email);
+
+            await context.NonQueryAsync();
         }
 
-        private static void MapToWriter(DbCommand cmd, Contact entity)
+        public static void MapToWriter(DbContext context, Contact entity)
         {
-            cmd.AddParameterWithValue("email", entity.Email);
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("phone_number", entity.PhoneNumber);
+            context.AddParameterWithValue("email", entity.Email);
+            context.AddParameterWithValue("name", entity.Name);
+            context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         }
 
-        private static Contact MapFromReader(DbDataReader reader)
+        public static Contact MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new Contact
             {
-                Email = reader.GetSafeString(0),
-                Name = reader.GetSafeString(1),
-                PhoneNumber = reader.GetSafeString(2),
+                Email = reader.GetSafeString(offset + 0),
+                Name = reader.GetSafeString(offset + 1),
+                PhoneNumber = reader.GetSafeString(offset + 2),
             };
 
         /// <summary>
@@ -110,22 +103,27 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Contact"/>.</returns>
         public override async ValueTask<Contact> GetByIdAsync(string email)
         {
+            if (TryGetEntity(email, out Contact entity))
+            {
+                return entity;
+            }
+
             var sql = @"
-                SELECT  email,
-                        name,
-                        phone_number
-                FROM    application.contact
-                WHERE   email = @email
+                SELECT  -- Contact
+                        c.email,
+                        c.name,
+                        c.phone_number
+                FROM    application.contact AS c
+                WHERE   c.email = @email
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("email", email);
 
-            return MapFromReader(reader);
+            await using var reader = await context.ReaderAsync();
+
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -140,20 +138,19 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  email,
-                        name,
-                        phone_number
-                FROM    application.contact";
+                SELECT  -- Contact
+                        c.email,
+                        c.name,
+                        c.phone_number
+                FROM    application.contact AS c";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(ref sql, navigation, "c");
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -168,18 +165,19 @@ namespace FunderMaps.Data.Repositories
                 throw new ArgumentNullException(nameof(entity));
             }
 
+            ResetCacheEntity(entity);
+
             var sql = @"
                     UPDATE  application.contact
                     SET     name = @name,
                             phone_number = @phone_number
                     WHERE   email = @email";
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await context.NonQueryAsync();
         }
     }
 }

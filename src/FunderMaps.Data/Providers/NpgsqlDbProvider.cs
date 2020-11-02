@@ -1,9 +1,12 @@
 ﻿using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.MapLayer;
+using FunderMaps.Core.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data.Common;
+using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 
 namespace FunderMaps.Data.Providers
 {
@@ -12,14 +15,27 @@ namespace FunderMaps.Data.Providers
     /// </summary>
     internal class NpgsqlDbProvider : DbProvider
     {
+        private string _connectionString;
+
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        /// <param name="configuration">Application configuration.</param>
-        /// <param name="options">Configuration options.</param>
         public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
             : base(configuration, options)
         {
+            var connectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString(_options.ConnectionStringName));
+
+            connectionStringBuilder.Timeout = _options.ConnectionTimeout > 0 ? _options.ConnectionTimeout : connectionStringBuilder.Timeout;
+            connectionStringBuilder.MinPoolSize = _options.MinPoolSize > 0 ? _options.MinPoolSize : connectionStringBuilder.MinPoolSize;
+            connectionStringBuilder.MaxPoolSize = _options.MaxPoolSize > 0 ? _options.MaxPoolSize : connectionStringBuilder.MaxPoolSize;
+            connectionStringBuilder.CommandTimeout = _options.CommandTimeout > 0 ? _options.CommandTimeout : connectionStringBuilder.CommandTimeout;
+
+            if (!string.IsNullOrEmpty(_options.ApplicationName))
+            {
+                connectionStringBuilder.ApplicationName = _options.ApplicationName;
+            }
+
+            _connectionString = connectionStringBuilder.ConnectionString;
         }
 
         // FUTURE: Move somewhere. Too npgsql specific
@@ -61,18 +77,34 @@ namespace FunderMaps.Data.Providers
         }
 
         /// <summary>
-        ///     Create a new Npgsql connection instance.
+        ///     <see cref="DbProvider.ConnectionScope"/>
         /// </summary>
-        /// <returns><see cref="DbConnection"/> instance.</returns>
-        public override DbConnection ConnectionScope() => new NpgsqlConnection(ConnectionString);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public override DbConnection ConnectionScope()
+            => new NpgsqlConnection(_connectionString);
 
         /// <summary>
-        ///     Create Npgsql command on the database connection.
+        ///     <see cref="DbProvider.CreateCommand(string, DbConnection)"/>
         /// </summary>
-        /// <param name="cmdText">The text of the query.</param>
-        /// <param name="connection">Database connection, see <see cref="DbConnection"/>.</param>
-        /// <returns>See <see cref="DbCommand"/>.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override DbCommand CreateCommand(string cmdText, DbConnection connection)
             => new NpgsqlCommand(cmdText, connection as NpgsqlConnection);
+
+        /// <summary>
+        ///     <see cref="DbProvider.HandleException(ExceptionDispatchInfo)"/>
+        /// </summary>
+        internal override void HandleException(ExceptionDispatchInfo edi)
+        {
+            if (edi.SourceException is PostgresException exception)
+            {
+                switch (exception.SqlState)
+                {
+                    case Npgsql.PostgresErrorCodes.ForeignKeyViolation:
+                        throw new ReferenceNotFoundException(exception.Message, exception);
+                }
+            }
+
+            base.HandleException(edi);
+        }
     }
 }

@@ -5,16 +5,13 @@ using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
@@ -33,8 +30,7 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public SpacesBlobStorageService(IOptions<BlobStorageOptions> options,
-            ILogger<SpacesBlobStorageService> logger)
+        public SpacesBlobStorageService(IOptions<BlobStorageOptions> options, ILogger<SpacesBlobStorageService> logger)
         {
             if (options == null || options.Value == null)
             {
@@ -53,50 +49,18 @@ namespace FunderMaps.Infrastructure.Storage
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Create client once.
-            var config = new AmazonS3Config
-            {
-                ServiceURL = _options.ServiceUri.AbsoluteUri
-            };
-            var credentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
-            client = new AmazonS3Client(credentials, config);
+            client = new AmazonS3Client(
+                new BasicAWSCredentials(_options.AccessKey, _options.SecretKey),
+                new AmazonS3Config
+                {
+                    ServiceURL = _options.ServiceUri.AbsoluteUri
+                });
         }
 
         /// <summary>
         ///     Called on graceful shutdown.
         /// </summary>
         public void Dispose() => client.Dispose();
-
-        /// <summary>
-        ///     Lists all names of subdirectories in a given container.
-        /// </summary>
-        /// <remarks>
-        ///     All container names are returned without trailing slash.
-        /// </remarks>
-        /// <param name="containerName">The container to check.</param>
-        /// <returns></returns>
-        public async ValueTask<IEnumerable<string>> ListSubcontainerNamesAsync(string containerName)
-        {
-            containerName.ThrowIfNullOrEmpty();
-
-            try
-            {
-                // Note: using a delimiter of '/' is used to group results. TODO Understand.
-                var result = await client.ListObjectsAsync(new ListObjectsRequest
-                {
-                    BucketName = _options.BlobStorageName,
-                    Prefix = WithTrailingSlash(containerName),
-                    Delimiter = "/"
-                });
-
-                var basePath = $"{WithoutTrailingSlash(containerName)}/";
-                return result.CommonPrefixes.Select(x => WithoutTrailingSlash(x.Replace(basePath, "", StringComparison.InvariantCulture)));
-            }
-            catch (AmazonS3Exception e)
-            {
-                _logger.LogError(e, "Could not list subdirectories in spaces using S3");
-                throw new StorageException("Could not list subdirectories", e);
-            }
-        }
 
         // TODO Amazon has no clean way to check for object existence.
         /// <summary>
@@ -107,22 +71,6 @@ namespace FunderMaps.Infrastructure.Storage
         /// <returns>Boolean result.</returns>
         public async ValueTask<bool> FileExistsAsync(string containerName, string fileName)
         {
-            // TODO Remove
-            try
-            {
-                var obj = await client.ListObjectsAsync(new ListObjectsRequest
-                {
-                    BucketName = _options.BlobStorageName,
-                    Prefix = "doesnotexist",
-                    Delimiter = "/"
-                });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-            // END remove
-
             fileName.ThrowIfNullOrEmpty();
 
             try
@@ -132,7 +80,7 @@ namespace FunderMaps.Infrastructure.Storage
                 var result = await client.GetObjectAsync(new GetObjectRequest
                 {
                     BucketName = _options.BlobStorageName,
-                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}"
+                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}"
                 });
 
                 return true;
@@ -146,6 +94,7 @@ namespace FunderMaps.Infrastructure.Storage
                 }
 
                 _logger.LogError(e, "Could not check file existence in Spaces using S3");
+
                 // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
                 throw new StorageException("Could not check file existence", e);
             }
@@ -154,42 +103,33 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Gets an access uri for a given file.
         /// </summary>
-        /// <remarks>
-        ///     The default <paramref name="accessType"/> is read.
-        /// </remarks>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <param name="hoursValid">How many hours the link should be valid.</param>
-        /// <param name="accessType">Indicates what we want to do with the link.</param>
         /// <returns>Access <see cref="Uri"/>.</returns>
-        public ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid, AccessType accessType = AccessType.Read)
+        public ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
         {
-            fileName.ThrowIfNullOrEmpty();
-            if (hoursValid <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(hoursValid));
-            }
-
             try
             {
-                var uri = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
+                fileName.ThrowIfNullOrEmpty();
+                if (hoursValid <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(hoursValid));
+                }
+
+                var url = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = _options.BlobStorageName,
-                    //Key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}",
-                    Expires = DateTime.UtcNow.AddHours(hoursValid),
-                    Verb = accessType switch
-                    {
-                        AccessType.Read => HttpVerb.GET,
-                        AccessType.Write => HttpVerb.PUT,
-                        _ => throw new InvalidOperationException(nameof(accessType))
-                    }
+                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
+                    Expires = DateTime.UtcNow.AddHours(hoursValid)
                 }));
 
-                return new ValueTask<Uri>(uri);
+                return new ValueTask<Uri>(url);
             }
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not get access link from Spaces using S3");
+
                 throw new StorageException("Could not get access link", e);
             }
         }
@@ -211,7 +151,7 @@ namespace FunderMaps.Infrastructure.Storage
                     throw new ArgumentNullException(nameof(stream));
                 }
 
-                var key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}";
+                var key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}";
                 using var transferUtility = new TransferUtility(client);
 
                 return new ValueTask(transferUtility.UploadAsync(stream, _options.BlobStorageName, key));
@@ -219,6 +159,7 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not store file to Spaces using S3");
+
                 throw new StorageException("Could not store file", e);
             }
         }
@@ -235,6 +176,7 @@ namespace FunderMaps.Infrastructure.Storage
         {
             fileName.ThrowIfNullOrEmpty();
             contentType.ThrowIfNullOrEmpty();
+
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
@@ -247,7 +189,7 @@ namespace FunderMaps.Infrastructure.Storage
                 {
                     BucketName = _options.BlobStorageName,
                     ContentType = contentType,
-                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{WithTrailingSlash(containerName)}{fileName}",
+                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
                     InputStream = stream
                 };
 
@@ -256,37 +198,19 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
+
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
         }
 
+        // FUTURE: From interface
         /// <summary>
-        ///     Removes a / or \ from the end of a string if present.
+        ///     Test the Amazon S3 service backend.
         /// </summary>
-        /// <param name="input">The string to check.</param>
-        /// <returns>The string without trailing slash.</returns>
-        private static string WithoutTrailingSlash(string input)
+        public async Task TestService()
         {
-            if (input.EndsWith("\\", StringComparison.InvariantCulture))
-            {
-                return input[0..^1];
-            }
-
-            if (input.EndsWith("/", StringComparison.InvariantCulture))
-            {
-                return input[0..^1];
-            }
-
-            return input;
+            await client.ListBucketsAsync();
         }
-
-        /// <summary>
-        ///     Ensures a / at the end of a string.
-        /// </summary>
-        /// <param name="input">The string to check.</param>
-        /// <returns>The string with trailing slash.</returns>
-        private static string WithTrailingSlash(string input)
-            => $"{WithoutTrailingSlash(input)}/";
     }
 }
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
+#pragma warning restore CA1812 // Internal class is never instantiated

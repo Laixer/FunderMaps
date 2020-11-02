@@ -1,10 +1,10 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;

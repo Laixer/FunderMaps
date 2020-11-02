@@ -2,7 +2,6 @@
 using FunderMaps.Testing.Faker;
 using FunderMaps.Webservice.ResponseModels;
 using FunderMaps.Webservice.ResponseModels.Statistics;
-using FunderMaps.Webservice.ResponseModels.Types;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -33,14 +32,14 @@ namespace FunderMaps.IntegrationTests.Webservice
         }
 
         [Theory]
-        [InlineData(StatisticsProductTypeResponseModel.BuildingsRestored)]
-        [InlineData(StatisticsProductTypeResponseModel.ConstructionYears)]
-        [InlineData(StatisticsProductTypeResponseModel.DataCollected)]
-        [InlineData(StatisticsProductTypeResponseModel.FoundationRatio)]
-        [InlineData(StatisticsProductTypeResponseModel.FoundationRisk)]
-        [InlineData(StatisticsProductTypeResponseModel.Incidents)]
-        [InlineData(StatisticsProductTypeResponseModel.Reports)]
-        public async Task GetProductByNeighborhoodCodeReturnProduct(StatisticsProductTypeResponseModel product)
+        [InlineData(StatisticsProductType.BuildingsRestored)]
+        [InlineData(StatisticsProductType.ConstructionYears)]
+        [InlineData(StatisticsProductType.DataCollected)]
+        [InlineData(StatisticsProductType.FoundationRatio)]
+        [InlineData(StatisticsProductType.FoundationRisk)]
+        [InlineData(StatisticsProductType.Incidents)]
+        [InlineData(StatisticsProductType.Reports)]
+        public async Task GetProductByNeighborhoodCodeReturnProduct(StatisticsProductType product)
         {
             // Act.
             var response = await client.GetAsync($"api/statistics/get?product={product}&neighborhoodCode={statisticsProduct.NeighborhoodCode}");
@@ -65,7 +64,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductWithoutRequestMethodThrows()
         {
             // Act.
-            var response = await client.GetAsync($"api/statistics/get?product={StatisticsProductTypeResponseModel.FoundationRatio}");
+            var response = await client.GetAsync($"api/statistics/get?product={StatisticsProductType.FoundationRatio}");
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
@@ -89,7 +88,7 @@ namespace FunderMaps.IntegrationTests.Webservice
 
         {
             // Act.
-            var response = await client.GetAsync($"api/statistics/get?limit={limit}&offset={offset}&product={StatisticsProductTypeResponseModel.ConstructionYears}&query=thisismyquerystring");
+            var response = await client.GetAsync($"api/statistics/get?limit={limit}&offset={offset}&product={StatisticsProductType.ConstructionYears}&query=thisismyquerystring");
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct

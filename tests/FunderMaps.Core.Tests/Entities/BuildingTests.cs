@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Entities.Geocoder;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -40,7 +39,6 @@ namespace FunderMaps.Core.Tests.Entities
 
             // Assert
             Assert.True(entity1.IsValidated);
-            Assert.IsAssignableFrom<IGeocoderEntity<Building>>(entity1);
             Assert.Contains("id", Assert.Throws<ValidationException>(() => entity2.Validate()).Message, StringComparison.InvariantCultureIgnoreCase);
         }
 

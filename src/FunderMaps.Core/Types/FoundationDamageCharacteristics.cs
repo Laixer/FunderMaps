@@ -1,43 +1,43 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    /// Foundation damage characteristics.
+    ///     Foundation damage characteristics.
     /// </summary>
     public enum FoundationDamageCharacteristics
     {
         /// <summary>
-        /// Jamming door window.
+        ///     Jamming door window.
         /// </summary>
-        JammingDoorWindow,
+        JammingDoorWindow = 0,
 
         /// <summary>
-        /// Crack.
+        ///     Crack.
         /// </summary>
-        Crack,
+        Crack = 1,
 
         /// <summary>
-        /// Skewed.
+        ///     Skewed.
         /// </summary>
-        Skewed,
+        Skewed = 2,
 
         /// <summary>
-        /// CrawlspaceFlooding.
+        ///     Crawlspace flooding.
         /// </summary>
-        CrawlspaceFlooding,
+        CrawlspaceFlooding = 3,
 
         /// <summary>
-        /// Threshold above subsurface.
+        ///     Threshold above subsurface.
         /// </summary>
-        ThresholdAboveSubsurface,
+        ThresholdAboveSubsurface = 4,
 
         /// <summary>
-        /// Threshold below subsurface.
+        ///     Threshold below subsurface.
         /// </summary>
-        ThresholdBelowSubsurface,
+        ThresholdBelowSubsurface = 5,
 
         /// <summary>
-        /// Crooked floor wall.
+        ///     Crooked floor wall.
         /// </summary>
-        CrookedFloorWall,
+        CrookedFloorWall = 6,
     }
 }

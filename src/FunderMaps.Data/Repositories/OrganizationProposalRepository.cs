@@ -2,7 +2,6 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -15,15 +14,6 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class OrganizationProposalRepository : RepositoryBase<OrganizationProposal, Guid>, IOrganizationProposalRepository
     {
-        /// <summary>
-        ///     Create a new instance.
-        /// </summary>
-        /// <param name="dbProvider">Database provider.</param>
-        public OrganizationProposalRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     Create new <see cref="OrganizationProposal"/>.
         /// </summary>
@@ -42,13 +32,12 @@ namespace FunderMaps.Data.Repositories
                     @name,
                     @email)";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("email", entity.Email);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("name", entity.Name);
+            context.AddParameterWithValue("email", entity.Email);
+
+            await using var reader = await context.ReaderAsync();
 
             return reader.GetGuid(0);
         }
@@ -57,13 +46,15 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override ValueTask<ulong> CountAsync()
+        public override async ValueTask<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.create_organization_proposal";
 
-            return ExecuteScalarUnsignedLongCommandAsync(sql);
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
         }
 
         /// <summary>
@@ -72,23 +63,26 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
+            ResetCacheEntity(id);
+
             var sql = @"
                 DELETE
                 FROM    application.organization_proposal
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
         }
 
-        private static OrganizationProposal MapFromReader(DbDataReader reader)
+        private static OrganizationProposal MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new OrganizationProposal
             {
-                Id = reader.GetGuid(0),
-                Name = reader.GetSafeString(1),
-                Email = reader.GetSafeString(2),
+                Id = reader.GetGuid(offset + 0),
+                Name = reader.GetSafeString(offset + 1),
+                Email = reader.GetSafeString(offset + 2),
             };
 
         /// <summary>
@@ -98,22 +92,27 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="OrganizationProposal"/>.</returns>
         public override async ValueTask<OrganizationProposal> GetByIdAsync(Guid id)
         {
+            if (TryGetEntity(id, out OrganizationProposal entity))
+            {
+                return entity;
+            }
+
             var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   id = @id
+                SELECT  -- OrganizationProposal
+                        op.id,
+                        op.name,
+                        op.email
+                FROM    application.organization_proposal AS op
+                WHERE   op.id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("id", id);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("id", id);
 
-            return MapFromReader(reader);
+            await using var reader = await context.ReaderAsync();
+
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -124,21 +123,21 @@ namespace FunderMaps.Data.Repositories
         public async ValueTask<OrganizationProposal> GetByNameAsync(string name)
         {
             var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   normalized_name = application.normalize(@name)
+                SELECT  -- OrganizationProposal
+                        op.id,
+                        op.name,
+                        op.email
+                FROM    application.organization_proposal AS op
+                WHERE   op.normalized_name = application.normalize(@name)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("@name", name);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("@name", name);
 
-            return MapFromReader(reader);
+            await using var reader = await context.ReaderAsync();
+
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -156,14 +155,13 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
-            cmd.AddParameterWithValue("email", email);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            context.AddParameterWithValue("email", email);
 
-            return MapFromReader(reader);
+            await using var reader = await context.ReaderAsync();
+
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -185,13 +183,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 

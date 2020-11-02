@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Testing.Repositories;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -23,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task CreateOrganizationUserFromSessionReturnOrganizationUser()
         {
             // Arrange
-            var newOrganizationUser = new UserFaker().Generate();
+            var newOrganizationUser = new OrganizationUserPasswordDtoFaker().Generate();
             var client = _factory
                 .ConfigureAuthentication(options =>
                 {
@@ -90,7 +90,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task UpdateOrganizationUserFromSessionReturnNoContent()
         {
             // Arrange
-            var newOrganizationUser = new UserFaker().Generate();
+            var newOrganizationUser = new UserDtoFaker().Generate();
             var sessionUser = new UserFaker().Generate();
             var organizationUser1 = new UserFaker().Generate();
             var sessionOrganization = new OrganizationFaker().Generate();
@@ -126,6 +126,96 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Act
             var response = await client.PutAsJsonAsync($"api/organization/user/{organizationUser1.Id}", newOrganizationUser);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ChangeOrganizationUserRoleFromSessionReturnNoContent()
+        {
+            // Arrange
+            var newOrganizationUserRole = new ChangeOrganizationRoleDtoFaker().Generate();
+            var sessionUser = new UserFaker().Generate();
+            var organizationUser1 = new UserFaker().Generate();
+            var sessionOrganization = new OrganizationFaker().Generate();
+            var client = _factory
+                .ConfigureAuthentication(options =>
+                {
+                    options.User = sessionUser;
+                    options.Organization = sessionOrganization;
+                    options.OrganizationRole = OrganizationRole.Superuser;
+                })
+                .WithDataStoreList(new[]
+                {
+                    new UserRecord { User = sessionUser },
+                    new UserRecord { User = organizationUser1 },
+                })
+                .WithDataStoreItem(sessionOrganization)
+                .WithDataStoreList(new[]
+                {
+                    new OrganizationUserRecord
+                    {
+                        UserId = sessionUser.Id,
+                        OrganizationId = sessionOrganization.Id,
+                        OrganizationRole = new Bogus.Faker().PickRandom<OrganizationRole>(),
+                    },
+                    new OrganizationUserRecord
+                    {
+                        UserId = organizationUser1.Id,
+                        OrganizationId = sessionOrganization.Id,
+                        OrganizationRole = new Bogus.Faker().PickRandom<OrganizationRole>(),
+                    },
+                })
+                .CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/organization/user/{organizationUser1.Id}/change-organization-role", newOrganizationUserRole);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task ChangeOrganizationUserPasswordFromSessionReturnNoContent()
+        {
+            // Arrange
+            var newOrganizationUserPassword = new ChangePasswordDtoFaker().Generate();
+            var sessionUser = new UserFaker().Generate();
+            var organizationUser1 = new UserFaker().Generate();
+            var sessionOrganization = new OrganizationFaker().Generate();
+            var client = _factory
+                .ConfigureAuthentication(options =>
+                {
+                    options.User = sessionUser;
+                    options.Organization = sessionOrganization;
+                    options.OrganizationRole = OrganizationRole.Superuser;
+                })
+                .WithDataStoreList(new[]
+                {
+                    new UserRecord { User = sessionUser },
+                    new UserRecord { User = organizationUser1 },
+                })
+                .WithDataStoreItem(sessionOrganization)
+                .WithDataStoreList(new[]
+                {
+                    new OrganizationUserRecord
+                    {
+                        UserId = sessionUser.Id,
+                        OrganizationId = sessionOrganization.Id,
+                        OrganizationRole = new Bogus.Faker().PickRandom<OrganizationRole>(),
+                    },
+                    new OrganizationUserRecord
+                    {
+                        UserId = organizationUser1.Id,
+                        OrganizationId = sessionOrganization.Id,
+                        OrganizationRole = new Bogus.Faker().PickRandom<OrganizationRole>(),
+                    },
+                })
+                .CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/organization/user/{organizationUser1.Id}/change-password", newOrganizationUserPassword);
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

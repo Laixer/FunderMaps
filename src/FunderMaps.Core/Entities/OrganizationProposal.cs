@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Entities.Application;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
@@ -7,7 +6,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Organization proposal.
     /// </summary>
-    public sealed class OrganizationProposal : IdentifiableEntity<OrganizationProposal, Guid>, IApplicationEntity<OrganizationProposal>
+    public sealed class OrganizationProposal : IdentifiableEntity<OrganizationProposal, Guid>
     {
         /// <summary>
         ///     Create new instance.

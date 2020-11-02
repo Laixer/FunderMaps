@@ -8,12 +8,12 @@
         /// <summary>
         ///     Ascending sorting.
         /// </summary>
-        Ascending,
+        Ascending = 0,
 
         /// <summary>
         ///     Descending sorting.
         /// </summary>
-        Descending,
+        Descending = 1,
     }
 
     /// <summary>

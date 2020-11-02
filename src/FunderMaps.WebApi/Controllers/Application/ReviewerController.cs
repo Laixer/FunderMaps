@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
-using FunderMaps.Controllers;
-using FunderMaps.Core.Authentication;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
-using FunderMaps.WebApi.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,39 +21,43 @@ namespace FunderMaps.WebApi.Controllers.Application
     ///     user session. Therefore the user context must be active.
     /// </remarks>
     [Authorize(Policy = "WriterPolicy")]
-    public class ReviewerController : BaseApiController
+    public class ReviewerController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly AuthManager _authManager;
-        private readonly OrganizationManager _organizationManager;
+        private readonly Core.AppContext _appContext;
+        private readonly IOrganizationUserRepository _organizationUserRepository;
+        private readonly IUserRepository _userRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ReviewerController(IMapper mapper, AuthManager authManager, OrganizationManager organizationManager)
+        public ReviewerController(IMapper mapper, Core.AppContext appContext, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authManager = authManager ?? throw new ArgumentNullException(nameof(authManager));
-            _organizationManager = organizationManager ?? throw new ArgumentNullException(nameof(organizationManager));
+            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         // GET: api/reviewer
         /// <summary>
         ///     Return all reviewers.
         /// </summary>
-        /// <remarks>
-        ///     Cache response for 1 hour.
-        /// </remarks>
+        /// <remarks>Cache response for 1 hour.</remarks>
         [HttpGet("reviewer"), ResponseCache(Duration = 60 * 60)]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationModel pagination)
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
-            // Assign.
-            var roles = new OrganizationRole[]{ OrganizationRole.Verifier, OrganizationRole.Superuser };
-            Organization sessionOrganization = await _authManager.GetOrganizationAsync(User);
-            IAsyncEnumerable<User> userList = _organizationManager.GetAllUserByRoleAsync(sessionOrganization.Id, roles, pagination.Navigation);
+            // Act.
+            // TODO: Single call
+            var userList = new List<User>();
+            var roles = new OrganizationRole[] { OrganizationRole.Verifier, OrganizationRole.Superuser };
+            await foreach (var user in _organizationUserRepository.ListAllByRoleAsync(_appContext.TenantId, roles, pagination.Navigation))
+            {
+                userList.Add(await _userRepository.GetByIdAsync(user));
+            }
 
             // Map.
-            var result = await _mapper.MapAsync<IList<ReviewerDto>, User>(userList);
+            var result = _mapper.Map<IList<ReviewerDto>>(userList);
 
             // Return.
             return Ok(result);

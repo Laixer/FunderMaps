@@ -18,6 +18,14 @@ namespace FunderMaps.Core.Services
         {
             return Task.CompletedTask;
         }
+
+        /// <summary>
+        ///     Test the email service backend.
+        /// </summary>
+        public Task TestService()
+        {
+            return Task.CompletedTask;
+        }
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

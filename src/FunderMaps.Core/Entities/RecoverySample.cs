@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.DataAnnotations;
-using FunderMaps.Core.Entities.Report;
 using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +8,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Recovery sample entity.
     /// </summary>
-    public sealed class RecoverySample : RecordControl<RecoverySample, int>, IReportEntity<RecoverySample>
+    public sealed class RecoverySample : RecordControl<RecoverySample, int>
     {
         /// <summary>
         ///     Create new instance.

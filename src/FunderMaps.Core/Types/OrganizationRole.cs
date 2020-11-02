@@ -1,28 +1,28 @@
 ﻿namespace FunderMaps.Core.Types
 {
     /// <summary>
-    ///     Organization role.
+    ///     Organization user role.
     /// </summary>
     public enum OrganizationRole
     {
         /// <summary>
         ///     Superuser.
         /// </summary>
-        Superuser,
+        Superuser = 0,
 
         /// <summary>
         ///     Verifier.
         /// </summary>
-        Verifier,
+        Verifier = 1,
 
         /// <summary>
         ///     Writer.
         /// </summary>
-        Writer,
+        Writer = 2,
 
         /// <summary>
         ///     Reader.
         /// </summary>
-        Reader,
+        Reader = 3,
     }
 }
