@@ -1,11 +1,8 @@
-﻿using FunderMaps.Console.BackgroundTasks;
-using FunderMaps.Console.BundleServices;
+﻿using FunderMaps.Console.BundleServices;
 using FunderMaps.Console.Dev;
-using FunderMaps.Console.V2;
-using FunderMaps.Core.BackgroundWork;
-using FunderMaps.Core.BackgroundWork.Interfaces;
-using FunderMaps.Core.BackgroundWork.Managers;
-using FunderMaps.Core.BackgroundWork.Types;
+using FunderMaps.Core;
+using FunderMaps.Core.Managers;
+using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -64,6 +61,7 @@ namespace FunderMaps.Console
             services.AddSpacesBlobStorageServices(configuration, "BlobStorage");
 
 
+            // Add all types of background tasks as an enumerable.
             services.TryAddEnumerable(new[]
             {
                 ServiceDescriptor.Transient(typeof(BackgroundTaskBase), typeof(BundleBuildingTask)),
@@ -76,7 +74,6 @@ namespace FunderMaps.Console
 
             // Add console services.
             services.AddScoped<BundleStorageService>();
-            services.AddScoped<>();
         }
     }
 }

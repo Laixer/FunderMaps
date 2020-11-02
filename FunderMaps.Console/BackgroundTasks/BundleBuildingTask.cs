@@ -1,12 +1,12 @@
 ﻿using FunderMaps.Console.Types;
 using FunderMaps.Core;
-using FunderMaps.Core.BackgroundWork.Types;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
@@ -75,6 +75,7 @@ namespace FunderMaps.Console.BundleServices
             }
             if (bundleBuildingContext.Formats.Distinct().Count() != bundleBuildingContext.Formats.Count())
             {
+                // TODO Warning?
                 throw new InvalidOperationException("Can't have duplicates in format list");
             }
 
@@ -87,10 +88,7 @@ namespace FunderMaps.Console.BundleServices
             }
 
             var bundle = await _bundleRepository.GetByIdAsync(bundleBuildingContext.BundleId).AsTask();
-
-            var layersTask = _layerRepository.ListAllFromBundleIdAsync(bundleBuildingContext.BundleId).ToListAsync().AsTask();
-            layersTask.Wait();
-            var layers = layersTask.Result;
+            var layers = await _layerRepository.ListAllFromBundleIdAsync(bundleBuildingContext.BundleId).ToListAsync();
 
             ExportFormats(bundle, layers, formats);
         }
@@ -182,6 +180,8 @@ namespace FunderMaps.Console.BundleServices
 
                 // TODO Name thing already exists?
                 var fileName = $"{BundleNameHelper.GetName(bundle, GeometryExportFormat.Gpkg)}";
+
+                // TODO Centralize ogr2ogr
                 var commandText = $"ogr2ogr -f GPKG {fileName} {BuildPGString()} {(append ? "-append " : "")}-sql \"{sql}\" -nln \"{layer.SchemaName}.{layer.TableName}\"";
 
                 CommandExecuter.ExecuteCommand(commandText);

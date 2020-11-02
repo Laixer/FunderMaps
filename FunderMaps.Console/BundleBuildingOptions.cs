@@ -6,7 +6,7 @@
     public sealed class BundleBuildingOptions
     {
         /// <summary>
-        ///  Name of our connection string.
+        ///     Name of our connection string.
         /// </summary>
         public string ConnectionStringName { get; set; }
 

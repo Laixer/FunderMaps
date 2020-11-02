@@ -38,7 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FunderMaps.Core.BackgroundWork\FunderMaps.Core.BackgroundWork.csproj" />
     <ProjectReference Include="..\src\FunderMaps.Core\FunderMaps.Core.csproj" />
     <ProjectReference Include="..\src\FunderMaps.Data\FunderMaps.Data.csproj" />
     <ProjectReference Include="..\src\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj" />
