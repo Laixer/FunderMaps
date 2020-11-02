@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Notification;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
@@ -17,8 +18,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Adds the core services to the container.
         /// </summary>
         /// <remarks>
-        ///     Add service components with their correct lifetime cycle. An invalid lifetime can
-        ///     block the dependency graph resulting in an underperforming application.
+        ///     Read the instructions before adding a service.
+        ///     <para>
+        ///         Add service components with their correct lifetime cycle. An invalid lifetime can
+        ///         block the dependency graph resulting in an underperforming application.
+        ///     </para>
         /// </remarks>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
@@ -50,13 +54,19 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
 
-            // Register core service fillers in DI container.
+            // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
-            //       them as a singleton will keep the services alife for the entire application
-            //       lifetime. Beware to add new services as singletons.
+            //       them as a singleton will keep the services alife for the entire lifetime
+            //       of the application. Beware to add new services as singletons.
             services.TryAddSingleton<IEmailService, NullEmailService>();
             services.TryAddSingleton<IBlobStorageService, NullBlobStorageService>();
-            services.TryAddSingleton<INotificationService, NullNotificationService>();
+            services.TryAddSingleton<INotifyService, NotificationHub>();
+
+            // Register notification handlers in DI container.
+            services.TryAddEnumerable(new[]
+            {
+                ServiceDescriptor.Transient<INotifyHandler, EmailHandler>(),
+            });
 
             // The application core (as well as many other components) depends upon the ability to cache
             // objects to memory. The memory cache may have already been registered with the container
