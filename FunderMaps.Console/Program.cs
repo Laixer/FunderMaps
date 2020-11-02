@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Console.BundleServices;
+using FunderMaps.Console.Dev;
 using FunderMaps.Core;
 using FunderMaps.Core.Managers;
 using FunderMaps.Core.Types.BackgroundTasks;
@@ -59,6 +60,8 @@ namespace FunderMaps.Console
             services.AddFunderMapsDataServices("FunderMapsConnection");
             services.AddSpacesBlobStorageServices(configuration, "BlobStorage");
 
+            // TODO Remove
+            services.AddHostedService<DevEnqueueMachine>();
 
             // Add all types of background tasks as an enumerable.
             services.TryAddEnumerable(new[]
