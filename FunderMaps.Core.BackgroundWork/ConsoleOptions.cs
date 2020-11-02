@@ -1,10 +1,11 @@
-﻿namespace FunderMaps.Console
+﻿namespace FunderMaps.Core.BackgroundWork
 {
     /// <summary>
     ///     Wrapper for all our console options.
     /// </summary>
     public sealed class ConsoleOptions
     {
+        // TODO Is this relevant?
         /// <summary>
         ///     Defines the maximum items in our queue.
         /// </summary>

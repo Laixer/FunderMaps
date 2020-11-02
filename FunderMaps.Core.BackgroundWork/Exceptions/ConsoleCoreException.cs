@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Console.Exceptions
+namespace FunderMaps.Core.BackgroundWork.Exceptions
 {
     /// <summary>
     ///     Base exception for all console related errors.

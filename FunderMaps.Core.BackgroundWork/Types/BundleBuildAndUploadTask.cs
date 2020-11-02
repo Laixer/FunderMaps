@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FunderMaps.Console.Types
+namespace FunderMaps.Core.BackgroundWork.Types
 {
     /// <summary>
     ///     Task representing building a bundle and uploading
@@ -16,6 +16,11 @@ namespace FunderMaps.Console.Types
     /// </remarks>
     public class BundleBuildAndUploadTask : BackgroundTask
     {
+        /// <summary>
+        ///     This item should run async.
+        /// </summary>
+        public override bool RunSynchronously => false;
+
         /// <summary>
         ///     The bundle id.
         /// </summary>

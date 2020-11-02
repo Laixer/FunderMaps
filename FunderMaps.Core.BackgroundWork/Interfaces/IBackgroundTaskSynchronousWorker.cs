@@ -1,19 +1,18 @@
-﻿using FunderMaps.Console.Types;
-using System.Threading.Tasks;
+﻿using FunderMaps.Core.BackgroundWork.Types;
 
-namespace FunderMaps.Console.Interfaces
+namespace FunderMaps.Core.BackgroundWork.Interfaces
 {
     /// <summary>
     ///     Contract for a background task worker for a specific task type.
     /// </summary>
     /// <typeparam name="TBackgroundTask">The type of background task.</typeparam>
-    public interface IBackgroundTaskWorker<TBackgroundTask>
+    public interface IBackgroundTaskSynchronousWorker<TBackgroundTask>
         where TBackgroundTask : BackgroundTask, new()
     {
         /// <summary>
-        ///     Process an item asynchronously.
+        ///     Process an item synchronously.
         /// </summary>
         /// <param name="item">The task to process.</param>
-        Task ProcessAsync(TBackgroundTask item);
+        void Process(TBackgroundTask item);
     }
 }

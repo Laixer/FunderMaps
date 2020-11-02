@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Console.Exceptions
+namespace FunderMaps.Core.BackgroundWork.Exceptions
 {
     /// <summary>
     ///     Exception indicating our task queue is full.

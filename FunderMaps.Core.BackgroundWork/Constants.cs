@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Console
+﻿namespace FunderMaps.Core.BackgroundWork
 {
     /// <summary>
     ///     Contains constant values.

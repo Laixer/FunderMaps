@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FunderMaps.Console.Types
+namespace FunderMaps.Core.BackgroundWork.Types
 {
     // FUTURE Implement service for this.
     /// <summary>
@@ -8,6 +8,11 @@ namespace FunderMaps.Console.Types
     /// </summary>
     public class BundleCleanupTask : BackgroundTask
     {
+        /// <summary>
+        ///     This task should run synchronously.
+        /// </summary>
+        public override bool RunSynchronously => false;
+
         /// <summary>
         ///     The bundle id.
         /// </summary>
