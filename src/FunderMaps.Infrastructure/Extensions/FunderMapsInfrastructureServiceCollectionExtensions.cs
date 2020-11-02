@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Infrastructure.Email;
-using FunderMaps.Infrastructure.Notification;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -47,20 +46,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        ///     Use this method to add services to the container.
-        /// </summary>
-        /// <remarks>
-        ///     Order is undetermined when configuring services.
-        /// </remarks>
-        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public static void ConfigureServices(IServiceCollection services)
-        {
-            // Remove all existing notification services and inject local email service.
-            services.RemoveAll<INotificationService>();
-            services.AddTransient<INotificationService, NotificationHubService>();
-        }
-
-        /// <summary>
         ///     Adds the infrastructure services to the container.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
@@ -75,8 +60,6 @@ namespace Microsoft.Extensions.DependencyInjection
             using var serviceProviderScope = services.BuildServiceProvider().CreateScope();
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
-
-            ConfigureServices(services);
 
             if (!HostEnvironment.IsDevelopment())
             {

@@ -4,6 +4,7 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly Core.AppContext _appContext;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IBlobStorageService _blobStorageService;
-        private readonly INotificationService _notificationService;
+        private readonly INotifyService _notifyService;
 
         /// <summary>
         ///     Create new instance.
@@ -36,13 +37,13 @@ namespace FunderMaps.WebApi.Controllers.Report
             Core.AppContext appContext,
             IInquiryRepository inquiryRepository,
             IBlobStorageService blobStorageService,
-            INotificationService notificationService)
+            INotifyService notificationService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
         // GET: api/inquiry/stats
@@ -210,10 +211,13 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notificationService.NotifyByEmailAsync(
-                address: new string[] { "info@example.com" }, // TODO:
-                content: input.Message,
-                subject: "FunderMaps - Rapportage ter review");
+
+            _notifyService.DispatchNotify(new Envelope(
+               recipient: "info@example.com", // TODO:
+               content: input.Message)
+            {
+                Subject = "FunderMaps - Rapportage ter review",
+            });
 
             // Return.
             return NoContent();
@@ -234,10 +238,13 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notificationService.NotifyByEmailAsync(
-                address: new string[] { "info@example.com" }, // TODO:
-                content: input.Message,
-                subject: "FunderMaps - Rapportage afgekeurd");
+
+            _notifyService.DispatchNotify(new Envelope(
+               recipient: "info@example.com", // TODO:
+               content: input.Message)
+            {
+                Subject = "FunderMaps - Rapportage afgekeurd",
+            });
 
             // Return.
             return NoContent();
