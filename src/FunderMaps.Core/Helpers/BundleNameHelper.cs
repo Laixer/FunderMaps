@@ -25,6 +25,7 @@ namespace FunderMaps.Core.Helpers
             return GetName(bundle.Id, bundle.VersionId, format);
         }
 
+        // TODO Is this correct?
         /// <summary>
         ///     Constructs a filename for a bundle.
         /// </summary>
@@ -37,6 +38,8 @@ namespace FunderMaps.Core.Helpers
             {
                 GeometryExportFormat.Mvt => throw new InvalidOperationException("Can't get file name for a MVT folder structure"),
                 GeometryExportFormat.Gpkg => $"{bundleId}-{versionId}.gpkg",
+                GeometryExportFormat.Shp => $"{bundleId}-{versionId}.shp",
+                GeometryExportFormat.GeoJSON=> $"{bundleId}-{versionId}.geojson",
                 _ => throw new InvalidOperationException(nameof(format))
             };
     }

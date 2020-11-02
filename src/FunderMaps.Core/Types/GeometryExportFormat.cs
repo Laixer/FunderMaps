@@ -18,6 +18,11 @@
         /// <summary>
         ///     Shapefile.
         /// </summary>
-        Shp
+        Shp,
+
+        /// <summary>
+        ///     GeoJSON.
+        /// </summary>
+        GeoJSON,
     }
 }

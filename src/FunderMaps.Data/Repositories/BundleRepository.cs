@@ -146,7 +146,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="organizationId">The organization id.</param>
         /// <param name="navigation">Navigation.</param>
         /// <returns>Collection of <see cref="Bundle"/> entities.</returns>
-        public async IAsyncEnumerable<Bundle> GetAllByOrganizationAsync(Guid organizationId, INavigation navigation)
+        public async IAsyncEnumerable<Bundle> ListAllByOrganizationAsync(Guid organizationId, INavigation navigation)
         {
             if (organizationId == null || organizationId == Guid.Empty)
             {
@@ -189,20 +189,47 @@ namespace FunderMaps.Data.Repositories
         ///     Marks a bundle as processing.
         /// </summary>
         /// <param name="bundleId">The bundle id to mark.</param>
-        public Task MarkAsProcessingAsync(Guid bundleId)
+        public async Task MarkAsProcessingAsync(Guid bundleId)
         {
             bundleId.ThrowIfNullOrEmpty();
-            return MarkAsStatusAsync(bundleId, BundleStatus.Processing);
+
+            var sql = @"
+                    UPDATE  maplayer.bundle
+                    SET     bundle_status = @bundle_status
+                    WHERE   id = @id";
+
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            cmd.AddParameterWithValue("id", bundleId);
+            cmd.AddParameterWithValue("bundle_status", BundleStatus.Processing);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
         /// <summary>
-        ///     Marks a bundle as up to date.
+        ///     Marks a bundle as up to date and bumps the version id.
         /// </summary>
         /// <param name="bundleId">The bundle id to mark.</param>
-        public Task MarkAsUpToDateAsync(Guid bundleId)
+        public async Task MarkAsUpToDateBumpVersionAsync(Guid bundleId)
         {
             bundleId.ThrowIfNullOrEmpty();
-            return MarkAsStatusAsync(bundleId, BundleStatus.UpToDate);
+
+            var sql = @"
+                    UPDATE  maplayer.bundle
+                    SET     bundle_status = @bundle_status,
+                            version_id = version_id + 1
+                    WHERE   id = @id";
+
+
+            using var connection = await DbProvider.OpenConnectionScopeAsync();
+            using var cmd = DbProvider.CreateCommand(sql, connection);
+
+            cmd.AddParameterWithValue("id", bundleId);
+            cmd.AddParameterWithValue("bundle_status", BundleStatus.UpToDate);
+
+            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
 
         /// <summary>
@@ -264,28 +291,6 @@ namespace FunderMaps.Data.Repositories
             cmd.AddParameterWithValue("name", entity.Name);
             cmd.AddParameterWithValue("user_id", entity.UserId);
             cmd.AddParameterWithValue("layer_configuration", JsonSerializer.Serialize(entity.LayerConfiguration));
-        }
-
-        /// <summary>
-        ///     Marks a bundle with a given status.
-        /// </summary>
-        /// <param name="bundleId">The bundle id to mark.</param>
-        /// <param name="bundleStatus">The new bundle status.</param>
-        private async Task MarkAsStatusAsync(Guid bundleId, BundleStatus bundleStatus)
-        {
-            var sql = @"
-                    UPDATE  maplayer.bundle
-                    SET     bundle_status = @bundle_status
-                    WHERE   id = @id";
-
-
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
-
-            cmd.AddParameterWithValue("id", bundleId);
-            cmd.AddParameterWithValue("bundle_status", bundleStatus);
-
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
         }
     }
 }

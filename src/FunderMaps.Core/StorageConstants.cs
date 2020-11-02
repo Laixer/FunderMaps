@@ -19,5 +19,15 @@
         ///     Name of the geopackage export directory.
         /// </summary>
         public const string ExportGpkgDirectoryName = "gpkg";
+
+        /// <summary>
+        ///     Name of the geopackage export directory.
+        /// </summary>
+        public const string ExportShpDirectoryName = "shp";
+
+        /// <summary>
+        ///     Name of the geopackage export directory.
+        /// </summary>
+        public const string ExportGeoJSONDirectoryName = "geojson";
     }
 }

@@ -16,7 +16,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="organizationId">The organization id.</param>
         /// <param name="navigation">Navigation.</param>
         /// <returns>Collection of <see cref="Bundle"/> entities.</returns>
-        IAsyncEnumerable<Bundle> GetAllByOrganizationAsync(Guid organizationId, INavigation navigation);
+        IAsyncEnumerable<Bundle> ListAllByOrganizationAsync(Guid organizationId, INavigation navigation);
 
         /// <summary>
         ///     Marks a bundle as processing.
@@ -25,9 +25,9 @@ namespace FunderMaps.Core.Interfaces.Repositories
         Task MarkAsProcessingAsync(Guid bundleId);
 
         /// <summary>
-        ///     Marks a bundle as up to date.
+        ///     Marks a bundle as up to date and pump the version.
         /// </summary>
         /// <param name="bundleId">The bundle id to mark.</param>
-        Task MarkAsUpToDateAsync(Guid bundleId);
+        Task MarkAsUpToDateBumpVersionAsync(Guid bundleId);
     }
 }
