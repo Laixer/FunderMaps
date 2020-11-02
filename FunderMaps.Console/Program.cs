@@ -1,6 +1,3 @@
-﻿using FunderMaps.Console.BackgroundTaskWorkers;
-using FunderMaps.Console.Services;
-using FunderMaps.Console.Types;
 using FunderMaps.Core.BackgroundWork;
 using FunderMaps.Core.BackgroundWork.Interfaces;
 using FunderMaps.Core.BackgroundWork.Services;
