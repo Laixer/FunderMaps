@@ -8,7 +8,6 @@ using FunderMaps.Extensions;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using FunderMaps.Webservice.Handlers;
-using FunderMaps.Webservice.HealthChecks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -94,9 +93,6 @@ namespace FunderMaps.Webservice
         public void ConfigureServices(IServiceCollection services)
         {
             StartupConfigureServices(services);
-
-            services.AddHealthChecks()
-                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
         }
 
         /// <summary>
@@ -143,9 +139,6 @@ namespace FunderMaps.Webservice
         public void ConfigureStagingServices(IServiceCollection services)
         {
             StartupConfigureServices(services);
-
-            services.AddHealthChecks()
-                .AddCheck<WebserviceHealthCheck>("webservice_health_check");
 
             services.AddSwaggerGen(options =>
             {

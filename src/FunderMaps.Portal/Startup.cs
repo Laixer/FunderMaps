@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -46,8 +47,6 @@ namespace FunderMaps.Portal
         public void ConfigureServices(IServiceCollection services)
         {
             StartupConfigureServices(services);
-
-            services.AddHealthChecks();
         }
 
         /// <summary>

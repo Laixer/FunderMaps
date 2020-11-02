@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
@@ -90,11 +90,6 @@ namespace FunderMaps.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             StartupConfigureServices(services);
-
-            services.AddHealthChecks()
-                .AddCheck<ApiHealthCheck>("api_health_check")
-                //.AddCheck<DatabaseHealthCheck>("db_health_check")
-                .AddCheck<FileStorageCheck>("file_health_check");
         }
 
         /// <summary>
