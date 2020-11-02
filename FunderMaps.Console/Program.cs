@@ -1,8 +1,14 @@
+﻿using FunderMaps.Console.BackgroundTasks;
+using FunderMaps.Console.BundleServices;
+using FunderMaps.Console.Dev;
+using FunderMaps.Console.V2;
 using FunderMaps.Core.BackgroundWork;
 using FunderMaps.Core.BackgroundWork.Interfaces;
-using FunderMaps.Core.BackgroundWork.Services;
+using FunderMaps.Core.BackgroundWork.Managers;
+using FunderMaps.Core.BackgroundWork.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -57,13 +63,20 @@ namespace FunderMaps.Console
             services.AddFunderMapsDataServices("FunderMapsConnection");
             services.AddSpacesBlobStorageServices(configuration, "BlobStorage");
 
-            // TODO What to do with this?
-            //services.TryAddEnumerable(new ServiceDescriptor(typeof(BackgroundTask), typeof(BundleCleanupTask)));
-            //services.TryAddEnumerable(new ServiceDescriptor(typeof(BackgroundTask), typeof(BundleBuildAndUploadTask)));
+
+            services.TryAddEnumerable(new[]
+            {
+                ServiceDescriptor.Transient(typeof(BackgroundTaskBase), typeof(BundleBuildingTask)),
+            });
 
             // Add console services.
             services.AddSingleton<QueueManager>();
-            services.Configure<ConsoleOptions>(config => configuration.GetSection("ConsoleOptions").Bind(config));
+            services.Configure<BackgroundWorkOptions>(config => configuration.GetSection("BackgroundWorkOptions").Bind(config));
+            services.Configure<BundleBuildingOptions>(config => configuration.GetSection("BundleBuildingOptions").Bind(config));
+
+            // Add console services.
+            services.AddScoped<BundleStorageService>();
+            services.AddScoped<>();
         }
     }
 }

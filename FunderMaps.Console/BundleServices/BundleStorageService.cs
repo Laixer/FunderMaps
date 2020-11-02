@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core;
-using FunderMaps.Core.BackgroundWork;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Types;
@@ -10,6 +9,7 @@ using System;
 
 namespace FunderMaps.Console.BundleServices
 {
+    // TODO Don't use S3 for upload
     /// <summary>
     ///     Contract for handling bundle export storage.
     /// </summary>
@@ -112,7 +112,7 @@ namespace FunderMaps.Console.BundleServices
                 GeometryExportFormat.Mvt => StorageConstants.ExportMvtDirectoryName,
                 GeometryExportFormat.Gpkg => StorageConstants.ExportGpkgDirectoryName,
                 GeometryExportFormat.Shp => StorageConstants.ExportShpDirectoryName,
-                GeometryExportFormat.GeoJSON=> StorageConstants.ExportGeoJSONDirectoryName,
+                GeometryExportFormat.GeoJSON => StorageConstants.ExportGeoJSONDirectoryName,
                 _ => throw new InvalidOperationException(nameof(format))
             };
     }

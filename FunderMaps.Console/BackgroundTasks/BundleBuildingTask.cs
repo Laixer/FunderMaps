@@ -1,13 +1,17 @@
-﻿using FunderMaps.Core;
-using FunderMaps.Core.BackgroundWork;
+﻿using FunderMaps.Console.Types;
+using FunderMaps.Core;
+using FunderMaps.Core.BackgroundWork.Types;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,25 +28,28 @@ namespace FunderMaps.Console.BundleServices
     /// <summary>
     ///     Service for exporting bundles.
     /// </summary>
-    internal sealed class BundleBuildingService
+    internal class BundleBuildingTask : BackgroundTaskBase
     {
-        private readonly IBundleRepository _bundleRepository;
-        private readonly ILayerRepository _layerRepository;
-        private readonly BundleStorageService _bundleStorageService;
-        private readonly ConsoleOptions _options;
+        protected readonly IBundleRepository _bundleRepository;
+        protected readonly ILayerRepository _layerRepository;
+        protected readonly BundleStorageService _bundleStorageService;
+        protected readonly BundleBuildingOptions _options;
+        protected readonly DbConnectionStringBuilder csBuilder = new DbConnectionStringBuilder();
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleBuildingService(IBundleRepository bundleRepository,
+        public BundleBuildingTask(IBundleRepository bundleRepository,
             ILayerRepository layerRepository,
             BundleStorageService bundleStorageService,
-            IOptions<ConsoleOptions> options)
+            IOptions<BundleBuildingOptions> options,
+            IConfiguration configuration)
         {
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
             _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
             _bundleStorageService = bundleStorageService ?? throw new ArgumentNullException(nameof(bundleStorageService));
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            csBuilder.ConnectionString = configuration?.GetConnectionString(_options.ConnectionStringName) ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -53,34 +60,49 @@ namespace FunderMaps.Console.BundleServices
         /// </remarks>
         /// <param name="bundleId">The bundle id.</param>
         /// <param name="formats">The formats to export the bundle to.</param>
-        public async Task BuildBundleAsync(Guid bundleId, IList<GeometryExportFormat> formats)
+        public override async Task ProcessAsync(BackgroundTaskContext context)
         {
-            if (bundleId == null || bundleId == Guid.Empty)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(bundleId));
+                throw new ArgumentNullException(nameof(context));
             }
-            if (formats == null || !formats.Any())
+
+            var bundleBuildingContext = (BundleBuildingContext)context.Value;
+            bundleBuildingContext.BundleId.ThrowIfNullOrEmpty();
+            if (bundleBuildingContext.Formats == null || !bundleBuildingContext.Formats.Any())
             {
-                throw new ArgumentNullException(nameof(formats));
+                throw new ArgumentNullException(nameof(bundleBuildingContext.Formats));
             }
-            if (formats.Distinct().Count() != formats.Count())
+            if (bundleBuildingContext.Formats.Distinct().Count() != bundleBuildingContext.Formats.Count())
             {
                 throw new InvalidOperationException("Can't have duplicates in format list");
             }
 
             // To calculate the mvt we always need a gpkg.
-            if (formats.Contains(GeometryExportFormat.Mvt) && !formats.Contains(GeometryExportFormat.Gpkg))
+            // TODO This is ugly.
+            var formats = bundleBuildingContext.Formats.ToList();
+            if (bundleBuildingContext.Formats.Contains(GeometryExportFormat.Mvt) && !bundleBuildingContext.Formats.Contains(GeometryExportFormat.Gpkg))
             {
                 formats.Add(GeometryExportFormat.Gpkg);
             }
 
-            var bundle = await _bundleRepository.GetByIdAsync(bundleId);
-            var layers = await _layerRepository.ListAllFromBundleIdAsync(bundleId).ToListAsync();
+            var bundle = await _bundleRepository.GetByIdAsync(bundleBuildingContext.BundleId).AsTask();
+
+            var layersTask = _layerRepository.ListAllFromBundleIdAsync(bundleBuildingContext.BundleId).ToListAsync().AsTask();
+            layersTask.Wait();
+            var layers = layersTask.Result;
 
             ExportFormats(bundle, layers, formats);
         }
 
-        // TODO Parallel?
+        /// <summary>
+        ///     Checks if we can handle the value object.
+        /// </summary>
+        /// <param name="value">The value object.</param>
+        /// <returns>Boolean answer.</returns>
+        public override bool CanHandle(object value)
+            => value is BundleBuildingContext;
+
         /// <summary>
         ///     Exports a bundle to a list of <see cref="GeometryExportFormat"/>s.
         /// </summary>
@@ -237,11 +259,12 @@ namespace FunderMaps.Console.BundleServices
             return sb.ToString();
         }
 
+        // TODO Might be too hard coded
         /// <summary>
         ///     Builds a PG string for the ogr2ogr tool based on our options.
         /// </summary>
         /// <returns>The created PG string.</returns>
         private string BuildPGString()
-            => $"PG:\"host={_options.DatabaseHost} dbname={_options.DatabaseName} user={_options.DatabaseUser} password={_options.DatabasePassword}\"";
+            => $"PG:\"host={(string)csBuilder["Host"]} dbname={(string)csBuilder["Database"]} user={(string)csBuilder["User Id"]} password={(string)csBuilder["Password"]}\"";
     }
 }
