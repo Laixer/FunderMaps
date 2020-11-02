@@ -1,12 +1,13 @@
-﻿using FunderMaps.Core.BackgroundWork.Exceptions;
-using FunderMaps.Core.BackgroundWork.Types;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace FunderMaps.Core.BackgroundWork.Managers
+namespace FunderMaps.Core.Managers
 {
     /// <summary>
     ///     Wrapper that handles our queue.
@@ -37,6 +38,8 @@ namespace FunderMaps.Core.BackgroundWork.Managers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Setup threadpool
+            // ONTHOUDEN
+            // defaultWorkerThreads = 
             ThreadPool.SetMaxThreads((int)_options.MaxWorkers, (int)_options.MaxWorkers);
         }
 
@@ -93,7 +96,6 @@ namespace FunderMaps.Core.BackgroundWork.Managers
         /// </remarks>
         /// <param name="backgroundTask">The background task to execute.</param>
         /// <param name="value">The enqueued value object.</param>
-        /// <returns></returns>
         private WaitCallback BuildWaitCallback(BackgroundTaskBase backgroundTask, object value)
         {
             var context = new BackgroundTaskContext

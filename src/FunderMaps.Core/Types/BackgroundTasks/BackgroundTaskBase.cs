@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.BackgroundWork.Types
+namespace FunderMaps.Core.Types.BackgroundTasks
 {
     /// <summary>
     ///     Base class for executing a background task.

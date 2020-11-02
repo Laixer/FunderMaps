@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.BackgroundWork
+﻿namespace FunderMaps.Core
 {
     /// <summary>
     ///     Wrapper for all our console options.
@@ -8,10 +8,7 @@
         /// <summary>
         ///     Defines the maximum items in our queue.
         /// </summary>
-        /// <remarks>
-        ///     Defaults to 128.
-        /// </remarks>
-        public uint MaxQueueSize { get; set; } = 128;
+        public uint MaxQueueSize { get; set; } = 1024;
 
         /// <summary>
         ///     The amount of simultaneous running background workers

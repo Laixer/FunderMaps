@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace FunderMaps.Core.BackgroundWork.Exceptions
+namespace FunderMaps.Core.Exceptions
 {
     /// <summary>
     ///     Exception indicating our task queue is full.
@@ -12,15 +12,18 @@ namespace FunderMaps.Core.BackgroundWork.Exceptions
         {
         }
 
-        public QueueFullException(string message) : base(message)
+        public QueueFullException(string message) 
+            : base(message)
         {
         }
 
-        public QueueFullException(string message, Exception innerException) : base(message, innerException)
+        public QueueFullException(string message, Exception innerException) 
+            : base(message, innerException)
         {
         }
 
-        public QueueFullException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public QueueFullException(SerializationInfo info, StreamingContext context) 
+            : base(info, context)
         {
         }
     }
