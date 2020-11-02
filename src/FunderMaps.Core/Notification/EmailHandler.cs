@@ -27,7 +27,7 @@ namespace FunderMaps.Core.Notification
         /// </summary>
         /// <returns><c>True</c> if notification will be handled, false otherwise.</returns>
         private bool CanHandle()
-            => !string.IsNullOrEmpty(envelope.Subject) && envelope.Recipients[0].Contains('@');
+            => !string.IsNullOrEmpty(envelope.Subject) && envelope.Recipients[0].Contains('@', System.StringComparison.InvariantCulture);
 
         /// <summary>
         ///     Handle the incoming notification.
