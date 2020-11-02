@@ -42,5 +42,10 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="contentType">Blob content type.</param>
         /// <param name="stream">Content stream.</param>
         ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream);
+
+        /// <summary>
+        ///     Test the Amazon S3 service backend.
+        /// </summary>
+        Task TestService();
     }
 }

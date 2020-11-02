@@ -11,7 +11,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
@@ -30,8 +30,7 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public SpacesBlobStorageService(IOptions<BlobStorageOptions> options,
-            ILogger<SpacesBlobStorageService> logger)
+        public SpacesBlobStorageService(IOptions<BlobStorageOptions> options, ILogger<SpacesBlobStorageService> logger)
         {
             if (options == null || options.Value == null)
             {
@@ -50,12 +49,12 @@ namespace FunderMaps.Infrastructure.Storage
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Create client once.
-            var config = new AmazonS3Config
-            {
-                ServiceURL = _options.ServiceUri.AbsoluteUri
-            };
-            var credentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
-            client = new AmazonS3Client(credentials, config);
+            client = new AmazonS3Client(
+                new BasicAWSCredentials(_options.AccessKey, _options.SecretKey),
+                new AmazonS3Config
+                {
+                    ServiceURL = _options.ServiceUri.AbsoluteUri
+                });
         }
 
         /// <summary>
@@ -95,6 +94,7 @@ namespace FunderMaps.Infrastructure.Storage
                 }
 
                 _logger.LogError(e, "Could not check file existence in Spaces using S3");
+
                 // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
                 throw new StorageException("Could not check file existence", e);
             }
@@ -129,6 +129,7 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not get access link from Spaces using S3");
+
                 throw new StorageException("Could not get access link", e);
             }
         }
@@ -158,6 +159,7 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not store file to Spaces using S3");
+
                 throw new StorageException("Could not store file", e);
             }
         }
@@ -174,6 +176,7 @@ namespace FunderMaps.Infrastructure.Storage
         {
             fileName.ThrowIfNullOrEmpty();
             contentType.ThrowIfNullOrEmpty();
+
             if (stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
@@ -195,9 +198,19 @@ namespace FunderMaps.Infrastructure.Storage
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
+
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
         }
+
+        // FUTURE: From interface
+        /// <summary>
+        ///     Test the Amazon S3 service backend.
+        /// </summary>
+        public async Task TestService()
+        {
+            await client.ListBucketsAsync();
+        }
     }
 }
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
+#pragma warning restore CA1812 // Internal class is never instantiated

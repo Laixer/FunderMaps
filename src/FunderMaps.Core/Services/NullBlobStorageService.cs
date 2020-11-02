@@ -30,6 +30,11 @@ namespace FunderMaps.Core.Services
         {
             return new ValueTask();
         }
+
+        public Task TestService()
+        {
+            return Task.CompletedTask;
+        }
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

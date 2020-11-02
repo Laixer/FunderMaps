@@ -4,6 +4,7 @@ using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
@@ -78,6 +79,13 @@ namespace FunderMaps.AspNetCore
                 services.AddHttpContextAccessor();
 
                 AddAppContext(services);
+
+                services.AddHealthChecks()
+                    .AddCheck<ApiHealthCheck>("api_health_check")
+                    .AddCheck<IOHealthCheck>("io_health_check")
+                    .AddCheck<RepositoryHealthCheck>("data_health_check")
+                    .AddCheck<EmailHealthCheck>("email_health_check")
+                    .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check");
             });
         }
 
