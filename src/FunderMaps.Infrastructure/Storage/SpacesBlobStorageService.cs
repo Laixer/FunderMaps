@@ -202,6 +202,15 @@ namespace FunderMaps.Infrastructure.Storage
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
         }
+
+        // FUTURE: From interface
+        /// <summary>
+        ///     Test the Amazon S3 service backend.
+        /// </summary>
+        public async Task TestService()
+        {
+            await client.ListBucketsAsync();
+        }
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
