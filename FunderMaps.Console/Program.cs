@@ -1,7 +1,13 @@
-﻿using FunderMaps.Console.BundleServices;
+﻿using FunderMaps.Console.BackgroundTaskWorkers;
+using FunderMaps.Console.Services;
+using FunderMaps.Console.Types;
+using FunderMaps.Core.BackgroundWork;
+using FunderMaps.Core.BackgroundWork.Interfaces;
+using FunderMaps.Core.BackgroundWork.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -12,16 +18,18 @@ namespace FunderMaps.Console
     /// </summary>
     public class Program
     {
-        //private static readonly Guid OrganizationId = new Guid("11cdc51f-3ba6-4e3c-b975-dfed4f054c31");
-        //private static readonly Guid BundleId = new Guid("06df6716-2af0-4359-b2e5-c8a207c99b82");
-
-        // TODO Environment variables.
         /// <summary>
         ///     Application entry point.
         /// </summary>
         /// <param name="args">Command line arguments.</param>
         public static Task Main(string[] args)
             => Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((hostContext, config) =>
+                {
+                    // TODO Do correctly
+                    config.SetMinimumLevel(LogLevel.Trace);
+                    config.AddConsole();
+                })
                 .ConfigureServices(services =>
                 {
                     Configure(services, args);
@@ -29,7 +37,6 @@ namespace FunderMaps.Console
                 .Build()
                 .RunAsync();
 
-        // TODO Clean up.
         /// <summary>
         ///     Configure services.
         /// </summary>
@@ -37,13 +44,11 @@ namespace FunderMaps.Console
         /// <param name="args"></param>
         private static void Configure(IServiceCollection services, string[] args)
         {
-            // TODO This is a WIP.
             if (args == null || args.Length == 0)
             {
                 throw new InvalidOperationException("Missing config file arg");
             }
 
-            // TODO Correctly configure everything.
             var configurationBuilder = new ConfigurationBuilder()
                 .AddJsonFile(args[0], optional: false)
                 .AddEnvironmentVariables();
@@ -55,14 +60,13 @@ namespace FunderMaps.Console
             services.AddFunderMapsDataServices("FunderMapsConnection");
             services.AddSpacesBlobStorageServices(configuration, "BlobStorage");
 
-            // Add console services.
-            services.AddSingleton<BundleBuildingService>();
-            services.AddSingleton<BundleStorageService>();
-            services.Configure<ConsoleOptions>(config => configuration.GetSection("ConsoleOptions").Bind(config));
+            // TODO What to do with this?
+            //services.TryAddEnumerable(new ServiceDescriptor(typeof(BackgroundTask), typeof(BundleCleanupTask)));
+            //services.TryAddEnumerable(new ServiceDescriptor(typeof(BackgroundTask), typeof(BundleBuildAndUploadTask)));
 
-            // Add logger.
-            // TODO Look into this - does hostbuilder do this for us?
-            services.AddLogging();
+            // Add console services.
+            services.AddSingleton<QueueManager>();
+            services.Configure<ConsoleOptions>(config => configuration.GetSection("ConsoleOptions").Bind(config));
         }
     }
 }

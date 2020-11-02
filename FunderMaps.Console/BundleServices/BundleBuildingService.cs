@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core;
+using FunderMaps.Core.BackgroundWork;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
@@ -124,6 +125,8 @@ namespace FunderMaps.Console.BundleServices
                     ExportGpkg(bundle, layers.ToList());
                     break;
                 case GeometryExportFormat.Shp:
+                    throw new NotImplementedException(nameof(format));
+                case GeometryExportFormat.GeoJSON:
                     throw new NotImplementedException(nameof(format));
                 default:
                     throw new InvalidOperationException(nameof(format));

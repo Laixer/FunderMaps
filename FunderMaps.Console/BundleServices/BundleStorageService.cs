@@ -1,13 +1,12 @@
 ﻿using FunderMaps.Core;
+using FunderMaps.Core.BackgroundWork;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Console.BundleServices
 {
@@ -112,7 +111,8 @@ namespace FunderMaps.Console.BundleServices
             {
                 GeometryExportFormat.Mvt => StorageConstants.ExportMvtDirectoryName,
                 GeometryExportFormat.Gpkg => StorageConstants.ExportGpkgDirectoryName,
-                GeometryExportFormat.Shp => throw new NotImplementedException(nameof(format)),
+                GeometryExportFormat.Shp => StorageConstants.ExportShpDirectoryName,
+                GeometryExportFormat.GeoJSON=> StorageConstants.ExportGeoJSONDirectoryName,
                 _ => throw new InvalidOperationException(nameof(format))
             };
     }
