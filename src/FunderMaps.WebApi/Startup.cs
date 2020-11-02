@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
@@ -164,7 +164,7 @@ namespace FunderMaps.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }

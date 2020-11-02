@@ -226,7 +226,7 @@ namespace FunderMaps.Webservice
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
 
@@ -257,7 +257,7 @@ namespace FunderMaps.Webservice
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }
