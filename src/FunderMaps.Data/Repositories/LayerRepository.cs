@@ -14,6 +14,37 @@ namespace FunderMaps.Data.Repositories
     internal class LayerRepository : RepositoryBase<Layer, Guid>, ILayerRepository
     {
         /// <summary>
+        ///     Create new <see cref="Layer"/>.
+        /// </summary>
+        /// <param name="entity">Entity object.</param>
+        /// <returns>Created <see cref="Layer"/>.</returns>
+        public override async ValueTask<Guid> AddAsync(Layer entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            var sql = @"
+                INSERT INTO maplayer.layer(
+                    schema_name,
+                    table_name)
+                VALUES (
+                    @schema_name,
+                    @table_name)
+                RETURNING id";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("schema_name", entity.SchemaName);
+            context.AddParameterWithValue("table_name", entity.TableName);
+
+            await using var reader = await context.ReaderAsync();
+
+            return reader.GetGuid(0);
+        }
+
+        /// <summary>
         ///     Retrieve layer by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
@@ -118,11 +149,6 @@ namespace FunderMaps.Data.Repositories
                 SchemaName = reader.GetString(1),
                 TableName = reader.GetString(2)
             };
-
-        public override ValueTask<Guid> AddAsync(Layer entity)
-        {
-            throw new NotImplementedException();
-        }
 
         public override ValueTask UpdateAsync(Layer entity)
         {
