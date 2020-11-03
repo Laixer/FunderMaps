@@ -2,6 +2,7 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Services;
+using FunderMaps.Core.Threading;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -14,6 +15,22 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class FunderMapsCoreServiceCollectionExtensions
     {
+        /// <summary>
+        ///     Adds the core threading service to the container.
+        /// </summary>
+        private static IServiceCollection AddCoreThreading(this IServiceCollection services)
+        {
+            services.AddSingleton<DispatchManager>();
+            // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
+            services.Configure<BackgroundWorkOptions>(options =>
+            {
+                options.MaxQueueSize = 128;
+                options.MaxWorkers = 4;
+            });
+
+            return services;
+        }
+
         /// <summary>
         ///     Adds the core services to the container.
         /// </summary>
@@ -72,6 +89,10 @@ namespace Microsoft.Extensions.DependencyInjection
             // objects to memory. The memory cache may have already been registered with the container
             // by some other package, however we cannot expect this to be.
             services.AddMemoryCache();
+
+            // The application core (as well as many other components) depends upon the ability to dispatch
+            // tasks to the background.
+            services.AddCoreThreading();
 
             return services;
         }
