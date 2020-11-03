@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -25,19 +23,8 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="containerName">Storage container.</param>
         /// <param name="fileName">File name.</param>
         /// <param name="hoursValid">How long the link is valid in hours.</param>
-        /// <param name="accessType">Indicates what we want to do with the link.</param>
         /// <returns>The generated link.</returns>
-        ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid, AccessType accessType);
-        
-        /// <summary>
-        ///     List the names of all subcontainers in a given container.
-        /// </summary>
-        /// <remarks>
-        ///     This should return name, not the full path.
-        /// </remarks>
-        /// <param name="containerName">Container name to check.</param>
-        /// <returns>Collection of subcontainer names.</returns>
-        ValueTask<IEnumerable<string>> ListSubcontainerNamesAsync(string containerName);
+        ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
 
         /// <summary>
         ///     Store the file in the data store.
