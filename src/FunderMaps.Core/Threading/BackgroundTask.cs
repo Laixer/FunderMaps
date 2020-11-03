@@ -4,39 +4,28 @@ using System.Threading.Tasks;
 namespace FunderMaps.Core.Types.BackgroundTasks
 {
     /// <summary>
-    ///     Base class for executing a background task.
+    ///     Base class to background tasks.
     /// </summary>
     public abstract class BackgroundTask
     {
         /// <summary>
         ///     Do some asynchronous work.
         /// </summary>
-        /// <param name="context">The context.</param>
-        public virtual Task ProcessAsync(BackgroundTaskContext context)
+        /// <param name="context">Background task execution context.</param>
+        public virtual async Task ProcessAsync(BackgroundTaskContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             // We allways want to yield for the async state machine.
-            Task.Yield();
+            await Task.Yield();
 
             Process(context);
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Do some synchronous work.
         /// </summary>
-        /// <param name="context">The context.</param>
+        /// <param name="context">Background task execution context.</param>
         public virtual void Process(BackgroundTaskContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
         }
 
         /// <summary>
