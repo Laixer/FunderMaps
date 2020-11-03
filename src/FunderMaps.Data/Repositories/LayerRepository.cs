@@ -45,17 +45,46 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Retrieve layer by id.
+        ///     Retrieve number of entities.
+        /// </summary>
+        /// <returns>Number of entities.</returns>
+        public override async ValueTask<long> CountAsync()
+        {
+            var sql = @"
+                SELECT  COUNT(*)
+                FROM    maplayer.layer";
+
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
+        }
+        /// <summary>
+        ///     Delete <see cref="Layer"/>.
+        /// </summary>
+        /// <param name="entity">Entity object.</param>
+        public override async ValueTask DeleteAsync(Guid id)
+        {
+            ResetCacheEntity(id);
+
+            var sql = @"
+                DELETE
+                FROM    maplayer.layer
+                WHERE   id = @id";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
+        }
+
+        /// <summary>
+        ///     Retrieve <see cref="Layer"/> by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Layer"/>.</returns>
         public override async ValueTask<Layer> GetByIdAsync(Guid id)
         {
-            if (id == null || id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
             var sql = @"
                 SELECT  id,
                         schema_name,
@@ -70,7 +99,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -79,11 +108,6 @@ namespace FunderMaps.Data.Repositories
         /// <param name="bundleId">The linked bundle id.</param>
         public async IAsyncEnumerable<Layer> ListAllFromBundleIdAsync(Guid bundleId)
         {
-            if (bundleId == null || bundleId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(bundleId));
-            }
-
             var sql = @"
                 WITH layer_ids AS (
 	                SELECT (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
@@ -136,6 +160,33 @@ namespace FunderMaps.Data.Repositories
                 yield return CacheEntity(MapFromReader(reader));
             }
         }
+        /// <summary>
+        ///     Update <see cref="Layer"/>.
+        /// </summary>
+        /// <param name="entity">Entity object.</param>
+        public override async ValueTask UpdateAsync(Layer entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            ResetCacheEntity(entity);
+
+            var sql = @"
+                    UPDATE  maplayer.layer
+                    SET     schema_name = @schema_name,
+                            table_name = @table_name
+                    WHERE   id = @id";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("schema_name", entity.SchemaName);
+            context.AddParameterWithValue("table_name", entity.TableName);
+
+            await context.NonQueryAsync();
+        }
 
         /// <summary>
         ///     Maps a reader to a single <see cref="Layer"/>.
@@ -149,20 +200,5 @@ namespace FunderMaps.Data.Repositories
                 SchemaName = reader.GetString(1),
                 TableName = reader.GetString(2)
             };
-
-        public override ValueTask UpdateAsync(Layer entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ValueTask DeleteAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override ValueTask<long> CountAsync()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
