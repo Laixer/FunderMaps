@@ -1,8 +1,6 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -13,22 +11,14 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Repository implementation for <see cref="Layer"/> entities.
     /// </summary>
-    internal class LayerRepository : DataBase, ILayerRepository
+    internal class LayerRepository : RepositoryBase<Layer, Guid>, ILayerRepository
     {
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public LayerRepository(DbProvider dbProvider)
-          : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     Retrieve layer by id.
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Layer"/>.</returns>
-        public async ValueTask<Layer> GetByIdAsync(Guid id)
+        public override async ValueTask<Layer> GetByIdAsync(Guid id)
         {
             if (id == null || id == Guid.Empty)
             {
@@ -43,13 +33,11 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -81,15 +69,13 @@ namespace FunderMaps.Data.Repositories
                         )
                 WHERE   b.id = @bundle_id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("bundle_id", bundleId);
+            context.AddParameterWithValue("id", bundleId);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -97,7 +83,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all layers.
         /// </summary>
         /// <returns>List of <see cref="Layer"/>.</returns>
-        public async IAsyncEnumerable<Layer> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<Layer> ListAllAsync(INavigation navigation)
         {
             if (navigation == null)
             {
@@ -112,13 +98,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -134,5 +118,25 @@ namespace FunderMaps.Data.Repositories
                 SchemaName = reader.GetString(1),
                 TableName = reader.GetString(2)
             };
+
+        public override ValueTask<Guid> AddAsync(Layer entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ValueTask UpdateAsync(Layer entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ValueTask DeleteAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override ValueTask<long> CountAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

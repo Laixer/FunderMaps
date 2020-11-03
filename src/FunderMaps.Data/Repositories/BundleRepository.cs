@@ -4,11 +4,9 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.MapLayer;
 using FunderMaps.Data.Extensions;
-using FunderMaps.Data.Providers;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -16,22 +14,14 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Repository for <see cref="Bundle"/> entities.
     /// </summary>
-    internal class BundleRepository : DataBase, IBundleRepository
+    internal class BundleRepository : RepositoryBase<Bundle, Guid>, IBundleRepository
     {
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public BundleRepository(DbProvider dbProvider)
-            : base(dbProvider)
-        {
-        }
-
         /// <summary>
         ///     Creates a new <see cref="Bundle"/> in our database.
         /// </summary>
         /// <param name="entity">The bundle to create.</param>
         /// <returns>The id of the created bundle.</returns>
-        public async ValueTask<Guid> AddAsync(Bundle entity)
+        public override async ValueTask<Guid> AddAsync(Bundle entity)
         {
             if (entity == null)
             {
@@ -49,29 +39,58 @@ namespace FunderMaps.Data.Repositories
                     @name,
                     @user_id,
                     @layers)
-                RETURNING id;
-            ";
+                RETURNING id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            MapToWriter(cmd, entity);
+            MapToWriter(context, entity);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await context.ReaderAsync();
+
             return reader.GetGuid(0);
         }
 
-        public ValueTask<ulong> CountAsync() => throw new NotImplementedException();
+        /// <summary>
+        ///     Retrieve number of entities.
+        /// </summary>
+        /// <returns>Number of entities.</returns>
+        public override async ValueTask<long> CountAsync()
+        {
+            var sql = @"
+                SELECT  COUNT(*)
+                FROM    maplayer.bundle";
 
-        public ValueTask DeleteAsync(Guid id) => throw new NotImplementedException();
+            await using var context = await DbContextFactory(sql);
+
+            return await context.ScalarAsync<long>();
+        }
+
+        /// <summary>
+        ///     Delete <see cref="Bundle"/>.
+        /// </summary>
+        /// <param name="entity">Entity object.</param>
+        public override async ValueTask DeleteAsync(Guid id)
+        {
+            ResetCacheEntity(id);
+
+            var sql = @"
+                DELETE
+                FROM    maplayer.bundle
+                WHERE   id = @id";
+
+            await using var context = await DbContextFactory(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await context.NonQueryAsync();
+        }
 
         /// <summary>
         ///     Gets a <see cref="Bundle"/> by its id.
         /// </summary>
         /// <param name="id">Internal bundle id.</param>
         /// <returns>The retrieved bundle.</returns>
-        public async ValueTask<Bundle> GetByIdAsync(Guid id)
+        public override async ValueTask<Bundle> GetByIdAsync(Guid id)
         {
             if (id == null || id == Guid.Empty)
             {
@@ -92,15 +111,13 @@ namespace FunderMaps.Data.Repositories
                 FROM    maplayer.bundle
                 WHERE   id = @id";
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("id", id);
 
-            await using var reader = await cmd.ExecuteReaderAsyncEnsureRowAsync();
-            await reader.ReadAsync();
+            await using var reader = await context.ReaderAsync();
 
-            return MapFromReader(reader);
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -108,7 +125,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">The navigation parameters.</param>
         /// <returns>Collection of bundles.</returns>
-        public async IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation)
         {
             if (navigation == null)
             {
@@ -130,13 +147,11 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -173,15 +188,13 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var connection = await DbProvider.OpenConnectionScopeAsync();
-            await using var cmd = DbProvider.CreateCommand(sql, connection);
+            await using var context = await DbContextFactory(sql);
 
-            cmd.AddParameterWithValue("organization_id", organizationId);
+            context.AddParameterWithValue("organization_id", organizationId);
 
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return MapFromReader(reader);
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 
@@ -198,14 +211,12 @@ namespace FunderMaps.Data.Repositories
                     SET     bundle_status = @bundle_status
                     WHERE   id = @id";
 
+            await using var context = await DbContextFactory(sql);
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            context.AddParameterWithValue("id", bundleId);
+            context.AddParameterWithValue("bundle_status", BundleStatus.Processing);
 
-            cmd.AddParameterWithValue("id", bundleId);
-            cmd.AddParameterWithValue("bundle_status", BundleStatus.Processing);
-
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -222,14 +233,12 @@ namespace FunderMaps.Data.Repositories
                             version_id = version_id + 1
                     WHERE   id = @id";
 
+            await using var context = await DbContextFactory(sql);
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            context.AddParameterWithValue("id", bundleId);
+            context.AddParameterWithValue("bundle_status", BundleStatus.UpToDate);
 
-            cmd.AddParameterWithValue("id", bundleId);
-            cmd.AddParameterWithValue("bundle_status", BundleStatus.UpToDate);
-
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -237,7 +246,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">The updated bundle.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
-        public async ValueTask UpdateAsync(Bundle entity)
+        public override async ValueTask UpdateAsync(Bundle entity)
         {
             if (entity == null)
             {
@@ -250,14 +259,13 @@ namespace FunderMaps.Data.Repositories
                             layer_configuration = @layer_configuration::jsonb
                     WHERE   id = @id";
 
+            await using var context = await DbContextFactory(sql);
 
-            using var connection = await DbProvider.OpenConnectionScopeAsync();
-            using var cmd = DbProvider.CreateCommand(sql, connection);
+            context.AddParameterWithValue("id", entity.Id);
 
-            cmd.AddParameterWithValue("id", entity.Id);
-            MapToWriter(cmd, entity);
+            MapToWriter(context, entity);
 
-            await cmd.ExecuteNonQueryEnsureAffectedAsync();
+            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -285,12 +293,12 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="cmd">The command to write to.</param>
         /// <param name="entity">The entity to write.</param>
-        private static void MapToWriter(DbCommand cmd, Bundle entity)
+        private static void MapToWriter(DbContext context, Bundle entity)
         {
-            cmd.AddParameterWithValue("organization_id", entity.OrganizationId);
-            cmd.AddParameterWithValue("name", entity.Name);
-            cmd.AddParameterWithValue("user_id", entity.UserId);
-            cmd.AddParameterWithValue("layer_configuration", JsonSerializer.Serialize(entity.LayerConfiguration));
+            context.AddParameterWithValue("organization_id", entity.OrganizationId);
+            context.AddParameterWithValue("name", entity.Name);
+            context.AddParameterWithValue("user_id", entity.UserId);
+            context.AddJsonParameterWithValue("layer_configuration", entity.LayerConfiguration);
         }
     }
 }
