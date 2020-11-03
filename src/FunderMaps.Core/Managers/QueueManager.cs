@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -29,7 +28,8 @@ namespace FunderMaps.Core.Managers
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QueueManager(IEnumerable<BackgroundTaskBase> backgroundTasks,
+        public QueueManager(
+            IEnumerable<BackgroundTaskBase> backgroundTasks,
             IOptions<BackgroundWorkOptions> options,
             ILogger<QueueManager> logger)
         {
@@ -37,9 +37,7 @@ namespace FunderMaps.Core.Managers
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Setup threadpool
-            // ONTHOUDEN
-            // defaultWorkerThreads = 
+            ThreadPool.GetMaxThreads(out defaultWorkerThreads, out defaultCompletionPortThreads);
             ThreadPool.SetMaxThreads((int)_options.MaxWorkers, (int)_options.MaxWorkers);
         }
 
@@ -54,7 +52,7 @@ namespace FunderMaps.Core.Managers
         /// <param name="value">The object to process.</param>
         public void EnqueueTask(object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
@@ -72,19 +70,6 @@ namespace FunderMaps.Core.Managers
                     ThreadPool.QueueUserWorkItem(BuildWaitCallback(backgroundTask, value));
                 }
             }
-        }
-
-        /// <summary>
-        ///     Called on graceful shutdown.
-        /// </summary>
-        /// <remarks>
-        ///     This undoes our <see cref="ThreadPool"/> modification.
-        /// </remarks>
-        public void Dispose()
-        {
-            ThreadPool.SetMaxThreads(defaultWorkerThreads, defaultCompletionPortThreads);
-
-            cts.Dispose();
         }
 
         /// <summary>
@@ -108,7 +93,7 @@ namespace FunderMaps.Core.Managers
             {
                 try
                 {
-                    _logger.LogTrace($"Starting background task {context.Id}");
+                    _logger.LogDebug($"Starting background task {context.Id}");
 
                     await backgroundTask.ProcessAsync(context);
                 }
@@ -118,9 +103,22 @@ namespace FunderMaps.Core.Managers
                 }
                 finally
                 {
-                    _logger.LogTrace($"Finished background task {context.Id}");
+                    _logger.LogDebug($"Finished background task {context.Id}");
                 }
             };
+        }
+
+        /// <summary>
+        ///     Called on graceful shutdown.
+        /// </summary>
+        /// <remarks>
+        ///     This undoes our <see cref="ThreadPool"/> modification.
+        /// </remarks>
+        public void Dispose()
+        {
+            ThreadPool.SetMaxThreads(defaultWorkerThreads, defaultCompletionPortThreads);
+
+            cts.Dispose();
         }
     }
 }
