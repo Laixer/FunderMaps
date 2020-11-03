@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Types.BackgroundTasks
     /// <summary>
     ///     Base class for executing a background task.
     /// </summary>
-    public abstract class BackgroundTaskBase
+    public abstract class BackgroundTask
     {
         /// <summary>
         ///     Do some asynchronous work.

@@ -28,7 +28,7 @@ namespace FunderMaps.Console.BundleServices
     /// <summary>
     ///     Service for exporting bundles.
     /// </summary>
-    internal class BundleBuildingTask : BackgroundTaskBase
+    internal class BundleBuildingTask : BackgroundTask
     {
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;

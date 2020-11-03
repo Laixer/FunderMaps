@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core
+﻿namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     Wrapper for all our console options.
@@ -8,12 +8,12 @@
         /// <summary>
         ///     Defines the maximum items in our queue.
         /// </summary>
-        public uint MaxQueueSize { get; set; } = 1024;
+        public int MaxQueueSize { get; set; } = 1024;
 
         /// <summary>
         ///     The amount of simultaneous running background workers
         ///     for synchronous work.
         /// </summary>
-        public uint MaxWorkers { get; set; }
+        public int MaxWorkers { get; set; }
     }
 }

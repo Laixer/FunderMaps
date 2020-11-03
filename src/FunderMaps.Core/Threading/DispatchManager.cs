@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace FunderMaps.Core.Managers
+namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     Wrapper that handles our queue.
@@ -15,30 +15,30 @@ namespace FunderMaps.Core.Managers
     ///     This class modifies the threadpool max worker threads. Upon disposal
     ///     these changes will be undone. All will be set to its original values.
     /// </remarks>
-    public class QueueManager : IDisposable
+    public class DispatchManager : IDisposable
     {
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private readonly int defaultWorkerThreads;
         private readonly int defaultCompletionPortThreads;
 
-        private readonly IEnumerable<BackgroundTaskBase> _backgroundTasks;
+        private readonly IEnumerable<BackgroundTask> _backgroundTasks;
         private readonly BackgroundWorkOptions _options;
-        private readonly ILogger<QueueManager> _logger;
+        private readonly ILogger<DispatchManager> _logger;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QueueManager(
-            IEnumerable<BackgroundTaskBase> backgroundTasks,
+        public DispatchManager(
+            IEnumerable<BackgroundTask> backgroundTasks,
             IOptions<BackgroundWorkOptions> options,
-            ILogger<QueueManager> logger)
+            ILogger<DispatchManager> logger)
         {
             _backgroundTasks = backgroundTasks ?? throw new ArgumentNullException(nameof(backgroundTasks));
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             ThreadPool.GetMaxThreads(out defaultWorkerThreads, out defaultCompletionPortThreads);
-            ThreadPool.SetMaxThreads((int)_options.MaxWorkers, (int)_options.MaxWorkers);
+            ThreadPool.SetMaxThreads(_options.MaxWorkers, _options.MaxWorkers);
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace FunderMaps.Core.Managers
         /// </remarks>
         /// <param name="backgroundTask">The background task to execute.</param>
         /// <param name="value">The enqueued value object.</param>
-        private WaitCallback BuildWaitCallback(BackgroundTaskBase backgroundTask, object value)
+        private WaitCallback BuildWaitCallback(BackgroundTask backgroundTask, object value)
         {
             var context = new BackgroundTaskContext
             {

@@ -16,14 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsettings.debug.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.9" />
@@ -38,9 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\FunderMaps.Core\FunderMaps.Core.csproj" />
-    <ProjectReference Include="..\src\FunderMaps.Data\FunderMaps.Data.csproj" />
-    <ProjectReference Include="..\src\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj" />
+    <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
+    <ProjectReference Include="..\FunderMaps.Data\FunderMaps.Data.csproj" />
+    <ProjectReference Include="..\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
