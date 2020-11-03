@@ -8,21 +8,33 @@ namespace FunderMaps.Core.Exceptions
     /// </summary>
     public sealed class QueueFullException : BackgroundWorkBaseException
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public QueueFullException()
         {
         }
 
-        public QueueFullException(string message) 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public QueueFullException(string message)
             : base(message)
         {
         }
 
-        public QueueFullException(string message, Exception innerException) 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public QueueFullException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
-        public QueueFullException(SerializationInfo info, StreamingContext context) 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public QueueFullException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

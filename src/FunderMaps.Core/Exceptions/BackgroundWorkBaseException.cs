@@ -9,19 +9,34 @@ namespace FunderMaps.Core.Exceptions
     /// </summary>
     public abstract class BackgroundWorkBaseException : FunderMapsCoreException
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public BackgroundWorkBaseException()
         {
         }
 
-        public BackgroundWorkBaseException(string message) : base(message)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public BackgroundWorkBaseException(string message)
+            : base(message)
         {
         }
 
-        public BackgroundWorkBaseException(string message, Exception innerException) : base(message, innerException)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public BackgroundWorkBaseException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        protected BackgroundWorkBaseException(SerializationInfo info, StreamingContext context) : base(info, context)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        protected BackgroundWorkBaseException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

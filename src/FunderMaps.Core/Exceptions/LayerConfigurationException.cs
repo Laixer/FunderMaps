@@ -8,19 +8,34 @@ namespace FunderMaps.Core.Exceptions
     /// </summary>
     public sealed class LayerConfigurationException : FunderMapsCoreException
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public LayerConfigurationException()
         {
         }
 
-        public LayerConfigurationException(string message) : base(message)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public LayerConfigurationException(string message)
+            : base(message)
         {
         }
 
-        public LayerConfigurationException(string message, Exception innerException) : base(message, innerException)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public LayerConfigurationException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        public LayerConfigurationException(SerializationInfo info, StreamingContext context) : base(info, context)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public LayerConfigurationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }
