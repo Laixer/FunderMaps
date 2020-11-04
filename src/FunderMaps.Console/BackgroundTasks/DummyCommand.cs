@@ -1,4 +1,4 @@
-using FunderMaps.Core.Threading;
+using FunderMaps.Console.Command;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 

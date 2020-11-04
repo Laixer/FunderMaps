@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Console.BundleServices;
+using FunderMaps.Console.Command;
 using FunderMaps.Console.Types;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
@@ -29,7 +30,7 @@ namespace FunderMaps.Console.BackgroundTasks
     /// <summary>
     ///     Service for exporting bundles.
     /// </summary>
-    internal class BundleBuildingTask : BackgroundTask
+    internal class BundleBuildingTask : CommandTask
     {
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
@@ -61,7 +62,7 @@ namespace FunderMaps.Console.BackgroundTasks
         /// </remarks>
         /// <param name="bundleId">The bundle id.</param>
         /// <param name="formats">The formats to export the bundle to.</param>
-        public override async Task ExecuteAsync(BackgroundTaskContext context)
+        public override async Task ExecuteCommandAsync(CommandTaskContext context)
         {
             if (context == null)
             {
@@ -70,6 +71,7 @@ namespace FunderMaps.Console.BackgroundTasks
 
             var bundleBuildingContext = (BundleBuildingContext)context.Value;
             bundleBuildingContext.BundleId.ThrowIfNullOrEmpty();
+            
             if (bundleBuildingContext.Formats == null || !bundleBuildingContext.Formats.Any())
             {
                 throw new ArgumentNullException(nameof(bundleBuildingContext.Formats));
@@ -88,33 +90,9 @@ namespace FunderMaps.Console.BackgroundTasks
                 formats.Add(GeometryExportFormat.Gpkg);
             }
 
-            var bundle = await _bundleRepository.GetByIdAsync(bundleBuildingContext.BundleId).AsTask();
+            var bundle = await _bundleRepository.GetByIdAsync(bundleBuildingContext.BundleId);
             var layers = await _layerRepository.ListAllFromBundleIdAsync(bundleBuildingContext.BundleId).ToListAsync();
 
-            ExportFormats(bundle, layers, formats);
-        }
-
-        /// <summary>
-        ///     Checks if we can handle the value object.
-        /// </summary>
-        /// <param name="value">The value object.</param>
-        /// <returns>Boolean answer.</returns>
-        public override bool CanHandle(object value)
-            => value is BundleBuildingContext;
-
-        /// <summary>
-        ///     Exports a bundle to a list of <see cref="GeometryExportFormat"/>s.
-        /// </summary>
-        /// <remarks>
-        ///     This will always start with <see cref="GeometryExportFormat.Gpkg"/>
-        ///     if the <paramref name="formats"/> contain one.
-        /// </remarks>
-        /// <param name="bundle">The bundle to export.</param>
-        /// <param name="layers">The bundles layers.</param>
-        /// <param name="formats">All desired export formats.</param>
-        /// <returns>See <see cref="Task"/>.</returns>
-        private void ExportFormats(Bundle bundle, IEnumerable<Layer> layers, IList<GeometryExportFormat> formats)
-        {
             // Always start with the .gpkg if we have it
             if (formats.Contains(GeometryExportFormat.Gpkg))
             {
@@ -127,6 +105,14 @@ namespace FunderMaps.Console.BackgroundTasks
                 Export(bundle, layers, format);
             }
         }
+
+        /// <summary>
+        ///     Checks if we can handle the value object.
+        /// </summary>
+        /// <param name="value">The value object.</param>
+        /// <returns>Boolean answer.</returns>
+        public override bool CanHandle(object value)
+            => value is BundleBuildingContext;
 
         /// <summary>
         ///     Exports a bundle and all its layers to a specified format.

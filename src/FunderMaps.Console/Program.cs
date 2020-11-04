@@ -67,7 +67,7 @@ namespace FunderMaps.Console
             {
                 ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(BundleBuildingTask)),
                 ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(DummyTask)),
-                ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(CommandTask)),
+                ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(DummyCommand)),
             });
 
             // Add console services.
