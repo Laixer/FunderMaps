@@ -1,8 +1,6 @@
 ﻿using FunderMaps.Console.BundleServices;
 using FunderMaps.Console.Dev;
-using FunderMaps.Core;
 using FunderMaps.Core.Threading;
-using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -70,7 +68,6 @@ namespace FunderMaps.Console
             });
 
             // Add console services.
-            services.AddSingleton<DispatchManager>();
             services.Configure<BackgroundWorkOptions>(config => configuration.GetSection("BackgroundWorkOptions").Bind(config));
             services.Configure<BundleBuildingOptions>(config => configuration.GetSection("BundleBuildingOptions").Bind(config));
 
