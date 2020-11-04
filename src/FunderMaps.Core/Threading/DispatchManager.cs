@@ -1,11 +1,12 @@
 ﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Threading
 {
@@ -18,14 +19,19 @@ namespace FunderMaps.Core.Threading
     /// </remarks>
     public class DispatchManager : IDisposable
     {
-        private CancellationTokenSource cts = new CancellationTokenSource();
-        private readonly int defaultWorkerThreads;
-        private readonly int defaultCompletionPortThreads;
-
         private readonly IEnumerable<BackgroundTask> _backgroundTasks;
         private readonly BackgroundWorkOptions _options;
         private readonly ILogger<DispatchManager> _logger;
         private readonly IServiceProvider _serviceProvider;
+        private ConcurrentQueue<QueuePair> workerQueue = new ConcurrentQueue<QueuePair>();
+
+        private SemaphoreSlim pool;
+
+        class QueuePair
+        {   
+            public BackgroundTask BackgroundTask { get; set; }
+            public BackgroundTaskContext Context { get; set; }
+        }
 
         /// <summary>
         ///     Create new instance.
@@ -41,16 +47,9 @@ namespace FunderMaps.Core.Threading
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            ThreadPool.GetMaxThreads(out defaultWorkerThreads, out defaultCompletionPortThreads);
-            ThreadPool.SetMaxThreads(_options.MaxWorkers, _options.MaxWorkers);
-        }
+            pool = new SemaphoreSlim(_options.MaxWorkers, _options.MaxWorkers * 2);
 
-        /// <summary>
-        ///     Destroy instance.
-        /// </summary>
-        ~DispatchManager()
-        {
-            ThreadPool.SetMaxThreads(defaultWorkerThreads, defaultCompletionPortThreads);
+            new Timer(obj => LaunchWorker(), null, 2 * 60 * 1000, 60 * 1000);
         }
 
         /// <summary>
@@ -98,66 +97,96 @@ namespace FunderMaps.Core.Threading
         /// </summary>
         protected virtual void QueueTaskItem(BackgroundTask backgroundTask, object value)
         {
-            if (ThreadPool.PendingWorkItemCount > _options.MaxQueueSize)
+            if (workerQueue.Count > _options.MaxQueueSize)
             {
                 throw new QueueFullException();
             }
 
             // TODO: Rewrite {
+            var taskId = Guid.NewGuid();
             var appContext = _serviceProvider.GetRequiredService<AppContext>();
-            cts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, appContext.CancellationToken);
 
-            var context = new BackgroundTaskContext
+            var context = new BackgroundTaskContext(taskId)
             {
-                CancellationToken = cts.Token,
+                CancellationToken = appContext.CancellationToken,
                 Value = value,
             };
             // }
 
             _logger.LogInformation($"Queue background task {context.Id}");
 
-            ThreadPool.QueueUserWorkItem(BuildWaitCallback(backgroundTask, context));
+            workerQueue.Enqueue(new QueuePair
+            {
+                BackgroundTask = backgroundTask,
+                Context = context,
+            });
+
+            LaunchWorker();
         }
 
         /// <summary>
-        ///     Generates a callback to execute a <paramref name="backgroundTask"/>
-        ///     with some value object.
+        ///     Generates a callback to execute a <see cref="BackgroundTask"/>.
         /// </summary>
         /// <remarks>
         ///     This creates a new <see cref="BackgroundTaskContext"/>.
         /// </remarks>
-        /// <param name="backgroundTask">Background task to execute.</param>
-        /// <param name="context">Background task execution context.</param>
-        private WaitCallback BuildWaitCallback(BackgroundTask backgroundTask, BackgroundTaskContext context)
+        private void LaunchWorker()
         {
-            return async (object o) =>
+            async void Callback(object o)
             {
+                await pool.WaitAsync();
+
                 try
                 {
-                    _logger.LogInformation($"Starting background task {context.Id}");
+                    while (workerQueue.TryDequeue(out var pair))
+                    {
+                        using var cts = new CancellationTokenSource(_options.TimeoutDelay);
 
-                    await backgroundTask.ProcessAsync(context);
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, $"Exception in background task {context.Id}");
+                        BackgroundTask backgroundTask = pair.BackgroundTask;
+                        BackgroundTaskContext context = pair.Context;
+
+                        using var ctsCombined = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, context.CancellationToken);
+
+                        try
+                        {
+                            context.CancellationToken.ThrowIfCancellationRequested();
+
+                            _logger.LogInformation($"Starting background task {context.Id}");
+
+                            context.CancellationToken = ctsCombined.Token;
+
+                            await backgroundTask.ExecuteAsync(context);
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogError(e, $"Exception in background task {context.Id}");
+                        }
+                        finally
+                        {
+                            _logger.LogDebug($"Finished background task {context.Id}");
+
+                            await Task.Delay(250);
+                        }
+                    }
                 }
                 finally
                 {
-                    _logger.LogDebug($"Finished background task {context.Id}");
+                    pool.Release();
                 }
-            };
+            }
+
+            if (pool.CurrentCount > 0 && workerQueue.Count > 0)
+            {
+                ThreadPool.QueueUserWorkItem(Callback);
+            }
         }
 
         /// <summary>
         ///     Called on graceful shutdown.
         /// </summary>
-        /// <remarks>
-        ///     This undoes our <see cref="ThreadPool"/> modification.
-        /// </remarks>
         public void Dispose()
         {
-            cts.Dispose();
+            pool?.Dispose();
         }
     }
 }
