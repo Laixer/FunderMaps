@@ -28,7 +28,7 @@ namespace FunderMaps.Core.Threading
         private SemaphoreSlim pool;
 
         class QueuePair
-        {   
+        {
             public BackgroundTask BackgroundTask { get; set; }
             public BackgroundTaskContext Context { get; set; }
         }
@@ -49,7 +49,9 @@ namespace FunderMaps.Core.Threading
 
             pool = new SemaphoreSlim(_options.MaxWorkers, _options.MaxWorkers * 2);
 
-            new Timer(obj => LaunchWorker(), null, 2 * 60 * 1000, 60 * 1000);
+            new Timer(obj => LaunchWorker(), null,
+                TimeSpan.FromMinutes(2),
+                TimeSpan.FromMinutes(1));
         }
 
         /// <summary>

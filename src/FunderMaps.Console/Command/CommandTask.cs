@@ -23,7 +23,6 @@ namespace FunderMaps.Console.Command
         /// </summary>
         protected CommandTaskContext Context { get; private set; }
 
-        // FUTURE: Clean the environment
         /// <summary>
         ///     Run command in workspace.
         /// </summary>

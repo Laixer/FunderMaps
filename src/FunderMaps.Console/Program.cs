@@ -1,4 +1,4 @@
-﻿using FunderMaps.Console.BackgroundTasks;
+using FunderMaps.Console.BackgroundTasks;
 using FunderMaps.Console.BundleServices;
 using FunderMaps.Console.Dev;
 using FunderMaps.Core.Threading;
@@ -71,7 +71,6 @@ namespace FunderMaps.Console
             });
 
             // Add console services.
-            services.Configure<BackgroundWorkOptions>(config => configuration.GetSection("BackgroundWorkOptions").Bind(config));
             services.Configure<BundleBuildingOptions>(config => configuration.GetSection("BundleBuildingOptions").Bind(config));
 
             // Add console services.
