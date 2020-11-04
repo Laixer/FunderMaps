@@ -1,4 +1,6 @@
-﻿namespace FunderMaps.Core.Threading
+﻿using System;
+
+namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     Wrapper for all our console options.
@@ -15,5 +17,10 @@
         ///     for synchronous work.
         /// </summary>
         public int MaxWorkers { get; set; }
+
+        /// <summary>
+        ///     The time interval to wait before canceling a task.
+        /// </summary>
+        public TimeSpan TimeoutDelay { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace FunderMaps.Core.Types.BackgroundTasks
+namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     Context for executing a background task.
@@ -16,11 +16,19 @@ namespace FunderMaps.Core.Types.BackgroundTasks
         /// <summary>
         ///     The task id.
         /// </summary>
-        public Guid Id { get; } = Guid.NewGuid();
+        public Guid Id { get; }
 
         /// <summary>
         ///     The object to process, if any.
         /// </summary>
         public object Value { get; set; }
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public BackgroundTaskContext(Guid TaskId)
+        {
+            Id = TaskId;
+        }
     }
 }

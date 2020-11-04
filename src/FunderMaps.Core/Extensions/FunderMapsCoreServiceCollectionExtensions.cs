@@ -24,8 +24,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
             services.Configure<BackgroundWorkOptions>(options =>
             {
-                options.MaxQueueSize = 128;
+                options.MaxQueueSize = 1024;
                 options.MaxWorkers = 4;
+                options.TimeoutDelay = TimeSpan.FromMinutes(30);
             });
 
             return services;

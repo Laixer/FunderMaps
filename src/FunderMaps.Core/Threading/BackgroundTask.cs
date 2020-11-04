@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace FunderMaps.Core.Types.BackgroundTasks
+namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     Base class to background tasks.
@@ -12,19 +11,19 @@ namespace FunderMaps.Core.Types.BackgroundTasks
         ///     Do some asynchronous work.
         /// </summary>
         /// <param name="context">Background task execution context.</param>
-        public virtual async Task ProcessAsync(BackgroundTaskContext context)
+        public virtual async Task ExecuteAsync(BackgroundTaskContext context)
         {
             // We allways want to yield for the async state machine.
             await Task.Yield();
 
-            Process(context);
+            Execute(context);
         }
 
         /// <summary>
         ///     Do some synchronous work.
         /// </summary>
         /// <param name="context">Background task execution context.</param>
-        public virtual void Process(BackgroundTaskContext context)
+        public virtual void Execute(BackgroundTaskContext context)
         {
         }
 

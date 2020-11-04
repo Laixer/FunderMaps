@@ -5,8 +5,8 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Threading;
 using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.BackgroundTasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
@@ -60,7 +60,7 @@ namespace FunderMaps.Console.BundleServices
         /// </remarks>
         /// <param name="bundleId">The bundle id.</param>
         /// <param name="formats">The formats to export the bundle to.</param>
-        public override async Task ProcessAsync(BackgroundTaskContext context)
+        public override async Task ExecuteAsync(BackgroundTaskContext context)
         {
             if (context == null)
             {
