@@ -1,4 +1,5 @@
-﻿using FunderMaps.Console.BundleServices;
+﻿using FunderMaps.Console.BackgroundTasks;
+using FunderMaps.Console.BundleServices;
 using FunderMaps.Console.Dev;
 using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +66,8 @@ namespace FunderMaps.Console
             services.TryAddEnumerable(new[]
             {
                 ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(BundleBuildingTask)),
+                ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(DummyTask)),
+                ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(CommandTask)),
             });
 
             // Add console services.

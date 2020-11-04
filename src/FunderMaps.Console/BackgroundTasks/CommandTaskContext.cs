@@ -1,6 +1,7 @@
 using System;
+using FunderMaps.Core.Threading;
 
-namespace FunderMaps.Core.Threading
+namespace FunderMaps.Console.BackgroundTasks
 {
     /// <summary>
     ///     Context for executing a background task.

@@ -1,4 +1,5 @@
-﻿using FunderMaps.Console.Types;
+﻿using FunderMaps.Console.BundleServices;
+using FunderMaps.Console.Types;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -16,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Console.BundleServices
+namespace FunderMaps.Console.BackgroundTasks
 {
     ///
     /// TODO:

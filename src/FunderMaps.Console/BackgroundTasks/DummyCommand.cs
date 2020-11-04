@@ -2,7 +2,7 @@ using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Console.BundleServices
+namespace FunderMaps.Console.BackgroundTasks
 {
     internal class DummyCommand : CommandTask
     {

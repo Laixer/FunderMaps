@@ -2,8 +2,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using FunderMaps.Core.Threading;
 
-namespace FunderMaps.Core.Threading
+namespace FunderMaps.Console.BackgroundTasks
 {
     /// <summary>
     ///     Base class to command tasks.
