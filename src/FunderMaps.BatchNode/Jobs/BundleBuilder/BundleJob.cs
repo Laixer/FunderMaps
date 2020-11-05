@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
-    internal class Job : CommandTask
+    internal class BundleJob : CommandTask
     {
-        private ILogger<Job> _logger;
+        private ILogger<BundleJob> _logger;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public Job(ILogger<Job> logger)
+        public BundleJob(ILogger<BundleJob> logger)
         {
             _logger = logger;
         }

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace FunderMaps.BatchNode
@@ -37,12 +36,9 @@ namespace FunderMaps.BatchNode
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
-            // Add all types of background tasks as an enumerable.
-            services.TryAddEnumerable(new[]
-            {
-                ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(Jobs.BundleBuilder.Job)),
-                ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(Jobs.DummyCommand)),
-            });
+            // Add batch jobs to the DI container.
+            services.AddBatchJob<Jobs.DummyJob>();
+            services.AddBatchJob<Jobs.BundleBuilder.BundleJob>();
 
             services.AddGrpc();
         }

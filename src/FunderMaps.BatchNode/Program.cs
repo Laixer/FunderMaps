@@ -32,7 +32,7 @@ namespace FunderMaps.BatchNode
                 {
                     webBuilder.ConfigureKestrel(options =>
                     {
-                        // Setup a HTTP/2 endpoint without TLS.
+                        // Setup HTTP/2 endpoint as default protocol.
                         options.ConfigureEndpointDefaults(options =>
                         {
                             options.Protocols = HttpProtocols.Http2;

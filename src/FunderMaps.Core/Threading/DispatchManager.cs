@@ -25,7 +25,7 @@ namespace FunderMaps.Core.Threading
         private readonly IServiceProvider _serviceProvider;
         private ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
 
-        private SemaphoreSlim pool;
+        private SemaphoreSlim workerPoolHandle;
 
         /// <summary>
         ///     Task bucket represents tasks which will be run in the future.
@@ -81,7 +81,7 @@ namespace FunderMaps.Core.Threading
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            pool = new SemaphoreSlim(_options.MaxWorkers, _options.MaxWorkers * 2);
+            workerPoolHandle = new SemaphoreSlim(_options.MaxWorkers, _options.MaxWorkers * 2);
 
             new Timer(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
@@ -167,7 +167,9 @@ namespace FunderMaps.Core.Threading
         {
             async void Callback(object o)
             {
-                await pool.WaitAsync();
+                _logger.LogDebug("Allocating worker");
+
+                await workerPoolHandle.WaitAsync();
 
                 try
                 {
@@ -196,7 +198,7 @@ namespace FunderMaps.Core.Threading
                         }
                         finally
                         {
-                            _logger.LogDebug($"Finished background task {context.Id}");
+                            _logger.LogInformation($"Finished background task {context.Id}");
 
                             await Task.Delay(250);
                         }
@@ -204,11 +206,13 @@ namespace FunderMaps.Core.Threading
                 }
                 finally
                 {
-                    pool.Release();
+                    workerPoolHandle.Release();
+
+                    _logger.LogDebug("Free up worker");
                 }
             }
 
-            if (pool.CurrentCount > 0 && workerQueue.Count > 0)
+            if (workerPoolHandle.CurrentCount > 0 && workerQueue.Count > 0)
             {
                 ThreadPool.QueueUserWorkItem(Callback);
             }
@@ -219,7 +223,7 @@ namespace FunderMaps.Core.Threading
         /// </summary>
         public void Dispose()
         {
-            pool?.Dispose();
+            workerPoolHandle?.Dispose();
         }
     }
 }

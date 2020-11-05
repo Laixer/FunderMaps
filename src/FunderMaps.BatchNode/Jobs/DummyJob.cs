@@ -4,14 +4,14 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.BatchNode.Jobs
 {
-    internal class DummyCommand : CommandTask
+    internal class DummyJob : CommandTask
     {
-        private ILogger<DummyCommand> _logger;
+        private ILogger<DummyJob> _logger;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public DummyCommand(ILogger<DummyCommand> logger)
+        public DummyJob(ILogger<DummyJob> logger)
         {
             _logger = logger;
         }
