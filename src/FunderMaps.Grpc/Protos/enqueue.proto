@@ -30,7 +30,8 @@ service EnqueueService {
  */
 message EnqueueRequest {
   protocol.FunderMapsProtocol protocol = 1;
-  string payload = 2;
+  string name = 2;
+  string payload = 3;
 }
 
 /*

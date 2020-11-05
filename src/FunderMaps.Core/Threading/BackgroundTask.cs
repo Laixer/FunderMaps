@@ -30,8 +30,9 @@ namespace FunderMaps.Core.Threading
         /// <summary>
         ///     Method to check if a task can handle a given object.
         /// </summary>
-        /// <param name="value">The object to check.</param>
-        /// <returns>Boolean answer.</returns>
-        public abstract bool CanHandle(object value);
+        /// <param name="name">The task name.</param>
+        /// <param name="value">The task payload.</param>
+        /// <returns><c>True</c> if method handles task, false otherwise.</returns>
+        public abstract bool CanHandle(string name, object value);
     }
 }

@@ -23,14 +23,48 @@ namespace FunderMaps.Core.Threading
         private readonly BackgroundWorkOptions _options;
         private readonly ILogger<DispatchManager> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private ConcurrentQueue<QueuePair> workerQueue = new ConcurrentQueue<QueuePair>();
+        private ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
 
         private SemaphoreSlim pool;
 
-        class QueuePair
+        /// <summary>
+        ///     Task bucket represents tasks which will be run in the future.
+        /// </summary>
+        protected class TaskBucket
         {
+            /// <summary>
+            ///     Task to run.
+            /// </summary>
             public BackgroundTask BackgroundTask { get; set; }
+
+            /// <summary>
+            ///     Task runner context.
+            /// </summary>
             public BackgroundTaskContext Context { get; set; }
+
+            /// <summary>
+            ///     The task id.
+            /// </summary>
+            public Guid TaskId => Context.Id;
+
+            // TODO: Rewrite
+            /// <summary>
+            ///     Create new instance.
+            /// </summary>
+            public TaskBucket(IServiceProvider _serviceProvider, object value)
+            {
+                var scopeFactory = _serviceProvider.GetService<IServiceScopeFactory>();
+                using var scope = scopeFactory.CreateScope();
+                var scopedContainer = scope.ServiceProvider;
+
+                var appContext = scopedContainer.GetService<AppContext>();
+
+                Context = new BackgroundTaskContext(taskId: Guid.NewGuid())
+                {
+                    CancellationToken = appContext.CancellationToken,
+                    Value = value,
+                };
+            }
         }
 
         /// <summary>
@@ -62,28 +96,34 @@ namespace FunderMaps.Core.Threading
         ///     implementation which is capable of processing the object. If
         ///     no implementation can process the object, nothing happens.
         /// </remarks>
-        /// <param name="value">The object to process.</param>
-        public void EnqueueTask(object value)
+        /// <param name="name">The task name.</param>
+        /// <param name="value">The task payload.</param>
+        public Guid EnqueueTask(string name, object value)
         {
             if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
 
+            var bucket = new TaskBucket(_serviceProvider, value);
+
             foreach (var backgroundTask in _backgroundTasks)
             {
-                if (backgroundTask.CanHandle(value))
+                if (backgroundTask.CanHandle(name, value))
                 {
-                    QueueTaskItem(backgroundTask, value);
+                    bucket.BackgroundTask = backgroundTask;
+                    QueueTaskItem(bucket);
                 }
             }
+
+            return bucket.TaskId;
         }
 
         /// <summary>
         ///     Enqueues an object to process onto the queue with provided task.
         /// </summary>
         /// <param name="value">The object to process.</param>
-        public void EnqueueTask<TTask>(object value)
+        public Guid EnqueueTask<TTask>(object value)
             where TTask : BackgroundTask
         {
             if (value is null)
@@ -91,37 +131,28 @@ namespace FunderMaps.Core.Threading
                 throw new ArgumentNullException(nameof(value));
             }
 
-            QueueTaskItem(ActivatorUtilities.CreateInstance<TTask>(_serviceProvider), value);
+            var bucket = new TaskBucket(_serviceProvider, value)
+            {
+                BackgroundTask = ActivatorUtilities.CreateInstance<TTask>(_serviceProvider),
+            };
+
+            QueueTaskItem(bucket);
+            return bucket.TaskId;
         }
 
         /// <summary>
         ///     Dispatch task item to the background, then return.
         /// </summary>
-        protected virtual void QueueTaskItem(BackgroundTask backgroundTask, object value)
+        protected virtual void QueueTaskItem(TaskBucket taskBucket)
         {
             if (workerQueue.Count > _options.MaxQueueSize)
             {
                 throw new QueueFullException();
             }
 
-            // TODO: Rewrite {
-            var taskId = Guid.NewGuid();
-            var appContext = _serviceProvider.GetRequiredService<AppContext>();
+            _logger.LogInformation($"Queue background task {taskBucket.TaskId}");
 
-            var context = new BackgroundTaskContext(taskId)
-            {
-                CancellationToken = appContext.CancellationToken,
-                Value = value,
-            };
-            // }
-
-            _logger.LogInformation($"Queue background task {context.Id}");
-
-            workerQueue.Enqueue(new QueuePair
-            {
-                BackgroundTask = backgroundTask,
-                Context = context,
-            });
+            workerQueue.Enqueue(taskBucket);
 
             LaunchWorker();
         }
@@ -140,12 +171,12 @@ namespace FunderMaps.Core.Threading
 
                 try
                 {
-                    while (workerQueue.TryDequeue(out var pair))
+                    while (workerQueue.TryDequeue(out var taskBucket))
                     {
                         using var cts = new CancellationTokenSource(_options.TimeoutDelay);
 
-                        BackgroundTask backgroundTask = pair.BackgroundTask;
-                        BackgroundTaskContext context = pair.Context;
+                        BackgroundTask backgroundTask = taskBucket.BackgroundTask;
+                        BackgroundTaskContext context = taskBucket.Context;
 
                         using var ctsCombined = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, context.CancellationToken);
 
