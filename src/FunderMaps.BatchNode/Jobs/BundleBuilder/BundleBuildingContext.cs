@@ -1,8 +1,8 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
 
-namespace FunderMaps.Console.Types
+namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
     /// <summary>
     ///     Context for executing a bundle build task.

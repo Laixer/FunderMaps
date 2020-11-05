@@ -98,7 +98,7 @@ namespace FunderMaps.Core.Threading
         /// </remarks>
         /// <param name="name">The task name.</param>
         /// <param name="value">The task payload.</param>
-        public Guid EnqueueTask(string name, object value)
+        public ValueTask<Guid> EnqueueTaskAsync(string name, object value)
         {
             if (value is null)
             {
@@ -116,14 +116,14 @@ namespace FunderMaps.Core.Threading
                 }
             }
 
-            return bucket.TaskId;
+            return new ValueTask<Guid>(bucket.TaskId);
         }
 
         /// <summary>
         ///     Enqueues an object to process onto the queue with provided task.
         /// </summary>
         /// <param name="value">The object to process.</param>
-        public Guid EnqueueTask<TTask>(object value)
+        public ValueTask<Guid> EnqueueTaskAsync<TTask>(object value)
             where TTask : BackgroundTask
         {
             if (value is null)
@@ -137,7 +137,7 @@ namespace FunderMaps.Core.Threading
             };
 
             QueueTaskItem(bucket);
-            return bucket.TaskId;
+            return new ValueTask<Guid>(bucket.TaskId);
         }
 
         /// <summary>

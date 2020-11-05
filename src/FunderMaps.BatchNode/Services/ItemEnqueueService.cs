@@ -1,57 +1,64 @@
-using FunderMaps.Core.Managers;
+using FunderMaps.Core.Threading;
 using Grpc.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Grpc
+namespace FunderMaps.BatchNode
 {
     // TODO Question -> In the protobuf file the service is called
     //                  EnqueueService, according to the GRPC naming
     //                  conventions. This is the name we would want
     //                  to give to this class, what to do with this?
     /// <summary>
-    ///     Service used to enqueue items using GRPC onto our 
-    ///     queue manager.
+    ///     Service used to enqueue items using GRPC onto our queue manager.
     /// </summary>
     public class ItemEnqueueService : EnqueueService.EnqueueServiceBase
     {
-        private readonly QueueManager _queueManager;
+        private readonly DispatchManager _dispatchManager;
         private readonly ILogger<ItemEnqueueService> _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ItemEnqueueService(QueueManager queueManager,
-            ILogger<ItemEnqueueService> logger)
+        public ItemEnqueueService(
+            DispatchManager dispatchManager,
+            ILogger<ItemEnqueueService> logger,
+            IServiceScopeFactory serviceScopeFactory)
         {
-            _queueManager = queueManager ?? throw new ArgumentNullException(nameof(queueManager));
-            _logger = logger;
+            _dispatchManager = dispatchManager ?? throw new ArgumentNullException(nameof(dispatchManager));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _serviceScopeFactory = serviceScopeFactory;
         }
-        
+
         /// <summary>
         ///     Enqueue an item onto our queue manager.
         /// </summary>
         /// <param name="request">The request object.</param>
         /// <param name="context">The call context.</param>
         /// <returns>Response object containing a task id.</returns>
-        public override Task<EnqueueResponse> EnqueueItem(EnqueueRequest request, ServerCallContext context)
+        public override async Task<EnqueueResponse> EnqueueItem(EnqueueRequest request, ServerCallContext context)
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            // Deserialize the request payload to some json object to enqueue.
-            // TODO Do we really want this wildcard-behaviour?
-            var item = JsonSerializer.Deserialize<object>(request.Payload);
+            // TODO: This is a runtime err, maybe change ex
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                throw new ArgumentNullException(nameof(request.Name));
+            }
 
-            // TODO This doesn't return a task id yet
-            _queueManager.EnqueueTask(item);
+            Guid taskid = await _dispatchManager.EnqueueTaskAsync(request.Name, request.Payload);
 
-            // TODO Respond with message, call BuildProtocol()
-            throw new NotImplementedException();
+            return new EnqueueResponse
+            {
+                Protocol = new FunderMapsProtocol { },
+                TaskId = taskid.ToString(),
+            };
         }
 
         // TODO Move to some centralized class.

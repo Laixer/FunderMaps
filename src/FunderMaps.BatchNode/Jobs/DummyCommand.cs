@@ -1,8 +1,8 @@
-using FunderMaps.Console.Command;
+using FunderMaps.BatchNode.Command;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Console.BackgroundTasks
+namespace FunderMaps.BatchNode.Jobs
 {
     internal class DummyCommand : CommandTask
     {
@@ -20,11 +20,12 @@ namespace FunderMaps.Console.BackgroundTasks
         {
             _logger.LogDebug("START");
 
-            await RunCommand("printenv");
+            await RunCommand("printenv", context.Value as string);
 
             _logger.LogDebug("ENDS");
         }
 
-        public override bool CanHandle(object value) => true;
+        public override bool CanHandle(string name, object value)
+            => name.ToLowerInvariant() == "dummy" && value is string;
     }
 }

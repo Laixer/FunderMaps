@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using FunderMaps.Core.Threading;
 
-namespace FunderMaps.Console.Command
+namespace FunderMaps.BatchNode.Command
 {
     /// <summary>
     ///     Base class to command tasks.

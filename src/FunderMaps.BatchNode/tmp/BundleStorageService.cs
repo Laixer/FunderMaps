@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 
-namespace FunderMaps.Console.BundleServices
+namespace FunderMaps.BatchNode.Jobs
 {
     // TODO Don't use S3 for upload
     /// <summary>
@@ -58,7 +58,7 @@ namespace FunderMaps.Console.BundleServices
             var targetfile = $"s3://{_options.BlobStorageName}/{StorageConstants.ExportDirectoryName}/{organizationId}/{bundleId}/{versionId}/{FormatExportDirectoryName(format)}";
             var commandText = $"aws s3 cp --endpoint={_options.ServiceUri} {sourceFile} {targetfile}";
 
-            CommandExecuter.ExecuteCommand(commandText);
+            // CommandExecuter.ExecuteCommand(commandText);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace FunderMaps.Console.BundleServices
 
             var commandText = $"aws s3 cp --endpoint={_options.ServiceUri} {sourceDirectory} {targetDirectory} {formatSpecificOptions} --recursive";
 
-            CommandExecuter.ExecuteCommand(commandText);
+            // CommandExecuter.ExecuteCommand(commandText);
         }
 
         // TODO To helper

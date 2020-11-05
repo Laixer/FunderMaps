@@ -1,16 +1,12 @@
-﻿using FunderMaps.Console.BundleServices;
-using FunderMaps.Console.Command;
-using FunderMaps.Console.Types;
+﻿using FunderMaps.BatchNode.Command;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Threading;
 using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -18,7 +14,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Console.BackgroundTasks
+#if _DISAB
+namespace FunderMaps.BatchNode.Jobs
 {
     ///
     /// TODO:
@@ -35,7 +32,7 @@ namespace FunderMaps.Console.BackgroundTasks
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
         protected readonly BundleStorageService _bundleStorageService;
-        protected readonly BundleBuildingOptions _options;
+        // protected readonly BundleBuildingOptions _options;
         protected readonly DbConnectionStringBuilder csBuilder = new DbConnectionStringBuilder();
 
         /// <summary>
@@ -44,14 +41,14 @@ namespace FunderMaps.Console.BackgroundTasks
         public BundleBuildingTask(IBundleRepository bundleRepository,
             ILayerRepository layerRepository,
             BundleStorageService bundleStorageService,
-            IOptions<BundleBuildingOptions> options,
+            // IOptions<BundleBuildingOptions> options,
             IConfiguration configuration)
         {
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
             _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
             _bundleStorageService = bundleStorageService ?? throw new ArgumentNullException(nameof(bundleStorageService));
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-            csBuilder.ConnectionString = configuration?.GetConnectionString(_options.ConnectionStringName) ?? throw new ArgumentNullException(nameof(configuration));
+            // _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            csBuilder.ConnectionString = "";//configuration?.GetConnectionString(_options.ConnectionStringName) ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         /// <summary>
@@ -71,7 +68,7 @@ namespace FunderMaps.Console.BackgroundTasks
 
             var bundleBuildingContext = (BundleBuildingContext)context.Value;
             bundleBuildingContext.BundleId.ThrowIfNullOrEmpty();
-            
+
             if (bundleBuildingContext.Formats == null || !bundleBuildingContext.Formats.Any())
             {
                 throw new ArgumentNullException(nameof(bundleBuildingContext.Formats));
@@ -107,12 +104,13 @@ namespace FunderMaps.Console.BackgroundTasks
         }
 
         /// <summary>
-        ///     Checks if we can handle the value object.
+        ///     Method to check if a task can handle a given object.
         /// </summary>
-        /// <param name="value">The value object.</param>
-        /// <returns>Boolean answer.</returns>
-        public override bool CanHandle(object value)
-            => value is BundleBuildingContext;
+        /// <param name="name">The task name.</param>
+        /// <param name="value">The task payload.</param>
+        /// <returns><c>True</c> if method handles task, false otherwise.</returns>
+        public override bool CanHandle(string name, object value)
+            => name.ToLowerInvariant() == "bundle_building" && value is string;
 
         /// <summary>
         ///     Exports a bundle and all its layers to a specified format.
@@ -171,7 +169,7 @@ namespace FunderMaps.Console.BackgroundTasks
                 // TODO Centralize ogr2ogr
                 var commandText = $"ogr2ogr -f GPKG {fileName} {BuildPGString()} {(append ? "-append " : "")}-sql \"{sql}\" -nln \"{layer.SchemaName}.{layer.TableName}\"";
 
-                CommandExecuter.ExecuteCommand(commandText);
+                // CommandExecuter.ExecuteCommand(commandText);
             }
         }
 
@@ -189,11 +187,12 @@ namespace FunderMaps.Console.BackgroundTasks
 
             var sourceFile = $"{BundleNameHelper.GetName(bundle, GeometryExportFormat.Gpkg)}";
             var targetDirectory = $"{StorageConstants.ExportMvtDirectoryName}";
-            var mvtOptions = $"-dsco MINZOOM={_options.MvtMinZoom} -dsco MAXZOOM={_options.MvtMaxZoom}";
+            // var mvtOptions = $"-dsco MINZOOM={_options.MvtMinZoom} -dsco MAXZOOM={_options.MvtMaxZoom}";
+            var mvtOptions = $"-dsco MINZOOM=7 -dsco MAXZOOM=15";
 
             var commandText = $"ogr2ogr -f MVT {targetDirectory} {sourceFile} {mvtOptions}";
 
-            CommandExecuter.ExecuteCommand(commandText);
+            // CommandExecuter.ExecuteCommand(commandText);
 
             _bundleStorageService.UploadExportDirectory(bundle.OrganizationId, bundle.Id, bundle.VersionId, GeometryExportFormat.Mvt);
         }
@@ -255,3 +254,4 @@ namespace FunderMaps.Console.BackgroundTasks
             => $"PG:\"host={(string)csBuilder["Host"]} dbname={(string)csBuilder["Database"]} user={(string)csBuilder["User Id"]} password={(string)csBuilder["Password"]}\"";
     }
 }
+#endif
