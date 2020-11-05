@@ -26,6 +26,8 @@ namespace FunderMaps.Core.Threading
         private ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
 
         private SemaphoreSlim workerPoolHandle;
+        private Timer timer;
+        private bool disposedValue;
 
         /// <summary>
         ///     Task bucket represents tasks which will be run in the future.
@@ -83,7 +85,7 @@ namespace FunderMaps.Core.Threading
 
             workerPoolHandle = new SemaphoreSlim(_options.MaxWorkers, _options.MaxWorkers * 2);
 
-            new Timer(obj => LaunchWorker(), null,
+            timer = new Timer(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
                 TimeSpan.FromMinutes(1));
         }
@@ -145,6 +147,11 @@ namespace FunderMaps.Core.Threading
         /// </summary>
         protected virtual void QueueTaskItem(TaskBucket taskBucket)
         {
+            if (taskBucket is null)
+            {
+                throw new ArgumentNullException(nameof(taskBucket));
+            }
+
             if (workerQueue.Count > _options.MaxQueueSize)
             {
                 throw new QueueFullException();
@@ -221,9 +228,28 @@ namespace FunderMaps.Core.Threading
         /// <summary>
         ///     Called on graceful shutdown.
         /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    timer.Dispose();
+                    workerPoolHandle.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        /// <summary>
+        ///     Called on graceful shutdown.
+        /// </summary>
         public void Dispose()
         {
-            workerPoolHandle?.Dispose();
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
