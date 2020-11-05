@@ -18,13 +18,13 @@ namespace FunderMaps.BatchNode
         /// <summary>
         ///     Configuration.
         /// </summary>
-        public IConfiguration Configuration { get; }
+        // public IConfiguration Configuration { get; }
 
         /// <summary>
         ///     Create a new instance.
         /// </summary>
         /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        // public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
         ///     This method gets called by the runtime if no environment is set.
@@ -71,7 +71,7 @@ namespace FunderMaps.BatchNode
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<ItemEnqueueService>();
-                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+                // endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }
