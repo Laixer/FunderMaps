@@ -18,6 +18,11 @@ namespace FunderMaps.Core.Entities
         }
 
         /// <summary>
+        ///     Unique name per bundle.
+        /// </summary>
+        public string UniqueName => $"{Id}-{VersionId}";
+
+        /// <summary>
         ///     Unique identifier.
         /// </summary>
         [Required]

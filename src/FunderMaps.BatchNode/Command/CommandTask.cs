@@ -24,26 +24,39 @@ namespace FunderMaps.BatchNode.Command
         /// </summary>
         protected CommandTaskContext Context { get; private set; }
 
+        public Task RunCommandAsync(string fileName, string arguments = null)
+        {
+            return Task.Run(() => RunCommand(fileName, arguments));
+        }
+
         /// <summary>
         ///     Run command in workspace.
         /// </summary>
         /// <param name="fileName">Command filename.</param>
         /// <param name="arguments">Optional command arguments.</param>
-        public Task RunCommand(string fileName, string arguments = null)
+        public void RunCommand(string fileName, string arguments = null)
         {
             var command = new CommandInfo(fileName);
-            foreach (var argument in arguments.Split(" "))
+            if (arguments != null)
             {
-                command.ArgumentList.Add(argument.Trim());
+                foreach (var argument in arguments.Split(" "))
+                {
+                    command.ArgumentList.Add(argument.Trim());
+                }
             }
-            return RunCommand(command);
+            RunCommand(command);
+        }
+
+        public Task RunCommandAsync(CommandInfo commandInfo)
+        {
+            return Task.Run(() => RunCommand(commandInfo));
         }
 
         /// <summary>
         ///     Run command in workspace.
         /// </summary>
         /// <param name="commandInfo">Command descriptor.</param>
-        protected async Task RunCommand(CommandInfo commandInfo)
+        protected void RunCommand(CommandInfo commandInfo)
         {
             var processInfo = new ProcessStartInfo
             {
@@ -93,10 +106,9 @@ namespace FunderMaps.BatchNode.Command
             });
 
             process.WaitForExit();
-            await registration.DisposeAsync();
 
-            await stdoutWriter.FlushAsync();
-            await stderrWriter.FlushAsync();
+            stdoutWriter.Flush();
+            stderrWriter.Flush();
         }
 
         /// <summary>

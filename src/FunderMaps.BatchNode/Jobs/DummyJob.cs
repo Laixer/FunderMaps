@@ -24,7 +24,7 @@ namespace FunderMaps.BatchNode.Jobs
         {
             _logger.LogDebug("START");
 
-            await RunCommand("printenv", context.Value as string);
+            await RunCommandAsync("printenv", context.Value as string);
 
             _logger.LogDebug("ENDS");
         }

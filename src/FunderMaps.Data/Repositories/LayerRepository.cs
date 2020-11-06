@@ -112,7 +112,7 @@ namespace FunderMaps.Data.Repositories
                 WITH layer_ids AS (
 	                SELECT (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
 	                FROM maplayer.bundle b 
-                    WHERE b.id = @bundle_id
+                    WHERE b.id = @id
                 )
                 SELECT  l.id,
                         l.schema_name,
@@ -122,7 +122,7 @@ namespace FunderMaps.Data.Repositories
                             SELECT  layer_id 
                             FROM    layer_ids
                         )
-                WHERE   b.id = @bundle_id";
+                WHERE   b.id = @id";
 
             await using var context = await DbContextFactory(sql);
 

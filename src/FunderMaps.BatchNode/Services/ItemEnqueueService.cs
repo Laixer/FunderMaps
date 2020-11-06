@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.BatchNode
 {
-    // TODO Question -> In the protobuf file the service is called
-    //                  EnqueueService, according to the GRPC naming
-    //                  conventions. This is the name we would want
-    //                  to give to this class, what to do with this?
     /// <summary>
     ///     Service used to enqueue items using GRPC onto our queue manager.
     /// </summary>

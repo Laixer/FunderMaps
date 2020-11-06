@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,11 +18,10 @@ namespace FunderMaps.Core.Threading
     /// </remarks>
     public class DispatchManager : IDisposable
     {
-        private readonly IEnumerable<BackgroundTask> _backgroundTasks;
         private readonly BackgroundWorkOptions _options;
         private readonly ILogger<DispatchManager> _logger;
         private readonly IServiceProvider _serviceProvider;
-        private ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
+        private static ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
 
         private SemaphoreSlim workerPoolHandle;
         private Timer timer;
@@ -73,12 +71,10 @@ namespace FunderMaps.Core.Threading
         ///     Create new instance.
         /// </summary>
         public DispatchManager(
-            IEnumerable<BackgroundTask> backgroundTasks,
             IOptions<BackgroundWorkOptions> options,
             ILogger<DispatchManager> logger,
             IServiceProvider serviceProvider)
         {
-            _backgroundTasks = backgroundTasks ?? throw new ArgumentNullException(nameof(backgroundTasks));
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
@@ -109,7 +105,7 @@ namespace FunderMaps.Core.Threading
 
             var bucket = new TaskBucket(_serviceProvider, value);
 
-            foreach (var backgroundTask in _backgroundTasks)
+            foreach (var backgroundTask in _serviceProvider.GetServices<BackgroundTask>())
             {
                 if (backgroundTask.CanHandle(name, value))
                 {
@@ -165,14 +161,25 @@ namespace FunderMaps.Core.Threading
         }
 
         /// <summary>
-        ///     Generates a callback to execute a <see cref="BackgroundTask"/>.
+        ///     Fire a worker if possible, and return.
         /// </summary>
         /// <remarks>
-        ///     This creates a new <see cref="BackgroundTaskContext"/>.
+        ///     <para>
+        ///         This operation should never block. The worker delegate is spawn on another
+        ///         execution thread of execution which guarantees this thread is not blocked.
+        ///     </para>
+        ///     <para>
+        ///         The task concurrency documentation does not recommend the usage of task workers
+        ///         for synchronous CPU-bound work. However, this will not lead to manjor scalability
+        ///         issues because we put a restriction on the concurrency upper-bound.
+        ///     </para>
         /// </remarks>
         private void LaunchWorker()
         {
-            async void Callback(object o)
+            /// <summary>
+            ///     Run as long as there are items on the queue.
+            /// </summary>
+            async Task WorkerDelegate()
             {
                 _logger.LogDebug("Allocating worker");
 
@@ -221,7 +228,7 @@ namespace FunderMaps.Core.Threading
 
             if (workerPoolHandle.CurrentCount > 0 && workerQueue.Count > 0)
             {
-                ThreadPool.QueueUserWorkItem(Callback);
+                Task.Run(() => WorkerDelegate());
             }
         }
 
