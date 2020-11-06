@@ -54,10 +54,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddContextRepository<IAddressRepository, AddressRepository>();
             services.AddContextRepository<IAnalysisRepository, AnalysisRepository>();
             services.AddContextRepository<IBuildingRepository, BuildingRepository>();
+            services.AddContextRepository<IBundleRepository, BundleRepository>();
             services.AddContextRepository<IContactRepository, ContactRepository>();
             services.AddContextRepository<IIncidentRepository, IncidentRepository>();
             services.AddContextRepository<IInquiryRepository, InquiryRepository>();
             services.AddContextRepository<IInquirySampleRepository, InquirySampleRepository>();
+            services.AddContextRepository<ILayerRepository, LayerRepository>();
             services.AddContextRepository<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
             services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();

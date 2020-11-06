@@ -16,6 +16,10 @@ namespace FunderMaps.BatchNode.Jobs
             _logger = logger;
         }
 
+        /// <summary>
+        ///     Run the background command.
+        /// </summary>
+        /// <param name="context">Command task execution context.</param>
         public override async Task ExecuteCommandAsync(CommandTaskContext context)
         {
             _logger.LogDebug("START");

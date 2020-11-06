@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Threading;
 
@@ -27,13 +28,26 @@ namespace FunderMaps.BatchNode.Command
         ///     Run command in workspace.
         /// </summary>
         /// <param name="fileName">Command filename.</param>
-        /// <param name="arguments">Optional command arguments</param>
-        protected async Task RunCommand(string fileName, string arguments = null)
+        /// <param name="arguments">Optional command arguments.</param>
+        public Task RunCommand(string fileName, string arguments = null)
+        {
+            var command = new CommandInfo(fileName);
+            foreach (var argument in arguments.Split(" "))
+            {
+                command.ArgumentList.Add(argument.Trim());
+            }
+            return RunCommand(command);
+        }
+
+        /// <summary>
+        ///     Run command in workspace.
+        /// </summary>
+        /// <param name="commandInfo">Command descriptor.</param>
+        protected async Task RunCommand(CommandInfo commandInfo)
         {
             var processInfo = new ProcessStartInfo
             {
-                FileName = fileName,
-                Arguments = arguments,
+                FileName = commandInfo.FileName,
                 WorkingDirectory = Context.Workspace,
                 CreateNoWindow = true,
                 UseShellExecute = false,
@@ -41,18 +55,27 @@ namespace FunderMaps.BatchNode.Command
                 RedirectStandardOutput = true,
             };
 
+            processInfo.ArgumentList.Clear();
+            foreach (var argument in commandInfo.ArgumentList.Where(s => !string.IsNullOrEmpty(s)).Select(s => s.Trim()))
+            {
+                processInfo.ArgumentList.Add(argument);
+            }
+
             processInfo.Environment.Clear();
             processInfo.Environment[TaskIdName] = Context.Id.ToString();
             processInfo.Environment["PATH"] = System.Environment.GetEnvironmentVariable("PATH");
             processInfo.Environment["LANG"] = System.Environment.GetEnvironmentVariable("LANG");
             processInfo.Environment["LANGUAGE"] = System.Environment.GetEnvironmentVariable("LANGUAGE");
             processInfo.Environment["TERM"] = System.Environment.GetEnvironmentVariable("TERM");
+            foreach (var environmentVariable in commandInfo.Environment)
+            {
+                processInfo.Environment.Add(environmentVariable);
+            }
 
             using var process = System.Diagnostics.Process.Start(processInfo);
             if (process == null)
             {
-                // TODO Too specific
-                throw new Exception($"Could not start process for {fileName}");
+                throw new Exception($"Could not start process for {processInfo.FileName}"); // TODO:
             }
 
             var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
