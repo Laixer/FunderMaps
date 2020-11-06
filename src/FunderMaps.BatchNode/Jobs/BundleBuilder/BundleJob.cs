@@ -1,5 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using FunderMaps.BatchNode.Command;
+using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
@@ -11,7 +19,11 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleJob(ILogger<BundleJob> logger)
+        public BundleJob(IServiceScopeFactory serviceScopeFactory,
+            // IBundleRepository bundleRepository,
+            // ILayerRepository layerRepository,
+            ILogger<BundleJob> logger)
+            : base(logger)
         {
             _logger = logger;
         }

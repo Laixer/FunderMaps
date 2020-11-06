@@ -6,14 +6,12 @@ namespace FunderMaps.BatchNode.Jobs
 {
     internal class DummyJob : CommandTask
     {
-        private ILogger<DummyJob> _logger;
-
         /// <summary>
         ///     Create new instance.
         /// </summary>
         public DummyJob(ILogger<DummyJob> logger)
+            : base(logger)
         {
-            _logger = logger;
         }
 
         /// <summary>

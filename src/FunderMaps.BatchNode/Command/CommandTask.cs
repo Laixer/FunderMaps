@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.BatchNode.Command
 {
@@ -19,11 +20,24 @@ namespace FunderMaps.BatchNode.Command
     {
         private const string TaskIdName = "FM_TASK_ID";
 
+        protected readonly ILogger _logger;
+
         /// <summary>
         ///     Command context.
         /// </summary>
         protected CommandTaskContext Context { get; private set; }
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public CommandTask(ILogger logger)
+            => _logger = logger;
+
+        /// <summary>
+        ///     Run command in workspace.
+        /// </summary>
+        /// <param name="fileName">Command filename.</param>
+        /// <param name="arguments">Optional command arguments.</param>
         public Task RunCommandAsync(string fileName, string arguments = null)
         {
             return Task.Run(() => RunCommand(fileName, arguments));
@@ -47,6 +61,10 @@ namespace FunderMaps.BatchNode.Command
             RunCommand(command);
         }
 
+        /// <summary>
+        ///     Run command in workspace.
+        /// </summary>
+        /// <param name="commandInfo">Command descriptor.</param>
         public Task RunCommandAsync(CommandInfo commandInfo)
         {
             return Task.Run(() => RunCommand(commandInfo));
@@ -85,6 +103,8 @@ namespace FunderMaps.BatchNode.Command
                 processInfo.Environment.Add(environmentVariable);
             }
 
+            _logger.LogDebug("Start system process");
+
             using var process = System.Diagnostics.Process.Start(processInfo);
             if (process == null)
             {
@@ -105,10 +125,14 @@ namespace FunderMaps.BatchNode.Command
                 process.Kill(entireProcessTree: true);
             });
 
+            _logger.LogDebug("Wait for process to exit");
+
             process.WaitForExit();
 
             stdoutWriter.Flush();
             stderrWriter.Flush();
+
+            _logger.LogDebug($"Process exit with return code: {process.ExitCode}");
         }
 
         /// <summary>
@@ -117,6 +141,8 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="context">Command task execution context.</param>
         public virtual Task SetupAsync(CommandTaskContext context)
         {
+            _logger.LogDebug("Setup workspace for job");
+
             context.Workspace = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(context.Workspace);
 
@@ -124,6 +150,8 @@ namespace FunderMaps.BatchNode.Command
             // may cleanup unused temporary directories when disk space is limited.
             File.Create($"{context.Workspace}/.lock");
             File.WriteAllText($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
+
+            _logger.LogTrace($"Workspace: {context.Workspace}");
 
             return Task.CompletedTask;
         }
@@ -134,8 +162,12 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="context">Command task execution context.</param>
         public virtual Task TeardownAsync(CommandTaskContext context)
         {
+            _logger.LogDebug("Teardown workspace for job");
+
             if (!context.KeepWorkspace)
             {
+                _logger.LogTrace("Workspace directory is not kept");
+
                 Directory.Delete(context.Workspace, recursive: true);
             }
 
