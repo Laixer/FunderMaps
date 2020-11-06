@@ -79,7 +79,7 @@ namespace FunderMaps.Core.Threading
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            workerPoolHandle = new SemaphoreSlim(_options.MaxWorkers, _options.MaxWorkers * 2);
+            workerPoolHandle = new SemaphoreSlim(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
             timer = new Timer(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
@@ -161,7 +161,7 @@ namespace FunderMaps.Core.Threading
         }
 
         /// <summary>
-        ///     Fire a worker if possible, and return.
+        ///     Fire a worker, if possible, then return.
         /// </summary>
         /// <remarks>
         ///     <para>
@@ -181,7 +181,7 @@ namespace FunderMaps.Core.Threading
             /// </summary>
             async Task WorkerDelegate()
             {
-                _logger.LogDebug("Allocating worker");
+                _logger.LogDebug("Allocating new worker");
 
                 await workerPoolHandle.WaitAsync();
 
@@ -189,7 +189,9 @@ namespace FunderMaps.Core.Threading
                 {
                     while (workerQueue.TryDequeue(out var taskBucket))
                     {
-                        using var cts = new CancellationTokenSource(_options.TimeoutDelay);
+                        using var cts = new CancellationTokenSource(_options.TimeoutDelay == TimeSpan.Zero
+                            ? TimeSpan.FromMinutes(15)
+                            : _options.TimeoutDelay);
 
                         BackgroundTask backgroundTask = taskBucket.BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
@@ -222,7 +224,7 @@ namespace FunderMaps.Core.Threading
                 {
                     workerPoolHandle.Release();
 
-                    _logger.LogDebug("Free up worker");
+                    _logger.LogDebug("Free worker");
                 }
             }
 
