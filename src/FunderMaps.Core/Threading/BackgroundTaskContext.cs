@@ -24,6 +24,21 @@ namespace FunderMaps.Core.Threading
         public object Value { get; set; }
 
         /// <summary>
+        ///     Time at which the job was queued.
+        /// </summary>
+        public DateTime QueuedAt { get; set; }
+
+        /// <summary>
+        ///     Time at which the job started execution.
+        /// </summary>
+        public DateTime StartedAt { get; set; }
+
+        /// <summary>
+        ///     Time at which the job finished.
+        /// </summary>
+        public DateTime FinishedAt { get; set; }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public BackgroundTaskContext(Guid taskId)

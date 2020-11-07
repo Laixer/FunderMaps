@@ -155,6 +155,7 @@ namespace FunderMaps.Core.Threading
 
             _logger.LogInformation($"Queue background task {taskBucket.TaskId}");
 
+            taskBucket.Context.QueuedAt = DateTime.Now;
             workerQueue.Enqueue(taskBucket);
 
             LaunchWorker();
@@ -204,6 +205,7 @@ namespace FunderMaps.Core.Threading
 
                             _logger.LogInformation($"Starting background task {context.Id}");
 
+                            context.StartedAt = DateTime.Now;
                             context.CancellationToken = ctsCombined.Token;
 
                             await backgroundTask.ExecuteAsync(context);
@@ -214,7 +216,10 @@ namespace FunderMaps.Core.Threading
                         }
                         finally
                         {
-                            _logger.LogInformation($"Finished background task {context.Id}");
+                            context.FinishedAt = DateTime.Now;
+                            TimeSpan runingTime = context.FinishedAt - context.StartedAt;
+
+                            _logger.LogInformation($"Finished background task {context.Id} in {Math.Round(runingTime.TotalSeconds)}s");
 
                             await Task.Delay(250);
                         }
