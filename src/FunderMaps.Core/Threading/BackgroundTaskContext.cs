@@ -49,6 +49,11 @@ namespace FunderMaps.Core.Threading
         public int RetryCount { get; set; }
 
         /// <summary>
+        ///     Reference to the dispatch manager.
+        /// </summary>
+        public WeakReference<DispatchManager> DispatchManager { get; set; }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public BackgroundTaskContext(Guid taskId)

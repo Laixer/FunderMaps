@@ -8,6 +8,14 @@ namespace FunderMaps.Core.Threading
     public abstract class BackgroundTask
     {
         /// <summary>
+        ///     Get the dispatch manager from context.
+        /// </summary>
+        /// <param name="context">Background task execution context.</param>
+        /// <returns>Either <see cref="DispatchManager"/> or null.</returns>
+        public DispatchManager GetDispatchManager(BackgroundTaskContext context)
+            => context.DispatchManager.TryGetTarget(out DispatchManager manager) ? manager : null;
+
+        /// <summary>
         ///     Do some asynchronous work.
         /// </summary>
         /// <param name="context">Background task execution context.</param>

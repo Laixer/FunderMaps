@@ -226,6 +226,7 @@ namespace FunderMaps.Core.Threading
 
                             context.StartedAt = DateTime.Now;
                             context.CancellationToken = ctsCombined.Token;
+                            context.DispatchManager = new WeakReference<DispatchManager>(this);
 
                             await backgroundTask.ExecuteAsync(context);
                         }
