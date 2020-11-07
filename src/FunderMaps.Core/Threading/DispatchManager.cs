@@ -99,7 +99,8 @@ namespace FunderMaps.Core.Threading
         /// </remarks>
         /// <param name="name">The task name.</param>
         /// <param name="value">The task payload.</param>
-        public ValueTask<Guid> EnqueueTaskAsync(string name, object value)
+        /// <param name="delay">Optional task delay.</param>
+        public ValueTask<Guid> EnqueueTaskAsync(string name, object value, TimeSpan? delay = null)
         {
             if (value is null)
             {
@@ -113,7 +114,7 @@ namespace FunderMaps.Core.Threading
                 if (backgroundTask.CanHandle(name, value))
                 {
                     bucket.BackgroundTask = backgroundTask;
-                    QueueTaskItem(bucket);
+                    QueueTaskItem(bucket, delay);
                 }
             }
 
@@ -124,7 +125,8 @@ namespace FunderMaps.Core.Threading
         ///     Enqueues an object to process onto the queue with provided task.
         /// </summary>
         /// <param name="value">The object to process.</param>
-        public ValueTask<Guid> EnqueueTaskAsync<TTask>(object value)
+        /// <param name="delay">Optional task delay.</param>
+        public ValueTask<Guid> EnqueueTaskAsync<TTask>(object value, TimeSpan? delay = null)
             where TTask : BackgroundTask
         {
             if (value is null)
@@ -137,26 +139,29 @@ namespace FunderMaps.Core.Threading
                 BackgroundTask = ActivatorUtilities.CreateInstance<TTask>(_serviceProvider),
             };
 
-            QueueTaskItem(bucket);
+            QueueTaskItem(bucket, delay);
             return new ValueTask<Guid>(bucket.TaskId);
         }
 
         /// <summary>
         ///     Dispatch task item to the background, then return.
         /// </summary>
-        protected virtual void QueueTaskItem(TaskBucket taskBucket)
+        /// <param name="taskBucket"><see cref="TaskBucket"/> to queue.</param>
+        /// <param name="delay">Optional task delay.</param>
+        protected virtual void QueueTaskItem(TaskBucket taskBucket, TimeSpan? delay = null)
         {
             if (taskBucket is null)
             {
                 throw new ArgumentNullException(nameof(taskBucket));
             }
 
-            if (taskBucket.Context.Delay != TimeSpan.Zero)
+            if (delay.HasValue && delay != TimeSpan.Zero)
             {
                 if (workerQueueDelay.Count > _options.MaxQueueSize)
                 {
                     throw new QueueFullException();
                 }
+                taskBucket.Context.Delay = delay.Value;
                 taskBucket.Context.QueuedAt = DateTime.Now;
                 workerQueueDelay.Add(taskBucket);
             }
