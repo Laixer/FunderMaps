@@ -44,7 +44,7 @@ namespace FunderMaps.Core.Threading
         public TimeSpan Delay { get; set; }
 
         /// <summary>
-        ///     Number of times the task ws retried.
+        ///     Number of times the task was retried.
         /// </summary>
         public int RetryCount { get; set; }
 
