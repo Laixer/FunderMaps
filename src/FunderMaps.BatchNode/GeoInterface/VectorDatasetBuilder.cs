@@ -86,11 +86,11 @@ namespace FunderMaps.BatchNode.GeoInterface
         public string PathPrefix { get; set; }
         public string Name { get; set; }
         public string Extension => VectorDatasetBuilder.ExportFormatTuple(Format).Item2;
+        public string FileName => $"{Name}{Extension}";
 
         public override string ToString()
         {
-            var file = $"{Name}{Extension}";
-            return !string.IsNullOrEmpty(PathPrefix) ? Path.Combine(PathPrefix, file) : file;
+            return !string.IsNullOrEmpty(PathPrefix) ? Path.Combine(PathPrefix, FileName) : FileName;
         }
     }
 

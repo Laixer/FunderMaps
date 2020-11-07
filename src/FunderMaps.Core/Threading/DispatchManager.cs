@@ -161,6 +161,7 @@ namespace FunderMaps.Core.Threading
                 {
                     throw new QueueFullException();
                 }
+
                 taskBucket.Context.Delay = delay.Value;
                 taskBucket.Context.QueuedAt = DateTime.Now;
                 workerQueueDelay.Add(taskBucket);
@@ -171,6 +172,7 @@ namespace FunderMaps.Core.Threading
                 {
                     throw new QueueFullException();
                 }
+
                 taskBucket.Context.QueuedAt = DateTime.Now;
                 workerQueue.Enqueue(taskBucket);
             }
@@ -244,9 +246,9 @@ namespace FunderMaps.Core.Threading
                         finally
                         {
                             context.FinishedAt = DateTime.Now;
-                            TimeSpan runingTime = context.FinishedAt - context.StartedAt;
+                            TimeSpan runningTime = context.FinishedAt - context.StartedAt;
 
-                            _logger.LogInformation($"Finished background task {context.Id} in {Math.Round(runingTime.TotalSeconds)}s");
+                            _logger.LogInformation($"Finished background task {context.Id} in {Math.Round(runningTime.TotalSeconds)}s");
 
                             await Task.Delay(250);
                         }
