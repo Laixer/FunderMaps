@@ -136,10 +136,20 @@ namespace FunderMaps.BatchNode.Command
         }
 
         /// <summary>
+        ///     Create a directory inside the workspace.
+        /// </summary>
+        public string CreateDirectory(string name = null)
+        {
+            var path = Path.Combine(Context.Workspace, name ?? Path.GetRandomFileName());
+            Directory.CreateDirectory(path);
+            return path;
+        }
+
+        /// <summary>
         ///     Setup command workspace.
         /// </summary>
         /// <param name="context">Command task execution context.</param>
-        public virtual Task SetupAsync(CommandTaskContext context)
+        public virtual async Task SetupAsync(CommandTaskContext context)
         {
             _logger.LogDebug("Setup workspace for job");
 
@@ -147,13 +157,11 @@ namespace FunderMaps.BatchNode.Command
             Directory.CreateDirectory(context.Workspace);
 
             // These files are created as a placeholder. Some operating systems
-            // may cleanup unused temporary directories when disk space is limited.
-            File.Create($"{context.Workspace}/.lock");
-            File.WriteAllText($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
+            // may cleanup unused temporary directories when disk space is sparse.
+            await File.Create($"{context.Workspace}/.lock").DisposeAsync();
+            await File.WriteAllTextAsync($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
 
             _logger.LogTrace($"Workspace: {context.Workspace}");
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
