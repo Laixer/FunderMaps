@@ -4,6 +4,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +24,7 @@ namespace FunderMaps.Core.Threading
         private readonly ILogger<DispatchManager> _logger;
         private readonly IServiceProvider _serviceProvider;
         private static ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
+        private readonly List<TaskBucket> workerQueueDelay = new List<TaskBucket>();
 
         private SemaphoreSlim workerPoolHandle;
         private Timer timer;
@@ -148,15 +151,26 @@ namespace FunderMaps.Core.Threading
                 throw new ArgumentNullException(nameof(taskBucket));
             }
 
-            if (workerQueue.Count > _options.MaxQueueSize)
+            if (taskBucket.Context.Delay != TimeSpan.Zero)
             {
-                throw new QueueFullException();
+                if (workerQueueDelay.Count > _options.MaxQueueSize)
+                {
+                    throw new QueueFullException();
+                }
+                taskBucket.Context.QueuedAt = DateTime.Now;
+                workerQueueDelay.Add(taskBucket);
+            }
+            else
+            {
+                if (workerQueue.Count > _options.MaxQueueSize)
+                {
+                    throw new QueueFullException();
+                }
+                taskBucket.Context.QueuedAt = DateTime.Now;
+                workerQueue.Enqueue(taskBucket);
             }
 
             _logger.LogInformation($"Queue background task {taskBucket.TaskId}");
-
-            taskBucket.Context.QueuedAt = DateTime.Now;
-            workerQueue.Enqueue(taskBucket);
 
             LaunchWorker();
         }
@@ -213,6 +227,13 @@ namespace FunderMaps.Core.Threading
                         catch (Exception e)
                         {
                             _logger.LogError(e, $"Exception in background task {context.Id}");
+
+                            if (context.RetryCount == 0)
+                            {
+                                context.RetryCount++;
+                                context.Delay = TimeSpan.FromMinutes(1);
+                                QueueTaskItem(taskBucket);
+                            }
                         }
                         finally
                         {
@@ -233,7 +254,13 @@ namespace FunderMaps.Core.Threading
                 }
             }
 
-            if (workerPoolHandle.CurrentCount > 0 && workerQueue.Count > 0)
+            foreach (var item in workerQueueDelay.Where(b => DateTime.Now >= b.Context.QueuedAt + b.Context.Delay))
+            {
+                workerQueue.Enqueue(item);
+            }
+            workerQueueDelay.RemoveAll(b => DateTime.Now >= b.Context.QueuedAt + b.Context.Delay);
+
+            if (workerPoolHandle.CurrentCount > 0 && !workerQueue.IsEmpty)
             {
                 Task.Run(() => WorkerDelegate());
             }

@@ -39,6 +39,16 @@ namespace FunderMaps.Core.Threading
         public DateTime FinishedAt { get; set; }
 
         /// <summary>
+        ///     Delay the task.
+        /// </summary>
+        public TimeSpan Delay { get; set; }
+
+        /// <summary>
+        ///     Number of times the task ws retried.
+        /// </summary>
+        public int RetryCount { get; set; }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public BackgroundTaskContext(Guid taskId)
