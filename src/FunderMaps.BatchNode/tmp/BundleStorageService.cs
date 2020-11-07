@@ -47,14 +47,14 @@ namespace FunderMaps.BatchNode.Jobs
         {
             organizationId.ThrowIfNullOrEmpty();
             bundleId.ThrowIfNullOrEmpty();
-            if (format == GeometryExportFormat.Mvt)
+            if (format == GeometryExportFormat.MapboxVectorTiles)
             {
                 throw new InvalidOperationException($"Use UploadExportDirectoryAsync for folder based export format {format}");
             }
 
             // TODO Content encoding etc
 
-            var sourceFile = $"{BundleNameHelper.GetName(bundleId, versionId, format)}";
+            var sourceFile = ""; //$"{BundleNameHelper.GetName(bundleId, versionId, format)}";
             var targetfile = $"s3://{_options.BlobStorageName}/{StorageConstants.ExportDirectoryName}/{organizationId}/{bundleId}/{versionId}/{FormatExportDirectoryName(format)}";
             var commandText = $"aws s3 cp --endpoint={_options.ServiceUri} {sourceFile} {targetfile}";
 
@@ -76,7 +76,7 @@ namespace FunderMaps.BatchNode.Jobs
         {
             organizationId.ThrowIfNullOrEmpty();
             bundleId.ThrowIfNullOrEmpty();
-            if (format != GeometryExportFormat.Mvt)
+            if (format != GeometryExportFormat.MapboxVectorTiles)
             {
                 throw new InvalidOperationException($"Can't use directory export for non-directory format {format}");
             }
@@ -89,7 +89,7 @@ namespace FunderMaps.BatchNode.Jobs
 
             var formatSpecificOptions = format switch
             {
-                GeometryExportFormat.Mvt => "--content-encoding gzip --content-type application/x-protobuf --acl public-read",
+                GeometryExportFormat.MapboxVectorTiles => "--content-encoding gzip --content-type application/x-protobuf --acl public-read",
                 _ => throw new InvalidOperationException(nameof(format))
             };
 
@@ -110,9 +110,9 @@ namespace FunderMaps.BatchNode.Jobs
         private static string FormatExportDirectoryName(GeometryExportFormat format)
             => format switch
             {
-                GeometryExportFormat.Mvt => StorageConstants.ExportMvtDirectoryName,
-                GeometryExportFormat.Gpkg => StorageConstants.ExportGpkgDirectoryName,
-                GeometryExportFormat.Shp => StorageConstants.ExportShpDirectoryName,
+                GeometryExportFormat.MapboxVectorTiles => StorageConstants.ExportMvtDirectoryName,
+                GeometryExportFormat.GeoPackage => StorageConstants.ExportGpkgDirectoryName,
+                GeometryExportFormat.ESRIShapefile => StorageConstants.ExportShpDirectoryName,
                 GeometryExportFormat.GeoJSON => StorageConstants.ExportGeoJSONDirectoryName,
                 _ => throw new InvalidOperationException(nameof(format))
             };

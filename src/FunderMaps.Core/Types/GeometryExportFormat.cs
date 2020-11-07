@@ -8,17 +8,17 @@
         /// <summary>
         ///     Mapbox vector tiles.
         /// </summary>
-        Mvt,
+        MapboxVectorTiles,
 
         /// <summary>
-        ///     Geopackage.
+        ///     GeoPackage.
         /// </summary>
-        Gpkg,
+        GeoPackage,
 
         /// <summary>
-        ///     Shapefile.
+        ///     ESRI Shapefile.
         /// </summary>
-        Shp,
+        ESRIShapefile,
 
         /// <summary>
         ///     GeoJSON.
