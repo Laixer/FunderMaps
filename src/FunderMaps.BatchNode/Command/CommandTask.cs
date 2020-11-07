@@ -38,7 +38,7 @@ namespace FunderMaps.BatchNode.Command
         /// </summary>
         /// <param name="fileName">Command filename.</param>
         /// <param name="arguments">Optional command arguments.</param>
-        public Task RunCommandAsync(string fileName, string arguments = null)
+        public Task<int> RunCommandAsync(string fileName, string arguments = null)
         {
             return Task.Run(() => RunCommand(fileName, arguments));
         }
@@ -48,7 +48,7 @@ namespace FunderMaps.BatchNode.Command
         /// </summary>
         /// <param name="fileName">Command filename.</param>
         /// <param name="arguments">Optional command arguments.</param>
-        public void RunCommand(string fileName, string arguments = null)
+        public int RunCommand(string fileName, string arguments = null)
         {
             var command = new CommandInfo(fileName);
             if (arguments != null)
@@ -58,14 +58,14 @@ namespace FunderMaps.BatchNode.Command
                     command.ArgumentList.Add(argument.Trim());
                 }
             }
-            RunCommand(command);
+            return RunCommand(command);
         }
 
         /// <summary>
         ///     Run command in workspace.
         /// </summary>
         /// <param name="commandInfo">Command descriptor.</param>
-        public Task RunCommandAsync(CommandInfo commandInfo)
+        public Task<int> RunCommandAsync(CommandInfo commandInfo)
         {
             return Task.Run(() => RunCommand(commandInfo));
         }
@@ -74,7 +74,7 @@ namespace FunderMaps.BatchNode.Command
         ///     Run command in workspace.
         /// </summary>
         /// <param name="commandInfo">Command descriptor.</param>
-        protected void RunCommand(CommandInfo commandInfo)
+        protected int RunCommand(CommandInfo commandInfo)
         {
             var processInfo = new ProcessStartInfo
             {
@@ -133,6 +133,8 @@ namespace FunderMaps.BatchNode.Command
             stderrWriter.Flush();
 
             _logger.LogDebug($"Process exit with return code: {process.ExitCode}");
+
+            return process.ExitCode;
         }
 
         /// <summary>
