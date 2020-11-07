@@ -3,7 +3,6 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,25 +31,10 @@ namespace FunderMaps.Infrastructure.Storage
         /// </summary>
         public SpacesBlobStorageService(IOptions<BlobStorageOptions> options, ILogger<SpacesBlobStorageService> logger)
         {
-            if (options == null || options.Value == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            options.Value.AccessKey.ThrowIfNullOrEmpty();
-            options.Value.SecretKey.ThrowIfNullOrEmpty();
-
-            if (options.Value.ServiceUri == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Create client once.
-            client = new AmazonS3Client(
-                new BasicAWSCredentials(_options.AccessKey, _options.SecretKey),
+            client = new AmazonS3Client(new BasicAWSCredentials(_options.AccessKey, _options.SecretKey),
                 new AmazonS3Config
                 {
                     ServiceURL = _options.ServiceUri.AbsoluteUri
@@ -69,10 +53,8 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <returns>Boolean result.</returns>
-        public async ValueTask<bool> FileExistsAsync(string containerName, string fileName)
+        public async Task<bool> FileExistsAsync(string containerName, string fileName)
         {
-            fileName.ThrowIfNullOrEmpty();
-
             try
             {
                 // TODO Maybe use list keys with a filter?
@@ -107,24 +89,18 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="fileName">The file name.</param>
         /// <param name="hoursValid">How many hours the link should be valid.</param>
         /// <returns>Access <see cref="Uri"/>.</returns>
-        public ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
+        public Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
         {
             try
             {
-                fileName.ThrowIfNullOrEmpty();
-                if (hoursValid <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(hoursValid));
-                }
-
-                var url = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
+                var url = client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = _options.BlobStorageName,
                     Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
                     Expires = DateTime.UtcNow.AddHours(hoursValid)
-                }));
+                });
 
-                return new ValueTask<Uri>(url);
+                return Task.FromResult(new Uri(url));
             }
             catch (AmazonS3Exception e)
             {
@@ -141,20 +117,14 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="fileName">The file name.</param>
         /// <param name="stream">See <see cref="Stream"/>.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
-        public ValueTask StoreFileAsync(string containerName, string fileName, Stream stream)
+        public async Task StoreFileAsync(string containerName, string fileName, Stream stream)
         {
             try
             {
-                fileName.ThrowIfNullOrEmpty();
-                if (stream == null)
-                {
-                    throw new ArgumentNullException(nameof(stream));
-                }
-
                 var key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}";
                 using var transferUtility = new TransferUtility(client);
 
-                return new ValueTask(transferUtility.UploadAsync(stream, _options.BlobStorageName, key));
+                await transferUtility.UploadAsync(stream, _options.BlobStorageName, key);
             }
             catch (AmazonS3Exception e)
             {
@@ -172,16 +142,8 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="contentType">The content type.</param>
         /// <param name="stream">See <see cref="Stream"/>.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
-        public ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
+        public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
         {
-            fileName.ThrowIfNullOrEmpty();
-            contentType.ThrowIfNullOrEmpty();
-
-            if (stream == null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
-
             try
             {
                 using var transferUtility = new TransferUtility(client);
@@ -190,10 +152,10 @@ namespace FunderMaps.Infrastructure.Storage
                     BucketName = _options.BlobStorageName,
                     ContentType = contentType,
                     Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
-                    InputStream = stream
+                    InputStream = stream,
                 };
 
-                return new ValueTask(transferUtility.UploadAsync(request));
+                await transferUtility.UploadAsync(request);
             }
             catch (AmazonS3Exception e)
             {
@@ -208,9 +170,7 @@ namespace FunderMaps.Infrastructure.Storage
         ///     Test the Amazon S3 service backend.
         /// </summary>
         public async Task TestService()
-        {
-            await client.ListBucketsAsync();
-        }
+            => await client.ListBucketsAsync();
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
