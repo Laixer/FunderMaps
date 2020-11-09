@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Exceptions
     /// <summary>
     ///     Exception indicating our task queue is full.
     /// </summary>
-    public sealed class QueueFullException : BackgroundWorkBaseException
+    public sealed class QueueFullException : FunderMapsCoreException
     {
         /// <summary>
         ///     Create new instance.
