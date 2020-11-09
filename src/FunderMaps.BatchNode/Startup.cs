@@ -37,7 +37,6 @@ namespace FunderMaps.BatchNode
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
             // Add batch jobs to the DI container.
-            services.AddBatchJob<Jobs.DummyJob>();
             services.AddBatchJob<Jobs.BundleBuilder.BundleJob>();
 
             services.AddGrpc();
