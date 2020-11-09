@@ -18,9 +18,9 @@ option csharp_namespace = "FunderMaps.BatchNode";
  * A service for enqueing an item onto our
  * background task worker.
  */
-service EnqueueService {
+service Batch {
   // Attempts to enqueues an item onto our queue.
-  rpc EnqueueItem (EnqueueRequest) returns (EnqueueResponse);
+  rpc Enqueue (EnqueueRequest) returns (EnqueueResponse);
 }
 
 /*

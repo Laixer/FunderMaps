@@ -10,18 +10,18 @@ namespace FunderMaps.BatchNode
     /// <summary>
     ///     Service used to enqueue items using GRPC onto our queue manager.
     /// </summary>
-    public class ItemEnqueueService : EnqueueService.EnqueueServiceBase
+    public class BatchService : Batch.BatchBase
     {
         private readonly DispatchManager _dispatchManager;
-        private readonly ILogger<ItemEnqueueService> _logger;
+        private readonly ILogger<BatchService> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ItemEnqueueService(
+        public BatchService(
             DispatchManager dispatchManager,
-            ILogger<ItemEnqueueService> logger,
+            ILogger<BatchService> logger,
             IServiceScopeFactory serviceScopeFactory)
         {
             _dispatchManager = dispatchManager ?? throw new ArgumentNullException(nameof(dispatchManager));
@@ -35,7 +35,7 @@ namespace FunderMaps.BatchNode
         /// <param name="request">The request object.</param>
         /// <param name="context">The call context.</param>
         /// <returns>Response object containing a task id.</returns>
-        public override async Task<EnqueueResponse> EnqueueItem(EnqueueRequest request, ServerCallContext context)
+        public override async Task<EnqueueResponse> Enqueue(EnqueueRequest request, ServerCallContext context)
         {
             if (request == null)
             {

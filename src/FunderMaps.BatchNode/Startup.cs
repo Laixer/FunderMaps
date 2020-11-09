@@ -66,7 +66,7 @@ namespace FunderMaps.BatchNode
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<ItemEnqueueService>();
+                endpoints.MapGrpcService<BatchService>();
                 // endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
