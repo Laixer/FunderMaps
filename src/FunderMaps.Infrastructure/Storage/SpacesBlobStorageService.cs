@@ -4,6 +4,7 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
-    ///     Digital Ocean Spaces implementation of <see cref="IBlobStorageService"/>.
+    ///     Amazon S3 implementation of <see cref="IBlobStorageService"/>.
     /// </summary>
     /// <remarks>
     ///     This creates an <see cref="IAmazonS3"/> client once in its constructor.
@@ -134,6 +135,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
         }
 
+        // FUTURE: Refactor
         /// <summary>
         ///     Stores a file in a Digital Ocean Space.
         /// </summary>
@@ -141,12 +143,12 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="fileName">The file name.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="stream">See <see cref="Stream"/>.</param>
+        /// <param name="storageObject">Storage object settings.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
-        public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
+        public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject)
         {
             try
             {
-                using var transferUtility = new TransferUtility(client);
                 var request = new TransferUtilityUploadRequest
                 {
                     BucketName = _options.BlobStorageName,
@@ -155,6 +157,16 @@ namespace FunderMaps.Infrastructure.Storage
                     InputStream = stream,
                 };
 
+                if (storageObject != null)
+                {
+                    request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
+                    request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
+                    request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
+                    request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
+                    request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
+                }
+
+                using var transferUtility = new TransferUtility(client);
                 await transferUtility.UploadAsync(request);
             }
             catch (AmazonS3Exception e)
@@ -162,6 +174,41 @@ namespace FunderMaps.Infrastructure.Storage
                 _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
 
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
+            }
+        }
+
+        // FUTURE: Refactor
+        /// <summary>
+        ///     Stores a file in a Digital Ocean Space.
+        /// </summary>
+        /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
+        /// <param name="directoryPath">Source directory.</param>
+        /// <param name="storageObject">Storage object settings.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        public async Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
+        {
+            try
+            {
+                async Task DirectorySearch(string path, string subdir = "")
+                {
+                    foreach (var file in Directory.GetFiles(path))
+                    {
+                        using Stream stream = File.OpenRead(file);
+                        await StoreFileAsync(directoryName, Path.Combine(subdir, Path.GetFileName(file)), storageObject.ContentType, stream, storageObject);
+                    }
+                    foreach (var file in Directory.GetDirectories(path))
+                    {
+                        await DirectorySearch(file, Path.Combine(subdir, Path.GetFileName(file)));
+                    }
+                }
+
+                await DirectorySearch(directoryPath);
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError(e, "Could not store file to Spaces using S3");
+
+                throw new StorageException("Could not store file", e);
             }
         }
 
