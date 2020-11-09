@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using FunderMaps.Core.Storage;
 
 namespace FunderMaps.Core.Interfaces
 {
@@ -34,14 +35,27 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="stream">Content stream.</param>
         Task StoreFileAsync(string containerName, string fileName, Stream stream);
 
+        // FUTURE: Refactor
         /// <summary>
-        ///     Store the file in the data store.
+        ///     Stores a file in a Digital Ocean Space.
         /// </summary>
-        /// <param name="containerName">Storage container.</param>
-        /// <param name="fileName">File name.</param>
-        /// <param name="contentType">Blob content type.</param>
-        /// <param name="stream">Content stream.</param>
-        Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream);
+        /// <param name="containerName">The container name.</param>
+        /// <param name="fileName">The file name.</param>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="stream">See <see cref="Stream"/>.</param>
+        /// <param name="storageObject">Storage object settings.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject = null);
+
+        // FUTURE: Refactor
+        /// <summary>
+        ///     Stores a file in a Digital Ocean Space.
+        /// </summary>
+        /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
+        /// <param name="directoryPath">Source directory.</param>
+        /// <param name="storageObject">Storage object settings.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject = null);
 
         /// <summary>
         ///     Test the Amazon S3 service backend.

@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Storage;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -21,12 +22,17 @@ namespace FunderMaps.Core.Services
             return Task.FromResult(new Uri("https://localhost/blob"));
         }
 
+        public Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task StoreFileAsync(string store, string name, Stream stream)
         {
             return Task.CompletedTask;
         }
 
-        public Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
+        public Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject)
         {
             return Task.CompletedTask;
         }
