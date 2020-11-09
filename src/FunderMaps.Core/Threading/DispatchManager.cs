@@ -197,9 +197,7 @@ namespace FunderMaps.Core.Threading
         /// </remarks>
         private void LaunchWorker()
         {
-            /// <summary>
-            ///     Run as long as there are items on the queue.
-            /// </summary>
+            // Run as long as there are items on the queue.
             async Task WorkerDelegate()
             {
                 _logger.LogDebug("Allocating new worker");

@@ -1,115 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using FunderMaps.BatchNode.Command;
 using FunderMaps.Core.Types;
-using Npgsql;
 
 namespace FunderMaps.BatchNode.GeoInterface
 {
-    public abstract class DataSource
-    {
-        public GeometryExportFormat Format { get; set; }
-
-        public virtual string Read(CommandInfo commandInfo)
-        {
-            return ToString();
-        }
-
-        public virtual string Write(CommandInfo commandInfo)
-        {
-            return ToString();
-        }
-    }
-
-    public class LayerSource
-    {
-        public IEnumerable<string> Layers { get; set; }
-
-        public virtual void Imbue(CommandInfo commandInfo)
-        {
-            if (Layers != null)
-            {
-                foreach (var item in Layers)
-                {
-                    commandInfo.ArgumentList.Add(item.Trim());
-                }
-            }
-        }
-
-        public static LayerSource Enumerable(IEnumerable<string> layers)
-            => new LayerSource
-            {
-                Layers = layers,
-            };
-    }
-
-    public class SqlLayerSource : LayerSource
-    {
-        public string Query { get; set; }
-
-        public override void Imbue(CommandInfo commandInfo)
-        {
-            if (Query != null)
-            {
-                commandInfo.ArgumentList.Add("-sql");
-                commandInfo.ArgumentList.Add(Query.Replace('\n', ' ').Trim());
-            }
-        }
-
-        public static SqlLayerSource FromSql(string query)
-            => new SqlLayerSource
-            {
-                Query = query,
-            };
-    }
-
-    public class PostreSQLDataSource : DataSource
-    {
-        // FUTURE: Replace with non npgsql version
-        private NpgsqlConnectionStringBuilder connectionStringBuilder;
-
-        public PostreSQLDataSource(string dbConnection)
-        {
-            connectionStringBuilder = new NpgsqlConnectionStringBuilder(dbConnection);
-        }
-
-        public override string Read(CommandInfo commandInfo)
-        {
-            commandInfo.Environment.Add("PGHOST", connectionStringBuilder.Host);
-            commandInfo.Environment.Add("PGUSER", connectionStringBuilder.Username);
-            commandInfo.Environment.Add("PGPASSWORD", connectionStringBuilder.Password);
-
-            return $"PG:dbname={connectionStringBuilder.Database}";
-        }
-
-        public override string Write(CommandInfo commandInfo)
-        {
-            commandInfo.Environment.Add("PGHOST", connectionStringBuilder.Host);
-            commandInfo.Environment.Add("PGUSER", connectionStringBuilder.Username);
-            commandInfo.Environment.Add("PGPASSWORD", connectionStringBuilder.Password);
-
-            return $"PG:dbname={connectionStringBuilder.Database}";
-        }
-
-        public static PostreSQLDataSource FromConnectionString(string connectionString)
-            => new PostreSQLDataSource(connectionString);
-    }
-
-    public class FileDataSource : DataSource
-    {
-        public string PathPrefix { get; set; }
-        public string Name { get; set; }
-        public string Extension => VectorDatasetBuilder.ExportFormatTuple(Format).Item2;
-        public string FileName => $"{Name}{Extension}";
-
-        public override string ToString()
-        {
-            return !string.IsNullOrEmpty(PathPrefix) ? Path.Combine(PathPrefix, FileName) : FileName;
-        }
-    }
-
-    public class VectorDatasetBuilder
+    /// <summary>
+    ///     Interface the vector dataset command.
+    /// </summary>
+    internal class VectorDatasetBuilder
     {
         private const string CommandName = "ogr2ogr";
 
@@ -127,18 +25,30 @@ namespace FunderMaps.BatchNode.GeoInterface
             _options = options ?? new VectorDatasetBuilderOptions();
         }
 
+        /// <summary>
+        ///     Set the input dataset.
+        /// </summary>
+        /// <param name="input">Data input source.</param>
         public VectorDatasetBuilder InputDataset(DataSource input)
         {
             this.input = input;
             return this;
         }
 
+        /// <summary>
+        ///     Set the output dataset.
+        /// </summary>
+        /// <param name="input">Data output source.</param>
         public VectorDatasetBuilder OutputDataset(DataSource output)
         {
             this.output = output;
             return this;
         }
 
+        /// <summary>
+        ///     Set the input layer filter.
+        /// </summary>
+        /// <param name="input">Input layer selector.</param>
         public VectorDatasetBuilder InputLayers(LayerSource input)
         {
             inputLayer = input ?? new LayerSource();
@@ -158,10 +68,12 @@ namespace FunderMaps.BatchNode.GeoInterface
         /// <summary>
         ///     Build the command from builder parts.
         /// </summary>
+        /// <remarks>
+        ///     Keep the order in which arguments needs to be passed to the command.
+        /// </remarks>
         /// <returns>The <see cref="CommandInfo"/> to be executed.</returns>
         public CommandInfo Build()
         {
-            // NOTE: Keep the order in which arguments needs to be passed to the command.
             var command = new CommandInfo(CommandName);
             command.ArgumentList.Add("-overwrite");
             command.ArgumentList.Add("-f");
