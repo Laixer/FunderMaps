@@ -18,9 +18,7 @@ option csharp_namespace = "FunderMaps.BatchNode";
  * should be added to each request and response.
  */
 message FunderMapsProtocol {
-  bytes protocol_version = 1;
-  google.protobuf.Timestamp date_request = 2;
-  google.protobuf.Timestamp date_response = 3;
-  string user_agent = 4;
-  uint64 error_code = 5; // Only populated on error.
+  int32 version = 1;
+  string user_agent = 2;
+  uint64 error_code = 3; // Only populated on error.
 }

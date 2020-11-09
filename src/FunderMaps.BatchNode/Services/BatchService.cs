@@ -66,7 +66,8 @@ namespace FunderMaps.BatchNode
         private static FunderMapsProtocol BuildProtocol(DateTimeOffset dateRequest)
             => new FunderMapsProtocol
             {
-                //DateRequest =
+                Version = 0xa1,
+                UserAgent = "FunderMaps.BatchNode",
             };
     }
 }
