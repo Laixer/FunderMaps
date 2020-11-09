@@ -39,9 +39,7 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="fileName">Command filename.</param>
         /// <param name="arguments">Optional command arguments.</param>
         public Task<int> RunCommandAsync(string fileName, string arguments = null)
-        {
-            return Task.Run(() => RunCommand(fileName, arguments));
-        }
+            => Task.Run(() => RunCommand(fileName, arguments));
 
         /// <summary>
         ///     Run command in workspace.
@@ -66,9 +64,7 @@ namespace FunderMaps.BatchNode.Command
         /// </summary>
         /// <param name="commandInfo">Command descriptor.</param>
         public Task<int> RunCommandAsync(CommandInfo commandInfo)
-        {
-            return Task.Run(() => RunCommand(commandInfo));
-        }
+            => Task.Run(() => RunCommand(commandInfo));
 
         /// <summary>
         ///     Run command in workspace.
