@@ -15,6 +15,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
+    /// <summary>
+    ///     Bundle job entry.
+    /// </summary>
     internal class BundleJob : CommandTask
     {
         protected readonly IBundleRepository _bundleRepository;
@@ -35,6 +38,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             _serviceScopeFactory = serviceScopeFactory;
             _scope = _serviceScopeFactory.CreateScope();
 
+            // FUTURE: From injection scope
             var ctx = _scope.ServiceProvider.GetRequiredService<Core.AppContext>();
             ctx.Cache = _scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Caching.Memory.IMemoryCache>();
 
@@ -44,44 +48,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             var configuration = _scope.ServiceProvider.GetRequiredService<IConfiguration>();
             connectionString = configuration.GetConnectionString("FunderMapsConnection");
-        }
-
-        class BundleLayerSource : SqlLayerSource
-        {
-            private readonly string layerOutputName;
-
-            public BundleLayerSource(Bundle bundle, Layer layer)
-            {
-                var configuration = bundle.LayerConfiguration.Layers.Where(x => x.LayerId == layer.Id).FirstOrDefault();
-                if (configuration == null)
-                {
-                    // throw new LayerConfigurationException(nameof(bundle.LayerConfiguration.Layers));
-                    throw new Exception();
-                }
-
-                layerOutputName = layer.TableName;
-
-                IEnumerable<string> columns = new List<string>(configuration.ColumnNames);
-                if (!columns.Contains("geom"))
-                {
-                    columns.Append("geom");
-                }
-
-                Query = $@"
-                    SELECT
-                        {string.Join(',', columns.Select(c => $"s.{c}"))}
-                    FROM {layer.SchemaName}.{layer.TableName} AS s
-                    JOIN application.organization AS o ON o.id = '{bundle.OrganizationId}'
-                    WHERE ST_Intersects(o.fence, s.geom)";
-            }
-
-            public override void Imbue(CommandInfo commandInfo)
-            {
-                base.Imbue(commandInfo);
-
-                commandInfo.ArgumentList.Add("-nln");
-                commandInfo.ArgumentList.Add(layerOutputName);
-            }
         }
 
         /// <summary>
@@ -120,6 +86,9 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 Name = bundle.Id.ToString(),
             };
 
+            // FUTURE: Reduce to single op.
+            // NOTE: For now we're processing all configured formats
+
             {
                 var command = new VectorDatasetBuilder()
                     .InputDataset(PostreSQLDataSource.FromConnectionString(connectionString))
@@ -139,6 +108,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                     });
             }
 
+            // FUTURE: Content compression is disabled. 
+
             {
                 var fileDump = new FileDataSource()
                 {
@@ -150,7 +121,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 var command = new VectorDatasetBuilder(
                     new VectorDatasetBuilderOptions
                     {
-                        AdditionalOptions = "-dsco MINZOOM=7 -dsco MAXZOOM=15",
+                        AdditionalOptions = "-dsco MINZOOM=7 -dsco MAXZOOM=15 -dsco COMPRESS=NO",
                     })
                     .InputDataset(localCacheDataSource)
                     .OutputDataset(fileDump)
@@ -164,7 +135,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                     {
                         ContentType = "application/x-protobuf",
                         CacheControl = "public, max-age=3600",
-                        ContentEncoding = "gzip",
                         IsPublic = true,
                     });
             }
