@@ -52,7 +52,7 @@ namespace FunderMaps.BatchNode
 
             return new EnqueueResponse
             {
-                Protocol = new FunderMapsProtocol { },
+                Protocol = BuildProtocol(),
                 TaskId = taskid.ToString(),
             };
         }
@@ -63,7 +63,7 @@ namespace FunderMaps.BatchNode
         /// </summary>
         /// <param name="dateRequest">The request timestamp.</param>
         /// <returns>Created protocol object.</returns>
-        private static FunderMapsProtocol BuildProtocol(DateTimeOffset dateRequest)
+        private static FunderMapsProtocol BuildProtocol()
             => new FunderMapsProtocol
             {
                 Version = 0xa1,

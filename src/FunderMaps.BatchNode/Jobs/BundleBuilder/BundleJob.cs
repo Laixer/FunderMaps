@@ -20,6 +20,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     /// </summary>
     internal class BundleJob : CommandTask
     {
+        private const string TaskName = "bundle_building";
+
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
         protected readonly IBlobStorageService _blobStorageService;
@@ -197,6 +199,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <param name="valdirectoryNameue">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name.ToLowerInvariant() == "bundle_building" && value is string;
+            => name.ToLowerInvariant() == TaskName && value is string;
     }
 }

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -222,7 +221,7 @@ namespace FunderMaps.Core.Threading
 
                         try
                         {
-                            context.CancellationToken.ThrowIfCancellationRequested();
+                            ctsCombined.Token.ThrowIfCancellationRequested();
 
                             _logger.LogInformation($"Starting background task {context.Id}");
 
@@ -245,8 +244,7 @@ namespace FunderMaps.Core.Threading
                         }
                         finally
                         {
-                            context.FinishedAt = DateTime.Now;
-                            TimeSpan runningTime = context.FinishedAt - context.StartedAt;
+                            TimeSpan runningTime = DateTime.Now - context.StartedAt;
 
                             _logger.LogInformation($"Finished background task {context.Id} in {Math.Round(runningTime.TotalSeconds)}s");
 
@@ -262,11 +260,15 @@ namespace FunderMaps.Core.Threading
                 }
             }
 
-            foreach (var item in workerQueueDelay.Where(b => DateTime.Now >= b.Context.QueuedAt + b.Context.Delay))
+            workerQueueDelay.RemoveAll(b =>
             {
-                workerQueue.Enqueue(item);
-            }
-            workerQueueDelay.RemoveAll(b => DateTime.Now >= b.Context.QueuedAt + b.Context.Delay);
+                if (DateTime.Now >= b.Context.QueuedAt + b.Context.Delay)
+                {
+                    workerQueue.Enqueue(b);
+                    return true;
+                }
+                return false;
+            });
 
             if (workerPoolHandle.CurrentCount > 0 && !workerQueue.IsEmpty)
             {
