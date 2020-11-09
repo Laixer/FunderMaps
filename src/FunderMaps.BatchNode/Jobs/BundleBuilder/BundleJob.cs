@@ -12,6 +12,7 @@ using FunderMaps.Core.Types;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using FunderMaps.Core.Exceptions;
 
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
@@ -66,7 +67,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             var bundleBuildingContext = JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string);
             if (bundleBuildingContext == null)
             {
-                throw new Exception(); // protocol exception
+                throw new ProtocolException();
             }
 
             if (bundleBuildingContext.Formats == null || !bundleBuildingContext.Formats.Any())

@@ -1,3 +1,4 @@
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Threading;
 using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,8 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class BatchService : Batch.BatchBase
     {
+        private const int protocolVersion = 0xa1;
+
         private readonly DispatchManager _dispatchManager;
         private readonly ILogger<BatchService> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -48,13 +51,30 @@ namespace FunderMaps.BatchNode
                 throw new ArgumentNullException(nameof(request.Name));
             }
 
-            Guid taskid = await _dispatchManager.EnqueueTaskAsync(request.Name, request.Payload);
-
-            return new EnqueueResponse
+            try
             {
-                Protocol = BuildProtocol(),
-                TaskId = taskid.ToString(),
-            };
+                if (request.Protocol.Version != protocolVersion)
+                {
+                    throw new ProtocolException("Protocol version mismatch");
+                }
+
+                Guid taskid = await _dispatchManager.EnqueueTaskAsync(request.Name, request.Payload);
+
+                return new EnqueueResponse
+                {
+                    Protocol = BuildProtocol(),
+                    TaskId = taskid.ToString(),
+                };
+            }
+            catch (FunderMapsCoreException e)
+            {
+                _logger.LogError(e, "Exception occred while processing the request");
+
+                return new EnqueueResponse
+                {
+                    Protocol = BuildProtocol(0xc0),
+                };
+            }
         }
 
         // TODO Move to some centralized class.
@@ -63,11 +83,12 @@ namespace FunderMaps.BatchNode
         /// </summary>
         /// <param name="dateRequest">The request timestamp.</param>
         /// <returns>Created protocol object.</returns>
-        private static FunderMapsProtocol BuildProtocol()
+        private static FunderMapsProtocol BuildProtocol(long errorCode = 0)
             => new FunderMapsProtocol
             {
-                Version = 0xa1,
+                Version = protocolVersion,
                 UserAgent = "FunderMaps.BatchNode",
+                ErrorCode = errorCode,
             };
     }
 }

@@ -4,21 +4,21 @@ using System.Runtime.Serialization;
 namespace FunderMaps.Core.Exceptions
 {
     /// <summary>
-    ///     Exception indicating our task queue is full.
+    ///     Exception indicating queue hit item limit.
     /// </summary>
-    public sealed class QueueFullException : FunderMapsCoreException
+    public sealed class QueueOverflowException : FunderMapsCoreException
     {
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QueueFullException()
+        public QueueOverflowException()
         {
         }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QueueFullException(string message)
+        public QueueOverflowException(string message)
             : base(message)
         {
         }
@@ -26,7 +26,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QueueFullException(string message, Exception innerException)
+        public QueueOverflowException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
@@ -34,7 +34,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QueueFullException(SerializationInfo info, StreamingContext context)
+        public QueueOverflowException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

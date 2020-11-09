@@ -108,13 +108,20 @@ namespace FunderMaps.Core.Threading
 
             var bucket = new TaskBucket(_serviceProvider, value);
 
+            var isQueued = false;
             foreach (var backgroundTask in _serviceProvider.GetServices<BackgroundTask>())
             {
                 if (backgroundTask.CanHandle(name, value))
                 {
                     bucket.BackgroundTask = backgroundTask;
                     QueueTaskItem(bucket, delay);
+                    isQueued = true;
                 }
+            }
+
+            if (!isQueued)
+            {
+                throw new UnhandledTaskException();
             }
 
             return new ValueTask<Guid>(bucket.TaskId);
@@ -158,7 +165,7 @@ namespace FunderMaps.Core.Threading
             {
                 if (workerQueueDelay.Count > _options.MaxQueueSize)
                 {
-                    throw new QueueFullException();
+                    throw new QueueOverflowException();
                 }
 
                 taskBucket.Context.Delay = delay.Value;
@@ -169,7 +176,7 @@ namespace FunderMaps.Core.Threading
             {
                 if (workerQueue.Count > _options.MaxQueueSize)
                 {
-                    throw new QueueFullException();
+                    throw new QueueOverflowException();
                 }
 
                 taskBucket.Context.QueuedAt = DateTime.Now;
