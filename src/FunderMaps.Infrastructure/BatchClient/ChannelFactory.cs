@@ -2,6 +2,7 @@ using System.Net.Http;
 using Grpc.Net.Client;
 using Grpc.Core;
 using System;
+using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Infrastructure.BatchClient
 {
@@ -14,15 +15,17 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ChannelFactory()
+        public ChannelFactory(ILoggerFactory loggerFactory)
         {
+            // NOTE: The httpHandler is disposed when the channel is disposed.
             HttpClientHandler httpHandler = new HttpClientHandler();
             httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 
-            // The port number(5001) must match the port of the gRPC server.
             rpcChannel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions
             {
                 HttpHandler = httpHandler,
+                DisposeHttpClient = true,
+                LoggerFactory = loggerFactory,
             });
         }
 
