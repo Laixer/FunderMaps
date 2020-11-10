@@ -82,12 +82,13 @@ namespace FunderMaps.BatchNode.Command
                 RedirectStandardOutput = true,
             };
 
-            processInfo.ArgumentList.Clear();
             foreach (var argument in commandInfo.ArgumentList.Where(s => !string.IsNullOrEmpty(s)).Select(s => s.Trim()))
             {
                 processInfo.ArgumentList.Add(argument);
             }
 
+            // NOTE: Default value of Environment is null according to the docs, but this does not
+            //       seem to be the case for the actual implementation, which makes this approach correct.
             processInfo.Environment.Clear();
             processInfo.Environment[TaskIdName] = Context.Id.ToString();
             processInfo.Environment["PATH"] = System.Environment.GetEnvironmentVariable("PATH");
@@ -104,7 +105,7 @@ namespace FunderMaps.BatchNode.Command
             using var process = System.Diagnostics.Process.Start(processInfo);
             if (process == null)
             {
-                throw new Exception($"Could not start process for {processInfo.FileName}"); // TODO:
+                throw new ProcessException(processInfo.FileName);
             }
 
             var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
@@ -186,7 +187,7 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="context">Background task execution context.</param>
         public override async Task ExecuteAsync(BackgroundTaskContext context)
         {
-            // We allways want to yield for the async state machine.
+            // We always want to yield for the async state machine.
             await Task.Yield();
 
             Context = new CommandTaskContext(context.Id)
