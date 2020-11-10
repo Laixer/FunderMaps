@@ -9,7 +9,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// <summary>
     ///     Client connector to the batch node.
     /// </summary>
-    internal class BatchClient : Batch.BatchClient, IBatchService
+    internal class BatchClient : Batch.BatchClient, IBatchService // TODO: Inherit from AppServiceBase
     {
         private const int protocolVersion = 0xa1;
 
@@ -19,9 +19,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         ///     Create new instance.
         /// </summary>
         public BatchClient(ChannelFactory channelFactory)
-        {
-            _channelFactory = channelFactory;
-        }
+            => _channelFactory = channelFactory;
 
         /// <summary>
         ///     Add task to batch queue.

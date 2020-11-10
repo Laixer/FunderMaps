@@ -45,8 +45,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
             services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
-            services.AddSingleton<FunderMaps.Infrastructure.BatchClient.ChannelFactory>();
+            services.RemoveAll<IBatchService>();
             services.AddScoped<IBatchService, FunderMaps.Infrastructure.BatchClient.BatchClient>();
+            services.AddSingleton<FunderMaps.Infrastructure.BatchClient.ChannelFactory>();
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            // if (!HostEnvironment.IsDevelopment())
+            if (!HostEnvironment.IsDevelopment())
             {
                 ConfigureExternalServices(services);
             }

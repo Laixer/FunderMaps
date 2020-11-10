@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Notification
 {
+    /// <summary>
+    ///     Process notification envelopes.
+    /// </summary>
     internal class NotificationHub : AppServiceBase, INotifyService
     {
         private const string TaskName = "notification";
