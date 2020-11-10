@@ -107,7 +107,7 @@ namespace FunderMaps.Portal.Controllers
             }
 
             await _incidentRepository.AddAsync(incident);
-            await _notifyService.DispatchNotify(new Envelope
+            await _notifyService.DispatchNotifyAsync(new Envelope
             {
                 Recipients = new List<string> { "info@fundermaps.com", "info@laixer.com" },
                 Content = $"Nieuwe melding binnengekomen met opmerking: {incident.Note}",

@@ -44,8 +44,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
                 return false;
             }
 
-            var envelope = JsonSerializer.Deserialize<Envelope>(value as string);
-            return envelope != null;
+            return JsonSerializer.Deserialize<Envelope>(value as string) != null;
         }
 
         /// <summary>

@@ -27,7 +27,7 @@ namespace FunderMaps.Core.Notification
         ///     Notify by means of contacting.
         /// </summary>
         /// <param name="envelope">Envelope containing the notification.</param>
-        public Task DispatchNotify(Envelope envelope)
+        public Task DispatchNotifyAsync(Envelope envelope)
             => _batchService.EnqueueAsync(TaskName, envelope, AppContext.CancellationToken);
     }
 }

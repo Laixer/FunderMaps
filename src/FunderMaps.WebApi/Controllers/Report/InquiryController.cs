@@ -211,7 +211,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notifyService.DispatchNotify(new Envelope
+            await _notifyService.DispatchNotifyAsync(new Envelope
             {
                 Recipients = new List<string> { "info@example.com" },
                 Content = input.Message,
@@ -237,7 +237,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notifyService.DispatchNotify(new Envelope
+            await _notifyService.DispatchNotifyAsync(new Envelope
             {
                 Recipients = new List<string> { "info@example.com" },
                 Content = input.Message,
