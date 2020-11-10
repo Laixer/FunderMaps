@@ -45,9 +45,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
             }
 
             var envelope = JsonSerializer.Deserialize<Envelope>(value as string);
-            return envelope != null
-                && !string.IsNullOrEmpty(envelope.Subject)
-                && envelope.Recipients[0].Contains('@', System.StringComparison.InvariantCulture);
+            return envelope != null;
         }
 
         /// <summary>
