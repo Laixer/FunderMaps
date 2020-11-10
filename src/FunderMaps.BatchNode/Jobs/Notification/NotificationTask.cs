@@ -35,7 +35,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         ///     Method to check if a task can be handled by this job.
         /// </summary>
         /// <param name="name">The task name.</param>
-        /// <param name="valdirectoryNameue">The task payload.</param>
+        /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
         {
