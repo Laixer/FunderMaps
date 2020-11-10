@@ -109,6 +109,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                         CacheControl = "public, max-age=3600",
                         IsPublic = true,
                     });
+
+                _logger.LogWarning("Export of format GPKG done");
             }
 
             // FUTURE: Content compression is disabled. 
@@ -140,6 +142,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                         CacheControl = "public, max-age=3600",
                         IsPublic = true,
                     });
+
+                _logger.LogWarning("Export of format MVT done");
             }
 
             {
@@ -165,6 +169,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                         CacheControl = "public, max-age=3600",
                         IsPublic = true,
                     });
+
+                _logger.LogWarning("Export of format SHP done");
             }
 
             {
@@ -190,6 +196,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                         CacheControl = "public, max-age=3600",
                         IsPublic = true,
                     });
+
+                _logger.LogWarning("Export of format JSON done");
             }
         }
 
