@@ -9,7 +9,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// <summary>
     ///     Client connector to the batch node.
     /// </summary>
-    internal class BatchClient : Batch.BatchClient, IBatchService // TODO: Inherit from AppServiceBase
+    internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase
     {
         private const int protocolVersion = 0xa1;
 
