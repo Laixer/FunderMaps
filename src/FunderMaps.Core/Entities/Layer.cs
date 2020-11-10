@@ -35,6 +35,12 @@ namespace FunderMaps.Core.Entities
         public string TableName { get; set; }
 
         /// <summary>
+        ///     The human-readable name for this layer.
+        /// </summary>
+        [Required]
+        public string Name { get; set; }
+
+        /// <summary>
         ///     Get the full class name including the schema.
         /// </summary>
         public string FullName => !string.IsNullOrEmpty(SchemaName) ? $"{SchemaName}.{TableName}" : TableName;
