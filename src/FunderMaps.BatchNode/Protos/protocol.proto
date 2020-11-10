@@ -1,0 +1,24 @@
+/*
+ * Contains an application global grpc protocol
+ * definition.
+ */
+
+syntax = "proto3";
+
+package protocol;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "FunderMaps.BatchNode";
+
+/*
+ * Contains all generic information and metadata
+ * about a request or a response. This message
+ * should be added to each request and response.
+ */
+message FunderMapsProtocol {
+  int32 version = 1;
+  string user_agent = 2;
+  int64 error_code = 3; // Only populated on error.
+}

@@ -1,0 +1,46 @@
+﻿/*
+ * This file contains request and response messages
+ * along with a service definition for our background
+ * task enqueue service.
+ */
+
+syntax = "proto3";
+
+package enqueue;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+import "Protos/protocol.proto";
+
+option csharp_namespace = "FunderMaps.BatchNode";
+
+/*
+ * A service for enqueing an item onto our
+ * background task worker.
+ */
+service Batch {
+  // Attempts to enqueues an item onto our queue.
+  rpc Enqueue (EnqueueRequest) returns (EnqueueResponse);
+}
+
+/*
+ * Request message containing a payload to enqueue
+ * onto our background worker queue. The payload is
+ * expected to be JSON format.
+ */
+message EnqueueRequest {
+  protocol.FunderMapsProtocol protocol = 1;
+  string name = 2;
+  string payload = 3;
+}
+
+/*
+ * Response message we get after attempting to enqueue
+ * a payload onto our background worker queue. The 
+ * task_id represents whichever background task id is 
+ * executing our message.
+ */
+message EnqueueResponse { 
+  protocol.FunderMapsProtocol protocol = 1;
+  string task_id = 2;
+}

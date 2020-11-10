@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Storage;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -11,24 +12,29 @@ namespace FunderMaps.Core.Services
     /// </summary>
     internal class NullBlobStorageService : IBlobStorageService
     {
-        public ValueTask<bool> FileExistsAsync(string store, string name)
+        public Task<bool> FileExistsAsync(string store, string name)
         {
-            return new ValueTask<bool>(false);
+            return Task.FromResult(false);
         }
 
-        public ValueTask<Uri> GetAccessLinkAsync(string store, string name, double hoursValid)
+        public Task<Uri> GetAccessLinkAsync(string store, string name, double hoursValid)
         {
-            return new ValueTask<Uri>(new Uri("https://localhost/blob"));
+            return Task.FromResult(new Uri("https://localhost/blob"));
         }
 
-        public ValueTask StoreFileAsync(string store, string name, Stream stream)
+        public Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
         {
-            return new ValueTask();
+            throw new NotImplementedException();
         }
 
-        public ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
+        public Task StoreFileAsync(string store, string name, Stream stream)
         {
-            return new ValueTask();
+            return Task.CompletedTask;
+        }
+
+        public Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject)
+        {
+            return Task.CompletedTask;
         }
 
         public Task TestService()
