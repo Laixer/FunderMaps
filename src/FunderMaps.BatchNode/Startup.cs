@@ -38,6 +38,7 @@ namespace FunderMaps.BatchNode
 
             // Add batch jobs to the DI container.
             services.AddBatchJob<Jobs.BundleBuilder.BundleJob>();
+            services.AddBatchJob<Jobs.Notification.EmailHandler>();
 
             services.AddGrpc();
         }
