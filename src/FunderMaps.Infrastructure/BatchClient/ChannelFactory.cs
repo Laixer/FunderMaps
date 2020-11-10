@@ -7,7 +7,7 @@ namespace FunderMaps.Infrastructure.BatchClient
 {
     internal class ChannelFactory : IDisposable
     {
-        private HttpClientHandler httpHandler = new HttpClientHandler();
+        private readonly GrpcChannel rpcChannel;
 
         private bool disposedValue;
 
@@ -16,23 +16,20 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// </summary>
         public ChannelFactory()
         {
+            HttpClientHandler httpHandler = new HttpClientHandler();
             httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+
+            // The port number(5001) must match the port of the gRPC server.
+            rpcChannel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions
+            {
+                HttpHandler = httpHandler,
+            });
         }
 
         /// <summary>
         ///     Get a remote channel to the GRPC service.
         /// </summary>
-        public ChannelBase RemoteChannel
-        {
-            get
-            {
-                // The port number(5001) must match the port of the gRPC server.
-                return GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions
-                {
-                    HttpHandler = httpHandler
-                });
-            }
-        }
+        public ChannelBase RemoteChannel => rpcChannel;
 
         protected virtual void Dispose(bool disposing)
         {
@@ -41,7 +38,7 @@ namespace FunderMaps.Infrastructure.BatchClient
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    httpHandler.Dispose();
+                    rpcChannel.Dispose();
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override finalizer
