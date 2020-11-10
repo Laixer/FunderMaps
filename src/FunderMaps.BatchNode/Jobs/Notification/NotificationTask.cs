@@ -32,7 +32,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         }
 
         /// <summary>
-        ///     Method to check if a task can be handeld by this job.
+        ///     Method to check if a task can be handled by this job.
         /// </summary>
         /// <param name="name">The task name.</param>
         /// <param name="valdirectoryNameue">The task payload.</param>
