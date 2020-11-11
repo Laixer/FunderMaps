@@ -1152,6 +1152,76 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Layer",
+			"item": [
+				{
+					"name": "Get Layer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/layer/{{layer_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"layer",
+								"{{layer_id}}"
+							]
+						},
+						"description": "Returns layer by id"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Layers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/layer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"layer"
+							]
+						},
+						"description": "Returns all layers"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Bundle",
+			"item": [
+				{
+					"name": "Get All Bundles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bundle",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bundle"
+							]
+						},
+						"description": "Gets all the bundles (scoped to organization)"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Get Version",
 			"event": [
 				{

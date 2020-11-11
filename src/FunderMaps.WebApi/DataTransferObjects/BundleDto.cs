@@ -45,7 +45,8 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Gets or sets the display name for the bundle.
         /// </summary>
-        public string? Name { get; set; }
+        [Required]
+        public string Name { get; set; }
 
         /// <summary>
         ///     Bundle creation date.
