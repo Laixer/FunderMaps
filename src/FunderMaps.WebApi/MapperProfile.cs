@@ -32,6 +32,7 @@ namespace FunderMaps.WebApi
             CreateMap<Recovery, RecoveryDto>().ReverseMap();
             CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
+            CreateMap<Bundle, BundleDto>();
         }
     }
 }
