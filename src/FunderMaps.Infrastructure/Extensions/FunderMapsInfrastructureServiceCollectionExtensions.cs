@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Infrastructure.BatchClient;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
@@ -45,9 +46,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
             services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
+            // Remove all existing batch services and inject local batch service.
+            services.AddSingleton<ChannelFactory>();
             services.RemoveAll<IBatchService>();
-            services.AddScoped<IBatchService, FunderMaps.Infrastructure.BatchClient.BatchClient>();
-            services.AddSingleton<FunderMaps.Infrastructure.BatchClient.ChannelFactory>();
+            services.Configure<BatchOptions>(Configuration.GetSection("Batch"));
+            services.AddScoped<IBatchService, BatchClient>();
         }
 
         /// <summary>
@@ -66,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            if (!HostEnvironment.IsDevelopment())
+            // if (!HostEnvironment.IsDevelopment())
             {
                 ConfigureExternalServices(services);
             }

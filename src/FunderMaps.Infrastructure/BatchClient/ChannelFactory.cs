@@ -3,25 +3,33 @@ using Grpc.Net.Client;
 using Grpc.Core;
 using System;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Infrastructure.BatchClient
 {
     internal class ChannelFactory : IDisposable
     {
         private readonly GrpcChannel rpcChannel;
+        private readonly BatchOptions _options;
 
         private bool disposedValue;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ChannelFactory(ILoggerFactory loggerFactory)
+        public ChannelFactory(IOptions<BatchOptions> options, ILoggerFactory loggerFactory)
         {
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+
             // NOTE: The httpHandler is disposed when the channel is disposed.
             HttpClientHandler httpHandler = new HttpClientHandler();
-            httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
 
-            rpcChannel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions
+            if (!_options.TlsValidate)
+            {
+                httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            }
+
+            rpcChannel = GrpcChannel.ForAddress(_options.ServiceUri, new GrpcChannelOptions
             {
                 HttpHandler = httpHandler,
                 DisposeHttpClient = true,
