@@ -14,6 +14,7 @@ namespace FunderMaps.WebApi
         /// </summary>
         public MapperProfile()
         {
+            CreateMap<Bundle, BundleDto>();
             CreateMap<Organization, ContractorDto>();
             CreateMap<Inquiry, InquiryDto>().ReverseMap();
             CreateMap<InquiryFull, InquiryDto>()
@@ -32,7 +33,6 @@ namespace FunderMaps.WebApi
             CreateMap<Recovery, RecoveryDto>().ReverseMap();
             CreateMap<RecoverySample, RecoverySampleDto>().ReverseMap();
             CreateMap<User, ReviewerDto>();
-            CreateMap<Bundle, BundleDto>();
         }
     }
 }
