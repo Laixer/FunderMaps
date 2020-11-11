@@ -1160,14 +1160,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/api/layer/dd2b8725-2026-4e81-8dce-c7952786fe98",
+							"raw": "{{base_url}}/api/layer/{{layer_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"layer",
-								"dd2b8725-2026-4e81-8dce-c7952786fe98"
+								"{{layer_id}}"
 							]
 						},
 						"description": "Returns layer by id"
