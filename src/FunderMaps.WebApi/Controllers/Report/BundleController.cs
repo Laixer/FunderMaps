@@ -3,7 +3,6 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -24,15 +23,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleController(
-            IMapper mapper,
-            IBundleRepository bundleRepository)
+        public BundleController(IMapper mapper, IBundleRepository bundleRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
         }
 
-        // GET: api/bundles
+        // GET: api/bundle
         /// <summary>
         ///     Return all bundles.
         /// </summary>
@@ -40,14 +37,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
-            var bundleList = new List<Bundle>();
-            await foreach (var bundle in _bundleRepository.ListAllAsync(pagination.Navigation))
-            {
-                bundleList.Add(bundle);
-            }
+            IAsyncEnumerable<Bundle> bundleList = _bundleRepository.ListAllAsync(pagination.Navigation);
 
             // Map.
-            var output = _mapper.Map<IList<BundleDto>>(bundleList);
+            var output = await _mapper.MapAsync<IList<BundleDto>, Bundle>(bundleList);
 
             // Return.
             return Ok(output);

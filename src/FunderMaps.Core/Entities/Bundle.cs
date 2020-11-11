@@ -56,17 +56,17 @@ namespace FunderMaps.Core.Entities
         ///     The date this bundle was created.
         /// </summary>
         [Required]
-        public DateTimeOffset CreateDate { get; set; }
+        public DateTime CreateDate { get; set; }
 
         /// <summary>
         ///     The date this bundle was last updated.
         /// </summary>
-        public DateTimeOffset? UpdateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
         /// <summary>
         ///     The date this bundle was deleted.
         /// </summary>
-        public DateTimeOffset? DeleteDate { get; set; }
+        public DateTime? DeleteDate { get; set; }
 
         /// <summary>
         ///     Configuration of the selected layers.
