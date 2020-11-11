@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Maplayer
+namespace FunderMaps.WebApi.Controllers.MapLayer
 {
     /// <summary>
     ///     Endpoint controller for bundle operations.
