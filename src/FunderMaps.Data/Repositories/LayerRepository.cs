@@ -28,16 +28,19 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 INSERT INTO maplayer.layer(
                     schema_name,
-                    table_name)
+                    table_name,
+                    name)
                 VALUES (
                     @schema_name,
-                    @table_name)
+                    @table_name,
+                    @name)
                 RETURNING id";
 
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("schema_name", entity.SchemaName);
             context.AddParameterWithValue("table_name", entity.TableName);
+            context.AddParameterWithValue("name", entity.Name);
 
             await using var reader = await context.ReaderAsync();
 
@@ -85,10 +88,16 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Layer"/>.</returns>
         public override async ValueTask<Layer> GetByIdAsync(Guid id)
         {
+            if (TryGetEntity(id, out Layer entity))
+            {
+                return entity;
+            }
+
             var sql = @"
                 SELECT  id,
                         schema_name,
-                        table_name
+                        table_name,
+                        name
                 FROM    maplayer.layer
                 WHERE   id = @id
                 LIMIT   1";
@@ -116,7 +125,8 @@ namespace FunderMaps.Data.Repositories
                 )
                 SELECT  l.id,
                         l.schema_name,
-                        l.table_name
+                        l.table_name,
+                        l.name
                 FROM    maplayer.layer AS l
                 JOIN    maplayer.bundle AS b ON l.id = ANY(
                             SELECT  layer_id 
@@ -148,7 +158,8 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 SELECT  id,
                         schema_name,
-                        table_name
+                        table_name,
+                        name
                 FROM    maplayer.layer";
 
             ConstructNavigation(ref sql, navigation);
@@ -176,7 +187,8 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                     UPDATE  maplayer.layer
                     SET     schema_name = @schema_name,
-                            table_name = @table_name
+                            table_name = @table_name,
+                            name = @name
                     WHERE   id = @id";
 
             await using var context = await DbContextFactory(sql);
@@ -184,6 +196,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("id", entity.Id);
             context.AddParameterWithValue("schema_name", entity.SchemaName);
             context.AddParameterWithValue("table_name", entity.TableName);
+            context.AddParameterWithValue("name", entity.Name);
 
             await context.NonQueryAsync();
         }
@@ -198,7 +211,8 @@ namespace FunderMaps.Data.Repositories
             {
                 Id = reader.GetGuid(0),
                 SchemaName = reader.GetString(1),
-                TableName = reader.GetString(2)
+                TableName = reader.GetString(2),
+                Name = reader.GetString(3)
             };
     }
 }

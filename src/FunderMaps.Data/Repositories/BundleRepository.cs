@@ -75,8 +75,8 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                 DELETE
-                FROM    maplayer.bundle
-                WHERE   id = @id";
+                FROM    maplayer.bundle AS b
+                WHERE   b.id = @id";
 
             await using var context = await DbContextFactory(sql);
 
@@ -92,24 +92,24 @@ namespace FunderMaps.Data.Repositories
         /// <returns>The retrieved bundle.</returns>
         public override async ValueTask<Bundle> GetByIdAsync(Guid id)
         {
-            if (id == null || id == Guid.Empty)
+            if (TryGetEntity(id, out Bundle entity))
             {
-                throw new ArgumentNullException(nameof(id));
+                return entity;
             }
 
             var sql = @"
-                SELECT  id,
-                        organization_id,
-                        name,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        user_id,
-                        layer_configuration,
-                        version_id,
-                        bundle_status
-                FROM    maplayer.bundle
-                WHERE   id = @id";
+                SELECT  b.id,
+                        b.organization_id,
+                        b.name,
+                        b.create_date,
+                        b.update_date,
+                        b.delete_date,
+                        b.user_id,
+                        b.layer_configuration,
+                        b.version_id,
+                        b.bundle_status
+                FROM    maplayer.bundle AS b
+                WHERE   b.id = @id";
 
             await using var context = await DbContextFactory(sql);
 
@@ -133,64 +133,24 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        organization_id,
-                        name,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        user_id,
-                        layer_configuration,
-                        version_id,
-                        bundle_status
-                FROM    maplayer.bundle";
+                SELECT  b.id,
+                        b.organization_id,
+                        b.name,
+                        b.create_date,
+                        b.update_date,
+                        b.delete_date,
+                        b.user_id,
+                        b.layer_configuration,
+                        b.version_id,
+                        b.bundle_status
+                FROM    maplayer.bundle AS b
+                WHERE   b.organization_id = @id";
 
             ConstructNavigation(ref sql, navigation);
 
             await using var context = await DbContextFactory(sql);
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                yield return CacheEntity(MapFromReader(reader));
-            }
-        }
-
-        /// <summary>
-        ///     Get all bundles for a given organization.
-        /// </summary>
-        /// <param name="organizationId">The organization id.</param>
-        /// <param name="navigation">Navigation.</param>
-        /// <returns>Collection of <see cref="Bundle"/> entities.</returns>
-        public async IAsyncEnumerable<Bundle> ListAllByOrganizationAsync(Guid organizationId, INavigation navigation)
-        {
-            if (organizationId == null || organizationId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(organizationId));
-            }
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
-            var sql = @"
-                SELECT  id,
-                        organization_id,
-                        name,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        user_id,
-                        layer_configuration,
-                        version_id,
-                        bundle_status
-                FROM    maplayer.bundle
-                WHERE   organization_id = @organization_id";
-
-            ConstructNavigation(ref sql, navigation);
-
-            await using var context = await DbContextFactory(sql);
-
-            context.AddParameterWithValue("organization_id", organizationId);
+            context.AddParameterWithValue("id", AppContext.TenantId);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -289,9 +249,9 @@ namespace FunderMaps.Data.Repositories
             };
 
         /// <summary>
-        ///     Maps a single <see cref="Bundle"/> to a command.
+        ///     Maps a single <see cref="Bundle"/> to a context.
         /// </summary>
-        /// <param name="cmd">The command to write to.</param>
+        /// <param name="context">The context to write to.</param>
         /// <param name="entity">The entity to write.</param>
         private static void MapToWriter(DbContext context, Bundle entity)
         {
