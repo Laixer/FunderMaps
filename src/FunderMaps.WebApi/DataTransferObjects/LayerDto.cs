@@ -16,10 +16,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public Guid Id { get; set; }
 
         /// <summary>
-        ///     Layer full name
+        ///     The full layer name including the schema, appended with an underscore.
         /// </summary>
         [Required]
-        public string FullName { get; set; }
+        public string Slug { get; set; }
 
         /// <summary>
         ///     Gets or sets the display name for the bundle.
