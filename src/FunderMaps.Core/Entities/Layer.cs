@@ -43,6 +43,6 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Get the full class name including the schema.
         /// </summary>
-        public string FullName => !string.IsNullOrEmpty(SchemaName) ? $"{SchemaName}.{TableName}" : TableName;
+        public string FullName => !string.IsNullOrEmpty(SchemaName) ? $"{SchemaName}_{TableName}" : TableName;
     }
 }
