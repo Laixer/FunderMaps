@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
-    ///     Endpoint controller for incident operations.
+    ///     Endpoint controller for bundle operations.
     /// </summary>
     [Route("bundle")]
     public class BundleController : ControllerBase
