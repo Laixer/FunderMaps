@@ -7,6 +7,10 @@
     <UserSecretsId>0fffba0d-f307-443e-a70d-f0841e04f02f</UserSecretsId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>$(SolutionDir)DocumentationFunderMapsPortal.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />

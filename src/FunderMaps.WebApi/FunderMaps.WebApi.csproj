@@ -8,14 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>$(SolutionDir)DocumentationFunderMaps.xml</DocumentationFile>
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>$(SolutionDir)DocumentationFunderMaps.xml</DocumentationFile>
+    <DocumentationFile>$(SolutionDir)DocumentationFunderMapsWebApi.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +18,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.1.9" />
   </ItemGroup>
 
   <ItemGroup>
