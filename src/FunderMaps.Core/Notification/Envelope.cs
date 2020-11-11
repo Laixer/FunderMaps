@@ -10,12 +10,12 @@ namespace FunderMaps.Core.Notification
         /// <summary>
         ///     Email recipients.
         /// </summary>
-        public IList<string> Recipients { get; } = new List<string>();
+        public IList<string> Recipients { get; set; } = new List<string>();
 
         /// <summary>
         ///     Email senders.
         /// </summary>
-        public IList<string> Senders { get; } = new List<string>();
+        public IList<string> Senders { get; set; } = new List<string>();
 
         /// <summary>
         ///     Message subject.
@@ -36,14 +36,5 @@ namespace FunderMaps.Core.Notification
         ///     Message template.
         /// </summary>
         public string Template { get; set; }
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public Envelope(string recipient, string content)
-        {
-            Recipients.Add(recipient);
-            Content = content;
-        }
     }
 }
