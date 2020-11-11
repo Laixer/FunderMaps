@@ -1173,6 +1173,25 @@
 						"description": "Returns layer by id"
 					},
 					"response": []
+				},
+				{
+					"name": "Get All Layers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/layer",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"layer"
+							]
+						},
+						"description": "Returns all layers"
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}

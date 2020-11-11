@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -13,6 +14,14 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class LayerRepository : RepositoryBase<Layer, Guid>, ILayerRepository
     {
+        protected override void SetCacheItem(KeyPair key, Layer value, MemoryCacheEntryOptions options)
+        {
+            options.SlidingExpiration *= 2;
+            options.AbsoluteExpirationRelativeToNow *= 2;
+
+            base.SetCacheItem(key, value, options);
+        }
+
         /// <summary>
         ///     Create new <see cref="Layer"/>.
         /// </summary>

@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -25,6 +27,24 @@ namespace FunderMaps.WebApi.Controllers.Maplayer
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
+        }
+
+
+        // GET: api/layer
+        /// <summary>
+        ///     Return all layers.
+        /// </summary>
+        [HttpGet, ResponseCache(Duration = 60 * 60 * 24)]
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
+        {
+            // Act.
+            IAsyncEnumerable<Layer> layerList = _layerRepository.ListAllAsync(pagination.Navigation);
+
+            // Map.
+            var output = await _mapper.MapAsync<IList<LayerDto>, Layer>(layerList);
+
+            // Return.
+            return Ok(output);
         }
 
         // GET: api/layer/{id}
