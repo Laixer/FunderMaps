@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            // if (!HostEnvironment.IsDevelopment())
+            if (!HostEnvironment.IsDevelopment())
             {
                 ConfigureExternalServices(services);
             }

@@ -9,16 +9,16 @@ using FunderMaps.Core.Threading;
 namespace FunderMaps.BatchNode.Jobs.Notification
 {
     /// <summary>
-    ///     Email notification handler.
+    ///     Email notification job.
     /// </summary>
-    internal class EmailHandler : NotificationTask
+    internal class EmailJob : NotificationTask
     {
         private readonly IEmailService _emailService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public EmailHandler(IEmailService emailService)
+        public EmailJob(IEmailService emailService)
             => _emailService = emailService;
 
         /// <summary>
