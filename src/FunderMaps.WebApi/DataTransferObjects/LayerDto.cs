@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Types.MapLayer;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.WebApi.DataTransferObjects
@@ -26,6 +25,5 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [Required]
         public string Name { get; set; }
-
     }
 }
