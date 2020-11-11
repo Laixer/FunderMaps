@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
-    ///     Endpoint controller for incident operations.
+    ///     Endpoint controller for layer operations.
     /// </summary>
     [Route("layer")]
     public class LayerController : ControllerBase
