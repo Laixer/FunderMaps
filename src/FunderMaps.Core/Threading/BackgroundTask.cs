@@ -16,7 +16,7 @@ namespace FunderMaps.Core.Threading
             => context.DispatchManager.TryGetTarget(out DispatchManager manager) ? manager : null;
 
         /// <summary>
-        ///     Do some asynchronous work.
+        ///     Execute asynchronous operation.
         /// </summary>
         /// <param name="context">Background task execution context.</param>
         public virtual async Task ExecuteAsync(BackgroundTaskContext context)
@@ -28,7 +28,7 @@ namespace FunderMaps.Core.Threading
         }
 
         /// <summary>
-        ///     Do some synchronous work.
+        ///     Execute synchronous operation.
         /// </summary>
         /// <param name="context">Background task execution context.</param>
         public virtual void Execute(BackgroundTaskContext context)
