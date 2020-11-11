@@ -9,38 +9,38 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Report
+namespace FunderMaps.WebApi.Controllers.Maplayer
 {
     /// <summary>
-    ///     Endpoint controller for layer operations.
+    ///     Endpoint controller for bundle operations.
     /// </summary>
-    [Route("layer")]
-    public class LayerController : ControllerBase
+    [Route("bundle")]
+    public class BundleController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ILayerRepository _layerRepository;
+        private readonly IBundleRepository _bundleRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public LayerController(IMapper mapper, ILayerRepository layerRepository)
+        public BundleController(IMapper mapper, IBundleRepository bundleRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
+            _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
         }
 
-        // GET: api/layer/{id}
+        // GET: api/bundle
         /// <summary>
-        ///     Return layer by id.
+        ///     Return all bundles.
         /// </summary>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(Guid id)
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
-            var layer = await _layerRepository.GetByIdAsync(id);
+            IAsyncEnumerable<Bundle> bundleList = _bundleRepository.ListAllAsync(pagination.Navigation);
 
             // Map.
-            var output = _mapper.Map<LayerDto>(layer);
+            var output = await _mapper.MapAsync<IList<BundleDto>, Bundle>(bundleList);
 
             // Return.
             return Ok(output);
