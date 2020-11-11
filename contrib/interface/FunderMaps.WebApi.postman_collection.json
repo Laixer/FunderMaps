@@ -1152,6 +1152,57 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Layer",
+			"item": [
+				{
+					"name": "Get Layer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/layer/dd2b8725-2026-4e81-8dce-c7952786fe98",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"layer",
+								"dd2b8725-2026-4e81-8dce-c7952786fe98"
+							]
+						},
+						"description": "Returns layer by id"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Bundle",
+			"item": [
+				{
+					"name": "Get All Bundles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/bundle",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bundle"
+							]
+						},
+						"description": "Gets all the bundles (scoped to organization)"
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Get Version",
 			"event": [
 				{
