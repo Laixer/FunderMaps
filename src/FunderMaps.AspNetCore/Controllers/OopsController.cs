@@ -16,8 +16,7 @@ namespace FunderMaps.AspNetCore.Controllers
     {
         // GET: oops
         /// <summary>
-        ///     Returns a <see cref="ProblemDetails"/> based on the <see cref="IExceptionHandlerFeature"/>
-        ///     which is present in the current <see cref="ControllerBase.HttpContext"/>.
+        ///     Returns a <see cref="ProblemDetails"/> from the <see cref="ControllerBase.HttpContext"/>.
         /// </summary>
         /// <returns>Instance of <see cref="ProblemDetails"/>.</returns>
         [Route("oops")]

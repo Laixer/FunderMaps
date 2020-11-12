@@ -1,7 +1,13 @@
 namespace FunderMaps.BatchNode.GeoInterface
 {
-    public class VectorDatasetBuilderOptions
+    /// <summary>
+    ///     Vector dataset builder options.
+    /// </summary>
+    public record VectorDatasetBuilderOptions
     {
-        public string AdditionalOptions { get; set; }
+        /// <summary>
+        ///     Additional options to the command, these options are append to the command.
+        /// </summary>
+        public string AdditionalOptions { get; init; }
     }
 }

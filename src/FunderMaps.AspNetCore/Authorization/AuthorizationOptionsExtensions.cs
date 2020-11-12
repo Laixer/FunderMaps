@@ -4,6 +4,9 @@ using System;
 
 namespace FunderMaps.AspNetCore.Authorization
 {
+    /// <summary>
+    ///     Extensions to the authorization options.
+    /// </summary>
     public static class AuthorizationOptionsExtensions
     {
         // FUTURE: Move the business logic to the core.

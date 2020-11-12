@@ -24,7 +24,7 @@ namespace FunderMaps.AspNetCore
         /// <summary>
         ///     Use this method to add entity and object mapping configurations.
         /// </summary>
-        private void ConfigureMapper(IMapperConfigurationExpression mapper)
+        private static void ConfigureMapper(IMapperConfigurationExpression mapper)
         {
             mapper.CreateMap<Address, AddressBuildingDto>()
                 .IncludeMembers(src => src.BuildingNavigation)
@@ -112,12 +112,12 @@ namespace FunderMaps.AspNetCore
 
         // FUTURE: Create a service replace method from this stub.
         /// <summary>
-        ///     Replace the stock <see cref="AppContext" which an application context
+        ///     Replace the stock <see cref="AppContext"/> which an application context
         ///     hooked on the ASP.NET Core framework. The integration couples front framework
         ///     operations to the application core without imparing assemly dependencies.
         /// </summary>
         /// <param name="services">Collection of DI services.</param>
-        public IServiceCollection AddAppContext(IServiceCollection services)
+        private IServiceCollection AddAppContext(IServiceCollection services)
         {
             var serviceDescriptor = new ServiceDescriptor(typeof(Core.AppContext), AppContextFactory, ServiceLifetime.Scoped);
 

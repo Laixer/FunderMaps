@@ -8,7 +8,7 @@ namespace FunderMaps.BatchNode
     /// <summary>
     ///     Application entry.
     /// </summary>
-    public class Program
+    public static class Program
     {
         /// <summary>
         ///     Application entry point.

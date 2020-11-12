@@ -38,7 +38,7 @@ namespace FunderMaps.BatchNode.GeoInterface
         /// <summary>
         ///     Set the output dataset.
         /// </summary>
-        /// <param name="input">Data output source.</param>
+        /// <param name="output">Data output source.</param>
         public VectorDatasetBuilder OutputDataset(DataSource output)
         {
             this.output = output;

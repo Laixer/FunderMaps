@@ -7,7 +7,7 @@ namespace FunderMaps.AspNetCore.Helpers
     /// <summary>
     ///     Helper class for jwt tokens.
     /// </summary>
-    public class JwtHelper
+    public static class JwtHelper
     {
         /// <summary>
         ///     Create a new security key.

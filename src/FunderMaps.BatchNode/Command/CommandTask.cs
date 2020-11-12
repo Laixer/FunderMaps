@@ -20,6 +20,9 @@ namespace FunderMaps.BatchNode.Command
     {
         private const string TaskIdName = "FM_TASK_ID";
 
+        /// <summary>
+        ///     Represents a type used to perform logging.
+        /// </summary>
         protected readonly ILogger _logger;
 
         /// <summary>
@@ -108,8 +111,8 @@ namespace FunderMaps.BatchNode.Command
                 throw new ProcessException(processInfo.FileName);
             }
 
-            var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
-            var stderrWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stderr");
+            using var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
+            using var stderrWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stderr");
 
             process.OutputDataReceived += (sender, args) => stdoutWriter.WriteLine(args.Data);
             process.ErrorDataReceived += (sender, args) => stderrWriter.WriteLine(args.Data);

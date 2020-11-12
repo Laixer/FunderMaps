@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -23,10 +23,10 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
     public class CustomExceptionHandlerMiddleware<TException>
         where TException : Exception
     {
-        protected readonly RequestDelegate _next;
-        protected readonly CustomExceptionHandlerOptions _options;
-        protected readonly ILogger<CustomExceptionHandlerMiddleware<TException>> _logger;
-        protected readonly IExceptionMapper<TException> _mapper;
+        private readonly RequestDelegate _next;
+        private readonly CustomExceptionHandlerOptions _options;
+        private readonly ILogger<CustomExceptionHandlerMiddleware<TException>> _logger;
+        private readonly IExceptionMapper<TException> _mapper;
 
         /// <summary>
         ///     Create new instance.
@@ -107,10 +107,10 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         }
 
         /// <summary>
-        ///     Handle the thrown <paramref name="exception"/> by appending a
+        ///     Handle the thrown exception by appending a
         ///     <see cref="ProblemDetails"/> to the <see cref="HttpContext.Response"/>.
         /// </summary>
-        /// <param name="exception"><see cref="TException"/></param>
+        /// <param name="edi"><see cref="ExceptionDispatchInfo"/></param>
         /// <param name="context"><see cref="HttpContext"/></param>
         protected virtual async Task HandleExceptionAsync(ExceptionDispatchInfo edi, HttpContext context)
         {

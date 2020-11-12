@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
@@ -73,7 +73,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetAsync([Incident] string id)
         {
             // Act.
-            var incident = await _incidentRepository.GetByIdAsync(id);
+            Incident incident = await _incidentRepository.GetByIdAsync(id);
             incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
 
             // Map.
@@ -116,8 +116,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetDocumentAccessLinkAsync([Incident] string id)
         {
             // Act.
-            var incident = await _incidentRepository.GetByIdAsync(id);
-            var link = await _blobStorageService.GetAccessLinkAsync(
+            Incident incident = await _incidentRepository.GetByIdAsync(id);
+            Uri link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: incident.DocumentFile[0], // TODO
                 hoursValid: 1);
@@ -140,7 +140,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
-            var incidentList = new List<Incident>();
+            List<Incident> incidentList = new();
             await foreach (var incident in _incidentRepository.ListAllAsync(pagination.Navigation))
             {
                 incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);

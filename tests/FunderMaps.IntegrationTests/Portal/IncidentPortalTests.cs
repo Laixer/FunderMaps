@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.AspNetCore.DataTransferObjects;
@@ -200,7 +200,7 @@ namespace FunderMaps.IntegrationTests.Portal
         }
 
         // TODO: FIX: FIXME: XXX
-        [Fact(Skip="Change testcase to also allow on external address id")]
+        [Fact(Skip = "Change testcase to also allow on external address id")]
         public async Task GetRiskAnalysisReturnAnalysis()
         {
             // Arrange
@@ -237,9 +237,6 @@ namespace FunderMaps.IntegrationTests.Portal
                 .RuleFor(f => f.ClientId, f => clientId)
                 .RuleFor(f => f.Email, f => email)
                 .Generate();
-            incident.Address = address;
-            incident.ClientId = clientId;
-            incident.Email = email;
 
             // Act.
             var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
@@ -314,9 +311,9 @@ namespace FunderMaps.IntegrationTests.Portal
         public async Task RegressionCreateInvalidPhoneReturnBadRequest()
         {
             // Arrange.
-        var incident = new IncidentDtoFaker()
-                .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
-                .Generate();
+            var incident = new IncidentDtoFaker()
+                    .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
+                    .Generate();
 
             // Act.
             var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
