@@ -5,18 +5,18 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     /// <summary>
     ///     Change user password DTO.
     /// </summary>
-    public sealed class ChangePasswordDto
+    public sealed record ChangePasswordDto
     {
         /// <summary>
         ///     User current password.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string OldPassword { get; set; }
+        public string OldPassword { get; init; }
 
         /// <summary>
         ///     User new password.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string NewPassword { get; set; }
+        public string NewPassword { get; init; }
     }
 }

@@ -6,136 +6,136 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     /// <summary>
     ///     Organization DTO.
     /// </summary>
-    public sealed class OrganizationDto
+    public sealed record OrganizationDto
     {
         /// <summary>
         ///     Organization identifier.
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid Id { get; init; }
 
         /// <summary>
         ///     Gets or sets the name for the organization.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         /// <summary>
         ///     Gets or sets the email address for the organization.
         /// </summary>
         [Required, EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; init; }
 
         /// <summary>
         ///     Phone number.
         /// </summary>
         [Phone]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber { get; init; }
 
         /// <summary>
         ///     Organizatoin registration number.
         /// </summary>
-        public string RegistrationNumber { get; set; }
+        public string RegistrationNumber { get; init; }
 
         /// <summary>
         ///     Gets or sets the organization logo.
         /// </summary>
-        public string BrandingLogo { get; set; }
+        public string BrandingLogo { get; init; }
 
         /// <summary>
         ///     Name on the invoice.
         /// </summary>
-        public string InvoiceName { get; set; }
+        public string InvoiceName { get; init; }
 
         /// <summary>
         ///     Invoice PB box number.
         /// </summary>
-        public string InvoicePoBox { get; set; }
+        public string InvoicePoBox { get; init; }
 
         /// <summary>
         ///     Send invoices to designated email address.
         /// </summary>
-        public string InvoiceEmail { get; set; }
+        public string InvoiceEmail { get; init; }
 
         // TODO: Convert to geocoder address?
 
         /// <summary>
         ///     Street.
         /// </summary>
-        public string HomeStreet { get; set; }
+        public string HomeStreet { get; init; }
 
         /// <summary>
         ///     Street number.
         /// </summary>
-        public int? HomeAddressNumber { get; set; }
+        public int? HomeAddressNumber { get; init; }
 
         /// <summary>
         ///     Address number postfix.
         /// </summary>
-        public string HomeAddressNumberPostfix { get; set; }
+        public string HomeAddressNumberPostfix { get; init; }
 
         /// <summary>
         ///     City.
         /// </summary>
-        public string HomeCity { get; set; }
+        public string HomeCity { get; init; }
 
         /// <summary>
         ///     Postbox number.
         /// </summary>
-        public string HomePostbox { get; set; }
+        public string HomePostbox { get; init; }
 
         /// <summary>
         ///     Zipcode or postcode.
         /// </summary>
-        public string HomeZipcode { get; set; }
+        public string HomeZipcode { get; init; }
 
         /// <summary>
         ///     State or province.
         /// </summary>
-        public string HomeState { get; set; }
+        public string HomeState { get; init; }
 
         /// <summary>
         ///     Country.
         /// </summary>
-        public string HomeCountry { get; set; }
+        public string HomeCountry { get; init; }
 
         /// <summary>
         ///     Street.
         /// </summary>
-        public string PostalStreet { get; set; }
+        public string PostalStreet { get; init; }
 
         /// <summary>
         ///     Street number.
         /// </summary>
-        public int? PostalAddressNumber { get; set; }
+        public int? PostalAddressNumber { get; init; }
 
         /// <summary>
         ///     Address number postfix.
         /// </summary>
-        public string PostalAddressNumberPostfix { get; set; }
+        public string PostalAddressNumberPostfix { get; init; }
 
         /// <summary>
         ///     City.
         /// </summary>
-        public string PostalCity { get; set; }
+        public string PostalCity { get; init; }
 
         /// <summary>
         ///     Postbox number.
         /// </summary>
-        public string PostalPostbox { get; set; }
+        public string PostalPostbox { get; init; }
 
         /// <summary>
         ///     Zipcode or postcode.
         /// </summary>
-        public string PostalZipcode { get; set; }
+        public string PostalZipcode { get; init; }
 
         /// <summary>
         ///     State or province.
         /// </summary>
-        public string PostalState { get; set; }
+        public string PostalState { get; init; }
 
         /// <summary>
         ///     Country.
         /// </summary>
-        public string PostalCountry { get; set; }
+        public string PostalCountry { get; init; }
     }
 }
