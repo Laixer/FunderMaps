@@ -15,7 +15,19 @@ namespace FunderMaps.BatchNode
         /// </summary>
         /// <param name="args">Commandline arguments.</param>
         public static Task Main(string[] args)
-            => Host.CreateDefaultBuilder(args)
+            => CreateHostBuilder(args).Build().RunAsync();
+
+        /// <summary>
+        ///     Build a host and run the application.
+        /// </summary>
+        /// <remarks>
+        ///     The signature of this method should not be changed.
+        ///     External tooling expects this function be present.
+        /// </remarks>
+        /// <param name="args">Commandline arguments.</param>
+        /// <returns>See <see cref="IHostBuilder"/>.</returns>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.ConfigureKestrel(options =>
@@ -27,8 +39,6 @@ namespace FunderMaps.BatchNode
                         });
                     });
                     webBuilder.UseStartup<Startup>();
-                })
-                .Build()
-                .RunAsync();
+                });
     }
 }
