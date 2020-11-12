@@ -1,7 +1,7 @@
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Threading;
+using FunderMaps.Infrastructure.BatchClient;
 using Grpc.Core;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -13,23 +13,18 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class BatchService : Batch.BatchBase
     {
-        private const int protocolVersion = 0xa1;
+        private const string UserAgent = "FunderMaps.BatchNode";
 
         private readonly DispatchManager _dispatchManager;
         private readonly ILogger<BatchService> _logger;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BatchService(
-            DispatchManager dispatchManager,
-            ILogger<BatchService> logger,
-            IServiceScopeFactory serviceScopeFactory)
+        public BatchService(DispatchManager dispatchManager, ILogger<BatchService> logger)
         {
             _dispatchManager = dispatchManager ?? throw new ArgumentNullException(nameof(dispatchManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _serviceScopeFactory = serviceScopeFactory;
         }
 
         /// <summary>
@@ -40,7 +35,7 @@ namespace FunderMaps.BatchNode
         /// <returns>Response object containing a task id.</returns>
         public override async Task<EnqueueResponse> Enqueue(EnqueueRequest request, ServerCallContext context)
         {
-            if (request == null)
+            if (request is null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -48,21 +43,21 @@ namespace FunderMaps.BatchNode
             // TODO: This is a runtime err, maybe change ex
             if (string.IsNullOrEmpty(request.Name))
             {
-                throw new ArgumentNullException(nameof(request.Name));
+                throw new ArgumentNullException(nameof(request));
             }
 
             try
             {
-                if (request.Protocol.Version != protocolVersion)
+                if (request.Protocol.Version != Protocol.protocolVersion)
                 {
                     throw new ProtocolException("Protocol version mismatch");
                 }
 
                 Guid taskid = await _dispatchManager.EnqueueTaskAsync(request.Name, request.Payload);
 
-                return new EnqueueResponse
+                return new()
                 {
-                    Protocol = BuildProtocol(),
+                    Protocol = Protocol.BuildProtocol(UserAgent),
                     TaskId = taskid.ToString(),
                 };
             }
@@ -70,25 +65,11 @@ namespace FunderMaps.BatchNode
             {
                 _logger.LogError(e, "Exception occred while processing the request");
 
-                return new EnqueueResponse
+                return new()
                 {
-                    Protocol = BuildProtocol(0xc0),
+                    Protocol = Protocol.BuildProtocol(UserAgent),
                 };
             }
         }
-
-        // TODO Move to some centralized class.
-        /// <summary>
-        ///     Build a fundermaps protocol object for responses.
-        /// </summary>
-        /// <param name="dateRequest">The request timestamp.</param>
-        /// <returns>Created protocol object.</returns>
-        private static FunderMapsProtocol BuildProtocol(long errorCode = 0)
-            => new FunderMapsProtocol
-            {
-                Version = protocolVersion,
-                UserAgent = "FunderMaps.BatchNode",
-                ErrorCode = errorCode,
-            };
     }
 }

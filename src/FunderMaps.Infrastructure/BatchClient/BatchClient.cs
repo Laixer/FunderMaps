@@ -11,7 +11,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// </summary>
     internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase
     {
-        private const int protocolVersion = 0xa1;
+        private const string UserAgent = "FunderMaps.Infrastructure";
 
         private readonly ChannelFactory _channelFactory;
 
@@ -31,11 +31,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         {
             var request = new EnqueueRequest
             {
-                Protocol = new FunderMapsProtocol
-                {
-                    Version = protocolVersion,
-                    UserAgent = "FunderMaps.Infrastructure",
-                },
+                Protocol = Protocol.BuildProtocol(UserAgent),
                 Name = name,
                 Payload = JsonSerializer.Serialize(value),
             };
