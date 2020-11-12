@@ -3,7 +3,7 @@
     /// <summary>
     ///     Represents a type of export format.
     /// </summary>
-    public enum GeometryExportFormat
+    public enum GeometryFormat
     {
         /// <summary>
         ///     Mapbox vector tiles.

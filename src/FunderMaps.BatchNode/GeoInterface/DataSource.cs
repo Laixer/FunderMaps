@@ -5,7 +5,7 @@ namespace FunderMaps.BatchNode.GeoInterface
 {
     internal abstract class DataSource
     {
-        public GeometryExportFormat Format { get; set; }
+        public GeometryFormat Format { get; set; }
 
         public virtual string Read(CommandInfo commandInfo)
         {
