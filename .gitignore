@@ -262,3 +262,7 @@ __pycache__/
 **/appsettings.*.json
 **/launchSettings.json
 **/Documentation*.xml
+
+# Certificates
+**/*.crt
+**/*.pfx
