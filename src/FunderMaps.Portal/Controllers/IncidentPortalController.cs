@@ -74,7 +74,7 @@ namespace FunderMaps.Portal.Controllers
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
 
-            var output = new DocumentDto
+            DocumentDto output = new()
             {
                 Name = storeFileName,
             };
@@ -107,7 +107,7 @@ namespace FunderMaps.Portal.Controllers
             }
 
             await _incidentRepository.AddAsync(incident);
-            await _notifyService.DispatchNotifyAsync(new Envelope
+            await _notifyService.DispatchNotifyAsync(new()
             {
                 Recipients = new List<string> { "info@fundermaps.com", "info@laixer.com" },
                 Content = $"Nieuwe melding binnengekomen met opmerking: {incident.Note}",

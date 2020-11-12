@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
@@ -56,7 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
-            var output = new DatasetStatsDto
+            DatasetStatsDto output = new()
             {
                 Count = await _incidentRepository.CountAsync(),
             };
@@ -99,7 +99,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
 
-            var output = new DocumentDto
+            DocumentDto output = new()
             {
                 Name = storeFileName,
             };
@@ -123,7 +123,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 hoursValid: 1);
 
             // Map.
-            var result = new BlobAccessLinkDto
+            BlobAccessLinkDto result = new()
             {
                 AccessLink = link
             };

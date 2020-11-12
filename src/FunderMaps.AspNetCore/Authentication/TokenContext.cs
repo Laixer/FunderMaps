@@ -5,16 +5,16 @@ namespace FunderMaps.AspNetCore.Authentication
     /// <summary>
     ///     Security token context.
     /// </summary>
-    public class TokenContext
+    public record TokenContext
     {
         /// <summary>
         ///     Security token as string.
         /// </summary>
-        public string TokenString { get; set; }
+        public string TokenString { get; init; }
 
         /// <summary>
         ///     Security token.
         /// </summary>
-        public SecurityToken Token { get; set; }
+        public SecurityToken Token { get; init; }
     }
 }

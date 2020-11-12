@@ -1,4 +1,4 @@
-using FunderMaps.Core.Exceptions;
+﻿using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -126,7 +126,7 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
 
             // If we conclude the exception as not one of TException then abort and
             // throw the exception upwards.
-            if (!(edi.SourceException is TException))
+            if (edi.SourceException is not TException)
             {
                 edi.Throw();
             }

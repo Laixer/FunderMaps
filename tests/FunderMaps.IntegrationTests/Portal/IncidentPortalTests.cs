@@ -1,4 +1,4 @@
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.AspNetCore.DataTransferObjects;
@@ -245,8 +245,8 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        public static IEnumerable<object[]> RegressionCreateInvalidEnumReturnBadRequestData
-            => new List<object[]>
+        public static List<object[]> RegressionCreateInvalidEnumReturnBadRequestData
+            => new()
             {
                 new object[]
                 {
@@ -290,7 +290,7 @@ namespace FunderMaps.IntegrationTests.Portal
                             (EnvironmentDamageCharacteristics)10000
                         })
                         .Generate()
-                },                
+                },
             };
 
         [Theory]

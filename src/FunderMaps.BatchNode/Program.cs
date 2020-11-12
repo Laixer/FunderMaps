@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
@@ -30,14 +29,6 @@ namespace FunderMaps.BatchNode
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureKestrel(options =>
-                    {
-                        // Setup HTTP/2 endpoint as default protocol.
-                        options.ConfigureEndpointDefaults(options =>
-                        {
-                            options.Protocols = HttpProtocols.Http2;
-                        });
-                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }

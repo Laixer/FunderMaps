@@ -24,7 +24,7 @@ namespace FunderMaps.Core.Services
 
         public Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task StoreFileAsync(string store, string name, Stream stream)

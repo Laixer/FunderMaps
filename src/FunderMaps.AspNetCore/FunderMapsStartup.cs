@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
@@ -55,7 +56,7 @@ namespace FunderMaps.AspNetCore
         ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="builder">Extend the instance of <see cref="IWebHostBuilder"/>.</param>
-        public void Configure(IWebHostBuilder builder)
+        public void Configure([DisallowNull] IWebHostBuilder builder)
         {
             builder.ConfigureServices(services =>
             {
