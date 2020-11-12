@@ -103,12 +103,14 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        schema_name,
-                        table_name,
-                        name
-                FROM    maplayer.layer
-                WHERE   id = @id
+                SELECT  -- Layer
+                        l.id,
+                        l.schema_name,
+                        l.table_name,
+                        l.name,
+                        l.markup
+                FROM    maplayer.layer AS l
+                WHERE   l.id = @id
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -128,14 +130,17 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 WITH layer_ids AS (
-	                SELECT (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
-	                FROM maplayer.bundle b 
-                    WHERE b.id = @id
+	                SELECT
+                            (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
+	                FROM    maplayer.bundle AS b
+                    WHERE   b.id = @id
                 )
-                SELECT  l.id,
+                SELECT  -- Layer
+                        l.id,
                         l.schema_name,
                         l.table_name,
-                        l.name
+                        l.name,
+                        l.markup
                 FROM    maplayer.layer AS l
                 JOIN    maplayer.bundle AS b ON l.id = ANY(
                             SELECT  layer_id 
@@ -165,11 +170,13 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        schema_name,
-                        table_name,
-                        name
-                FROM    maplayer.layer";
+                SELECT  -- Layer
+                        l.id,
+                        l.schema_name,
+                        l.table_name,
+                        l.name,
+                        l.markup
+                FROM    maplayer.layer AS l";
 
             ConstructNavigation(ref sql, navigation);
 
@@ -197,7 +204,8 @@ namespace FunderMaps.Data.Repositories
                     UPDATE  maplayer.layer
                     SET     schema_name = @schema_name,
                             table_name = @table_name,
-                            name = @name
+                            name = @name,
+                            markup = @markup
                     WHERE   id = @id";
 
             await using var context = await DbContextFactory(sql);
@@ -206,6 +214,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("schema_name", entity.SchemaName);
             context.AddParameterWithValue("table_name", entity.TableName);
             context.AddParameterWithValue("name", entity.Name);
+            context.AddJsonParameterWithValue("markup", entity.Markup);
 
             await context.NonQueryAsync();
         }
@@ -214,14 +223,14 @@ namespace FunderMaps.Data.Repositories
         ///     Maps a reader to a single <see cref="Layer"/>.
         /// </summary>
         /// <param name="reader"></param>
-        /// <returns></returns>
         private static Layer MapFromReader(DbDataReader reader)
             => new Layer
             {
                 Id = reader.GetGuid(0),
                 SchemaName = reader.GetString(1),
                 TableName = reader.GetString(2),
-                Name = reader.GetString(3)
+                Name = reader.GetString(3),
+                Markup = reader.GetFieldValue<object>(4),
             };
     }
 }

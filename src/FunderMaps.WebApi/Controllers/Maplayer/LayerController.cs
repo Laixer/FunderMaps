@@ -29,12 +29,11 @@ namespace FunderMaps.WebApi.Controllers.MapLayer
             _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
         }
 
-
         // GET: api/layer
         /// <summary>
         ///     Return all layers.
         /// </summary>
-        [HttpGet, ResponseCache(Duration = 60 * 60 * 24)]
+        [HttpGet, ResponseCache(Duration = 8 * 60 * 60)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
