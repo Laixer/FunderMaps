@@ -111,6 +111,8 @@ namespace FunderMaps.BatchNode.Command
                 throw new ProcessException(processInfo.FileName);
             }
 
+            File.WriteAllText($"{Context.Workspace}/{process.Id}", process.StartInfo.FileName);
+
             using var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
             using var stderrWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stderr");
 
@@ -131,6 +133,8 @@ namespace FunderMaps.BatchNode.Command
 
             stdoutWriter.Flush();
             stderrWriter.Flush();
+
+            File.WriteAllText($"{Context.Workspace}/{process.Id}.rtn", process.ExitCode.ToString());
 
             _logger.LogDebug($"Process exit with return code: {process.ExitCode}");
 
