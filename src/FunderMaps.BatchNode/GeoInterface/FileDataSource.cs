@@ -4,9 +4,9 @@ namespace FunderMaps.BatchNode.GeoInterface
 {
     internal class FileDataSource : DataSource
     {
-        public string PathPrefix { get; set; }
-        public string Name { get; set; }
-        public string Extension => VectorDatasetBuilder.ExportFormatTuple(Format).Item2;
+        public string PathPrefix { get; init; }
+        public string Name { get; init; }
+        public string Extension { get; init; }
         public string FileName => $"{Name}{Extension}";
 
         public override string ToString()

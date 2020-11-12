@@ -4,6 +4,7 @@ using System.Linq;
 using FunderMaps.BatchNode.Command;
 using FunderMaps.BatchNode.GeoInterface;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types.MapLayer;
 
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
@@ -12,6 +13,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     /// </summary>
     internal class BundleLayerSource : SqlLayerSource
     {
+        private const string GeomColumn = "geom";
+
         private readonly string layerOutputName;
 
         /// <summary>
@@ -19,8 +22,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// </summary>
         public BundleLayerSource(Bundle bundle, Layer layer)
         {
-            var configuration = bundle.LayerConfiguration.Layers.Where(x => x.LayerId == layer.Id).FirstOrDefault();
-            if (configuration == null)
+            if (bundle.LayerConfiguration.Layers.Where(x => x.LayerId == layer.Id).FirstOrDefault() is not LayerColumnPair configuration)
             {
                 // throw new LayerConfigurationException(nameof(bundle.LayerConfiguration.Layers));
                 throw new Exception();
@@ -28,10 +30,11 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             layerOutputName = layer.TableName;
 
-            IEnumerable<string> columns = new List<string>(configuration.ColumnNames);
-            if (!columns.Contains("geom"))
+            // Always include geometry column.
+            List<string> columns = new(configuration.ColumnNames);
+            if (!columns.Contains(GeomColumn))
             {
-                columns.Append("geom");
+                columns.Append(GeomColumn);
             }
 
             Query = $@"
