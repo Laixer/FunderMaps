@@ -81,7 +81,7 @@ namespace FunderMaps.Core.Threading
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
-            workerPoolHandle = new SemaphoreSlim(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
+            workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
             timer = new Timer(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
@@ -97,7 +97,7 @@ namespace FunderMaps.Core.Threading
         ///     no implementation can process the object, nothing happens.
         /// </remarks>
         /// <param name="name">The task name.</param>
-        /// <param name="value">The task payload.</param>
+        /// <param name="value">The task payload object.</param>
         /// <param name="delay">Optional task delay.</param>
         public ValueTask<Guid> EnqueueTaskAsync(string name, object value, TimeSpan? delay = null)
         {
@@ -106,7 +106,7 @@ namespace FunderMaps.Core.Threading
                 throw new ArgumentNullException(nameof(value));
             }
 
-            var bucket = new TaskBucket(_serviceProvider, value);
+            TaskBucket bucket = new(_serviceProvider, value);
 
             var isQueued = false;
             foreach (var backgroundTask in _serviceProvider.GetServices<BackgroundTask>())
@@ -124,7 +124,7 @@ namespace FunderMaps.Core.Threading
                 throw new UnhandledTaskException();
             }
 
-            return new ValueTask<Guid>(bucket.TaskId);
+            return new(bucket.TaskId);
         }
 
         /// <summary>
@@ -140,13 +140,13 @@ namespace FunderMaps.Core.Threading
                 throw new ArgumentNullException(nameof(value));
             }
 
-            var bucket = new TaskBucket(_serviceProvider, value)
+            TaskBucket bucket = new(_serviceProvider, value)
             {
                 BackgroundTask = ActivatorUtilities.CreateInstance<TTask>(_serviceProvider),
             };
 
             QueueTaskItem(bucket, delay);
-            return new ValueTask<Guid>(bucket.TaskId);
+            return new(bucket.TaskId);
         }
 
         /// <summary>
@@ -265,6 +265,7 @@ namespace FunderMaps.Core.Threading
                 }
             }
 
+            // Enqueue and remove anything overdue.
             workerQueueDelay.RemoveAll(b =>
             {
                 if (DateTime.Now >= b.Context.QueuedAt + b.Context.Delay)

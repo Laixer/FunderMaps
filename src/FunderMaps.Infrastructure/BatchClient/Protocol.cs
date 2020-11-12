@@ -10,7 +10,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <summary>
         ///     Protocol version.
         /// </summary>
-        public static int protocolVersion = 0xa1;
+        public const int protocolVersion = 0xa1;
 
         /// <summary>
         ///     Construct protocol header.
