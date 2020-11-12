@@ -103,13 +103,14 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        schema_name,
-                        table_name,
-                        name,
-                        markup
-                FROM    maplayer.layer
-                WHERE   id = @id
+                SELECT  -- Layer
+                        l.id,
+                        l.schema_name,
+                        l.table_name,
+                        l.name,
+                        l.markup
+                FROM    maplayer.layer AS l
+                WHERE   l.id = @id
                 LIMIT   1";
 
             await using var context = await DbContextFactory(sql);
@@ -129,11 +130,13 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 WITH layer_ids AS (
-	                SELECT (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
-	                FROM maplayer.bundle b 
-                    WHERE b.id = @id
+	                SELECT
+                            (jsonb_array_elements(layer_configuration ->'Layers')->>'LayerId')::uuid AS layer_id
+	                FROM    maplayer.bundle AS b
+                    WHERE   b.id = @id
                 )
-                SELECT  l.id,
+                SELECT  -- Layer
+                        l.id,
                         l.schema_name,
                         l.table_name,
                         l.name,
@@ -167,12 +170,13 @@ namespace FunderMaps.Data.Repositories
             }
 
             var sql = @"
-                SELECT  id,
-                        schema_name,
-                        table_name,
-                        name,
-                        markup
-                FROM    maplayer.layer";
+                SELECT  -- Layer
+                        l.id,
+                        l.schema_name,
+                        l.table_name,
+                        l.name,
+                        l.markup
+                FROM    maplayer.layer AS l";
 
             ConstructNavigation(ref sql, navigation);
 
