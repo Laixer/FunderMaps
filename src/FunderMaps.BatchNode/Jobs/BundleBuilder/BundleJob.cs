@@ -154,6 +154,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 await RunCommandAsync(command);
             }
 
+            _logger.LogTrace($"Start uploading exported bundle");
+
             await _blobStorageService.StoreDirectoryAsync(
                 directoryName: blobStoragePath,
                 directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
@@ -192,6 +194,8 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 .Build(formatProperty.FormatName);
 
             await RunCommandAsync(command);
+
+            _logger.LogTrace($"Start uploading exported bundle");
 
             await _blobStorageService.StoreDirectoryAsync(
                 directoryName: blobStoragePath,
