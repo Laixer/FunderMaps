@@ -60,7 +60,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 Format = GeometryFormat.GeoJSON,
                 FormatName = "GeoJSON",
                 FormatShortName = "JSON",
-                Extension = "..json",
+                Extension = ".json",
                 ContentType = "application/json",
             },
         };

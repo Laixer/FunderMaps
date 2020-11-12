@@ -28,7 +28,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 throw new Exception();
             }
 
-            layerOutputName = layer.TableName;
+            layerOutputName = layer.Slug;
 
             // Always include geometry column.
             List<string> columns = new(configuration.ColumnNames);

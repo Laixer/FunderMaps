@@ -8,21 +8,21 @@
         /// <summary>
         ///     Mapbox vector tiles.
         /// </summary>
-        MapboxVectorTiles,
+        MapboxVectorTiles = 0,
 
         /// <summary>
         ///     GeoPackage.
         /// </summary>
-        GeoPackage,
+        GeoPackage = 1,
 
         /// <summary>
         ///     ESRI Shapefile.
         /// </summary>
-        ESRIShapefile,
+        ESRIShapefile = 2,
 
         /// <summary>
         ///     GeoJSON.
         /// </summary>
-        GeoJSON,
+        GeoJSON = 3,
     }
 }
