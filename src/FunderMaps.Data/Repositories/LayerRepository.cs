@@ -106,7 +106,8 @@ namespace FunderMaps.Data.Repositories
                 SELECT  id,
                         schema_name,
                         table_name,
-                        name
+                        name,
+                        markup
                 FROM    maplayer.layer
                 WHERE   id = @id
                 LIMIT   1";
@@ -135,7 +136,8 @@ namespace FunderMaps.Data.Repositories
                 SELECT  l.id,
                         l.schema_name,
                         l.table_name,
-                        l.name
+                        l.name,
+                        l.markup
                 FROM    maplayer.layer AS l
                 JOIN    maplayer.bundle AS b ON l.id = ANY(
                             SELECT  layer_id 
@@ -168,7 +170,8 @@ namespace FunderMaps.Data.Repositories
                 SELECT  id,
                         schema_name,
                         table_name,
-                        name
+                        name,
+                        markup
                 FROM    maplayer.layer";
 
             ConstructNavigation(ref sql, navigation);
@@ -197,7 +200,8 @@ namespace FunderMaps.Data.Repositories
                     UPDATE  maplayer.layer
                     SET     schema_name = @schema_name,
                             table_name = @table_name,
-                            name = @name
+                            name = @name,
+                            markup = @markup
                     WHERE   id = @id";
 
             await using var context = await DbContextFactory(sql);
@@ -206,6 +210,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("schema_name", entity.SchemaName);
             context.AddParameterWithValue("table_name", entity.TableName);
             context.AddParameterWithValue("name", entity.Name);
+            context.AddJsonParameterWithValue("markup", entity.Markup);
 
             await context.NonQueryAsync();
         }
@@ -214,14 +219,14 @@ namespace FunderMaps.Data.Repositories
         ///     Maps a reader to a single <see cref="Layer"/>.
         /// </summary>
         /// <param name="reader"></param>
-        /// <returns></returns>
         private static Layer MapFromReader(DbDataReader reader)
             => new Layer
             {
                 Id = reader.GetGuid(0),
                 SchemaName = reader.GetString(1),
                 TableName = reader.GetString(2),
-                Name = reader.GetString(3)
+                Name = reader.GetString(3),
+                Markup = reader.GetFieldValue<object>(4),
             };
     }
 }

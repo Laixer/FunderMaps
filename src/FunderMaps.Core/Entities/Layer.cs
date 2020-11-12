@@ -40,6 +40,13 @@ namespace FunderMaps.Core.Entities
         [Required]
         public string Name { get; set; }
 
+        // FUTURE: Replace object with another entity
+        /// <summary>
+        ///     Frontend markup and styling.
+        /// </summary>
+        [Required]
+        public object Markup { get; set; }
+
         /// <summary>
         ///     Get the full class name including the schema, appended with an underscore.
         /// </summary>

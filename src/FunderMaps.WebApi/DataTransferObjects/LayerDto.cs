@@ -25,5 +25,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [Required]
         public string Name { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the markup for the bundle.
+        /// </summary>
+        public object Markup { get; set; }
     }
 }
