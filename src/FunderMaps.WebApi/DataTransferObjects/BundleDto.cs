@@ -26,11 +26,10 @@ namespace FunderMaps.WebApi.DataTransferObjects
         [Required]
         public Guid UserId { get; set; }
 
-
         /// <summary>
         ///     Bundle layer configuration.
         /// </summary>
-        public LayerConfiguration? LayerConfiguration { get; set; }
+        public LayerConfiguration LayerConfiguration { get; set; }
 
         /// <summary>
         ///     Bundle version identifier.
