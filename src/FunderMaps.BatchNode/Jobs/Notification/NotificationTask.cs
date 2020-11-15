@@ -7,6 +7,9 @@ using FunderMaps.Core.Threading;
 
 namespace FunderMaps.BatchNode.Jobs.Notification
 {
+    /// <summary>
+    ///     Base class to notification tasks.
+    /// </summary>
     public abstract class NotificationTask : BackgroundTask
     {
         private const string TaskName = "notification";
@@ -17,15 +20,14 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         /// <param name="context">Background task execution context.</param>
         public override async Task ExecuteAsync(BackgroundTaskContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var envelope = JsonSerializer.Deserialize<Envelope>(context.Value as string);
-            if (envelope == null)
+            if (JsonSerializer.Deserialize<Envelope>(context.Value as string) is not Envelope envelope)
             {
-                throw new ProtocolException();
+                throw new ProtocolException("Invalid envelope context");
             }
 
             await NotifyAsync(context, envelope);
@@ -39,12 +41,12 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
         {
-            if (!(name.ToLowerInvariant() == TaskName && value is string))
+            if (name is null || name.ToLowerInvariant() != TaskName || value is not string)
             {
                 return false;
             }
 
-            return JsonSerializer.Deserialize<Envelope>(value as string) != null;
+            return JsonSerializer.Deserialize<Envelope>(value as string) is not null;
         }
 
         /// <summary>
