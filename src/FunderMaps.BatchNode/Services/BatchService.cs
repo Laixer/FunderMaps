@@ -28,20 +28,14 @@ namespace FunderMaps.BatchNode
         }
 
         /// <summary>
-        ///     Enqueue an item onto our queue manager.
+        ///     Enqueue an item onto the queue and return with response.
         /// </summary>
-        /// <param name="request">The request object.</param>
+        /// <param name="request">The client request.</param>
         /// <param name="context">The call context.</param>
         /// <returns>Response object containing a task id.</returns>
         public override async Task<EnqueueResponse> Enqueue(EnqueueRequest request, ServerCallContext context)
         {
             if (request is null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
-            // TODO: This is a runtime err, maybe change ex
-            if (string.IsNullOrEmpty(request.Name))
             {
                 throw new ArgumentNullException(nameof(request));
             }
@@ -53,6 +47,11 @@ namespace FunderMaps.BatchNode
                 if (!Protocol.IsCompatible(request.Protocol))
                 {
                     throw new ProtocolException("Protocol version mismatch");
+                }
+
+                if (string.IsNullOrEmpty(request.Name))
+                {
+                    throw new ProtocolException("Task name is mandatory");
                 }
 
                 Guid taskid = await _dispatchManager.EnqueueTaskAsync(request.Name, request.Payload);
