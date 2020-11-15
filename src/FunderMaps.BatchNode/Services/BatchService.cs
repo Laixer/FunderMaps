@@ -48,7 +48,9 @@ namespace FunderMaps.BatchNode
 
             try
             {
-                if (request.Protocol.Version != Protocol.protocolVersion)
+                // If the other side communicates a protocol which is incompatible with ours then
+                // we won't be able to do anything. The request is halted and returns an error code.
+                if (!Protocol.IsCompatible(request.Protocol))
                 {
                     throw new ProtocolException("Protocol version mismatch");
                 }

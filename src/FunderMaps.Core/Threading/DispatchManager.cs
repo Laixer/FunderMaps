@@ -42,7 +42,7 @@ namespace FunderMaps.Core.Threading
             /// <summary>
             ///     Task runner context.
             /// </summary>
-            public BackgroundTaskContext Context { get; set; }
+            public BackgroundTaskContext Context { get; init; }
 
             /// <summary>
             ///     The task id.
@@ -83,7 +83,7 @@ namespace FunderMaps.Core.Threading
 
             workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
-            timer = new Timer(obj => LaunchWorker(), null,
+            timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
                 TimeSpan.FromMinutes(1));
         }

@@ -25,5 +25,11 @@ namespace FunderMaps.Infrastructure.BatchClient
                 UserAgent = userAgent,
                 ErrorCode = errorCode,
             };
+
+        /// <summary>
+        ///     Test if the protocol is compatible.
+        /// </summary>
+        public static bool IsCompatible(FunderMapsProtocol protocol)
+            => protocol.Version != Protocol.protocolVersion;
     }
 }
