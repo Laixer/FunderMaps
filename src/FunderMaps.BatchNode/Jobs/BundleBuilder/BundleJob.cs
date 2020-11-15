@@ -141,7 +141,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             foreach (var layer in layers)
             {
                 var command = new VectorDatasetBuilder(
-                    new VectorDatasetBuilderOptions
+                    new()
                     {
                         AdditionalOptions = formatProperty.CommandOptions,
                         Append = true,
@@ -184,7 +184,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             };
 
             var command = new VectorDatasetBuilder(
-                new VectorDatasetBuilderOptions
+                new()
                 {
                     AdditionalOptions = formatProperty.CommandOptions,
                     Overwrite = true,
@@ -224,7 +224,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             if (JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string) is not BundleBuildingContext bundleBuildingContext)
             {
-                throw new ProtocolException();
+                throw new ProtocolException("Invalid bundle building context");
             }
 
             if (bundleBuildingContext.Formats is null || !bundleBuildingContext.Formats.Any())

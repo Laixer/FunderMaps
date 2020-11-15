@@ -29,7 +29,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <param name="token">Canellation token.</param>
         public async Task EnqueueAsync(string name, object value, CancellationToken token = default)
         {
-            var request = new EnqueueRequest
+            EnqueueRequest request = new()
             {
                 Protocol = Protocol.BuildProtocol(UserAgent),
                 Name = name,
