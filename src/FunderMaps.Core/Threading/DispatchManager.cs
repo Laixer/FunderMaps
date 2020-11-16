@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -72,15 +72,14 @@ namespace FunderMaps.Core.Threading
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public DispatchManager(
-            IOptions<BackgroundWorkOptions> options,
-            ILogger<DispatchManager> logger,
-            IServiceProvider serviceProvider)
+        public DispatchManager(IOptions<BackgroundWorkOptions> options, ILogger<DispatchManager> logger, IServiceProvider serviceProvider)
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 
+            // NOTE: Add one more worker than configured. This will set the lower bound to 1
+            //       and will disalign the workers to CPU core ratio.
             workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
             timer = new(obj => LaunchWorker(), null,

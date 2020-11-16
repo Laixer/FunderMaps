@@ -12,7 +12,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         ///     Replaces all services in <see cref="IServiceCollection"/> with the same service type as descriptor
         ///     and adds descriptor to the collection. If the service is not found then a new descriptor is added
-        ///      to the <see cref="IServiceCollection"/>.
+        ///     to the <see cref="IServiceCollection"/>.
         /// </summary>
         public static IServiceCollection AddOrReplace<TService>(this IServiceCollection services, Func<IServiceProvider, object> implementationFactory, ServiceLifetime lifetime)
         {
