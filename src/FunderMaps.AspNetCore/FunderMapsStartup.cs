@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
@@ -12,7 +11,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
 namespace FunderMaps.AspNetCore
@@ -79,7 +77,7 @@ namespace FunderMaps.AspNetCore
                 //       related service is being resolved within the scope.
                 services.AddHttpContextAccessor();
 
-                AddAppContext(services);
+                services.AddOrReplace<Core.AppContext>(AppContextFactory, ServiceLifetime.Scoped);
 
                 services.AddHealthChecks()
                     .AddCheck<ApiHealthCheck>("api_health_check")
@@ -108,30 +106,6 @@ namespace FunderMaps.AspNetCore
                 User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
                 Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
             };
-        }
-
-        // FUTURE: Create a service replace method from this stub.
-        /// <summary>
-        ///     Replace the stock <see cref="AppContext"/> which an application context
-        ///     hooked on the ASP.NET Core framework. The integration couples front framework
-        ///     operations to the application core without imparing assemly dependencies.
-        /// </summary>
-        /// <param name="services">Collection of DI services.</param>
-        private IServiceCollection AddAppContext(IServiceCollection services)
-        {
-            var serviceDescriptor = new ServiceDescriptor(typeof(Core.AppContext), AppContextFactory, ServiceLifetime.Scoped);
-
-            var hasAppContextService = services.Any(d => d.ServiceType == typeof(Core.AppContext));
-            if (hasAppContextService)
-            {
-                services.Replace(serviceDescriptor);
-            }
-            else
-            {
-                services.Add(serviceDescriptor);
-            }
-
-            return services;
         }
     }
 }
