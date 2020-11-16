@@ -61,9 +61,10 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container
             //       in order for core services to be functional. This registration is
-            //       merely a placeholder. The front framework should setup the application
-            //       context.
-            services.TryAddScoped<FunderMaps.Core.AppContext>();
+            //       merely a placeholder. The front framework should bootstrap the application
+            //       context if possible.
+            services.AddSingleton<IAppContextFactory, AppContextFactory>();
+            services.AddScoped<FunderMaps.Core.AppContext>(sp => sp.GetRequiredService<IAppContextFactory>().Create());
 
             // Register core use cases in DI container.
             services.AddScoped<ProjectUseCase>();

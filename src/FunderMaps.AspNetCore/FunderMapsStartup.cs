@@ -6,10 +6,9 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
@@ -82,7 +81,7 @@ namespace FunderMaps.AspNetCore
                 //       related service is being resolved within the scope.
                 services.AddHttpContextAccessor();
 
-                services.AddOrReplace<Core.AppContext>(AppContextFactory, ServiceLifetime.Scoped);
+                services.AddOrReplace<IAppContextFactory, AspAppContextFactory>(ServiceLifetime.Singleton);
 
                 services.AddHealthChecks()
                     .AddCheck<ApiHealthCheck>("api_health_check")
@@ -91,26 +90,6 @@ namespace FunderMaps.AspNetCore
                     .AddCheck<EmailHealthCheck>("email_health_check")
                     .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check");
             });
-        }
-
-        // TODO: Move this into a singleton service.
-        private Core.AppContext AppContextFactory(IServiceProvider serviceProvider)
-        {
-            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            if (httpContextAccessor.HttpContext is null)
-            {
-                return new();
-            }
-
-            HttpContext httpContext = httpContextAccessor.HttpContext;
-            return new()
-            {
-                CancellationToken = httpContext.RequestAborted,
-                Items = new(httpContext.Items),
-                Cache = httpContext.RequestServices.GetRequiredService<IMemoryCache>(),
-                User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
-                Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
-            };
         }
     }
 }
