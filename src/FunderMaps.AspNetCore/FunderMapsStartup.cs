@@ -96,16 +96,15 @@ namespace FunderMaps.AspNetCore
             var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             if (httpContextAccessor.HttpContext is null)
             {
-                return new Core.AppContext();
+                return new();
             }
 
             HttpContext httpContext = httpContextAccessor.HttpContext;
-            return new Core.AppContext
+            return new()
             {
                 CancellationToken = httpContext.RequestAborted,
-                Items = new System.Collections.Generic.Dictionary<object, object>(httpContext.Items),
+                Items = new(httpContext.Items),
                 Cache = httpContext.RequestServices.GetRequiredService<IMemoryCache>(),
-                ServiceProvider = httpContext.RequestServices,
                 User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
                 Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
             };

@@ -19,11 +19,6 @@ namespace FunderMaps.Core
         public CancellationToken CancellationToken { get; init; } = CancellationToken.None;
 
         /// <summary>
-        ///     Gets or sets the service provider that provides access to the service container.
-        /// </summary>
-        public IServiceProvider ServiceProvider { get; init; }
-
-        /// <summary>
         ///     Gets or sets a key/value collection that can be used to share data within this scope.
         /// </summary>
         public Dictionary<object, object> Items { get; init; }
@@ -31,7 +26,7 @@ namespace FunderMaps.Core
         /// <summary>
         ///     Memory cache.
         /// </summary>
-        public IMemoryCache Cache { get; set; } // TODO: init
+        public IMemoryCache Cache { get; set; } // TODO: init  // TODO: remove
 
         /// <summary>
         ///     User identity.
