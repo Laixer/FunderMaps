@@ -56,6 +56,11 @@ namespace FunderMaps.AspNetCore
         /// <param name="builder">Extend the instance of <see cref="IWebHostBuilder"/>.</param>
         public void Configure([DisallowNull] IWebHostBuilder builder)
         {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             builder.ConfigureServices(services =>
             {
                 services.AddAutoMapper(mapper => ConfigureMapper(mapper));

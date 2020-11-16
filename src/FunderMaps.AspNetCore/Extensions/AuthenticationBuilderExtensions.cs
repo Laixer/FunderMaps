@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static AuthenticationBuilder AddJwtBearerTokenProvider(this AuthenticationBuilder authenticationBuilder)
         {
-            if (authenticationBuilder == null)
+            if (authenticationBuilder is null)
             {
                 throw new ArgumentNullException(nameof(authenticationBuilder));
             }

@@ -15,7 +15,7 @@ namespace FunderMaps.Extensions
         /// <param name="configuration">The configuration.</param>
         public static string GetJwtSigningKey(this IConfiguration configuration)
         {
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
@@ -29,7 +29,7 @@ namespace FunderMaps.Extensions
         /// <param name="configuration">The configuration.</param>
         public static string GetJwtIssuer(this IConfiguration configuration)
         {
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
@@ -43,7 +43,7 @@ namespace FunderMaps.Extensions
         /// <param name="configuration">The configuration.</param>
         public static string GetJwtAudience(this IConfiguration configuration)
         {
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
@@ -57,7 +57,7 @@ namespace FunderMaps.Extensions
         /// <param name="configuration">The configuration.</param>
         public static TimeSpan GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
         {
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
