@@ -27,17 +27,17 @@ namespace AutoMapper
             CancellationToken token = default)
             where TDestination : IEnumerable
         {
-            if (mapper == null)
+            if (mapper is null)
             {
                 throw new ArgumentNullException(nameof(mapper));
             }
 
-            if (enumerable == null)
+            if (enumerable is null)
             {
                 throw new ArgumentNullException(nameof(enumerable));
             }
 
-            ICollection<TEntity> entities = new Collection<TEntity>();
+            Collection<TEntity> entities = new();
             await foreach (var item in enumerable.WithCancellation(token))
             {
                 entities.Add(item);
