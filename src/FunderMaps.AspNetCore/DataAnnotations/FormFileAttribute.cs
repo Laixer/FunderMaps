@@ -26,7 +26,7 @@ namespace FunderMaps.AspNetCore.DataAnnotations
         ///     Create new instance.
         /// </summary>
         public FormFileAttribute(string mimeTypes)
-            => AllowedFileMimes = mimeTypes.Split(',').Select(s => s.Trim()).ToArray();
+            => AllowedFileMimes = mimeTypes?.Split(',').Select(s => s.Trim()).ToArray();
 
         /// <summary>
         ///     Returns true if the file is allowed and not empty.
@@ -34,10 +34,7 @@ namespace FunderMaps.AspNetCore.DataAnnotations
         /// <param name="value">The value to test for validity.</param>
         /// <returns><c>true</c> means the <paramref name="value" /> is valid</returns>
         public override bool IsValid(object value)
-        {
-            return value is null
-                || (value is IFormFile file && AllowedFileMimes.Contains(file.ContentType.ToLowerInvariant()) && file.Length > 0);
-        }
+            => value is null || (value is IFormFile file && AllowedFileMimes.Contains(file.ContentType.ToLowerInvariant()) && file.Length > 0);
 
         /// <summary>
         ///     Override of <see cref="ValidationAttribute.FormatErrorMessage" />

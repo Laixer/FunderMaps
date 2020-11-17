@@ -4,6 +4,7 @@ using FunderMaps.Core.Interfaces;
 using System.Threading.Tasks;
 using System.Threading;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.BatchClient
 {
     /// <summary>
@@ -49,3 +50,4 @@ namespace FunderMaps.Infrastructure.BatchClient
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated
