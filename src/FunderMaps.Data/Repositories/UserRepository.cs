@@ -156,7 +156,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Retrieve <see cref="User"/> by email and password hash.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="User"/>.</returns>
         public async ValueTask<User> GetByEmailAsync(string email)
         {

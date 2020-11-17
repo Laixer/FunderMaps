@@ -68,7 +68,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="Bundle"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity id.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
