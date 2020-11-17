@@ -34,7 +34,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 Format = GeometryFormat.MapboxVectorTiles,
                 FormatName = "MVT",
                 FormatShortName = "MVT",
-                CommandOptions = "-dsco MINZOOM=13 -dsco MAXZOOM=16 -dsco COMPRESS=NO",
+                CommandOptions = "-dsco MINZOOM=13 -dsco MAXZOOM=16 -dsco COMPRESS=NO -dsco MAX_SIZE=25000000",
                 ContentType = "application/x-protobuf",
             },
             new FormatProperty
@@ -132,8 +132,17 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 Name = bundle.Id.ToString(),
             };
 
+            int returnCode = 0;
             foreach (var layer in layers)
             {
+                // NOTE: Only check the return code in the next iteration. We cannot append to an
+                //       invalid dataset, however we can continue if only the last layer failed to
+                //       complete.
+                if (returnCode != 0)
+                {
+                    throw new Exception("Last layer command failed, refuse to continue");
+                }
+
                 var command = new VectorDatasetBuilder(
                     new()
                     {
@@ -145,7 +154,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                     .OutputDataset(fileDump)
                     .Build(formatProperty.FormatName);
 
-                await RunCommandAsync(command);
+                returnCode = await RunCommandAsync(command);
             }
 
             _logger.LogTrace($"Start uploading exported bundle");
