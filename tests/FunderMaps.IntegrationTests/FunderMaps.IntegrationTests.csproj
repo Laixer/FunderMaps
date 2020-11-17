@@ -6,10 +6,6 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>$(SolutionDir)DocumentationFunderMapsIntegrationTests.xml</DocumentationFile>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Bogus" Version="31.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.0" />
