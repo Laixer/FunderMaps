@@ -30,19 +30,29 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             layerOutputName = layer.Slug;
 
-            // Always include geometry column.
-            List<string> columns = new(configuration.ColumnNames);
-            if (!columns.Contains(GeomColumn))
+            if (configuration.ColumnNames.Any() && configuration.ColumnNames.First() != "*")
             {
-                columns.Append(GeomColumn);
-            }
+                // Always include geometry column.
+                List<string> columns = new(configuration.ColumnNames);
+                if (!columns.Contains(GeomColumn))
+                {
+                    columns.Add(GeomColumn);
+                }
 
-            Query = $@"
-                SELECT
-                    {string.Join(',', columns.Select(c => $"s.{c}"))}
-                FROM {layer.SchemaName}.{layer.TableName} AS s
-                JOIN application.organization AS o ON o.id = '{bundle.OrganizationId}'
-                WHERE ST_Intersects(o.fence, s.geom)";
+                Query = $@"
+                    SELECT  {string.Join(',', columns.Select(c => $"s.{c}"))}
+                    FROM    {layer.SchemaName}.{layer.TableName} AS s
+                    JOIN    application.organization AS o ON o.id = '{bundle.OrganizationId}'
+                    WHERE   ST_Intersects(o.fence, s.geom)";
+            }
+            else
+            {
+                Query = $@"
+                    SELECT  *
+                    FROM    {layer.SchemaName}.{layer.TableName} AS s
+                    JOIN    application.organization AS o ON o.id = '{bundle.OrganizationId}'
+                    WHERE   ST_Intersects(o.fence, s.geom)";
+            }
         }
 
         public override void Imbue(CommandInfo commandInfo)

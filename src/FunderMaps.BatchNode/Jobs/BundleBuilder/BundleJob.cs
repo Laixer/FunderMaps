@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.Exceptions;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
     /// <summary>
@@ -259,3 +260,4 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             => name is not null && name.ToLowerInvariant() == TaskName && value is string;
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated
