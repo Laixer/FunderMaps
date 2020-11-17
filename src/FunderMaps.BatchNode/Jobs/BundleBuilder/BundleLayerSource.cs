@@ -14,6 +14,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     internal class BundleLayerSource : SqlLayerSource
     {
         private const string GeomColumn = "geom";
+        private const string SelectWildcard = "*";
 
         private readonly string layerOutputName;
 
@@ -30,17 +31,19 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             layerOutputName = layer.Slug;
 
+            // Select layer field as follows:
+            // - If no column is specified then select everything from the layer
+            // - If wildcard is found, then only use wildcard.
+            // - If no geometry column was found, then add one.
             List<string> columns = new(configuration.ColumnNames);
             if (columns.Count == 0)
             {
-                columns.Add("*");
+                columns.Add(SelectWildcard);
             }
-            // If wildcard is found, then only use wildcard.
-            else if (columns.Contains("*"))
+            else if (columns.Contains(SelectWildcard))
             {
-                columns = new List<string> { "*" };
+                columns = new List<string> { SelectWildcard };
             }
-            // Always include geometry column.
             else if (!columns.Contains(GeomColumn))
             {
                 columns.Add(GeomColumn);
