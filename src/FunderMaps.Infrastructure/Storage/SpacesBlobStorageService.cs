@@ -112,7 +112,7 @@ namespace FunderMaps.Infrastructure.Storage
         }
 
         /// <summary>
-        ///     Stores a file in a Digital Ocean Space.
+        ///     Stores a file.
         /// </summary>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
@@ -137,7 +137,7 @@ namespace FunderMaps.Infrastructure.Storage
 
         // FUTURE: Refactor
         /// <summary>
-        ///     Stores a file in a Digital Ocean Space.
+        ///     Stores a file.
         /// </summary>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
@@ -149,7 +149,7 @@ namespace FunderMaps.Infrastructure.Storage
         {
             try
             {
-                var request = new TransferUtilityUploadRequest
+                TransferUtilityUploadRequest request = new()
                 {
                     BucketName = _options.BlobStorageName,
                     ContentType = contentType,
@@ -157,7 +157,7 @@ namespace FunderMaps.Infrastructure.Storage
                     InputStream = stream,
                 };
 
-                if (storageObject != null)
+                if (storageObject is not null)
                 {
                     request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
                     request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
@@ -166,7 +166,7 @@ namespace FunderMaps.Infrastructure.Storage
                     request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
                 }
 
-                using var transferUtility = new TransferUtility(client);
+                using TransferUtility transferUtility = new(client);
                 await transferUtility.UploadAsync(request);
             }
             catch (AmazonS3Exception e)
@@ -179,7 +179,7 @@ namespace FunderMaps.Infrastructure.Storage
 
         // FUTURE: Refactor
         /// <summary>
-        ///     Stores a file in a Digital Ocean Space.
+        ///     Stores a file.
         /// </summary>
         /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
         /// <param name="directoryPath">Source directory.</param>
