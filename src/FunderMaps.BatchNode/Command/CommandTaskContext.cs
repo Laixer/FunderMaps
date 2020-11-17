@@ -6,7 +6,7 @@ namespace FunderMaps.BatchNode.Command
     /// <summary>
     ///     Context for executing a background task.
     /// </summary>
-    public class CommandTaskContext : BackgroundTaskContext
+    public record CommandTaskContext : BackgroundTaskContext
     {
         /// <summary>
         ///     Workspace directory

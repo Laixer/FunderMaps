@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Threading
     /// <summary>
     ///     Context for executing a background task.
     /// </summary>
-    public class BackgroundTaskContext
+    public record BackgroundTaskContext
     {
         /// <summary>
         ///     The cancellation token.
@@ -21,22 +21,17 @@ namespace FunderMaps.Core.Threading
         /// <summary>
         ///     The object to process, if any.
         /// </summary>
-        public object Value { get; set; }
+        public object Value { get; init; }
 
         /// <summary>
         ///     Time at which the job was queued.
         /// </summary>
-        public DateTime QueuedAt { get; set; }
+        public DateTime QueuedAt { get; init; }
 
         /// <summary>
         ///     Time at which the job started execution.
         /// </summary>
         public DateTime StartedAt { get; set; }
-
-        /// <summary>
-        ///     Time at which the job finished.
-        /// </summary>
-        public DateTime FinishedAt { get; set; }
 
         /// <summary>
         ///     Delay the task.
@@ -49,16 +44,9 @@ namespace FunderMaps.Core.Threading
         public int RetryCount { get; set; }
 
         /// <summary>
-        ///     Reference to the dispatch manager.
-        /// </summary>
-        public WeakReference<DispatchManager> DispatchManager { get; set; }
-
-        /// <summary>
         ///     Create new instance.
         /// </summary>
         public BackgroundTaskContext(Guid taskId)
-        {
-            Id = taskId;
-        }
+            => Id = taskId;
     }
 }

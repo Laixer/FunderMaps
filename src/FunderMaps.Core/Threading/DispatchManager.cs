@@ -68,9 +68,14 @@ namespace FunderMaps.Core.Threading
                     throw new QueueOverflowException();
                 }
 
-                taskBucket.Context.Delay = delay.Value;
-                taskBucket.Context.QueuedAt = DateTime.Now;
-                workerQueueDelay.Add(taskBucket);
+                workerQueueDelay.Add(taskBucket with
+                {
+                    Context = taskBucket.Context with
+                    {
+                        Delay = delay.Value,
+                        QueuedAt = DateTime.Now
+                    }
+                });
             }
             else
             {
@@ -79,8 +84,13 @@ namespace FunderMaps.Core.Threading
                     throw new QueueOverflowException();
                 }
 
-                taskBucket.Context.QueuedAt = DateTime.Now;
-                workerQueue.Enqueue(taskBucket);
+                workerQueue.Enqueue(taskBucket with
+                {
+                    Context = taskBucket.Context with
+                    {
+                        QueuedAt = DateTime.Now
+                    }
+                });
             }
 
             _logger.LogInformation($"Queue background task {taskBucket.TaskId}");
@@ -127,7 +137,7 @@ namespace FunderMaps.Core.Threading
                             ? TimeSpan.FromMinutes(15)
                             : _options.TimeoutDelay);
 
-                        BackgroundTask backgroundTask = services.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
+                        var backgroundTask = services.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
 
                         try
@@ -136,7 +146,6 @@ namespace FunderMaps.Core.Threading
 
                             context.StartedAt = DateTime.Now;
                             context.CancellationToken = cts.Token;
-                            context.DispatchManager = new WeakReference<DispatchManager>(this);
 
                             await backgroundTask.ExecuteAsync(context);
                         }

@@ -203,10 +203,8 @@ namespace FunderMaps.BatchNode.Command
                 Value = context.Value,
                 QueuedAt = context.QueuedAt,
                 StartedAt = context.StartedAt,
-                FinishedAt = context.FinishedAt,
                 Delay = context.Delay,
                 RetryCount = context.RetryCount,
-                DispatchManager = context.DispatchManager,
                 KeepWorkspace = false,
             };
 
