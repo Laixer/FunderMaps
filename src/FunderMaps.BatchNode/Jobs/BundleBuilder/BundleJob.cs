@@ -157,7 +157,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 returnCode = await RunCommandAsync(command);
             }
 
-            _logger.LogTrace($"Start uploading exported bundle");
+            Logger.LogTrace($"Start uploading exported bundle");
 
             await _blobStorageService.StoreDirectoryAsync(
                 directoryName: blobStoragePath,
@@ -168,7 +168,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                     IsPublic = true,
                 });
 
-            _logger.LogInformation($"Export of format {formatProperty.FormatName} done");
+            Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
 
             return fileDump;
         }
@@ -198,7 +198,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             await RunCommandAsync(command);
 
-            _logger.LogTrace($"Start uploading exported bundle");
+            Logger.LogTrace($"Start uploading exported bundle");
 
             await _blobStorageService.StoreDirectoryAsync(
                 directoryName: blobStoragePath,
@@ -209,7 +209,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                     IsPublic = true,
                 });
 
-            _logger.LogInformation($"Export of format {formatProperty.FormatName} done");
+            Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
 
             return fileDump;
         }
@@ -232,7 +232,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
             if (bundleBuildingContext.Formats is null || !bundleBuildingContext.Formats.Any())
             {
-                _logger.LogWarning("No formats listed for export");
+                Logger.LogWarning("No formats listed for export");
                 return;
             }
 

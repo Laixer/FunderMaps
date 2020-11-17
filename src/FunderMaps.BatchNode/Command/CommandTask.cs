@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace FunderMaps.BatchNode.Command
         /// <summary>
         ///     Represents a type used to perform logging.
         /// </summary>
-        protected readonly ILogger _logger;
+        protected ILogger Logger { get; private set; }
 
         /// <summary>
         ///     Command context.
@@ -34,7 +35,7 @@ namespace FunderMaps.BatchNode.Command
         ///     Create new instance.
         /// </summary>
         public CommandTask(ILogger logger)
-            => _logger = logger;
+            => Logger = logger;
 
         /// <summary>
         ///     Run command in workspace.
@@ -51,8 +52,8 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="arguments">Optional command arguments.</param>
         public int RunCommand(string fileName, string arguments = null)
         {
-            var command = new CommandInfo(fileName);
-            if (arguments != null)
+            CommandInfo command = new(fileName);
+            if (arguments is not null)
             {
                 foreach (var argument in arguments.Split(" "))
                 {
@@ -75,7 +76,12 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="commandInfo">Command descriptor.</param>
         protected int RunCommand(CommandInfo commandInfo)
         {
-            var processInfo = new ProcessStartInfo
+            if (commandInfo is null)
+            {
+                throw new ArgumentNullException(nameof(commandInfo));
+            }
+
+            ProcessStartInfo processInfo = new()
             {
                 FileName = commandInfo.FileName,
                 WorkingDirectory = Context.Workspace,
@@ -103,10 +109,10 @@ namespace FunderMaps.BatchNode.Command
                 processInfo.Environment.Add(environmentVariable);
             }
 
-            _logger.LogDebug("Start system process");
+            Logger.LogDebug("Start system process");
 
-            using var process = System.Diagnostics.Process.Start(processInfo);
-            if (process == null)
+            using var process = Process.Start(processInfo);
+            if (process is null)
             {
                 throw new ProcessException(processInfo.FileName);
             }
@@ -127,7 +133,7 @@ namespace FunderMaps.BatchNode.Command
                 process.Kill(entireProcessTree: true);
             });
 
-            _logger.LogDebug("Wait for process to exit");
+            Logger.LogDebug("Wait for process to exit");
 
             process.WaitForExit();
 
@@ -136,7 +142,7 @@ namespace FunderMaps.BatchNode.Command
 
             File.WriteAllText($"{Context.Workspace}/{process.Id}.rtn", process.ExitCode.ToString());
 
-            _logger.LogDebug($"Process exit with return code: {process.ExitCode}");
+            Logger.LogDebug($"Process exit with return code: {process.ExitCode}");
 
             return process.ExitCode;
         }
@@ -157,7 +163,12 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="context">Command task execution context.</param>
         public virtual async Task SetupAsync(CommandTaskContext context)
         {
-            _logger.LogDebug("Setup workspace for job");
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            Logger.LogDebug("Setup workspace for job");
 
             context.Workspace = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(context.Workspace);
@@ -167,7 +178,7 @@ namespace FunderMaps.BatchNode.Command
             await File.Create($"{context.Workspace}/.lock").DisposeAsync();
             await File.WriteAllTextAsync($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
 
-            _logger.LogTrace($"Workspace: {context.Workspace}");
+            Logger.LogTrace($"Workspace: {context.Workspace}");
         }
 
         /// <summary>
@@ -176,11 +187,16 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="context">Command task execution context.</param>
         public virtual Task TeardownAsync(CommandTaskContext context)
         {
-            _logger.LogDebug("Teardown workspace for job");
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
+            Logger.LogDebug("Teardown workspace for job");
 
             if (!context.KeepWorkspace)
             {
-                _logger.LogTrace("Workspace directory is not kept");
+                Logger.LogTrace("Workspace directory is not kept");
 
                 Directory.Delete(context.Workspace, recursive: true);
             }
@@ -194,6 +210,11 @@ namespace FunderMaps.BatchNode.Command
         /// <param name="context">Background task execution context.</param>
         public override async Task ExecuteAsync(BackgroundTaskContext context)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             // We always want to yield for the async state machine.
             await Task.Yield();
 

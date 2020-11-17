@@ -13,11 +13,11 @@ namespace FunderMaps.BatchNode.GeoInterface
         /// <summary>
         ///     Overwrite current file if exist in the output.
         /// </summary>
-        public bool Overwrite { get; init; } = false;
+        public bool Overwrite { get; init; }
 
         /// <summary>
         ///     Append to current file if exist.
         /// </summary>
-        public bool Append { get; init; } = false;
+        public bool Append { get; init; }
     }
 }
