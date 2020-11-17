@@ -20,7 +20,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
         {
+            services.AddScoped<BackgroundTaskScopedDispatcher>();
             services.AddSingleton<DispatchManager>();
+            services.AddTransient<BackgroundTaskDispatcher>();
             // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
             services.Configure<BackgroundWorkOptions>(options =>
             {

@@ -15,15 +15,15 @@ namespace FunderMaps.BatchNode
     {
         private const string UserAgent = "FunderMaps.BatchNode";
 
-        private readonly DispatchManager _dispatchManager;
+        private readonly BackgroundTaskScopedDispatcher _backgroundTaskDispatcher;
         private readonly ILogger<BatchService> _logger;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BatchService(DispatchManager dispatchManager, ILogger<BatchService> logger)
+        public BatchService(BackgroundTaskScopedDispatcher backgroundTaskDispatcher, ILogger<BatchService> logger)
         {
-            _dispatchManager = dispatchManager ?? throw new ArgumentNullException(nameof(dispatchManager));
+            _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -54,7 +54,7 @@ namespace FunderMaps.BatchNode
                     throw new ProtocolException("Task name is mandatory");
                 }
 
-                Guid taskid = await _dispatchManager.EnqueueTaskAsync(request.Name, request.Payload);
+                Guid taskid = await _backgroundTaskDispatcher.EnqueueTaskAsync(request.Name, request.Payload);
 
                 return new()
                 {
@@ -64,7 +64,7 @@ namespace FunderMaps.BatchNode
             }
             catch (FunderMapsCoreException e)
             {
-                _logger.LogError(e, "Exception occred while processing the request");
+                _logger.LogError(e, "Exception occred while queueing the task");
 
                 return new()
                 {

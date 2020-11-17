@@ -13,6 +13,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static IServiceCollection AddBatchJob<TBatchJob>(this IServiceCollection services)
         {
+            services.AddTransient(typeof(TBatchJob));
             services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(TBatchJob)));
 
             return services;

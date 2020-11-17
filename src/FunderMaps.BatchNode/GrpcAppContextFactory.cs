@@ -19,26 +19,12 @@ namespace FunderMaps.AspNetCore
             => (_httpContextAccessor, _memoryCache) = (httpContextAccessor, memoryCache);
 
         /// <summary>
-        ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.
+        ///     Create the <see cref="Core.AppContext"/>.
         /// </summary>
-        /// <remarks>
-        ///     The HTTP context accessor is a singleton provided by the ASP.NET framework. The singleton
-        ///     offers access to the <see cref="HttpContext"/> within the current scope. There does not
-        ///     have to be an active scope, in which case the accessor returns null on the
-        ///     <see cref="HttpContext"/> request. If the aforementioned HTTP context accessor is null then
-        ///     we'll return an empty <see cref="Core.AppContext"/>.
-        /// </remarks>
         public override Core.AppContext Create()
         {
-            if (_httpContextAccessor.HttpContext is not HttpContext httpContext)
-            {
-                return new();
-            }
-
             return new()
             {
-                CancellationToken = httpContext.RequestAborted,
-                Items = new(httpContext.Items),
                 Cache = _memoryCache, // TODO: Remove
             };
         }

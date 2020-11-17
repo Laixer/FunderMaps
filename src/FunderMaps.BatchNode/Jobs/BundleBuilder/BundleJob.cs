@@ -9,7 +9,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.Exceptions;
@@ -27,8 +26,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
         protected readonly IBlobStorageService _blobStorageService;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IServiceScope _scope;
 
         private static readonly FormatProperty[] exportFormats =
         {
@@ -107,22 +104,18 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleJob(IServiceScopeFactory serviceScopeFactory,
+        public BundleJob(
+            IConfiguration configuration,
+            IBundleRepository bundleRepository,
+            ILayerRepository layerRepository,
+            IBlobStorageService blobStorageService,
             ILogger<BundleJob> logger)
             : base(logger)
         {
-            _serviceScopeFactory = serviceScopeFactory;
-            _scope = _serviceScopeFactory.CreateScope();
+            _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
+            _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
 
-            // FUTURE: From injection scope
-            var ctx = _scope.ServiceProvider.GetRequiredService<Core.AppContext>();
-            ctx.Cache = _scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Caching.Memory.IMemoryCache>();
-
-            _bundleRepository = _scope.ServiceProvider.GetService<IBundleRepository>();
-            _layerRepository = _scope.ServiceProvider.GetService<ILayerRepository>();
-            _blobStorageService = _scope.ServiceProvider.GetService<IBlobStorageService>();
-
-            var configuration = _scope.ServiceProvider.GetRequiredService<IConfiguration>();
             connectionString = configuration.GetConnectionString("FunderMapsConnection");
         }
 
