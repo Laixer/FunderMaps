@@ -54,7 +54,12 @@ namespace FunderMaps.BatchNode
                     throw new ProtocolException("Task name is mandatory");
                 }
 
+                _logger.LogTrace("Submit task via dispatcher");
+
                 Guid taskid = await _backgroundTaskDispatcher.EnqueueTaskAsync(request.Name, request.Payload);
+
+                _logger.LogTrace("Dispatcher enqueued task with success");
+                _logger.LogTrace($"Task ID {taskid}");
 
                 return new()
                 {
