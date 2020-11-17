@@ -20,6 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
         {
+            // TODO: Read from config
             services.AddScoped<BackgroundTaskScopedDispatcher>();
             services.AddSingleton<DispatchManager>();
             services.AddTransient<BackgroundTaskDispatcher>();
@@ -59,7 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
         {
-            if (services == null)
+            if (services is not IServiceCollection)
             {
                 throw new ArgumentNullException(nameof(services));
             }

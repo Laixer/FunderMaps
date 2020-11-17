@@ -35,12 +35,13 @@ namespace FunderMaps.Core.Threading
         /// </summary>
         public DispatchManager(IOptions<BackgroundWorkOptions> options, ILogger<DispatchManager> logger, IServiceScopeFactory serviceScopeFactory)
         {
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
             // NOTE: Add one more worker than configured. This will set the lower bound to 1
-            //       and will disalign the workers to CPU core ratio.
+            //       and will misalign the number of workers to CPU core ratio. Doing so will
+            //       keep a single core free for other computation.
             workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
             timer = new(obj => LaunchWorker(), null,
@@ -103,6 +104,8 @@ namespace FunderMaps.Core.Threading
         /// </remarks>
         private void LaunchWorker()
         {
+            const int sleepAfterEachJobInMs = 250;
+
             // Run as long as there are items on the queue.
             async Task WorkerDelegate()
             {
@@ -154,7 +157,7 @@ namespace FunderMaps.Core.Threading
 
                             _logger.LogInformation($"Finished background task {context.Id} in {Math.Round(runningTime.TotalSeconds)}s");
 
-                            await Task.Delay(250);
+                            await Task.Delay(sleepAfterEachJobInMs);
                         }
                     }
                 }
