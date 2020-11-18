@@ -25,10 +25,8 @@ namespace FunderMaps.AspNetCore.HealthChecks
         /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
         /// <returns>Instance of <see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-        {
-            return await _testRepository.IsAlive()
+            => await _testRepository.IsAlive()
                 ? HealthCheckResult.Healthy()
                 : HealthCheckResult.Unhealthy();
-        }
     }
 }
