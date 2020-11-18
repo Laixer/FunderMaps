@@ -30,7 +30,13 @@ namespace FunderMaps.AspNetCore.HealthChecks
         {
             var request = _httpContextAccessor.HttpContext.Request;
 
-            using var client = new HttpClient();
+            // Only check the API over a remote connection.
+            if (request.Host.Host is "localhost" or "127.0.0.1" or "::")
+            {
+                return HealthCheckResult.Healthy();
+            }
+
+            using HttpClient client = new();
             using var response = await client.GetAsync(new Uri($"{request.Scheme}://{request.Host}/api/version"), cancellationToken);
 
             return response.IsSuccessStatusCode

@@ -1,22 +1,22 @@
 using System.Threading;
 using System.Threading.Tasks;
-using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace FunderMaps.AspNetCore.HealthChecks
 {
     /// <summary>
-    ///     Check if the data backend is alive.
+    ///     Check if the batch backend is alive.
     /// </summary>
-    public class RepositoryHealthCheck : IHealthCheck
+    public class BatchHealthCheck : IHealthCheck
     {
-        private readonly ITestRepository _testRepository;
+        private readonly IBatchService _batchService;
 
         /// <summary>
         ///     Create a new instance.
         /// </summary>
-        public RepositoryHealthCheck(ITestRepository testRepository)
-            => _testRepository = testRepository;
+        public BatchHealthCheck(IBatchService batchService)
+            => _batchService = batchService;
 
         /// <summary>
         ///     Runs the health check, returning the status of the component being checked.
@@ -25,8 +25,10 @@ namespace FunderMaps.AspNetCore.HealthChecks
         /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
         /// <returns>Instance of <see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-            => await _testRepository.IsAlive()
-                ? HealthCheckResult.Healthy()
-                : HealthCheckResult.Unhealthy();
+        {
+            // Operation throws if an error occurs.
+            await _batchService.TestService();
+            return HealthCheckResult.Healthy();
+        }
     }
 }

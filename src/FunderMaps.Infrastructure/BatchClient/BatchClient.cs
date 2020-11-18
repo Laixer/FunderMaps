@@ -3,6 +3,7 @@ using FunderMaps.BatchNode;
 using FunderMaps.Core.Interfaces;
 using System.Threading.Tasks;
 using System.Threading;
+using System;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.BatchClient
@@ -28,7 +29,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <param name="name">Name of task to run.</param>
         /// <param name="value">Task payload.</param>
         /// <param name="token">Canellation token.</param>
-        public async Task EnqueueAsync(string name, object value, CancellationToken token = default)
+        public async Task<Guid> EnqueueAsync(string name, object value = null, CancellationToken token = default)
         {
             EnqueueRequest request = new()
             {
@@ -38,15 +39,16 @@ namespace FunderMaps.Infrastructure.BatchClient
             };
 
             var client = new Batch.BatchClient(_channelFactory.RemoteChannel);
-            await client.EnqueueAsync(request, null, null, token);
+            EnqueueResponse response = await client.EnqueueAsync(request, null, null, token);
+            return Guid.Parse(response.TaskId);
         }
 
         /// <summary>
         ///     Test the batch service backend.
         /// </summary>
-        public Task TestService()
+        public async Task TestService()
         {
-            throw new System.NotImplementedException();
+            await EnqueueAsync("foobar");
         }
     }
 }

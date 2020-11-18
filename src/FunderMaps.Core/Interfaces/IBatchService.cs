@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,7 +15,8 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="name">Name of task to run.</param>
         /// <param name="value">Task payload.</param>
         /// <param name="token">Canellation token.</param>
-        Task EnqueueAsync(string name, object value, CancellationToken token = default);
+        /// <returns>Task identifier if task was enqueued.</returns>
+        Task<Guid> EnqueueAsync(string name, object value, CancellationToken token = default);
 
         /// <summary>
         ///     Test the batch service backend.
