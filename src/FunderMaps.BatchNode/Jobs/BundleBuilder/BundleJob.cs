@@ -34,7 +34,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 Format = GeometryFormat.MapboxVectorTiles,
                 FormatName = "MVT",
                 FormatShortName = "MVT",
-                CommandOptions = "-dsco MINZOOM=13 -dsco MAXZOOM=16 -dsco COMPRESS=NO -dsco MAX_SIZE=25000000",
+                CommandOptions = "-dsco MINZOOM=14 -dsco MAXZOOM=16 -dsco COMPRESS=NO -dsco MAX_SIZE=25000000",
                 ContentType = "application/x-protobuf",
             },
             new FormatProperty
