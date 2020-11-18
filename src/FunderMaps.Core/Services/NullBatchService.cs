@@ -1,4 +1,5 @@
 using FunderMaps.Core.Interfaces;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,9 +11,9 @@ namespace FunderMaps.Core.Services
     /// </summary>
     internal class NullBatchService : IBatchService
     {
-        public Task EnqueueAsync(string name, object value, CancellationToken token = default)
+        public Task<Guid> EnqueueAsync(string name, object value, CancellationToken token = default)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(Guid.NewGuid());
         }
 
         public Task TestService()
