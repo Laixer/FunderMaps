@@ -88,7 +88,8 @@ namespace FunderMaps.AspNetCore
                     .AddCheck<IOHealthCheck>("io_health_check")
                     .AddCheck<RepositoryHealthCheck>("data_health_check")
                     .AddCheck<EmailHealthCheck>("email_health_check")
-                    .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check");
+                    .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check")
+                    .AddCheck<BatchHealthCheck>("batch_health_check");
             });
         }
     }
