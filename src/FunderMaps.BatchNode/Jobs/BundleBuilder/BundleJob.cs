@@ -9,11 +9,11 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.Exceptions;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 {
     /// <summary>
@@ -26,31 +26,192 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
         protected readonly IBlobStorageService _blobStorageService;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IServiceScope _scope;
+
+        private static readonly FormatProperty[] exportFormats =
+        {
+            new FormatProperty
+            {
+                Format = GeometryFormat.MapboxVectorTiles,
+                FormatName = "MVT",
+                FormatShortName = "MVT",
+                CommandOptions = "-dsco MINZOOM=13 -dsco MAXZOOM=16 -dsco COMPRESS=NO -dsco MAX_SIZE=25000000",
+                ContentType = "application/x-protobuf",
+            },
+            new FormatProperty
+            {
+                Format = GeometryFormat.GeoPackage,
+                FormatName = "GPKG",
+                FormatShortName = "GPKG",
+                Extension = ".gpkg",
+                ContentType = "application/vnd.sqlite3",
+            },
+            new FormatProperty
+            {
+                Format = GeometryFormat.ESRIShapefile,
+                FormatName = "ESRI Shapefile",
+                FormatShortName = "SHP",
+                Extension = ".shp",
+                ContentType = "x-gis/x-shapefile",
+            },
+            new FormatProperty
+            {
+                Format = GeometryFormat.GeoJSON,
+                FormatName = "GeoJSON",
+                FormatShortName = "JSON",
+                Extension = ".json",
+                ContentType = "application/json",
+            },
+        };
 
         private string connectionString;
 
         /// <summary>
+        ///     Geometry format properties.
+        /// </summary>
+        record FormatProperty
+        {
+            /// <summary>
+            ///     Geometry format.
+            /// </summary>
+            public GeometryFormat Format { get; init; }
+
+            /// <summary>
+            ///     Format name as used in system calls.
+            /// </summary>
+            public string FormatName { get; init; }
+
+            /// <summary>
+            ///     Format short name used in directories.
+            /// </summary>
+            public string FormatShortName { get; init; }
+
+            /// <summary>
+            ///     Format file extension.
+            /// </summary>
+            public string Extension { get; init; }
+
+            /// <summary>
+            ///     Format dataset options.
+            /// </summary>
+            public string CommandOptions { get; init; }
+
+            /// <summary>
+            ///     Format file content type.
+            /// </summary>
+            public string ContentType { get; init; }
+        }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleJob(IServiceScopeFactory serviceScopeFactory,
+        public BundleJob(
+            IConfiguration configuration,
+            IBundleRepository bundleRepository,
+            ILayerRepository layerRepository,
+            IBlobStorageService blobStorageService,
             ILogger<BundleJob> logger)
             : base(logger)
         {
-            _serviceScopeFactory = serviceScopeFactory;
-            _scope = _serviceScopeFactory.CreateScope();
+            _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
+            _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
+            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
 
-            // FUTURE: From injection scope
-            var ctx = _scope.ServiceProvider.GetRequiredService<Core.AppContext>();
-            ctx.Cache = _scope.ServiceProvider.GetRequiredService<Microsoft.Extensions.Caching.Memory.IMemoryCache>();
-
-            _bundleRepository = _scope.ServiceProvider.GetService<IBundleRepository>();
-            _layerRepository = _scope.ServiceProvider.GetService<ILayerRepository>();
-            _blobStorageService = _scope.ServiceProvider.GetService<IBlobStorageService>();
-
-            var configuration = _scope.ServiceProvider.GetRequiredService<IConfiguration>();
             connectionString = configuration.GetConnectionString("FunderMapsConnection");
+        }
+
+        private async Task<DataSource> BuildBundleWithLayerAsync(Bundle bundle, IEnumerable<Layer> layers, DataSource input, GeometryFormat format)
+        {
+            FormatProperty formatProperty = exportFormats.First(f => f.Format == format);
+            string blobStoragePath = $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/{formatProperty.FormatShortName}";
+
+            FileDataSource fileDump = new()
+            {
+                Format = format,
+                PathPrefix = CreateDirectory(formatProperty.FormatShortName),
+                Extension = formatProperty.Extension,
+                Name = bundle.Id.ToString(),
+            };
+
+            int returnCode = 0;
+            foreach (var layer in layers)
+            {
+                // NOTE: Only check the return code in the next iteration. We cannot append to an
+                //       invalid dataset, however we can continue if only the last layer failed to
+                //       complete.
+                if (returnCode != 0)
+                {
+                    throw new Exception("Last layer command failed, refuse to continue");
+                }
+
+                var command = new VectorDatasetBuilder(
+                    new()
+                    {
+                        AdditionalOptions = formatProperty.CommandOptions,
+                        Append = true,
+                    })
+                    .InputDataset(input)
+                    .InputLayers(new BundleLayerSource(bundle, layer))
+                    .OutputDataset(fileDump)
+                    .Build(formatProperty.FormatName);
+
+                returnCode = await RunCommandAsync(command);
+            }
+
+            Logger.LogTrace($"Start uploading exported bundle");
+
+            await _blobStorageService.StoreDirectoryAsync(
+                directoryName: blobStoragePath,
+                directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
+                {
+                    ContentType = formatProperty.ContentType,
+                    CacheControl = "public, max-age=3600",
+                    IsPublic = true,
+                });
+
+            Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
+
+            return fileDump;
+        }
+
+        private async Task<DataSource> BuildBundleAsync(Bundle bundle, DataSource input, GeometryFormat format)
+        {
+            FormatProperty formatProperty = exportFormats.First(f => f.Format == format);
+            string blobStoragePath = $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/{formatProperty.FormatShortName}";
+
+            FileDataSource fileDump = new()
+            {
+                Format = format,
+                PathPrefix = CreateDirectory(formatProperty.FormatShortName),
+                Extension = formatProperty.Extension,
+                Name = bundle.Id.ToString(),
+            };
+
+            var command = new VectorDatasetBuilder(
+                new()
+                {
+                    AdditionalOptions = formatProperty.CommandOptions,
+                    Overwrite = true,
+                })
+                .InputDataset(input)
+                .OutputDataset(fileDump)
+                .Build(formatProperty.FormatName);
+
+            await RunCommandAsync(command);
+
+            Logger.LogTrace($"Start uploading exported bundle");
+
+            await _blobStorageService.StoreDirectoryAsync(
+                directoryName: blobStoragePath,
+                directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
+                {
+                    ContentType = formatProperty.ContentType,
+                    CacheControl = "public, max-age=3600",
+                    IsPublic = true,
+                });
+
+            Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
+
+            return fileDump;
         }
 
         /// <summary>
@@ -59,145 +220,35 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <param name="context">Command task execution context.</param>
         public override async Task ExecuteCommandAsync(CommandTaskContext context)
         {
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var bundleBuildingContext = JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string);
-            if (bundleBuildingContext == null)
+            if (JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string) is not BundleBuildingContext bundleBuildingContext)
             {
-                throw new ProtocolException();
+                throw new ProtocolException("Invalid bundle building context");
             }
 
-            if (bundleBuildingContext.Formats == null || !bundleBuildingContext.Formats.Any())
+            if (bundleBuildingContext.Formats is null || !bundleBuildingContext.Formats.Any())
             {
-                _logger.LogWarning("No formats listed for export");
+                Logger.LogWarning("No formats listed for export");
                 return;
             }
 
             var formats = bundleBuildingContext.Formats.Distinct().ToList();
-            formats.RemoveAll(f => f == GeometryExportFormat.GeoPackage);
+            formats.RemoveAll(f => f == GeometryFormat.GeoPackage);
 
             Bundle bundle = await _bundleRepository.GetByIdAsync(bundleBuildingContext.BundleId);
             IList<Layer> layers = await _layerRepository.ListAllFromBundleIdAsync(bundleBuildingContext.BundleId).ToListAsync();
 
-            var localCacheDataSource = new FileDataSource
+            DataSource localCacheDataSource = await BuildBundleWithLayerAsync(bundle, layers,
+                input: PostreSQLDataSource.FromConnectionString(connectionString),
+                format: GeometryFormat.GeoPackage);
+
+            foreach (var format in formats)
             {
-                Format = GeometryExportFormat.GeoPackage,
-                PathPrefix = CreateDirectory("GPKG"),
-                Name = bundle.Id.ToString(),
-            };
-
-            // FUTURE: Reduce to single op.
-            // NOTE: For now we're processing all configured formats
-
-            {
-                var command = new VectorDatasetBuilder()
-                    .InputDataset(PostreSQLDataSource.FromConnectionString(connectionString))
-                    .InputLayers(new BundleLayerSource(bundle, layers.First()))
-                    .OutputDataset(localCacheDataSource)
-                    .Build();
-
-                await RunCommandAsync(command);
-
-                await _blobStorageService.StoreDirectoryAsync(
-                    directoryName: $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/GPKG",
-                    directoryPath: localCacheDataSource.PathPrefix, new Core.Storage.StorageObject
-                    {
-                        ContentType = "application/vnd.sqlite3",
-                        CacheControl = "public, max-age=3600",
-                        IsPublic = true,
-                    });
-
-                _logger.LogWarning("Export of format GPKG done");
-            }
-
-            // FUTURE: Content compression is disabled. 
-
-            {
-                var fileDump = new FileDataSource()
-                {
-                    Format = GeometryExportFormat.MapboxVectorTiles,
-                    PathPrefix = CreateDirectory("MVT"),
-                    Name = bundle.Id.ToString(),
-                };
-
-                var command = new VectorDatasetBuilder(
-                    new VectorDatasetBuilderOptions
-                    {
-                        AdditionalOptions = "-dsco MINZOOM=7 -dsco MAXZOOM=15 -dsco COMPRESS=NO",
-                    })
-                    .InputDataset(localCacheDataSource)
-                    .OutputDataset(fileDump)
-                    .Build();
-
-                await RunCommandAsync(command);
-
-                await _blobStorageService.StoreDirectoryAsync(
-                    directoryName: $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/MVT",
-                    directoryPath: fileDump.ToString(), new Core.Storage.StorageObject
-                    {
-                        ContentType = "application/x-protobuf",
-                        CacheControl = "public, max-age=3600",
-                        IsPublic = true,
-                    });
-
-                _logger.LogWarning("Export of format MVT done");
-            }
-
-            {
-                var fileDump = new FileDataSource
-                {
-                    Format = GeometryExportFormat.ESRIShapefile,
-                    PathPrefix = CreateDirectory("SHP"),
-                    Name = bundle.Id.ToString(),
-                };
-
-                var command = new VectorDatasetBuilder()
-                    .InputDataset(localCacheDataSource)
-                    .OutputDataset(fileDump)
-                    .Build();
-
-                await RunCommandAsync(command);
-
-                await _blobStorageService.StoreDirectoryAsync(
-                    directoryName: $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/SHP",
-                    directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
-                    {
-                        ContentType = "x-gis/x-shapefile",
-                        CacheControl = "public, max-age=3600",
-                        IsPublic = true,
-                    });
-
-                _logger.LogWarning("Export of format SHP done");
-            }
-
-            {
-                var fileDump = new FileDataSource
-                {
-                    Format = GeometryExportFormat.GeoJSON,
-                    PathPrefix = CreateDirectory("JSON"),
-                    Name = bundle.Id.ToString(),
-                };
-
-                var command = new VectorDatasetBuilder()
-                    .InputDataset(localCacheDataSource)
-                    .OutputDataset(fileDump)
-                    .Build();
-
-                await RunCommandAsync(command);
-
-                await _blobStorageService.StoreDirectoryAsync(
-                    directoryName: $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/JSON",
-                    directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
-                    {
-                        ContentType = "application/json",
-                        CacheControl = "public, max-age=3600",
-                        IsPublic = true,
-                    });
-
-                _logger.LogWarning("Export of format JSON done");
+                await BuildBundleAsync(bundle, localCacheDataSource, format);
             }
         }
 
@@ -205,9 +256,10 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         ///     Method to check if a task can be handeld by this job.
         /// </summary>
         /// <param name="name">The task name.</param>
-        /// <param name="valdirectoryNameue">The task payload.</param>
+        /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name.ToLowerInvariant() == TaskName && value is string;
+            => name is not null && name.ToLowerInvariant() == TaskName && value is string;
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

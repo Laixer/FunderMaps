@@ -4,11 +4,17 @@ using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    /// <summary>
+    ///     Extensions to the authentication builder.
+    /// </summary>
     public static class AuthenticationBuilderExtensions
     {
+        /// <summary>
+        ///     Register <see cref="JwtBearerTokenProvider"/> as <see cref="ISecurityTokenProvider"/>.
+        /// </summary>
         public static AuthenticationBuilder AddJwtBearerTokenProvider(this AuthenticationBuilder authenticationBuilder)
         {
-            if (authenticationBuilder == null)
+            if (authenticationBuilder is null)
             {
                 throw new ArgumentNullException(nameof(authenticationBuilder));
             }

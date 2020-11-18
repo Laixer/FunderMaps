@@ -18,11 +18,6 @@ namespace FunderMaps.Core.Entities
         }
 
         /// <summary>
-        ///     Unique name per bundle.
-        /// </summary>
-        public string UniqueName => $"{Id}-{VersionId}";
-
-        /// <summary>
         ///     Unique identifier.
         /// </summary>
         [Required]
@@ -33,18 +28,6 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         [Required]
         public Guid OrganizationId { get; set; }
-
-        /// <summary>
-        ///     References the user that created this bundle.
-        /// </summary>
-        [Required]
-        public Guid UserId { get; set; }
-
-        /// <summary>
-        ///     Unique identifier for this bundle version.
-        /// </summary>
-        [Required]
-        public uint VersionId { get; set; }
 
         /// <summary>
         ///     Name of this bundle.
@@ -72,10 +55,5 @@ namespace FunderMaps.Core.Entities
         ///     Configuration of the selected layers.
         /// </summary>
         public LayerConfiguration LayerConfiguration { get; set; }
-
-        /// <summary>
-        ///     Indicates the status of this bundle.
-        /// </summary>
-        public BundleStatus BundleStatus { get; set; }
     }
 }

@@ -32,12 +32,10 @@ namespace FunderMaps.Data.Repositories
                 INSERT INTO maplayer.bundle(
                     organization_id,
                     name,
-                    user_id,
                     layers)
                 VALUES (
                     @organization_id,
                     @name,
-                    @user_id,
                     @layers)
                 RETURNING id";
 
@@ -68,7 +66,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="Bundle"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity id.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
@@ -104,10 +102,7 @@ namespace FunderMaps.Data.Repositories
                         b.create_date,
                         b.update_date,
                         b.delete_date,
-                        b.user_id,
-                        b.layer_configuration,
-                        b.version_id,
-                        b.bundle_status
+                        b.layer_configuration
                 FROM    maplayer.bundle AS b
                 WHERE   b.id = @id";
 
@@ -139,10 +134,7 @@ namespace FunderMaps.Data.Repositories
                         b.create_date,
                         b.update_date,
                         b.delete_date,
-                        b.user_id,
-                        b.layer_configuration,
-                        b.version_id,
-                        b.bundle_status
+                        b.layer_configuration
                 FROM    maplayer.bundle AS b
                 WHERE   b.organization_id = @id";
 
@@ -156,49 +148,6 @@ namespace FunderMaps.Data.Repositories
             {
                 yield return CacheEntity(MapFromReader(reader));
             }
-        }
-
-        /// <summary>
-        ///     Marks a bundle as processing.
-        /// </summary>
-        /// <param name="bundleId">The bundle id to mark.</param>
-        public async Task MarkAsProcessingAsync(Guid bundleId)
-        {
-            bundleId.ThrowIfNullOrEmpty();
-
-            var sql = @"
-                    UPDATE  maplayer.bundle
-                    SET     bundle_status = @bundle_status
-                    WHERE   id = @id";
-
-            await using var context = await DbContextFactory(sql);
-
-            context.AddParameterWithValue("id", bundleId);
-            context.AddParameterWithValue("bundle_status", BundleStatus.Processing);
-
-            await context.NonQueryAsync();
-        }
-
-        /// <summary>
-        ///     Marks a bundle as up to date and bumps the version id.
-        /// </summary>
-        /// <param name="bundleId">The bundle id to mark.</param>
-        public async Task MarkAsUpToDateBumpVersionAsync(Guid bundleId)
-        {
-            bundleId.ThrowIfNullOrEmpty();
-
-            var sql = @"
-                    UPDATE  maplayer.bundle
-                    SET     bundle_status = @bundle_status,
-                            version_id = version_id + 1
-                    WHERE   id = @id";
-
-            await using var context = await DbContextFactory(sql);
-
-            context.AddParameterWithValue("id", bundleId);
-            context.AddParameterWithValue("bundle_status", BundleStatus.UpToDate);
-
-            await context.NonQueryAsync();
         }
 
         /// <summary>
@@ -242,10 +191,7 @@ namespace FunderMaps.Data.Repositories
                 CreateDate = reader.GetDateTime(3),
                 UpdateDate = reader.GetSafeDateTime(4),
                 DeleteDate = reader.GetSafeDateTime(5),
-                UserId = reader.GetGuid(6),
-                LayerConfiguration = reader.GetFieldValue<LayerConfiguration>(7),
-                VersionId = reader.GetUInt(8), // TODO Is uint correct? DB = int4
-                BundleStatus = reader.GetFieldValue<BundleStatus>(9)
+                LayerConfiguration = reader.GetFieldValue<LayerConfiguration>(6),
             };
 
         /// <summary>
@@ -257,7 +203,6 @@ namespace FunderMaps.Data.Repositories
         {
             context.AddParameterWithValue("organization_id", entity.OrganizationId);
             context.AddParameterWithValue("name", entity.Name);
-            context.AddParameterWithValue("user_id", entity.UserId);
             context.AddJsonParameterWithValue("layer_configuration", entity.LayerConfiguration);
         }
     }

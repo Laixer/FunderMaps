@@ -8,7 +8,6 @@ using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -47,7 +46,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="Incident"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity object.</param>
         public override ValueTask DeleteAsync(string id)
             => throw new NotImplementedException();
 
@@ -103,7 +102,6 @@ namespace FunderMaps.Data.Repositories
         /// </remarks>
         /// <param name="userId">Internal user id.</param>
         /// <param name="buildingId">Internal building id.</param>
-        /// <param name="token"><see cref="CancellationToken"/></param>
         /// <returns>Boolean result</returns>
         public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
         {

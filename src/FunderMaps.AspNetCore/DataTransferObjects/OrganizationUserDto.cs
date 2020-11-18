@@ -6,12 +6,12 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     /// <summary>
     ///     Organization user DTO.
     /// </summary>
-    public class OrganizationUserDto : UserDto
+    public record OrganizationUserDto : UserDto
     {
         /// <summary>
         ///     User role in organization.
         /// </summary>
         [Required]
-        public OrganizationRole OrganizationRole { get; set; }
+        public OrganizationRole OrganizationRole { get; set; } // TODO: init
     }
 }

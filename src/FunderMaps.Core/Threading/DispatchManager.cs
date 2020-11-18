@@ -21,132 +21,32 @@ namespace FunderMaps.Core.Threading
     {
         private readonly BackgroundWorkOptions _options;
         private readonly ILogger<DispatchManager> _logger;
-        private readonly IServiceProvider _serviceProvider;
-        private static ConcurrentQueue<TaskBucket> workerQueue = new ConcurrentQueue<TaskBucket>();
-        private readonly List<TaskBucket> workerQueueDelay = new List<TaskBucket>();
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        private static List<TaskBucket> workerQueueDelay = new();
+        private static ConcurrentQueue<TaskBucket> workerQueue = new();
 
         private SemaphoreSlim workerPoolHandle;
         private Timer timer;
         private bool disposedValue;
 
         /// <summary>
-        ///     Task bucket represents tasks which will be run in the future.
-        /// </summary>
-        protected class TaskBucket
-        {
-            /// <summary>
-            ///     Task to run.
-            /// </summary>
-            public BackgroundTask BackgroundTask { get; set; }
-
-            /// <summary>
-            ///     Task runner context.
-            /// </summary>
-            public BackgroundTaskContext Context { get; set; }
-
-            /// <summary>
-            ///     The task id.
-            /// </summary>
-            public Guid TaskId => Context.Id;
-
-            // TODO: Rewrite
-            /// <summary>
-            ///     Create new instance.
-            /// </summary>
-            public TaskBucket(IServiceProvider _serviceProvider, object value)
-            {
-                var scopeFactory = _serviceProvider.GetService<IServiceScopeFactory>();
-                using var scope = scopeFactory.CreateScope();
-                var scopedContainer = scope.ServiceProvider;
-
-                var appContext = scopedContainer.GetService<AppContext>();
-
-                Context = new BackgroundTaskContext(taskId: Guid.NewGuid())
-                {
-                    CancellationToken = appContext.CancellationToken,
-                    Value = value,
-                };
-            }
-        }
-
-        /// <summary>
         ///     Create new instance.
         /// </summary>
-        public DispatchManager(
-            IOptions<BackgroundWorkOptions> options,
-            ILogger<DispatchManager> logger,
-            IServiceProvider serviceProvider)
+        public DispatchManager(IOptions<BackgroundWorkOptions> options, ILogger<DispatchManager> logger, IServiceScopeFactory serviceScopeFactory)
         {
-            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+            _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
-            workerPoolHandle = new SemaphoreSlim(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
+            // NOTE: Add one more worker than configured. This will set the lower bound to 1
+            //       and will misalign the number of workers to CPU core ratio. Doing so will
+            //       keep a single core free for other computation.
+            workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
-            timer = new Timer(obj => LaunchWorker(), null,
+            timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
                 TimeSpan.FromMinutes(1));
-        }
-
-        /// <summary>
-        ///     Enqueues an object to process onto the queue.
-        /// </summary>
-        /// <remarks>
-        ///     This <paramref name="value"/> is sent to each background task
-        ///     implementation which is capable of processing the object. If
-        ///     no implementation can process the object, nothing happens.
-        /// </remarks>
-        /// <param name="name">The task name.</param>
-        /// <param name="value">The task payload.</param>
-        /// <param name="delay">Optional task delay.</param>
-        public ValueTask<Guid> EnqueueTaskAsync(string name, object value, TimeSpan? delay = null)
-        {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            var bucket = new TaskBucket(_serviceProvider, value);
-
-            var isQueued = false;
-            foreach (var backgroundTask in _serviceProvider.GetServices<BackgroundTask>())
-            {
-                if (backgroundTask.CanHandle(name, value))
-                {
-                    bucket.BackgroundTask = backgroundTask;
-                    QueueTaskItem(bucket, delay);
-                    isQueued = true;
-                }
-            }
-
-            if (!isQueued)
-            {
-                throw new UnhandledTaskException();
-            }
-
-            return new ValueTask<Guid>(bucket.TaskId);
-        }
-
-        /// <summary>
-        ///     Enqueues an object to process onto the queue with provided task.
-        /// </summary>
-        /// <param name="value">The object to process.</param>
-        /// <param name="delay">Optional task delay.</param>
-        public ValueTask<Guid> EnqueueTaskAsync<TTask>(object value, TimeSpan? delay = null)
-            where TTask : BackgroundTask
-        {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            var bucket = new TaskBucket(_serviceProvider, value)
-            {
-                BackgroundTask = ActivatorUtilities.CreateInstance<TTask>(_serviceProvider),
-            };
-
-            QueueTaskItem(bucket, delay);
-            return new ValueTask<Guid>(bucket.TaskId);
         }
 
         /// <summary>
@@ -154,7 +54,7 @@ namespace FunderMaps.Core.Threading
         /// </summary>
         /// <param name="taskBucket"><see cref="TaskBucket"/> to queue.</param>
         /// <param name="delay">Optional task delay.</param>
-        protected virtual void QueueTaskItem(TaskBucket taskBucket, TimeSpan? delay = null)
+        public virtual void QueueTaskItem(TaskBucket taskBucket, TimeSpan? delay = null)
         {
             if (taskBucket is null)
             {
@@ -168,9 +68,14 @@ namespace FunderMaps.Core.Threading
                     throw new QueueOverflowException();
                 }
 
-                taskBucket.Context.Delay = delay.Value;
-                taskBucket.Context.QueuedAt = DateTime.Now;
-                workerQueueDelay.Add(taskBucket);
+                workerQueueDelay.Add(taskBucket with
+                {
+                    Context = taskBucket.Context with
+                    {
+                        Delay = delay.Value,
+                        QueuedAt = DateTime.Now
+                    }
+                });
             }
             else
             {
@@ -179,8 +84,13 @@ namespace FunderMaps.Core.Threading
                     throw new QueueOverflowException();
                 }
 
-                taskBucket.Context.QueuedAt = DateTime.Now;
-                workerQueue.Enqueue(taskBucket);
+                workerQueue.Enqueue(taskBucket with
+                {
+                    Context = taskBucket.Context with
+                    {
+                        QueuedAt = DateTime.Now
+                    }
+                });
             }
 
             _logger.LogInformation($"Queue background task {taskBucket.TaskId}");
@@ -204,6 +114,8 @@ namespace FunderMaps.Core.Threading
         /// </remarks>
         private void LaunchWorker()
         {
+            const int sleepAfterEachJobInMs = 250;
+
             // Run as long as there are items on the queue.
             async Task WorkerDelegate()
             {
@@ -215,24 +127,25 @@ namespace FunderMaps.Core.Threading
                 {
                     while (workerQueue.TryDequeue(out var taskBucket))
                     {
+                        // Setup scope per task. We know for a fact that at there does not exist
+                        // an active service provider from this. The scope is valid until the end
+                        // of the tasks lifespan. Tasks can resolve any service within their scope.
+                        using var serviceScope = _serviceScopeFactory.CreateScope();
+                        var services = serviceScope.ServiceProvider;
+
                         using var cts = new CancellationTokenSource(_options.TimeoutDelay == TimeSpan.Zero
                             ? TimeSpan.FromMinutes(15)
                             : _options.TimeoutDelay);
 
-                        BackgroundTask backgroundTask = taskBucket.BackgroundTask;
+                        var backgroundTask = services.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
-
-                        using var ctsCombined = CancellationTokenSource.CreateLinkedTokenSource(cts.Token, context.CancellationToken);
 
                         try
                         {
-                            ctsCombined.Token.ThrowIfCancellationRequested();
-
                             _logger.LogInformation($"Starting background task {context.Id}");
 
                             context.StartedAt = DateTime.Now;
-                            context.CancellationToken = ctsCombined.Token;
-                            context.DispatchManager = new WeakReference<DispatchManager>(this);
+                            context.CancellationToken = cts.Token;
 
                             await backgroundTask.ExecuteAsync(context);
                         }
@@ -253,9 +166,13 @@ namespace FunderMaps.Core.Threading
 
                             _logger.LogInformation($"Finished background task {context.Id} in {Math.Round(runningTime.TotalSeconds)}s");
 
-                            await Task.Delay(250);
+                            await Task.Delay(sleepAfterEachJobInMs);
                         }
                     }
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, $"Exception when creating task");
                 }
                 finally
                 {
@@ -265,6 +182,7 @@ namespace FunderMaps.Core.Threading
                 }
             }
 
+            // Enqueue and remove anything overdue.
             workerQueueDelay.RemoveAll(b =>
             {
                 if (DateTime.Now >= b.Context.QueuedAt + b.Context.Delay)

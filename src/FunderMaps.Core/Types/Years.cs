@@ -16,29 +16,6 @@ namespace FunderMaps.Core.Types
         }
 
         /// <summary>
-        ///     Constructor based on two years.
-        /// </summary>
-        /// <param name="yearFrom"><see cref="DateTimeOffset"/></param>
-        /// <param name="yearTo"><see cref="DateTimeOffset"/></param>
-        public Years(DateTimeOffset yearFrom, DateTimeOffset yearTo)
-        {
-            if (yearFrom == null)
-            {
-                throw new ArgumentNullException(nameof(yearFrom));
-            }
-
-            if (yearTo == null)
-            {
-                throw new ArgumentNullException(nameof(yearTo));
-            }
-
-            if (yearFrom.Year >= yearTo.Year)
-            {
-                throw new ArgumentOutOfRangeException(nameof(yearFrom));
-            }
-        }
-
-        /// <summary>
         ///     Static constructor for easy decade creation.
         /// </summary>
         /// <remarks>
@@ -50,7 +27,11 @@ namespace FunderMaps.Core.Types
         /// <returns><see cref="Years"/></returns>
         public static Years FromDecade(int decadeStart)
         {
-            if (decadeStart % 10 != 0) { throw new ArgumentOutOfRangeException(nameof(decadeStart)); }
+            if (decadeStart % 10 != 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(decadeStart));
+            }
+            
             return new Years
             {
                 YearFrom = DateTimeOffsetHelper.FromYear(decadeStart),

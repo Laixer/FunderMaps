@@ -1,17 +1,15 @@
 using System;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
 namespace FunderMaps.AspNetCore
@@ -24,7 +22,7 @@ namespace FunderMaps.AspNetCore
         /// <summary>
         ///     Use this method to add entity and object mapping configurations.
         /// </summary>
-        private void ConfigureMapper(IMapperConfigurationExpression mapper)
+        private static void ConfigureMapper(IMapperConfigurationExpression mapper)
         {
             mapper.CreateMap<Address, AddressBuildingDto>()
                 .IncludeMembers(src => src.BuildingNavigation)
@@ -55,8 +53,13 @@ namespace FunderMaps.AspNetCore
         ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="builder">Extend the instance of <see cref="IWebHostBuilder"/>.</param>
-        public void Configure(IWebHostBuilder builder)
+        public void Configure([DisallowNull] IWebHostBuilder builder)
         {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             builder.ConfigureServices(services =>
             {
                 services.AddAutoMapper(mapper => ConfigureMapper(mapper));
@@ -78,7 +81,7 @@ namespace FunderMaps.AspNetCore
                 //       related service is being resolved within the scope.
                 services.AddHttpContextAccessor();
 
-                AddAppContext(services);
+                services.AddOrReplace<IAppContextFactory, AspAppContextFactory>(ServiceLifetime.Singleton);
 
                 services.AddHealthChecks()
                     .AddCheck<ApiHealthCheck>("api_health_check")
@@ -87,51 +90,6 @@ namespace FunderMaps.AspNetCore
                     .AddCheck<EmailHealthCheck>("email_health_check")
                     .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check");
             });
-        }
-
-        // TODO: Move this into a singleton service.
-        private Core.AppContext AppContextFactory(IServiceProvider serviceProvider)
-        {
-            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            if (httpContextAccessor.HttpContext is null)
-            {
-                return new Core.AppContext();
-            }
-
-            HttpContext httpContext = httpContextAccessor.HttpContext;
-            return new Core.AppContext
-            {
-                CancellationToken = httpContext.RequestAborted,
-                Items = new System.Collections.Generic.Dictionary<object, object>(httpContext.Items),
-                Cache = httpContext.RequestServices.GetRequiredService<IMemoryCache>(),
-                ServiceProvider = httpContext.RequestServices,
-                User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
-                Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
-            };
-        }
-
-        // FUTURE: Create a service replace method from this stub.
-        /// <summary>
-        ///     Replace the stock <see cref="AppContext" which an application context
-        ///     hooked on the ASP.NET Core framework. The integration couples front framework
-        ///     operations to the application core without imparing assemly dependencies.
-        /// </summary>
-        /// <param name="services">Collection of DI services.</param>
-        public IServiceCollection AddAppContext(IServiceCollection services)
-        {
-            var serviceDescriptor = new ServiceDescriptor(typeof(Core.AppContext), AppContextFactory, ServiceLifetime.Scoped);
-
-            var hasAppContextService = services.Any(d => d.ServiceType == typeof(Core.AppContext));
-            if (hasAppContextService)
-            {
-                services.Replace(serviceDescriptor);
-            }
-            else
-            {
-                services.Add(serviceDescriptor);
-            }
-
-            return services;
         }
     }
 }

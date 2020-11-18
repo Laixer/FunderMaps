@@ -1,6 +1,4 @@
-using System;
 using FunderMaps.BatchNode.Command;
-using FunderMaps.Core.Types;
 
 namespace FunderMaps.BatchNode.GeoInterface
 {
@@ -13,17 +11,21 @@ namespace FunderMaps.BatchNode.GeoInterface
 
         private DataSource input;
         private DataSource output;
-        private LayerSource inputLayer = new LayerSource();
-
-        private VectorDatasetBuilderOptions _options;
+        private LayerSource inputLayer = new();
+        private VectorDatasetBuilderOptions options = new();
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public VectorDatasetBuilder(VectorDatasetBuilderOptions options = null)
+        public VectorDatasetBuilder()
         {
-            _options = options ?? new VectorDatasetBuilderOptions();
         }
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public VectorDatasetBuilder(VectorDatasetBuilderOptions options)
+            => this.options = options;
 
         /// <summary>
         ///     Set the input dataset.
@@ -38,7 +40,7 @@ namespace FunderMaps.BatchNode.GeoInterface
         /// <summary>
         ///     Set the output dataset.
         /// </summary>
-        /// <param name="input">Data output source.</param>
+        /// <param name="output">Data output source.</param>
         public VectorDatasetBuilder OutputDataset(DataSource output)
         {
             this.output = output;
@@ -55,16 +57,6 @@ namespace FunderMaps.BatchNode.GeoInterface
             return this;
         }
 
-        public static (string, string) ExportFormatTuple(GeometryExportFormat format)
-            => format switch
-            {
-                GeometryExportFormat.MapboxVectorTiles => ("MVT", ""),
-                GeometryExportFormat.GeoPackage => ("GPKG", ".gpkg"),
-                GeometryExportFormat.ESRIShapefile => ("ESRI Shapefile", ".shp"),
-                GeometryExportFormat.GeoJSON => ("GeoJSON", ".json"),
-                _ => throw new InvalidOperationException(nameof(format)),
-            };
-
         /// <summary>
         ///     Build the command from builder parts.
         /// </summary>
@@ -72,20 +64,27 @@ namespace FunderMaps.BatchNode.GeoInterface
         ///     Keep the order in which arguments needs to be passed to the command.
         /// </remarks>
         /// <returns>The <see cref="CommandInfo"/> to be executed.</returns>
-        public CommandInfo Build()
+        public CommandInfo Build(string formatName)
         {
             var command = new CommandInfo(CommandName);
-            command.ArgumentList.Add("-overwrite");
+            if (options.Overwrite)
+            {
+                command.ArgumentList.Add("-overwrite");
+            }
+            else if (options.Append)
+            {
+                command.ArgumentList.Add("-append");
+            }
             command.ArgumentList.Add("-f");
-            command.ArgumentList.Add(ExportFormatTuple(output.Format).Item1);
+            command.ArgumentList.Add(formatName);
             command.ArgumentList.Add(output.Write(command));
             command.ArgumentList.Add(input.Read(command));
 
             inputLayer.Imbue(command);
 
-            if (!string.IsNullOrEmpty(_options.AdditionalOptions))
+            if (!string.IsNullOrEmpty(options.AdditionalOptions))
             {
-                foreach (var argument in _options.AdditionalOptions.Split(" "))
+                foreach (var argument in options.AdditionalOptions.Split(" "))
                 {
                     command.ArgumentList.Add(argument.Trim());
                 }

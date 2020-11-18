@@ -24,10 +24,7 @@ namespace FunderMaps.Core.Components
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public PasswordHasher(IRandom random)
-        {
-            Random = random;
-        }
+        public PasswordHasher(IRandom random) => Random = random;
 
         // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -88,11 +85,6 @@ namespace FunderMaps.Core.Components
         /// <returns>Returns hashed password.</returns>
         public string HashPassword(string password)
         {
-            if (password == null)
-            {
-                throw new ArgumentNullException(nameof(password));
-            }
-
             if (string.IsNullOrEmpty(password))
             {
                 throw new ArgumentNullException(nameof(password));
@@ -113,12 +105,12 @@ namespace FunderMaps.Core.Components
         /// <returns>Returns <c>true</c> if passwords match, false otherwise.</returns>
         public bool IsPasswordValid(string hashedPassword, string providedPassword)
         {
-            if (hashedPassword == null)
+            if (string.IsNullOrEmpty(hashedPassword))
             {
                 throw new ArgumentNullException(nameof(hashedPassword));
             }
 
-            if (providedPassword == null)
+            if (string.IsNullOrEmpty(providedPassword))
             {
                 throw new ArgumentNullException(nameof(providedPassword));
             }

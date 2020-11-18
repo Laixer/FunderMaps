@@ -56,7 +56,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
-            var output = new DatasetStatsDto
+            DatasetStatsDto output = new()
             {
                 Count = await _incidentRepository.CountAsync(),
             };
@@ -73,7 +73,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetAsync([Incident] string id)
         {
             // Act.
-            var incident = await _incidentRepository.GetByIdAsync(id);
+            Incident incident = await _incidentRepository.GetByIdAsync(id);
             incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
 
             // Map.
@@ -99,7 +99,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
 
-            var output = new DocumentDto
+            DocumentDto output = new()
             {
                 Name = storeFileName,
             };
@@ -116,14 +116,14 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetDocumentAccessLinkAsync([Incident] string id)
         {
             // Act.
-            var incident = await _incidentRepository.GetByIdAsync(id);
-            var link = await _blobStorageService.GetAccessLinkAsync(
+            Incident incident = await _incidentRepository.GetByIdAsync(id);
+            Uri link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: incident.DocumentFile[0], // TODO
                 hoursValid: 1);
 
             // Map.
-            var result = new BlobAccessLinkDto
+            BlobAccessLinkDto result = new()
             {
                 AccessLink = link
             };
@@ -140,7 +140,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
-            var incidentList = new List<Incident>();
+            List<Incident> incidentList = new();
             await foreach (var incident in _incidentRepository.ListAllAsync(pagination.Navigation))
             {
                 incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);

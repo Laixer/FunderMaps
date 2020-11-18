@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
         ///         Repositories that obey the <see cref="DbContextBase"/> contract can request the application context
         ///         from inheritance. The application context is per scope so repositories need to be scoped as well.
         ///     </para>
-        /// </remakrs>
+        /// </remarks>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         private static IServiceCollection AddContextRepository<TService, TImplementation>(this IServiceCollection services)
@@ -28,7 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TImplementation : DbContextBase, TService, new()
             => services.AddScoped<TService, TImplementation>(serviceProvider =>
             {
-                var repository = new TImplementation();
+                TImplementation repository = new();
                 DbContextBase injectorBase = repository as DbContextBase;
                 injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
                 injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
@@ -44,7 +44,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -83,7 +83,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services, string dbConfigName)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }

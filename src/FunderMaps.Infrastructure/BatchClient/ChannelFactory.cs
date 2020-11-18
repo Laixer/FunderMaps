@@ -5,8 +5,12 @@ using System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.BatchClient
 {
+    /// <summary>
+    ///     GRPC channel factory.
+    /// </summary>
     internal class ChannelFactory : IDisposable
     {
         private readonly GrpcChannel rpcChannel;
@@ -22,14 +26,14 @@ namespace FunderMaps.Infrastructure.BatchClient
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
             // NOTE: The httpHandler is disposed when the channel is disposed.
-            HttpClientHandler httpHandler = new HttpClientHandler();
+            HttpClientHandler httpHandler = new();
 
             if (!_options.TlsValidate)
             {
                 httpHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
 
-            rpcChannel = GrpcChannel.ForAddress(_options.ServiceUri, new GrpcChannelOptions
+            rpcChannel = GrpcChannel.ForAddress(_options.ServiceUri, new()
             {
                 HttpHandler = httpHandler,
                 DisposeHttpClient = true,
@@ -66,3 +70,4 @@ namespace FunderMaps.Infrastructure.BatchClient
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

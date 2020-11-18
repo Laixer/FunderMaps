@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
@@ -54,18 +55,18 @@ namespace FunderMaps.AspNetCore.Authentication
 
         protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
         {
-            if (principal == null)
+            if (principal is null)
             {
                 throw new ArgumentNullException(nameof(principal));
             }
 
-            var properties = new AuthenticationProperties();
+            AuthenticationProperties properties = new();
 
             var JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters;
             var issuerSigningKey = JwtTokenValidationParameters.IssuerSigningKey;
             var SigningCredentials = new SigningCredentials(issuerSigningKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new List<Claim>(principal.Claims)
+            List<Claim> claims = new(principal.Claims)
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
@@ -117,12 +118,12 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <returns>Instance of <see cref="TokenContext"/>.</returns>
         public virtual TokenContext GetTokenContext(ClaimsPrincipal principal)
         {
-            if (Handler == null)
+            if (Handler is null)
             {
                 throw new InvalidOperationException();
             }
 
-            var token = GetToken(principal);
+            SecurityToken token = GetToken(principal);
             return new TokenContext
             {
                 TokenString = Handler.WriteToken(token),
@@ -131,3 +132,4 @@ namespace FunderMaps.AspNetCore.Authentication
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

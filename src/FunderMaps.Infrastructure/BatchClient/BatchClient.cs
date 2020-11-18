@@ -4,6 +4,7 @@ using FunderMaps.Core.Interfaces;
 using System.Threading.Tasks;
 using System.Threading;
 
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.BatchClient
 {
     /// <summary>
@@ -11,7 +12,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// </summary>
     internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase
     {
-        private const int protocolVersion = 0xa1;
+        private const string UserAgent = "FunderMaps.Infrastructure";
 
         private readonly ChannelFactory _channelFactory;
 
@@ -29,13 +30,9 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <param name="token">Canellation token.</param>
         public async Task EnqueueAsync(string name, object value, CancellationToken token = default)
         {
-            var request = new EnqueueRequest
+            EnqueueRequest request = new()
             {
-                Protocol = new FunderMapsProtocol
-                {
-                    Version = protocolVersion,
-                    UserAgent = "FunderMaps.Infrastructure",
-                },
+                Protocol = Protocol.BuildProtocol(UserAgent),
                 Name = name,
                 Payload = JsonSerializer.Serialize(value),
             };
@@ -53,3 +50,4 @@ namespace FunderMaps.Infrastructure.BatchClient
         }
     }
 }
+#pragma warning restore CA1812 // Internal class is never instantiated

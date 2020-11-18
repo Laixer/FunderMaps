@@ -20,7 +20,10 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
         {
+            // TODO: Read from config
+            services.AddScoped<BackgroundTaskScopedDispatcher>();
             services.AddSingleton<DispatchManager>();
+            services.AddTransient<BackgroundTaskDispatcher>();
             // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
             services.Configure<BackgroundWorkOptions>(options =>
             {
@@ -28,6 +31,17 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.MaxWorkers = 2;
                 options.TimeoutDelay = TimeSpan.FromMinutes(30);
             });
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds the <see cref="AppContext"/> to the container.
+        /// </summary>
+        private static IServiceCollection AddAppContext(this IServiceCollection services)
+        {
+            services.AddSingleton<IAppContextFactory, AppContextFactory>();
+            services.AddScoped<FunderMaps.Core.AppContext>(sp => sp.GetRequiredService<IAppContextFactory>().Create());
 
             return services;
         }
@@ -46,7 +60,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
         {
-            if (services == null)
+            if (services is not IServiceCollection)
             {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -61,9 +75,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container
             //       in order for core services to be functional. This registration is
-            //       merely a placeholder. The front framework should setup the application
-            //       context.
-            services.TryAddScoped<FunderMaps.Core.AppContext>();
+            //       merely a placeholder. The front framework should bootstrap the application
+            //       context if possible.
+            services.AddAppContext();
 
             // Register core use cases in DI container.
             services.AddScoped<ProjectUseCase>();

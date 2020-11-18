@@ -1,4 +1,6 @@
 ﻿using AutoMapper.Configuration;
+using FunderMaps.AspNetCore;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +44,15 @@ namespace FunderMaps.BatchNode
             services.AddBatchJob<Jobs.FooBarJob>();
 
             services.AddGrpc();
+
+            // NOTE: Register the HttpContextAccessor service to the container.
+            //       The HttpContextAccessor exposes a singleton holding the
+            //       HttpContext within a scoped resolver, or null outside the scope.
+            //       Some components require the HttpContext and its features when the
+            //       related service is being resolved within the scope.
+            services.AddHttpContextAccessor();
+
+            services.AddOrReplace<IAppContextFactory, GrpcAppContextFactory>(ServiceLifetime.Singleton);
         }
 
         /// <summary>

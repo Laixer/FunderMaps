@@ -17,6 +17,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <summary>
         ///     Contains all formats we wish to export.
         /// </summary>
-        public IEnumerable<GeometryExportFormat> Formats { get; set; }
+        public IEnumerable<GeometryFormat> Formats { get; set; }
     }
 }
