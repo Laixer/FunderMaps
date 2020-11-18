@@ -1,5 +1,5 @@
 [Unit]
-Description=FunderMaps Batch WebApplication
+Description=FunderMaps Batch
 
 [Service]
 ExecStart=/opt/fundermaps/fundermaps-batch/FunderMaps.BatchNode
