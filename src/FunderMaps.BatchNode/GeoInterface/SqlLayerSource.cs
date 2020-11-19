@@ -6,6 +6,8 @@ namespace FunderMaps.BatchNode.GeoInterface
     {
         public string Query { get; set; }
 
+        // FUTURE: Write the SQL to disk and point the command to the sql file
+        //         This allows for much larger SQL statements in the future.
         public override void Imbue(CommandInfo commandInfo)
         {
             if (Query != null)

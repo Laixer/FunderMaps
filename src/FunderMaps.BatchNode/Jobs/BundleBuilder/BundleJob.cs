@@ -140,6 +140,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 //       complete.
                 if (returnCode != 0)
                 {
+                    // TODO: Another exception
                     throw new Exception("Last layer command failed, refuse to continue");
                 }
 
