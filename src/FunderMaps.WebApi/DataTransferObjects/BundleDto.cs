@@ -21,25 +21,9 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public Guid OrganizationId { get; set; }
 
         /// <summary>
-        ///     User identifier.
-        /// </summary>
-        [Required]
-        public Guid UserId { get; set; }
-
-        /// <summary>
         ///     Bundle layer configuration.
         /// </summary>
         public LayerConfiguration LayerConfiguration { get; set; }
-
-        /// <summary>
-        ///     Bundle version identifier.
-        /// </summary>
-        public int VersionId { get; set; }
-
-        /// <summary>
-        ///     Bundle status.
-        /// </summary>
-        public BundleStatus BundleStatus { get; set; }
 
         /// <summary>
         ///     Gets or sets the display name for the bundle.
