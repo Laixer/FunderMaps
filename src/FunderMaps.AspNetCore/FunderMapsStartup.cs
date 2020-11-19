@@ -84,7 +84,6 @@ namespace FunderMaps.AspNetCore
                 services.AddOrReplace<IAppContextFactory, AspAppContextFactory>(ServiceLifetime.Singleton);
 
                 services.AddHealthChecks()
-                    .AddCheck<ApiHealthCheck>("api_health_check")
                     .AddCheck<IOHealthCheck>("io_health_check")
                     .AddCheck<RepositoryHealthCheck>("data_health_check")
                     .AddCheck<EmailHealthCheck>("email_health_check")
