@@ -3,7 +3,6 @@ using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Extensions;
-using FunderMaps.HealthChecks;
 using FunderMaps.WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -90,11 +89,6 @@ namespace FunderMaps.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             StartupConfigureServices(services);
-
-            services.AddHealthChecks()
-                .AddCheck<ApiHealthCheck>("api_health_check")
-                //.AddCheck<DatabaseHealthCheck>("db_health_check")
-                .AddCheck<FileStorageCheck>("file_health_check");
         }
 
         /// <summary>
@@ -169,7 +163,7 @@ namespace FunderMaps.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/health");
+                endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }

@@ -305,6 +305,16 @@ namespace FunderMaps.Data.Repositories
             ResetCacheEntity(entity);
 
             var sql = @"
+                    -- Attribution
+                    UPDATE  application.attribution AS a
+                    SET     reviewer = @reviewer,
+                            contractor = @contractor
+                    FROM    report.inquiry AS i
+                    WHERE   a.id = i.attribution
+                    AND     i.id = @id
+                    AND     a.owner = @tenant;
+
+                    -- Inquiry
                     UPDATE  report.inquiry AS i
                     SET     document_name = @document_name,
                             inspection = @inspection,
@@ -324,7 +334,9 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("id", entity.Id);
+            context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
+            context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
             MapToWriter(context, entity);
 

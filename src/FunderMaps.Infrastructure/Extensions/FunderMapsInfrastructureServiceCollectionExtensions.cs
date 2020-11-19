@@ -1,6 +1,7 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Extensions;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Infrastructure.BatchClient;
 using FunderMaps.Infrastructure.Email;
-using FunderMaps.Infrastructure.Notification;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -44,20 +45,12 @@ namespace Microsoft.Extensions.DependencyInjection
             services.RemoveAll<IBlobStorageService>();
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
             services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
-        }
 
-        /// <summary>
-        ///     Use this method to add services to the container.
-        /// </summary>
-        /// <remarks>
-        ///     Order is undetermined when configuring services.
-        /// </remarks>
-        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public static void ConfigureServices(IServiceCollection services)
-        {
-            // Remove all existing notification services and inject local email service.
-            services.RemoveAll<INotificationService>();
-            services.AddTransient<INotificationService, NotificationHubService>();
+            // Remove all existing batch services and inject local batch service.
+            services.AddSingleton<ChannelFactory>();
+            services.RemoveAll<IBatchService>();
+            services.Configure<BatchOptions>(Configuration.GetSection("Batch"));
+            services.AddScoped<IBatchService, BatchClient>();
         }
 
         /// <summary>
@@ -76,12 +69,35 @@ namespace Microsoft.Extensions.DependencyInjection
             Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
             HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            ConfigureServices(services);
-
             if (!HostEnvironment.IsDevelopment())
             {
                 ConfigureExternalServices(services);
             }
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Explicitly add <see cref="IBlobStorageService"/> to the services.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="configuration">Configuration collection.</param>
+        /// <param name="configurationSection">The name of the configuration section.</param>
+        /// <returns>Chained <paramref name="services"/>.</returns>
+        public static IServiceCollection AddSpacesBlobStorageServices(this IServiceCollection services, IConfiguration configuration, string configurationSection)
+        {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+            configurationSection.ThrowIfNullOrEmpty();
+
+            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
+            services.Configure<BlobStorageOptions>(options => configuration.GetSection(configurationSection).Bind(options));
 
             return services;
         }

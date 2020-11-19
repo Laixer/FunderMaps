@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using FunderMaps.Core.Storage;
 
 namespace FunderMaps.Core.Interfaces
 {
@@ -15,7 +16,7 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="containerName">Storage container.</param>
         /// <param name="fileName">File name.</param>
         /// <returns>True if file exist, false otherwise.</returns>
-        ValueTask<bool> FileExistsAsync(string containerName, string fileName);
+        Task<bool> FileExistsAsync(string containerName, string fileName);
 
         /// <summary>
         ///     Retrieve file access link as uri.
@@ -24,7 +25,7 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="fileName">File name.</param>
         /// <param name="hoursValid">How long the link is valid in hours.</param>
         /// <returns>The generated link.</returns>
-        ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
+        Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
 
         /// <summary>
         ///     Store the file in the data store.
@@ -32,15 +33,33 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="containerName">Storage container.</param>
         /// <param name="fileName">File name.</param>
         /// <param name="stream">Content stream.</param>
-        ValueTask StoreFileAsync(string containerName, string fileName, Stream stream);
+        Task StoreFileAsync(string containerName, string fileName, Stream stream);
+
+        // FUTURE: Refactor
+        /// <summary>
+        ///     Stores a file in a Digital Ocean Space.
+        /// </summary>
+        /// <param name="containerName">The container name.</param>
+        /// <param name="fileName">The file name.</param>
+        /// <param name="contentType">The content type.</param>
+        /// <param name="stream">See <see cref="Stream"/>.</param>
+        /// <param name="storageObject">Storage object settings.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject = null);
+
+        // FUTURE: Refactor
+        /// <summary>
+        ///     Stores a file in a Digital Ocean Space.
+        /// </summary>
+        /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
+        /// <param name="directoryPath">Source directory.</param>
+        /// <param name="storageObject">Storage object settings.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject = null);
 
         /// <summary>
-        ///     Store the file in the data store.
+        ///     Test the Amazon S3 service backend.
         /// </summary>
-        /// <param name="containerName">Storage container.</param>
-        /// <param name="fileName">File name.</param>
-        /// <param name="contentType">Blob content type.</param>
-        /// <param name="stream">Content stream.</param>
-        ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream);
+        Task TestService();
     }
 }

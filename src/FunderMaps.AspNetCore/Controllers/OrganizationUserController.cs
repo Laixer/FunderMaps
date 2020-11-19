@@ -80,7 +80,7 @@ namespace FunderMaps.AspNetCore.Controllers
             // Act.
             // TODO: FIX: This is ugly.
             // TODO: Single call
-            var output = new List<OrganizationUserDto>();
+            List<OrganizationUserDto> output = new();
             await foreach (var user in _organizationUserRepository.ListAllAsync(_appContext.TenantId, pagination.Navigation))
             {
                 var result = _mapper.Map<OrganizationUserDto>(await _userRepository.GetByIdAsync(user));

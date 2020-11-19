@@ -1,6 +1,8 @@
 ﻿using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Notification;
 using FunderMaps.Core.Services;
+using FunderMaps.Core.Threading;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -14,17 +16,51 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class FunderMapsCoreServiceCollectionExtensions
     {
         /// <summary>
+        ///     Adds the core threading service to the container.
+        /// </summary>
+        private static IServiceCollection AddCoreThreading(this IServiceCollection services)
+        {
+            // TODO: Read from config
+            services.AddScoped<BackgroundTaskScopedDispatcher>();
+            services.AddSingleton<DispatchManager>();
+            services.AddTransient<BackgroundTaskDispatcher>();
+            // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
+            services.Configure<BackgroundWorkOptions>(options =>
+            {
+                options.MaxQueueSize = 8192;
+                options.MaxWorkers = 2;
+                options.TimeoutDelay = TimeSpan.FromMinutes(30);
+            });
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds the <see cref="AppContext"/> to the container.
+        /// </summary>
+        private static IServiceCollection AddAppContext(this IServiceCollection services)
+        {
+            services.AddSingleton<IAppContextFactory, AppContextFactory>();
+            services.AddScoped<FunderMaps.Core.AppContext>(sp => sp.GetRequiredService<IAppContextFactory>().Create());
+
+            return services;
+        }
+
+        /// <summary>
         ///     Adds the core services to the container.
         /// </summary>
         /// <remarks>
-        ///     Add service components with their correct lifetime cycle. An invalid lifetime can
-        ///     block the dependency graph resulting in an underperforming application.
+        ///     Read the instructions before adding a service.
+        ///     <para>
+        ///         Add service components with their correct lifetime cycle. An invalid lifetime can
+        ///         block the dependency graph resulting in an underperforming application.
+        ///     </para>
         /// </remarks>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
         {
-            if (services == null)
+            if (services is not IServiceCollection)
             {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -39,9 +75,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container
             //       in order for core services to be functional. This registration is
-            //       merely a placeholder. The front framework should setup the application
-            //       context.
-            services.TryAddScoped<FunderMaps.Core.AppContext>();
+            //       merely a placeholder. The front framework should bootstrap the application
+            //       context if possible.
+            services.AddAppContext();
 
             // Register core use cases in DI container.
             services.AddScoped<ProjectUseCase>();
@@ -49,19 +85,24 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<INotifyService, NotificationHub>();
 
-            // Register core service fillers in DI container.
+            // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
-            //       them as a singleton will keep the services alife for the entire application
-            //       lifetime. Beware to add new services as singletons.
+            //       them as a singleton will keep the services alife for the entire lifetime
+            //       of the application. Beware to add new services as singletons.
+            services.TryAddSingleton<IBatchService, NullBatchService>();
             services.TryAddSingleton<IEmailService, NullEmailService>();
             services.TryAddSingleton<IBlobStorageService, NullBlobStorageService>();
-            services.TryAddSingleton<INotificationService, NullNotificationService>();
 
             // The application core (as well as many other components) depends upon the ability to cache
             // objects to memory. The memory cache may have already been registered with the container
             // by some other package, however we cannot expect this to be.
             services.AddMemoryCache();
+
+            // The application core (as well as many other components) depends upon the ability to dispatch
+            // tasks to the background.
+            services.AddCoreThreading();
 
             return services;
         }

@@ -4,6 +4,7 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -31,6 +32,7 @@ namespace FunderMaps.Portal.Controllers
         private readonly IAddressRepository _addressRepository;
         private readonly IProductService _productService;
         private readonly IBlobStorageService _blobStorageService;
+        private readonly INotifyService _notifyService;
 
         /// <summary>
         ///     Create new instance.
@@ -41,7 +43,8 @@ namespace FunderMaps.Portal.Controllers
             IIncidentRepository incidentRepository,
             IAddressRepository addressRepository,
             IProductService productService,
-            IBlobStorageService blobStorageService)
+            IBlobStorageService blobStorageService,
+            INotifyService notifyService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
@@ -49,6 +52,7 @@ namespace FunderMaps.Portal.Controllers
             _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _productService = productService ?? throw new ArgumentNullException(nameof(productService));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+            _notifyService = notifyService ?? throw new ArgumentNullException(nameof(notifyService));
         }
 
         // POST: api/incident-portal/upload-document
@@ -70,7 +74,7 @@ namespace FunderMaps.Portal.Controllers
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
 
-            var output = new DocumentDto
+            DocumentDto output = new()
             {
                 Name = storeFileName,
             };
@@ -102,10 +106,13 @@ namespace FunderMaps.Portal.Controllers
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
 
-            // FUTURE: Works for now, but may not be the best solution to check
-            //         if input data is valid
-            await _addressRepository.GetByIdAsync(incident.Address);
             await _incidentRepository.AddAsync(incident);
+            await _notifyService.DispatchNotifyAsync(new()
+            {
+                Recipients = new List<string> { "info@fundermaps.com", "info@laixer.com" },
+                Content = $"Nieuwe melding binnengekomen met opmerking: {incident.Note}",
+                Subject = "FunderMaps - Nieuwe melding via loket",
+            });
 
             // Return.
             return NoContent();

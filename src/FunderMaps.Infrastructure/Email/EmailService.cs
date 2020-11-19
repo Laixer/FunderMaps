@@ -86,6 +86,17 @@ namespace FunderMaps.Infrastructure.Email
             Logger.LogInformation($"Message sent with success");
         }
 
+        // FUTURE: From interface
+        /// <summary>
+        ///     Test the email service backend.
+        /// </summary>
+        public async Task TestService()
+        {
+            await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
+            await emailClient.DisconnectAsync(quit: true);
+        }
+
         #region Disposable Pattern
 
         protected virtual void Dispose(bool disposing)

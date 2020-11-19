@@ -60,7 +60,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="OrganizationProposal"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity id.</param>
         public override async ValueTask DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
@@ -118,7 +118,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Retrieve <see cref="OrganizationProposal"/> by id.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="name">Organization name.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
         public async ValueTask<OrganizationProposal> GetByNameAsync(string name)
         {
@@ -143,7 +143,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Retrieve <see cref="OrganizationProposal"/> by id.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
         public async ValueTask<OrganizationProposal> GetByEmailAsync(string email)
         {

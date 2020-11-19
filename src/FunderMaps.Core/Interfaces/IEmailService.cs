@@ -13,5 +13,10 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="emailMessage">Message to send.</param>
         Task SendAsync(EmailMessage emailMessage);
+
+        /// <summary>
+        ///     Test the email service backend.
+        /// </summary>
+        Task TestService();
     }
 }

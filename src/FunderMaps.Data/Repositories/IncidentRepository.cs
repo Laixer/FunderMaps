@@ -74,7 +74,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return reader.GetSafeString(0);
+            return reader.GetString(0);
         }
 
         /// <summary>

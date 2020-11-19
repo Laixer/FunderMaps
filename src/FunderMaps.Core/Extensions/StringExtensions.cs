@@ -14,11 +14,6 @@ namespace FunderMaps.Core.Extensions
         /// <param name="str">The <see cref="string"/> to check</param>
         public static void ThrowIfNullOrEmpty(this string str)
         {
-            if (str == null)
-            {
-                throw new ArgumentNullException(nameof(str));
-            }
-
             if (string.IsNullOrEmpty(str))
             {
                 throw new ArgumentNullException(nameof(str));

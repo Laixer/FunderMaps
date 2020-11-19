@@ -12,7 +12,7 @@ on:
       - develop
 
 env:
-  DOTNET_VERSION: '3.1.101'
+  DOTNET_VERSION: '5.0'
   BUILD_CONFIG: Release
 
 jobs:

@@ -107,7 +107,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="Incident"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity id.</param>
         public override ValueTask DeleteAsync(string id)
             => throw new InvalidOperationException();
 
@@ -201,6 +201,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve <see cref="Address"/> by search query.
         /// </summary>
         /// <param name="query">Search query.</param>
+        /// <param name="navigation">The navigation parameters.</param>
         /// <returns><see cref="Address"/>.</returns>
         public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
         {

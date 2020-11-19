@@ -7,28 +7,28 @@ namespace FunderMaps.AspNetCore.InputModels
     /// <summary>
     ///     DTO for pagination.
     /// </summary>
-    public class PaginationInputModel
+    public class PaginationInputModel // TODO: Should be record
     {
         /// <summary>
         ///     Recordset offset.
         /// </summary>
-        public int Offset { get; set; } = 0;
+        public int Offset { get; init; }
 
         /// <summary>
         ///     Recordset limit.
         /// </summary>
         [Range(1, uint.MaxValue)]
-        public int Limit { get; set; } = 25;
+        public int Limit { get; init; } = 25;
 
         /// <summary>
         ///     Sort onto field.
         /// </summary>
-        public string SortOn { get; set; }
+        public string SortOn { get; init; }
 
         /// <summary>
         ///     Sort ascending or descending.
         /// </summary>
-        public bool SortAscending { get; set; } = true;
+        public bool SortAscending { get; init; } = true;
 
         // TODO This links to FunderMaps.Data which seems incorrect?
         /// <summary>

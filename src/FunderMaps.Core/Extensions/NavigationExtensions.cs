@@ -14,7 +14,7 @@ namespace FunderMaps.Core.Extensions
         /// <param name="navigation"><see cref="INavigation"/></param>
         public static void Validate(this INavigation navigation)
         {
-            if (navigation == null)
+            if (navigation is null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }

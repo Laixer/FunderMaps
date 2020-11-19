@@ -3,19 +3,19 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Avoid uninstantiated internal classes
+#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
-    ///     Digital Ocean Spaces implementation of <see cref="IBlobStorageService"/>.
+    ///     Amazon S3 implementation of <see cref="IBlobStorageService"/>.
     /// </summary>
     /// <remarks>
     ///     This creates an <see cref="IAmazonS3"/> client once in its constructor.
@@ -30,32 +30,16 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public SpacesBlobStorageService(IOptions<BlobStorageOptions> options,
-            ILogger<SpacesBlobStorageService> logger)
+        public SpacesBlobStorageService(IOptions<BlobStorageOptions> options, ILogger<SpacesBlobStorageService> logger)
         {
-            if (options == null || options.Value == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            options.Value.AccessKey.ThrowIfNullOrEmpty();
-            options.Value.SecretKey.ThrowIfNullOrEmpty();
-
-            if (options.Value.ServiceUri == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Create client once.
-            var config = new AmazonS3Config
-            {
-                ServiceURL = _options.ServiceUri.AbsoluteUri
-            };
-            var credentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
-            client = new AmazonS3Client(credentials, config);
+            client = new AmazonS3Client(new BasicAWSCredentials(_options.AccessKey, _options.SecretKey),
+                new AmazonS3Config
+                {
+                    ServiceURL = _options.ServiceUri.AbsoluteUri
+                });
         }
 
         /// <summary>
@@ -70,10 +54,8 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <returns>Boolean result.</returns>
-        public async ValueTask<bool> FileExistsAsync(string containerName, string fileName)
+        public async Task<bool> FileExistsAsync(string containerName, string fileName)
         {
-            fileName.ThrowIfNullOrEmpty();
-
             try
             {
                 // TODO Maybe use list keys with a filter?
@@ -95,6 +77,7 @@ namespace FunderMaps.Infrastructure.Storage
                 }
 
                 _logger.LogError(e, "Could not check file existence in Spaces using S3");
+
                 // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
                 throw new StorageException("Could not check file existence", e);
             }
@@ -107,97 +90,134 @@ namespace FunderMaps.Infrastructure.Storage
         /// <param name="fileName">The file name.</param>
         /// <param name="hoursValid">How many hours the link should be valid.</param>
         /// <returns>Access <see cref="Uri"/>.</returns>
-        public ValueTask<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
+        public Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
         {
             try
             {
-                fileName.ThrowIfNullOrEmpty();
-                if (hoursValid <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(hoursValid));
-                }
-
-                var url = new Uri(client.GetPreSignedURL(new GetPreSignedUrlRequest
+                var url = client.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = _options.BlobStorageName,
                     Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
                     Expires = DateTime.UtcNow.AddHours(hoursValid)
-                }));
+                });
 
-                return new ValueTask<Uri>(url);
+                return Task.FromResult(new Uri(url));
             }
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not get access link from Spaces using S3");
+
                 throw new StorageException("Could not get access link", e);
             }
         }
 
         /// <summary>
-        ///     Stores a file in a Digital Ocean Space.
+        ///     Stores a file.
         /// </summary>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <param name="stream">See <see cref="Stream"/>.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
-        public ValueTask StoreFileAsync(string containerName, string fileName, Stream stream)
+        public async Task StoreFileAsync(string containerName, string fileName, Stream stream)
         {
             try
             {
-                fileName.ThrowIfNullOrEmpty();
-                if (stream == null)
-                {
-                    throw new ArgumentNullException(nameof(stream));
-                }
-
                 var key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}";
                 using var transferUtility = new TransferUtility(client);
 
-                return new ValueTask(transferUtility.UploadAsync(stream, _options.BlobStorageName, key));
+                await transferUtility.UploadAsync(stream, _options.BlobStorageName, key);
             }
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, "Could not store file to Spaces using S3");
+
                 throw new StorageException("Could not store file", e);
             }
         }
 
+        // FUTURE: Refactor
         /// <summary>
-        ///     Stores a file in a Digital Ocean Space.
+        ///     Stores a file.
         /// </summary>
         /// <param name="containerName">The container name.</param>
         /// <param name="fileName">The file name.</param>
         /// <param name="contentType">The content type.</param>
         /// <param name="stream">See <see cref="Stream"/>.</param>
+        /// <param name="storageObject">Storage object settings.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
-        public ValueTask StoreFileAsync(string containerName, string fileName, string contentType, Stream stream)
+        public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject)
         {
-            fileName.ThrowIfNullOrEmpty();
-            contentType.ThrowIfNullOrEmpty();
-            if (stream == null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
-
             try
             {
-                using var transferUtility = new TransferUtility(client);
-                var request = new TransferUtilityUploadRequest
+                TransferUtilityUploadRequest request = new()
                 {
                     BucketName = _options.BlobStorageName,
                     ContentType = contentType,
                     Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
-                    InputStream = stream
+                    InputStream = stream,
                 };
 
-                return new ValueTask(transferUtility.UploadAsync(request));
+                if (storageObject is not null)
+                {
+                    request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
+                    request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
+                    request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
+                    request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
+                    request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
+                }
+
+                using TransferUtility transferUtility = new(client);
+                await transferUtility.UploadAsync(request);
             }
             catch (AmazonS3Exception e)
             {
                 _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
+
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
         }
+
+        // FUTURE: Refactor
+        /// <summary>
+        ///     Stores a file.
+        /// </summary>
+        /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
+        /// <param name="directoryPath">Source directory.</param>
+        /// <param name="storageObject">Storage object settings.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        public async Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
+        {
+            try
+            {
+                async Task DirectorySearch(string path, string subdir = "")
+                {
+                    foreach (var file in Directory.GetFiles(path))
+                    {
+                        using Stream stream = File.OpenRead(file);
+                        await StoreFileAsync(directoryName, Path.Combine(subdir, Path.GetFileName(file)), storageObject.ContentType, stream, storageObject);
+                    }
+                    foreach (var file in Directory.GetDirectories(path))
+                    {
+                        await DirectorySearch(file, Path.Combine(subdir, Path.GetFileName(file)));
+                    }
+                }
+
+                await DirectorySearch(directoryPath);
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError(e, "Could not store file to Spaces using S3");
+
+                throw new StorageException("Could not store file", e);
+            }
+        }
+
+        // FUTURE: From interface
+        /// <summary>
+        ///     Test the Amazon S3 service backend.
+        /// </summary>
+        public async Task TestService()
+            => await client.ListBucketsAsync();
     }
 }
-#pragma warning restore CA1812 // Avoid uninstantiated internal classes
+#pragma warning restore CA1812 // Internal class is never instantiated

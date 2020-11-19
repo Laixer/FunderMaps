@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core", "src\Fund
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Infrastructure", "src\FunderMaps.Infrastructure\FunderMaps.Infrastructure.csproj", "{FE4947DD-2A36-4FD6-BC31-674797585837}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contrib", "Contrib", "{28D0668F-611D-4A4C-9E9B-6D244CC11CAA}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApp", "WebApp", "{54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0219D434-DD4F-4187-ADED-8CD4A62E90F1}"
@@ -21,8 +19,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.IntegrationTests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Data", "src\FunderMaps.Data\FunderMaps.Data.csproj", "{E176260E-0D9C-4374-AC49-F312C7EC23FD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{3C4DCA0E-4BE1-4554-9C42-909D060419FD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core.Tests", "tests\FunderMaps.Core.Tests\FunderMaps.Core.Tests.csproj", "{3206FABE-295E-401D-A43A-41174E2DEA61}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Core.Authentication", "src\FunderMaps.Core.Authentication\FunderMaps.Core.Authentication.csproj", "{604F9414-3E2F-4DC7-9420-366441FFA31D}"
@@ -31,11 +27,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Webservice", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.AspNetCore", "src\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj", "{8A28CFFE-2028-40AC-9CCD-81796FD360AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Testing", "tests\FunderMaps.Testing\FunderMaps.Testing.csproj", "{2A345D40-2842-4AAA-A552-630FAD97B9D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Testing", "tests\FunderMaps.Testing\FunderMaps.Testing.csproj", "{2A345D40-2842-4AAA-A552-630FAD97B9D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Portal", "src\FunderMaps.Portal\FunderMaps.Portal.csproj", "{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Portal", "src\FunderMaps.Portal\FunderMaps.Portal.csproj", "{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.BatchNode", "src\FunderMaps.BatchNode\FunderMaps.BatchNode.csproj", "{532227C4-BAD4-46AB-B45D-65F15317AFFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +85,10 @@ Global
 		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{532227C4-BAD4-46AB-B45D-65F15317AFFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{532227C4-BAD4-46AB-B45D-65F15317AFFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{532227C4-BAD4-46AB-B45D-65F15317AFFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{532227C4-BAD4-46AB-B45D-65F15317AFFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -103,6 +105,7 @@ Global
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE} = {54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}
 		{2A345D40-2842-4AAA-A552-630FAD97B9D5} = {0219D434-DD4F-4187-ADED-8CD4A62E90F1}
 		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1} = {2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}
+		{532227C4-BAD4-46AB-B45D-65F15317AFFA} = {2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDA50611-E011-4C1E-8823-7A6943652DCE}

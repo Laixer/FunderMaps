@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;

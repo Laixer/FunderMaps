@@ -14,6 +14,7 @@ namespace FunderMaps.WebApi
         /// </summary>
         public MapperProfile()
         {
+            CreateMap<Bundle, BundleDto>();
             CreateMap<Organization, ContractorDto>();
             CreateMap<Inquiry, InquiryDto>().ReverseMap();
             CreateMap<InquiryFull, InquiryDto>()
@@ -27,6 +28,7 @@ namespace FunderMaps.WebApi
                 .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
                 .ReverseMap();
             CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
+            CreateMap<Layer, LayerDto>();
             CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
             CreateMap<Project, ProjectDto>().ReverseMap();
             CreateMap<Recovery, RecoveryDto>().ReverseMap();

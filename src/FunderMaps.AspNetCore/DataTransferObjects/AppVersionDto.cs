@@ -3,21 +3,21 @@
     /// <summary>
     ///     Application version DTO.
     /// </summary>
-    public sealed class AppVersionDto
+    public sealed record AppVersionDto
     {
         /// <summary>
         ///     Application name.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; init; }
 
         /// <summary>
         ///     Application version.
         /// </summary>
-        public string Version { get; set; }
+        public string Version { get; init; }
 
         /// <summary>
         ///     Application version commit.
         /// </summary>
-        public string Commit { get; set; }
+        public string Commit { get; init; }
     }
 }

@@ -39,7 +39,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
-            var output = new DatasetStatsDto
+            DatasetStatsDto output = new()
             {
                 Count = await _organizationProposalRepository.CountAsync(),
             };

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Data
 {
+    // FUTURE: Detach memory from AppContext
     /// <summary>
     ///     Generic repository base.
     /// </summary>
@@ -87,17 +88,7 @@ namespace FunderMaps.Data
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
         protected virtual bool GetCacheItem(KeyPair key, out TEntity value)
-        {
-            var hasItem = AppContext.Cache.TryGetValue(key.KeyPairIdentity, out value);
-            if (hasItem)
-            {
-                if (!AppContext.Items.ContainsKey("cachehit"))
-                {
-                    AppContext.Items.Add("cachehit", 1);
-                }
-            }
-            return hasItem;
-        }
+            => AppContext.Cache.TryGetValue(key.KeyPairIdentity, out value);
 
         /// <summary>
         ///     Try get entity from cache.

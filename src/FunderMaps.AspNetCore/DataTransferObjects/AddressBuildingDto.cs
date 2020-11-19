@@ -7,52 +7,52 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     /// <summary>
     ///     Address with building DTO.
     /// </summary>
-    public sealed class AddressBuildingDto
+    public sealed record AddressBuildingDto
     {
         /// <summary>
         ///     Address identifier.
         /// </summary>
         [Geocoder]
-        public string AddressId { get; set; }
+        public string AddressId { get; init; }
 
         /// <summary>
         ///     Building identifier.
         /// </summary>
         [Geocoder]
-        public string BuildingId { get; set; }
+        public string BuildingId { get; init; }
 
         /// <summary>
         ///     Building number.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string BuildingNumber { get; set; }
+        public string BuildingNumber { get; init; }
 
         /// <summary>
         ///     Postcode.
         /// </summary>
-        public string PostalCode { get; set; }
+        public string PostalCode { get; init; }
 
         /// <summary>
         ///     Street name.
         /// </summary>
         [Required(AllowEmptyStrings = false)]
-        public string Street { get; set; }
+        public string Street { get; init; }
 
         /// <summary>
         ///     City.
         /// </summary>
         [Required]
-        public string City { get; set; }
+        public string City { get; init; }
 
         /// <summary>
         ///     Building Built year.
         /// </summary>
-        public DateTime? BuiltYear { get; set; }
+        public DateTime? BuiltYear { get; init; }
 
         /// <summary>
         ///     Building Geometry.
         /// </summary>
         [Required]
-        public string BuildingGeometry { get; set; }
+        public string BuildingGeometry { get; init; }
     }
 }
