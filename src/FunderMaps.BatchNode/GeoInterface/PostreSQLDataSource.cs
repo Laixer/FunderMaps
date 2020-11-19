@@ -8,10 +8,11 @@ namespace FunderMaps.BatchNode.GeoInterface
         // FUTURE: Replace with non npgsql version
         private NpgsqlConnectionStringBuilder connectionStringBuilder;
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public PostreSQLDataSource(string dbConnection)
-        {
-            connectionStringBuilder = new NpgsqlConnectionStringBuilder(dbConnection);
-        }
+            => connectionStringBuilder = new NpgsqlConnectionStringBuilder(dbConnection);
 
         public override string Read(CommandInfo commandInfo)
         {

@@ -229,6 +229,8 @@ namespace FunderMaps.BatchNode.Command
                 KeepWorkspace = false,
             };
 
+            // FUTURE: Maybe catch all exceptions, logs stats and keep workspace
+            //         on faillure.
             try
             {
                 await SetupAsync(Context);

@@ -43,6 +43,7 @@ namespace FunderMaps.Infrastructure.BatchClient
             return Guid.Parse(response.TaskId);
         }
 
+        // FUTURE: Make a separate call to the service to check the remote services.
         /// <summary>
         ///     Test the batch service backend.
         /// </summary>
