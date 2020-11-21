@@ -21,7 +21,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
 
         protected readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
         protected readonly IBundleRepository _bundleRepository;
-        protected readonly ILayerRepository _layerRepository;
 
         /// <summary>
         ///     Create new instance.
@@ -29,13 +28,11 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         public BundleBatch(
             BackgroundTaskDispatcher backgroundTaskDispatcher,
             IBundleRepository bundleRepository,
-            ILayerRepository layerRepository,
             ILogger<BundleJob> logger)
             : base(logger)
         {
             _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
-            _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
         }
 
         /// <summary>
