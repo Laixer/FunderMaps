@@ -229,6 +229,10 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             {
                 PropertyNameCaseInsensitive = true,
             });
+
+            // NOTE: The serializer will always return an object no matter the input value. Therefore we'll check
+            //       if the property BundleId was initialized to a non-empty value.
+            if (bundleBuildingContext.BundleId == Guid.Empty)
             {
                 throw new ProtocolException("Invalid bundle building context");
             }
