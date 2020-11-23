@@ -135,14 +135,22 @@ namespace FunderMaps.Data.Repositories
                         b.update_date,
                         b.delete_date,
                         b.layer_configuration
-                FROM    maplayer.bundle AS b
-                WHERE   b.organization_id = @id";
+                FROM    maplayer.bundle AS b";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n WHERE b.organization_id = @id";
+            }
 
             ConstructNavigation(ref sql, navigation);
 
             await using var context = await DbContextFactory(sql);
 
-            context.AddParameterWithValue("id", AppContext.TenantId);
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("id", AppContext.UserId);
+            }
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
