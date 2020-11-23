@@ -149,7 +149,7 @@ namespace FunderMaps.Data.Repositories
 
             if (AppContext.HasIdentity)
             {
-                context.AddParameterWithValue("id", AppContext.UserId);
+                context.AddParameterWithValue("id", AppContext.TenantId);
             }
 
             await foreach (var reader in context.EnumerableReaderAsync())
