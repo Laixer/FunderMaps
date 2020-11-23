@@ -225,7 +225,10 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string) is not BundleBuildingContext bundleBuildingContext)
+            var bundleBuildingContext = JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string, new()
+            {
+                PropertyNameCaseInsensitive = true,
+            });
             {
                 throw new ProtocolException("Invalid bundle building context");
             }
