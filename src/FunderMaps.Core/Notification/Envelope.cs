@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Notification
     /// <summary>
     ///     Notification envelope.
     /// </summary>
-    public class Envelope
+    public record Envelope
     {
         /// <summary>
         ///     Email recipients.

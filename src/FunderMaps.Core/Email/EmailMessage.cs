@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Email
     /// <summary>
     ///     Email message.
     /// </summary>
-    public class EmailMessage
+    public record EmailMessage
     {
         /// <summary>
         ///     Email recipients.

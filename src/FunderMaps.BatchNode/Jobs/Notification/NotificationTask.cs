@@ -11,7 +11,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
     /// </summary>
     public abstract class NotificationTask : BackgroundTask
     {
-        private const string TaskName = "notification";
+        private const string TaskName = "NOTIFICATION";
 
         /// <summary>
         ///     Prepare the notification for the handler.
@@ -57,7 +57,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name is not null && name.ToLowerInvariant() == TaskName && CanHandleEnvelope(name, value);
+            => name is not null && name.ToUpperInvariant() == TaskName && CanHandleEnvelope(name, value);
 
         /// <summary>
         ///     Method to check if the envelope can be handeld by this notification handler.
