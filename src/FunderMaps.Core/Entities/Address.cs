@@ -70,6 +70,11 @@ namespace FunderMaps.Core.Entities
         [Geocoder]
         public string BuildingId { get; set; }
 
+        /// <summary>
+        ///     Full address.
+        /// </summary>
+        public string FullAddress => $"{Street.Trim()} {BuildingNumber.Trim()}, {City.Trim()}";
+
         // TODO: Obsolete
         /// <summary>
         ///     Building identifier.
