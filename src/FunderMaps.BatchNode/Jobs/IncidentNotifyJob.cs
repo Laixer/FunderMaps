@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.BatchNode.Jobs.Notification;
 using FunderMaps.Core.Entities;
@@ -105,9 +105,7 @@ namespace FunderMaps.BatchNode.Jobs
                 };
 
             public static IEnumerable<string> ArrayToFoundationDamageCharacteristics(IEnumerable<Core.Types.FoundationDamageCharacteristics> values)
-            {
-                return values.Select(value => ToFoundationDamageCharacteristics(value));
-            }
+                => values.Select(value => ToFoundationDamageCharacteristics(value));
 
             public static string ToEnvironmentDamageCharacteristics(Core.Types.EnvironmentDamageCharacteristics value)
                 => value switch
@@ -127,9 +125,7 @@ namespace FunderMaps.BatchNode.Jobs
                 };
 
             public static IEnumerable<string> ArrayToEnvironmentDamageCharacteristics(IEnumerable<Core.Types.EnvironmentDamageCharacteristics> values)
-            {
-                return values.Select(value => ToEnvironmentDamageCharacteristics(value));
-            }
+                => values.Select(value => ToEnvironmentDamageCharacteristics(value));
         }
 
         // FUTURE: It makes much more sense to have the templateParser be injected in the
