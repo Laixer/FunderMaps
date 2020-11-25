@@ -17,7 +17,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     /// </summary>
     internal class BundleBatch : CommandTask
     {
-        private const string TaskName = "bundle_batch";
+        private const string TaskName = "BUNDLE_BATCH";
 
         protected readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
         protected readonly IBundleRepository _bundleRepository;
@@ -76,7 +76,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name is not null && name.ToLowerInvariant() == TaskName && value is string;
+            => name is not null && name.ToUpperInvariant() == TaskName && value is string;
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

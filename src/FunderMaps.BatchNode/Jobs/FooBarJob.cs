@@ -10,6 +10,8 @@ namespace FunderMaps.BatchNode.Jobs
     /// </summary>
     internal class FooBarJob : BackgroundTask
     {
+        private const string TaskName = "FOOBAR";
+
         private readonly ILogger<FooBarJob> _logger;
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace FunderMaps.BatchNode.Jobs
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name is not null && name.ToLowerInvariant() == "foobar";
+            => name is not null && name.ToUpperInvariant() == TaskName;
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

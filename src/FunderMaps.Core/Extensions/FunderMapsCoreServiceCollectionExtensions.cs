@@ -71,6 +71,7 @@ namespace Microsoft.Extensions.DependencyInjection
             //       resolve and disposed right after.
             services.AddTransient<IRandom, RandomGenerator>();
             services.AddTransient<IPasswordHasher, PasswordHasher>();
+            services.AddTransient<ITemplateParser, TemplateParser>();
 
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container

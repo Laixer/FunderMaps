@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Email;
@@ -24,20 +25,38 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         /// <summary>
         ///     Handle the incoming notification.
         /// </summary>
+        /// <remarks>
+        ///     If one of the recipient fields happens to contain more than
+        ///     a single address split them now.
+        /// </remarks>
         /// <param name="context">Notification context.</param>
         /// <param name="envelope">Envelope containing the notification.</param>
         public override async Task NotifyAsync(BackgroundTaskContext context, Envelope envelope)
         {
-            var message = new EmailMessage
+            EmailMessage message = new()
             {
                 Content = envelope.Content,
                 Subject = envelope.Subject,
             };
 
-            message.ToAddresses = envelope.Recipients.Select(address => new EmailAddress
+            List<EmailAddress> toAddresses = new();
+            foreach (var recipients in envelope.Recipients.Where(s => s.Contains(';')))
             {
-                Address = address,
-            });
+                foreach (var recipient in recipients.Split(';'))
+                {
+                    toAddresses.Add(new EmailAddress()
+                    {
+                        Address = recipient.Trim(),
+                    });
+                }
+            }
+
+            toAddresses.AddRange(envelope.Recipients.Where(s => !s.Contains(';')).Select(address => new EmailAddress
+            {
+                Address = address.Trim(),
+            }));
+
+            message.ToAddresses = toAddresses;
 
             await _emailService.SendAsync(message);
         }
@@ -49,7 +68,6 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(Envelope envelope)
             => !string.IsNullOrEmpty(envelope.Subject)
-                && envelope.Recipients.Count > 0
                 && envelope.Recipients[0].Contains('@', System.StringComparison.InvariantCulture);
     }
 }
