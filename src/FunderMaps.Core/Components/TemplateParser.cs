@@ -2,6 +2,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using FunderMaps.Core.Interfaces;
 using Scriban;
 using Scriban.Runtime;
 
@@ -10,7 +11,7 @@ namespace FunderMaps.Core.Components
     /// <summary>
     ///     Template parser.
     /// </summary>
-    public class TemplateParser
+    public class TemplateParser : ITemplateParser
     {
         private const string templatePath = "Template/{0}/{1}.html";
 
@@ -23,7 +24,7 @@ namespace FunderMaps.Core.Components
         /// </summary>
         /// <param name="name">Name of the object when referring from template.</param>
         /// <param name="value">Object to access in template.</param>
-        public TemplateParser AddObject(string name, object value)
+        public ITemplateParser AddObject(string name, object value)
         {
             scriptObject.Add(name, value);
             return this;
@@ -33,7 +34,7 @@ namespace FunderMaps.Core.Components
         ///     Register a <see cref="IScriptObject"/> extension in the template context.
         /// </summary>
         /// <param name="scriptObject">Script object to load on rendering.</param>
-        public TemplateParser RegisterExtension(IScriptObject scriptObject)
+        public ITemplateParser RegisterExtension(IScriptObject scriptObject)
         {
             templateContext.PushGlobal(scriptObject);
             return this;
@@ -44,10 +45,9 @@ namespace FunderMaps.Core.Components
         /// </summary>
         /// <param name="order">Subject order.</param>
         /// <param name="templateName">Template name on disk.</param>
-        public TemplateParser FromTemplateFile(string order, string templateName)
+        public ITemplateParser FromTemplateFile(string order, string templateName)
         {
-            // TODO: Move to AppContext
-            var applicationDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var applicationDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // TODO: Move to AppContext
             var fullTemplatePath = Path.Combine(applicationDirectory, string.Format(templatePath, order, templateName));
             template = Template.ParseLiquid(File.ReadAllText(fullTemplatePath), fullTemplatePath);
             return this;
@@ -57,7 +57,7 @@ namespace FunderMaps.Core.Components
         ///     Supply the template.
         /// </summary>
         /// <param name="templateString">Template as string.</param>
-        public TemplateParser FromTemplate(string templateString)
+        public ITemplateParser FromTemplate(string templateString)
         {
             template = Template.ParseLiquid(templateString);
             return this;
