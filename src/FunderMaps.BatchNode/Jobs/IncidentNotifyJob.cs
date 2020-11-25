@@ -14,7 +14,7 @@ using Scriban.Runtime;
 namespace FunderMaps.BatchNode.Jobs
 {
     /// <summary>
-    ///     FooBar dummy job.
+    ///     Icident notification job.
     /// </summary>
     internal class IncidentNotifyJob : EmailJob
     {
@@ -42,13 +42,11 @@ namespace FunderMaps.BatchNode.Jobs
             _contactRepository = contactRepository;
         }
 
+        // TODO: This is a temporary solution.
         // TODO: Move into culture service?
         class TranslationFunctions : ScriptObject
         {
-            public static string ToBoolean(bool value)
-            {
-                return value ? "Ja" : "Nee";
-            }
+            public static string ToBoolean(bool value) => value ? "Ja" : "Nee";
 
             public static string ToFoundationType(Core.Types.FoundationType value)
                 => value switch

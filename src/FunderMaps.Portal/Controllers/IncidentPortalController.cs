@@ -113,7 +113,6 @@ namespace FunderMaps.Portal.Controllers
             await _notifyService.DispatchNotifyAsync("incident_notify", new()
             {
                 Recipients = new List<string> { "info@fundermaps.com", "info@kcaf.nl" }, // TODO: Retrieve from config
-                Subject = $"Nieuwe melding: {id}",
                 Items = new Dictionary<string, string> { { "id", id } },
             });
 
