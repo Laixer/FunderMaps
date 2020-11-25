@@ -106,12 +106,7 @@ namespace FunderMaps.BatchNode.Jobs
 
             public static IEnumerable<string> ArrayToFoundationDamageCharacteristics(IEnumerable<Core.Types.FoundationDamageCharacteristics> values)
             {
-                Collection<string> list = new();
-                foreach (var value in values)
-                {
-                    list.Add(ToFoundationDamageCharacteristics(value));
-                }
-                return list;
+                return values.Select(value => ToFoundationDamageCharacteristics(value));
             }
 
             public static string ToEnvironmentDamageCharacteristics(Core.Types.EnvironmentDamageCharacteristics value)
