@@ -106,12 +106,15 @@ namespace FunderMaps.Portal.Controllers
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
 
-            await _incidentRepository.AddAsync(incident);
-            await _notifyService.DispatchNotifyAsync(new()
+            // Act.
+            var id = await _incidentRepository.AddAsync(incident);
+
+            // Act.
+            await _notifyService.DispatchNotifyAsync("incident_notify", new()
             {
-                Recipients = new List<string> { "info@fundermaps.com", "info@laixer.com" },
-                Content = $"Nieuwe melding binnengekomen met opmerking: {incident.Note}",
-                Subject = "FunderMaps - Nieuwe melding via loket",
+                Recipients = new List<string> { "info@fundermaps.com", "info@kcaf.nl" }, // TODO: Retrieve from config
+                Subject = $"Nieuwe melding: {id}",
+                Items = new Dictionary<string, string> { { "id", id } },
             });
 
             // Return.

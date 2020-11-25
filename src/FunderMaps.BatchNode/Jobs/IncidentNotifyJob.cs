@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -152,6 +153,11 @@ namespace FunderMaps.BatchNode.Jobs
         /// <param name="envelope">Envelope containing the notification.</param>
         public override async Task NotifyAsync(BackgroundTaskContext context, Envelope envelope)
         {
+            if (!envelope.Items.ContainsKey("id"))
+            {
+                throw new ArgumentException("id was not found in items");
+            }
+
             Incident incident = await _incidentRepository.GetByIdAsync(envelope.Items["id"]);
             Address address = await _addressRepository.GetByIdAsync(incident.Address);
 
