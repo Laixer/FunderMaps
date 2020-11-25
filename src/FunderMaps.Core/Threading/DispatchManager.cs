@@ -149,7 +149,7 @@ namespace FunderMaps.Core.Threading
 
                             await backgroundTask.ExecuteAsync(context);
                         }
-                        catch (Exception e)
+                        catch (Exception e) // TODO: Check a specific exception
                         {
                             _logger.LogError(e, $"Exception in background task {context.Id}");
 

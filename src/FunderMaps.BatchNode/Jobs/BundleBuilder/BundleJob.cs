@@ -21,7 +21,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     /// </summary>
     internal class BundleJob : CommandTask
     {
-        private const string TaskName = "bundle_building";
+        private const string TaskName = "BUNDLE_BUILDING";
 
         protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
@@ -225,7 +225,14 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string) is not BundleBuildingContext bundleBuildingContext)
+            var bundleBuildingContext = JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string, new()
+            {
+                PropertyNameCaseInsensitive = true,
+            });
+
+            // NOTE: The serializer will always return an object no matter the input value. Therefore we'll check
+            //       if the property BundleId was initialized to a non-empty value.
+            if (bundleBuildingContext.BundleId == Guid.Empty)
             {
                 throw new ProtocolException("Invalid bundle building context");
             }
@@ -259,7 +266,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name is not null && name.ToLowerInvariant() == TaskName && value is string;
+            => name is not null && name.ToUpperInvariant() == TaskName && value is string;
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

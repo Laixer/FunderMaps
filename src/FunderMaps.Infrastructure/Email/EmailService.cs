@@ -36,7 +36,12 @@ namespace FunderMaps.Infrastructure.Email
         private InternetAddress GetDefaultSender
             => new MailboxAddress(_options.DefaultSenderName, _options.DefaultSenderAddress);
 
-        protected MimeMessage BuildHeader(MimeMessage message, EmailMessage emailMessage)
+        /// <summary>
+        ///     Set the headers in the email message.
+        /// </summary>
+        /// <param name="message">Mail message to send.</param>
+        /// <param name="emailMessage">Message source.</param>
+        protected void BuildHeader(ref MimeMessage message, EmailMessage emailMessage)
         {
             message.To.AddRange(emailMessage.ToAddresses.Select(m => new MailboxAddress(m.Name, m.Address)));
 
@@ -52,17 +57,19 @@ namespace FunderMaps.Infrastructure.Email
             message.Subject = emailMessage.Subject;
 
             Logger.LogDebug($"Sending message to {string.Join(", ", emailMessage.ToAddresses)}");
-
-            return message;
         }
 
-        protected static MimeMessage BuildBody(MimeMessage message, EmailMessage emailMessage)
+        /// <summary>
+        ///     Set the body in the email message.
+        /// </summary>
+        /// <param name="message">Mail message to send.</param>
+        /// <param name="emailMessage">Message source.</param>
+        protected static void BuildBody(ref MimeMessage message, EmailMessage emailMessage)
         {
             message.Body = new TextPart(TextFormat.Html)
             {
                 Text = emailMessage.Content,
             };
-            return message;
         }
 
         /// <summary>
@@ -71,10 +78,10 @@ namespace FunderMaps.Infrastructure.Email
         /// <param name="emailMessage">Message to send.</param>
         public async Task SendAsync(EmailMessage emailMessage)
         {
-            var message = new MimeMessage();
+            MimeMessage message = new();
 
-            BuildHeader(message, emailMessage);
-            BuildBody(message, emailMessage);
+            BuildHeader(ref message, emailMessage);
+            BuildBody(ref message, emailMessage);
 
             Logger.LogDebug($"Message prepared, try sending message to MTA");
 
