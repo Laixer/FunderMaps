@@ -100,7 +100,7 @@ namespace FunderMaps.BatchNode.Jobs
                     Core.Types.FoundationDamageCharacteristics.CrawlspaceFlooding => "Water in kruipruimte",
                     Core.Types.FoundationDamageCharacteristics.ThresholdAboveSubsurface => "Maaiveld lager dan dorpel",
                     Core.Types.FoundationDamageCharacteristics.ThresholdBelowSubsurface => "Drempel lager dan maaiveld",
-                    Core.Types.FoundationDamageCharacteristics.CrookedFloorWall => "Scheven vloer",
+                    Core.Types.FoundationDamageCharacteristics.CrookedFloorWall => "Scheve vloer",
                     _ => "Onbekend",
                 };
 
