@@ -179,10 +179,6 @@ namespace FunderMaps.WebApi.Controllers.Report
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
 
-            // FUTURE: Works for now, but may not be the best solution to check
-            //         if input data is valid
-            await _addressRepository.GetByIdAsync(incident.Address);
-
             var id = await _incidentRepository.AddAsync(incident);
             incident = await _incidentRepository.GetByIdAsync(id);
             incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
