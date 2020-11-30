@@ -174,7 +174,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             // There does not have to be a contact, but if it exists we'll save it.
-            if (incident.ContactNavigation != null)
+            if (incident.ContactNavigation is not null)
             {
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
