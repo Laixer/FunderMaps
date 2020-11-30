@@ -174,14 +174,10 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             // There does not have to be a contact, but if it exists we'll save it.
-            if (incident.ContactNavigation != null)
+            if (incident.ContactNavigation is not null)
             {
                 await _contactRepository.AddAsync(incident.ContactNavigation);
             }
-
-            // FUTURE: Works for now, but may not be the best solution to check
-            //         if input data is valid
-            await _addressRepository.GetByIdAsync(incident.Address);
 
             var id = await _incidentRepository.AddAsync(incident);
             incident = await _incidentRepository.GetByIdAsync(id);

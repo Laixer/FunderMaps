@@ -22,7 +22,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Incident"/>.</returns>
         public override async ValueTask<string> AddAsync(Incident entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -54,12 +54,12 @@ namespace FunderMaps.Data.Repositories
                     @foundation_recovery,
                     @neightbor_recovery,
                     @foundation_damage_cause,
-                    @document_file,
-                    @note,
-                    @internal_note,
-                    @email,
-                    @foundation_damage_characteristics,
-                    @environment_damage_characteristics,
+                    NULLIF(@document_file, '{}'::text[]),
+                    NULLIF(trim(@note), ''),
+                    NULLIF(trim(@internal_note), ''),
+                    NULLIF(trim(@email), ''),
+                    NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
+                    NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
                     @address,
                     @audit_status,
                     @question_type,
@@ -95,8 +95,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="Incident"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
+        /// <param name="id">Entity identifier.</param>
         public override async ValueTask DeleteAsync(string id)
         {
             ResetCacheEntity(id);
@@ -133,7 +132,7 @@ namespace FunderMaps.Data.Repositories
             context.AddJsonParameterWithValue("meta", entity.Meta);
         }
 
-        public static Incident MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        public static Incident MapFromReader(DbDataReader reader, int offset = 0)
             => new Incident
             {
                 Id = reader.GetSafeString(offset + 0),
@@ -150,8 +149,8 @@ namespace FunderMaps.Data.Repositories
                 CreateDate = reader.GetDateTime(offset + 11),
                 UpdateDate = reader.GetSafeDateTime(offset + 12),
                 DeleteDate = reader.GetSafeDateTime(offset + 13),
-                FoundationDamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics[]>(offset + 14),
-                EnvironmentDamageCharacteristics = reader.GetFieldValue<EnvironmentDamageCharacteristics[]>(offset + 15),
+                FoundationDamageCharacteristics = reader.GetSafeFieldValue<FoundationDamageCharacteristics[]>(offset + 14),
+                EnvironmentDamageCharacteristics = reader.GetSafeFieldValue<EnvironmentDamageCharacteristics[]>(offset + 15),
                 Address = reader.GetSafeString(offset + 16),
                 AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 17),
                 QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset + 18),
@@ -163,7 +162,6 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Incident"/>.</returns>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public override async ValueTask<Incident> GetByIdAsync(string id)
         {
             if (TryGetEntity(id, out Incident entity))
@@ -209,10 +207,9 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all <see cref="Incident"/>.
         /// </summary>
         /// <returns>List of <see cref="Incident"/>.</returns>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public override async IAsyncEnumerable<Incident> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
+            if (navigation is null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
@@ -254,10 +251,9 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Incident"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        /// <exception cref="NullResultException"> is thrown if statement had no affect.</exception>
         public override async ValueTask UpdateAsync(Incident entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
