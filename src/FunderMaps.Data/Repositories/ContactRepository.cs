@@ -89,7 +89,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         }
 
-        public static Contact MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        public static Contact MapFromReader(DbDataReader reader, int offset = 0)
             => new Contact
             {
                 Email = reader.GetSafeString(offset + 0),
@@ -170,8 +170,8 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                     UPDATE  application.contact
-                    SET     name = @name,
-                            phone_number = @phone_number
+                    SET     name = NULLIF(trim(@name), '')),
+                            phone_number = NULLIF(trim(@phone_number), ''))
                     WHERE   email = @email";
 
             await using var context = await DbContextFactory(sql);
