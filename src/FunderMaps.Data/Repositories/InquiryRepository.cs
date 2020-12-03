@@ -102,7 +102,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="InquiryFull"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
         {
             ResetCacheEntity(id);
@@ -137,7 +137,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
         }
 
-        public static InquiryFull MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        public static InquiryFull MapFromReader(DbDataReader reader, int offset = 0)
             => new InquiryFull
             {
                 Id = reader.GetInt(offset + 0),

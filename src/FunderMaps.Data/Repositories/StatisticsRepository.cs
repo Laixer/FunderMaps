@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
+    // TODO: Move most if not all logic to db.
     // FUTURE: This casts uint? to uint (and similar). In theory this is safe
     ///     but this is VERY bug sensitive.
     /// <summary>
