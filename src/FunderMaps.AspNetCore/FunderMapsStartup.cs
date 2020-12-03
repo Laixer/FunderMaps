@@ -7,6 +7,8 @@ using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,13 +31,17 @@ namespace FunderMaps.AspNetCore
                 .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
                 .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
                 .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
-            mapper.CreateMap<AnalysisProduct, AnalysisRiskDto>();
+
+            mapper.CreateMap<AnalysisProduct, AnalysisFoundationDto>();
+            mapper.CreateMap<AnalysisProduct, AnalysisCompleteDto>();
+            mapper.CreateMap<AnalysisProduct, AnalysisRiskPlusDto>();
             mapper.CreateMap<Building, AddressBuildingDto>().ReverseMap();
             mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
             mapper.CreateMap<Incident, IncidentDto>()
                 .IncludeMembers(src => src.ContactNavigation)
                 .ReverseMap();
             mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
+            mapper.CreateMap<StatisticsProduct, StatisticsDto>();
             mapper.CreateMap<TokenContext, SignInSecurityTokenDto>()
                 .ForMember(dest => dest.Id, o => o.MapFrom(src => src.Token.Id))
                 .ForMember(dest => dest.Issuer, o => o.MapFrom(src => src.Token.Issuer))
@@ -44,6 +50,14 @@ namespace FunderMaps.AspNetCore
                 .ForMember(dest => dest.ValidTo, o => o.MapFrom(src => src.Token.ValidTo));
             mapper.CreateMap<User, UserDto>().ReverseMap();
             mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
+
+            // FUTURE: Rewrite.
+            mapper.CreateMap<Years, YearsResponseModel>();
+            mapper.CreateMap<ConstructionYearDistribution, ConstructionYearDistributionResponseModel>();
+            mapper.CreateMap<ConstructionYearPair, ConstructionYearPairResponseModel>();
+            mapper.CreateMap<FoundationRiskDistribution, FoundationRiskDistributionResponseModel>();
+            mapper.CreateMap<FoundationTypeDistribution, FoundationTypeDistributionResponseModel>();
+            mapper.CreateMap<FoundationTypePair, FoundationTypePairResponseModel>();
         }
 
         /// <summary>
