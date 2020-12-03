@@ -211,7 +211,7 @@ namespace FunderMaps.IntegrationTests.Portal
 
             // Act.
             var response = await client.GetAsync($"api/incident-portal/risk?id={analysisProducts.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisRiskDto>();
+            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisRiskPlusDto>();
 
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
