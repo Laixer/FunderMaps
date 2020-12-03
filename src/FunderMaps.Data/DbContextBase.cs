@@ -24,7 +24,7 @@ namespace FunderMaps.Data
         /// </summary>
         public virtual async ValueTask<DbContext> DbContextFactory(string cmdText)
         {
-            var context = new DbContext()
+            DbContext context = new()
             {
                 DbProvider = DbProvider,
                 AppContext = AppContext,
@@ -43,6 +43,11 @@ namespace FunderMaps.Data
         protected static void ConstructNavigation(ref string cmdText, INavigation navigation, string alias = null)
         {
             const string lineFeed = "\r\n";
+
+            if (navigation is null)
+            {
+                return;
+            }
 
             // FUTURE: Can we improve stability and readability here?
             if (!string.IsNullOrEmpty(navigation.SortColumn))

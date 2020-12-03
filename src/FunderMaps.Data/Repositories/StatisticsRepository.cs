@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
+    // TODO: Move most if not all logic to db.
     // FUTURE: This casts uint? to uint (and similar). In theory this is safe
     ///     but this is VERY bug sensitive.
     /// <summary>
@@ -33,48 +34,77 @@ namespace FunderMaps.Data.Repositories
             NeighborhoodId = 1,
         }
 
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (await ProcessAsync(userId, StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodCode, neighborhoodCode)).ConstructionYearDistribution;
+        /// <summary>
+        ///     Fill all statistic fields if required.
+        /// </summary>
+        public async Task<StatisticsProduct> GetStatisticsProductByIdAsync(string id)
+            => new()
+            {
+                FoundationTypeDistribution = await GetFoundationTypeDistributionByIdAsync(id),
+                ConstructionYearDistribution = await GetConstructionYearDistributionByIdAsync(id),
+                FoundationRiskDistribution = await GetFoundationRiskDistributionByIdAsync(id),
+                DataCollectedPercentage = await GetDataCollectedPercentageByIdAsync(id),
+                TotalBuildingRestoredCount = await GetTotalBuildingRestoredCountByIdAsync(id),
+                TotalIncidentCount = await GetTotalIncidentCountByIdAsync(id),
+                TotalReportCount = await GetTotalReportCountByIdAsync(id),
+            };
 
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(Guid userId, string neighborhoodId)
-            => (await ProcessAsync(userId, StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodId, neighborhoodId)).ConstructionYearDistribution;
+        /// <summary>
+        ///     Fill all statistic fields if required.
+        /// </summary>
+        public async Task<StatisticsProduct> GetStatisticsProductByExternalIdAsync(string id)
+            => new()
+            {
+                FoundationTypeDistribution = await GetFoundationTypeDistributionByExternalIdAsync(id),
+                ConstructionYearDistribution = await GetConstructionYearDistributionByExternalIdAsync(id),
+                FoundationRiskDistribution = await GetFoundationRiskDistributionByExternalIdAsync(id),
+                DataCollectedPercentage = await GetDataCollectedPercentageByExternalIdAsync(id),
+                TotalBuildingRestoredCount = await GetTotalBuildingRestoredCountByExternalIdAsync(id),
+                TotalIncidentCount = await GetTotalIncidentCountByExternalIdAsync(id),
+                TotalReportCount = await GetTotalReportCountByExternalIdAsync(id),
+            };
 
-        public async Task<double> GetDataCollectedPercentageByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (double)(await ProcessAsync(userId, StatisticsProductType.DataCollected, IdMethod.NeighborhoodCode, neighborhoodCode)).DataCollectedPercentage;
+        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string neighborhoodCode)
+            => (await ProcessAsync(StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodCode, neighborhoodCode)).ConstructionYearDistribution;
 
-        public async Task<double> GetDataCollectedPercentageByIdAsync(Guid userId, string neighborhoodId)
-            => (double)(await ProcessAsync(userId, StatisticsProductType.DataCollected, IdMethod.NeighborhoodId, neighborhoodId)).DataCollectedPercentage;
+        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string neighborhoodId)
+            => (await ProcessAsync(StatisticsProductType.ConstructionYears, IdMethod.NeighborhoodId, neighborhoodId)).ConstructionYearDistribution;
 
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (await ProcessAsync(userId, StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodCode, neighborhoodCode)).FoundationRiskDistribution;
+        public async Task<double> GetDataCollectedPercentageByExternalIdAsync(string neighborhoodCode)
+            => (double)(await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodCode, neighborhoodCode)).DataCollectedPercentage;
 
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(Guid userId, string neighborhoodId)
-            => (await ProcessAsync(userId, StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodId, neighborhoodId)).FoundationRiskDistribution;
+        public async Task<double> GetDataCollectedPercentageByIdAsync(string neighborhoodId)
+            => (double)(await ProcessAsync(StatisticsProductType.DataCollected, IdMethod.NeighborhoodId, neighborhoodId)).DataCollectedPercentage;
 
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (await ProcessAsync(userId, StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodCode, neighborhoodCode)).FoundationTypeDistribution;
+        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string neighborhoodCode)
+            => (await ProcessAsync(StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodCode, neighborhoodCode)).FoundationRiskDistribution;
 
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(Guid userId, string neighborhoodId)
-            => (await ProcessAsync(userId, StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodId, neighborhoodId)).FoundationTypeDistribution;
+        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string neighborhoodId)
+            => (await ProcessAsync(StatisticsProductType.FoundationRisk, IdMethod.NeighborhoodId, neighborhoodId)).FoundationRiskDistribution;
 
-        public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (uint)(await ProcessAsync(userId, StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode)).TotalBuildingRestoredCount;
+        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string neighborhoodCode)
+            => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodCode, neighborhoodCode)).FoundationTypeDistribution;
 
-        public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(Guid userId, string neighborhoodId)
-            => (uint)(await ProcessAsync(userId, StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId)).TotalBuildingRestoredCount;
+        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string neighborhoodId)
+            => (await ProcessAsync(StatisticsProductType.FoundationRatio, IdMethod.NeighborhoodId, neighborhoodId)).FoundationTypeDistribution;
 
-        public async Task<uint> GetTotalIncidentCountByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (uint)(await ProcessAsync(userId, StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode)).TotalIncidentCount;
+        public async Task<uint> GetTotalBuildingRestoredCountByExternalIdAsync(string neighborhoodCode)
+            => (uint)(await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodCode, neighborhoodCode)).TotalBuildingRestoredCount;
 
-        public async Task<uint> GetTotalIncidentCountByIdAsync(Guid userId, string neighborhoodId)
-            => (uint)(await ProcessAsync(userId, StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId)).TotalIncidentCount;
+        public async Task<uint> GetTotalBuildingRestoredCountByIdAsync(string neighborhoodId)
+            => (uint)(await ProcessAsync(StatisticsProductType.BuildingsRestored, IdMethod.NeighborhoodId, neighborhoodId)).TotalBuildingRestoredCount;
 
-        public async Task<uint> GetTotalReportCountByExternalIdAsync(Guid userId, string neighborhoodCode)
-            => (uint)(await ProcessAsync(userId, StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode)).TotalReportCount;
+        public async Task<uint> GetTotalIncidentCountByExternalIdAsync(string neighborhoodCode)
+            => (uint)(await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodCode, neighborhoodCode)).TotalIncidentCount;
 
-        public async Task<uint> GetTotalReportCountByIdAsync(Guid userId, string neighborhoodId)
-            => (uint)(await ProcessAsync(userId, StatisticsProductType.Reports, IdMethod.NeighborhoodId, neighborhoodId)).TotalReportCount;
+        public async Task<uint> GetTotalIncidentCountByIdAsync(string neighborhoodId)
+            => (uint)(await ProcessAsync(StatisticsProductType.Incidents, IdMethod.NeighborhoodId, neighborhoodId)).TotalIncidentCount;
 
+        public async Task<uint> GetTotalReportCountByExternalIdAsync(string neighborhoodCode)
+            => (uint)(await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodCode, neighborhoodCode)).TotalReportCount;
+
+        public async Task<uint> GetTotalReportCountByIdAsync(string neighborhoodId)
+            => (uint)(await ProcessAsync(StatisticsProductType.Reports, IdMethod.NeighborhoodId, neighborhoodId)).TotalReportCount;
 
         // TODO This seems a bit hacky. The format might change in the future when we decide to change the process of getting the data.
         /// <summary>
@@ -85,7 +115,7 @@ namespace FunderMaps.Data.Repositories
         ///     for all fields that were not requested.
         /// </remarks>
         /// <param name="identifier">Neighborhood id or code</param>
-        private async Task<StatisticsProduct> ProcessAsync(Guid userId, StatisticsProductType product, IdMethod method, string identifier)
+        private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier)
         {
             static string GetTable(StatisticsProductType product)
                 => product switch
@@ -108,6 +138,9 @@ namespace FunderMaps.Data.Repositories
                     _ => throw new InvalidOperationException(nameof(method))
                 };
 
+            var sql1 = "application.is_geometry_in_fence(@user_id, geom)";
+            var sql2 = "1=1";
+
             // TODO: Write out columns in the select.
             // Note: This uses a CTE for proper index usage. 
             var sql = $@"
@@ -115,7 +148,7 @@ namespace FunderMaps.Data.Repositories
                     SELECT id
                     FROM geocoder.neighborhood
                     WHERE {GetIdColumnName(method)} = @identifier
-                    AND application.is_geometry_in_fence(@user_id, geom)
+                    AND  {(AppContext.HasIdentity ? sql1 : sql2)}
                     LIMIT 1
                 )
                 SELECT 
@@ -126,19 +159,21 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory(sql);
 
             context.AddParameterWithValue("identifier", identifier);
-            context.AddParameterWithValue("user_id", userId);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId); // TODO: Should check AppContext.HasIdentity
+            }
 
             // await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);
 
             // Map and return.
-            return new StatisticsProduct
+            return new()
             {
                 ConstructionYearDistribution = product == StatisticsProductType.ConstructionYears ? await MapConstructionYearDistributionAsync(context) : null,
                 DataCollectedPercentage = product == StatisticsProductType.DataCollected ? await MapDataCollectedAsync(context) : (double?)null,
                 FoundationRiskDistribution = product == StatisticsProductType.FoundationRisk ? await MapFoundationRiskDistributionAsync(context) : null,
                 FoundationTypeDistribution = product == StatisticsProductType.FoundationRatio ? await MapFoundationTypeDistributionAsync(context) : null,
-                NeighborhoodCode = method == IdMethod.NeighborhoodCode ? identifier : null,
-                NeighborhoodId = method == IdMethod.NeighborhoodId ? identifier : null,
                 TotalBuildingRestoredCount = product == StatisticsProductType.BuildingsRestored ? await MapBuildingsRestoredAsync(context) : (uint?)null,
                 TotalIncidentCount = product == StatisticsProductType.Incidents ? await MapIncidentsAsync(context) : (uint?)null,
                 TotalReportCount = product == StatisticsProductType.Reports ? await MapInquiriesAsync(context) : (uint?)null,
@@ -197,7 +232,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         private async Task<FoundationRiskDistribution> MapFoundationRiskDistributionAsync(DbContext context)
         {
-            var map = new Dictionary<FoundationRisk, double>
+            Dictionary<FoundationRisk, double> map = new()
             {
                 { FoundationRisk.A, 0 },
                 { FoundationRisk.B, 0 },
@@ -240,7 +275,7 @@ namespace FunderMaps.Data.Repositories
                 });
             }
 
-            return new FoundationTypeDistribution
+            return new()
             {
                 FoundationTypes = pairs
             };

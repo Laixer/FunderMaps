@@ -5,9 +5,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
-    // FUTURE: Inherit from parent child enforcing contract.
-    // FUTURE: Split into partial classes.
-
     /// <summary>
     ///     Inquiry sample entity.
     /// </summary>

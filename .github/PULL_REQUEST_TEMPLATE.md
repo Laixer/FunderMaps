@@ -2,7 +2,7 @@
 
 * [ ] The merge build succeeded
 * [ ] The PR has been reviewed and is approved
-* [ ] All packages are upgraded to the lastest version (only PR into master)
+* [ ] All packages are upgraded to the latest version (only PR into master)
 
 **What issue does this PR address?**
 
@@ -14,4 +14,4 @@ Yes/No
 
 **Additional information**:
 
-None
+Remove branch after merge

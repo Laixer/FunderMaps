@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddContextRepository<IRecoverySampleRepository, RecoverySampleRepository>();
             services.AddContextRepository<IStatisticsRepository, StatisticsRepository>();
             services.AddContextRepository<ITestRepository, TestRepository>();
-            services.AddContextRepository<ITrackingRepository, TrackingRepository>();
+            services.AddContextRepository<ITelemetryRepository, TelemetryRepository>();
             services.AddContextRepository<IUserRepository, UserRepository>();
 
             return services;

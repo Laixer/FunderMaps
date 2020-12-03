@@ -6,17 +6,17 @@
     public enum ExternalDataSource
     {
         /// <summary>
-        ///     Basis Registratie Gebouwen.
+        ///     Basis Registratie Gebouwen (BAG).
         /// </summary>
         NlBag = 0,
 
         /// <summary>
-        ///     Open Street Maps.
+        ///     Open Street Maps (OSM).
         /// </summary>
         NlOsm = 1,
 
         /// <summary>
-        ///     Centraal Bureau Statistiek.
+        ///     Centraal Bureau Statistiek (CBS).
         /// </summary>
         NlCbs = 2,
     }

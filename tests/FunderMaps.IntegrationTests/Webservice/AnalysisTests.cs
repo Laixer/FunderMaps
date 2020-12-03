@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Types.Products;
+﻿#if _DISABLE
+using FunderMaps.Core.Types.Products;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Webservice.ResponseModels;
-using FunderMaps.Webservice.ResponseModels.Analysis;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -190,3 +190,4 @@ namespace FunderMaps.IntegrationTests.Webservice
         }
     }
 }
+#endif

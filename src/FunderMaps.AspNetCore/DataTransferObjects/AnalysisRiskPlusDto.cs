@@ -1,50 +1,17 @@
-﻿using FunderMaps.Core.DataAnnotations;
+﻿using FunderMaps.Core.Types;
 using System;
 
-namespace FunderMaps.Core.Types.Products
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>
-    ///     Represents a model for the complete endpoint.
+    ///     Represents a response model for the complete endpoint.
     /// </summary>
-    public sealed class AnalysisProduct : ProductBase
+    public record AnalysisRiskPlusDto : AnalysisDto
     {
-        /// <summary>
-        ///     Building identifier.
-        /// </summary>
-        [Geocoder]
-        public string Id { get; set; }
-
-        /// <summary>
-        ///     Building external identifier.
-        /// </summary>
-        public string ExternalId { get; set; }
-
-        /// <summary>
-        ///     Represents the external data source of this building.
-        /// </summary>
-        public ExternalDataSource? ExternalSource { get; set; }
-
         /// <summary>
         ///     Represents the year in which this building was built.
         /// </summary>
         public DateTimeOffset ConstructionYear { get; set; }
-
-        /// <summary>
-        ///     Address identifier.
-        /// </summary>
-        [Geocoder]
-        public string AddressId { get; set; }
-
-        /// <summary>
-        ///     Address external identifier.
-        /// </summary>
-        public string AddressExternalId { get; set; }
-
-        /// <summary>
-        ///     Neighborhood identifier.
-        /// </summary>
-        [Geocoder]
-        public string NeighborhoodId { get; set; }
 
         /// <summary>
         ///     Represents the ground water level.
@@ -187,8 +154,8 @@ namespace FunderMaps.Core.Types.Products
         public string DescriptionBioInfection { get; set; }
 
         /// <summary>
-        ///     Statistisch per region.
+        ///     Statistics.
         /// </summary>
-        public StatisticsProduct Statistics { get; set; }
+        public StatisticsDto Statistics { get; set; }
     }
 }
