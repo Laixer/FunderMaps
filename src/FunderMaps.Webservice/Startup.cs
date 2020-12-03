@@ -7,7 +7,6 @@ using FunderMaps.Core.Services;
 using FunderMaps.Extensions;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
-using FunderMaps.Webservice.Handlers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -47,8 +46,6 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         private void StartupConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(MapperProfile));
-
             // Add the authentication layer.
             services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -79,7 +76,6 @@ namespace FunderMaps.Webservice
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
             // Configure project specific services.
-            services.AddTransient<ProductHandler>();
             services.AddTransient<SignInHandler>();
 
             // Override default product service by tracking variant of product service.

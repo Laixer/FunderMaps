@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types.Distributions;
+﻿using FunderMaps.Core.DataAnnotations;
 using System;
 
 namespace FunderMaps.Core.Types.Products
@@ -9,19 +9,15 @@ namespace FunderMaps.Core.Types.Products
     public sealed class AnalysisProduct : ProductBase
     {
         /// <summary>
-        ///     Represents the internal id of this building.
+        ///     Building identifier.
         /// </summary>
+        [Geocoder]
         public string Id { get; set; }
 
         /// <summary>
-        ///     Represents the external id of this building.
+        ///     Building external identifier.
         /// </summary>
         public string ExternalId { get; set; }
-
-        /// <summary>
-        ///     Internal neighborhood id in which this building lies.
-        /// </summary>
-        public string NeighborhoodId { get; set; }
 
         /// <summary>
         ///     Represents the external data source of this building.
@@ -29,9 +25,26 @@ namespace FunderMaps.Core.Types.Products
         public ExternalDataSource? ExternalSource { get; set; }
 
         /// <summary>
-        ///     Represents the foundation type of this building.
+        ///     Represents the year in which this building was built.
         /// </summary>
-        public FoundationType? FoundationType { get; set; }
+        public DateTimeOffset ConstructionYear { get; set; }
+
+        /// <summary>
+        ///     Address identifier.
+        /// </summary>
+        [Geocoder]
+        public string AddressId { get; set; }
+
+        /// <summary>
+        ///     Address external identifier.
+        /// </summary>
+        public string AddressExternalId { get; set; }
+
+        /// <summary>
+        ///     Neighborhood identifier.
+        /// </summary>
+        [Geocoder]
+        public string NeighborhoodId { get; set; }
 
         /// <summary>
         ///     Represents the ground water level.
@@ -39,14 +52,9 @@ namespace FunderMaps.Core.Types.Products
         public double? GroundWaterLevel { get; set; }
 
         /// <summary>
-        ///     Represents the foundation risk for this building.
+        ///     Soil code.
         /// </summary>
-        public FoundationRisk? FoundationRisk { get; set; }
-
-        /// <summary>
-        ///     Represents the year in which this building was built.
-        /// </summary>
-        public DateTimeOffset ConstructionYear { get; set; }
+        public string Soil { get; set; }
 
         /// <summary>
         ///     Represents the height of this building.
@@ -54,14 +62,49 @@ namespace FunderMaps.Core.Types.Products
         public double? BuildingHeight { get; set; }
 
         /// <summary>
-        ///     Description of the terrain on which this building lies.
-        /// </summary>
-        public string TerrainDescription { get; set; }
-
-        /// <summary>
-        ///     Represents the ground level (maaiveldniveau) of this building.
+        ///     Ground level.
         /// </summary>
         public double? GroundLevel { get; set; }
+
+        /// <summary>
+        ///     CPT.
+        /// </summary>
+        public string Cpt { get; set; }
+
+        /// <summary>
+        ///     Monitoring well.
+        /// </summary>
+        public string MonitoringWell { get; set; }
+
+        /// <summary>
+        ///     Client document identifier.
+        /// </summary>
+        public string DocumentName { get; set; }
+
+        /// <summary>
+        ///     Original document creation.
+        /// </summary>
+        public DateTime? DocumentDate { get; set; }
+
+        /// <summary>
+        ///     Report type.
+        /// </summary>
+        public InquiryType? InquiryType { get; set; }
+
+        /// <summary>
+        ///     Foundation recovery type.
+        /// </summary>
+        public RecoveryDocumentType? RecoveryType { get; set; }
+
+        /// <summary>
+        ///     Building surface area in m^2.
+        /// </summary>
+        public double? SurfaceArea { get; set; }
+
+        /// <summary>
+        ///     Foundation bearing ground layer.
+        /// </summary>
+        public double? FoundationBearingLayer { get; set; }
 
         /// <summary>
         ///     Represents the estimated restoration costs for this building.
@@ -69,9 +112,19 @@ namespace FunderMaps.Core.Types.Products
         public double? RestorationCosts { get; set; }
 
         /// <summary>
-        ///     Represents the dewatering depth (ontwateringsdiepte) for this building.
+        ///     Description for restoration costs.
         /// </summary>
-        public double? DewateringDepth { get; set; }
+        public string DescriptionRestorationCosts { get; set; }
+
+        /// <summary>
+        ///     Foundation type.
+        /// </summary>
+        public FoundationType? FoundationType { get; set; }
+
+        /// <summary>
+        ///     Foundation type reliability.
+        /// </summary>
+        public Reliability FoundationTypeReliability { get; set; }
 
         /// <summary>
         ///     Represents the period of drought (droogstand) for this building.
@@ -79,49 +132,63 @@ namespace FunderMaps.Core.Types.Products
         public double? Drystand { get; set; }
 
         /// <summary>
-        ///     Complete description of this building.
+        ///     Foundation type reliability.
         /// </summary>
-        public string FullDescription { get; set; }
+        public Reliability DrystandReliability { get; set; }
 
         /// <summary>
-        ///     Represents the reliability of all data about this building.
+        ///     Represents the foundation risk for this building.
         /// </summary>
-        public Reliability? Reliability { get; set; }
+        public FoundationRisk? DrystandRisk { get; set; }
 
         /// <summary>
-        ///     Represents the distribution of foundation types.
+        ///     Description for drystand.
         /// </summary>
-        public FoundationTypeDistribution FoundationTypeDistribution { get; set; }
+        public string DescriptionDrystand { get; set; }
 
         /// <summary>
-        ///     Represents the distribution of building construction years in the
-        ///     given region.
+        ///     Dewatering depth.
         /// </summary>
-        public ConstructionYearDistribution ConstructionYearDistribution { get; set; }
+        public double? DewateringDepth { get; set; }
 
         /// <summary>
-        ///     Represents the distribution of foundation risks in the given region.
+        ///     Dewatering depth reliability.
         /// </summary>
-        public FoundationRiskDistribution FoundationRiskDistribution { get; set; }
+        public Reliability DewateringDepthReliability { get; set; }
 
         /// <summary>
-        ///     Represents the percentage of collected data in the given region.
+        ///     Dewatering depth risk.
         /// </summary>
-        public double? DataCollectedPercentage { get; set; }
+        public FoundationRisk? DewateringDepthRisk { get; set; }
 
         /// <summary>
-        ///     Total amount of restored buildings in the given area.
+        ///     Description for dewatering depth.
         /// </summary>
-        public uint? TotalBuildingRestoredCount { get; set; }
+        public string DescriptionDewateringDepth { get; set; }
 
         /// <summary>
-        ///     Total amount of incidents in the given region.
+        ///     Biological infection.
         /// </summary>
-        public uint? TotalIncidentCount { get; set; }
+        public string BioInfection { get; set; }
 
         /// <summary>
-        ///     Total amount of reports in the given region.
+        ///     Biological infection reliability.
         /// </summary>
-        public uint? TotalReportCount { get; set; }
+        public Reliability BioInfectionReliability { get; set; }
+
+        /// <summary>
+        ///     Biological infection risk.
+        /// </summary>
+        public FoundationRisk? BioInfectionRisk { get; set; }
+
+        /// <summary>
+        ///     Description for biological infection.
+        /// </summary>
+        public string DescriptionBioInfection { get; set; }
+
+        /// <summary>
+        ///     Statistisch per region.
+        /// </summary>
+        public StatisticsProduct Statistics { get; set; }
     }
 }

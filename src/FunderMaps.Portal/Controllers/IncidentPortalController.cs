@@ -145,10 +145,10 @@ namespace FunderMaps.Portal.Controllers
         public async Task<IActionResult> GetRiskAnalysisAsync([Required] string id)
         {
             // Assign.
-            AnalysisProduct product = await _productService.GetAnalysisByAddressExternalIdAsync(Guid.Empty, AnalysisProductType.Risk, id);
+            IAsyncEnumerable<AnalysisProduct> productList = _productService.GetAnalysisAsync(AnalysisProductType.RiskPlus, id);
 
             // Map.
-            var result = _mapper.Map<AnalysisProduct, AnalysisRiskDto>(product);
+            var result = await _mapper.MapAsync<IList<AnalysisRiskPlusDto>, AnalysisProduct>(productList);
 
             // Return.
             return Ok(result);
