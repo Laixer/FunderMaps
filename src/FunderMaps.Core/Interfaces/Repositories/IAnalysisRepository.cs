@@ -1,6 +1,4 @@
 ﻿using FunderMaps.Core.Types.Products;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
@@ -10,15 +8,22 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// </summary>
     public interface IAnalysisRepository
     {
+        /// <summary>
+        ///     Gets an analysis product by its internal building id.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
         Task<AnalysisProduct> GetByIdAsync(string id);
 
-        Task<AnalysisProduct> GetByExternalIdAsync(Guid userId, string externalId);
-
-        Task<AnalysisProduct> GetByAddressExternalIdAsync(Guid userId, string externalId);
+        /// <summary>
+        ///     Gets an analysis product by its external building id.
+        /// </summary>
+        /// <param name="id">External building id.</param>
+        Task<AnalysisProduct> GetByExternalIdAsync(string id);
 
         /// <summary>
-        ///     Retrieve <see cref="AnalysisProduct"/> by search query.
+        ///     Gets an analysis product by its external address id.
         /// </summary>
-        IAsyncEnumerable<AnalysisProduct> GetBySearchQueryAsync(Guid userId, string query, INavigation navigation);
+        /// <param name="id">External address id.</param>
+        Task<AnalysisProduct> GetByAddressExternalIdAsync(string id);
     }
 }

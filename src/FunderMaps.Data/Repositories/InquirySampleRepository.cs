@@ -204,7 +204,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="InquirySample"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="id">Entity object.</param>
         public override async ValueTask DeleteAsync(int id)
         {
             ResetCacheEntity(id);
@@ -290,7 +290,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("settlement_speed", entity.SettlementSpeed);
         }
 
-        private static InquirySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
             => new InquirySample
             {
                 Id = reader.GetInt(offset + 0),

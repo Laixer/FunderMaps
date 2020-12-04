@@ -1,71 +1,24 @@
-﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Types.Products;
-using System;
+﻿using FunderMaps.Core.Types.Products;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Abstractions.Services
 {
     /// <summary>
-    ///     Contract for retrieving products from the data store.
+    ///     Service to the analysis products.
     /// </summary>
     public interface IProductService
     {
         /// <summary>
-        ///     Gets an analysis product by internal building id.
+        ///     Get an analysis product.
         /// </summary>
-        /// <param name="userId">User identifier.</param>
         /// <param name="productType">Product type.</param>
-        /// <param name="id">Internal building id.</param>
-        ValueTask<AnalysisProduct> GetAnalysisByIdAsync(Guid userId, AnalysisProductType productType, string id);
+        /// <param name="input">Input query.</param>
+        IAsyncEnumerable<AnalysisProduct> GetAnalysisAsync(AnalysisProductType productType, string input);
 
         /// <summary>
-        ///     Gets an analysis product by external building id.
+        ///     Get statistics per region.
         /// </summary>
-        /// <param name="userId">User identifier.</param>
-        /// <param name="productType">Product type.</param>
-        /// <param name="externalId">External building id.</param>
-        ValueTask<AnalysisProduct> GetAnalysisByExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId);
-
-        /// <summary>
-        ///     Gets an analysis product by external address id.
-        /// </summary>
-        /// <param name="userId">User identifier.</param>
-        /// <param name="productType">Product type.</param>
-        /// <param name="externalId">External address id.</param>
-        ValueTask<AnalysisProduct> GetAnalysisByAddressExternalIdAsync(Guid userId, AnalysisProductType productType, string externalId);
-
-        /// <summary>
-        ///     Gets a collection of analysis products by a query.
-        /// </summary>
-        /// <param name="userId">User identifier.</param>
-        /// <param name="productType">Product type.</param>
-        /// <param name="query">Query string to search by.</param>
-        /// <param name="navigation">Return set by navigation.</param>
-        IAsyncEnumerable<AnalysisProduct> GetAnalysisByQueryAsync(Guid userId, AnalysisProductType productType, string query, INavigation navigation);
-
-        /// <summary>
-        ///     Gets all analysis products in a users geofence.
-        /// </summary>
-        /// <param name="userId">User identifier.</param>
-        /// <param name="productType">Product type.</param>
-        /// <param name="navigation">Return set by navigation.</param>
-        IAsyncEnumerable<AnalysisProduct> GetAnalysisInFenceAsync(Guid userId, AnalysisProductType productType, INavigation navigation);
-
-        /// <summary>
-        ///     Gets a statistics product by neighborhood code.
-        /// </summary>
-        /// <param name="userId">User identifier.</param>
-        /// <param name="productType">Product type.</param>
-        /// <param name="neighborhoodCode">External neighborhood code.</param>
-        ValueTask<StatisticsProduct> GetStatisticsByNeighborhoodAsync(Guid userId, StatisticsProductType productType, string neighborhoodCode);
-
-        /// <summary>
-        ///     Gets all statistics products in a users geofence.
-        /// </summary>
-        /// <param name="userId">User identifier.</param>
-        /// <param name="productType">Product type.</param>
-        /// <param name="navigation">Return set by navigation.</param>
-        ValueTask<StatisticsProduct> GetStatisticsInFenceAsync(Guid userId, StatisticsProductType productType, INavigation navigation);
+        /// <param name="input">Input query.</param>
+        IAsyncEnumerable<StatisticsProduct> GetStatisticsAsync(string input);
     }
 }

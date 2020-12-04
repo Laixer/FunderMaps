@@ -83,10 +83,10 @@ namespace FunderMaps.Portal.Controllers
             return Ok(output);
         }
 
+        // POST: api/incident-portal/submit
         /// <summary>
         ///     Register new incident.
         /// </summary>
-        /// <param name="input">See <see cref="IncidentDto"/>.</param>
         [HttpPost("submit")]
         public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input)
         {
@@ -120,11 +120,10 @@ namespace FunderMaps.Portal.Controllers
             return NoContent();
         }
 
+        // TODO: Remove?
         /// <summary>
         ///     Get address suggestions.
         /// </summary>
-        /// <param name="input">Address search query.</param>
-        /// <returns>List of matching addresses.</returns>
         [HttpGet("address-suggest")]
         public async Task<IActionResult> GetAllAddressSuggestionAsync([FromQuery] AddressSearchDto input)
         {
@@ -138,19 +137,18 @@ namespace FunderMaps.Portal.Controllers
             return Ok(result);
         }
 
+        // GET: api/incident-portal/risk
         /// <summary>
         ///     Get the analysis product by buillding identifier.
         /// </summary>
-        /// <param name="id">Address identifier.</param>
-        /// <returns>The risk product.</returns>
         [HttpGet("risk")]
         public async Task<IActionResult> GetRiskAnalysisAsync([Required] string id)
         {
             // Assign.
-            AnalysisProduct product = await _productService.GetAnalysisByAddressExternalIdAsync(Guid.Empty, AnalysisProductType.Risk, id);
+            IAsyncEnumerable<AnalysisProduct> productList = _productService.GetAnalysisAsync(AnalysisProductType.RiskPlus, id);
 
             // Map.
-            var result = _mapper.Map<AnalysisProduct, AnalysisRiskDto>(product);
+            var result = await _mapper.MapAsync<IList<AnalysisRiskPlusDto>, AnalysisProduct>(productList);
 
             // Return.
             return Ok(result);

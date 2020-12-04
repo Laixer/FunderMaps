@@ -1,0 +1,94 @@
+using AutoMapper;
+using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types.Products;
+using FunderMaps.Webservice.Abstractions.Services;
+using FunderMaps.Webservice.InputModels;
+using FunderMaps.Webservice.ResponseModels;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Threading.Tasks;
+
+#pragma warning disable CA1062 // Validate arguments of public methods
+namespace FunderMaps.Webservice.Controllers
+{
+    /// <summary>
+    ///     Controller for all product endpoints.
+    /// </summary>
+    [Route("product")]
+    public sealed class ProductController : ControllerBase
+    {
+        private readonly IMapper _mapper;
+        private readonly IProductService _productService;
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public ProductController(IMapper mapper, IProductService productService)
+        {
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _productService = productService ?? throw new ArgumentNullException(nameof(productService));
+        }
+
+        /// <summary>
+        ///     Encapulate transfer object into item wrapper.
+        /// </summary>
+        private async Task<ResponseWrapper<TDto>> AsResponseWrapperAsync<TDto, TSource>(IAsyncEnumerable<TSource> itemList)
+            where TSource : ProductBase
+            => new()
+            {
+                Items = await _mapper.MapAsync<IList<TDto>, TSource>(itemList)
+            };
+
+        /// <summary>
+        ///     Builds the output object associated with the product.
+        /// </summary>
+        internal async Task<ResponseWrapper> AnalysisProductFactoryAsync(AnalysisProductType productType, IAsyncEnumerable<AnalysisProduct> itemList)
+            => productType switch
+            {
+                AnalysisProductType.Foundation => await AsResponseWrapperAsync<AnalysisFoundationDto, AnalysisProduct>(itemList),
+                AnalysisProductType.Complete => await AsResponseWrapperAsync<AnalysisCompleteDto, AnalysisProduct>(itemList),
+                AnalysisProductType.RiskPlus => await AsResponseWrapperAsync<AnalysisRiskPlusDto, AnalysisProduct>(itemList),
+                _ => throw new InvalidOperationException(nameof(productType)),
+            };
+
+        // GET: api/product/analysis
+        /// <summary>
+        ///     Request a analysis product.
+        /// </summary>
+        [HttpGet("analysis")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]
+        public async Task<IActionResult> GetProductAnalysisAsync([FromQuery] AnalysisInputModel input)
+        {
+            // Assign.
+            IAsyncEnumerable<AnalysisProduct> productList = _productService.GetAnalysisAsync(input.Product.Value, input.Id);
+
+            // Map.
+            ResponseWrapper result = await AnalysisProductFactoryAsync(input.Product.Value, productList);
+
+            // Return.
+            return Ok(result);
+        }
+
+        // GET: api/product/statistics
+        /// <summary>
+        ///     Request statistics product.
+        /// </summary>
+        [HttpGet("statistics")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]
+        public async Task<IActionResult> GetProducitStatisticsAsync([FromQuery][Required(AllowEmptyStrings = false)] string id)
+        {
+            // Assign.
+            IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);
+
+            // Map.
+            ResponseWrapper result = await AsResponseWrapperAsync<StatisticsDto, StatisticsProduct>(productList);
+
+            // Return.
+            return Ok(result);
+        }
+    }
+}
+#pragma warning restore CA1062 // Validate arguments of public methods

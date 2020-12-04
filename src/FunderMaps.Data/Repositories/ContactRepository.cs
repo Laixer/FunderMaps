@@ -14,6 +14,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepository
     {
+        // FUTURE: Email should also be normalized.
         /// <summary>
         ///     Create new <see cref="Contact"/>.
         /// </summary>
@@ -21,7 +22,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Contact"/>.</returns>
         public override async ValueTask<string> AddAsync(Contact entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -33,8 +34,8 @@ namespace FunderMaps.Data.Repositories
                     phone_number)
                 VALUES (
                     @email,
-                    @name,
-                    @phone_number)
+                    NULLIF(trim(@name), ''),
+                    NULLIF(trim(@phone_number), ''))
                 ON CONFLICT DO NOTHING";
 
             await using var context = await DbContextFactory(sql);
@@ -64,7 +65,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Delete <see cref="Contact"/>.
         /// </summary>
-        /// <param name="entity">Entity object.</param>
+        /// <param name="email">Entity email.</param>
         public override async ValueTask DeleteAsync(string email)
         {
             ResetCacheEntity(email);
@@ -88,7 +89,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         }
 
-        public static Contact MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        public static Contact MapFromReader(DbDataReader reader, int offset = 0)
             => new Contact
             {
                 Email = reader.GetSafeString(offset + 0),
@@ -99,7 +100,7 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Retrieve <see cref="Contact"/> by id.
         /// </summary>
-        /// <param name="id">Unique identifier.</param>
+        /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="Contact"/>.</returns>
         public override async ValueTask<Contact> GetByIdAsync(string email)
         {
@@ -132,7 +133,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Contact"/>.</returns>
         public override async IAsyncEnumerable<Contact> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
+            if (navigation is null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
@@ -169,8 +170,8 @@ namespace FunderMaps.Data.Repositories
 
             var sql = @"
                     UPDATE  application.contact
-                    SET     name = @name,
-                            phone_number = @phone_number
+                    SET     name = NULLIF(trim(@name), '')),
+                            phone_number = NULLIF(trim(@phone_number), ''))
                     WHERE   email = @email";
 
             await using var context = await DbContextFactory(sql);

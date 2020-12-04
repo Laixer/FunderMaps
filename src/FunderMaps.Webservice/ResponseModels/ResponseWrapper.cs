@@ -3,35 +3,26 @@ using System.Linq;
 
 namespace FunderMaps.Webservice.ResponseModels
 {
+    // TODO: Move to AspNetCore
+
     /// <summary>
-    ///     Base class for the response wrapper. 
+    ///     Base class for the response wrapper.
     /// </summary>
-    /// <remarks>
-    ///     This has no generics and thus can be used as a base for both abstract
-    ///     and non-abstract implementations of the <see cref="ResponseWrapper{TResponseModel}"/>.
-    /// </remarks>
-    public class ResponseWrapper { }
+    public record ResponseWrapper { }
 
     /// <summary>
     ///     Wrapper class for our API response object.
     /// </summary>
-    /// <typeparam name="TResponseModel"><see cref="ResponseModelBase"/></typeparam>
-    public class ResponseWrapper<TResponseModel> : ResponseWrapper
-        where TResponseModel : ResponseModelBase
+    public record ResponseWrapper<TDto> : ResponseWrapper
     {
         /// <summary>
-        ///     Collection of <see cref="TResponseModel"/>.
+        ///     Collection of <typeparamref name="TDto"/>.
         /// </summary>
-        public IEnumerable<TResponseModel> Models { get; set; }
+        public IEnumerable<TDto> Items { get; init; }
 
         /// <summary>
-        ///     Total items in the <see cref="Models"/> field.
+        ///     Total items in the <see cref="Items"/> field.
         /// </summary>
-        public uint ModelCount => (uint)((Models == null) ? 0 : Models.Count());
-
-        /// <summary>
-        ///     Total items in the data store based on the request.
-        /// </summary>
-        public uint TotalCount { get; set; }
+        public int ItemCount => Items?.Count() ?? 0;
     }
 }

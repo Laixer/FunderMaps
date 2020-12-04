@@ -8,16 +8,6 @@ namespace FunderMaps.Core.Types.Products
     public sealed class StatisticsProduct : ProductBase
     {
         /// <summary>
-        ///     Internal neighborhood id in which these statistics were calculated.
-        /// </summary>
-        public string NeighborhoodId { get; set; }
-
-        /// <summary>
-        ///     Neighborhood code in which these statistics were calculated.
-        /// </summary>
-        public string NeighborhoodCode { get; set; }
-
-        /// <summary>
         ///     Represents the distribution of foundation types.
         /// </summary>
         public FoundationTypeDistribution FoundationTypeDistribution { get; set; }
