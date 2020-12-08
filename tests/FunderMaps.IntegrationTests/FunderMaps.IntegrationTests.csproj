@@ -9,10 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="32.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
