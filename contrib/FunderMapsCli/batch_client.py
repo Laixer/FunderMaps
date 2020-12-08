@@ -24,8 +24,7 @@ from Protos import protocol_pb2
 from Protos import batch_pb2
 from Protos import batch_pb2_grpc
 
-
-GRPC_HOST = 'batch.fundermaps.com'
+GRPC_HOST = 'localhost:5000'
 
 
 def _make_protocol():
@@ -58,6 +57,21 @@ def bundle_create(stub, bundle):
     _print_response(response)
 
 
+def bundle_batch(stub):
+    print("-------------- Bundle --------------")
+    print(f"Bundle : all")
+
+    request = batch_pb2.EnqueueRequest(
+        protocol=_make_protocol(),
+        name="bundle_batch",
+        payload=json.dumps({
+            "Formats": [0, 1]})
+    )
+
+    response = stub.Enqueue(request)
+    _print_response(response)
+
+
 def foobar(stub):
     print("-------------- Foobar --------------")
 
@@ -69,11 +83,26 @@ def foobar(stub):
     _print_response(response)
 
 
+def email_send(stub, recp):
+    print("-------------- Email --------------")
+
+    request = batch_pb2.EnqueueRequest(
+        protocol=_make_protocol(),
+        name="incident_notify",
+        payload=json.dumps({
+            'recipients': [recp],
+        }))
+
+    response = stub.Enqueue(request)
+    _print_response(response)
+
+
 def run():
     # NOTE: .close() is possible on a channel and should be used in circumstances
     #       in which the with statement does not fit the needs of the code.
     creds = grpc.ssl_channel_credentials()
     with grpc.secure_channel(GRPC_HOST, creds) as channel:
+        # with grpc.insecure_channel(GRPC_HOST) as channel:
         stub = batch_pb2_grpc.BatchStub(channel)
         if len(sys.argv) == 1:
             print('Command required')
@@ -81,8 +110,13 @@ def run():
 
         if sys.argv[1] == 'foobar':
             foobar(stub)
+        elif sys.argv[1] == 'email':
+            email_send(stub, sys.argv[2])
         elif sys.argv[1] == 'bundle':
-            bundle_create(stub, sys.argv[2])
+            if sys.argv[2] == 'all':
+                bundle_batch(stub)
+            else:
+                bundle_create(stub, sys.argv[2])
         else:
             print('Command required')
 
