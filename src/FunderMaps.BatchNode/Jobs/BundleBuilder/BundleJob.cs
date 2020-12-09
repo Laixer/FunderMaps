@@ -119,6 +119,13 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             connectionString = configuration.GetConnectionString("FunderMapsConnection");
         }
 
+        /// <summary>
+        ///     Build the geometry dataset from bundle.
+        /// </summary>
+        /// <param name="bundle">Bundle to build.</param>
+        /// <param name="layers">Layers to include in the output dataset.</param>
+        /// <param name="input">Dataset input.</param>
+        /// <param name="format">Output format.</param>
         private async Task<DataSource> BuildBundleWithLayerAsync(Bundle bundle, IEnumerable<Layer> layers, DataSource input, GeometryFormat format)
         {
             FormatProperty formatProperty = exportFormats.First(f => f.Format == format);
@@ -140,8 +147,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 //       complete.
                 if (returnCode != 0)
                 {
-                    // TODO: Another exception
-                    throw new Exception("Last layer command failed, refuse to continue");
+                    throw new ProcessException("Last layer command failed, refuse to continue");
                 }
 
                 var command = new VectorDatasetBuilder(
@@ -174,6 +180,12 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             return fileDump;
         }
 
+        /// <summary>
+        ///     Build the geometry dataset from bundle.
+        /// </summary>
+        /// <param name="bundle">Bundle to build.</param>
+        /// <param name="input">Dataset input.</param>
+        /// <param name="format">Output format.</param>
         private async Task<DataSource> BuildBundleAsync(Bundle bundle, DataSource input, GeometryFormat format)
         {
             FormatProperty formatProperty = exportFormats.First(f => f.Format == format);
