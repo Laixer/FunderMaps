@@ -193,11 +193,15 @@ namespace FunderMaps.BatchNode.Command
 
             Logger.LogDebug("Teardown workspace for job");
 
-            if (!context.KeepWorkspace)
+            if (!context.KeepWorkspace && !context.Failed)
             {
                 Logger.LogTrace("Workspace directory is not kept");
 
                 Directory.Delete(context.Workspace, recursive: true);
+            }
+            else if (context.Failed)
+            {
+                Logger.LogWarning($"Task failed, keeping workspace: {context.Workspace}");
             }
 
             return Task.CompletedTask;
@@ -226,6 +230,7 @@ namespace FunderMaps.BatchNode.Command
                 Delay = context.Delay,
                 RetryCount = context.RetryCount,
                 KeepWorkspace = false,
+                Failed = false,
             };
 
             // FUTURE: Maybe catch all exceptions, logs stats and keep workspace
@@ -237,6 +242,12 @@ namespace FunderMaps.BatchNode.Command
                 Context.CancellationToken.ThrowIfCancellationRequested();
 
                 await ExecuteCommandAsync(Context);
+            }
+            catch
+            {
+                Context.Failed = true;
+
+                throw;
             }
             finally
             {
