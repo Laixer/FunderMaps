@@ -28,9 +28,12 @@ namespace FunderMaps.Core.Threading
 
         private SemaphoreSlim workerPoolHandle;
         private Timer timer;
-        private int jobsSucceeded;
-        private int jobsFailed;
         private bool disposedValue;
+
+        /// <summary>
+        ///     Job processing status.
+        /// </summary>
+        public DispatchManagerStatus Status { get; } = new();
 
         /// <summary>
         ///     Create new instance.
@@ -151,7 +154,7 @@ namespace FunderMaps.Core.Threading
 
                             await backgroundTask.ExecuteAsync(context);
 
-                            ++jobsSucceeded;
+                            Status.JobsSucceeded++;
                         }
                         catch (Exception e) // TODO: Check a specific exception
                         {
@@ -165,7 +168,7 @@ namespace FunderMaps.Core.Threading
                             }
                             else
                             {
-                                ++jobsFailed;
+                                Status.JobsFailed++;
                             }
                         }
                         finally

@@ -18,7 +18,7 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class TimedHostedService : IHostedService, IDisposable
     {
-        private const string configurationScheduleSection = "Scheduler";
+        private const string ConfigurationScheduleSection = "Scheduler";
 
         private readonly IConfiguration _configuration;
         private readonly ILogger<TimedHostedService> _logger;
@@ -58,7 +58,7 @@ namespace FunderMaps.BatchNode
             _servicesProvider = services;
             _logger = logger;
 
-            scheduleTasks = _configuration.GetSection(configurationScheduleSection).Get<ScheduleTask[]>();
+            scheduleTasks = _configuration.GetSection(ConfigurationScheduleSection).Get<ScheduleTask[]>();
         }
 
         /// <summary>
