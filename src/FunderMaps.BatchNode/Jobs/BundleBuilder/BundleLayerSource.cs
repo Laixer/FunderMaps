@@ -21,7 +21,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleLayerSource(Bundle bundle, Layer layer)
+        public BundleLayerSource(Bundle bundle, Layer layer, string workspace)
         {
             if (bundle.LayerConfiguration.Layers.Where(x => x.LayerId == layer.Id).FirstOrDefault() is not LayerColumnPair configuration)
             {
@@ -49,6 +49,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 columns.Add(GeomColumn);
             }
 
+            Workspace = workspace;
             Query = $@"
                 SELECT  {string.Join(',', columns.Select(c => $"s.{c}"))}
                 FROM    {layer.SchemaName}.{layer.TableName} AS s
