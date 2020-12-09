@@ -23,6 +23,7 @@ import grpc
 from Protos import protocol_pb2
 from Protos import batch_pb2
 from Protos import batch_pb2_grpc
+from google.protobuf import empty_pb2
 
 GRPC_HOST = 'localhost:5000'
 
@@ -97,6 +98,14 @@ def email_send(stub, recp):
     _print_response(response)
 
 
+def get_status(stub):
+    print("-------------- Status --------------")
+
+    response = stub.Status(empty_pb2.Empty())
+    print(f"Jobs succeeded: {response.jobs_succeeded}")
+    print(f"Jobs failed: {response.jobs_failed}")
+
+
 def run():
     # NOTE: .close() is possible on a channel and should be used in circumstances
     #       in which the with statement does not fit the needs of the code.
@@ -117,6 +126,8 @@ def run():
                 bundle_batch(stub)
             else:
                 bundle_create(stub, sys.argv[2])
+        elif sys.argv[1] == 'status':
+            get_status(stub)
         else:
             print('Command required')
 
