@@ -28,6 +28,8 @@ namespace FunderMaps.Core.Threading
 
         private SemaphoreSlim workerPoolHandle;
         private Timer timer;
+        private int jobsSucceeded;
+        private int jobsFailed;
         private bool disposedValue;
 
         /// <summary>
@@ -148,6 +150,8 @@ namespace FunderMaps.Core.Threading
                             context.CancellationToken = cts.Token;
 
                             await backgroundTask.ExecuteAsync(context);
+
+                            ++jobsSucceeded;
                         }
                         catch (Exception e) // TODO: Check a specific exception
                         {
@@ -158,6 +162,10 @@ namespace FunderMaps.Core.Threading
                                 context.RetryCount++;
                                 context.Delay = TimeSpan.FromMinutes(1);
                                 QueueTaskItem(taskBucket);
+                            }
+                            else
+                            {
+                                ++jobsFailed;
                             }
                         }
                         finally
