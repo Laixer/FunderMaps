@@ -31,6 +31,11 @@ namespace FunderMaps.Core.Threading
         private bool disposedValue;
 
         /// <summary>
+        ///     Job processing status.
+        /// </summary>
+        public DispatchManagerStatus Status { get; } = new();
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public DispatchManager(IOptions<BackgroundWorkOptions> options, ILogger<DispatchManager> logger, IServiceScopeFactory serviceScopeFactory)
@@ -148,6 +153,8 @@ namespace FunderMaps.Core.Threading
                             context.CancellationToken = cts.Token;
 
                             await backgroundTask.ExecuteAsync(context);
+
+                            Status.JobsSucceeded++;
                         }
                         catch (Exception e) // TODO: Check a specific exception
                         {
@@ -158,6 +165,10 @@ namespace FunderMaps.Core.Threading
                                 context.RetryCount++;
                                 context.Delay = TimeSpan.FromMinutes(1);
                                 QueueTaskItem(taskBucket);
+                            }
+                            else
+                            {
+                                Status.JobsFailed++;
                             }
                         }
                         finally

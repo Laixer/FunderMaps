@@ -9,12 +9,12 @@ namespace FunderMaps.Core.Interfaces.Repositories
     public interface IStatisticsRepository
     {
         /// <summary>
-        ///     Fill all statistic fields if required.
+        ///     Get statistics product by id.
         /// </summary>
         Task<StatisticsProduct> GetStatisticsProductByIdAsync(string id);
 
         /// <summary>
-        ///     Fill all statistic fields if required.
+        ///     Get statistics product by external id.
         /// </summary>
         Task<StatisticsProduct> GetStatisticsProductByExternalIdAsync(string id);
     }

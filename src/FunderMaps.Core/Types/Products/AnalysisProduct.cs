@@ -25,7 +25,7 @@ namespace FunderMaps.Core.Types.Products
         public ExternalDataSource? ExternalSource { get; set; }
 
         /// <summary>
-        ///     Represents the year in which this building was built.
+        ///     Built year.
         /// </summary>
         public DateTimeOffset ConstructionYear { get; set; }
 
@@ -62,12 +62,12 @@ namespace FunderMaps.Core.Types.Products
         public double? BuildingHeight { get; set; }
 
         /// <summary>
-        ///     Ground level.
+        ///     Ground level in meters.
         /// </summary>
         public double? GroundLevel { get; set; }
 
         /// <summary>
-        ///     CPT.
+        ///     Cone penetration test name.
         /// </summary>
         public string Cpt { get; set; }
 
@@ -97,7 +97,7 @@ namespace FunderMaps.Core.Types.Products
         public RecoveryDocumentType? RecoveryType { get; set; }
 
         /// <summary>
-        ///     Building surface area in m^2.
+        ///     Building surface area in square meters.
         /// </summary>
         public double? SurfaceArea { get; set; }
 

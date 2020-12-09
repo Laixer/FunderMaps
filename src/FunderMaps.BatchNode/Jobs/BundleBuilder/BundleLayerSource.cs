@@ -21,7 +21,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleLayerSource(Bundle bundle, Layer layer)
+        public BundleLayerSource(Bundle bundle, Layer layer, string workspace)
         {
             if (bundle.LayerConfiguration.Layers.Where(x => x.LayerId == layer.Id).FirstOrDefault() is not LayerColumnPair configuration)
             {
@@ -32,9 +32,9 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             layerOutputName = layer.Slug;
 
             // Select layer field as follows:
-            // - If no column is specified then select everything from the layer
-            // - If wildcard is found, then only use wildcard.
-            // - If no geometry column was found, then add one.
+            // * If no column is specified then select everything from the layer
+            // * If wildcard is found, then only use wildcard.
+            // * If no geometry column was found, then add one.
             List<string> columns = new(configuration.ColumnNames);
             if (columns.Count == 0)
             {
@@ -49,6 +49,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 columns.Add(GeomColumn);
             }
 
+            Workspace = workspace;
             Query = $@"
                 SELECT  {string.Join(',', columns.Select(c => $"s.{c}"))}
                 FROM    {layer.SchemaName}.{layer.TableName} AS s

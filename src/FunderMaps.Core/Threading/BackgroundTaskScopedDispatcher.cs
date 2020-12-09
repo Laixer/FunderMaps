@@ -31,13 +31,8 @@ namespace FunderMaps.Core.Threading
         /// <param name="name">The task name.</param>
         /// <param name="value">The task payload object.</param>
         /// <param name="delay">Optional task delay.</param>
-        public virtual ValueTask<Guid> EnqueueTaskAsync(string name, object value, TimeSpan? delay = null)
+        public virtual ValueTask<Guid> EnqueueTaskAsync(string name, object value = null, TimeSpan? delay = null)
         {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
             TaskBucket bucket = new(value);
 
             var isQueued = false;

@@ -8,8 +8,7 @@ syntax = "proto3";
 
 package enqueue;
 
-import "google/protobuf/any.proto";
-import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 import "Protos/protocol.proto";
 
 option csharp_namespace = "FunderMaps.BatchNode";
@@ -21,6 +20,9 @@ option csharp_namespace = "FunderMaps.BatchNode";
 service Batch {
   // Attempts to enqueues an item onto our queue.
   rpc Enqueue (EnqueueRequest) returns (EnqueueResponse);
+  
+  // Retrieve the service status.
+  rpc Status (google.protobuf.Empty) returns (StatusResponse);
 }
 
 /*
@@ -43,4 +45,13 @@ message EnqueueRequest {
 message EnqueueResponse { 
   protocol.FunderMapsProtocol protocol = 1;
   string task_id = 2;
+}
+
+/*
+ * Response message containing the status of processed
+ * jobs by the service.
+ */
+message StatusResponse { 
+  int32 jobs_succeeded = 1;
+  int32 jobs_failed = 2;
 }

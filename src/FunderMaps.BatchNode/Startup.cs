@@ -54,6 +54,9 @@ namespace FunderMaps.BatchNode
             //       related service is being resolved within the scope.
             services.AddHttpContextAccessor();
 
+            // Add the task scheduler.
+            services.AddHostedService<TimedHostedService>();
+
             services.AddOrReplace<IAppContextFactory, GrpcAppContextFactory>(ServiceLifetime.Singleton);
         }
 

@@ -19,6 +19,11 @@ namespace FunderMaps.BatchNode.Command
         public bool KeepWorkspace { get; set; }
 
         /// <summary>
+        ///     Whether or not the task failed.
+        /// </summary>
+        public bool Failed { get; set; }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public CommandTaskContext(Guid TaskId)
