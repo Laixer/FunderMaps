@@ -66,9 +66,12 @@ namespace FunderMaps.BatchNode
         /// </summary>
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _timer = new(Worker, null,
-                TimeSpan.Zero,
-                TimeSpan.FromMinutes(1));
+            if (scheduleTasks is not null)
+            {
+                _timer = new(Worker, null,
+                    TimeSpan.Zero,
+                    TimeSpan.FromMinutes(1));
+            }
 
             return Task.CompletedTask;
         }
