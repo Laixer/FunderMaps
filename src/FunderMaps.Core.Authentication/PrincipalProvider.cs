@@ -13,13 +13,12 @@ namespace FunderMaps.Core.Authentication
     public static class PrincipalProvider
     {
         /// <summary>
-        ///     Create <see cref="ClaimsIdentity"/> for specified <paramref name="IUser"/>.
+        ///     Create <see cref="ClaimsIdentity"/> for specified <see cref="IUser"/>.
         /// </summary>
         /// <param name="user">The tenant user to create the principal for.</param>
         /// <param name="tenant">The tenant which the user is a member of.</param>
         /// <param name="tenantRole">The user role within the tenant.</param>
         /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
-        /// <param name="additionalClaims">Additional claims that will be stored in the claim.</param>
         /// <returns>Instance of <see cref="ClaimsIdentity"/>.</returns>
         public static ClaimsIdentity CreateTenantUserIdentity(
             IUser user,
@@ -27,12 +26,12 @@ namespace FunderMaps.Core.Authentication
             OrganizationRole tenantRole,
             string authenticationType)
         {
-            if (user == null)
+            if (user is null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (tenant == null)
+            if (tenant is null)
             {
                 throw new ArgumentNullException(nameof(tenant));
             }
@@ -45,11 +44,11 @@ namespace FunderMaps.Core.Authentication
                 new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, tenantRole.ToString()),
             };
 
-            return new ClaimsIdentity(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
+            return new(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
         }
 
         /// <summary>
-        ///     Create <see cref="ClaimsPrincipal"/> for specified <paramref name="IUser"/>.
+        ///     Create <see cref="ClaimsPrincipal"/> for specified <see cref="IUser"/>.
         /// </summary>
         /// <param name="user">The tenant user to create the principal for.</param>
         /// <param name="tenant">The tenant which the user is a member of.</param>
@@ -66,7 +65,7 @@ namespace FunderMaps.Core.Authentication
         {
             ClaimsIdentity identity = CreateTenantUserIdentity(user, tenant, tenantRole, authenticationType);
 
-            if (additionalClaims != null)
+            if (additionalClaims is not null)
             {
                 foreach (var claim in additionalClaims)
                 {
@@ -74,7 +73,7 @@ namespace FunderMaps.Core.Authentication
                 }
             }
 
-            return new ClaimsPrincipal(identity);
+            return new(identity);
         }
 
         /// <summary>
@@ -84,24 +83,24 @@ namespace FunderMaps.Core.Authentication
         /// <returns><c>True</c> if the user is logged in with identity.</returns>
         public static bool IsSignedIn(ClaimsPrincipal principal)
         {
-            if (principal == null)
+            if (principal is null)
             {
                 throw new ArgumentNullException(nameof(principal));
             }
 
-            return principal?.Identities != null && principal.Identities.Any(i => i.IsAuthenticated);
+            return principal.Identities.Any(i => i.IsAuthenticated);
         }
 
         /// <summary>
         ///     Returns the <see cref="IUser"/> and <see cref="ITenant"/> from the principal.
         /// </summary>
         /// <param name="principal">The <see cref="ClaimsPrincipal"/> instance.</param>
-        /// <returns>Tuple of <see cref="IUser"/> and <see cref="ITenant"/.</returns>
+        /// <returns>Tuple of <see cref="IUser"/> and <see cref="ITenant"/>.</returns>
         public static (IUser, ITenant) GetUserAndTenant<TUser, TTenant>(ClaimsPrincipal principal)
             where TUser : IUser, new()
             where TTenant : ITenant, new()
         {
-            if (principal == null)
+            if (principal is null)
             {
                 throw new ArgumentNullException(nameof(principal));
             }
@@ -117,13 +116,13 @@ namespace FunderMaps.Core.Authentication
                 return idClaim.Value;
             }
 
-            var user = new TUser
+            TUser user = new()
             {
                 Id = Guid.Parse(GetValueOrThrow(ClaimTypes.NameIdentifier)),
                 Role = (ApplicationRole)Enum.Parse(typeof(ApplicationRole), GetValueOrThrow(ClaimTypes.Role)),
             };
 
-            var tenant = new TTenant
+            TTenant tenant = new()
             {
                 Id = Guid.Parse(GetValueOrThrow(FunderMapsAuthenticationClaimTypes.Tenant)),
             };

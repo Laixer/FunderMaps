@@ -16,14 +16,16 @@ namespace FunderMaps.BatchNode
         private const string UserAgent = "FunderMaps.BatchNode";
 
         private readonly BackgroundTaskScopedDispatcher _backgroundTaskDispatcher;
+        private readonly DispatchManager _dispatchManager;
         private readonly ILogger<BatchService> _logger;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BatchService(BackgroundTaskScopedDispatcher backgroundTaskDispatcher, ILogger<BatchService> logger)
+        public BatchService(BackgroundTaskScopedDispatcher backgroundTaskDispatcher, DispatchManager dispatchManager, ILogger<BatchService> logger)
         {
             _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
+            _dispatchManager = dispatchManager ?? throw new ArgumentNullException(nameof(dispatchManager));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -77,5 +79,18 @@ namespace FunderMaps.BatchNode
                 };
             }
         }
+
+        /// <summary>
+        ///     Return batch service task processing status.
+        /// </summary>
+        /// <param name="request">Empty request.</param>
+        /// <param name="context">The call context.</param>
+        /// <returns>Response with the status.</returns>
+        public override Task<StatusResponse> Status(Google.Protobuf.WellKnownTypes.Empty request, ServerCallContext context)
+            => Task.FromResult<StatusResponse>(new()
+            {
+                JobsSucceeded = _dispatchManager.Status.JobsSucceeded,
+                JobsFailed = _dispatchManager.Status.JobsFailed,
+            });
     }
 }

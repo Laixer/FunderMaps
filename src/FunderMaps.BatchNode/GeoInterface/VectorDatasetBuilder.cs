@@ -67,6 +67,7 @@ namespace FunderMaps.BatchNode.GeoInterface
         public CommandInfo Build(string formatName)
         {
             var command = new CommandInfo(CommandName);
+
             if (options.Overwrite)
             {
                 command.ArgumentList.Add("-overwrite");
@@ -75,6 +76,7 @@ namespace FunderMaps.BatchNode.GeoInterface
             {
                 command.ArgumentList.Add("-append");
             }
+
             command.ArgumentList.Add("-f");
             command.ArgumentList.Add(formatName);
             command.ArgumentList.Add(output.Write(command));

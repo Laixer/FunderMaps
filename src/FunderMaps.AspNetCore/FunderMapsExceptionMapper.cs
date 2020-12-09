@@ -36,12 +36,10 @@ namespace FunderMaps.AspNetCore
                 EntityNotFoundException _ => BuildMessage("Requested entity not found.", HttpStatusCode.NotFound),
                 EntityReadOnlyException _ => BuildMessage("Requested entity is immutable.", HttpStatusCode.Locked),
                 InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
-                InvalidProductRequestException _ => BuildMessage("Invalid product requested.", HttpStatusCode.BadRequest),
                 OperationAbortedException _ => BuildMessage("Operation was aborted by client.", HttpStatusCode.BadRequest),
                 ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
                 StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
-                UploadException _ => BuildMessage("File upload failed.", HttpStatusCode.BadRequest),
                 _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError)
             };
     }

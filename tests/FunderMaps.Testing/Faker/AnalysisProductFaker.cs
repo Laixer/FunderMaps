@@ -10,7 +10,7 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class AnalysisProductFaker : Faker<AnalysisProduct>
     {
-        // FUTURE: Class is imcomplete.
+        // FUTURE: Class is incomplete.
         // FUTURE Check subclass product initialization --> slow?
         public AnalysisProductFaker()
         {

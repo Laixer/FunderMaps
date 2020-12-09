@@ -46,10 +46,10 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 throw new ArgumentNullException(nameof(context));
             }
 
-            if (JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string) is not BundleBuildingContext bundleBuildingContext)
+            var bundleBuildingContext = JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string, new()
             {
-                throw new ProtocolException("Invalid bundle building context");
-            }
+                PropertyNameCaseInsensitive = true,
+            });
 
             if (bundleBuildingContext.Formats is null || !bundleBuildingContext.Formats.Any())
             {
