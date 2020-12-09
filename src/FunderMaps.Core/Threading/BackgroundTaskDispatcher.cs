@@ -22,14 +22,9 @@ namespace FunderMaps.Core.Threading
         /// </summary>
         /// <param name="value">The object to process.</param>
         /// <param name="delay">Optional task delay.</param>
-        public ValueTask<Guid> EnqueueTaskAsync<TTask>(object value, TimeSpan? delay = null)
+        public ValueTask<Guid> EnqueueTaskAsync<TTask>(object value = null, TimeSpan? delay = null)
             where TTask : BackgroundTask
         {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
             TaskBucket bucket = new(value, typeof(TTask));
 
             _dispatchManager.QueueTaskItem(bucket, delay);
