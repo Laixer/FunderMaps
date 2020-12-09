@@ -151,7 +151,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                         Append = true,
                     })
                     .InputDataset(input)
-                    .InputLayers(new BundleLayerSource(bundle, layer))
+                    .InputLayers(new BundleLayerSource(bundle, layer, Context.Workspace))
                     .OutputDataset(fileDump)
                     .Build(formatProperty.FormatName);
 
