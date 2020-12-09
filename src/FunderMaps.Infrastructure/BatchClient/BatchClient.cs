@@ -1,6 +1,7 @@
 using System.Text.Json;
 using FunderMaps.BatchNode;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Threading;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
@@ -40,16 +41,32 @@ namespace FunderMaps.Infrastructure.BatchClient
 
             var client = new Batch.BatchClient(_channelFactory.RemoteChannel);
             EnqueueResponse response = await client.EnqueueAsync(request, null, null, token);
+
             return Guid.Parse(response.TaskId);
         }
 
-        // FUTURE: Make a separate call to the service to check the remote services.
+        /// <summary>
+        ///     Job processing status.
+        /// </summary>
+        /// <param name="token">Canellation token.</param>
+        public async Task<DispatchManagerStatus> StatusAsync(CancellationToken token = default)
+        {
+            var client = new Batch.BatchClient(_channelFactory.RemoteChannel);
+            StatusResponse response = await client.StatusAsync(new(), null, null, token);
+
+            return new()
+            {
+                JobsSucceeded = response.JobsSucceeded,
+                JobsFailed = response.JobsFailed,
+            };
+        }
+
         /// <summary>
         ///     Test the batch service backend.
         /// </summary>
         public async Task TestService()
         {
-            await EnqueueAsync("foobar");
+            await StatusAsync();
         }
     }
 }
