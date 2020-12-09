@@ -177,7 +177,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         private async Task<DataSource> BuildBundleAsync(Bundle bundle, DataSource input, GeometryFormat format)
         {
             FormatProperty formatProperty = exportFormats.First(f => f.Format == format);
-            string blobStoragePath = $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/{formatProperty.FormatShortName}";
+            var blobStoragePath = $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/{formatProperty.FormatShortName}";
 
             FileDataSource fileDump = new()
             {

@@ -34,8 +34,7 @@ namespace FunderMaps.BatchNode.Command
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public CommandTask(ILogger logger)
-            => Logger = logger;
+        public CommandTask(ILogger logger) => Logger = logger;
 
         /// <summary>
         ///     Run command in workspace.
