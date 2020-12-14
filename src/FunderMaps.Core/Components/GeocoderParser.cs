@@ -32,8 +32,12 @@ namespace FunderMaps.Core.Components
             };
 
         /// <summary>
-        ///     Identify the geocoder datasource from the input.
+        ///     Identify the geocoder datasource from the input and return repaired identifier.
         /// </summary>
+        /// <remarks>
+        ///     Try and fix invalid BAG identifiers. This should not be necessary however
+        ///     malformed BAG identifiers are common.
+        /// </remarks>
         /// <param name="input">Input identifier.</param>
         /// <param name="output">Output identifier.</param>
         /// <returns>Geocoder datasource via <see cref="GeocoderDatasource"/>.</returns>

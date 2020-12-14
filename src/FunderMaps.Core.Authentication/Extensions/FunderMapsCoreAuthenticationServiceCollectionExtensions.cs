@@ -8,9 +8,12 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class FunderMapsCoreAuthenticationServiceCollectionExtensions
     {
+        /// <summary>
+        ///     Adds the core authentication service to the container.
+        /// </summary>
         public static IServiceCollection AddFunderMapsCoreAuthentication(this IServiceCollection services)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
