@@ -36,5 +36,17 @@
             "problemMatcher": "$msCompile",
             "promptOnClose": true
         },
+        {
+            "label": "package outdated",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "list",
+                "package",
+                "--outdated"
+            ],
+            "problemMatcher": "$msCompile",
+            "promptOnClose": true
+        },
     ]
 }

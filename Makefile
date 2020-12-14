@@ -13,3 +13,4 @@ test:
 
 clean:
 	dotnet clean --nologo
+	rm Documentation*.xml
