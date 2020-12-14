@@ -103,7 +103,7 @@ namespace FunderMaps.Portal
         /// </remarks>
         public static void Configure(IApplicationBuilder app)
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            app.UseForwardedHeaders(new()
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
             });
@@ -112,7 +112,7 @@ namespace FunderMaps.Portal
 
             app.UseFunderMapsExceptionHandler("/oops");
 
-            app.UsePathBase(new PathString("/api"));
+            app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();

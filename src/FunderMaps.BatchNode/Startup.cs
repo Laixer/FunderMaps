@@ -1,11 +1,9 @@
-﻿using AutoMapper.Configuration;
-using FunderMaps.AspNetCore;
+﻿using FunderMaps.AspNetCore;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Threading;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -19,13 +17,13 @@ namespace FunderMaps.BatchNode
         /// <summary>
         ///     Configuration.
         /// </summary>
-        // public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         /// <summary>
         ///     Create a new instance.
         /// </summary>
         /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
-        // public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         /// <summary>
         ///     This method gets called by the runtime if no environment is set.
@@ -69,7 +67,7 @@ namespace FunderMaps.BatchNode
         /// </remarks>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            app.UseForwardedHeaders(new()
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
             });
@@ -84,7 +82,6 @@ namespace FunderMaps.BatchNode
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGrpcService<BatchService>();
-                // endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
             });
         }
     }
