@@ -123,7 +123,7 @@ namespace FunderMaps.Data.Repositories
                         aa.bio_infection_reliability,
                         aa.bio_infection_risk
                 FROM    data.analysis_address AS aa
-                WHERE   aa.external_id = @external_id";
+                WHERE   aa.external_id = upper(@external_id)";
 
             // FUTURE: Maybe move up.
             if (AppContext.HasIdentity)
@@ -191,7 +191,7 @@ namespace FunderMaps.Data.Repositories
                         aa.bio_infection_reliability,
                         aa.bio_infection_risk
                 FROM    data.analysis_address AS aa
-                WHERE   aa.address_external_id = @external_id";
+                WHERE   aa.address_external_id = upper(@external_id)";
 
             // FUTURE: Maybe move up.
             if (AppContext.HasIdentity)

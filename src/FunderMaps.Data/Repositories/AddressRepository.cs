@@ -75,7 +75,7 @@ namespace FunderMaps.Data.Repositories
                         @postal_code,
                         @street,
                         @is_active,
-                        @external_id,
+                        upper(@external_id),
                         @external_source)
                     ON CONFLICT DO NOTHING
                     RETURNING id";
@@ -136,7 +136,7 @@ namespace FunderMaps.Data.Repositories
                         b.neighborhood_id
                 FROM    geocoder.address AS a
                 JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
-                WHERE   a.external_id = @external_id
+                WHERE   a.external_id = upper(@external_id)
                 AND     a.external_source = @external_source
                 LIMIT   1";
 
@@ -310,7 +310,7 @@ namespace FunderMaps.Data.Repositories
                             postal_code = @postal_code,
                             street = @street,
                             is_active = @is_active,
-                            external_id = @external_id,
+                            external_id = upper(@external_id),
                             external_source = @external_source
                     WHERE   id = @id";
 
