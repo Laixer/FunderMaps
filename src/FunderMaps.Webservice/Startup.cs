@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
@@ -235,7 +234,7 @@ namespace FunderMaps.Webservice
         /// </remarks>
         public static void Configure(IApplicationBuilder app)
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            app.UseForwardedHeaders(new()
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
             });
@@ -244,7 +243,7 @@ namespace FunderMaps.Webservice
 
             app.UseFunderMapsExceptionHandler("/oops");
 
-            app.UsePathBase(new PathString("/api"));
+            app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();

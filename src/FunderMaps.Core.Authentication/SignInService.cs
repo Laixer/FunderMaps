@@ -101,22 +101,23 @@ namespace FunderMaps.Core.Authentication
         ///     Attempts to sign in the specified <paramref name="principal"/>.
         /// </summary>
         /// <param name="principal">The principal to sign in.</param>
+        /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> SignInAsync(ClaimsPrincipal principal, string authenticationType)
         {
-            if (principal == null)
+            if (principal is null)
             {
                 throw new ArgumentNullException(nameof(principal));
             }
 
             var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(principal);
-            if (user == null || tenant == null)
+            if (user is null || tenant is null)
             {
                 return SignInContext.Failed;
             }
 
-            var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.TenantRole);
-            if (claim == null)
+            Claim claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.TenantRole);
+            if (claim is null)
             {
                 return SignInContext.Failed;
             }
@@ -125,18 +126,21 @@ namespace FunderMaps.Core.Authentication
         }
 
         /// <summary>
-        ///     Attempts to sign in the specified <paramref name="user"/> and <paramref name="password"/> combination.
+        ///     Attempts to sign in the specified <paramref name="user"/>.
         /// </summary>
         /// <param name="user">The user to sign in.</param>
+        /// <param name="tenant">The associated <paramref name="user"/> tenant.</param>
+        /// <param name="organizationRole">The <paramref name="user"/> role within the organization.</param>
+        /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> SignInAsync(IUser user, ITenant tenant, OrganizationRole organizationRole, string authenticationType)
         {
-            if (user == null)
+            if (user is null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (tenant == null)
+            if (tenant is null)
             {
                 throw new ArgumentNullException(nameof(tenant));
             }
@@ -155,15 +159,16 @@ namespace FunderMaps.Core.Authentication
         }
 
         /// <summary>
-        ///     Attempts to sign in the specified <paramref name="userName"/> and <paramref name="password"/> combination.
+        ///     Attempts to sign in the specified <paramref name="email"/> and <paramref name="password"/> combination.
         /// </summary>
         /// <param name="email">The user email to sign in.</param>
-        /// <param name="password">The password to attempt to sign in with.</param>
+        /// <param name="password">The password to attempt to authenticate.</param>
+        /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> PasswordSignInAsync(string email, string password, string authenticationType)
         {
             IUser user = await UserRepository.GetByEmailAsync(email);
-            if (user == null)
+            if (user is null)
             {
                 return SignInContext.Failed;
             }
@@ -179,7 +184,10 @@ namespace FunderMaps.Core.Authentication
         ///     Attempts a password sign in for a user.
         /// </summary>
         /// <param name="user">The user to sign in.</param>
-        /// <param name="password">The password to attempt to sign in with.</param>
+        /// <param name="tenant">The associated <paramref name="user"/> tenant.</param>
+        /// <param name="organizationRole">The <paramref name="user"/> role within the organization.</param>
+        /// <param name="password">The password to attempt to authenticate.</param>
+        /// <param name="authenticationType">Authentication type to use in authentication scheme.</param>
         /// <returns>Instance of <see cref="SignInContext"/>.</returns>
         public virtual async Task<SignInContext> PasswordSignInAsync(
             IUser user,
@@ -188,17 +196,17 @@ namespace FunderMaps.Core.Authentication
             string password,
             string authenticationType)
         {
-            if (user == null)
+            if (user is null)
             {
                 throw new ArgumentNullException(nameof(user));
             }
 
-            if (tenant == null)
+            if (tenant is null)
             {
                 throw new ArgumentNullException(nameof(tenant));
             }
 
-            var result = await CanSignInAsync(user.Id);
+            SignInContext result = await CanSignInAsync(user.Id);
             if (result != SignInContext.Success)
             {
                 return result;

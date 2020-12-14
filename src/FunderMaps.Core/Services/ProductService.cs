@@ -37,11 +37,11 @@ namespace FunderMaps.Core.Services
         /// <param name="input">Input query.</param>
         public virtual async IAsyncEnumerable<AnalysisProduct> GetAnalysisAsync(AnalysisProductType productType, string input)
         {
-            await foreach (var product in _geocoderParser.FromIdentifier(input) switch
+            await foreach (var product in _geocoderParser.FromIdentifier(input, out string id) switch
             {
-                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByIdAsync(input)),
-                GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalIdAsync(input)),
-                GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByAddressExternalIdAsync(input)),
+                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByIdAsync(id)),
+                GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalIdAsync(id)),
+                GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByAddressExternalIdAsync(id)),
                 _ => throw new System.InvalidOperationException(), // TODO
             })
             {

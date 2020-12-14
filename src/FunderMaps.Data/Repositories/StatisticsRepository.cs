@@ -114,7 +114,9 @@ namespace FunderMaps.Data.Repositories
         ///     The returned <see cref="StatisticsProduct"/> has null values
         ///     for all fields that were not requested.
         /// </remarks>
-        /// <param name="identifier">Neighborhood id or code</param>
+        /// <param name="product">Product type.</param>
+        /// <param name="method">Query method.</param>
+        /// <param name="identifier">Neighborhood id or code.</param>
         private async Task<StatisticsProduct> ProcessAsync(StatisticsProductType product, IdMethod method, string identifier)
         {
             static string GetTable(StatisticsProductType product)
@@ -183,7 +185,7 @@ namespace FunderMaps.Data.Repositories
         #region Mapping
 
         /// <summary>
-        ///     Gets a <see cref="ConstructionYearDistribution"/> from a <paramref name="reader"/>.
+        ///     Gets a <see cref="ConstructionYearDistribution"/>.
         /// </summary>
         private async Task<ConstructionYearDistribution> MapConstructionYearDistributionAsync(DbContext context)
         {
@@ -207,7 +209,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Gets the amount of buildings restored from a <paramref name="reader"/>.
+        ///     Gets the amount of buildings restored.
         /// </summary>
         /// <returns>Amount of buildings restored.</returns>
         private static async Task<uint> MapBuildingsRestoredAsync(DbContext context)
@@ -217,7 +219,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Gets the amount of data collected from a <paramref name="reader"/>.
+        ///     Gets the amount of data collected.
         /// </summary>
         /// <returns>Percentage of data collected.</returns>
         private static async Task<double> MapDataCollectedAsync(DbContext context)
@@ -228,7 +230,7 @@ namespace FunderMaps.Data.Repositories
 
         // FUTURE: Clean up, this is ugly.
         /// <summary>
-        ///     Gets a <see cref="FoundationRiskDistribution"/> from a <paramref name="reader"/>.
+        ///     Gets a <see cref="FoundationRiskDistribution"/>.
         /// </summary>
         private async Task<FoundationRiskDistribution> MapFoundationRiskDistributionAsync(DbContext context)
         {
@@ -258,7 +260,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Gets a <see cref="FoundationTypeDistribution"/> from a <paramref name="reader"/>.
+        ///     Gets a <see cref="FoundationTypeDistribution"/>.
         /// </summary>
         private async Task<FoundationTypeDistribution> MapFoundationTypeDistributionAsync(DbContext context)
         {
@@ -282,7 +284,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Gets the amount of incidents from a <paramref name="reader"/>.
+        ///     Gets the amount of incidents.
         /// </summary>
         /// <returns>Amount of incidents.</returns>
         private static async Task<uint> MapIncidentsAsync(DbContext context)
@@ -292,7 +294,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Gets the amount of inquiries from a <paramref name="reader"/>.
+        ///     Gets the amount of inquiries.
         /// </summary>
         /// <returns>Amount of inquiries.</returns>
         private static async Task<uint> MapInquiriesAsync(DbContext context)
