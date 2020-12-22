@@ -31,9 +31,19 @@ namespace FunderMaps.Core.Threading
         private bool disposedValue;
 
         /// <summary>
-        ///     Job processing status.
+        ///     Execution statistics.
         /// </summary>
         public DispatchManagerStatus Status { get; } = new();
+
+        /// <summary>
+        ///     Number of jobs in delay queue.
+        /// </summary>
+        public int WorkerQueueDelaySize => workerQueueDelay.Count;
+
+        /// <summary>
+        ///     Number of jobs in queue.
+        /// </summary>
+        public int WorkerQueueSize => workerQueue.Count;
 
         /// <summary>
         ///     Create new instance.
@@ -156,9 +166,10 @@ namespace FunderMaps.Core.Threading
 
                             Status.JobsSucceeded++;
                         }
-                        catch (Exception e) // TODO: Check a specific exception
+                        catch (Exception e) // FUTURE: Check a specific exception
                         {
-                            _logger.LogError($"Exception in background task {context.Id}");
+                            _logger.LogError($"background task {context.Id} failed");
+                            _logger.LogDebug(e, $"Exception in background task {context.Id}");
 
                             if (context.RetryCount == 0)
                             {
@@ -182,7 +193,7 @@ namespace FunderMaps.Core.Threading
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, $"Exception when creating task");
+                    _logger.LogCritical(e, $"Exception when creating task");
                 }
                 finally
                 {
