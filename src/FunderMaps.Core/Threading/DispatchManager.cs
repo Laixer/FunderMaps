@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -136,13 +136,12 @@ namespace FunderMaps.Core.Threading
                         // an active service provider from this. The scope is valid until the end
                         // of the tasks lifespan. Tasks can resolve any service within their scope.
                         using var serviceScope = _serviceScopeFactory.CreateScope();
-                        var services = serviceScope.ServiceProvider;
 
                         using CancellationTokenSource cts = new(_options.TimeoutDelay == TimeSpan.Zero
                             ? TimeSpan.FromMinutes(15)
                             : _options.TimeoutDelay);
 
-                        var backgroundTask = services.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
+                        var backgroundTask = serviceScope.ServiceProvider.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
 
                         try
@@ -158,13 +157,12 @@ namespace FunderMaps.Core.Threading
                         }
                         catch (Exception e) // TODO: Check a specific exception
                         {
-                            _logger.LogError(e, $"Exception in background task {context.Id}");
+                            _logger.LogError($"Exception in background task {context.Id}");
 
                             if (context.RetryCount == 0)
                             {
                                 context.RetryCount++;
-                                context.Delay = TimeSpan.FromMinutes(5);
-                                QueueTaskItem(taskBucket);
+                                QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
                             }
                             else
                             {
