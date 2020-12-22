@@ -1,4 +1,4 @@
-using FunderMaps.Core.Exceptions;
+﻿using FunderMaps.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -148,6 +148,7 @@ namespace FunderMaps.Core.Threading
                         {
                             _logger.LogInformation($"Starting background task {context.Id}");
 
+                            context.ServiceProvider = serviceScope.ServiceProvider;
                             context.StartedAt = DateTime.Now;
                             context.CancellationToken = cts.Token;
 

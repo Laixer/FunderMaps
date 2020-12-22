@@ -108,9 +108,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             IConfiguration configuration,
             IBundleRepository bundleRepository,
             ILayerRepository layerRepository,
-            IBlobStorageService blobStorageService,
-            ILogger<BundleJob> logger)
-            : base(logger)
+            IBlobStorageService blobStorageService)
         {
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
             _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));

@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using FunderMaps.BatchNode.Command;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Threading;
 using FunderMaps.Data;
 
@@ -25,11 +24,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleBatch(
-            BackgroundTaskDispatcher backgroundTaskDispatcher,
-            IBundleRepository bundleRepository,
-            ILogger<BundleJob> logger)
-            : base(logger)
+        public BundleBatch(BackgroundTaskDispatcher backgroundTaskDispatcher, IBundleRepository bundleRepository)
         {
             _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
