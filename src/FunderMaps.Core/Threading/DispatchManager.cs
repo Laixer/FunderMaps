@@ -138,7 +138,7 @@ namespace FunderMaps.Core.Threading
                         using var serviceScope = _serviceScopeFactory.CreateScope();
                         var services = serviceScope.ServiceProvider;
 
-                        using var cts = new CancellationTokenSource(_options.TimeoutDelay == TimeSpan.Zero
+                        using CancellationTokenSource cts = new(_options.TimeoutDelay == TimeSpan.Zero
                             ? TimeSpan.FromMinutes(15)
                             : _options.TimeoutDelay);
 
@@ -163,7 +163,7 @@ namespace FunderMaps.Core.Threading
                             if (context.RetryCount == 0)
                             {
                                 context.RetryCount++;
-                                context.Delay = TimeSpan.FromMinutes(1);
+                                context.Delay = TimeSpan.FromMinutes(5);
                                 QueueTaskItem(taskBucket);
                             }
                             else
