@@ -41,7 +41,6 @@ namespace FunderMaps.BatchNode
             services.AddBatchJob<Jobs.BundleBuilder.BundleJob>();
             services.AddBatchJob<Jobs.Notification.EmailJob>();
             services.AddBatchJob<Jobs.IncidentNotifyJob>();
-            services.AddBatchJob<Jobs.FooBarJob>();
 
             services.AddGrpc();
 

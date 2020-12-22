@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace FunderMaps.BatchNode.Jobs
 {
     /// <summary>
-    ///     FooBar dummy job.
+    ///     FooBar dummy job. Take this job as the template for other jobs.
     /// </summary>
     internal class FooBarJob : BackgroundTask
     {
