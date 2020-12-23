@@ -166,7 +166,7 @@ namespace FunderMaps.BatchNode.Command
 
             Logger.LogDebug("Setup workspace for job");
 
-            context.Workspace = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            context.Workspace = Path.Combine(Directory.GetCurrentDirectory(), $"workspace/job-{Context.Id}");
             Directory.CreateDirectory(context.Workspace);
 
             // NOTE: These files are created as a placeholder. Some operating systems
