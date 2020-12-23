@@ -26,6 +26,7 @@ namespace FunderMaps.Infrastructure.Storage
     internal class SpacesBlobStorageService : IBlobStorageService, IDisposable
     {
         private static readonly byte MaxKeys = Byte.MaxValue;
+        private static readonly byte ConcurrentServiceRequests = 10;
 
         private readonly BlobStorageOptions _options;
         private readonly IAmazonS3 client;
@@ -193,26 +194,43 @@ namespace FunderMaps.Infrastructure.Storage
         {
             try
             {
-                async Task DirectorySearch(string path, string subdir = "")
+                TransferUtilityUploadDirectoryRequest request = new()
                 {
-                    foreach (var file in Directory.GetFiles(path))
-                    {
-                        using Stream stream = File.OpenRead(file);
-                        await StoreFileAsync(directoryName, Path.Combine(subdir, Path.GetFileName(file)), storageObject?.ContentType, stream, storageObject);
-                    }
-                    foreach (var file in Directory.GetDirectories(path))
-                    {
-                        await DirectorySearch(file, Path.Combine(subdir, Path.GetFileName(file)));
-                    }
-                }
+                    BucketName = _options.BlobStorageName,
+                    Directory = directoryPath,
+                    KeyPrefix = directoryName,
+                    SearchOption = SearchOption.AllDirectories,
+                    UploadFilesConcurrently = true,
+                };
 
-                await DirectorySearch(directoryPath);
+                request.UploadDirectoryFileRequestEvent += (sender, e) =>
+                {
+                    e.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? e.UploadRequest.Headers.ContentType;
+                    e.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? e.UploadRequest.Headers.CacheControl;
+                    e.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? e.UploadRequest.Headers.ContentDisposition;
+                    e.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? e.UploadRequest.Headers.ContentEncoding;
+                };
+
+                TransferUtilityConfig config = new()
+                {
+                    /** Note: This is currently set to the default value of 10. I did some benchmarking on 23 dec 2020 
+                           and discovered that turning this value up will cause some unstable behaviour resulting in
+                           the task throwing an exception and being cancelled. Setting this to 20 seemed to work fine, 
+                           however 50 or above seems to result in crashes. I've left it on 10 for now to be safe for use 
+                           in production. Worth investigating later for a major performance increase!
+
+                           - Patrick
+                    **/
+                    ConcurrentServiceRequests = ConcurrentServiceRequests
+                };
+
+                await new TransferUtility(client, config).UploadDirectoryAsync(request);
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not store file to Spaces using S3");
+                _logger.LogError(e, "Could not store directory to Spaces using S3");
 
-                throw new StorageException("Could not store file", e);
+                throw new StorageException("Could not store directory", e);
             }
         }
 
