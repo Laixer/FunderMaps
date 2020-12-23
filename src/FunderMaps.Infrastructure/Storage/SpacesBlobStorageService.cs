@@ -8,7 +8,9 @@ using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -23,6 +25,8 @@ namespace FunderMaps.Infrastructure.Storage
     /// </remarks>
     internal class SpacesBlobStorageService : IBlobStorageService, IDisposable
     {
+        private static readonly byte MaxKeys = Byte.MaxValue;
+
         private readonly BlobStorageOptions _options;
         private readonly IAmazonS3 client;
         private readonly ILogger<SpacesBlobStorageService> _logger;
@@ -179,7 +183,7 @@ namespace FunderMaps.Infrastructure.Storage
 
         // FUTURE: Refactor
         /// <summary>
-        ///     Stores a file.
+        ///     Stores a directory.
         /// </summary>
         /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
         /// <param name="directoryPath">Source directory.</param>
@@ -194,7 +198,7 @@ namespace FunderMaps.Infrastructure.Storage
                     foreach (var file in Directory.GetFiles(path))
                     {
                         using Stream stream = File.OpenRead(file);
-                        await StoreFileAsync(directoryName, Path.Combine(subdir, Path.GetFileName(file)), storageObject.ContentType, stream, storageObject);
+                        await StoreFileAsync(directoryName, Path.Combine(subdir, Path.GetFileName(file)), storageObject?.ContentType, stream, storageObject);
                     }
                     foreach (var file in Directory.GetDirectories(path))
                     {
@@ -209,6 +213,73 @@ namespace FunderMaps.Infrastructure.Storage
                 _logger.LogError(e, "Could not store file to Spaces using S3");
 
                 throw new StorageException("Could not store file", e);
+            }
+        }
+
+        /// <summary>
+        ///     Removes a directory.
+        /// </summary>
+        /// <param name="directoryPath">Full path of the directory to delete.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        public async Task RemoveDirectoryAsync(string directoryPath)
+        {
+            try
+            {
+                // NOTE: This call returns max. up to 1000 records by design
+                //       In order to obtain every record that matches our query, 
+                //       we have to repeat our request execution in a loop - using continuation tokens -- until no longer truncated.
+                //       See https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/MS3ListObjectsV2AsyncListObjectsV2RequestCancellationToken.html
+
+
+                ListObjectsV2Request request = new()
+                {
+                    BucketName = _options.BlobStorageName,
+                    Prefix = directoryPath,
+                    MaxKeys = MaxKeys
+                };
+
+                List<Task> tasklist = new();
+
+                ListObjectsV2Response response;
+                do
+                {
+                    response = await client.ListObjectsV2Async(request);
+
+                    if (response.S3Objects.Count <= 0)
+                    {
+                        continue;
+                    }
+
+                    Task deleteTask = client.DeleteObjectsAsync(new()
+                    {
+                        BucketName = _options.BlobStorageName,
+                        Objects = response.S3Objects.Select(x => new KeyVersion()
+                        {
+                            Key = x.Key
+                        }).ToList()
+                    });
+
+                    tasklist.Add(deleteTask);
+
+                    _ = Task.Run(async () =>
+                    {
+                        _logger.LogTrace($"(Task {Task.CurrentId}): Starting remote deletion of {response.S3Objects.Count} objects. ");
+
+                        await deleteTask;
+
+                        _logger.LogTrace($"(Task {Task.CurrentId}): Completed.");
+                    });
+
+                    request.ContinuationToken = response.NextContinuationToken;
+                } while (response.IsTruncated);
+
+                await Task.WhenAll(tasklist.ToArray());
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogTrace(e, "Could not delete directory on Spaces using S3");
+
+                throw new StorageException("Could delete directory", e);
             }
         }
 

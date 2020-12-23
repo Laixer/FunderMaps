@@ -22,6 +22,11 @@ namespace FunderMaps.Core.Services
             return Task.FromResult(new Uri("https://localhost/blob"));
         }
 
+        public Task RemoveDirectoryAsync(string directoryPath)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
         {
             return Task.CompletedTask;

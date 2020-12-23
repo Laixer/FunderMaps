@@ -49,13 +49,20 @@ namespace FunderMaps.Core.Interfaces
 
         // FUTURE: Refactor
         /// <summary>
-        ///     Stores a file in a Digital Ocean Space.
+        ///     Stores a directory in a Digital Ocean Space.
         /// </summary>
         /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
         /// <param name="directoryPath">Source directory.</param>
         /// <param name="storageObject">Storage object settings.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
         Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject = null);
+
+        /// <summary>
+        ///     Removes a directory in a Digital Ocean Space.
+        /// </summary>
+        /// <param name="directoryPath">Full path of the directory to delete.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        Task RemoveDirectoryAsync(string directoryPath);
 
         /// <summary>
         ///     Test the Amazon S3 service backend.
