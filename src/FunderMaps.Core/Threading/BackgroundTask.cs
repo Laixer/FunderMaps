@@ -62,7 +62,7 @@ namespace FunderMaps.Core.Threading
         /// <param name="context">Background task execution context.</param>
         public virtual void Execute(BackgroundTaskContext context)
         {
-            // NOTE: This is deliberately left empty if for any derived class.
+            // NOTE: This is deliberately left empty for any derived class.
         }
 
         /// <summary>
