@@ -205,6 +205,7 @@ namespace FunderMaps.Infrastructure.Storage
 
                 request.UploadDirectoryFileRequestEvent += (sender, e) =>
                 {
+                    e.UploadRequest.CannedACL = (storageObject?.IsPublic ?? false) ? S3CannedACL.PublicRead : S3CannedACL.Private;
                     e.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? e.UploadRequest.Headers.ContentType;
                     e.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? e.UploadRequest.Headers.CacheControl;
                     e.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? e.UploadRequest.Headers.ContentDisposition;
