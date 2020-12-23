@@ -33,9 +33,6 @@ namespace FunderMaps.BatchNode.Command
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public CommandInfo(string fileName)
-        {
-            FileName = fileName;
-        }
+        public CommandInfo(string fileName) => FileName = fileName;
     }
 }

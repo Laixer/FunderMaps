@@ -113,7 +113,7 @@ namespace FunderMaps.Webservice
                 // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
                 options.SchemaFilter<EnumSchemaFilter>();
                 // FUTURE: This call is obsolete.
-                options.GeneratePolymorphicSchemas();
+                options.UseOneOfForPolymorphism();
             });
 
             services.AddCors(options =>
@@ -150,7 +150,7 @@ namespace FunderMaps.Webservice
                 // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
                 options.SchemaFilter<EnumSchemaFilter>();
                 // FUTURE: This call is obsolete.
-                options.GeneratePolymorphicSchemas();
+                options.UseOneOfForPolymorphism();
             });
         }
 
