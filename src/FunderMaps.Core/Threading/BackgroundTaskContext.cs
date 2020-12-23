@@ -14,6 +14,11 @@ namespace FunderMaps.Core.Threading
         public CancellationToken CancellationToken { get; set; }
 
         /// <summary>
+        ///     Service provider to the task context.
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
         ///     The task id.
         /// </summary>
         public Guid Id { get; }

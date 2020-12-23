@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -51,7 +50,7 @@ namespace FunderMaps.Data.Repositories
             => throw new NotImplementedException();
 
         public static Building MapFromReader(DbDataReader reader, int offset = 0)
-            => new Building
+            => new()
             {
                 Id = reader.GetSafeString(offset + 0),
                 BuildingType = reader.GetFieldValue<BuildingType?>(offset + 1),
@@ -104,12 +103,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="buildingId">Internal building id.</param>
         /// <returns>Boolean result</returns>
         public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
-        {
-            userId.ThrowIfNullOrEmpty();
-            buildingId.ThrowIfNullOrEmpty();
-
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         public override IAsyncEnumerable<Building> ListAllAsync(INavigation navigation)
             => throw new NotImplementedException();

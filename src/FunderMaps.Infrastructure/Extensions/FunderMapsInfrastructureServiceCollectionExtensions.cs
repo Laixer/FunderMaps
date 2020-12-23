@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Extensions;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Infrastructure.BatchClient;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;
@@ -60,7 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsInfrastructureServices(this IServiceCollection services)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
@@ -86,15 +85,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>Chained <paramref name="services"/>.</returns>
         public static IServiceCollection AddSpacesBlobStorageServices(this IServiceCollection services, IConfiguration configuration, string configurationSection)
         {
-            if (services == null)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
-            if (configuration == null)
+            if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
-            configurationSection.ThrowIfNullOrEmpty();
 
             services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
             services.Configure<BlobStorageOptions>(options => configuration.GetSection(configurationSection).Bind(options));

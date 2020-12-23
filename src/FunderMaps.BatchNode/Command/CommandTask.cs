@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.BatchNode.Command
@@ -22,19 +24,14 @@ namespace FunderMaps.BatchNode.Command
         private const string TaskIdName = "FM_TASK_ID";
 
         /// <summary>
-        ///     Represents a type used to perform logging.
-        /// </summary>
-        protected ILogger Logger { get; private set; }
-
-        /// <summary>
         ///     Command context.
         /// </summary>
         protected CommandTaskContext Context { get; private set; }
 
         /// <summary>
-        ///     Create new instance.
+        ///     Hosting environment.
         /// </summary>
-        public CommandTask(ILogger logger) => Logger = logger;
+        protected IHostEnvironment HostEnvironment { get; private set; }
 
         /// <summary>
         ///     Run command in workspace.
@@ -169,11 +166,11 @@ namespace FunderMaps.BatchNode.Command
 
             Logger.LogDebug("Setup workspace for job");
 
-            context.Workspace = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            context.Workspace = Path.Combine(Directory.GetCurrentDirectory(), $"workspace/job-{Context.Id}");
             Directory.CreateDirectory(context.Workspace);
 
-            // These files are created as a placeholder. Some operating systems
-            // may cleanup unused temporary directories when disk space is sparse.
+            // NOTE: These files are created as a placeholder. Some operating systems
+            //       may cleanup unused temporary directories when disk space is sparse.
             await File.Create($"{context.Workspace}/.lock").DisposeAsync();
             await File.WriteAllTextAsync($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
 
@@ -193,15 +190,11 @@ namespace FunderMaps.BatchNode.Command
 
             Logger.LogDebug("Teardown workspace for job");
 
-            if (!context.KeepWorkspace && !context.Failed)
+            if (!context.KeepWorkspace)
             {
                 Logger.LogTrace("Workspace directory is not kept");
 
                 Directory.Delete(context.Workspace, recursive: true);
-            }
-            else if (context.Failed)
-            {
-                Logger.LogWarning($"Task failed, keeping workspace: {context.Workspace}");
             }
 
             return Task.CompletedTask;
@@ -218,23 +211,23 @@ namespace FunderMaps.BatchNode.Command
                 throw new ArgumentNullException(nameof(context));
             }
 
-            // We always want to yield for the async state machine.
-            await Task.Yield();
+            await SetupTaskAsync(context);
+
+            HostEnvironment = context.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
             Context = new CommandTaskContext(context.Id)
             {
                 CancellationToken = context.CancellationToken,
+                ServiceProvider = context.ServiceProvider,
                 Value = context.Value,
                 QueuedAt = context.QueuedAt,
                 StartedAt = context.StartedAt,
                 Delay = context.Delay,
                 RetryCount = context.RetryCount,
-                KeepWorkspace = false,
+                KeepWorkspace = HostEnvironment.IsDevelopment(),
                 Failed = false,
             };
 
-            // FUTURE: Maybe catch all exceptions, logs stats and keep workspace
-            //         on faillure.
             try
             {
                 await SetupAsync(Context);
