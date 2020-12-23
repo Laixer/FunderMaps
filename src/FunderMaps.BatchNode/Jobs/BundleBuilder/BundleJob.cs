@@ -164,11 +164,19 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 returnCode = await RunCommandAsync(command);
             }
 
-            Logger.LogTrace($"Start uploading exported bundle");
+            // TODO: We can parallelize deletion of existing files with the uploading part by uploading to a temporary directory 
+            // and then moving it when both tasks are complete. For now we wait for deletion to complete before we upload into the destination directory.
+
+            Logger.LogTrace("Deleting existing files (if they exist)");
+
+            await _blobStorageService.RemoveDirectoryAsync(blobStoragePath);
+
+            Logger.LogTrace("Start uploading exported bundle");
 
             await _blobStorageService.StoreDirectoryAsync(
                 directoryName: blobStoragePath,
-                directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
+                directoryPath: fileDump.PathPrefix,
+                new Core.Storage.StorageObject
                 {
                     ContentType = formatProperty.ContentType,
                     CacheControl = "public, max-age=3600",
@@ -210,6 +218,13 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 .Build(formatProperty.FormatName);
 
             await RunCommandAsync(command);
+
+            // TODO: We can parallelize deletion of existing files with the uploading part by uploading to a temporary directory 
+            // and then moving it when both tasks are complete. For now we wait for deletion to complete before we upload into the destination directory.
+
+            Logger.LogTrace("Deleting existing files (if they exist)");
+
+            await _blobStorageService.RemoveDirectoryAsync(blobStoragePath);
 
             Logger.LogTrace($"Start uploading exported bundle");
 

@@ -229,8 +229,6 @@ namespace FunderMaps.Infrastructure.Storage
                 //       In order to obtain every record that matches our query, 
                 //       we have to repeat our request execution in a loop - using continuation tokens -- until no longer truncated.
                 //       See https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/MS3ListObjectsV2AsyncListObjectsV2RequestCancellationToken.html
-
-
                 ListObjectsV2Request request = new()
                 {
                     BucketName = _options.BlobStorageName,
