@@ -203,13 +203,13 @@ namespace FunderMaps.Infrastructure.Storage
                     UploadFilesConcurrently = true,
                 };
 
-                request.UploadDirectoryFileRequestEvent += (sender, e) =>
+                request.UploadDirectoryFileRequestEvent += (sender, uploadDirectoryRequest) =>
                 {
-                    e.UploadRequest.CannedACL = (storageObject?.IsPublic ?? false) ? S3CannedACL.PublicRead : S3CannedACL.Private;
-                    e.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? e.UploadRequest.Headers.ContentType;
-                    e.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? e.UploadRequest.Headers.CacheControl;
-                    e.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? e.UploadRequest.Headers.ContentDisposition;
-                    e.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? e.UploadRequest.Headers.ContentEncoding;
+                    uploadDirectoryRequest.UploadRequest.CannedACL = (storageObject?.IsPublic ?? false) ? S3CannedACL.PublicRead : S3CannedACL.Private;
+                    uploadDirectoryRequest.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? uploadDirectoryRequest.UploadRequest.Headers.ContentType;
+                    uploadDirectoryRequest.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? uploadDirectoryRequest.UploadRequest.Headers.CacheControl;
+                    uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition;
+                    uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding;
                 };
 
                 TransferUtilityConfig config = new()
@@ -254,8 +254,11 @@ namespace FunderMaps.Infrastructure.Storage
 
                 List<Task> tasklist = new();
 
-                for (ListObjectsV2Response response = await client.ListObjectsV2Async(request); response.IsTruncated; request.ContinuationToken = response.NextContinuationToken, response = await client.ListObjectsV2Async(request))
+                for (ListObjectsV2Response response = await client.ListObjectsV2Async(request);
+                    response.IsTruncated;
+                    request.ContinuationToken = response.NextContinuationToken, response = await client.ListObjectsV2Async(request))
                 {
+                    // TODO; Move this into for loop
                     if (response.S3Objects.Count <= 0)
                     {
                         break;
@@ -280,7 +283,6 @@ namespace FunderMaps.Infrastructure.Storage
 
                         _logger.LogTrace($"(Task {Task.CurrentId}): Completed.");
                     });
-
                 }
 
                 await Task.WhenAll(tasklist.ToArray());
