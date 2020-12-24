@@ -11,7 +11,7 @@ namespace FunderMaps.Core.Tests.Entities
         public void ValidateUser()
         {
             // Arrange
-            var entity1 = new User { Email = "info@example.com" };
+            var entity1 = new User { Email = "info@example.org" };
             var entity2 = new User { };
 
             // Act
@@ -29,19 +29,19 @@ namespace FunderMaps.Core.Tests.Entities
             var entity1 = new User
             {
                 Id = Guid.NewGuid(),
-                Email = "info@example.com",
+                Email = "info@example.org",
                 Role = Types.ApplicationRole.Guest,
             };
             var entity2 = new User
             {
                 Id = entity1.Id,
-                Email = "info@example.com",
+                Email = "info@example.org",
                 Role = Types.ApplicationRole.Guest,
             };
             var entity3 = new User
             {
                 Id = Guid.NewGuid(),
-                Email = "info@example.com",
+                Email = "info@example.org",
                 Role = Types.ApplicationRole.Guest,
             };
 
