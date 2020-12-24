@@ -1,4 +1,4 @@
-﻿using Amazon.Runtime;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
@@ -25,7 +25,7 @@ namespace FunderMaps.Infrastructure.Storage
     /// </remarks>
     internal class SpacesBlobStorageService : IBlobStorageService, IDisposable
     {
-        private static readonly byte MaxKeys = Byte.MaxValue;
+        private static readonly byte MaxKeys = 255;
         private static readonly byte ConcurrentServiceRequests = 10;
 
         private readonly BlobStorageOptions _options;
@@ -81,7 +81,7 @@ namespace FunderMaps.Infrastructure.Storage
                     return false;
                 }
 
-                _logger.LogError(e, "Could not check file existence in Spaces using S3");
+                _logger.LogError("Could not check file existence in Spaces using S3");
 
                 // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
                 throw new StorageException("Could not check file existence", e);
@@ -110,7 +110,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not get access link from Spaces using S3");
+                _logger.LogError("Could not get access link from Spaces using S3");
 
                 throw new StorageException("Could not get access link", e);
             }
@@ -134,7 +134,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not store file to Spaces using S3");
+                _logger.LogError("Could not store file to Spaces using S3");
 
                 throw new StorageException("Could not store file", e);
             }
@@ -176,7 +176,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
+                _logger.LogError($"Could not store file with content type {contentType} to Spaces using S3");
 
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
@@ -214,14 +214,11 @@ namespace FunderMaps.Infrastructure.Storage
 
                 TransferUtilityConfig config = new()
                 {
-                    /** Note: This is currently set to the default value of 10. I did some benchmarking on 23 dec 2020 
-                           and discovered that turning this value up will cause some unstable behaviour resulting in
-                           the task throwing an exception and being cancelled. Setting this to 20 seemed to work fine, 
-                           however 50 or above seems to result in crashes. I've left it on 10 for now to be safe for use 
-                           in production. Worth investigating later for a major performance increase!
-
-                           - Patrick
-                    **/
+                    // Note: This is currently set to the default value of 10. I did some benchmarking on 23 dec 2020 
+                    //       and discovered that turning this value up will cause some unstable behaviour resulting in
+                    //       the task throwing an exception and being cancelled. Setting this to 20 seemed to work fine, 
+                    //       however 50 or above seems to result in crashes. I've left it on 10 for now to be safe for use 
+                    //       in production. Worth investigating later for a major performance increase!
                     ConcurrentServiceRequests = ConcurrentServiceRequests
                 };
 
@@ -229,7 +226,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not store directory to Spaces using S3");
+                _logger.LogError("Could not store directory to Spaces using S3");
 
                 throw new StorageException("Could not store directory", e);
             }
@@ -244,7 +241,7 @@ namespace FunderMaps.Infrastructure.Storage
         {
             try
             {
-                // NOTE: This call returns max. up to 1000 records by design
+                // NOTE: This call returns max. up to 1000 records by design.
                 //       In order to obtain every record that matches our query, 
                 //       we have to repeat our request execution in a loop - using continuation tokens -- until no longer truncated.
                 //       See https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/MS3ListObjectsV2AsyncListObjectsV2RequestCancellationToken.html
@@ -257,14 +254,11 @@ namespace FunderMaps.Infrastructure.Storage
 
                 List<Task> tasklist = new();
 
-                ListObjectsV2Response response;
-                do
+                for (ListObjectsV2Response response = await client.ListObjectsV2Async(request); response.IsTruncated; request.ContinuationToken = response.NextContinuationToken, response = await client.ListObjectsV2Async(request))
                 {
-                    response = await client.ListObjectsV2Async(request);
-
                     if (response.S3Objects.Count <= 0)
                     {
-                        continue;
+                        break;
                     }
 
                     Task deleteTask = client.DeleteObjectsAsync(new()
@@ -287,14 +281,13 @@ namespace FunderMaps.Infrastructure.Storage
                         _logger.LogTrace($"(Task {Task.CurrentId}): Completed.");
                     });
 
-                    request.ContinuationToken = response.NextContinuationToken;
-                } while (response.IsTruncated);
+                }
 
                 await Task.WhenAll(tasklist.ToArray());
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogTrace(e, "Could not delete directory on Spaces using S3");
+                _logger.LogError("Could not delete directory on Spaces using S3");
 
                 throw new StorageException("Could delete directory", e);
             }
