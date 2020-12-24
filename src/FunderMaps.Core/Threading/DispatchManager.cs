@@ -31,9 +31,19 @@ namespace FunderMaps.Core.Threading
         private bool disposedValue;
 
         /// <summary>
-        ///     Job processing status.
+        ///     Execution statistics.
         /// </summary>
         public DispatchManagerStatus Status { get; } = new();
+
+        /// <summary>
+        ///     Number of jobs in delay queue.
+        /// </summary>
+        public int WorkerQueueDelaySize => workerQueueDelay.Count;
+
+        /// <summary>
+        ///     Number of jobs in queue.
+        /// </summary>
+        public int WorkerQueueSize => workerQueue.Count;
 
         /// <summary>
         ///     Create new instance.
@@ -45,8 +55,8 @@ namespace FunderMaps.Core.Threading
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
             // NOTE: Add one more worker than configured. This will set the lower bound to 1
-            //       and will misalign the number of workers to CPU core ratio. Doing so will
-            //       keep a single core free for other computation.
+            //       and will misalign the number of workers-to-CPU-core ratio. Doing so will
+            //       always keep a single core free for other processes.
             workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
 
             timer = new(obj => LaunchWorker(), null,
@@ -136,19 +146,19 @@ namespace FunderMaps.Core.Threading
                         // an active service provider from this. The scope is valid until the end
                         // of the tasks lifespan. Tasks can resolve any service within their scope.
                         using var serviceScope = _serviceScopeFactory.CreateScope();
-                        var services = serviceScope.ServiceProvider;
 
-                        using var cts = new CancellationTokenSource(_options.TimeoutDelay == TimeSpan.Zero
+                        using CancellationTokenSource cts = new(_options.TimeoutDelay == TimeSpan.Zero
                             ? TimeSpan.FromMinutes(15)
                             : _options.TimeoutDelay);
 
-                        var backgroundTask = services.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
+                        var backgroundTask = serviceScope.ServiceProvider.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
 
                         try
                         {
                             _logger.LogInformation($"Starting background task {context.Id}");
 
+                            context.ServiceProvider = serviceScope.ServiceProvider;
                             context.StartedAt = DateTime.Now;
                             context.CancellationToken = cts.Token;
 
@@ -156,15 +166,15 @@ namespace FunderMaps.Core.Threading
 
                             Status.JobsSucceeded++;
                         }
-                        catch (Exception e) // TODO: Check a specific exception
+                        catch (Exception e) // FUTURE: Check a specific exception
                         {
-                            _logger.LogError(e, $"Exception in background task {context.Id}");
+                            _logger.LogError($"background task {context.Id} failed");
+                            _logger.LogDebug(e, $"Exception in background task {context.Id}");
 
                             if (context.RetryCount == 0)
                             {
                                 context.RetryCount++;
-                                context.Delay = TimeSpan.FromMinutes(1);
-                                QueueTaskItem(taskBucket);
+                                QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
                             }
                             else
                             {
@@ -183,7 +193,7 @@ namespace FunderMaps.Core.Threading
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, $"Exception when creating task");
+                    _logger.LogCritical(e, $"Exception when creating task");
                 }
                 finally
                 {

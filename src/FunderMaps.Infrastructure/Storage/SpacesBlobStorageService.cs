@@ -1,4 +1,4 @@
-﻿using Amazon.Runtime;
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
@@ -8,7 +8,9 @@ using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -23,6 +25,9 @@ namespace FunderMaps.Infrastructure.Storage
     /// </remarks>
     internal class SpacesBlobStorageService : IBlobStorageService, IDisposable
     {
+        private static readonly byte MaxKeys = 255;
+        private static readonly byte ConcurrentServiceRequests = 10;
+
         private readonly BlobStorageOptions _options;
         private readonly IAmazonS3 client;
         private readonly ILogger<SpacesBlobStorageService> _logger;
@@ -76,7 +81,7 @@ namespace FunderMaps.Infrastructure.Storage
                     return false;
                 }
 
-                _logger.LogError(e, "Could not check file existence in Spaces using S3");
+                _logger.LogError("Could not check file existence in Spaces using S3");
 
                 // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
                 throw new StorageException("Could not check file existence", e);
@@ -105,7 +110,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not get access link from Spaces using S3");
+                _logger.LogError("Could not get access link from Spaces using S3");
 
                 throw new StorageException("Could not get access link", e);
             }
@@ -129,7 +134,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not store file to Spaces using S3");
+                _logger.LogError("Could not store file to Spaces using S3");
 
                 throw new StorageException("Could not store file", e);
             }
@@ -171,7 +176,7 @@ namespace FunderMaps.Infrastructure.Storage
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, $"Could not store file with content type {contentType} to Spaces using S3");
+                _logger.LogError($"Could not store file with content type {contentType} to Spaces using S3");
 
                 throw new StorageException($"Could not upload file with content type {contentType}", e);
             }
@@ -179,7 +184,7 @@ namespace FunderMaps.Infrastructure.Storage
 
         // FUTURE: Refactor
         /// <summary>
-        ///     Stores a file.
+        ///     Stores a directory.
         /// </summary>
         /// <param name="directoryName">Directory name at the destination including prefix paths.</param>
         /// <param name="directoryPath">Source directory.</param>
@@ -189,26 +194,104 @@ namespace FunderMaps.Infrastructure.Storage
         {
             try
             {
-                async Task DirectorySearch(string path, string subdir = "")
+                TransferUtilityUploadDirectoryRequest request = new()
                 {
-                    foreach (var file in Directory.GetFiles(path))
-                    {
-                        using Stream stream = File.OpenRead(file);
-                        await StoreFileAsync(directoryName, Path.Combine(subdir, Path.GetFileName(file)), storageObject.ContentType, stream, storageObject);
-                    }
-                    foreach (var file in Directory.GetDirectories(path))
-                    {
-                        await DirectorySearch(file, Path.Combine(subdir, Path.GetFileName(file)));
-                    }
-                }
+                    BucketName = _options.BlobStorageName,
+                    Directory = directoryPath,
+                    KeyPrefix = directoryName,
+                    SearchOption = SearchOption.AllDirectories,
+                    UploadFilesConcurrently = true,
+                };
 
-                await DirectorySearch(directoryPath);
+                request.UploadDirectoryFileRequestEvent += (sender, uploadDirectoryRequest) =>
+                {
+                    uploadDirectoryRequest.UploadRequest.CannedACL = (storageObject?.IsPublic ?? false) ? S3CannedACL.PublicRead : S3CannedACL.Private;
+                    uploadDirectoryRequest.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? uploadDirectoryRequest.UploadRequest.Headers.ContentType;
+                    uploadDirectoryRequest.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? uploadDirectoryRequest.UploadRequest.Headers.CacheControl;
+                    uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition;
+                    uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding;
+                };
+
+                TransferUtilityConfig config = new()
+                {
+                    // Note: This is currently set to the default value of 10. I did some benchmarking on 23 dec 2020 
+                    //       and discovered that turning this value up will cause some unstable behaviour resulting in
+                    //       the task throwing an exception and being cancelled. Setting this to 20 seemed to work fine, 
+                    //       however 50 or above seems to result in crashes. I've left it on 10 for now to be safe for use 
+                    //       in production. Worth investigating later for a major performance increase!
+                    ConcurrentServiceRequests = ConcurrentServiceRequests
+                };
+
+                await new TransferUtility(client, config).UploadDirectoryAsync(request);
             }
             catch (AmazonS3Exception e)
             {
-                _logger.LogError(e, "Could not store file to Spaces using S3");
+                _logger.LogError("Could not store directory to Spaces using S3");
 
-                throw new StorageException("Could not store file", e);
+                throw new StorageException("Could not store directory", e);
+            }
+        }
+
+        /// <summary>
+        ///     Removes a directory.
+        /// </summary>
+        /// <param name="directoryPath">Full path of the directory to delete.</param>
+        /// <returns>See <see cref="ValueTask"/>.</returns>
+        public async Task RemoveDirectoryAsync(string directoryPath)
+        {
+            try
+            {
+                // NOTE: This call returns max. up to 1000 records by design.
+                //       In order to obtain every record that matches our query, 
+                //       we have to repeat our request execution in a loop - using continuation tokens -- until no longer truncated.
+                //       See https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/MS3ListObjectsV2AsyncListObjectsV2RequestCancellationToken.html
+                ListObjectsV2Request request = new()
+                {
+                    BucketName = _options.BlobStorageName,
+                    Prefix = directoryPath,
+                    MaxKeys = MaxKeys
+                };
+
+                List<Task> tasklist = new();
+
+                for (ListObjectsV2Response response = await client.ListObjectsV2Async(request);
+                    response.IsTruncated;
+                    request.ContinuationToken = response.NextContinuationToken, response = await client.ListObjectsV2Async(request))
+                {
+                    // TODO; Move this into for loop
+                    if (response.S3Objects.Count <= 0)
+                    {
+                        break;
+                    }
+
+                    Task deleteTask = client.DeleteObjectsAsync(new()
+                    {
+                        BucketName = _options.BlobStorageName,
+                        Objects = response.S3Objects.Select(x => new KeyVersion()
+                        {
+                            Key = x.Key
+                        }).ToList()
+                    });
+
+                    tasklist.Add(deleteTask);
+
+                    _ = Task.Run(async () =>
+                    {
+                        _logger.LogTrace($"(Task {Task.CurrentId}): Starting remote deletion of {response.S3Objects.Count} objects. ");
+
+                        await deleteTask;
+
+                        _logger.LogTrace($"(Task {Task.CurrentId}): Completed.");
+                    });
+                }
+
+                await Task.WhenAll(tasklist.ToArray());
+            }
+            catch (AmazonS3Exception e)
+            {
+                _logger.LogError("Could not delete directory on Spaces using S3");
+
+                throw new StorageException("Could delete directory", e);
             }
         }
 
