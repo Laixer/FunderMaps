@@ -92,6 +92,12 @@ namespace FunderMaps.Cli
             }
 
             {
+                Command subcommand = new("build-bundle-all", "The all maplayer bundles");
+                subcommand.Handler = DriverHandler.InstantiateDriver(BatchDriver.BuildAllAsync);
+                command.AddCommand(subcommand);
+            }
+
+            {
                 Command subcommand = new("status", "Print the batch status reports");
                 subcommand.Handler = DriverHandler.InstantiateDriver(BatchDriver.StatusAsync);
                 command.AddCommand(subcommand);
