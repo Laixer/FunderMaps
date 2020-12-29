@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.MapBundle;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
@@ -88,6 +89,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<INotifyService, NotificationHub>();
+            services.AddScoped<IBundleService, BundleHub>();
 
             // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
