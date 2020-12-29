@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 namespace FunderMaps.Cli.Drivers
 {
     /// <summary>
-    ///     GRPC channel factory.
+    ///     gRPC channel factory.
     /// </summary>
     internal class BatchDriver : CommandDriver
     {
