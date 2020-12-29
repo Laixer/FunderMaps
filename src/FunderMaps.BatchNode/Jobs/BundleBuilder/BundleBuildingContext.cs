@@ -7,7 +7,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     /// <summary>
     ///     Context for executing a bundle build task.
     /// </summary>
-    public class BundleBuildingContext
+    public class BundleBuildingContext // TODO: Remove, this is moved to core
     {
         /// <summary>
         ///     The id of the bundle to process.

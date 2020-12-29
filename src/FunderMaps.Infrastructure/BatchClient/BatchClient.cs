@@ -12,7 +12,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// <summary>
     ///     Client connector to the batch node.
     /// </summary>
-    internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase
+    internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase // TODO: Rename to BatchProxy
     {
         private const string UserAgent = "FunderMaps.Infrastructure";
 

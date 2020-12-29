@@ -7,7 +7,7 @@ namespace FunderMaps.Core.DataAnnotations
     ///     Guid validation attribute.
     /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-    public class GuidAttribute : ValidationAttribute
+    public class GuidAttribute : ValidationAttribute // TODO: Remove
     {
         /// <summary>
         ///     Returns true if the value is an non empty guid.
