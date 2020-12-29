@@ -1,4 +1,5 @@
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Threading;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,14 +13,12 @@ namespace FunderMaps.Core.Services
     internal class NullBatchService : IBatchService
     {
         public Task<Guid> EnqueueAsync(string name, object value, CancellationToken token = default)
-        {
-            return Task.FromResult(Guid.NewGuid());
-        }
+            => Task.FromResult(Guid.NewGuid());
 
-        public Task TestService()
-        {
-            return Task.CompletedTask;
-        }
+        public Task<DispatchManagerStatus> StatusAsync(CancellationToken token = default)
+            => Task.FromResult(new DispatchManagerStatus());
+
+        public Task TestService() => Task.CompletedTask;
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
