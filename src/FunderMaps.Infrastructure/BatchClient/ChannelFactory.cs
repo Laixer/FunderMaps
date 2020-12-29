@@ -25,8 +25,14 @@ namespace FunderMaps.Infrastructure.BatchClient
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
-            // NOTE: The httpHandler is disposed when the channel is disposed.
+            // NOTE: The httpHandler is disposed when the GrpcChannel is disposed.
             HttpClientHandler httpHandler = new();
+
+            // There is no TLS when connecting over HTTP, disable TLS verification.
+            if (_options.ServiceUri.Scheme == "http")
+            {
+                _options.TlsValidate = false;
+            }
 
             if (!_options.TlsValidate)
             {

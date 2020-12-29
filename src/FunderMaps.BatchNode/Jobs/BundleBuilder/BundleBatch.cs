@@ -14,7 +14,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     /// <summary>
     ///     Bundle batch job entry.
     /// </summary>
-    internal class BundleBatch : CommandTask
+    internal class BundleBatch : CommandTask // TODO: Rename to BundleAllJob
     {
         private const string TaskName = "BUNDLE_BATCH";
 

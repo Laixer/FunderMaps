@@ -12,7 +12,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// <summary>
     ///     Client connector to the batch node.
     /// </summary>
-    internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase
+    internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase // TODO: Rename to BatchProxy
     {
         private const string UserAgent = "FunderMaps.Infrastructure";
 
@@ -29,7 +29,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// </summary>
         /// <param name="name">Name of task to run.</param>
         /// <param name="value">Task payload.</param>
-        /// <param name="token">Canellation token.</param>
+        /// <param name="token">Cancellation token.</param>
         public async Task<Guid> EnqueueAsync(string name, object value = null, CancellationToken token = default)
         {
             EnqueueRequest request = new()
@@ -39,19 +39,19 @@ namespace FunderMaps.Infrastructure.BatchClient
                 Payload = JsonSerializer.Serialize(value),
             };
 
-            var client = new Batch.BatchClient(_channelFactory.RemoteChannel);
+            Batch.BatchClient client = new(_channelFactory.RemoteChannel);
             EnqueueResponse response = await client.EnqueueAsync(request, null, null, token);
 
             return Guid.Parse(response.TaskId);
         }
 
         /// <summary>
-        ///     Job processing status.
+        ///     Batch service processing status.
         /// </summary>
-        /// <param name="token">Canellation token.</param>
+        /// <param name="token">Cancellation token.</param>
         public async Task<DispatchManagerStatus> StatusAsync(CancellationToken token = default)
         {
-            var client = new Batch.BatchClient(_channelFactory.RemoteChannel);
+            Batch.BatchClient client = new(_channelFactory.RemoteChannel);
             StatusResponse response = await client.StatusAsync(new(), null, null, token);
 
             return new()
@@ -64,10 +64,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <summary>
         ///     Test the batch service backend.
         /// </summary>
-        public async Task TestService()
-        {
-            await StatusAsync();
-        }
+        public async Task TestService() => await StatusAsync();
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
