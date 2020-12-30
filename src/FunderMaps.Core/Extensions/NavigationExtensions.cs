@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Extensions
     public static class NavigationExtensions
     {
         /// <summary>
-        ///     Validates an <see cref="INavigation"/> object.
+        ///     Validate a <see cref="INavigation"/> object.
         /// </summary>
         /// <param name="navigation"><see cref="INavigation"/></param>
         public static void Validate(this INavigation navigation)
