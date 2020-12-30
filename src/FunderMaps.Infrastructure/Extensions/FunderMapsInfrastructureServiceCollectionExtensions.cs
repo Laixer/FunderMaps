@@ -64,9 +64,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            using var serviceProviderScope = services.BuildServiceProvider().CreateScope();
-            Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
-            HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            Configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            HostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
 
             if (!HostEnvironment.IsDevelopment())
             {

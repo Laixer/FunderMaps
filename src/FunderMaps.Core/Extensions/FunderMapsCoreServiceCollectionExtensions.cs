@@ -6,7 +6,9 @@ using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
 using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -17,6 +19,16 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class FunderMapsCoreServiceCollectionExtensions
     {
         /// <summary>
+        ///     Configuration.
+        /// </summary>
+        public static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Host environment.
+        /// </summary>
+        public static IHostEnvironment HostEnvironment { get; set; }
+
+        /// <summary>
         ///     Adds the core threading service to the container.
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
@@ -25,13 +37,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<BackgroundTaskScopedDispatcher>();
             services.AddSingleton<DispatchManager>();
             services.AddTransient<BackgroundTaskDispatcher>();
-            // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
-            services.Configure<BackgroundWorkOptions>(options =>
-            {
-                options.MaxQueueSize = 8192;
-                options.MaxWorkers = 2;
-                options.TimeoutDelay = TimeSpan.FromMinutes(30);
-            });
+            services.Configure<BackgroundWorkOptions>(Configuration.GetSection(BackgroundWorkOptions.Section));
 
             return services;
         }
@@ -42,7 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddAppContext(this IServiceCollection services)
         {
             services.AddSingleton<IAppContextFactory, AppContextFactory>();
-            services.AddScoped<FunderMaps.Core.AppContext>(sp => sp.GetRequiredService<IAppContextFactory>().Create());
+            services.AddScoped<FunderMaps.Core.AppContext>(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
 
             return services;
         }
@@ -65,6 +71,10 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 throw new ArgumentNullException(nameof(services));
             }
+
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            Configuration = serviceProvider.GetRequiredService<IConfiguration>();
+            HostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
 
             // Register core components in DI container.
             // NOTE: These services are rarely used and should therefore be
