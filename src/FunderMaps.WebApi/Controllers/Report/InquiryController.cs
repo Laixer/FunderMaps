@@ -123,7 +123,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
-        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
         {
             // Act.
             var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);

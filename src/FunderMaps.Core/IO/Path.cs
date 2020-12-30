@@ -3,6 +3,7 @@ using SystemPath = System.IO.Path;
 
 namespace FunderMaps.Core.IO
 {
+    // TODO: Do not use the class Path
     /// <summary>
     ///     <see cref="System.IO.Path"/> extensions.
     /// </summary>
@@ -15,7 +16,7 @@ namespace FunderMaps.Core.IO
         /// <returns></returns>
         public static string GetUniqueName(string fileName = null)
         {
-            if (fileName == null || !SystemPath.HasExtension(fileName))
+            if (fileName is null || !SystemPath.HasExtension(fileName))
             {
                 return Guid.NewGuid().ToString();
             }
