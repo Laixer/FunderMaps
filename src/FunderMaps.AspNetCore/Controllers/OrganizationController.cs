@@ -34,7 +34,7 @@ namespace FunderMaps.AspNetCore.Controllers
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         }
 
-        // GET: api/organization
+        // GET: organization
         /// <summary>
         ///     Return session organization.
         /// </summary>
@@ -51,7 +51,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return Ok(output);
         }
 
-        // PUT: api/organization
+        // PUT: organization
         /// <summary>
         ///     Update session organization.
         /// </summary>
