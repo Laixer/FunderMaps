@@ -8,16 +8,19 @@ using System.Threading.Tasks;
 namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
-    ///     Helper for the signing process. Consolidates different authentication
-    ///     services and provides a single facade.
+    ///     Helper for the sign-in process. Consolidates different authentication
+    ///     services and serves functionallity through a facade.
     /// </summary>
     /// <remarks>
-    ///     This is the only object which shpuld handle authentication and signing requests
+    ///     This is the only object which should handle authentication and sign-in requests
     ///     for the entire web framework.
     /// </remarks>
     public class SignInHandler
     {
-        private readonly ISecurityTokenProvider _tokenProvider;
+        /// <summary>
+        ///     The <see cref="ISecurityTokenProvider"/> used.
+        /// </summary>
+        public ISecurityTokenProvider TokenProvider { get; }
 
         /// <summary>
         ///     The <see cref="SignInService"/> used.
@@ -30,7 +33,7 @@ namespace FunderMaps.AspNetCore.Authentication
         public SignInHandler(SignInService signInService, ISecurityTokenProvider tokenProvider)
         {
             SignInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-            _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+            TokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         }
 
         /// <summary>
@@ -55,11 +58,11 @@ namespace FunderMaps.AspNetCore.Authentication
                     throw new AuthenticationException();
                 }
 
-                if (result.Principal == null)
+                if (result.Principal is null)
                 {
                     throw new AuthenticationException();
                 }
-                return _tokenProvider.GetTokenContext(result.Principal);
+                return TokenProvider.GetTokenContext(result.Principal);
             }
             catch (FunderMapsCoreException)
             {
@@ -88,11 +91,11 @@ namespace FunderMaps.AspNetCore.Authentication
                     throw new AuthenticationException();
                 }
 
-                if (result.Principal == null)
+                if (result.Principal is null)
                 {
                     throw new AuthenticationException();
                 }
-                return _tokenProvider.GetTokenContext(result.Principal);
+                return TokenProvider.GetTokenContext(result.Principal);
             }
             catch (FunderMapsCoreException)
             {

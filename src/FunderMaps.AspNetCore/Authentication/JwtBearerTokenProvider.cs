@@ -38,7 +38,7 @@ namespace FunderMaps.AspNetCore.Authentication
         /// </summary>
         public JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILogger<JwtBearerTokenProvider> logger, ISystemClock clock)
         {
-            if (options == null)
+            if (options is null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
@@ -48,11 +48,17 @@ namespace FunderMaps.AspNetCore.Authentication
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
+        /// <summary>
+        ///     Find the first security token handler that can write a token.
+        /// </summary>
         private SecurityTokenHandler Handler
-                    => (SecurityTokenHandler)Options
-                        .SecurityTokenValidators
-                        .FirstOrDefault(s => (s as SecurityTokenHandler).CanValidateToken);
+            => (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);
 
+        /// <summary>
+        ///     Generate a <see cref="SecurityToken"/> from a <see cref="ClaimsPrincipal"/>.
+        /// </summary>
+        /// <param name="principal">Claims principal.</param>
+        /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
         protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
         {
             if (principal is null)
@@ -64,7 +70,7 @@ namespace FunderMaps.AspNetCore.Authentication
 
             var JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters;
             var issuerSigningKey = JwtTokenValidationParameters.IssuerSigningKey;
-            var SigningCredentials = new SigningCredentials(issuerSigningKey, SecurityAlgorithms.HmacSha256);
+            SigningCredentials SigningCredentials = new(issuerSigningKey, SecurityAlgorithms.HmacSha256);
 
             List<Claim> claims = new(principal.Claims)
             {
@@ -72,9 +78,9 @@ namespace FunderMaps.AspNetCore.Authentication
             };
 
             var nameClaim = claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name, StringComparison.Ordinal));
-            if (nameClaim != null)
+            if (nameClaim is not null)
             {
-                claims.Add(new Claim(JwtRegisteredClaimNames.Sub, nameClaim.Value));
+                claims.Add(new(JwtRegisteredClaimNames.Sub, nameClaim.Value));
             }
 
             DateTimeOffset issuedUtc;
@@ -103,7 +109,7 @@ namespace FunderMaps.AspNetCore.Authentication
         }
 
         /// <summary>
-        ///     Generate token.
+        ///     Generate a <see cref="SecurityToken"/> from a <see cref="ClaimsPrincipal"/>.
         /// </summary>
         /// <param name="principal">Claims principal.</param>
         /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
@@ -112,7 +118,7 @@ namespace FunderMaps.AspNetCore.Authentication
             => GenerateSecurityToken(principal);
 
         /// <summary>
-        ///     Generate token.
+        ///     Generate a <see cref="TokenContext"/> from a <see cref="ClaimsPrincipal"/>.
         /// </summary>
         /// <param name="principal">Claims principal.</param>
         /// <returns>Instance of <see cref="TokenContext"/>.</returns>
@@ -124,7 +130,7 @@ namespace FunderMaps.AspNetCore.Authentication
             }
 
             SecurityToken token = GetToken(principal);
-            return new TokenContext
+            return new()
             {
                 TokenString = Handler.WriteToken(token),
                 Token = token,
