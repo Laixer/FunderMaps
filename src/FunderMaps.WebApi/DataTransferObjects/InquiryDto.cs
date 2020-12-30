@@ -97,7 +97,6 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Contractor identifier.
         /// </summary>
-        [Guid]
         public Guid Contractor { get; set; }
 
         /// <summary>
