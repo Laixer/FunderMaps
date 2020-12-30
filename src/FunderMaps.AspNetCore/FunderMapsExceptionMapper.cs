@@ -17,7 +17,7 @@ namespace FunderMaps.AspNetCore
         /// <param name="statusCode">Status code to display.</param>
         /// <returns>Instance of<see cref="ErrorMessage"/>.</returns>
         protected static ErrorMessage BuildMessage(string message, HttpStatusCode statusCode)
-            => new ErrorMessage
+            => new()
             {
                 Message = message,
                 StatusCode = (int)statusCode

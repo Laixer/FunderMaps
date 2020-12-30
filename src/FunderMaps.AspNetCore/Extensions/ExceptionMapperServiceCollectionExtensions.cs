@@ -7,7 +7,7 @@ namespace FunderMaps.AspNetCore.Extensions
     /// <summary>
     ///     Extension functionality to add exception mapping to the services.
     /// </summary>
-    public static class ExceptionMapperServiceCollectionExtensions
+    internal static class ExceptionMapperServiceCollectionExtensions
     {
         /// <summary>
         ///     Add <see cref="FunderMapsExceptionMapper"/> to the services.

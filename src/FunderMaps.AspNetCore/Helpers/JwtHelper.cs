@@ -3,6 +3,7 @@ using System.Text;
 
 namespace FunderMaps.AspNetCore.Helpers
 {
+    // TODO: Remove, bad idea
     // TODO This is a duplicate of FunderMaps.WebApi.Helpers.JwtHelper.cs
     /// <summary>
     ///     Helper class for jwt tokens.

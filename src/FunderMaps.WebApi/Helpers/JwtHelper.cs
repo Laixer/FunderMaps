@@ -5,6 +5,7 @@ namespace FunderMaps.WebApi.Helpers
 {
     internal class JwtHelper
     {
+        // TODO: Remove, bad idea
         internal static SecurityKey CreateSecurityKey(string defaultKey = null)
         {
             if (!string.IsNullOrEmpty(defaultKey))

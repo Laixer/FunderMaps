@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
-    ///     Default AppContext factory.
+    ///     Default <see cref="Core.AppContext"/> factory.
     /// </summary>
     public class AspAppContextFactory : AppContextFactory
     {
@@ -23,7 +23,7 @@ namespace FunderMaps.AspNetCore
         /// </summary>
         /// <remarks>
         ///     The HTTP context accessor is a singleton provided by the ASP.NET framework. The singleton
-        ///     offers access to the <see cref="HttpContext"/> within the current scope. There does not
+        ///     offers access to the <see cref="HttpContext"/> within the current scope. There does *not*
         ///     have to be an active scope, in which case the accessor returns null on the
         ///     <see cref="HttpContext"/> request. If the aforementioned HTTP context accessor is null then
         ///     we'll return an empty <see cref="Core.AppContext"/>.

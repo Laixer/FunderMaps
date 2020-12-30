@@ -3,7 +3,6 @@ using FunderMaps.Core.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
 using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FunderMaps.AspNetCore.Extensions
 {
@@ -18,13 +17,11 @@ namespace FunderMaps.AspNetCore.Extensions
         /// <param name="builder">The <see cref="IApplicationBuilder"/> instance.</param>
         /// <param name="errorControllerPath">Path which leads to error handler.</param>
         /// <returns>Instance of <see cref="IApplicationBuilder"/>.</returns>
-        public static IApplicationBuilder UseFunderMapsExceptionHandler([DisallowNull] this IApplicationBuilder builder, string errorControllerPath)
-        {
-            return builder.UseCustomExceptionHandler<FunderMapsCoreException>(new CustomExceptionHandlerOptions()
+        public static IApplicationBuilder UseFunderMapsExceptionHandler(this IApplicationBuilder builder, string errorControllerPath)
+            => builder.UseCustomExceptionHandler<FunderMapsCoreException>(new CustomExceptionHandlerOptions()
             {
                 ErrorControllerPath = errorControllerPath
             });
-        }
 
         /// <summary>
         ///     Add <see cref="CustomExceptionHandlerMiddleware{TException}"/> to the builder.
@@ -33,10 +30,10 @@ namespace FunderMaps.AspNetCore.Extensions
         /// <param name="options"><see cref="CustomExceptionHandlerOptions"/></param>
         /// <typeparam name="TException">Exception base class to catch.</typeparam>
         /// <returns>Instance of <see cref="IApplicationBuilder"/>.</returns>
-        internal static IApplicationBuilder UseCustomExceptionHandler<TException>([DisallowNull] this IApplicationBuilder builder, CustomExceptionHandlerOptions options)
+        internal static IApplicationBuilder UseCustomExceptionHandler<TException>(this IApplicationBuilder builder, CustomExceptionHandlerOptions options)
             where TException : Exception
         {
-            if (options == null)
+            if (options is null)
             {
                 throw new ArgumentNullException(nameof(options));
             }
