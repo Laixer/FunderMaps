@@ -4,7 +4,6 @@ using FunderMaps.Core.MapBundle;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
-using FunderMaps.Core.UseCases;
 using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -91,10 +90,6 @@ namespace Microsoft.Extensions.DependencyInjection
             //       merely a placeholder. The front framework should bootstrap the application
             //       context if possible.
             services.AddAppContext();
-
-            // Register core use cases in DI container.
-            services.AddScoped<ProjectUseCase>();
-            services.AddScoped<RecoveryUseCase>();
 
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
