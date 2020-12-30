@@ -32,7 +32,7 @@ namespace FunderMaps.Data
     }
 
     /// <summary>
-    /// Navigation structure.
+    ///     Navigation structure.
     /// </summary>
     public class Navigation : NavigationImpl<int, int>, INavigation
     {
