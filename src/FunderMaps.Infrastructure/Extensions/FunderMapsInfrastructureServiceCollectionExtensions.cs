@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ChannelFactory>();
             services.RemoveAll<IBatchService>();
             services.Configure<BatchOptions>(Configuration.GetSection("Batch"));
-            services.AddScoped<IBatchService, BatchClient>();
+            services.AddScoped<IBatchService, BatchProxy>();
         }
 
         /// <summary>

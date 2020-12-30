@@ -12,7 +12,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// <summary>
     ///     Client connector to the batch node.
     /// </summary>
-    internal class BatchClient : IBatchService // TODO: Inherit from AppServiceBase // TODO: Rename to BatchProxy
+    internal class BatchProxy : IBatchService // TODO: Inherit from AppServiceBase
     {
         private const string UserAgent = "FunderMaps.Infrastructure";
 
@@ -21,7 +21,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BatchClient(ChannelFactory channelFactory)
+        public BatchProxy(ChannelFactory channelFactory)
             => _channelFactory = channelFactory;
 
         /// <summary>
