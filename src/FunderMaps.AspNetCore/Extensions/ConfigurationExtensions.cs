@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Globalization;
+using System.Text;
 
 namespace FunderMaps.Extensions
 {
@@ -13,14 +15,14 @@ namespace FunderMaps.Extensions
         ///     Get signature key from configuration and convert into security key.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        public static string GetJwtSigningKey(this IConfiguration configuration)
+        public static SymmetricSecurityKey GetJwtSigningKey(this IConfiguration configuration)
         {
             if (configuration is null)
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
 
-            return configuration["Jwt:SignatureKey"];
+            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SignatureKey"]));
         }
 
         /// <summary>

@@ -58,7 +58,7 @@ namespace FunderMaps.Data
             // FUTURE: Can we improve stability and readability here?
             if (!string.IsNullOrEmpty(navigation.SortColumn))
             {
-                var column = alias != null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
+                var column = alias is not null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
                 cmdText += $"{lineFeed} ORDER BY {column} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
             }
 

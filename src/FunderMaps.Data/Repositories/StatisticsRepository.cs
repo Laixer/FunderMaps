@@ -164,7 +164,7 @@ namespace FunderMaps.Data.Repositories
 
             if (AppContext.HasIdentity)
             {
-                context.AddParameterWithValue("user_id", AppContext.UserId); // TODO: Should check AppContext.HasIdentity
+                context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
             // await using var reader = await context.ReaderAsync(readAhead: true, hasRowsGuard: false);

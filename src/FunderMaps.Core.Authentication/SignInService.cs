@@ -173,7 +173,7 @@ namespace FunderMaps.Core.Authentication
                 return SignInContext.Failed;
             }
 
-            // TODO: Single call?
+            // FUTURE: Single call?
             var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
             Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
             OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);

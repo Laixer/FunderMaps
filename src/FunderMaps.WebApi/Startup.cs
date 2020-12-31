@@ -3,7 +3,6 @@ using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Extensions;
-using FunderMaps.WebApi.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -53,7 +52,7 @@ namespace FunderMaps.WebApi
                     {
                         ValidIssuer = Configuration.GetJwtIssuer(),
                         ValidAudience = Configuration.GetJwtAudience(),
-                        IssuerSigningKey = JwtHelper.CreateSecurityKey(Configuration.GetJwtSigningKey()), // TODO: Only for testing
+                        IssuerSigningKey = Configuration.GetJwtSigningKey(),
                         Valid = Configuration.GetJwtTokenExpirationInMinutes(),
                     };
                 })
