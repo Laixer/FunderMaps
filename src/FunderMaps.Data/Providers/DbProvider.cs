@@ -49,7 +49,7 @@ namespace FunderMaps.Data.Providers
         /// <returns>See <see cref="DbCommand"/>.</returns>
         public virtual DbCommand CreateCommand(string cmdText, DbConnection connection)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }

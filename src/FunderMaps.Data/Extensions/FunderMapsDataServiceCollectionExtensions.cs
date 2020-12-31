@@ -2,6 +2,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -32,6 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 DbContextBase injectorBase = repository as DbContextBase;
                 injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
                 injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
+                injectorBase.Cache = serviceProvider.GetService<IMemoryCache>();
                 // TODO: 
                 // injectorBase.DbContextFactory = serviceProvider.GetRequiredService<DbContextFactory>()
                 return repository;

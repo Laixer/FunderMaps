@@ -36,7 +36,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static Address MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new Address
+            => new()
             {
                 Id = reader.GetSafeString(offset + 0),
                 BuildingNumber = reader.GetSafeString(offset + 1),
@@ -57,7 +57,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Address"/>.</returns>
         public override async ValueTask<string> AddAsync(Address entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -205,7 +205,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Address"/>.</returns>
         public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
         {
-            if (navigation == null)
+            if (navigation is null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
@@ -252,7 +252,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Address"/>.</returns>
         public override async IAsyncEnumerable<Address> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
+            if (navigation is null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
@@ -297,7 +297,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(Address entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
