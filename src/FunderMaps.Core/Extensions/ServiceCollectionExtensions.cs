@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Extension methods for adding or replacing services to an <see cref="IServiceCollection"/>.
+    ///     Extension methods to the <see cref="IServiceCollection"/>.
     /// </summary>
     public static class ServiceCollectionExtensions
     {
@@ -39,11 +41,8 @@ namespace Microsoft.Extensions.DependencyInjection
                     services.Replace(new(typeof(TService), implementationFactory, service.Lifetime));
                 }
             }
-            else
-            {
-                services.Add(new(typeof(TService), implementationFactory, lifetime));
-            }
 
+            services.Add(new(typeof(TService), implementationFactory, lifetime));
             return services;
         }
 
@@ -77,12 +76,23 @@ namespace Microsoft.Extensions.DependencyInjection
                     services.Replace(new(typeof(TService), typeof(TImplementation), service.Lifetime));
                 }
             }
-            else
+
+            services.Add(new(typeof(TService), typeof(TImplementation), lifetime));
+            return services;
+        }
+
+        /// <summary>
+        ///     Return <see cref="IConfiguration"/> and <see cref="IHostEnvironment"/> from <see cref="IServiceCollection"/>.
+        /// </summary>
+        public static (IConfiguration, IHostEnvironment) BuildStartupProperties(this IServiceCollection services)
+        {
+            if (services is null)
             {
-                services.Add(new(typeof(TService), typeof(TImplementation), lifetime));
+                throw new ArgumentNullException(nameof(services));
             }
 
-            return services;
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            return (serviceProvider.GetRequiredService<IConfiguration>(), serviceProvider.GetRequiredService<IHostEnvironment>());
         }
     }
 }

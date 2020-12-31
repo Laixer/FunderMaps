@@ -64,9 +64,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
-            Configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            HostEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
+            // The startup essential properties can be used to setup components.
+            (Configuration, HostEnvironment) = services.BuildStartupProperties();
 
             if (!HostEnvironment.IsDevelopment())
             {

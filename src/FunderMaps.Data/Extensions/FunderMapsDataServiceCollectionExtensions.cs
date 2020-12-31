@@ -3,6 +3,8 @@ using FunderMaps.Data;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -12,6 +14,16 @@ namespace Microsoft.Extensions.DependencyInjection
     /// </summary>
     public static class FunderMapsDataServiceCollectionExtensions
     {
+        /// <summary>
+        ///     Configuration.
+        /// </summary>
+        public static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Host environment.
+        /// </summary>
+        public static IHostEnvironment HostEnvironment { get; set; }
+
         /// <summary>
         ///     Add repository with application context injection to container.
         /// </summary>
@@ -50,6 +62,9 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 throw new ArgumentNullException(nameof(services));
             }
+
+            // The startup essential properties can be used to setup components.
+            (Configuration, HostEnvironment) = services.BuildStartupProperties();
 
             // Register context repositories with the DI container.
             // NOTE: Keep the order in which they are directory listed
@@ -100,10 +115,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<DbProviderOptions>(options =>
             {
                 options.ConnectionStringName = dbConfigName;
-                options.ConnectionTimeout = 5; // in seconds
-                options.CommandTimeout = 5; // in seconds
-                options.MinPoolSize = 0;
-                options.MaxPoolSize = 25;
             });
 
             return services;

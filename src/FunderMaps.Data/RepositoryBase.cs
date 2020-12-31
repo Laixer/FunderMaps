@@ -31,17 +31,17 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Keypair used as cache identifier.
         /// </summary>
-        protected class KeyPair
+        protected record KeyPair
         {
             /// <summary>
             ///     Entity hash key.
             /// </summary>
-            public int EntityKey { get; set; }
+            public int EntityKey { get; init; }
 
             /// <summary>
             ///     Object hash key.
             /// </summary>
-            public int Key { get; set; }
+            public int Key { get; init; }
 
             /// <summary>
             ///     Keypair identifier.
