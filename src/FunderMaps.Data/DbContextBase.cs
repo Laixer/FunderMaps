@@ -2,6 +2,7 @@
 using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Data.Providers;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data
 {
@@ -17,6 +18,11 @@ namespace FunderMaps.Data
         ///     Data provider interface.
         /// </summary>
         public DbProvider DbProvider { get; set; }
+
+        /// <summary>
+        ///     Memory cache.
+        /// </summary>
+        public IMemoryCache Cache { get; set; }
 
         // FUTURE: Move into DI. This becomes the DbContext DbContext
         /// <summary>

@@ -23,7 +23,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="User"/>.</returns>
         public override async ValueTask<Guid> AddAsync(User entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -106,7 +106,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new User
+            => new()
             {
                 Id = reader.GetGuid(offset + 0),
                 GivenName = reader.GetSafeString(offset + 1),
@@ -296,7 +296,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="User"/>.</returns>
         public override async IAsyncEnumerable<User> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
+            if (navigation is null)
             {
                 throw new ArgumentNullException(nameof(navigation));
             }
@@ -328,7 +328,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(User entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }

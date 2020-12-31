@@ -1,22 +1,22 @@
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Components;
+using FunderMaps.Core.Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.AspNetCore
 {
     /// <summary>
-    ///     Default <see cref="Core.AppContext"/> factory.
+    ///     ASP.NET Core <see cref="Core.AppContext"/> factory.
     /// </summary>
-    public class AspAppContextFactory : AppContextFactory
+    public sealed class AspAppContextFactory : AppContextFactory
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IMemoryCache _memoryCache; // TODO: For now
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AspAppContextFactory(IHttpContextAccessor httpContextAccessor, IMemoryCache memoryCache)
-            => (_httpContextAccessor, _memoryCache) = (httpContextAccessor, memoryCache);
+        public AspAppContextFactory(IHttpContextAccessor httpContextAccessor)
+            => _httpContextAccessor = httpContextAccessor;
 
         /// <summary>
         ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.
@@ -35,13 +35,22 @@ namespace FunderMaps.AspNetCore
                 return new();
             }
 
+            if (PrincipalProvider.IsSignedIn(httpContext.User))
+            {
+                var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
+                return new()
+                {
+                    CancellationToken = httpContext.RequestAborted,
+                    Items = new(httpContext.Items),
+                    User = user,
+                    Tenant = tenant,
+                };
+            }
+
             return new()
             {
                 CancellationToken = httpContext.RequestAborted,
-                Items = new(httpContext.Items),
-                Cache = _memoryCache, // TODO: Remove
-                User = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item1 : null,
-                Tenant = Core.Authentication.PrincipalProvider.IsSignedIn(httpContext.User) ? Core.Authentication.PrincipalProvider.GetUserAndTenant<Core.Entities.User, Core.Entities.Organization>(httpContext.User).Item2 : null,
+                Items = new(httpContext.Items)
             };
         }
     }

@@ -32,7 +32,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
         {
-            // TODO: Read from config
             services.AddScoped<BackgroundTaskScopedDispatcher>();
             services.AddSingleton<DispatchManager>();
             services.AddTransient<BackgroundTaskDispatcher>();

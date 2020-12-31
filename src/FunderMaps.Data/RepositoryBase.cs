@@ -70,7 +70,7 @@ namespace FunderMaps.Data
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
         protected virtual void SetCacheItem(KeyPair key, TEntity value, MemoryCacheEntryOptions options)
-            => AppContext.Cache.Set(key.KeyPairIdentity, value, options);
+            => Cache.Set(key.KeyPairIdentity, value, options);
 
         /// <summary>
         ///     Unset cache item.
@@ -79,7 +79,7 @@ namespace FunderMaps.Data
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
         protected virtual void UnsetCacheItem(KeyPair key)
-            => AppContext.Cache.Remove(key.KeyPairIdentity);
+            => Cache.Remove(key.KeyPairIdentity);
 
         /// <summary>
         ///     Get cache item.
@@ -88,7 +88,7 @@ namespace FunderMaps.Data
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
         protected virtual bool GetCacheItem(KeyPair key, out TEntity value)
-            => AppContext.Cache.TryGetValue(key.KeyPairIdentity, out value);
+            => Cache.TryGetValue(key.KeyPairIdentity, out value);
 
         /// <summary>
         ///     Try get entity from cache.
