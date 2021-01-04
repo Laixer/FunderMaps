@@ -80,8 +80,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddContextRepository<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
             services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();
-            services.AddContextRepository<IProjectRepository, ProjectRepository>();
-            services.AddContextRepository<IProjectSampleRepository, ProjectSampleRepository>();
             services.AddContextRepository<IRecoveryRepository, RecoveryRepository>();
             services.AddContextRepository<IRecoverySampleRepository, RecoverySampleRepository>();
             services.AddContextRepository<IStatisticsRepository, StatisticsRepository>();
