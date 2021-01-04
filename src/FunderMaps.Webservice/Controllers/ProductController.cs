@@ -36,7 +36,6 @@ namespace FunderMaps.Webservice.Controllers
         ///     Encapulate transfer object into item wrapper.
         /// </summary>
         private async Task<ResponseWrapper<TDto>> AsResponseWrapperAsync<TDto, TSource>(IAsyncEnumerable<TSource> itemList)
-            where TSource : ProductBase
             => new()
             {
                 Items = await _mapper.MapAsync<IList<TDto>, TSource>(itemList)

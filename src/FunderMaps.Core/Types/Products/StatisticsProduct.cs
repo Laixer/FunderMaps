@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Types.Products
     /// <summary>
     ///     Model representing statistics about some region.
     /// </summary>
-    public sealed class StatisticsProduct : ProductBase
+    public sealed class StatisticsProduct
     {
         /// <summary>
         ///     Represents the distribution of foundation types.
