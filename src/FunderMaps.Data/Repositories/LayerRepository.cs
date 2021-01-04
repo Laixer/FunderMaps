@@ -29,7 +29,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Layer"/>.</returns>
         public override async ValueTask<Guid> AddAsync(Layer entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -164,11 +164,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Layer"/>.</returns>
         public override async IAsyncEnumerable<Layer> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Layer
                         l.id,
@@ -187,13 +182,14 @@ namespace FunderMaps.Data.Repositories
                 yield return CacheEntity(MapFromReader(reader));
             }
         }
+
         /// <summary>
         ///     Update <see cref="Layer"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(Layer entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -224,7 +220,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="reader"></param>
         private static Layer MapFromReader(DbDataReader reader)
-            => new Layer
+            => new()
             {
                 Id = reader.GetGuid(0),
                 SchemaName = reader.GetString(1),

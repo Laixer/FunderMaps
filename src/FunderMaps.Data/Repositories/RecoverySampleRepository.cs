@@ -17,6 +17,11 @@ namespace FunderMaps.Data.Repositories
     {
         public static void MapToWriter(DbContext context, RecoverySample entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("recovery", entity.Recovery);
             context.AddParameterWithValue("address", entity.Address);
             context.AddParameterWithValue("note", entity.Note);
@@ -31,7 +36,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static RecoverySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new RecoverySample
+            => new()
             {
                 Id = reader.GetInt(offset + 0),
                 Recovery = reader.GetInt(offset + 1),
@@ -57,11 +62,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="RecoverySample"/>.</returns>
         public override async ValueTask<int> AddAsync(RecoverySample entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO report.recovery_sample(
                     recovery,
@@ -87,8 +87,7 @@ namespace FunderMaps.Data.Repositories
                     @permit,
                     @permit_date,
                     @recovery_date)
-                RETURNING id;
-            ";
+                RETURNING id";
 
             await using var context = await DbContextFactory(sql);
 
@@ -172,11 +171,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="RecoverySample"/>.</returns>
         public override async IAsyncEnumerable<RecoverySample> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  id,
                         recovery,
@@ -207,11 +201,6 @@ namespace FunderMaps.Data.Repositories
 
         public override async ValueTask UpdateAsync(RecoverySample entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                     UPDATE  report.inquiry_sample
                     SET     recovery = @recovery,

@@ -23,7 +23,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>The id of the created bundle.</returns>
         public override async ValueTask<Guid> AddAsync(Bundle entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -122,11 +122,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Collection of bundles.</returns>
         public override async IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  b.id,
                         b.organization_id,
@@ -165,7 +160,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>See <see cref="ValueTask"/>.</returns>
         public override async ValueTask UpdateAsync(Bundle entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -191,7 +186,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"></param>
         /// <returns></returns>
         private static Bundle MapFromReader(DbDataReader reader)
-            => new Bundle
+            => new()
             {
                 Id = reader.GetGuid(0),
                 OrganizationId = reader.GetGuid(1),

@@ -11,6 +11,10 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Check if backend is online.
         /// </summary>
+        /// <remarks>
+        ///     Explicit check on result, not all commands are submitted
+        ///     to the database.
+        /// </remarks>
         public async Task<bool> IsAlive()
         {
             var sql = @"SELECT 1";

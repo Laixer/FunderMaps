@@ -23,11 +23,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="User"/>.</returns>
         public override async ValueTask<Guid> AddAsync(User entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             // FUTURE: normalized_email should be db trigger function
             var sql = @"
                 INSERT INTO application.user(
@@ -96,6 +91,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, User entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("given_name", entity.GivenName);
             context.AddParameterWithValue("last_name", entity.LastName);
             context.AddParameterWithValue("email", entity.Email);
@@ -296,11 +296,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="User"/>.</returns>
         public override async IAsyncEnumerable<User> ListAllAsync(INavigation navigation)
         {
-            if (navigation is null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  u.id,
                         u.given_name,

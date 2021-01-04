@@ -15,16 +15,6 @@ namespace FunderMaps.Data.Repositories
     {
         public async ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {
-            if (organizationId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(organizationId));
-            }
-
-            if (userId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
             var sql = @"
                 INSERT INTO application.organization_user(
                     user_id,
@@ -90,16 +80,6 @@ namespace FunderMaps.Data.Repositories
 
         public async ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId)
         {
-            if (organizationId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(organizationId));
-            }
-
-            if (userId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
             // FUTURE: database function
             var sql = @"
                 SELECT EXISTS (

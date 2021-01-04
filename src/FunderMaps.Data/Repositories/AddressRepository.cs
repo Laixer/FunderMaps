@@ -27,6 +27,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, Address entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("building_number", entity.BuildingNumber);
             context.AddParameterWithValue("postal_code", entity.PostalCode);
             context.AddParameterWithValue("street", entity.Street);
@@ -57,11 +62,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Address"/>.</returns>
         public override async ValueTask<string> AddAsync(Address entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                     INSERT INTO geocoder.address(
                         building_number,
@@ -205,11 +205,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Address"/>.</returns>
         public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
         {
-            if (navigation is null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Address
                         a.id,
@@ -252,11 +247,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Address"/>.</returns>
         public override async IAsyncEnumerable<Address> ListAllAsync(INavigation navigation)
         {
-            if (navigation is null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Address
                         a.id,

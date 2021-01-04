@@ -90,7 +90,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static Contact MapFromReader(DbDataReader reader, int offset = 0)
-            => new Contact
+            => new()
             {
                 Email = reader.GetSafeString(offset + 0),
                 Name = reader.GetSafeString(offset + 1),
@@ -133,11 +133,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Contact"/>.</returns>
         public override async IAsyncEnumerable<Contact> ListAllAsync(INavigation navigation)
         {
-            if (navigation is null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Contact
                         c.email,
@@ -161,7 +156,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(Contact entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }

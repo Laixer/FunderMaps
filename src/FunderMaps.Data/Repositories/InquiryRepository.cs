@@ -23,7 +23,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="InquiryFull"/>.</returns>
         public override async ValueTask<int> AddAsync(InquiryFull entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -138,7 +138,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static InquiryFull MapFromReader(DbDataReader reader, int offset = 0)
-            => new InquiryFull
+            => new()
             {
                 Id = reader.GetInt(offset + 0),
                 DocumentName = reader.GetSafeString(offset + 1),
@@ -150,22 +150,22 @@ namespace FunderMaps.Data.Repositories
                 DocumentFile = reader.GetSafeString(offset + 7),
                 Type = reader.GetFieldValue<InquiryType>(offset + 8),
                 StandardF3o = reader.GetBoolean(offset + 9),
-                Attribution = new AttributionControl
+                Attribution = new()
                 {
                     Reviewer = reader.GetFieldValue<Guid?>(offset + 10),
                     Creator = reader.GetGuid(offset + 11),
                     Owner = reader.GetGuid(offset + 12),
                     Contractor = reader.GetGuid(offset + 13),
                 },
-                State = new StateControl
+                State = new()
                 {
                     AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 14),
                 },
-                Access = new AccessControl
+                Access = new()
                 {
                     AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 15),
                 },
-                Record = new RecordControl
+                Record = new()
                 {
                     CreateDate = reader.GetDateTime(offset + 16),
                     UpdateDate = reader.GetSafeDateTime(offset + 17),
@@ -231,9 +231,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
+            => throw new NotImplementedException();
 
         /// <summary>
         ///     Retrieve all <see cref="InquiryFull"/>.
@@ -241,11 +239,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="InquiryFull"/>.</returns>
         public override async IAsyncEnumerable<InquiryFull> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Inquiry
                         i.id,
@@ -297,7 +290,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(InquiryFull entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -350,7 +343,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public async Task SetAuditStatusAsync(int id, InquiryFull entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }

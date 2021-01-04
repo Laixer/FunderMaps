@@ -22,11 +22,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="InquirySample"/>.</returns>
         public override async ValueTask<int> AddAsync(InquirySample entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO report.inquiry_sample(
                     inquiry,
@@ -228,6 +223,11 @@ namespace FunderMaps.Data.Repositories
 
         private static void MapToWriter(DbContext context, InquirySample entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("inquiry", entity.Inquiry);
             context.AddParameterWithValue("address", entity.Address);
             context.AddParameterWithValue("note", entity.Note);
@@ -291,7 +291,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
-            => new InquirySample
+            => new()
             {
                 Id = reader.GetInt(offset + 0),
                 Inquiry = reader.GetInt(offset + 1),
@@ -466,22 +466,12 @@ namespace FunderMaps.Data.Repositories
             return CacheEntity(MapFromReader(reader));
         }
 
-        public Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         ///     Retrieve all <see cref="InquirySample"/>.
         /// </summary>
         /// <returns>List of <see cref="InquirySample"/>.</returns>
         public override async IAsyncEnumerable<InquirySample> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- InquirySample
                         s.id,
@@ -582,11 +572,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of entities.</returns>
         public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- InquirySample
                         s.id,
@@ -685,7 +670,7 @@ namespace FunderMaps.Data.Repositories
 
         public override async ValueTask UpdateAsync(InquirySample entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }

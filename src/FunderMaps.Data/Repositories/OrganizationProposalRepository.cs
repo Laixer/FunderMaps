@@ -21,7 +21,7 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="OrganizationProposal"/>.</returns>
         public override async ValueTask<Guid> AddAsync(OrganizationProposal entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -78,7 +78,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         private static OrganizationProposal MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new OrganizationProposal
+            => new()
             {
                 Id = reader.GetGuid(offset + 0),
                 Name = reader.GetSafeString(offset + 1),
@@ -170,11 +170,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="OrganizationProposal"/>.</returns>
         public override async IAsyncEnumerable<OrganizationProposal> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  id,
                         name,

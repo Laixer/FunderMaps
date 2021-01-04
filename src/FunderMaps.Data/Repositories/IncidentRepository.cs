@@ -22,11 +22,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Incident"/>.</returns>
         public override async ValueTask<string> AddAsync(Incident entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO report.incident(
                     id,
@@ -114,6 +109,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, Incident entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("foundation_type", entity.FoundationType);
             context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
             context.AddParameterWithValue("owner", entity.Owner);
@@ -133,7 +133,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static Incident MapFromReader(DbDataReader reader, int offset = 0)
-            => new Incident
+            => new()
             {
                 Id = reader.GetSafeString(offset + 0),
                 FoundationType = reader.GetFieldValue<FoundationType>(offset + 1),
@@ -209,11 +209,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Incident"/>.</returns>
         public override async IAsyncEnumerable<Incident> ListAllAsync(INavigation navigation)
         {
-            if (navigation is null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  id,
                         foundation_type,

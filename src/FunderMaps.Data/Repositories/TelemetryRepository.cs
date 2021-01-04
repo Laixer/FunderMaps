@@ -13,7 +13,14 @@ namespace FunderMaps.Data.Repositories
         ///     Log a product hit.
         /// </summary>
         /// <remarks>
-        ///     The <paramref name="hitCount"/> has a lower bound of 1.
+        ///     <para>
+        ///         The <paramref name="hitCount"/> has a lower bound of 1.
+        ///     </para>
+        ///     <para>
+        ///         This method is and should be fault-tolerant. If one of the
+        ///         necessary parameters is not passed, then behavior could
+        ///         be different.
+        ///     </para>
         /// </remarks>
         /// <param name="productName">Product name.</param>
         /// <param name="hitCount">Number of hits to log.</param>

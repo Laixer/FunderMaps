@@ -25,27 +25,10 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Organization"/>.</returns>
         public override ValueTask<Guid> AddAsync(Organization entity)
-        {
-            throw new InvalidOperationException();
-        }
+            => throw new InvalidOperationException();
 
         public async ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
-            if (id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentNullException(nameof(email));
-            }
-
-            if (string.IsNullOrEmpty(passwordHash))
-            {
-                throw new ArgumentNullException(nameof(passwordHash));
-            }
-
             // TODO: normalized_email should be db trigger function
             var sql = @"
 	            SELECT application.create_organization(
@@ -126,7 +109,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         private static Organization MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new Organization
+            => new()
             {
                 Id = reader.GetGuid(offset + 0),
                 Name = reader.GetSafeString(offset + 1),
@@ -321,11 +304,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Organization"/>.</returns>
         public override async IAsyncEnumerable<Organization> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  id,
                         name,
@@ -370,7 +348,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(Organization entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }

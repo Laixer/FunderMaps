@@ -17,6 +17,11 @@ namespace FunderMaps.Data.Repositories
     {
         public static void MapToWriter(DbContext context, Recovery entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("note", entity.Note);
             context.AddParameterWithValue("attribution", entity.Attribution);
             context.AddParameterWithValue("access_policy", entity.AccessPolicy);
@@ -26,7 +31,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static Recovery MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new Recovery
+            => new()
             {
                 Id = reader.GetInt(offset + 0),
                 Note = reader.GetSafeString(offset + 1),
@@ -47,11 +52,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="Recovery"/>.</returns>
         public override async ValueTask<int> AddAsync(Recovery entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO report.recovery(
                     note,
@@ -147,11 +147,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Recovery"/>.</returns>
         public override async IAsyncEnumerable<Recovery> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Recovery
                         r.id,
@@ -182,19 +177,14 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public override async ValueTask UpdateAsync(Recovery entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
-                    UPDATE  report.recovery
-                    SET     note = @note,
-                            access_policy = @access_policy,
-                            type = @type,
-                            document_date = @document_date,
-                            document_file = @document_file
-                    WHERE   id = @id";
+                UPDATE  report.recovery
+                SET     note = @note,
+                        access_policy = @access_policy,
+                        type = @type,
+                        document_date = @document_date,
+                        document_file = @document_file
+                WHERE   id = @id";
 
             await using var context = await DbContextFactory(sql);
 
