@@ -11,14 +11,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
     public interface IInquirySampleRepository : IAsyncRepository<InquirySample, int>
     {
         /// <summary>
-        ///     Retrieve entity by id and organization or public record.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <param name="orgId">Organization identifier.</param>
-        /// <returns><see cref="InquirySample"/> on success, null on error.</returns>
-        Task<InquirySample> GetPublicAndByIdAsync(int id, Guid orgId);
-
-        /// <summary>
         ///     Retrieve number of entities and filter on report.
         /// </summary>
         /// <returns>Number of entities.</returns>
