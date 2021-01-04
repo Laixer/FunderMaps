@@ -27,7 +27,7 @@ namespace FunderMaps.Data.Repositories
         public override ValueTask<Guid> AddAsync(Organization entity)
             => throw new InvalidOperationException();
 
-        public async ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
+        public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
             // TODO: normalized_email should be db trigger function
             var sql = @"
@@ -194,7 +194,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="name">Organization name.</param>
         /// <returns><see cref="Organization"/>.</returns>
-        public async ValueTask<Organization> GetByNameAsync(string name)
+        public async Task<Organization> GetByNameAsync(string name)
         {
             var sql = @"
                 SELECT  id,
@@ -240,7 +240,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="Organization"/>.</returns>
-        public async ValueTask<Organization> GetByEmailAsync(string email)
+        public async Task<Organization> GetByEmailAsync(string email)
         {
             var sql = @"
                 SELECT  id,
@@ -279,23 +279,6 @@ namespace FunderMaps.Data.Repositories
             await using var reader = await context.ReaderAsync();
 
             return CacheEntity(MapFromReader(reader));
-        }
-
-        public async ValueTask<string> GetFenceAsync(Organization entity)
-        {
-            var sql = @"
-                SELECT  ST_AsText(fence) AS fence
-                FROM    application.organization
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory(sql);
-
-            context.AddParameterWithValue("id", entity.Id);
-
-            await using var reader = await context.ReaderAsync();
-
-            return reader.GetSafeString(0);
         }
 
         /// <summary>
