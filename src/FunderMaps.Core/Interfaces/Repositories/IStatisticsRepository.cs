@@ -11,11 +11,11 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <summary>
         ///     Get statistics product by id.
         /// </summary>
-        Task<StatisticsProduct> GetStatisticsProductByIdAsync(string id);
+        Task<StatisticsProduct> GetStatisticsByIdAsync(string id);
 
         /// <summary>
         ///     Get statistics product by external id.
         /// </summary>
-        Task<StatisticsProduct> GetStatisticsProductByExternalIdAsync(string id);
+        Task<StatisticsProduct> GetStatisticsByExternalIdAsync(string id);
     }
 }

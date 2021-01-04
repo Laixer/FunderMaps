@@ -14,6 +14,6 @@
         /// <summary>
         ///     The percentage of buildings having this foundation type.
         /// </summary>
-        public double Percentage { get; set; }
+        public decimal Percentage { get; set; }
     }
 }

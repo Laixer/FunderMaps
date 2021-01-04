@@ -15,6 +15,6 @@
         /// <summary>
         ///     Total amount of items that fall into this decade.
         /// </summary>
-        public uint TotalCount { get; set; }
+        public int TotalCount { get; set; }
     }
 }

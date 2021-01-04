@@ -55,7 +55,7 @@ namespace FunderMaps.Core.Services
                 {
                     case AnalysisProductType.RiskPlus:
                     case AnalysisProductType.Complete:
-                        product.Statistics = await _statisticsRepository.GetStatisticsProductByIdAsync(product.NeighborhoodId);
+                        product.Statistics = await _statisticsRepository.GetStatisticsByIdAsync(product.NeighborhoodId);
                         break;
                 };
 
@@ -71,8 +71,8 @@ namespace FunderMaps.Core.Services
         {
             await foreach (var product in _geocoderParser.FromIdentifier(input) switch
             {
-                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _statisticsRepository.GetStatisticsProductByIdAsync(input)),
-                GeocoderDatasource.NlCbsNeighborhood => AsyncEnumerableHelper.AsEnumerable(await _statisticsRepository.GetStatisticsProductByExternalIdAsync(input)),
+                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _statisticsRepository.GetStatisticsByIdAsync(input)),
+                GeocoderDatasource.NlCbsNeighborhood => AsyncEnumerableHelper.AsEnumerable(await _statisticsRepository.GetStatisticsByExternalIdAsync(input)),
                 _ => throw new System.InvalidOperationException(), // TODO
             })
             {

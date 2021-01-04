@@ -20,13 +20,13 @@ namespace FunderMaps.Testing.Repositories
             DataStore = dataStore;
         }
 
-        public async Task<StatisticsProduct> GetStatisticsProductByIdAsync(string id)
+        public async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
         {
             await Task.CompletedTask;
             return DataStore.ItemList.First();
         }
 
-        public async Task<StatisticsProduct> GetStatisticsProductByExternalIdAsync(string id)
+        public async Task<StatisticsProduct> GetStatisticsByExternalIdAsync(string id)
         {
             await Task.CompletedTask;
             return DataStore.ItemList.First();
