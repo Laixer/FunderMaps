@@ -36,10 +36,14 @@ namespace FunderMaps.AspNetCore
                 EntityNotFoundException _ => BuildMessage("Requested entity not found.", HttpStatusCode.NotFound),
                 EntityReadOnlyException _ => BuildMessage("Requested entity is immutable.", HttpStatusCode.Locked),
                 InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
+                InvalidIdentifierException _ => BuildMessage("Action failed with provided identifier.", HttpStatusCode.BadRequest),
                 OperationAbortedException _ => BuildMessage("Operation was aborted by client.", HttpStatusCode.BadRequest),
+                ProcessException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
+                QueueOverflowException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
                 StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
+                UnhandledTaskException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError)
             };
     }

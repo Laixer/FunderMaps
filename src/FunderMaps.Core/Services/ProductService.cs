@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Helpers;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -67,7 +68,7 @@ namespace FunderMaps.Core.Services
                 GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByIdAsync(id)),
                 GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalIdAsync(id)),
                 GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByAddressExternalIdAsync(id)),
-                _ => throw new System.InvalidOperationException(), // TODO
+                _ => throw new InvalidIdentifierException(),
             })
             {
                 // FUTURE: Retrieve the description from a service.
@@ -98,7 +99,7 @@ namespace FunderMaps.Core.Services
             {
                 GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await GetStatisticsByIdAsync(input)),
                 GeocoderDatasource.NlCbsNeighborhood => AsyncEnumerableHelper.AsEnumerable(await GetStatisticsByExternalIdAsync(input)),
-                _ => throw new System.InvalidOperationException(), // TODO
+                _ => throw new InvalidIdentifierException(),
             })
             {
                 yield return product;

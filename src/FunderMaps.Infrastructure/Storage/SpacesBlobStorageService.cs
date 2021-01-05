@@ -83,7 +83,6 @@ namespace FunderMaps.Infrastructure.Storage
 
                 _logger.LogError("Could not check file existence in Spaces using S3");
 
-                // TODO QUESTION: Inner exception or not? I don't think so because we already log it.
                 throw new StorageException("Could not check file existence", e);
             }
         }
@@ -275,14 +274,7 @@ namespace FunderMaps.Infrastructure.Storage
 
                     tasklist.Add(deleteTask);
 
-                    _ = Task.Run(async () =>
-                    {
-                        _logger.LogTrace($"(Task {Task.CurrentId}): Starting remote deletion of {response.S3Objects.Count} objects. ");
-
-                        await deleteTask;
-
-                        _logger.LogTrace($"(Task {Task.CurrentId}): Completed.");
-                    });
+                    _ = Task.Run(() => deleteTask);
                 }
 
                 await Task.WhenAll(tasklist.ToArray());
