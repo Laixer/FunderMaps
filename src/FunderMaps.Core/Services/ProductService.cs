@@ -5,6 +5,7 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
 {
@@ -29,6 +30,30 @@ namespace FunderMaps.Core.Services
             _statisticsRepository = statisticsRepository;
             _geocoderParser = geocoderParser;
         }
+
+        private async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
+            => new()
+            {
+                FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByIdAsync(id),
+                ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByIdAsync(id),
+                DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByIdAsync(id),
+                FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(id),
+                TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(id),
+                TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(id),
+                TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(id),
+            };
+
+        private async Task<StatisticsProduct> GetStatisticsByExternalIdAsync(string id)
+            => new()
+            {
+                FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByExternalIdAsync(id),
+                ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByExternalIdAsync(id),
+                DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByExternalIdAsync(id),
+                FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByExternalIdAsync(id),
+                TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(id),
+                TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(id),
+                TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(id),
+            };
 
         /// <summary>
         ///     Get an analysis product.
@@ -55,7 +80,7 @@ namespace FunderMaps.Core.Services
                 {
                     case AnalysisProductType.RiskPlus:
                     case AnalysisProductType.Complete:
-                        product.Statistics = await _statisticsRepository.GetStatisticsByIdAsync(product.NeighborhoodId);
+                        product.Statistics = await GetStatisticsByIdAsync(product.NeighborhoodId);
                         break;
                 };
 
@@ -71,8 +96,8 @@ namespace FunderMaps.Core.Services
         {
             await foreach (var product in _geocoderParser.FromIdentifier(input) switch
             {
-                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _statisticsRepository.GetStatisticsByIdAsync(input)),
-                GeocoderDatasource.NlCbsNeighborhood => AsyncEnumerableHelper.AsEnumerable(await _statisticsRepository.GetStatisticsByExternalIdAsync(input)),
+                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await GetStatisticsByIdAsync(input)),
+                GeocoderDatasource.NlCbsNeighborhood => AsyncEnumerableHelper.AsEnumerable(await GetStatisticsByExternalIdAsync(input)),
                 _ => throw new System.InvalidOperationException(), // TODO
             })
             {

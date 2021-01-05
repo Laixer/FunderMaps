@@ -1,7 +1,6 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
-using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Collections.Generic;
@@ -16,35 +15,9 @@ namespace FunderMaps.Data.Repositories
     internal sealed class StatisticsRepository : DbContextBase, IStatisticsRepository
     {
         /// <summary>
-        ///     Fill all statistic fields if required.
+        ///     Get foundation type distribution by id.
         /// </summary>
-        public async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
-            => new()
-            {
-                FoundationTypeDistribution = await GetFoundationTypeDistributionByIdAsync(id),
-                ConstructionYearDistribution = await GetConstructionYearDistributionByIdAsync(id),
-                DataCollectedPercentage = await GetDataCollectedPercentageByIdAsync(id),
-                FoundationRiskDistribution = await GetFoundationRiskDistributionByIdAsync(id),
-                TotalBuildingRestoredCount = await GetTotalBuildingRestoredCountByIdAsync(id),
-                TotalIncidentCount = await GetTotalIncidentCountByIdAsync(id),
-                TotalReportCount = await GetTotalReportCountByIdAsync(id),
-            };
-
-        /// <summary>
-        ///     Fill all statistic fields if required.
-        /// </summary>
-        public async Task<StatisticsProduct> GetStatisticsByExternalIdAsync(string id)
-            => new()
-            {
-                FoundationTypeDistribution = await GetFoundationTypeDistributionByExternalIdAsync(id),
-                ConstructionYearDistribution = await GetConstructionYearDistributionByExternalIdAsync(id),
-                DataCollectedPercentage = await GetDataCollectedPercentageByExternalIdAsync(id),
-                FoundationRiskDistribution = await GetFoundationRiskDistributionByExternalIdAsync(id),
-                TotalBuildingRestoredCount = await GetTotalBuildingRestoredCountByExternalIdAsync(id),
-                TotalIncidentCount = await GetTotalIncidentCountByExternalIdAsync(id),
-                TotalReportCount = await GetTotalReportCountByExternalIdAsync(id),
-            };
-
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id)
         {
             var sql = @"
@@ -86,6 +59,10 @@ namespace FunderMaps.Data.Repositories
             };
         }
 
+        /// <summary>
+        ///     Get foundation type distribution by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string id)
         {
             var sql = @"
@@ -127,6 +104,10 @@ namespace FunderMaps.Data.Repositories
             };
         }
 
+        /// <summary>
+        ///     Get construction year distribution by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id)
         {
             var sql = @"
@@ -168,6 +149,10 @@ namespace FunderMaps.Data.Repositories
             };
         }
 
+        /// <summary>
+        ///     Get construction year distribution by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string id)
         {
             var sql = @"
@@ -209,6 +194,10 @@ namespace FunderMaps.Data.Repositories
             };
         }
 
+        /// <summary>
+        ///     Get data collection percentage by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<decimal> GetDataCollectedPercentageByIdAsync(string id)
         {
             var sql = @"
@@ -238,6 +227,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<decimal>();
         }
 
+        /// <summary>
+        ///     Get data collection percentage by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<decimal> GetDataCollectedPercentageByExternalIdAsync(string id)
         {
             var sql = @"
@@ -267,6 +260,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<decimal>();
         }
 
+        /// <summary>
+        ///     Get foundation risk distribution by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id)
         {
             var sql = @"
@@ -316,6 +313,10 @@ namespace FunderMaps.Data.Repositories
             };
         }
 
+        /// <summary>
+        ///     Get foundation risk distribution by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string id)
         {
             var sql = @"
@@ -365,6 +366,10 @@ namespace FunderMaps.Data.Repositories
             };
         }
 
+        /// <summary>
+        ///     Get total building restored count by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<long> GetTotalBuildingRestoredCountByIdAsync(string id)
         {
             var sql = @"
@@ -394,6 +399,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        /// <summary>
+        ///     Get total building restored count by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<long> GetTotalBuildingRestoredCountByExternalIdAsync(string id)
         {
             var sql = @"
@@ -423,6 +432,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        /// <summary>
+        ///     Get total incident count by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<long> GetTotalIncidentCountByIdAsync(string id)
         {
             var sql = @"
@@ -452,6 +465,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        /// <summary>
+        ///     Get total incident count by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<long> GetTotalIncidentCountByExternalIdAsync(string id)
         {
             var sql = @"
@@ -481,6 +498,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        /// <summary>
+        ///     Get total report count by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<long> GetTotalReportCountByIdAsync(string id)
         {
             var sql = @"
@@ -510,6 +531,10 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        /// <summary>
+        ///     Get total report count by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
         public async Task<long> GetTotalReportCountByExternalIdAsync(string id)
         {
             var sql = @"
