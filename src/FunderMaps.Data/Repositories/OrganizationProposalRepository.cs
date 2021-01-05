@@ -32,7 +32,7 @@ namespace FunderMaps.Data.Repositories
                     @name,
                     @email)";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("name", entity.Name);
             context.AddParameterWithValue("email", entity.Email);
@@ -52,7 +52,7 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    application.create_organization_proposal";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -70,7 +70,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_proposal
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -106,7 +106,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   op.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -131,7 +131,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   op.normalized_name = application.normalize(@name)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("@name", name);
 
@@ -155,7 +155,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -178,7 +178,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {

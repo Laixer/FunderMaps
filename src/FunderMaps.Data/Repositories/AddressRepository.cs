@@ -80,7 +80,7 @@ namespace FunderMaps.Data.Repositories
                     ON CONFLICT DO NOTHING
                     RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -99,7 +99,7 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    geocoder.address";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -140,7 +140,7 @@ namespace FunderMaps.Data.Repositories
                 AND     a.external_source = @external_source
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
             context.AddParameterWithValue("external_source", source);
@@ -188,7 +188,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   a.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -231,7 +231,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "a");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("query", query);
 
@@ -273,7 +273,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "a");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -304,7 +304,7 @@ namespace FunderMaps.Data.Repositories
                             external_source = @external_source
                     WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 

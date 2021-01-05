@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using FunderMaps.Data.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Organization user repository.
     /// </summary>
-    internal class OrganizationUserRepository : DbContextBase, IOrganizationUserRepository
+    internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepository
     {
         public async Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {
@@ -25,7 +26,7 @@ namespace FunderMaps.Data.Repositories
                     @organization_id,
                     @role)";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
             context.AddParameterWithValue("organization_id", organizationId);
@@ -45,9 +46,9 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   organization_id = @organization_id";
 
-            ConstructNavigation(ref sql, navigation);
+            // ConstructNavigation(ref sql, navigation); // TODO:
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("organization_id", organizationId);
 
@@ -65,9 +66,9 @@ namespace FunderMaps.Data.Repositories
                 WHERE   organization_id = @organization_id
                 AND     role = ANY(@role)";
 
-            ConstructNavigation(ref sql, navigation);
+            // ConstructNavigation(ref sql, navigation); // TODO:
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("organization_id", organizationId);
             context.AddParameterWithValue("role", role);
@@ -90,7 +91,7 @@ namespace FunderMaps.Data.Repositories
                     LIMIT   1
                 )";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
             context.AddParameterWithValue("organization_id", organizationId);
@@ -105,7 +106,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   user_id = @user_id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
 
@@ -121,7 +122,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   user_id = @user_id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
 
@@ -137,7 +138,7 @@ namespace FunderMaps.Data.Repositories
                 SET     role = @role
                 WHERE   user_id = @user_id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
             context.AddParameterWithValue("role", role);

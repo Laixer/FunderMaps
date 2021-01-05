@@ -47,7 +47,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="entity">Entity object.</param>
         Task UpdateAsync(TEntity entity);
 
-        // TODO: Delete based on id.
         /// <summary>
         ///     Delete <typeparamref name="TEntity"/>.
         /// </summary>

@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
+using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Repository for statistics.
     /// </summary>
-    internal sealed class StatisticsRepository : DbContextBase, IStatisticsRepository
+    internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepository
     {
         /// <summary>
         ///     Get foundation type distribution by id.
@@ -34,7 +35,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -79,7 +80,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -124,7 +125,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -169,7 +170,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -215,7 +216,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -248,7 +249,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -280,7 +281,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -333,7 +334,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -387,7 +388,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -420,7 +421,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -453,7 +454,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -486,7 +487,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -519,7 +520,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -552,7 +553,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 

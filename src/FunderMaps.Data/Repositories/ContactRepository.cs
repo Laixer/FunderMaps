@@ -33,7 +33,7 @@ namespace FunderMaps.Data.Repositories
                     NULLIF(trim(@phone_number), ''))
                 ON CONFLICT DO NOTHING";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -52,7 +52,7 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    application.contact";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -70,7 +70,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -118,7 +118,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   c.email = @email
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -142,7 +142,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "c");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -169,7 +169,7 @@ namespace FunderMaps.Data.Repositories
                             phone_number = NULLIF(trim(@phone_number), ''))
                     WHERE   email = @email";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 

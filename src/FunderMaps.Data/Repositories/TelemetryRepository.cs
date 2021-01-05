@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 using System;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Log product hit.
     /// </summary>
-    internal class TelemetryRepository : DbContextBase, ITelemetryRepository
+    internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
     {
         /// <summary>
         ///     Log a product hit.
@@ -46,7 +47,7 @@ namespace FunderMaps.Data.Repositories
                 DO UPDATE SET
                     count = pu.count + EXCLUDED.count";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);

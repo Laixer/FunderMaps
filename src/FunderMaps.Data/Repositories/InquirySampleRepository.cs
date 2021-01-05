@@ -147,7 +147,7 @@ namespace FunderMaps.Data.Repositories
                     @settlement_speed)
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -167,7 +167,7 @@ namespace FunderMaps.Data.Repositories
                 JOIN 	application.attribution AS a ON a.id = i.attribution
                 WHERE   a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
@@ -188,7 +188,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   a.owner = @tenant
                 AND     i.id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", report);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
@@ -213,7 +213,7 @@ namespace FunderMaps.Data.Repositories
                 AND     s.id = @id
                 AND     a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
@@ -456,7 +456,7 @@ namespace FunderMaps.Data.Repositories
                 AND     a.owner = @tenant
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
@@ -556,7 +556,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
@@ -657,7 +657,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", report);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
@@ -751,7 +751,7 @@ namespace FunderMaps.Data.Repositories
                     AND     s.id = @id
                     AND     a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
             context.AddParameterWithValue("tenant", AppContext.TenantId);

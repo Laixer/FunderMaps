@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,11 @@ namespace FunderMaps.Data
     /// </summary>
     /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
     /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
-    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbContextBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
+    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
         where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
-        /// </summary>
-        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
-        {
-            TEntityPrimaryKey primaryKey = await AddAsync(entity);
-            return await GetByIdAsync(primaryKey);
-        }
+        #region Cache
 
         /// <summary>
         ///     Keypair used as cache bucket item.
@@ -124,6 +118,52 @@ namespace FunderMaps.Data
         /// </summary>
         protected void ResetCacheEntity(TEntity value)
             => ResetCacheEntity(value.Identifier);
+
+        #endregion Cache
+
+        // FUTURE: Maybe too npgsql specific.
+        // FUTURE: Extension ?
+        /// <summary>
+        ///     Convert navigation to query.
+        /// </summary>
+        /// <param name="cmdText">SQL query.</param>
+        /// <param name="navigation">Navigation instance of type <see cref="INavigation"/>.</param>
+        /// <param name="alias">Datasource alias.</param>
+        protected static void ConstructNavigation(ref string cmdText, INavigation navigation, string alias = null)
+        {
+            const string lineFeed = "\r\n";
+
+            if (navigation is null)
+            {
+                return;
+            }
+
+            // FUTURE: Can we improve stability and readability here?
+            if (!string.IsNullOrEmpty(navigation.SortColumn))
+            {
+                var column = alias is not null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
+                cmdText += $"{lineFeed} ORDER BY {column} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
+            }
+
+            if (navigation.Offset != 0)
+            {
+                cmdText += $"{lineFeed} OFFSET {navigation.Offset}";
+            }
+
+            if (navigation.Limit != 0)
+            {
+                cmdText += $"{lineFeed} LIMIT {navigation.Limit}";
+            }
+        }
+
+        /// <summary>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
+        /// </summary>
+        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+        {
+            TEntityPrimaryKey primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
+        }
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>

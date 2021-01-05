@@ -1,5 +1,6 @@
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data;
+using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
@@ -28,9 +29,11 @@ namespace Microsoft.Extensions.DependencyInjection
         ///     Add repository with application context injection to container.
         /// </summary>
         /// <remarks>
-        ///     This service factory create the repository service and initializes the context.
         ///     <para>
-        ///         Repositories that obey the <see cref="DbContextBase"/> contract can request the application context
+        ///         This service factory create the repository service and initializes the context.
+        ///     </para>
+        ///     <para>
+        ///         Repositories that obey the <see cref="DbServiceBase"/> contract can request the application context
         ///         from inheritance. The application context is per scope so repositories need to be scoped as well.
         ///     </para>
         /// </remarks>
@@ -38,16 +41,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>A reference to this instance after the operation has completed.</returns>
         private static IServiceCollection AddContextRepository<TService, TImplementation>(this IServiceCollection services)
             where TService : class
-            where TImplementation : DbContextBase, TService, new()
+            where TImplementation : DbServiceBase, TService, new()
             => services.AddScoped<TService, TImplementation>(serviceProvider =>
             {
                 TImplementation repository = new();
-                DbContextBase injectorBase = repository as DbContextBase;
+                DbServiceBase injectorBase = repository as DbServiceBase;
                 injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
-                injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
                 injectorBase.Cache = serviceProvider.GetService<IMemoryCache>();
-                // TODO: 
-                // injectorBase.DbContextFactory = serviceProvider.GetRequiredService<DbContextFactory>()
+                injectorBase.DbContextFactory = ActivatorUtilities.CreateInstance<DbContextFactory>(serviceProvider);
                 return repository;
             });
 

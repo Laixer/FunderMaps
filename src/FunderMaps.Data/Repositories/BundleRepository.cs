@@ -33,7 +33,7 @@ namespace FunderMaps.Data.Repositories
                     @layers)
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -52,7 +52,7 @@ namespace FunderMaps.Data.Repositories
                 SELECT  COUNT(*)
                 FROM    maplayer.bundle";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -70,7 +70,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    maplayer.bundle AS b
                 WHERE   b.id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -100,7 +100,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    maplayer.bundle AS b
                 WHERE   b.id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -134,7 +134,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             if (AppContext.HasIdentity)
             {
@@ -159,7 +159,7 @@ namespace FunderMaps.Data.Repositories
                             layer_configuration = @layer_configuration::jsonb
                     WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 

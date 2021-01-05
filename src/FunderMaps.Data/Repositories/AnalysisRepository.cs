@@ -2,6 +2,7 @@
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
+using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Data.Common;
@@ -13,7 +14,7 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Repository for analysis products.
     /// </summary>
-    internal sealed class AnalysisRepository : DbContextBase, IAnalysisRepository
+    internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     {
         /// <summary>
         ///     Gets an analysis product by its internal building id.
@@ -65,7 +66,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -133,7 +134,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
 
@@ -201,7 +202,7 @@ namespace FunderMaps.Data.Repositories
 
             sql += $"\r\n LIMIT 1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
 
