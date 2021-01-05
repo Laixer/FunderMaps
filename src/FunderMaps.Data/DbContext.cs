@@ -40,7 +40,7 @@ namespace FunderMaps.Data
             get => reader;
             set
             {
-                if (reader != null)
+                if (reader is not null)
                 {
                     reader.Dispose();
                 }
@@ -114,7 +114,7 @@ namespace FunderMaps.Data
         /// <param name="value">Parameter value.</param>
         public void AddJsonParameterWithValue(string parameterName, object value)
         {
-            var parameter = new Npgsql.NpgsqlParameter(parameterName, NpgsqlTypes.NpgsqlDbType.Jsonb)
+            Npgsql.NpgsqlParameter parameter = new(parameterName, NpgsqlTypes.NpgsqlDbType.Jsonb)
             {
                 Value = value ?? DBNull.Value
             };
@@ -188,7 +188,7 @@ namespace FunderMaps.Data
         {
             try
             {
-                var affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
+                int affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
                 if (affected <= 0 && affectedGuard)
                 {
                     throw new EntityNotFoundException();
@@ -209,13 +209,13 @@ namespace FunderMaps.Data
         {
             try
             {
-                var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
-                if (result == null && resultGuard)
+                TResult result = (TResult)await Command.ExecuteScalarAsync(AppContext.CancellationToken);
+                if (result is null && resultGuard)
                 {
                     throw new EntityNotFoundException();
                 }
 
-                return (TResult)result;
+                return result;
             }
             catch (DbException exception)
             {
