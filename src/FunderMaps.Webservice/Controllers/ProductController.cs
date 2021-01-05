@@ -3,7 +3,6 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;
-using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;

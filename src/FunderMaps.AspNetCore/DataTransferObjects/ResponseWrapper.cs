@@ -1,17 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace FunderMaps.Webservice.ResponseModels
+namespace FunderMaps.AspNetCore.DataTransferObjects
 {
-    // TODO: Move to AspNetCore
-
     /// <summary>
     ///     Base class for the response wrapper.
     /// </summary>
     public record ResponseWrapper { }
 
     /// <summary>
-    ///     Wrapper class for our API response object.
+    ///     Wrapper class for collections.
     /// </summary>
     public record ResponseWrapper<TDto> : ResponseWrapper
     {
