@@ -12,7 +12,7 @@ namespace FunderMaps.Core.Tests.Mocks
         public MockAddressRepository MockGetByIdAsync(Address result)
         {
             Setup(s => s.GetByIdAsync(It.IsAny<string>()))
-                .Returns(new ValueTask<Address>(result));
+                .Returns(Task.FromResult<Address>(result));
 
             return this;
         }

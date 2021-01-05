@@ -20,7 +20,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Incident"/>.</returns>
-        public override async ValueTask<string> AddAsync(Incident entity)
+        public override async Task<string> AddAsync(Incident entity)
         {
             var sql = @"
                 INSERT INTO report.incident(
@@ -76,7 +76,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -91,7 +91,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Incident"/>.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public override async ValueTask DeleteAsync(string id)
+        public override async Task DeleteAsync(string id)
         {
             ResetCacheEntity(id);
 
@@ -162,7 +162,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Incident"/>.</returns>
-        public override async ValueTask<Incident> GetByIdAsync(string id)
+        public override async Task<Incident> GetByIdAsync(string id)
         {
             if (TryGetEntity(id, out Incident entity))
             {
@@ -246,13 +246,8 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Incident"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Incident entity)
+        public override async Task UpdateAsync(Incident entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             ResetCacheEntity(entity);
 
             var sql = @"

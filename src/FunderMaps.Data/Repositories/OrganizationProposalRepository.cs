@@ -19,7 +19,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="OrganizationProposal"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(OrganizationProposal entity)
+        public override async Task<Guid> AddAsync(OrganizationProposal entity)
         {
             if (entity is null)
             {
@@ -46,7 +46,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -61,7 +61,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="OrganizationProposal"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -90,7 +90,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public override async ValueTask<OrganizationProposal> GetByIdAsync(Guid id)
+        public override async Task<OrganizationProposal> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out OrganizationProposal entity))
             {
@@ -120,7 +120,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="name">Organization name.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetByNameAsync(string name)
+        public async Task<OrganizationProposal> GetByNameAsync(string name)
         {
             var sql = @"
                 SELECT  -- OrganizationProposal
@@ -145,7 +145,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetByEmailAsync(string email)
+        public async Task<OrganizationProposal> GetByEmailAsync(string email)
         {
             var sql = @"
                 SELECT  id,
@@ -190,7 +190,7 @@ namespace FunderMaps.Data.Repositories
         ///     Cannot update a proposal.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override ValueTask UpdateAsync(OrganizationProposal entity)
+        public override Task UpdateAsync(OrganizationProposal entity)
             => throw new InvalidOperationException();
     }
 }

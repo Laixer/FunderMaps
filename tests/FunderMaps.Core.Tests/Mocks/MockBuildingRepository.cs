@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Tests.Mocks
         public MockBuildingRepository MockGetByIdAsync(Building result)
         {
             Setup(s => s.GetByIdAsync(It.IsAny<string>()))
-                .Returns(new ValueTask<Building>(result));
+                .Returns(Task.FromResult<Building>(result));
 
             return this;
         }

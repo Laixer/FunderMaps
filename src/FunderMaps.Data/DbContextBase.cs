@@ -28,6 +28,10 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Create the database context.
         /// </summary>
+        /// <remarks>
+        ///     We return a value task because InitializeAsync may often not need
+        ///     to be awaited.
+        /// </remarks>
         public virtual async ValueTask<DbContext> DbContextFactory(string cmdText)
         {
             DbContext context = new()
@@ -40,6 +44,7 @@ namespace FunderMaps.Data
         }
 
         // FUTURE: Maybe too npgsql specific.
+        // FUTURE: Extension ?
         /// <summary>
         ///     Convert navigation to query.
         /// </summary>

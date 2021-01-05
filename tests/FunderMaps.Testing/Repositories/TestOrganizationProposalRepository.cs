@@ -13,20 +13,20 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public override ValueTask<Guid> AddAsync(OrganizationProposal entity)
+        public override Task<Guid> AddAsync(OrganizationProposal entity)
         {
             entity.Id = Guid.NewGuid();
             return base.AddAsync(entity);
         }
 
-        public ValueTask<OrganizationProposal> GetByEmailAsync(string email)
+        public Task<OrganizationProposal> GetByEmailAsync(string email)
         {
-            return new ValueTask<OrganizationProposal>(DataStore.ItemList.FirstOrDefault(e => e.Email == email));
+            return Task.FromResult<OrganizationProposal>(DataStore.ItemList.FirstOrDefault(e => e.Email == email));
         }
 
-        public ValueTask<OrganizationProposal> GetByNameAsync(string name)
+        public Task<OrganizationProposal> GetByNameAsync(string name)
         {
-            return new ValueTask<OrganizationProposal>(DataStore.ItemList.FirstOrDefault(e => e.Name == name));
+            return Task.FromResult<OrganizationProposal>(DataStore.ItemList.FirstOrDefault(e => e.Name == name));
         }
     }
 }

@@ -16,9 +16,9 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
+        public Task<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
-            return new ValueTask<Address>(DataStore.ItemList.FirstOrDefault(e => e.ExternalId == id && e.ExternalSource == source));
+            return Task.FromResult<Address>(DataStore.ItemList.FirstOrDefault(e => e.ExternalId == id && e.ExternalSource == source));
         }
 
         public IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)

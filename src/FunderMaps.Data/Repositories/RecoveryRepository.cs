@@ -50,7 +50,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Recovery"/>.</returns>
-        public override async ValueTask<int> AddAsync(Recovery entity)
+        public override async Task<int> AddAsync(Recovery entity)
         {
             var sql = @"
                 INSERT INTO report.recovery(
@@ -80,7 +80,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -95,7 +95,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Recovery"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(int id)
+        public override async Task DeleteAsync(int id)
         {
             var sql = @"
                 DELETE
@@ -114,7 +114,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Recovery"/>.</returns>
-        public override async ValueTask<Recovery> GetByIdAsync(int id)
+        public override async Task<Recovery> GetByIdAsync(int id)
         {
             var sql = @"
                 SELECT  -- Recovery
@@ -175,7 +175,7 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Recovery"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Recovery entity)
+        public override async Task UpdateAsync(Recovery entity)
         {
             var sql = @"
                 UPDATE  report.recovery

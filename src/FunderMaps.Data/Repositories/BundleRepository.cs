@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.MapLayer;
@@ -21,13 +20,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">The bundle to create.</param>
         /// <returns>The id of the created bundle.</returns>
-        public override async ValueTask<Guid> AddAsync(Bundle entity)
+        public override async Task<Guid> AddAsync(Bundle entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO maplayer.bundle(
                     organization_id,
@@ -52,7 +46,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -67,7 +61,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Bundle"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -88,7 +82,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Internal bundle id.</param>
         /// <returns>The retrieved bundle.</returns>
-        public override async ValueTask<Bundle> GetByIdAsync(Guid id)
+        public override async Task<Bundle> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out Bundle entity))
             {
@@ -157,14 +151,8 @@ namespace FunderMaps.Data.Repositories
         ///     Updates a <see cref="Bundle"/> in our database.
         /// </summary>
         /// <param name="entity">The updated bundle.</param>
-        /// <returns>See <see cref="ValueTask"/>.</returns>
-        public override async ValueTask UpdateAsync(Bundle entity)
+        public override async Task UpdateAsync(Bundle entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                     UPDATE  maplayer.bundle
                     SET     name = @name,
@@ -204,6 +192,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">The entity to write.</param>
         private static void MapToWriter(DbContext context, Bundle entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("organization_id", entity.OrganizationId);
             context.AddParameterWithValue("name", entity.Name);
             context.AddJsonParameterWithValue("layer_configuration", entity.LayerConfiguration);

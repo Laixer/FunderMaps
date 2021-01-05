@@ -24,7 +24,7 @@ namespace FunderMaps.Data.Repositories
         /// </remarks>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Organization"/>.</returns>
-        public override ValueTask<Guid> AddAsync(Organization entity)
+        public override Task<Guid> AddAsync(Organization entity)
             => throw new InvalidOperationException();
 
         public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
@@ -51,7 +51,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -66,7 +66,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Organization"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -84,6 +84,11 @@ namespace FunderMaps.Data.Repositories
 
         private static void MapToWriter(DbContext context, Organization entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
             context.AddParameterWithValue("registration_number", entity.RegistrationNumber);
             context.AddParameterWithValue("branding_logo", entity.BrandingLogo);
@@ -143,7 +148,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Organization"/>.</returns>
-        public override async ValueTask<Organization> GetByIdAsync(Guid id)
+        public override async Task<Organization> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out Organization entity))
             {
@@ -329,13 +334,8 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Organization"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Organization entity)
+        public override async Task UpdateAsync(Organization entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             ResetCacheEntity(entity);
 
             var sql = @"

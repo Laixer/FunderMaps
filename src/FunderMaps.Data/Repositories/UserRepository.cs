@@ -21,7 +21,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="User"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(User entity)
+        public override async Task<Guid> AddAsync(User entity)
         {
             // FUTURE: normalized_email should be db trigger function
             var sql = @"
@@ -58,7 +58,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -73,7 +73,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="User"/>.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -123,7 +123,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns><see cref="User"/>.</returns>
-        public override async ValueTask<User> GetByIdAsync(Guid id)
+        public override async Task<User> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out User entity))
             {
@@ -158,7 +158,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="User"/>.</returns>
-        public async ValueTask<User> GetByEmailAsync(string email)
+        public async Task<User> GetByEmailAsync(string email)
         {
             var sql = @"
                 SELECT  -- User
@@ -188,7 +188,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Number of failed signins.</returns>
-        public async ValueTask<uint> GetAccessFailedCountAsync(Guid id)
+        public async Task<uint> GetAccessFailedCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  access_failed_count
@@ -208,7 +208,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Number of signins.</returns>
-        public async ValueTask<uint> GetLoginCountAsync(Guid id)
+        public async Task<uint> GetLoginCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  login_count
@@ -228,7 +228,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Datetime of last signin.</returns>
-        public async ValueTask<DateTime?> GetLastLoginAsync(Guid id)
+        public async Task<DateTime?> GetLastLoginAsync(Guid id)
         {
             var sql = @"
                 SELECT  last_login
@@ -250,7 +250,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Password hash as string.</returns>
-        public async ValueTask<string> GetPasswordHashAsync(Guid id)
+        public async Task<string> GetPasswordHashAsync(Guid id)
         {
             var sql = @"
                 SELECT  password_hash
@@ -272,7 +272,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>True if locked out, false otherwise.</returns>
-        public async ValueTask<bool> IsLockedOutAsync(Guid id)
+        public async Task<bool> IsLockedOutAsync(Guid id)
         {
             var sql = @"
                 SELECT EXISTS (
@@ -321,7 +321,7 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="User"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(User entity)
+        public override async Task UpdateAsync(User entity)
         {
             if (entity is null)
             {
@@ -354,7 +354,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <param name="passwordHash">New password hash.</param>
-        public async ValueTask SetPasswordHashAsync(Guid id, string passwordHash)
+        public async Task SetPasswordHashAsync(Guid id, string passwordHash)
         {
             var sql = @"
                 UPDATE  application.user
@@ -373,7 +373,7 @@ namespace FunderMaps.Data.Repositories
         ///     Increase signin failure count.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public async ValueTask BumpAccessFailed(Guid id)
+        public async Task BumpAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
@@ -391,7 +391,7 @@ namespace FunderMaps.Data.Repositories
         ///     Reset signin failure count.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public async ValueTask ResetAccessFailed(Guid id)
+        public async Task ResetAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
@@ -409,7 +409,7 @@ namespace FunderMaps.Data.Repositories
         ///     Register a new user login.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public async ValueTask RegisterAccess(Guid id)
+        public async Task RegisterAccess(Guid id)
         {
             // FUTURE: db func
             // FUTURE: db trigger to update last_login

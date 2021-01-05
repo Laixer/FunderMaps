@@ -13,7 +13,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class OrganizationUserRepository : DbContextBase, IOrganizationUserRepository
     {
-        public async ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
+        public async Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {
             var sql = @"
                 INSERT INTO application.organization_user(
@@ -78,7 +78,7 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public async ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId)
+        public async Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
         {
             // FUTURE: database function
             var sql = @"
@@ -98,7 +98,7 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<bool>();
         }
 
-        public async ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
+        public async Task<Guid> GetOrganizationByUserIdAsync(Guid userId)
         {
             var sql = @"
                 SELECT  organization_id
@@ -114,7 +114,7 @@ namespace FunderMaps.Data.Repositories
             return reader.GetGuid(0);
         }
 
-        public async ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
+        public async Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
         {
             var sql = @"
                 SELECT  role

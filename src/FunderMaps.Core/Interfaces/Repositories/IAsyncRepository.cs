@@ -26,7 +26,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns><typeparamref name="TEntity"/>.</returns>
-        ValueTask<TEntity> GetByIdAsync(TEntityPrimaryKey id);
+        Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
         /// <summary>
         ///     Retrieve all <typeparamref name="TEntity"/>.
@@ -39,25 +39,25 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Entity identifier.</returns>
-        ValueTask<TEntityPrimaryKey> AddAsync(TEntity entity);
+        Task<TEntityPrimaryKey> AddAsync(TEntity entity);
 
         /// <summary>
         ///     Update <typeparamref name="TEntity"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        ValueTask UpdateAsync(TEntity entity);
+        Task UpdateAsync(TEntity entity);
 
         // TODO: Delete based on id.
         /// <summary>
         ///     Delete <typeparamref name="TEntity"/>.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        ValueTask DeleteAsync(TEntityPrimaryKey id);
+        Task DeleteAsync(TEntityPrimaryKey id);
 
         /// <summary>
         ///     Count number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        ValueTask<long> CountAsync();
+        Task<long> CountAsync();
     }
 }

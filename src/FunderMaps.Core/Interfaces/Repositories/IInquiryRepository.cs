@@ -11,14 +11,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
     public interface IInquiryRepository : IAsyncRepository<InquiryFull, int>
     {
         /// <summary>
-        ///     Retrieve entity by id and document_id and organization or public record.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <param name="orgId">Organization identifier.</param>
-        /// <returns>Entity.</returns>
-        Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId);
-
-        /// <summary>
         ///     Set <see cref="InquiryFull"/> audit status.
         /// </summary>
         /// <param name="id">Entity identifier.</param>

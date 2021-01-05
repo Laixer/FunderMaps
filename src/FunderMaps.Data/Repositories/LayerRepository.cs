@@ -14,7 +14,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class LayerRepository : RepositoryBase<Layer, Guid>, ILayerRepository
     {
-        protected override void SetCacheItem(KeyPair key, Layer value, MemoryCacheEntryOptions options)
+        protected override void SetCacheItem(CacheKeyPair key, Layer value, MemoryCacheEntryOptions options)
         {
             options.SlidingExpiration *= 2;
             options.AbsoluteExpirationRelativeToNow *= 2;
@@ -27,7 +27,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Layer"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(Layer entity)
+        public override async Task<Guid> AddAsync(Layer entity)
         {
             if (entity is null)
             {
@@ -60,7 +60,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -74,7 +74,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Layer"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -95,7 +95,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Layer"/>.</returns>
-        public override async ValueTask<Layer> GetByIdAsync(Guid id)
+        public override async Task<Layer> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out Layer entity))
             {
@@ -187,7 +187,7 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Layer"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Layer entity)
+        public override async Task UpdateAsync(Layer entity)
         {
             if (entity is null)
             {

@@ -17,7 +17,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
     {
-        protected override void SetCacheItem(KeyPair key, Address value, MemoryCacheEntryOptions options)
+        protected override void SetCacheItem(CacheKeyPair key, Address value, MemoryCacheEntryOptions options)
         {
             options.SlidingExpiration *= 2;
             options.AbsoluteExpirationRelativeToNow *= 2;
@@ -60,7 +60,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Address"/>.</returns>
-        public override async ValueTask<string> AddAsync(Address entity)
+        public override async Task<string> AddAsync(Address entity)
         {
             var sql = @"
                     INSERT INTO geocoder.address(
@@ -93,7 +93,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -108,10 +108,10 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Incident"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override ValueTask DeleteAsync(string id)
+        public override Task DeleteAsync(string id)
             => throw new InvalidOperationException();
 
-        public async ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
+        public async Task<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
             var sql = @"
                 SELECT  -- Address
@@ -155,7 +155,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Address"/>.</returns>
-        public override async ValueTask<Address> GetByIdAsync(string id)
+        public override async Task<Address> GetByIdAsync(string id)
         {
             if (TryGetEntity(id, out Address entity))
             {
@@ -285,7 +285,7 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Address"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Address entity)
+        public override async Task UpdateAsync(Address entity)
         {
             if (entity is null)
             {

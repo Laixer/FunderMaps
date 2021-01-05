@@ -20,13 +20,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Contact"/>.</returns>
-        public override async ValueTask<string> AddAsync(Contact entity)
+        public override async Task<string> AddAsync(Contact entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO application.contact(
                     email,
@@ -51,7 +46,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -66,7 +61,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Contact"/>.
         /// </summary>
         /// <param name="email">Entity email.</param>
-        public override async ValueTask DeleteAsync(string email)
+        public override async Task DeleteAsync(string email)
         {
             ResetCacheEntity(email);
 
@@ -84,6 +79,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, Contact entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("email", entity.Email);
             context.AddParameterWithValue("name", entity.Name);
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
@@ -102,7 +102,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="Contact"/>.</returns>
-        public override async ValueTask<Contact> GetByIdAsync(string email)
+        public override async Task<Contact> GetByIdAsync(string email)
         {
             if (TryGetEntity(email, out Contact entity))
             {
@@ -154,7 +154,7 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Contact"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Contact entity)
+        public override async Task UpdateAsync(Contact entity)
         {
             if (entity is null)
             {

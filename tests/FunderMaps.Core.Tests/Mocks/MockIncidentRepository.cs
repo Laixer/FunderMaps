@@ -11,7 +11,7 @@ namespace FunderMaps.Core.Tests.Mocks
         public MockIncidentRepository MockGetByIdAsync(Incident result)
         {
             Setup(s => s.GetByIdAsync(It.IsAny<string>()))
-                .Returns(new ValueTask<Incident>(result));
+                .Returns(Task.FromResult<Incident>(result));
 
             return this;
         }

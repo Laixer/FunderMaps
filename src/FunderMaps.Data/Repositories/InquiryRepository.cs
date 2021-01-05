@@ -2,7 +2,6 @@
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Control;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Collections.Generic;
@@ -21,13 +20,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="InquiryFull"/>.</returns>
-        public override async ValueTask<int> AddAsync(InquiryFull entity)
+        public override async Task<int> AddAsync(InquiryFull entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 WITH attribution AS (
 	                INSERT INTO application.attribution(
@@ -84,7 +78,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
 				SELECT  COUNT(*)
@@ -103,7 +97,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="id">Entity object.</param>
-        public override async ValueTask DeleteAsync(int id)
+        public override async Task DeleteAsync(int id)
         {
             ResetCacheEntity(id);
 
@@ -125,6 +119,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, InquiryFull entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("document_name", entity.DocumentName);
             context.AddParameterWithValue("inspection", entity.Inspection);
             context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
@@ -178,7 +177,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="InquiryFull"/>.</returns>
-        public override async ValueTask<InquiryFull> GetByIdAsync(int id)
+        public override async Task<InquiryFull> GetByIdAsync(int id)
         {
             if (TryGetEntity(id, out InquiryFull entity))
             {
@@ -229,9 +228,6 @@ namespace FunderMaps.Data.Repositories
 
             return CacheEntity(MapFromReader(reader));
         }
-
-        public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
-            => throw new NotImplementedException();
 
         /// <summary>
         ///     Retrieve all <see cref="InquiryFull"/>.
@@ -288,13 +284,8 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(InquiryFull entity)
+        public override async Task UpdateAsync(InquiryFull entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             ResetCacheEntity(entity);
 
             var sql = @"

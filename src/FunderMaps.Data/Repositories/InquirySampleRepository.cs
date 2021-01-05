@@ -20,7 +20,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="InquirySample"/>.</returns>
-        public override async ValueTask<int> AddAsync(InquirySample entity)
+        public override async Task<int> AddAsync(InquirySample entity)
         {
             var sql = @"
                 INSERT INTO report.inquiry_sample(
@@ -158,7 +158,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -200,7 +200,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="InquirySample"/>.
         /// </summary>
         /// <param name="id">Entity object.</param>
-        public override async ValueTask DeleteAsync(int id)
+        public override async Task DeleteAsync(int id)
         {
             ResetCacheEntity(id);
 
@@ -365,7 +365,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="InquirySample"/>.</returns>
-        public override async ValueTask<InquirySample> GetByIdAsync(int id)
+        public override async Task<InquirySample> GetByIdAsync(int id)
         {
             if (TryGetEntity(id, out InquirySample entity))
             {
@@ -668,13 +668,8 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public override async ValueTask UpdateAsync(InquirySample entity)
+        public override async Task UpdateAsync(InquirySample entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             ResetCacheEntity(entity);
 
             var sql = @"

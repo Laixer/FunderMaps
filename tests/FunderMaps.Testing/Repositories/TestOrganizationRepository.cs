@@ -19,7 +19,7 @@ namespace FunderMaps.Testing.Repositories
             DataStoreOrganizationProposal = dataStoreOrganizationProposal;
         }
 
-        public override ValueTask<Guid> AddAsync(Organization entity)
+        public override Task<Guid> AddAsync(Organization entity)
             => throw new InvalidOperationException();
 
         public Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
