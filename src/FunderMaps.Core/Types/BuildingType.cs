@@ -16,9 +16,9 @@ namespace FunderMaps.Core.Types
         Shed = 1,
 
         /// <summary>
-        ///     House boat.
+        ///     Houseboat.
         /// </summary>
-        HouseBoat = 2,
+        Houseboat = 2,
 
         /// <summary>
         ///     Mobile home.

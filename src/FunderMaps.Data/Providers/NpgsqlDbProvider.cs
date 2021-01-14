@@ -49,6 +49,7 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ApplicationRole>("application.role");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AuditStatus>("report.audit_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BaseMeasurementLevel>("report.base_measurement_level");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<BuildingType>("geocoder.building_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BundleStatus>("maplayer.bundle_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ConstructionPile>("report.construction_pile");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<CrackType>("report.crack_type");
@@ -75,6 +76,7 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodEncroachement>("report.wood_encroachement");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodQuality>("report.wood_quality");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodType>("report.wood_type");
+
         }
 
         /// <summary>
