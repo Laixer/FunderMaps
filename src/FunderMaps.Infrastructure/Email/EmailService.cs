@@ -73,6 +73,21 @@ namespace FunderMaps.Infrastructure.Email
         }
 
         /// <summary>
+        ///     Connect to the mail service.
+        /// </summary>
+        public async Task ConnectAsync()
+        {
+            if (!emailClient.IsConnected)
+            {
+                await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            }
+            if (!emailClient.IsAuthenticated)
+            {
+                await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
+            }
+        }
+
+        /// <summary>
         ///     Send email message.
         /// </summary>
         /// <param name="emailMessage">Message to send.</param>
@@ -85,8 +100,7 @@ namespace FunderMaps.Infrastructure.Email
 
             Logger.LogDebug($"Message prepared, try sending message to MTA");
 
-            await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
-            await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
+            await ConnectAsync();
             await emailClient.SendAsync(message);
             await emailClient.DisconnectAsync(quit: true);
 
@@ -99,8 +113,8 @@ namespace FunderMaps.Infrastructure.Email
         /// </summary>
         public async Task TestService()
         {
-            await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
-            await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
+            await ConnectAsync();
+            await emailClient.NoOpAsync();
             await emailClient.DisconnectAsync(quit: true);
         }
 
