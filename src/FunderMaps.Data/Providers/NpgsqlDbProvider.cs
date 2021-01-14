@@ -76,7 +76,6 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodEncroachement>("report.wood_encroachement");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodQuality>("report.wood_quality");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodType>("report.wood_type");
-
         }
 
         /// <summary>
