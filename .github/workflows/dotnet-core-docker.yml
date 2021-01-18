@@ -1,10 +1,12 @@
 name: FunderMaps Docker Container
 
 on:
+  push:
+    branches:
+      - 'feature/**'
   pull_request:
     branches:
       - master
-      - 'feature/**'
 
 jobs:
   build:
