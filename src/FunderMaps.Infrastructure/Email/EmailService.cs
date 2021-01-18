@@ -13,20 +13,29 @@ using System.Threading.Tasks;
 namespace FunderMaps.Infrastructure.Email
 {
     // FUTURE: Catch ex.
-    // FUTURE: Turn this into a factory
     // FUTURE: We can configure much more and we will in a next release.
     // TODO: Check input.
-    internal class EmailService : IEmailService, IDisposable
+    /// <summary>
+    ///     Send email to the MTA.
+    /// </summary>
+    /// <remarks>
+    ///     Keep the connection to the remote host succinct. MTA's are
+    ///     typically not prepared to deal with long living connections.
+    ///     Also its unclear if <seealso cref="SmtpClient"/> is designed
+    ///     to reuse transport connections.
+    /// </remarks>
+    internal class EmailService : IEmailService
     {
         private readonly EmailOptions _options;
-        private readonly ISmtpClient emailClient = new SmtpClient();
-        private bool disposedValue;
 
         /// <summary>
         ///     Logger.
         /// </summary>
         public ILogger Logger { get; }
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public EmailService(IOptions<EmailOptions> options, ILogger<EmailService> logger)
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
@@ -85,10 +94,12 @@ namespace FunderMaps.Infrastructure.Email
 
             Logger.LogDebug($"Message prepared, try sending message to MTA");
 
-            await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
-            await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
-            await emailClient.SendAsync(message);
-            await emailClient.DisconnectAsync(quit: true);
+            using SmtpClient client = new();
+
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(quit: true);
 
             Logger.LogInformation($"Message sent with success");
         }
@@ -99,36 +110,13 @@ namespace FunderMaps.Infrastructure.Email
         /// </summary>
         public async Task TestService()
         {
-            await emailClient.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
-            await emailClient.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
-            await emailClient.DisconnectAsync(quit: true);
+            using SmtpClient client = new();
+
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
+            await client.NoOpAsync();
+            await client.DisconnectAsync(quit: true);
         }
-
-        #region Disposable Pattern
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    emailClient.Dispose();
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion Disposable Pattern
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
