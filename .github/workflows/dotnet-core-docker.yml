@@ -1,57 +1,23 @@
 name: FunderMaps Docker Containers
 
 on:
+  push:
+    branches:
+      - 'feature/**'
   pull_request:
     branches:
       - master
 
 jobs:
-  build1:
+  build:
     name: Build WebApi Container
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        subtool: ["FunderMaps.WebApi", "FunderMaps.Webservice", "FunderMaps.BatchNode", "FunderMaps.Portal", "FunderMaps.Cli"]
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Build
-      run: docker build --build-arg subtool=FunderMaps.WebApi .
-
-  build2:
-    name: Build Webservice Container
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Build
-      run: docker build --build-arg subtool=FunderMaps.Webservice .
-
-  build3:
-    name: Build BatchNode Container
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Build
-      run: docker build --build-arg subtool=FunderMaps.BatchNode .
-
-  build4:
-    name: Build Portal Container
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Build
-      run: docker build --build-arg subtool=FunderMaps.Portal .
-
-  build5:
-    name: Build Cli Container
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Build
-      run: docker build --build-arg subtool=FunderMaps.Cli .
+      run: docker build --build-arg subtool= ${{ matrix.subtool }} .
