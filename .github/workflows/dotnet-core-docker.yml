@@ -9,8 +9,8 @@ on:
       - master
 
 jobs:
-  build:
-    name: Build Container
+  build1:
+    name: Build FunderMaps WebApi Container
     runs-on: ubuntu-latest
 
     steps:
@@ -19,3 +19,42 @@ jobs:
     - name: Build
       run: docker build --build-arg subtool=FunderMaps.WebApi .
 
+  build2:
+    name: Build FunderMaps Webservice Container
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      run: docker build --build-arg subtool=FunderMaps.Webservice .
+
+  build3:
+    name: Build FunderMaps BatchNode Container
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      run: docker build --build-arg subtool=FunderMaps.BatchNode .
+
+  build4:
+    name: Build FunderMaps Portal Container
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      run: docker build --build-arg subtool=FunderMaps.Portal .
+
+  build5:
+    name: Build FunderMaps Cli Container
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      run: docker build --build-arg subtool=FunderMaps.Cli .
