@@ -6,7 +6,11 @@ version:
 	find src -type f -exec sed -i "s/@@COMMIT@@/`git rev-parse HEAD`/" {} +
 
 docker:
-	docker build -t fundermaps . --file Dockerfile
+	docker build --build-arg subtool=FunderMaps.WebApi -t fundermaps-app:latest .
+	docker build --build-arg subtool=FunderMaps.Webservice -t fundermaps-webservice:latest .
+	docker build --build-arg subtool=FunderMaps.BatchNode -t fundermaps-batch:latest .
+	docker build --build-arg subtool=FunderMaps.Portal -t fundermaps-portal:latest .
+	docker build --build-arg subtool=FunderMaps.Cli -t fundermaps-cli:latest .
 
 test:
 	dotnet test
