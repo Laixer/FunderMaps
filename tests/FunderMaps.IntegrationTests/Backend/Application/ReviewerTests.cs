@@ -92,8 +92,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(expectedCount, returnList.Count);
-            Assert.True(response.Headers.CacheControl.Public);
-            Assert.NotNull(response.Headers.CacheControl.MaxAge);
         }
     }
 }
