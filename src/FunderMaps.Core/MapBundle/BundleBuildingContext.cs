@@ -2,17 +2,17 @@ using FunderMaps.Core.Types;
 using System;
 using System.Collections.Generic;
 
-namespace FunderMaps.BatchNode.Jobs.BundleBuilder
+namespace FunderMaps.Core.MapBundle
 {
     /// <summary>
     ///     Context for executing a bundle build task.
     /// </summary>
-    public class BundleBuildingContext // TODO: Remove, this is moved to core
+    public record BundleBuildingContext
     {
         /// <summary>
         ///     The id of the bundle to process.
         /// </summary>
-        public Guid BundleId { get; set; }
+        public Guid BundleId { get; init; }
 
         /// <summary>
         ///     Contains all formats we wish to export.

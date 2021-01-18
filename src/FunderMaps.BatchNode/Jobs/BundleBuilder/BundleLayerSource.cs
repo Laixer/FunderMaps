@@ -32,9 +32,9 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             layerOutputName = layer.Slug;
 
             // Select layer field as follows:
-            // * If no column is specified then select everything from the layer
-            // * If wildcard is found, then only use wildcard.
-            // * If no geometry column was found, then add one.
+            // - If no column is specified then select everything from the layer
+            // - If wildcard is found, then only use wildcard.
+            // - If no geometry column was found, then add one.
             List<string> columns = new(configuration.ColumnNames);
             if (columns.Count == 0)
             {

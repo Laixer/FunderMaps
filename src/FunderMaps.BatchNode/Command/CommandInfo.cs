@@ -6,7 +6,7 @@ namespace FunderMaps.BatchNode.Command
     /// <summary>
     ///     Command descriptor.
     /// </summary>
-    public class CommandInfo
+    public class CommandInfo // TODO: Move to core
     {
         /// <summary>
         ///     Command filename.
