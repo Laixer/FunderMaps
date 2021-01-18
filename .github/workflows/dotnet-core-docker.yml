@@ -14,7 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        subtool: ["FunderMaps.WebApi", "FunderMaps.Webservice", "FunderMaps.BatchNode", "FunderMaps.Portal", "FunderMaps.Cli"]
+        subtool:
+          - FunderMaps.WebApi
+          - FunderMaps.Webservice
+          - FunderMaps.BatchNode
+          - FunderMaps.Portal
+          - FunderMaps.Cli
 
     steps:
     - uses: actions/checkout@v2
