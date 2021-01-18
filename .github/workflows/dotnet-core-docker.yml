@@ -1,16 +1,13 @@
-name: FunderMaps Docker Container
+name: FunderMaps Docker Containers
 
 on:
-  push:
-    branches:
-      - 'feature/**'
   pull_request:
     branches:
       - master
 
 jobs:
   build1:
-    name: Build FunderMaps WebApi Container
+    name: Build WebApi Container
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +17,7 @@ jobs:
       run: docker build --build-arg subtool=FunderMaps.WebApi .
 
   build2:
-    name: Build FunderMaps Webservice Container
+    name: Build Webservice Container
     runs-on: ubuntu-latest
 
     steps:
@@ -30,7 +27,7 @@ jobs:
       run: docker build --build-arg subtool=FunderMaps.Webservice .
 
   build3:
-    name: Build FunderMaps BatchNode Container
+    name: Build BatchNode Container
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +37,7 @@ jobs:
       run: docker build --build-arg subtool=FunderMaps.BatchNode .
 
   build4:
-    name: Build FunderMaps Portal Container
+    name: Build Portal Container
     runs-on: ubuntu-latest
 
     steps:
@@ -50,7 +47,7 @@ jobs:
       run: docker build --build-arg subtool=FunderMaps.Portal .
 
   build5:
-    name: Build FunderMaps Cli Container
+    name: Build Cli Container
     runs-on: ubuntu-latest
 
     steps:
