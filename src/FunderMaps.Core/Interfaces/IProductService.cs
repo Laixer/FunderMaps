@@ -1,7 +1,7 @@
 ﻿using FunderMaps.Core.Types.Products;
 using System.Collections.Generic;
 
-namespace FunderMaps.Webservice.Abstractions.Services
+namespace FunderMaps.Core.Interfaces
 {
     /// <summary>
     ///     Service to the analysis products.

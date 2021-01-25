@@ -7,7 +7,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

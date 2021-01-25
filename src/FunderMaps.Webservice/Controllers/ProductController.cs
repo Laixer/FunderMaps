@@ -1,7 +1,7 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;
 using Microsoft.AspNetCore.Mvc;
 using System;

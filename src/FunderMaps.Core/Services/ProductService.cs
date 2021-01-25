@@ -4,7 +4,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Webservice.Abstractions.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

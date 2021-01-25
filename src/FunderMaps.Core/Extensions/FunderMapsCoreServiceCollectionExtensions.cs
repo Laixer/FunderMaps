@@ -4,7 +4,6 @@ using FunderMaps.Core.MapBundle;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
-using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;

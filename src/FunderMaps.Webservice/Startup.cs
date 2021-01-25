@@ -1,9 +1,9 @@
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 using FunderMaps.Extensions;
-using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.Documentation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
