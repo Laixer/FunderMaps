@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
@@ -22,19 +23,25 @@ namespace FunderMaps.Core.Components
         public IRandom Random { get; }
 
         /// <summary>
+        ///     Gets the <see cref="ILogger"/> used.
+        /// </summary>
+        public ILogger Logger { get; }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
-        public PasswordHasher(IRandom random) => Random = random;
+        public PasswordHasher(IRandom random, ILogger<PasswordHasher> logger)
+            => (Random, Logger) = (random, logger);
 
         // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
         [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         private static bool ByteArraysEqual(byte[] a, byte[] b)
         {
-            if (a == null && b == null)
+            if (a is null && b is null)
             {
                 return true;
             }
-            if (a == null || b == null || a.Length != b.Length)
+            if (a is null || b is null || a.Length != b.Length)
             {
                 return false;
             }
@@ -98,7 +105,7 @@ namespace FunderMaps.Core.Components
         /// </summary>
         /// <remarks>
         ///     If anything fails in the process this method will return as if
-        ///     the password validation failed.
+        ///     the password validation failed. Exception details are logged.
         /// </remarks>
         /// <param name="hashedPassword">Password hash.</param>
         /// <param name="providedPassword">Plaintext password to test.</param>
@@ -125,9 +132,9 @@ namespace FunderMaps.Core.Components
 
                 return VerifyHashedPassword(decodedHashedPassword, providedPassword);
             }
-            catch (SystemException)
+            catch (SystemException exception)
             {
-                // TODO: Log
+                Logger.LogError(exception, "Error occurred during password validation");
 
                 return false;
             }
