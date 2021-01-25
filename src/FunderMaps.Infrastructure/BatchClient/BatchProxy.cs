@@ -12,7 +12,7 @@ namespace FunderMaps.Infrastructure.BatchClient
     /// <summary>
     ///     Client connector to the batch node.
     /// </summary>
-    internal class BatchProxy : IBatchService // TODO: Inherit from AppServiceBase
+    internal class BatchProxy : IBatchService
     {
         private const string UserAgent = "FunderMaps.Infrastructure";
 
@@ -64,7 +64,7 @@ namespace FunderMaps.Infrastructure.BatchClient
         /// <summary>
         ///     Test the batch service backend.
         /// </summary>
-        public async Task TestService() => await StatusAsync();
+        public Task HealthCheck() => StatusAsync();
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

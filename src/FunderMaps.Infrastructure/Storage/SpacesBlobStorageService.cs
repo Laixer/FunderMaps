@@ -287,11 +287,10 @@ namespace FunderMaps.Infrastructure.Storage
             }
         }
 
-        // FUTURE: From interface
         /// <summary>
         ///     Test the Amazon S3 service backend.
         /// </summary>
-        public async Task TestService()
+        public async Task HealthCheck()
             => await client.ListBucketsAsync();
     }
 }

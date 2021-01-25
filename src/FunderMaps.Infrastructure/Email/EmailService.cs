@@ -50,7 +50,7 @@ namespace FunderMaps.Infrastructure.Email
         /// </summary>
         /// <param name="message">Mail message to send.</param>
         /// <param name="emailMessage">Message source.</param>
-        protected void BuildHeader(ref MimeMessage message, EmailMessage emailMessage)
+        protected void BuildHeader(MimeMessage message, EmailMessage emailMessage)
         {
             message.To.AddRange(emailMessage.ToAddresses.Select(m => new MailboxAddress(m.Name, m.Address)));
 
@@ -73,7 +73,7 @@ namespace FunderMaps.Infrastructure.Email
         /// </summary>
         /// <param name="message">Mail message to send.</param>
         /// <param name="emailMessage">Message source.</param>
-        protected static void BuildBody(ref MimeMessage message, EmailMessage emailMessage)
+        protected static void BuildBody(MimeMessage message, EmailMessage emailMessage)
         {
             message.Body = new TextPart(TextFormat.Html)
             {
@@ -89,8 +89,8 @@ namespace FunderMaps.Infrastructure.Email
         {
             MimeMessage message = new();
 
-            BuildHeader(ref message, emailMessage);
-            BuildBody(ref message, emailMessage);
+            BuildHeader(message, emailMessage);
+            BuildBody(message, emailMessage);
 
             Logger.LogDebug($"Message prepared, try sending message to MTA");
 
@@ -104,11 +104,10 @@ namespace FunderMaps.Infrastructure.Email
             Logger.LogInformation($"Message sent with success");
         }
 
-        // FUTURE: From interface
         /// <summary>
         ///     Test the email service backend.
         /// </summary>
-        public async Task TestService()
+        public async Task HealthCheck()
         {
             using SmtpClient client = new();
 

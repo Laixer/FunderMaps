@@ -1,7 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.AspNetCore.HealthChecks
 {
@@ -11,12 +13,13 @@ namespace FunderMaps.AspNetCore.HealthChecks
     public class BatchHealthCheck : IHealthCheck
     {
         private readonly IBatchService _batchService;
+        private readonly ILogger<BatchHealthCheck> _logger;
 
         /// <summary>
         ///     Create a new instance.
         /// </summary>
-        public BatchHealthCheck(IBatchService batchService)
-            => _batchService = batchService;
+        public BatchHealthCheck(IBatchService batchService, ILogger<BatchHealthCheck> logger)
+            => (_batchService, _logger) = (batchService, logger);
 
         /// <summary>
         ///     Runs the health check, returning the status of the component being checked.
@@ -26,9 +29,17 @@ namespace FunderMaps.AspNetCore.HealthChecks
         /// <returns>Instance of <see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
         {
-            // Operation throws if an error occurs.
-            await _batchService.TestService();
-            return HealthCheckResult.Healthy();
+            try
+            {
+                await _batchService.HealthCheck();
+                return HealthCheckResult.Healthy();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogTrace(exception, "Health check failed");
+
+                return HealthCheckResult.Unhealthy("batch service");
+            }
         }
     }
 }
