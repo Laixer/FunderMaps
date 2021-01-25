@@ -3,7 +3,7 @@ using FunderMaps.Core.Components;
 using FunderMaps.Core.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace FunderMaps.AspNetCore
+namespace FunderMaps.AspNetCore.Components
 {
     /// <summary>
     ///     ASP.NET Core <see cref="Core.AppContext"/> factory.
@@ -26,13 +26,13 @@ namespace FunderMaps.AspNetCore
         ///     offers access to the <see cref="HttpContext"/> within the current scope. There does *not*
         ///     have to be an active scope, in which case the accessor returns null on the
         ///     <see cref="HttpContext"/> request. If the aforementioned HTTP context accessor is null then
-        ///     we'll return an empty <see cref="Core.AppContext"/>.
+        ///     we'll pass the action back to the base.
         /// </remarks>
         public override Core.AppContext Create()
         {
             if (_httpContextAccessor.HttpContext is not HttpContext httpContext)
             {
-                return new();
+                return base.Create();
             }
 
             if (PrincipalProvider.IsSignedIn(httpContext.User))
