@@ -9,13 +9,16 @@ namespace FunderMaps.AspNetCore.Authorization
     /// </summary>
     public static class AuthorizationOptionsExtensions
     {
-        // FUTURE: Move the business logic to the core.
         /// <summary>
         ///     Add FunderMaps authorization policy.
         /// </summary>
         /// <remarks>
-        ///     Authorization policy matrix
         ///     <para>
+        ///         Consult the policy matrix before setting a authorization policy on anything.
+        ///     </para>
+        ///     <para>
+        ///        Authorization policy matrix.
+        ///
         ///                                      || ApplicationRole                || OrganizationRole
         ///                                      || Administrator   | User | Guest || Superuser | Verifier | Writer | Reader
         ///         AdministratorPolicy          || Yes             | No   | No    || No        | No       | No     | No

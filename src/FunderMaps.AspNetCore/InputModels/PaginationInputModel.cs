@@ -7,7 +7,7 @@ namespace FunderMaps.AspNetCore.InputModels
     /// <summary>
     ///     DTO for pagination.
     /// </summary>
-    public class PaginationInputModel // TODO: Should be record
+    public record PaginationInputModel
     {
         /// <summary>
         ///     Recordset offset.

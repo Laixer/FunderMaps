@@ -2,6 +2,7 @@ using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;
@@ -67,7 +68,7 @@ namespace FunderMaps.Portal.Controllers
         public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
         {
             // Act.
-            var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
+            var storeFileName = FileHelper.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(
                 containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: storeFileName,
