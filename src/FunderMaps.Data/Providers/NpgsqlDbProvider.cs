@@ -50,6 +50,7 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AuditStatus>("report.audit_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BaseMeasurementLevel>("report.base_measurement_level");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BuildingType>("geocoder.building_type");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<BuiltYearSource>("report.built_year_source");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BundleStatus>("maplayer.bundle_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ConstructionPile>("report.construction_pile");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<CrackType>("report.crack_type");
