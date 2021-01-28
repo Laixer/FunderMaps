@@ -1,7 +1,7 @@
 # FunderMaps Ecosystem
 
 # Build the application solution
-FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
 WORKDIR /source
 
 # Copy and restore app
@@ -22,7 +22,7 @@ RUN git rev-parse HEAD > /app/COMMIT
 # Any FunderMaps application in the repository can
 # be called via the CMD=<application> environment
 # variable.
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:latest
 ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 WORKDIR /app
 COPY --from=build /app .
