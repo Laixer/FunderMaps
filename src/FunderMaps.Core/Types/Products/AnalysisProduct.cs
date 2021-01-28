@@ -20,6 +20,11 @@ namespace FunderMaps.Core.Types.Products
         public string ExternalId { get; set; }
 
         /// <summary>
+        ///     Postcode.
+        /// </summary>
+        public string PostalCode { get; set; }
+
+        /// <summary>
         ///     Represents the external data source of this building.
         /// </summary>
         public ExternalDataSource? ExternalSource { get; set; }
@@ -28,6 +33,11 @@ namespace FunderMaps.Core.Types.Products
         ///     Built year.
         /// </summary>
         public DateTimeOffset ConstructionYear { get; set; }
+
+        /// <summary>
+        ///     Built year source.
+        /// </summary>
+        public BuiltYearSource ConstructionYearSource { get; set; }
 
         /// <summary>
         ///     Address identifier.
@@ -77,6 +87,21 @@ namespace FunderMaps.Core.Types.Products
         public string MonitoringWell { get; set; }
 
         /// <summary>
+        ///     Recovery advised.
+        /// </summary>
+        public bool? RecoveryAdvised { get; set; }
+
+        /// <summary>
+        ///     Damage cause.
+        /// </summary>
+        public FoundationDamageCause? DamageCause { get; set; }
+
+        /// <summary>
+        ///     Substructure.
+        /// </summary>
+        public Substructure? Substructure { get; set; }
+
+        /// <summary>
         ///     Client document identifier.
         /// </summary>
         public string DocumentName { get; set; }
@@ -97,9 +122,19 @@ namespace FunderMaps.Core.Types.Products
         public RecoveryDocumentType? RecoveryType { get; set; }
 
         /// <summary>
+        ///     Foundation recovery status.
+        /// </summary>
+        public RecoveryStatus? RecoveryStatus { get; set; }
+
+        /// <summary>
         ///     Building surface area in square meters.
         /// </summary>
         public double? SurfaceArea { get; set; }
+
+        /// <summary>
+        ///     Address living surface area in square meters.
+        /// </summary>
+        public double? LivingArea { get; set; }
 
         /// <summary>
         ///     Foundation bearing ground layer.
