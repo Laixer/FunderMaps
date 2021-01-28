@@ -20,7 +20,7 @@ namespace FunderMaps.Core.Types.Products
         public string ExternalId { get; set; }
 
         /// <summary>
-        ///     Postcode.
+        ///     Postal code
         /// </summary>
         public string PostalCode { get; set; }
 
