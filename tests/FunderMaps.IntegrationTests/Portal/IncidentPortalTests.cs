@@ -388,18 +388,18 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        [Theory]
-        [InlineData("0000XX")]
-        [InlineData("1111YY")]
-        public async Task GetAllAddressByQueryReturnEmptyList(string query)
-        {
-            // Act
-            var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
-            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
+        // [Theory]
+        // [InlineData("0000XX")]
+        // [InlineData("1111YY")]
+        // public async Task GetAllAddressByQueryReturnEmptyList(string query)
+        // {
+        //     // Act
+        //     var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
+        //     var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Empty(returnList);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.Empty(returnList);
+        // }
     }
 }
