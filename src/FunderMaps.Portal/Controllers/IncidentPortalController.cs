@@ -99,6 +99,7 @@ namespace FunderMaps.Portal.Controllers
                 Gateway = Constants.IncidentGateway,
             };
 
+            // FUTURE: Contact is required, remove the checks.
             // Act.
             // There does not have to be a contact, but if it exists we'll save it.
             if (incident.ContactNavigation is not null && !string.IsNullOrEmpty(incident.ContactNavigation.Email))
@@ -118,23 +119,6 @@ namespace FunderMaps.Portal.Controllers
 
             // Return.
             return NoContent();
-        }
-
-        // TODO: Remove?
-        /// <summary>
-        ///     Get address suggestions.
-        /// </summary>
-        [HttpGet("address-suggest")]
-        public async Task<IActionResult> GetAllAddressSuggestionAsync([FromQuery] AddressSearchDto input)
-        {
-            // Assign.
-            IAsyncEnumerable<Address> addressList = _addressRepository.GetBySearchQueryAsync(input.Query, input.Navigation);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList, HttpContext.RequestAborted);
-
-            // Return.
-            return Ok(result);
         }
 
         // GET: api/incident-portal/risk

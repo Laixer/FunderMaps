@@ -10,6 +10,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// </summary>
     public interface IAddressRepository : IAsyncRepository<Address, string>
     {
+        // FUTURE: Remove
         /// <summary>
         ///     Get all adresses matching query.
         /// </summary>
