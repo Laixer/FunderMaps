@@ -170,19 +170,19 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData("4621EV")]
-        [InlineData("2271TT")]
-        public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
-        {
-            // Act
-            var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
-            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
+        // [Theory]
+        // [InlineData("4621EV")]
+        // [InlineData("2271TT")]
+        // public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
+        // {
+        //     // Act
+        //     var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
+        //     var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count > 0);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.True(returnList.Count > 0);
+        // }
 
         [Fact]
         public async Task UploadDocumentReturnDocument()
