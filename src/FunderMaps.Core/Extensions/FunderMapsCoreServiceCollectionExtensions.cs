@@ -91,6 +91,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<INotifyService, NotificationHub>();
             services.AddScoped<IBundleService, BundleHub>();
+            services.AddScoped<IncidentService>();
 
             // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering

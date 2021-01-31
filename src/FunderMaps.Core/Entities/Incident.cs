@@ -97,9 +97,9 @@ namespace FunderMaps.Core.Entities
         public string Email { get; set; }
 
         /// <summary>
-        ///     Address identifier.
+        ///     An address identifier.
         /// </summary>
-        [Required, Geocoder]
+        [Required]
         public string Address { get; set; }
 
         /// <summary>

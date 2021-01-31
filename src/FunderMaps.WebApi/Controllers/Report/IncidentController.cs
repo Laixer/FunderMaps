@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -26,7 +25,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         private readonly Core.AppContext _appContext;
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
-        private readonly IAddressRepository _addressRepository;
         private readonly IBlobStorageService _blobStorageService;
 
         /// <summary>
@@ -44,7 +42,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
-            _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
         }
 
@@ -83,10 +80,14 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
+        // FUTURE: Return the result in an encrypted envelope.
         // POST: api/incident/upload-document
         /// <summary>
         ///     Upload document to the backstore.
         /// </summary>
+        /// <remarks>
+        ///     Max file upload size is configured at 128 MB.
+        /// </remarks>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
         public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
@@ -159,29 +160,19 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Create incident.
         /// </summary>
         [HttpPost]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input)
+        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input, [FromServices] Core.Services.IncidentService incidentService)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
 
-            incident.Meta = new
+            // FUTURE: Remove the meta object.
+            // Act.
+            incident = await incidentService.AddAsync(incident, new
             {
                 SessionUser = _appContext.UserId,
                 SessionOrganization = _appContext.TenantId,
                 Gateway = Constants.IncidentGateway,
-            };
-
-            // Act.
-            // There does not have to be a contact, but if it exists we'll save it.
-            if (incident.ContactNavigation is not null)
-            {
-                await _contactRepository.AddAsync(incident.ContactNavigation);
-            }
-
-            var id = await _incidentRepository.AddAsync(incident);
-            incident = await _incidentRepository.GetByIdAsync(id);
-            incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
+            });
 
             // Map.
             var output = _mapper.Map<IncidentDto>(incident);
