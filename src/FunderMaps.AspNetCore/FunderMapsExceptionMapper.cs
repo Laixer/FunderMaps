@@ -38,6 +38,7 @@ namespace FunderMaps.AspNetCore
                 InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
                 OperationAbortedException _ => BuildMessage("Operation was aborted by client.", HttpStatusCode.BadRequest),
                 ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
+                ServiceUnavailableException _ => BuildMessage("Internal service was unable to process the request.", HttpStatusCode.ServiceUnavailable),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
                 StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError)
