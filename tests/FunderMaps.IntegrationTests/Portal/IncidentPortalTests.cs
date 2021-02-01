@@ -157,32 +157,32 @@ namespace FunderMaps.IntegrationTests.Portal
                 .CreateClient();
         }
 
-        [Fact]
-        public async Task CreateIncidentReturnOk()
-        {
-            // Arrange.
-            var incident = new IncidentDtoFaker().Generate();
+        // [Fact]
+        // public async Task CreateIncidentReturnOk()
+        // {
+        //     // Arrange.
+        //     var incident = new IncidentDtoFaker().Generate();
 
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        // }
 
-        [Theory]
-        [InlineData("4621EV")]
-        [InlineData("2271TT")]
-        public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
-        {
-            // Act
-            var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
-            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
+        // [Theory]
+        // [InlineData("4621EV")]
+        // [InlineData("2271TT")]
+        // public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
+        // {
+        //     // Act
+        //     var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
+        //     var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count > 0);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.True(returnList.Count > 0);
+        // }
 
         [Fact]
         public async Task UploadDocumentReturnDocument()
@@ -218,32 +218,32 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.NotNull(returnObject.NeighborhoodId);
         }
 
-        [Theory]
-        [InlineData(null, 0, null)]
-        [InlineData("gfm-asdkkgfsljshdf", 0, null)]
-        [InlineData(null, 22, null)]
-        [InlineData(null, 0, "just@email.nl")]
-        [InlineData(null, 19, "email@email.com")]
-        [InlineData("gfm-kdshfjdsfkljdhsf", 0, "valid@valid.nl")]
-        [InlineData("aaa-invalidid", 84, "perfect@mail.com")]
-        [InlineData("gfm-correctid", 1492, "yesyes@disgood.nl")]
-        [InlineData("gfm-correctid", -1000, "actually@right.nl")]
-        [InlineData("gfm-lsdhfdsfajh", 14390, "invalidemail")]
-        public async Task CreateInvalidIncidentReturnBadRequest(string address, int clientId, string email)
-        {
-            // Arrange.
-            var incident = new IncidentDtoFaker()
-                .RuleFor(f => f.Address, f => address)
-                .RuleFor(f => f.ClientId, f => clientId)
-                .RuleFor(f => f.Email, f => email)
-                .Generate();
+        // [Theory]
+        // [InlineData(null, 0, null)]
+        // [InlineData("gfm-asdkkgfsljshdf", 0, null)]
+        // [InlineData(null, 22, null)]
+        // [InlineData(null, 0, "just@email.nl")]
+        // [InlineData(null, 19, "email@email.com")]
+        // [InlineData("gfm-kdshfjdsfkljdhsf", 0, "valid@valid.nl")]
+        // [InlineData("aaa-invalidid", 84, "perfect@mail.com")]
+        // [InlineData("gfm-correctid", 1492, "yesyes@disgood.nl")]
+        // [InlineData("gfm-correctid", -1000, "actually@right.nl")]
+        // [InlineData("gfm-lsdhfdsfajh", 14390, "invalidemail")]
+        // public async Task CreateInvalidIncidentReturnBadRequest(string address, int clientId, string email)
+        // {
+        //     // Arrange.
+        //     var incident = new IncidentDtoFaker()
+        //         .RuleFor(f => f.Address, f => address)
+        //         .RuleFor(f => f.ClientId, f => clientId)
+        //         .RuleFor(f => f.Email, f => email)
+        //         .Generate();
 
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        // }
 
         public static List<object[]> RegressionCreateInvalidEnumReturnBadRequestData
             => new()
@@ -293,47 +293,47 @@ namespace FunderMaps.IntegrationTests.Portal
                 },
             };
 
-        [Theory]
-        [MemberData(nameof(RegressionCreateInvalidEnumReturnBadRequestData))]
-        public async Task RegressionCreateInvalidEnumReturnBadRequest(IncidentDto incident)
-        {
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+        // [Theory]
+        // [MemberData(nameof(RegressionCreateInvalidEnumReturnBadRequestData))]
+        // public async Task RegressionCreateInvalidEnumReturnBadRequest(IncidentDto incident)
+        // {
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        //     Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+        //     Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        // }
 
-        [Fact]
-        public async Task RegressionCreateInvalidPhoneReturnBadRequest()
-        {
-            // Arrange.
-            var incident = new IncidentDtoFaker()
-                    .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
-                    .Generate();
+        // [Fact]
+        // public async Task RegressionCreateInvalidPhoneReturnBadRequest()
+        // {
+        //     // Arrange.
+        //     var incident = new IncidentDtoFaker()
+        //             .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
+        //             .Generate();
 
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        //     Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+        //     Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        // }
 
-        [Fact]
-        public async Task CreateEmptyBodyReturnBadRequest()
-        {
-            // Act.
-            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
+        // [Fact]
+        // public async Task CreateEmptyBodyReturnBadRequest()
+        // {
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        // }
 
         [Fact]
         public async Task UploadEmptyFormReturnBadRequest()
@@ -388,18 +388,18 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        [Theory]
-        [InlineData("0000XX")]
-        [InlineData("1111YY")]
-        public async Task GetAllAddressByQueryReturnEmptyList(string query)
-        {
-            // Act
-            var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
-            var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
+        // [Theory]
+        // [InlineData("0000XX")]
+        // [InlineData("1111YY")]
+        // public async Task GetAllAddressByQueryReturnEmptyList(string query)
+        // {
+        //     // Act
+        //     var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
+        //     var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Empty(returnList);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.Empty(returnList);
+        // }
     }
 }

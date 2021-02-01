@@ -131,22 +131,22 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             Assert.Equal("gfm-67f8fd79bf3a461c923e7c24c0fb479f", returnObject.AddressId);
         }
 
-        [Theory]
-        [InlineData("kade")]
-        [InlineData("4621E")]
-        [InlineData("5707KM")]
-        [InlineData("straat")]
-        [InlineData("hage")]
-        public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
-        {
-            // Act
-            var response = await _client.GetAsync($"api/address/suggest?query={query}");
-            var returnList = await response.Content.ReadFromJsonAsync<List<AddressBuildingDto>>();
+        // [Theory]
+        // [InlineData("kade")]
+        // [InlineData("4621E")]
+        // [InlineData("5707KM")]
+        // [InlineData("straat")]
+        // [InlineData("hage")]
+        // public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
+        // {
+        //     // Act
+        //     var response = await _client.GetAsync($"api/address/suggest?query={query}");
+        //     var returnList = await response.Content.ReadFromJsonAsync<List<AddressBuildingDto>>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count > 0);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.True(returnList.Count > 0);
+        // }
 
         [Fact]
         public async Task GetLimitedAddressByQueryReturnMatchingAddressList()

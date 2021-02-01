@@ -19,6 +19,11 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         public string ExternalId { get; set; }
 
         /// <summary>
+        ///     Postcode.
+        /// </summary>
+        public string PostalCode { get; set; }
+
+        /// <summary>
         ///     Address identifier.
         /// </summary>
         [Geocoder]

@@ -114,9 +114,9 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         public string PhoneNumber { get; init; }
 
         /// <summary>
-        ///     Address identifier.
+        ///     An address identifier.
         /// </summary>
-        [Required, Geocoder]
+        [Required]
         public string Address { get; init; }
 
         /// <summary>
