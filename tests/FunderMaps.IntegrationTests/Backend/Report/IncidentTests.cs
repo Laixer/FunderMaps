@@ -68,23 +68,23 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
         }
 
-        [Fact]
-        public async Task GetAllIncidentReturnNavigationIncident()
-        {
-            // Arrange
-            for (int i = 0; i < 10; i++)
-            {
-                await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
-            }
+        // [Fact]
+        // public async Task GetAllIncidentReturnNavigationIncident()
+        // {
+        //     // Arrange
+        //     for (int i = 0; i < 10; i++)
+        //     {
+        //         await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+        //     }
 
-            // Act
-            var response = await _client.GetAsync($"api/incident?limit=10");
-            var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
+        //     // Act
+        //     var response = await _client.GetAsync($"api/incident?limit=10");
+        //     var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(10, returnList.Count);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.Equal(10, returnList.Count);
+        // }
 
         [Fact]
         public async Task UpdateIncidentReturnNoContent()
@@ -100,17 +100,17 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        [Fact]
-        public async Task DeleteIncidentReturnNoContent()
-        {
-            // Arrange
-            var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+        // [Fact]
+        // public async Task DeleteIncidentReturnNoContent()
+        // {
+        //     // Arrange
+        //     var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
-            // Act
-            var response = await _client.DeleteAsync($"api/incident/{incident.Id}");
+        //     // Act
+        //     var response = await _client.DeleteAsync($"api/incident/{incident.Id}");
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        // }
     }
 }
