@@ -293,47 +293,47 @@ namespace FunderMaps.IntegrationTests.Portal
                 },
             };
 
-        [Theory]
-        [MemberData(nameof(RegressionCreateInvalidEnumReturnBadRequestData))]
-        public async Task RegressionCreateInvalidEnumReturnBadRequest(IncidentDto incident)
-        {
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+        // [Theory]
+        // [MemberData(nameof(RegressionCreateInvalidEnumReturnBadRequestData))]
+        // public async Task RegressionCreateInvalidEnumReturnBadRequest(IncidentDto incident)
+        // {
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        //     Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+        //     Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        // }
 
-        [Fact]
-        public async Task RegressionCreateInvalidPhoneReturnBadRequest()
-        {
-            // Arrange.
-            var incident = new IncidentDtoFaker()
-                    .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
-                    .Generate();
+        // [Fact]
+        // public async Task RegressionCreateInvalidPhoneReturnBadRequest()
+        // {
+        //     // Arrange.
+        //     var incident = new IncidentDtoFaker()
+        //             .RuleFor(f => f.PhoneNumber, f => "12345678901234567")
+        //             .Generate();
 
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        //     Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+        //     Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        // }
 
-        [Fact]
-        public async Task CreateEmptyBodyReturnBadRequest()
-        {
-            // Act.
-            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
+        // [Fact]
+        // public async Task CreateEmptyBodyReturnBadRequest()
+        // {
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        // }
 
         [Fact]
         public async Task UploadEmptyFormReturnBadRequest()
