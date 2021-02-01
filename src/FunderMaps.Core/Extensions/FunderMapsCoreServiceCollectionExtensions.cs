@@ -74,6 +74,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.AddTransient<ITemplateParser, TemplateParser>();
             services.AddTransient<IGeocoderParser, GeocoderParser>();
+            services.AddTransient<IGeocoderTranslation, GeocoderTranslation>();
 
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container
@@ -90,6 +91,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<INotifyService, NotificationHub>();
             services.AddScoped<IBundleService, BundleHub>();
+            services.AddScoped<IIncidentService, IncidentService>();
 
             // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
