@@ -12,7 +12,7 @@ namespace FunderMaps.Core.Services
     /// <summary>
     ///     Service to the incidents.
     /// </summary>
-    public class IncidentService
+    public class IncidentService : IIncidentService
     {
         private readonly Core.AppContext _appContext;
         private readonly IConfiguration _configuration;
@@ -21,6 +21,7 @@ namespace FunderMaps.Core.Services
         private readonly IGeocoderTranslation _geocoderTranslation;
         private readonly INotifyService _notifyService;
 
+        // FUTURE: IOptions
         /// <summary>
         ///     Create new instance.
         /// </summary>
@@ -41,7 +42,7 @@ namespace FunderMaps.Core.Services
         }
 
         /// <summary>
-        ///     ...
+        ///     Register a new incident.
         /// </summary>
         /// <param name="incident">Incident to process.</param>
         /// <param name="meta">Optional metadata.</param>
