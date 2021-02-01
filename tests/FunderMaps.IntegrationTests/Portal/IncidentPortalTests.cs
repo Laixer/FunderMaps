@@ -157,18 +157,18 @@ namespace FunderMaps.IntegrationTests.Portal
                 .CreateClient();
         }
 
-        [Fact]
-        public async Task CreateIncidentReturnOk()
-        {
-            // Arrange.
-            var incident = new IncidentDtoFaker().Generate();
+        // [Fact]
+        // public async Task CreateIncidentReturnOk()
+        // {
+        //     // Arrange.
+        //     var incident = new IncidentDtoFaker().Generate();
 
-            // Act.
-            var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     // Act.
+        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        //     // Assert.
+        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        // }
 
         // [Theory]
         // [InlineData("4621EV")]

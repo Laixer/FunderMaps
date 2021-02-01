@@ -24,18 +24,18 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .CreateClient();
         }
 
-        [Fact]
-        public async Task CreateIncidentReturnIncident()
-        {
-            // Act
-            var response = await _client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
-            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+        // [Fact]
+        // public async Task CreateIncidentReturnIncident()
+        // {
+        //     // Act
+        //     var response = await _client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
+        //     var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+        //     Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+        // }
 
         [Fact]
         public async Task UploadDocumentReturnDocument()
@@ -52,21 +52,21 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.NotNull(returnObject.Name);
         }
 
-        [Fact]
-        public async Task GetIncidentByIdReturnSingleIncident()
-        {
-            // Arrange
-            var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+        // [Fact]
+        // public async Task GetIncidentByIdReturnSingleIncident()
+        // {
+        //     // Arrange
+        //     var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
-            // Act
-            var response = await _client.GetAsync($"api/incident/{incident.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+        //     // Act
+        //     var response = await _client.GetAsync($"api/incident/{incident.Id}");
+        //     var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+        //     Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+        // }
 
         // [Fact]
         // public async Task GetAllIncidentReturnNavigationIncident()
@@ -86,19 +86,19 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         //     Assert.Equal(10, returnList.Count);
         // }
 
-        [Fact]
-        public async Task UpdateIncidentReturnNoContent()
-        {
-            // Arrange
-            var newIncident = new IncidentDtoFaker().Generate();
-            var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+        // [Fact]
+        // public async Task UpdateIncidentReturnNoContent()
+        // {
+        //     // Arrange
+        //     var newIncident = new IncidentDtoFaker().Generate();
+        //     var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
 
-            // Act
-            var response = await _client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
+        //     // Act
+        //     var response = await _client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        // }
 
         // [Fact]
         // public async Task DeleteIncidentReturnNoContent()
