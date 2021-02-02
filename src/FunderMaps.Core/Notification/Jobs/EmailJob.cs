@@ -3,11 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Notification;
 using FunderMaps.Core.Threading;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
-namespace FunderMaps.BatchNode.Jobs.Notification
+namespace FunderMaps.Core.Notification.Jobs
 {
     /// <summary>
     ///     Email notification job.

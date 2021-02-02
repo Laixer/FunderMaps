@@ -3,6 +3,7 @@ using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.MapBundle;
 using FunderMaps.Core.Notification;
+using FunderMaps.Core.Notification.Jobs;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,17 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IHostEnvironment HostEnvironment { get; set; }
 
         /// <summary>
+        ///     Adds batch job to the task component.
+        /// </summary>
+        public static IServiceCollection AddBatchJob<TBatchJob>(this IServiceCollection services)
+        {
+            services.AddTransient(typeof(TBatchJob));
+            services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(TBatchJob)));
+
+            return services;
+        }
+
+        /// <summary>
         ///     Adds the core threading service to the container.
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
@@ -45,6 +57,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         private static IServiceCollection AddIncident(this IServiceCollection services)
         {
+            services.AddBatchJob<EmailJob>();
             services.AddScoped<IIncidentService, IncidentService>();
             services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
 
