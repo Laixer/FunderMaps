@@ -129,7 +129,7 @@ namespace FunderMaps.Data
         /// <param name="cmdText">SQL query.</param>
         /// <param name="navigation">Navigation instance of type <see cref="INavigation"/>.</param>
         /// <param name="alias">Datasource alias.</param>
-        protected static void ConstructNavigation(ref string cmdText, INavigation navigation, string alias = null)
+        protected static void ConstructNavigation(string cmdText, INavigation navigation, string alias = null)
         {
             const string lineFeed = "\r\n";
 

@@ -320,7 +320,7 @@ namespace FunderMaps.Data.Repositories
                         postal_country
                 FROM    application.organization";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
