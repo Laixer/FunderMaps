@@ -5,8 +5,12 @@ using Microsoft.Extensions.Logging;
 namespace FunderMaps.Core.Threading
 {
     /// <summary>
-    ///     FooBar dummy job. Take this job as the template for other jobs.
+    ///     FooBar dummy job.
     /// </summary>
+    /// <remarks>
+    ///     This job is never used neither should it be used anywhere.
+    ///     Take this job as the template to new jobs.
+    /// </remarks>
     internal class FooBarJob : BackgroundTask
     {
         private const string TaskName = "FOOBAR";
@@ -30,8 +34,12 @@ namespace FunderMaps.Core.Threading
         }
 
         /// <summary>
-        ///     Method to check if this task can handle a given object.
+        ///     Method to check if this job can handle the task.
         /// </summary>
+        /// <remarks>
+        ///     How the job decides to accept or ignore the task is implementation
+        ///     specific.
+        /// </remarks>
         /// <param name="name">The task name.</param>
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>

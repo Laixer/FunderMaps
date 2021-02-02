@@ -6,6 +6,7 @@ using System.Threading;
 
 namespace FunderMaps.Core.Threading
 {
+    // FUTURE: Rename to BackgroundJob
     /// <summary>
     ///     Base class to background tasks.
     /// </summary>
