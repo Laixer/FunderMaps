@@ -4,7 +4,6 @@ using FunderMaps.Infrastructure.BatchClient;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
 
@@ -37,20 +36,17 @@ namespace Microsoft.Extensions.DependencyInjection
         private static void ConfigureExternalServices(IServiceCollection services)
         {
             // Remove all existing email services and inject local email service.
-            services.RemoveAll<IEmailService>();
+            services.AddOrReplace<IEmailService, EmailService>(ServiceLifetime.Singleton);
             services.Configure<EmailOptions>(Configuration.GetSection(EmailOptions.Section));
-            services.AddSingleton<IEmailService, EmailService>();
 
             // Remove all existing file storage services and inject local file stoage service.
-            services.RemoveAll<IBlobStorageService>();
+            services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Singleton);
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
-            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
             // Remove all existing batch services and inject local batch service.
             services.AddSingleton<ChannelFactory>();
-            services.RemoveAll<IBatchService>();
+            services.AddOrReplace<IBatchService, BatchProxy>(ServiceLifetime.Singleton);
             services.Configure<BatchOptions>(Configuration.GetSection("Batch"));
-            services.AddScoped<IBatchService, BatchProxy>();
         }
 
         /// <summary>

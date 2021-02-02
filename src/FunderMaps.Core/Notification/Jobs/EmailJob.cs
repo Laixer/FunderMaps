@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Email;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Threading;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
