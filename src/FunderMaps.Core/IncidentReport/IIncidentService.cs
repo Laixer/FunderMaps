@@ -1,7 +1,7 @@
-using FunderMaps.Core.Entities;
 using System.Threading.Tasks;
+using FunderMaps.Core.Entities;
 
-namespace FunderMaps.Core.Interfaces
+namespace FunderMaps.Core.IncidentReport
 {
     /// <summary>
     ///     Service to the incidents.

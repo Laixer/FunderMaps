@@ -4,6 +4,7 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Helpers;
+using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -161,7 +162,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Create incident.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input, [FromServices] Core.Services.IncidentService incidentService)
+        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input, [FromServices] IIncidentService incidentService)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
