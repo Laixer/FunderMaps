@@ -41,6 +41,7 @@ namespace FunderMaps.AspNetCore
                 ProcessException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 QueueOverflowException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
+                ServiceUnavailableException _ => BuildMessage("Internal service was unable to process the request.", HttpStatusCode.ServiceUnavailable),
                 StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
                 StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
                 UnhandledTaskException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),

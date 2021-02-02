@@ -1,0 +1,27 @@
+{
+    "Jwt": {
+        "Issuer": "FunderMaps",
+        "Audience": "FunderMaps",
+        "TokenValidity": 120
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Warning",
+            "Microsoft.AspNetCore.DataProtection": "Error"
+        }
+    },
+    "Batch": {
+        "ServiceUri": "https://batch.fundermaps.com"
+    },
+    "Email": {
+        "SmtpPort": 465,
+        "SmtpTls": true,
+        "DefaultSenderName": "FunderMaps",
+        "DefaultSenderAddress": "info@fundermaps.com"
+    },
+    "BlobStorage": {
+        "AccessKey": "ZDQQ3W7SX2LTGEHGIY3M",
+        "ServiceUri": "https://ams3.digitaloceanspaces.com/",
+        "BlobStorageName": "fundermaps-production"
+    }
+}
