@@ -36,8 +36,8 @@ namespace Microsoft.Extensions.DependencyInjection
         private static void ConfigureExternalServices(IServiceCollection services)
         {
             // Remove all existing email services and inject local email service.
-            services.AddOrReplace<IEmailService, EmailService>(ServiceLifetime.Singleton);
-            services.Configure<EmailOptions>(Configuration.GetSection(EmailOptions.Section));
+            services.AddOrReplace<IEmailService, SmtpService>(ServiceLifetime.Singleton);
+            services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.Section));
 
             // Remove all existing file storage services and inject local file stoage service.
             services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Singleton);
