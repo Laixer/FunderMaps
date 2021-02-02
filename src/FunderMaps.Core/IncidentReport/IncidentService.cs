@@ -18,7 +18,6 @@ namespace FunderMaps.Core.IncidentReport
     {
         private readonly IncidentOptions _options;
         private readonly Core.AppContext _appContext;
-        private readonly ITemplateParser _templateParser;
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
         private readonly IGeocoderTranslation _geocoderTranslation;
@@ -30,7 +29,6 @@ namespace FunderMaps.Core.IncidentReport
         public IncidentService(
             IOptions<IncidentOptions> options,
             Core.AppContext appContext,
-            ITemplateParser templateParser,
             IContactRepository contactRepository,
             IIncidentRepository incidentRepository,
             IGeocoderTranslation geocoderTranslation,
@@ -38,7 +36,6 @@ namespace FunderMaps.Core.IncidentReport
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
-            _templateParser = templateParser ?? throw new ArgumentNullException(nameof(templateParser));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(contactRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
@@ -147,22 +144,23 @@ namespace FunderMaps.Core.IncidentReport
 
             await _contactRepository.AddAsync(incident.ContactNavigation);
             incident = await _incidentRepository.AddGetAsync(incident);
-            var contact = await _contactRepository.GetByIdAsync(incident.Email);
-            incident.ContactNavigation = contact;
+            incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
 
-            _templateParser.AddObject(nameof(incident), incident);
-            _templateParser.AddObject(nameof(address), address);
-            _templateParser.AddObject(nameof(contact), contact);
-            _templateParser.FromTemplateFile("Email", "incident");
-
-            // FUTURE: Fix this cast.
-            (_templateParser as Core.Components.TemplateParser).RegisterExtension(new TranslationFunctions());
+            List<string> recipients = new(_options.Recipients);
+            recipients.Add(incident.Email);
 
             await _notifyService.DispatchNotifyAsync(new()
             {
-                Recipients = _options.Recipients,
-                Content = await _templateParser.RenderAsync(_appContext.CancellationToken),
+                Recipients = recipients,
                 Subject = $"Nieuwe melding: {incident.Id}",
+                Template = "incident",
+                Items = new Dictionary<string, object>
+                {
+                    { "incident", incident },
+                    { "address", address },
+                    { "contact", incident.ContactNavigation }
+                },
+                Extensions = new List<object> { new TranslationFunctions() },
             });
 
             return incident;
