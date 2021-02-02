@@ -554,7 +554,7 @@ namespace FunderMaps.Data.Repositories
                 JOIN 	application.attribution AS a ON a.id = i.attribution
                 WHERE   a.owner = @tenant";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -655,7 +655,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   a.owner = @tenant
                 AND     i.id = @id";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
