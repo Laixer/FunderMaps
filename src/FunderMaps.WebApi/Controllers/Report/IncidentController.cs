@@ -173,7 +173,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             {
                 SessionUser = _appContext.UserId,
                 SessionOrganization = _appContext.TenantId,
-                Gateway = Constants.IncidentGateway,
             });
 
             // Map.

@@ -83,14 +83,8 @@ namespace FunderMaps.Portal.Controllers
             // Map.
             var incident = _mapper.Map<Incident>(input);
 
-            // FUTURE: Remove the meta object.
             // Act.
-            await incidentService.AddAsync(incident, new
-            {
-                UserAgent = Request.Headers["User-Agent"].ToString(),
-                RemoteAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Gateway = Constants.IncidentGateway,
-            });
+            await incidentService.AddAsync(incident);
 
             // Return.
             return NoContent();
