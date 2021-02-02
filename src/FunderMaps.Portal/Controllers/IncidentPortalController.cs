@@ -3,6 +3,7 @@ using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Helpers;
+using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;

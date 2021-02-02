@@ -51,7 +51,6 @@ namespace FunderMaps.Core.Threading
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BackgroundTaskContext(Guid taskId)
-            => Id = taskId;
+        public BackgroundTaskContext(Guid taskId) => Id = taskId;
     }
 }

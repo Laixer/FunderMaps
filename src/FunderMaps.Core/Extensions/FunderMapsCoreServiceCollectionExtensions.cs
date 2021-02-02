@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.MapBundle;
 using FunderMaps.Core.Notification;
@@ -35,6 +36,17 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<DispatchManager>();
             services.AddTransient<BackgroundTaskDispatcher>();
             services.Configure<BackgroundWorkOptions>(Configuration.GetSection(BackgroundWorkOptions.Section));
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds incident reporting service.
+        /// </summary>
+        private static IServiceCollection AddIncident(this IServiceCollection services)
+        {
+            services.AddScoped<IIncidentService, IncidentService>();
+            services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
 
             return services;
         }
@@ -93,7 +105,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<INotifyService, NotificationHub>();
             services.AddScoped<IBundleService, BundleHub>();
-            services.AddScoped<IIncidentService, IncidentService>();
 
             // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
@@ -107,6 +118,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // objects to memory. The memory cache may have already been registered with the container
             // by some other package, however we cannot expect this to be.
             services.AddMemoryCache();
+
+            // Register the incident core service.
+            services.AddIncident();
 
             // The application core (as well as many other components) depends upon the ability to dispatch
             // tasks to the background.
