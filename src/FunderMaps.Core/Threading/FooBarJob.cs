@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
-using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
-namespace FunderMaps.BatchNode.Jobs
+namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     FooBar dummy job. Take this job as the template for other jobs.
@@ -17,8 +16,7 @@ namespace FunderMaps.BatchNode.Jobs
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public FooBarJob(ILogger<FooBarJob> logger)
-            => _logger = logger;
+        public FooBarJob(ILogger<FooBarJob> logger) => _logger = logger;
 
         /// <summary>
         ///     Execute asynchronous operation.
