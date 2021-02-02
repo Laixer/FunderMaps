@@ -1,9 +1,7 @@
-﻿using FunderMaps.Core.Email;
-using FunderMaps.Core.Interfaces;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
-namespace FunderMaps.Core.Services
+namespace FunderMaps.Core.Email
 {
     /// <summary>
     ///     Dummy eamail service.

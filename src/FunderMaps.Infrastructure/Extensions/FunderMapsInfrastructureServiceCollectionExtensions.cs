@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Email;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Infrastructure.BatchClient;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;

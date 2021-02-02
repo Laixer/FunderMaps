@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.MapBundle;
