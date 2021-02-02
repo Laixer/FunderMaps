@@ -232,7 +232,7 @@ namespace FunderMaps.Data.Repositories
                         meta
                 FROM    report.incident";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

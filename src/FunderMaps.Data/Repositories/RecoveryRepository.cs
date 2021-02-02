@@ -161,7 +161,7 @@ namespace FunderMaps.Data.Repositories
                         r.document_file
                 FROM    report.recovery AS r";
 
-            ConstructNavigation(ref sql, navigation, "r");
+            ConstructNavigation(sql, navigation, "r");
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

@@ -189,7 +189,7 @@ namespace FunderMaps.Data.Repositories
                         recovery_date
                 FROM    report.recovery_sample";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
