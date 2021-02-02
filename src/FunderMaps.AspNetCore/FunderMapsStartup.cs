@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Components;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;

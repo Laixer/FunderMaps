@@ -38,7 +38,7 @@ namespace FunderMaps.AspNetCore.Controllers
             _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
         }
 
-        // GET: api/user
+        // GET: user
         /// <summary>
         ///     Return session user.
         /// </summary>
@@ -55,7 +55,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return Ok(output);
         }
 
-        // PUT: api/user
+        // PUT: user
         /// <summary>
         ///     Update session user user.
         /// </summary>
@@ -73,7 +73,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return NoContent();
         }
 
-        // POST: api/user/change-password
+        // POST: user/change-password
         /// <summary>
         ///     Set password for session user.
         /// </summary>

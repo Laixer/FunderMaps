@@ -24,28 +24,11 @@ namespace FunderMaps.Data.Repositories
         /// </remarks>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Organization"/>.</returns>
-        public override ValueTask<Guid> AddAsync(Organization entity)
+        public override Task<Guid> AddAsync(Organization entity)
+            => throw new InvalidOperationException();
+
+        public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
-            throw new InvalidOperationException();
-        }
-
-        public async ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
-        {
-            if (id == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(id));
-            }
-
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new ArgumentNullException(nameof(email));
-            }
-
-            if (string.IsNullOrEmpty(passwordHash))
-            {
-                throw new ArgumentNullException(nameof(passwordHash));
-            }
-
             // TODO: normalized_email should be db trigger function
             var sql = @"
 	            SELECT application.create_organization(
@@ -53,7 +36,7 @@ namespace FunderMaps.Data.Repositories
                     @email,
                     @passwordHash)";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("email", email);
@@ -68,13 +51,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.organization";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -83,7 +66,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Organization"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -92,7 +75,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -101,6 +84,11 @@ namespace FunderMaps.Data.Repositories
 
         private static void MapToWriter(DbContext context, Organization entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
             context.AddParameterWithValue("registration_number", entity.RegistrationNumber);
             context.AddParameterWithValue("branding_logo", entity.BrandingLogo);
@@ -126,7 +114,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         private static Organization MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new Organization
+            => new()
             {
                 Id = reader.GetGuid(offset + 0),
                 Name = reader.GetSafeString(offset + 1),
@@ -160,7 +148,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Organization"/>.</returns>
-        public override async ValueTask<Organization> GetByIdAsync(Guid id)
+        public override async Task<Organization> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out Organization entity))
             {
@@ -197,7 +185,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -211,7 +199,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="name">Organization name.</param>
         /// <returns><see cref="Organization"/>.</returns>
-        public async ValueTask<Organization> GetByNameAsync(string name)
+        public async Task<Organization> GetByNameAsync(string name)
         {
             var sql = @"
                 SELECT  id,
@@ -243,7 +231,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_name = application.normalize(@name)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("name", name);
 
@@ -257,7 +245,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="Organization"/>.</returns>
-        public async ValueTask<Organization> GetByEmailAsync(string email)
+        public async Task<Organization> GetByEmailAsync(string email)
         {
             var sql = @"
                 SELECT  id,
@@ -289,7 +277,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -298,34 +286,12 @@ namespace FunderMaps.Data.Repositories
             return CacheEntity(MapFromReader(reader));
         }
 
-        public async ValueTask<string> GetFenceAsync(Organization entity)
-        {
-            var sql = @"
-                SELECT  ST_AsText(fence) AS fence
-                FROM    application.organization
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory(sql);
-
-            context.AddParameterWithValue("id", entity.Id);
-
-            await using var reader = await context.ReaderAsync();
-
-            return reader.GetSafeString(0);
-        }
-
         /// <summary>
         ///     Retrieve all <see cref="Organization"/>.
         /// </summary>
         /// <returns>List of <see cref="Organization"/>.</returns>
         public override async IAsyncEnumerable<Organization> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  id,
                         name,
@@ -356,7 +322,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -368,13 +334,8 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Organization"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Organization entity)
+        public override async Task UpdateAsync(Organization entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             ResetCacheEntity(entity);
 
             var sql = @"
@@ -403,7 +364,7 @@ namespace FunderMaps.Data.Repositories
                         postal_country = @postal_country
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 

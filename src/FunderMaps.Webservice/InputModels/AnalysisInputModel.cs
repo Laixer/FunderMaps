@@ -7,7 +7,7 @@ namespace FunderMaps.Webservice.InputModels
     /// <summary>
     ///     DTO for an analysis product request.
     /// </summary>
-    public sealed class AnalysisInputModel : PaginationInputModel
+    public sealed record AnalysisInputModel : PaginationInputModel
     {
         /// <summary>
         ///     Product type.

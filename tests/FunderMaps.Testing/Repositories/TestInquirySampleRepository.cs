@@ -18,7 +18,7 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public override ValueTask<int> AddAsync(InquirySample entity)
+        public override Task<int> AddAsync(InquirySample entity)
         {
             entity.Id = randomizer.Int(0, int.MaxValue);
             return base.AddAsync(entity);

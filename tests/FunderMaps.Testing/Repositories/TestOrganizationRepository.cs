@@ -19,14 +19,14 @@ namespace FunderMaps.Testing.Repositories
             DataStoreOrganizationProposal = dataStoreOrganizationProposal;
         }
 
-        public override ValueTask<Guid> AddAsync(Organization entity)
+        public override Task<Guid> AddAsync(Organization entity)
             => throw new InvalidOperationException();
 
-        public ValueTask<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
+        public Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
             var proposal = DataStoreOrganizationProposal.ItemList.FirstOrDefault(e => e.Id == id);
 
-            var organization = new Organization
+            Organization organization = new()
             {
                 Id = proposal.Id,
                 Name = proposal.Name,
@@ -34,13 +34,13 @@ namespace FunderMaps.Testing.Repositories
             };
 
             DataStore.ItemList.Add(organization);
-            return new ValueTask<Guid>(organization.Id);
+            return Task.FromResult<Guid>(organization.Id);
         }
 
-        public ValueTask<Organization> GetByEmailAsync(string email)
-            => new ValueTask<Organization>(DataStore.ItemList.FirstOrDefault(e => e.Email == email));
+        public Task<Organization> GetByEmailAsync(string email)
+            => Task.FromResult<Organization>(DataStore.ItemList.FirstOrDefault(e => e.Email == email));
 
-        public ValueTask<Organization> GetByNameAsync(string name)
-            => new ValueTask<Organization>(DataStore.ItemList.FirstOrDefault(e => e.Name == name));
+        public Task<Organization> GetByNameAsync(string name)
+            => Task.FromResult<Organization>(DataStore.ItemList.FirstOrDefault(e => e.Name == name));
     }
 }

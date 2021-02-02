@@ -16,7 +16,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="organizationId">Organization identifier.</param>
         /// <param name="userId">User identifier.</param>
         /// <param name="role">User role in organization.</param>
-        ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role);
+        Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role);
 
         /// <summary>
         ///     Test if user belongs to an organization.
@@ -24,21 +24,21 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="organizationId">Organization identifier.</param>
         /// <param name="userId">User identifier.</param>
         /// <returns><c>True</c> if user is member of organization, false otherwise.</returns>
-        ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId);
+        Task<bool> IsUserInOrganization(Guid organizationId, Guid userId);
 
         /// <summary>
         ///     Find organization by user.
         /// </summary>
         /// <param name="userId">User identifier.</param>
         /// <returns>Identifier of organization.</returns>
-        ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId);
+        Task<Guid> GetOrganizationByUserIdAsync(Guid userId);
 
         /// <summary>
         ///     Get user role within the organization.
         /// </summary>
         /// <param name="userId">User identifier.</param>
         /// <returns>Organization role.</returns>
-        ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId);
+        Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId);
 
         /// <summary>
         ///     List all organization members.

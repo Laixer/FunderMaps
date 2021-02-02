@@ -1,12 +1,12 @@
-﻿using System;
-using SystemPath = System.IO.Path;
+using System;
+using System.IO;
 
-namespace FunderMaps.Core.IO
+namespace FunderMaps.Core.Helpers
 {
     /// <summary>
-    ///     <see cref="System.IO.Path"/> extensions.
+    ///     Helpers for file and path related operations.
     /// </summary>
-    public static class Path
+    public static class FileHelper
     {
         /// <summary>
         ///     Generate a unique file name.
@@ -15,12 +15,12 @@ namespace FunderMaps.Core.IO
         /// <returns></returns>
         public static string GetUniqueName(string fileName = null)
         {
-            if (fileName == null || !SystemPath.HasExtension(fileName))
+            if (fileName is null || !Path.HasExtension(fileName))
             {
                 return Guid.NewGuid().ToString();
             }
 
-            return $"{Guid.NewGuid()}{SystemPath.GetExtension(fileName)}";
+            return $"{Guid.NewGuid()}{Path.GetExtension(fileName)}";
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿using FunderMaps.Core.Services;
-using FunderMaps.Webservice.Abstractions.Services;
+﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice

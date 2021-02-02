@@ -14,7 +14,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class LayerRepository : RepositoryBase<Layer, Guid>, ILayerRepository
     {
-        protected override void SetCacheItem(KeyPair key, Layer value, MemoryCacheEntryOptions options)
+        protected override void SetCacheItem(CacheKeyPair key, Layer value, MemoryCacheEntryOptions options)
         {
             options.SlidingExpiration *= 2;
             options.AbsoluteExpirationRelativeToNow *= 2;
@@ -27,9 +27,9 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Layer"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(Layer entity)
+        public override async Task<Guid> AddAsync(Layer entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -45,7 +45,7 @@ namespace FunderMaps.Data.Repositories
                     @name)
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("schema_name", entity.SchemaName);
             context.AddParameterWithValue("table_name", entity.TableName);
@@ -60,13 +60,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    maplayer.layer";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -74,7 +74,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Layer"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -83,7 +83,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    maplayer.layer
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -95,7 +95,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Layer"/>.</returns>
-        public override async ValueTask<Layer> GetByIdAsync(Guid id)
+        public override async Task<Layer> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out Layer entity))
             {
@@ -113,7 +113,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   l.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -148,7 +148,7 @@ namespace FunderMaps.Data.Repositories
                         )
                 WHERE   b.id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", bundleId);
 
@@ -164,11 +164,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Layer"/>.</returns>
         public override async IAsyncEnumerable<Layer> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Layer
                         l.id,
@@ -180,20 +175,21 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return CacheEntity(MapFromReader(reader));
             }
         }
+
         /// <summary>
         ///     Update <see cref="Layer"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Layer entity)
+        public override async Task UpdateAsync(Layer entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -208,7 +204,7 @@ namespace FunderMaps.Data.Repositories
                             markup = @markup
                     WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
             context.AddParameterWithValue("schema_name", entity.SchemaName);
@@ -224,7 +220,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="reader"></param>
         private static Layer MapFromReader(DbDataReader reader)
-            => new Layer
+            => new()
             {
                 Id = reader.GetGuid(0),
                 SchemaName = reader.GetString(1),

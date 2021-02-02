@@ -1,9 +1,8 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Webservice.Abstractions.Services;
 using FunderMaps.Webservice.InputModels;
-using FunderMaps.Webservice.ResponseModels;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -36,7 +35,6 @@ namespace FunderMaps.Webservice.Controllers
         ///     Encapulate transfer object into item wrapper.
         /// </summary>
         private async Task<ResponseWrapper<TDto>> AsResponseWrapperAsync<TDto, TSource>(IAsyncEnumerable<TSource> itemList)
-            where TSource : ProductBase
             => new()
             {
                 Items = await _mapper.MapAsync<IList<TDto>, TSource>(itemList)

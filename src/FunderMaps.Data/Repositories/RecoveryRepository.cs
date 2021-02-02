@@ -17,6 +17,11 @@ namespace FunderMaps.Data.Repositories
     {
         public static void MapToWriter(DbContext context, Recovery entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("note", entity.Note);
             context.AddParameterWithValue("attribution", entity.Attribution);
             context.AddParameterWithValue("access_policy", entity.AccessPolicy);
@@ -26,7 +31,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static Recovery MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new Recovery
+            => new()
             {
                 Id = reader.GetInt(offset + 0),
                 Note = reader.GetSafeString(offset + 1),
@@ -45,13 +50,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Recovery"/>.</returns>
-        public override async ValueTask<int> AddAsync(Recovery entity)
+        public override async Task<int> AddAsync(Recovery entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO report.recovery(
                     note,
@@ -69,7 +69,7 @@ namespace FunderMaps.Data.Repositories
                     @document_file)
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -80,13 +80,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    report.recovery";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -95,14 +95,14 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Recovery"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(int id)
+        public override async Task DeleteAsync(int id)
         {
             var sql = @"
                 DELETE
                 FROM    report.recovery
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -114,7 +114,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Recovery"/>.</returns>
-        public override async ValueTask<Recovery> GetByIdAsync(int id)
+        public override async Task<Recovery> GetByIdAsync(int id)
         {
             var sql = @"
                 SELECT  -- Recovery
@@ -132,7 +132,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   r.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -147,11 +147,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Recovery"/>.</returns>
         public override async IAsyncEnumerable<Recovery> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Recovery
                         r.id,
@@ -168,7 +163,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "r");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -180,23 +175,18 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Recovery"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Recovery entity)
+        public override async Task UpdateAsync(Recovery entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
-                    UPDATE  report.recovery
-                    SET     note = @note,
-                            access_policy = @access_policy,
-                            type = @type,
-                            document_date = @document_date,
-                            document_file = @document_file
-                    WHERE   id = @id";
+                UPDATE  report.recovery
+                SET     note = @note,
+                        access_policy = @access_policy,
+                        type = @type,
+                        document_date = @document_date,
+                        document_file = @document_file
+                WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 

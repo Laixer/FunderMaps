@@ -3,7 +3,7 @@ using FunderMaps.Core.Interfaces;
 namespace FunderMaps.Core.Components
 {
     /// <summary>
-    ///     Default AppContext factory.
+    ///     Default <see cref="AppContext"/> factory.
     /// </summary>
     public class AppContextFactory : IAppContextFactory
     {

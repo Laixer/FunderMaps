@@ -1,7 +1,11 @@
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data;
+using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -12,12 +16,24 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class FunderMapsDataServiceCollectionExtensions
     {
         /// <summary>
+        ///     Configuration.
+        /// </summary>
+        public static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Host environment.
+        /// </summary>
+        public static IHostEnvironment HostEnvironment { get; set; }
+
+        /// <summary>
         ///     Add repository with application context injection to container.
         /// </summary>
         /// <remarks>
-        ///     This service factory create the repository service and initializes the context.
         ///     <para>
-        ///         Repositories that obey the <see cref="DbContextBase"/> contract can request the application context
+        ///         This service factory create the repository service and initializes the context.
+        ///     </para>
+        ///     <para>
+        ///         Repositories that obey the <see cref="DbServiceBase"/> contract can request the application context
         ///         from inheritance. The application context is per scope so repositories need to be scoped as well.
         ///     </para>
         /// </remarks>
@@ -25,15 +41,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>A reference to this instance after the operation has completed.</returns>
         private static IServiceCollection AddContextRepository<TService, TImplementation>(this IServiceCollection services)
             where TService : class
-            where TImplementation : DbContextBase, TService, new()
+            where TImplementation : DbServiceBase, TService, new()
             => services.AddScoped<TService, TImplementation>(serviceProvider =>
             {
                 TImplementation repository = new();
-                DbContextBase injectorBase = repository as DbContextBase;
+                DbServiceBase injectorBase = repository as DbServiceBase;
                 injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
-                injectorBase.DbProvider = serviceProvider.GetService<DbProvider>();
-                // TODO: 
-                // injectorBase.DbContextFactory = serviceProvider.GetRequiredService<DbContextFactory>()
+                injectorBase.Cache = serviceProvider.GetService<IMemoryCache>();
+                injectorBase.DbContextFactory = ActivatorUtilities.CreateInstance<DbContextFactory>(serviceProvider);
                 return repository;
             });
 
@@ -49,6 +64,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
+            // The startup essential properties can be used to setup components.
+            (Configuration, HostEnvironment) = services.BuildStartupProperties();
+
             // Register context repositories with the DI container.
             // NOTE: Keep the order in which they are directory listed
             services.AddContextRepository<IAddressRepository, AddressRepository>();
@@ -63,8 +81,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddContextRepository<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
             services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();
-            services.AddContextRepository<IProjectRepository, ProjectRepository>();
-            services.AddContextRepository<IProjectSampleRepository, ProjectSampleRepository>();
             services.AddContextRepository<IRecoveryRepository, RecoveryRepository>();
             services.AddContextRepository<IRecoverySampleRepository, RecoverySampleRepository>();
             services.AddContextRepository<IStatisticsRepository, StatisticsRepository>();
@@ -98,10 +114,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<DbProviderOptions>(options =>
             {
                 options.ConnectionStringName = dbConfigName;
-                options.ConnectionTimeout = 5; // in seconds
-                options.CommandTimeout = 5; // in seconds
-                options.MinPoolSize = 0;
-                options.MaxPoolSize = 25;
             });
 
             return services;

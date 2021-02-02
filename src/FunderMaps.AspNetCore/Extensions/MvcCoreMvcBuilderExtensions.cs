@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     ///     Extensions for configuring MVC using an <see cref="IMvcBuilder"/>.
     /// </summary>
-    public static class MvcCoreMvcBuilderExtensions
+    internal static class MvcCoreMvcBuilderExtensions
     {
         /// <summary>
         ///     Adds the FunderMaps AspNetCore application part to the MVC application.
@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The <see cref="IMvcBuilder"/>.</returns>
         public static IMvcBuilder AddFunderMapsAssembly(this IMvcBuilder builder)
         {
-            if (builder == null)
+            if (builder is null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }

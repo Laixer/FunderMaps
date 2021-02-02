@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Identity
     public interface ITenant
     {
         /// <summary>
-        ///     Unique identifier.
+        ///     Unique tenant identifier.
         /// </summary>
         Guid Id { get; set; }
     }

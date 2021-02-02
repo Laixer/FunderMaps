@@ -20,13 +20,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Contact"/>.</returns>
-        public override async ValueTask<string> AddAsync(Contact entity)
+        public override async Task<string> AddAsync(Contact entity)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO application.contact(
                     email,
@@ -38,7 +33,7 @@ namespace FunderMaps.Data.Repositories
                     NULLIF(trim(@phone_number), ''))
                 ON CONFLICT DO NOTHING";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -51,13 +46,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.contact";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -66,7 +61,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Contact"/>.
         /// </summary>
         /// <param name="email">Entity email.</param>
-        public override async ValueTask DeleteAsync(string email)
+        public override async Task DeleteAsync(string email)
         {
             ResetCacheEntity(email);
 
@@ -75,7 +70,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -84,13 +79,18 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, Contact entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("email", entity.Email);
             context.AddParameterWithValue("name", entity.Name);
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         }
 
         public static Contact MapFromReader(DbDataReader reader, int offset = 0)
-            => new Contact
+            => new()
             {
                 Email = reader.GetSafeString(offset + 0),
                 Name = reader.GetSafeString(offset + 1),
@@ -102,7 +102,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="Contact"/>.</returns>
-        public override async ValueTask<Contact> GetByIdAsync(string email)
+        public override async Task<Contact> GetByIdAsync(string email)
         {
             if (TryGetEntity(email, out Contact entity))
             {
@@ -118,7 +118,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   c.email = @email
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -133,11 +133,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Contact"/>.</returns>
         public override async IAsyncEnumerable<Contact> ListAllAsync(INavigation navigation)
         {
-            if (navigation is null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Contact
                         c.email,
@@ -147,7 +142,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "c");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -159,9 +154,9 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Contact"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Contact entity)
+        public override async Task UpdateAsync(Contact entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -174,7 +169,7 @@ namespace FunderMaps.Data.Repositories
                             phone_number = NULLIF(trim(@phone_number), ''))
                     WHERE   email = @email";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 

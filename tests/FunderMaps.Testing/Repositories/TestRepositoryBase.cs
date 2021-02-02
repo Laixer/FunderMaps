@@ -51,28 +51,28 @@ namespace FunderMaps.Testing.Repositories
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public virtual ValueTask<TEntryPrimaryKey> AddAsync(TEntity entity)
+        public virtual Task<TEntryPrimaryKey> AddAsync(TEntity entity)
         {
             DataStore.Add(entity);
-            return new ValueTask<TEntryPrimaryKey>(EntityPrimaryKey(entity));
+            return Task.FromResult<TEntryPrimaryKey>(EntityPrimaryKey(entity));
         }
 
         /// <summary>
         ///     Count items in datastore.
         /// </summary>
         /// <returns>Number of items in data store.</returns>
-        public virtual ValueTask<long> CountAsync()
-            => new ValueTask<long>(DataStore.Count);
+        public virtual Task<long> CountAsync()
+            => Task.FromResult<long>(DataStore.Count);
 
         /// <summary>
         ///     Remove entity from data store.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual ValueTask DeleteAsync(TEntryPrimaryKey id)
+        public virtual Task DeleteAsync(TEntryPrimaryKey id)
         {
             DataStore.ItemList.Remove(FindEntityById(id));
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace FunderMaps.Testing.Repositories
         /// </summary>
         /// <param name="id">Entity primary key.</param>
         /// <returns>Instance of <see cref="TEntity"/>.</returns>
-        public virtual ValueTask<TEntity> GetByIdAsync(TEntryPrimaryKey id)
-            => new ValueTask<TEntity>(FindEntityById(id));
+        public virtual Task<TEntity> GetByIdAsync(TEntryPrimaryKey id)
+            => Task.FromResult<TEntity>(FindEntityById(id));
 
         /// <summary>
         ///     Return all items in the data store.
@@ -96,10 +96,10 @@ namespace FunderMaps.Testing.Repositories
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public virtual ValueTask UpdateAsync(TEntity entity)
+        public virtual Task UpdateAsync(TEntity entity)
         {
             DataStore.ItemList[FindIndexById(EntityPrimaryKey(entity))] = entity;
-            return new ValueTask();
+            return Task.CompletedTask;
         }
     }
 }

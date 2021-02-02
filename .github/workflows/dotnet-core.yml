@@ -41,3 +41,5 @@ jobs:
 
     - name: Test
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
+      env:
+        Jwt__SignatureKey: somelargetextstringusedinsignatures

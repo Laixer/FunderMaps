@@ -49,7 +49,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ChannelFactory>();
             services.RemoveAll<IBatchService>();
             services.Configure<BatchOptions>(Configuration.GetSection("Batch"));
-            services.AddScoped<IBatchService, BatchClient>();
+            services.AddScoped<IBatchService, BatchProxy>();
         }
 
         /// <summary>
@@ -64,11 +64,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            using var serviceProviderScope = services.BuildServiceProvider().CreateScope();
-            Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
-            HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+            // The startup essential properties can be used to setup components.
+            (Configuration, HostEnvironment) = services.BuildStartupProperties();
 
-            if (!HostEnvironment.IsDevelopment())
+            if (!HostEnvironment.IsDevelopment() || Configuration.GetValue<bool>("UseExternalServices", false))
             {
                 ConfigureExternalServices(services);
             }

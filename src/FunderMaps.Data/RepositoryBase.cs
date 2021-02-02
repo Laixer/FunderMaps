@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -8,40 +9,31 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Data
 {
-    // FUTURE: Detach memory from AppContext
     /// <summary>
     ///     Generic repository base.
     /// </summary>
     /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
     /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
-    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbContextBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
+    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
         where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
         where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
     {
-        // FUTURE: Single transaction
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
-        /// </summary>
-        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
-        {
-            TEntityPrimaryKey primaryKey = await AddAsync(entity);
-            return await GetByIdAsync(primaryKey);
-        }
+        #region Cache
 
         /// <summary>
-        ///     Keypair used as cache identifier.
+        ///     Keypair used as cache bucket item.
         /// </summary>
-        protected class KeyPair
+        protected record CacheKeyPair
         {
             /// <summary>
             ///     Entity hash key.
             /// </summary>
-            public int EntityKey { get; set; }
+            public int EntityKey { get; init; }
 
             /// <summary>
             ///     Object hash key.
             /// </summary>
-            public int Key { get; set; }
+            public int Key { get; init; }
 
             /// <summary>
             ///     Keypair identifier.
@@ -56,8 +48,8 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Build entity hash key.
         /// </summary>
-        protected static KeyPair EntityHashKey(object key)
-            => new KeyPair
+        protected static CacheKeyPair EntityHashKey(object key)
+            => new()
             {
                 EntityKey = typeof(TEntity).GetHashCode(),
                 Key = key.GetHashCode(),
@@ -69,8 +61,8 @@ namespace FunderMaps.Data
         /// <remarks>
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
-        protected virtual void SetCacheItem(KeyPair key, TEntity value, MemoryCacheEntryOptions options)
-            => AppContext.Cache.Set(key.KeyPairIdentity, value, options);
+        protected virtual void SetCacheItem(CacheKeyPair key, TEntity value, MemoryCacheEntryOptions options)
+            => Cache.Set(key.KeyPairIdentity, value, options);
 
         /// <summary>
         ///     Unset cache item.
@@ -78,8 +70,8 @@ namespace FunderMaps.Data
         /// <remarks>
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
-        protected virtual void UnsetCacheItem(KeyPair key)
-            => AppContext.Cache.Remove(key.KeyPairIdentity);
+        protected virtual void UnsetCacheItem(CacheKeyPair key)
+            => Cache.Remove(key.KeyPairIdentity);
 
         /// <summary>
         ///     Get cache item.
@@ -87,8 +79,8 @@ namespace FunderMaps.Data
         /// <remarks>
         ///     Derived repositories can override this call to change cache behavior.
         /// </remarks>
-        protected virtual bool GetCacheItem(KeyPair key, out TEntity value)
-            => AppContext.Cache.TryGetValue(key.KeyPairIdentity, out value);
+        protected virtual bool GetCacheItem(CacheKeyPair key, out TEntity value)
+            => Cache.TryGetValue(key.KeyPairIdentity, out value);
 
         /// <summary>
         ///     Try get entity from cache.
@@ -127,10 +119,56 @@ namespace FunderMaps.Data
         protected void ResetCacheEntity(TEntity value)
             => ResetCacheEntity(value.Identifier);
 
+        #endregion Cache
+
+        // FUTURE: Maybe too npgsql specific.
+        // FUTURE: Extension ?
+        /// <summary>
+        ///     Convert navigation to query.
+        /// </summary>
+        /// <param name="cmdText">SQL query.</param>
+        /// <param name="navigation">Navigation instance of type <see cref="INavigation"/>.</param>
+        /// <param name="alias">Datasource alias.</param>
+        protected static void ConstructNavigation(ref string cmdText, INavigation navigation, string alias = null)
+        {
+            const string lineFeed = "\r\n";
+
+            if (navigation is null)
+            {
+                return;
+            }
+
+            // FUTURE: Can we improve stability and readability here?
+            if (!string.IsNullOrEmpty(navigation.SortColumn))
+            {
+                var column = alias is not null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
+                cmdText += $"{lineFeed} ORDER BY {column} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
+            }
+
+            if (navigation.Offset != 0)
+            {
+                cmdText += $"{lineFeed} OFFSET {navigation.Offset}";
+            }
+
+            if (navigation.Limit != 0)
+            {
+                cmdText += $"{lineFeed} LIMIT {navigation.Limit}";
+            }
+        }
+
+        /// <summary>
+        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
+        /// </summary>
+        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+        {
+            TEntityPrimaryKey primaryKey = await AddAsync(entity);
+            return await GetByIdAsync(primaryKey);
+        }
+
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntity> GetByIdAsync(TEntityPrimaryKey id);
+        public abstract Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
@@ -140,21 +178,21 @@ namespace FunderMaps.Data
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
         /// </summary>
-        public abstract ValueTask<TEntityPrimaryKey> AddAsync(TEntity entity);
+        public abstract Task<TEntityPrimaryKey> AddAsync(TEntity entity);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
         /// </summary>
-        public abstract ValueTask UpdateAsync(TEntity entity);
+        public abstract Task UpdateAsync(TEntity entity);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
         /// </summary>
-        public abstract ValueTask DeleteAsync(TEntityPrimaryKey id);
+        public abstract Task DeleteAsync(TEntityPrimaryKey id);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
         /// </summary>
-        public abstract ValueTask<long> CountAsync();
+        public abstract Task<long> CountAsync();
     }
 }

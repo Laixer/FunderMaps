@@ -24,17 +24,17 @@ namespace FunderMaps.Data.Providers
         /// <summary>
         ///     Maximum number of connection to keep in the pool.
         /// </summary>
-        public int MaxPoolSize { get; set; }
+        public int MaxPoolSize { get; set; } = 25;
 
         /// <summary>
         ///     The time in seconds to wait for a connection to open.
         /// </summary>
-        public int ConnectionTimeout { get; set; }
+        public int ConnectionTimeout { get; set; } = 5;
 
         /// <summary>
         ///     The time in seconds to wait for the command to execute.
         /// </summary>
-        public int CommandTimeout { get; set; }
+        public int CommandTimeout { get; set; } = 5;
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

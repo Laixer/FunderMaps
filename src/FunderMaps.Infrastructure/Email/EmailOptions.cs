@@ -5,7 +5,7 @@ namespace FunderMaps.Infrastructure.Email
     /// <summary>
     ///     Options for the email service.
     /// </summary>
-    public sealed class EmailOptions
+    public sealed record EmailOptions
     {
         /// <summary>
         ///     Configuration section key.

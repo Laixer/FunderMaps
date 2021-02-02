@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.MapLayer;
@@ -21,13 +20,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">The bundle to create.</param>
         /// <returns>The id of the created bundle.</returns>
-        public override async ValueTask<Guid> AddAsync(Bundle entity)
+        public override async Task<Guid> AddAsync(Bundle entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 INSERT INTO maplayer.bundle(
                     organization_id,
@@ -39,7 +33,7 @@ namespace FunderMaps.Data.Repositories
                     @layers)
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -52,13 +46,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    maplayer.bundle";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -67,7 +61,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Bundle"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -76,7 +70,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    maplayer.bundle AS b
                 WHERE   b.id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -88,7 +82,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Internal bundle id.</param>
         /// <returns>The retrieved bundle.</returns>
-        public override async ValueTask<Bundle> GetByIdAsync(Guid id)
+        public override async Task<Bundle> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out Bundle entity))
             {
@@ -106,7 +100,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    maplayer.bundle AS b
                 WHERE   b.id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -122,11 +116,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Collection of bundles.</returns>
         public override async IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  b.id,
                         b.organization_id,
@@ -145,7 +134,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             if (AppContext.HasIdentity)
             {
@@ -162,21 +151,15 @@ namespace FunderMaps.Data.Repositories
         ///     Updates a <see cref="Bundle"/> in our database.
         /// </summary>
         /// <param name="entity">The updated bundle.</param>
-        /// <returns>See <see cref="ValueTask"/>.</returns>
-        public override async ValueTask UpdateAsync(Bundle entity)
+        public override async Task UpdateAsync(Bundle entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                     UPDATE  maplayer.bundle
                     SET     name = @name,
                             layer_configuration = @layer_configuration::jsonb
                     WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 
@@ -191,7 +174,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="reader"></param>
         /// <returns></returns>
         private static Bundle MapFromReader(DbDataReader reader)
-            => new Bundle
+            => new()
             {
                 Id = reader.GetGuid(0),
                 OrganizationId = reader.GetGuid(1),
@@ -209,6 +192,11 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">The entity to write.</param>
         private static void MapToWriter(DbContext context, Bundle entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("organization_id", entity.OrganizationId);
             context.AddParameterWithValue("name", entity.Name);
             context.AddJsonParameterWithValue("layer_configuration", entity.LayerConfiguration);

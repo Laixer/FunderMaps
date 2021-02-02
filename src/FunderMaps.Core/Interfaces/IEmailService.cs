@@ -6,17 +6,12 @@ namespace FunderMaps.Core.Interfaces
     /// <summary>
     ///     Email service.
     /// </summary>
-    public interface IEmailService
+    public interface IEmailService : IServiceHealthCheck
     {
         /// <summary>
         ///     Send email message.
         /// </summary>
         /// <param name="emailMessage">Message to send.</param>
         Task SendAsync(EmailMessage emailMessage);
-
-        /// <summary>
-        ///     Test the email service backend.
-        /// </summary>
-        Task TestService();
     }
 }

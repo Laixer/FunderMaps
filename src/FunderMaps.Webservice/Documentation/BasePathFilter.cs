@@ -16,11 +16,11 @@ namespace FunderMaps.Webservice.Documentation
         /// <param name="context"><see cref="DocumentFilterContext"/></param>
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            if (swaggerDoc == null)
+            if (swaggerDoc is null)
             {
                 throw new ArgumentNullException(nameof(swaggerDoc));
             }
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }

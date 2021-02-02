@@ -28,10 +28,10 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.Statistics.FoundationTypeDistribution, f => null);
             RuleFor(f => f.Statistics.FoundationRiskDistribution, f => null);
             RuleFor(f => f.Statistics.ConstructionYearDistribution, f => null);
-            RuleFor(f => f.Statistics.DataCollectedPercentage, f => f.Random.Double(0, 100));
-            RuleFor(f => f.Statistics.TotalBuildingRestoredCount, f => f.Random.UInt(3, 100));
-            RuleFor(f => f.Statistics.TotalIncidentCount, f => f.Random.UInt(3, 100));
-            RuleFor(f => f.Statistics.TotalReportCount, f => f.Random.UInt(3, 100));
+            RuleFor(f => f.Statistics.DataCollectedPercentage, f => f.Random.Int(0, 100));
+            RuleFor(f => f.Statistics.TotalBuildingRestoredCount, f => f.Random.Int(3, 100));
+            RuleFor(f => f.Statistics.TotalIncidentCount, f => f.Random.Int(3, 100));
+            RuleFor(f => f.Statistics.TotalReportCount, f => f.Random.Int(3, 100));
         }
     }
 }

@@ -24,7 +24,7 @@ namespace FunderMaps.Core.Entities
         [Required, Geocoder]
         public string Id { get; set; }
 
-        // TODO: Contraints, see #203
+        // FUTURE: Contraints, see #203
         /// <summary>
         ///     Built year.
         /// </summary>

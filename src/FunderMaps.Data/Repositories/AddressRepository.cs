@@ -17,7 +17,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
     {
-        protected override void SetCacheItem(KeyPair key, Address value, MemoryCacheEntryOptions options)
+        protected override void SetCacheItem(CacheKeyPair key, Address value, MemoryCacheEntryOptions options)
         {
             options.SlidingExpiration *= 2;
             options.AbsoluteExpirationRelativeToNow *= 2;
@@ -27,6 +27,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, Address entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("building_number", entity.BuildingNumber);
             context.AddParameterWithValue("postal_code", entity.PostalCode);
             context.AddParameterWithValue("street", entity.Street);
@@ -36,7 +41,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static Address MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new Address
+            => new()
             {
                 Id = reader.GetSafeString(offset + 0),
                 BuildingNumber = reader.GetSafeString(offset + 1),
@@ -55,13 +60,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="Address"/>.</returns>
-        public override async ValueTask<string> AddAsync(Address entity)
+        public override async Task<string> AddAsync(Address entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                     INSERT INTO geocoder.address(
                         building_number,
@@ -80,7 +80,7 @@ namespace FunderMaps.Data.Repositories
                     ON CONFLICT DO NOTHING
                     RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -93,13 +93,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    geocoder.address";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -108,10 +108,10 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Incident"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override ValueTask DeleteAsync(string id)
+        public override Task DeleteAsync(string id)
             => throw new InvalidOperationException();
 
-        public async ValueTask<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
+        public async Task<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
         {
             var sql = @"
                 SELECT  -- Address
@@ -140,7 +140,7 @@ namespace FunderMaps.Data.Repositories
                 AND     a.external_source = @external_source
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
             context.AddParameterWithValue("external_source", source);
@@ -155,7 +155,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="Address"/>.</returns>
-        public override async ValueTask<Address> GetByIdAsync(string id)
+        public override async Task<Address> GetByIdAsync(string id)
         {
             if (TryGetEntity(id, out Address entity))
             {
@@ -188,7 +188,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   a.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -205,11 +205,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns><see cref="Address"/>.</returns>
         public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Address
                         a.id,
@@ -236,7 +231,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "a");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("query", query);
 
@@ -252,11 +247,6 @@ namespace FunderMaps.Data.Repositories
         /// <returns>List of <see cref="Address"/>.</returns>
         public override async IAsyncEnumerable<Address> ListAllAsync(INavigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Address
                         a.id,
@@ -283,7 +273,7 @@ namespace FunderMaps.Data.Repositories
 
             ConstructNavigation(ref sql, navigation, "a");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -295,9 +285,9 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="Address"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(Address entity)
+        public override async Task UpdateAsync(Address entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -314,7 +304,7 @@ namespace FunderMaps.Data.Repositories
                             external_source = @external_source
                     WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 

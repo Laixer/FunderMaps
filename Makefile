@@ -17,4 +17,4 @@ test:
 
 clean:
 	dotnet clean --nologo
-	rm Documentation*.xml
+	find . -type f -name "Documentation*.xml" -exec rm {} +

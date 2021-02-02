@@ -2,6 +2,7 @@
 
 namespace FunderMaps.Core.Helpers
 {
+    // FUTURE: Maybe remove this?
     /// <summary>
     ///     Contains utility functionality for <see cref="DateTimeOffset"/>.
     /// </summary>
@@ -16,6 +17,6 @@ namespace FunderMaps.Core.Helpers
         /// </remarks>
         /// <param name="year">Integer representing the year</param>
         /// <returns><see cref="DateTimeOffset"/> representing a year</returns>
-        public static DateTimeOffset FromYear(int year) => new DateTimeOffset(year, 1, 1, 0, 0, 0, TimeSpan.Zero);
+        public static DateTimeOffset FromYear(int year) => new(year, 1, 1, 0, 0, 0, TimeSpan.Zero);
     }
 }

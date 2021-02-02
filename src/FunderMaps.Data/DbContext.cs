@@ -12,7 +12,7 @@ namespace FunderMaps.Data
     /// <summary>
     ///     Database context.
     /// </summary>
-    internal class DbContext : IAsyncDisposable // TODO: Inherit from AppContext?
+    internal class DbContext : IAsyncDisposable
     {
         /// <summary>
         ///     Data provider interface.
@@ -35,15 +35,20 @@ namespace FunderMaps.Data
         public DbCommand Command { get; private set; }
 
         private DbDataReader reader;
+
+        /// <summary>
+        ///     Database resultset reader.
+        /// </summary>
+        /// <remarks>
+        ///     Resultsets are expensive so if a new reader is set on 
+        ///     this context then dispose the current resultset right away.
+        /// </remarks>
         public DbDataReader Reader
         {
             get => reader;
             set
             {
-                if (reader != null)
-                {
-                    reader.Dispose();
-                }
+                reader?.Dispose();
                 reader = value;
             }
         }
@@ -52,9 +57,11 @@ namespace FunderMaps.Data
         ///     Dispatch the exception to the databse provider.
         /// </summary>
         /// <remarks>
-        ///     This method should not be called directly but only in the context
-        ///     of a caught exception. The exception block should still re-throw
-        ///     the exception since this handler *cannot* guarantee end of execution.
+        ///     <para>
+        ///         This method should not be called directly but only in the context
+        ///         of a caught exception. The exception block should still re-throw
+        ///         the exception since this handler *cannot* guarantee end of execution.
+        ///     </para>
         ///     <para>
         ///         The exception is captured first before its send to a remote
         ///         handler. The <see cref="ExceptionDispatchInfo"/> preserves
@@ -73,6 +80,10 @@ namespace FunderMaps.Data
         /// <summary>
         ///     Initialize database context.
         /// </summary>
+        /// <remarks>
+        ///     The database connection scope is rarely ever opened. Thus
+        ///     we'll return an explicit valuetask.
+        /// </remarks>
         /// <param name="cmdText">The text of the query.</param>
         public async ValueTask InitializeAsync(string cmdText)
         {
@@ -114,7 +125,7 @@ namespace FunderMaps.Data
         /// <param name="value">Parameter value.</param>
         public void AddJsonParameterWithValue(string parameterName, object value)
         {
-            var parameter = new Npgsql.NpgsqlParameter(parameterName, NpgsqlTypes.NpgsqlDbType.Jsonb)
+            Npgsql.NpgsqlParameter parameter = new(parameterName, NpgsqlTypes.NpgsqlDbType.Jsonb)
             {
                 Value = value ?? DBNull.Value
             };
@@ -188,7 +199,7 @@ namespace FunderMaps.Data
         {
             try
             {
-                var affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
+                int affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
                 if (affected <= 0 && affectedGuard)
                 {
                     throw new EntityNotFoundException();
@@ -209,13 +220,13 @@ namespace FunderMaps.Data
         {
             try
             {
-                var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
-                if (result == null && resultGuard)
+                TResult result = (TResult)await Command.ExecuteScalarAsync(AppContext.CancellationToken);
+                if (result is null && resultGuard)
                 {
                     throw new EntityNotFoundException();
                 }
 
-                return (TResult)result;
+                return result;
             }
             catch (DbException exception)
             {
@@ -229,8 +240,7 @@ namespace FunderMaps.Data
         /// </summary>
         public async ValueTask DisposeAsync()
         {
-            // NOTE: Cannot dispose async with nullable (?.) check.
-            if (Reader != null)
+            if (Reader is not null)
             {
                 await Reader.DisposeAsync();
             }

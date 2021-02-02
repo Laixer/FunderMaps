@@ -15,7 +15,7 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public override ValueTask<string> AddAsync(Incident entity)
+        public override Task<string> AddAsync(Incident entity)
         {
             entity.Id = randomizer.Replace("FIR######-#####");
             entity.AuditStatus = AuditStatus.Todo;
