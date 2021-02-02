@@ -11,8 +11,6 @@ using System.Linq;
 
 namespace FunderMaps.BatchNode
 {
-    // FUTURE: This scheduler will eventually be replaced by a combination of
-    //         CLI + OS unit timer.
     /// <summary>
     ///     Schedule tasks with interval.
     /// </summary>
@@ -57,8 +55,6 @@ namespace FunderMaps.BatchNode
             _configuration = configuration;
             _servicesProvider = services;
             _logger = logger;
-
-            scheduleTasks = _configuration.GetSection(ConfigurationScheduleSection).Get<ScheduleTask[]>();
         }
 
         /// <summary>
@@ -66,12 +62,9 @@ namespace FunderMaps.BatchNode
         /// </summary>
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            if (scheduleTasks is not null)
-            {
-                _timer = new(Worker, null,
-                    TimeSpan.Zero,
-                    TimeSpan.FromMinutes(1));
-            }
+            _timer = new(Worker, null,
+                TimeSpan.Zero,
+                TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
@@ -88,21 +81,16 @@ namespace FunderMaps.BatchNode
         {
             _logger.LogTrace("Timed worker is running scheduled jobs.");
 
-            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+            using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
             await signal.WaitAsync(cts.Token);
-
-            static bool ChronoParser(ScheduleTask task)
-                => (task.Interval == "every hour" && DateTime.Now.Minute == 42)
-                || (task.Interval == "every half hour" && (DateTime.Now.Minute == 56 || DateTime.Now.Minute == 26))
-                || task.Interval == "every minute";
 
             try
             {
                 using var scope = _servicesProvider.CreateScope();
                 var backgroundTaskDispatcher = scope.ServiceProvider.GetRequiredService<BackgroundTaskScopedDispatcher>();
 
-                foreach (var task in scheduleTasks.ToArray().Where(ChronoParser))
+                foreach (var task in scheduleTasks.ToArray())
                 {
                     await backgroundTaskDispatcher.EnqueueTaskAsync(task.TaskName, task.Value);
                 }
