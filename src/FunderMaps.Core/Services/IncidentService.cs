@@ -12,7 +12,7 @@ namespace FunderMaps.Core.Services
     /// <summary>
     ///     Service to the incidents.
     /// </summary>
-    public class IncidentService : IIncidentService
+    internal class IncidentService : IIncidentService
     {
         private readonly Core.AppContext _appContext;
         private readonly IConfiguration _configuration;
@@ -54,20 +54,11 @@ namespace FunderMaps.Core.Services
             incident.ClientId = int.Parse(_configuration["Incident:ClientId"]);
             incident.Meta = meta;
 
-            // FUTURE: Contact is required, remove the checks.
-            // Act.
-            // There does not have to be a contact, but if it exists we'll save it.
-            if (incident.ContactNavigation is not null && !string.IsNullOrEmpty(incident.ContactNavigation.Email))
-            {
-                await _contactRepository.AddAsync(incident.ContactNavigation);
-            }
-
-            // Act.
+            await _contactRepository.AddAsync(incident.ContactNavigation);
             var id = await _incidentRepository.AddAsync(incident);
             incident = await _incidentRepository.GetByIdAsync(id);
             incident.ContactNavigation = await _contactRepository.GetByIdAsync(incident.Email);
 
-            // Act.
             await _notifyService.DispatchNotifyAsync("incident_notify", new()
             {
                 Recipients = new List<string> { "info@fundermaps.com", "info@kcaf.nl" }, // TODO: Retrieve from config

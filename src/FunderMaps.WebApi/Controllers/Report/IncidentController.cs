@@ -161,7 +161,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Create incident.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input, [FromServices] Core.Services.IncidentService incidentService)
+        public async Task<IActionResult> CreateAsync([FromBody] IncidentDto input, [FromServices] IIncidentService incidentService)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);

@@ -77,7 +77,7 @@ namespace FunderMaps.Portal.Controllers
         ///     Register new incident.
         /// </summary>
         [HttpPost("submit")]
-        public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input, [FromServices] Core.Services.IncidentService incidentService)
+        public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input, [FromServices] IIncidentService incidentService)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
