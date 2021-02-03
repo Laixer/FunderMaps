@@ -17,11 +17,10 @@ namespace FunderMaps.Core.MapBundle
     /// </summary>
     internal class BundleHub : AppServiceBase, IBundleService
     {
-        private const string TaskName = "BUNDLE_BUILDING";
-
         private readonly ILogger _logger;
         private readonly IBundleRepository _bundleRepository;
         private readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
+        private readonly Random _random = new Random();
 
         /// <summary>
         ///     Create new instance.
@@ -34,7 +33,7 @@ namespace FunderMaps.Core.MapBundle
             _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
         }
 
-        // REMOVE
+        // TODO: REMOVE
         class Nav : Interfaces.INavigation
         {
             public int Offset => 0;
@@ -50,7 +49,14 @@ namespace FunderMaps.Core.MapBundle
         /// </summary>
         public async Task BuildAsync()
         {
-            await foreach (var bundle in _bundleRepository.ListAllAsync(new Nav()))
+            IAsyncEnumerable<Entities.Bundle> bundleList = _bundleRepository.ListAllRecentAsync(new Nav());
+
+            if (_random.Next(0, 10) == 0)
+            {
+                bundleList = _bundleRepository.ListAllAsync(new Nav());
+            }
+
+            await foreach (var bundle in bundleList)
             {
                 _logger.LogDebug($"Enqueue bundle {bundle.Id}");
 
@@ -59,7 +65,6 @@ namespace FunderMaps.Core.MapBundle
                     Bundle = bundle,
                     Formats = new List<GeometryFormat> { GeometryFormat.MapboxVectorTiles },
                 });
-                break;
             }
         }
     }

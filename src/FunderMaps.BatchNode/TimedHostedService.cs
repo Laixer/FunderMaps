@@ -1,13 +1,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FunderMaps.Core.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
-using System.Linq;
+using FunderMaps.Core.MapBundle;
 
 namespace FunderMaps.BatchNode
 {
@@ -16,43 +13,17 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class TimedHostedService : IHostedService, IDisposable
     {
-        private const string ConfigurationScheduleSection = "Scheduler";
-
-        private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _servicesProvider;
         private readonly ILogger<TimedHostedService> _logger;
+
         private Timer _timer;
-        private IServiceProvider _servicesProvider;
-
         private SemaphoreSlim signal = new(1);
-        private ScheduleTask[] scheduleTasks;
-
-        /// <summary>
-        ///     Schedule task options.
-        /// </summary>
-        public record ScheduleTask
-        {
-            /// <summary>
-            ///     Task to execute.
-            /// </summary>
-            public string TaskName { get; init; }
-
-            /// <summary>
-            ///     Task value.
-            /// </summary>
-            public string Value { get; init; }
-
-            /// <summary>
-            ///     Task interval.
-            /// </summary>
-            public string Interval { get; init; }
-        }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public TimedHostedService(IConfiguration configuration, IServiceProvider services, ILogger<TimedHostedService> logger)
+        public TimedHostedService(IServiceProvider services, ILogger<TimedHostedService> logger)
         {
-            _configuration = configuration;
             _servicesProvider = services;
             _logger = logger;
         }
@@ -64,7 +35,7 @@ namespace FunderMaps.BatchNode
         {
             _timer = new(Worker, null,
                 TimeSpan.Zero,
-                TimeSpan.FromMinutes(1));
+                TimeSpan.FromMinutes(10));
 
             return Task.CompletedTask;
         }
@@ -79,7 +50,7 @@ namespace FunderMaps.BatchNode
         /// </remarks>
         private async void Worker(object state)
         {
-            _logger.LogTrace("Timed worker is running scheduled jobs.");
+            _logger.LogTrace("Timed worker is running.");
 
             using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
@@ -88,12 +59,9 @@ namespace FunderMaps.BatchNode
             try
             {
                 using var scope = _servicesProvider.CreateScope();
-                var backgroundTaskDispatcher = scope.ServiceProvider.GetRequiredService<BackgroundTaskScopedDispatcher>();
+                var bundleService = scope.ServiceProvider.GetRequiredService<IBundleService>();
 
-                foreach (var task in scheduleTasks.ToArray())
-                {
-                    await backgroundTaskDispatcher.EnqueueTaskAsync(task.TaskName, task.Value);
-                }
+                await bundleService.BuildAsync();
             }
             finally
             {
