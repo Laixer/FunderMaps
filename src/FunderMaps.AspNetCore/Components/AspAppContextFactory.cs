@@ -39,9 +39,17 @@ namespace FunderMaps.AspNetCore.Components
             Dictionary<object, object> requestItems = new(httpContext.Items)
             {
                 { "domain", httpContext.Request.Host.ToString() },
-                { "remote-agent", httpContext.Request.Headers["User-Agent"].ToString() },
-                { "remote-address", httpContext.Connection.RemoteIpAddress.ToString() },
             };
+
+            if (httpContext.Request.Headers.ContainsKey("User-Agent"))
+            {
+                requestItems.Add("remote-agent", httpContext.Request.Headers["User-Agent"].ToString());
+            }
+
+            if (httpContext.Connection.RemoteIpAddress is not null)
+            {
+                requestItems.Add("remote-address", httpContext.Connection.RemoteIpAddress.ToString());
+            }
 
             if (PrincipalProvider.IsSignedIn(httpContext.User))
             {
