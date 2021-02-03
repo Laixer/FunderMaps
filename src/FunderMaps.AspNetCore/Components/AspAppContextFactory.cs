@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Components;
 using FunderMaps.Core.Entities;
@@ -35,13 +36,28 @@ namespace FunderMaps.AspNetCore.Components
                 return base.Create();
             }
 
+            Dictionary<object, object> requestItems = new(httpContext.Items)
+            {
+                { "domain", httpContext.Request.Host.ToString() },
+            };
+
+            if (httpContext.Request.Headers.ContainsKey("User-Agent"))
+            {
+                requestItems.Add("remote-agent", httpContext.Request.Headers["User-Agent"].ToString());
+            }
+
+            if (httpContext.Connection.RemoteIpAddress is not null)
+            {
+                requestItems.Add("remote-address", httpContext.Connection.RemoteIpAddress.ToString());
+            }
+
             if (PrincipalProvider.IsSignedIn(httpContext.User))
             {
                 var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
                 return new()
                 {
                     CancellationToken = httpContext.RequestAborted,
-                    Items = new(httpContext.Items),
+                    Items = requestItems,
                     User = user,
                     Tenant = tenant,
                 };
@@ -50,7 +66,7 @@ namespace FunderMaps.AspNetCore.Components
             return new()
             {
                 CancellationToken = httpContext.RequestAborted,
-                Items = new(httpContext.Items)
+                Items = requestItems,
             };
         }
     }
