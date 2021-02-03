@@ -74,7 +74,7 @@ namespace FunderMaps.Core.Notification.Jobs
 
             message.ToAddresses = toAddresses;
 
-            await _emailService.SendAsync(message);
+            await _emailService.SendAsync(message, context.CancellationToken);
         }
 
         /// <summary>
