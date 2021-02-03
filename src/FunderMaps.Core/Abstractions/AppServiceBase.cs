@@ -1,5 +1,6 @@
 namespace FunderMaps.Core.Abstractions
 {
+    // TODO: Add Logging ?
     /// <summary>
     ///     Application service base.
     /// </summary>

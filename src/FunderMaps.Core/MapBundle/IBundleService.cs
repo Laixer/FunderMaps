@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.MapBundle
@@ -9,15 +8,8 @@ namespace FunderMaps.Core.MapBundle
     public interface IBundleService
     {
         /// <summary>
-        ///     Build a bundle.
+        ///     Build outdated bundles.
         /// </summary>
-        /// <param name="context">Bundle building context.</param>
-        Task<Guid> BuildAsync(BundleBuildingContext context);
-
-        /// <summary>
-        ///     Build all bundles.
-        /// </summary>
-        /// <param name="context">Bundle building context.</param>
-        Task<Guid> BuildAllAsync(BundleBuildingContext context);
+        Task BuildAsync();
     }
 }
