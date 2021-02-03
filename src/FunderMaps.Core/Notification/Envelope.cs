@@ -30,11 +30,16 @@ namespace FunderMaps.Core.Notification
         /// <summary>
         ///     Message key values.
         /// </summary>
-        public IDictionary<string, string> Items { get; set; } = new Dictionary<string, string>();
+        public IDictionary<string, object> Items { get; set; } = new Dictionary<string, object>();
 
         /// <summary>
         ///     Message template.
         /// </summary>
         public string Template { get; set; }
+
+        /// <summary>
+        ///     Rendering extensions.
+        /// </summary>
+        public IList<object> Extensions { get; set; } = new List<object>();
     }
 }

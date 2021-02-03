@@ -5,8 +5,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -33,12 +31,7 @@ namespace FunderMaps.Portal.Controllers
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentPortalController(
-            IMapper mapper,
-            IContactRepository contactRepository,
-            IIncidentRepository incidentRepository,
-            IBlobStorageService blobStorageService,
-            INotifyService notifyService)
+        public IncidentPortalController(IMapper mapper, IBlobStorageService blobStorageService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));

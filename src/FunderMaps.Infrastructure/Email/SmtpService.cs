@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Email;
-using FunderMaps.Core.Interfaces;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -24,9 +23,9 @@ namespace FunderMaps.Infrastructure.Email
     ///     Also its unclear if <seealso cref="SmtpClient"/> is designed
     ///     to reuse transport connections.
     /// </remarks>
-    internal class EmailService : IEmailService
+    internal class SmtpService : IEmailService
     {
-        private readonly EmailOptions _options;
+        private readonly SmtpOptions _options;
 
         /// <summary>
         ///     Logger.
@@ -36,21 +35,20 @@ namespace FunderMaps.Infrastructure.Email
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public EmailService(IOptions<EmailOptions> options, ILogger<EmailService> logger)
+        public SmtpService(IOptions<SmtpOptions> options, ILogger<SmtpService> logger)
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-            Logger = logger;
+            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        private InternetAddress GetDefaultSender
-            => new MailboxAddress(_options.DefaultSenderName, _options.DefaultSenderAddress);
+        private InternetAddress GetDefaultSender => new MailboxAddress(_options.DefaultSenderName, _options.DefaultSenderAddress);
 
         /// <summary>
         ///     Set the headers in the email message.
         /// </summary>
         /// <param name="message">Mail message to send.</param>
         /// <param name="emailMessage">Message source.</param>
-        protected void BuildHeader(MimeMessage message, EmailMessage emailMessage)
+        protected virtual void BuildHeader(MimeMessage message, EmailMessage emailMessage)
         {
             message.To.AddRange(emailMessage.ToAddresses.Select(m => new MailboxAddress(m.Name, m.Address)));
 
@@ -73,7 +71,7 @@ namespace FunderMaps.Infrastructure.Email
         /// </summary>
         /// <param name="message">Mail message to send.</param>
         /// <param name="emailMessage">Message source.</param>
-        protected static void BuildBody(MimeMessage message, EmailMessage emailMessage)
+        protected virtual void BuildBody(MimeMessage message, EmailMessage emailMessage)
         {
             message.Body = new TextPart(TextFormat.Html)
             {

@@ -1,15 +1,13 @@
 using System;
-using System.Text.Json;
 using System.Threading.Tasks;
-using FunderMaps.Core.Notification;
 using FunderMaps.Core.Threading;
 
-namespace FunderMaps.BatchNode.Jobs.Notification
+namespace FunderMaps.Core.Notification
 {
     /// <summary>
     ///     Base class to notification tasks.
     /// </summary>
-    public abstract class NotificationTask : BackgroundTask
+    public abstract class NotificationJob : BackgroundTask
     {
         private const string TaskName = "NOTIFICATION";
 
@@ -24,30 +22,7 @@ namespace FunderMaps.BatchNode.Jobs.Notification
                 throw new ArgumentNullException(nameof(context));
             }
 
-            await NotifyAsync(context, JsonSerializer.Deserialize<Envelope>(context.Value as string, new()
-            {
-                PropertyNameCaseInsensitive = true,
-            }));
-        }
-
-        /// <summary>
-        ///     Method to check if we got an envelope.
-        /// </summary>
-        /// <param name="name">The task name.</param>
-        /// <param name="value">The task payload.</param>
-        /// <returns><c>True</c> if method handles task, false otherwise.</returns>
-        public virtual bool CanHandleEnvelope(string name, object value)
-        {
-            if (name is null || value is not string)
-            {
-                return false;
-            }
-
-            var envelope = JsonSerializer.Deserialize<Envelope>(value as string, new()
-            {
-                PropertyNameCaseInsensitive = true,
-            });
-            return envelope is not null && envelope.Recipients.Count > 0;
+            await NotifyAsync(context, context.Value as Envelope);
         }
 
         /// <summary>
@@ -57,7 +32,10 @@ namespace FunderMaps.BatchNode.Jobs.Notification
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name is not null && name.ToUpperInvariant() == TaskName && CanHandleEnvelope(name, value);
+            => name is not null && name.ToUpperInvariant() == TaskName
+                && value is Envelope envelope
+                && envelope.Recipients.Count > 0
+                && CanHandle(envelope);
 
         /// <summary>
         ///     Method to check if the envelope can be handeld by this notification handler.

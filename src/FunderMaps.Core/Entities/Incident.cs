@@ -93,7 +93,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Contact email.
         /// </summary>
-        [EmailAddress]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public override void InitializeDefaults(Incident other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException(nameof(other));
             }

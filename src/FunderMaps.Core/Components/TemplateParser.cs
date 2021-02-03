@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -18,6 +19,19 @@ namespace FunderMaps.Core.Components
         private Template template;
         private ScriptObject scriptObject = new();
         private TemplateContext templateContext = new();
+
+        /// <summary>
+        ///     Add object with name to the template context.
+        /// </summary>
+        /// <param name="contextItems">Dictionary with key and value objects.</param>
+        public ITemplateParser AddObject(IDictionary<string, object> contextItems)
+        {
+            foreach (var contextItem in contextItems)
+            {
+                scriptObject.Add(contextItem.Key, contextItem.Value);
+            }
+            return this;
+        }
 
         /// <summary>
         ///     Add object with name to the template context.

@@ -3,10 +3,11 @@
 namespace FunderMaps.Infrastructure.Email
 {
     /// <summary>
-    ///     Options for the email service.
+    ///     Options for the smtp service.
     /// </summary>
-    public sealed record EmailOptions
+    public sealed record SmtpOptions
     {
+        // FUTURE: Eventually rename to Smtp
         /// <summary>
         ///     Configuration section key.
         /// </summary>
