@@ -29,9 +29,13 @@ RUN dotnet publish -c release -o /app \
     && cp /source/contrib/etc/_appsettings.Staging.json /app/appsettings.Staging.json
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:latest
+FROM mcr.microsoft.com/dotnet/aspnet:5.0-focal
 ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 WORKDIR /app
 COPY --from=build /app .
+RUN if grep -Fxq  "FunderMaps.BatchNode" SUBTOOL ; then \
+  apt -y update; \
+  apt -y install gdal-bin; \
+fi
 EXPOSE 80/tcp
 ENTRYPOINT "/app/entry"
