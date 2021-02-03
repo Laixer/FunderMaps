@@ -11,7 +11,7 @@ namespace FunderMaps.BatchNode
     /// <summary>
     ///     Schedule tasks with interval.
     /// </summary>
-    public class TimedHostedService : IHostedService, IDisposable
+    public class TimedHostedService : IHostedService, IAsyncDisposable
     {
         private readonly IServiceProvider _servicesProvider;
         private readonly ILogger<TimedHostedService> _logger;
@@ -23,10 +23,7 @@ namespace FunderMaps.BatchNode
         ///     Create new instance.
         /// </summary>
         public TimedHostedService(IServiceProvider services, ILogger<TimedHostedService> logger)
-        {
-            _servicesProvider = services;
-            _logger = logger;
-        }
+            => (_servicesProvider, _logger) = (services, logger);
 
         /// <summary>
         ///     Triggered when the application host is ready to start the service.
@@ -52,9 +49,10 @@ namespace FunderMaps.BatchNode
         {
             _logger.LogTrace("Timed worker is running.");
 
-            using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
-
-            await signal.WaitAsync(cts.Token);
+            if (!await signal.WaitAsync(0))
+            {
+                return;
+            }
 
             try
             {
@@ -72,12 +70,17 @@ namespace FunderMaps.BatchNode
         /// <summary>
         ///     Triggered when the application host is performing a graceful shutdown.
         /// </summary>
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            _timer.Change(Timeout.Infinite, Timeout.Infinite);
+
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting
         ///     unmanaged resources.
         /// </summary>
-        public void Dispose() => _timer?.Dispose();
+        public ValueTask DisposeAsync() => _timer.DisposeAsync();
     }
 }
