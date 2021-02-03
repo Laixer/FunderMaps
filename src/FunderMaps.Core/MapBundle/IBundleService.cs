@@ -8,7 +8,7 @@ namespace FunderMaps.Core.MapBundle
     public interface IBundleService
     {
         /// <summary>
-        ///     Build outdated bundles.
+        ///     Build bundles.
         /// </summary>
         Task BuildAsync();
     }

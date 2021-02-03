@@ -45,18 +45,16 @@ namespace FunderMaps.Core.MapBundle
         }
 
         /// <summary>
-        ///     Build outdated bundles.
+        ///     Build bundles.
         /// </summary>
+        /// <remarks>
+        ///     Try to process all the bundles once every so many times.
+        /// </remarks>>
         public async Task BuildAsync()
         {
-            IAsyncEnumerable<Entities.Bundle> bundleList = _bundleRepository.ListAllRecentAsync(new Nav());
-
-            if (_random.Next(0, 10) == 0)
-            {
-                bundleList = _bundleRepository.ListAllAsync(new Nav());
-            }
-
-            await foreach (var bundle in bundleList)
+            await foreach (var bundle in _random.Next(0, 10) == 0
+                ? _bundleRepository.ListAllAsync(new Nav())
+                : _bundleRepository.ListAllRecentAsync(new Nav()))
             {
                 _logger.LogDebug($"Enqueue bundle {bundle.Id}");
 
