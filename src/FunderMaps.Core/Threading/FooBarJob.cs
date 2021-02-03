@@ -1,13 +1,16 @@
 using System.Threading.Tasks;
-using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
-namespace FunderMaps.BatchNode.Jobs
+namespace FunderMaps.Core.Threading
 {
     /// <summary>
-    ///     FooBar dummy job. Take this job as the template for other jobs.
+    ///     FooBar dummy job.
     /// </summary>
+    /// <remarks>
+    ///     This job is never used neither should it be used anywhere.
+    ///     Take this job as the template to new jobs.
+    /// </remarks>
     internal class FooBarJob : BackgroundTask
     {
         private const string TaskName = "FOOBAR";
@@ -17,8 +20,7 @@ namespace FunderMaps.BatchNode.Jobs
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public FooBarJob(ILogger<FooBarJob> logger)
-            => _logger = logger;
+        public FooBarJob(ILogger<FooBarJob> logger) => _logger = logger;
 
         /// <summary>
         ///     Execute asynchronous operation.
@@ -32,8 +34,12 @@ namespace FunderMaps.BatchNode.Jobs
         }
 
         /// <summary>
-        ///     Method to check if this task can handle a given object.
+        ///     Method to check if this job can handle the task.
         /// </summary>
+        /// <remarks>
+        ///     How the job decides to accept or ignore the task is implementation
+        ///     specific.
+        /// </remarks>
         /// <param name="name">The task name.</param>
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>

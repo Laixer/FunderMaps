@@ -1,7 +1,7 @@
-﻿using FunderMaps.Core.Email;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using FunderMaps.Core.Interfaces;
 
-namespace FunderMaps.Core.Interfaces
+namespace FunderMaps.Core.Email
 {
     /// <summary>
     ///     Email service.

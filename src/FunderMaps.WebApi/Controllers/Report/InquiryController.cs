@@ -212,7 +212,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notifyService.DispatchNotifyAsync(new Envelope
+            await _notifyService.DispatchNotifyAsync(new()
             {
                 Recipients = new List<string> { "info@example.org" },
                 Content = input.Message,
