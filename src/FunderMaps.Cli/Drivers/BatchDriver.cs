@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.MapBundle;
-using FunderMaps.Core.Threading;
-using FunderMaps.Core.Types;
 using Microsoft.Extensions.Hosting;
 
 namespace FunderMaps.Cli.Drivers
@@ -16,41 +12,11 @@ namespace FunderMaps.Cli.Drivers
     /// </summary>
     internal class BatchDriver : CommandDriver
     {
-        private readonly IBatchService _batchService;
-        private readonly IBundleService _bundleService;
+        private async Task StatusAsync(CancellationToken token = default) => await Task.CompletedTask;
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public BatchDriver(IBatchService batchService, IBundleService bundleService)
-            => (_batchService, _bundleService) = (batchService, bundleService);
+        private async Task BuildBundleAsync(IEnumerable<Guid> bundleIdList, CancellationToken token = default) => await Task.CompletedTask;
 
-        private async Task StatusAsync(CancellationToken token = default)
-        {
-            DispatchManagerStatus status = await _batchService.StatusAsync(token);
-            Console.WriteLine($"Jobs failed: {status.JobsFailed}");
-            Console.WriteLine($"Jobs succeeded: {status.JobsSucceeded}");
-        }
-
-        private async Task BuildBundleAsync(IEnumerable<Guid> bundleIdList, CancellationToken token = default)
-        {
-            foreach (var bundleId in bundleIdList)
-            {
-                await _bundleService.BuildAsync(new BundleBuildingContext
-                {
-                    BundleId = bundleId,
-                    Formats = new List<GeometryFormat> { GeometryFormat.GeoPackage },
-                });
-            }
-        }
-
-        private async Task BuildAllAsync(CancellationToken token = default)
-        {
-            await _bundleService.BuildAllAsync(new BundleBuildingContext
-            {
-                Formats = new List<GeometryFormat> { GeometryFormat.GeoPackage },
-            });
-        }
+        private async Task BuildAllAsync(CancellationToken token = default) => await Task.CompletedTask;
 
         #region Factory Methods
 
