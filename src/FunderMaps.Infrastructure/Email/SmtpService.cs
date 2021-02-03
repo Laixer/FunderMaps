@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Core.Email;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
@@ -42,6 +43,8 @@ namespace FunderMaps.Infrastructure.Email
         }
 
         private InternetAddress GetDefaultSender => new MailboxAddress(_options.DefaultSenderName, _options.DefaultSenderAddress);
+
+        private SecureSocketOptions TlsOptions => _options.SmtpPort == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.Auto;
 
         /// <summary>
         ///     Set the headers in the email message.
@@ -94,7 +97,7 @@ namespace FunderMaps.Infrastructure.Email
 
             using SmtpClient client = new();
 
-            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, TlsOptions);
             await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
             await client.SendAsync(message);
             await client.DisconnectAsync(quit: true);
@@ -109,7 +112,7 @@ namespace FunderMaps.Infrastructure.Email
         {
             using SmtpClient client = new();
 
-            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, TlsOptions);
             await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
             await client.NoOpAsync();
             await client.DisconnectAsync(quit: true);
