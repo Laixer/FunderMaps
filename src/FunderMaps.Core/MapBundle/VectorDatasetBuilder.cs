@@ -1,6 +1,6 @@
-using FunderMaps.BatchNode.Command;
+using FunderMaps.Core.Threading.Command;
 
-namespace FunderMaps.BatchNode.GeoInterface
+namespace FunderMaps.Core.MapBundle
 {
     /// <summary>
     ///     Interface the vector dataset command.
@@ -66,7 +66,7 @@ namespace FunderMaps.BatchNode.GeoInterface
         /// <returns>The <see cref="CommandInfo"/> to be executed.</returns>
         public CommandInfo Build(string formatName)
         {
-            var command = new CommandInfo(CommandName);
+            CommandInfo command = new(CommandName);
 
             if (options.Overwrite)
             {

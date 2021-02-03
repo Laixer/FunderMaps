@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FunderMaps.BatchNode.Command;
-using FunderMaps.BatchNode.GeoInterface;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Threading.Command;
 using FunderMaps.Core.Types.MapLayer;
 
-namespace FunderMaps.BatchNode.Jobs.BundleBuilder
+namespace FunderMaps.Core.MapBundle
 {
     /// <summary>
     ///     Bundle layer source specialization.

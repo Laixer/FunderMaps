@@ -1,4 +1,4 @@
-namespace FunderMaps.BatchNode.GeoInterface
+namespace FunderMaps.Core.MapBundle
 {
     /// <summary>
     ///     Vector dataset builder options.

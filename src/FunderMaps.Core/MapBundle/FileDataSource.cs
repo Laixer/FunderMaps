@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace FunderMaps.BatchNode.GeoInterface
+namespace FunderMaps.Core.MapBundle
 {
     internal class FileDataSource : DataSource
     {
