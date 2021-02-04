@@ -59,7 +59,7 @@ namespace FunderMaps.Core
         public bool HasIdentity => User is not null;
 
         /// <summary>
-        ///     Full directory to the loaded file that contains the manifest for the currently executing <see cref="Assembly"/>.
+        ///     Absolute path to the application directory.
         /// </summary>
         public string applicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     }

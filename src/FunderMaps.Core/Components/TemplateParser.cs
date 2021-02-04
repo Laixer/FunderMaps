@@ -78,8 +78,7 @@ namespace FunderMaps.Core.Components
             var header = File.ReadAllText(fullHeaderPath);
             var footer = File.ReadAllText(fullFooterPath);
 
-            var temp = header + body + footer;
-            template = Template.ParseLiquid(temp);
+            template = Template.ParseLiquid(header + body + footer);
             return this;
         }
 
