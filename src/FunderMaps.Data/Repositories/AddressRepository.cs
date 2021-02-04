@@ -198,50 +198,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Retrieve <see cref="Address"/> by search query.
-        /// </summary>
-        /// <param name="query">Search query.</param>
-        /// <param name="navigation">The navigation parameters.</param>
-        /// <returns><see cref="Address"/>.</returns>
-        public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
-        {
-            var sql = @"
-                SELECT  -- Address
-                        a.id,
-                        a.building_number,
-                        a.postal_code,
-                        a.street,
-                        a.is_active,
-                        a.external_id,
-                        a.external_source,
-                        a.city,
-                        a.building_id,
-
-                        -- Building
-                        b.id,
-                        b.building_type,
-                        b.built_year,
-                        b.is_active,
-                        b.external_id, 
-                        b.external_source, 
-                        b.geom,
-                        b.neighborhood_id
-                FROM    geocoder.search_address(@query) AS a
-                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
-
-            ConstructNavigation(sql, navigation, "a");
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("query", query);
-
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                yield return CacheEntity(MapFromReader(reader, fullMap: true));
-            }
-        }
-
-        /// <summary>
         ///     Retrieve all <see cref="Address"/>.
         /// </summary>
         /// <returns>List of <see cref="Address"/>.</returns>
