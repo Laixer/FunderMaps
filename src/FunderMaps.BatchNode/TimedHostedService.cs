@@ -17,7 +17,6 @@ namespace FunderMaps.BatchNode
         private readonly ILogger<TimedHostedService> _logger;
 
         private Timer _timer;
-        private SemaphoreSlim signal = new(1);
 
         /// <summary>
         ///     Create new instance.
@@ -49,22 +48,10 @@ namespace FunderMaps.BatchNode
         {
             _logger.LogTrace("Timed worker is running.");
 
-            if (!await signal.WaitAsync(0))
-            {
-                return;
-            }
+            using var scope = _servicesProvider.CreateScope();
+            var bundleService = scope.ServiceProvider.GetRequiredService<IBundleService>();
 
-            try
-            {
-                using var scope = _servicesProvider.CreateScope();
-                var bundleService = scope.ServiceProvider.GetRequiredService<IBundleService>();
-
-                await bundleService.BuildAsync();
-            }
-            finally
-            {
-                signal.Release();
-            }
+            await bundleService.BuildAsync();
         }
 
         /// <summary>
