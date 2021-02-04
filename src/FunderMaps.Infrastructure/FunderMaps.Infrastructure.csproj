@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -9,11 +9,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>$(SolutionDir)DocumentationFunderMapsCloud.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\batch.proto" />
-    <Protobuf Include="Protos\protocol.proto" GrpcServices="None" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
