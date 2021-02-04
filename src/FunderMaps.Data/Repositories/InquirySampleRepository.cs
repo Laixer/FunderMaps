@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -470,7 +470,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all <see cref="InquirySample"/>.
         /// </summary>
         /// <returns>List of <see cref="InquirySample"/>.</returns>
-        public override async IAsyncEnumerable<InquirySample> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT  -- InquirySample
@@ -570,7 +570,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all entities and filter on report.
         /// </summary>
         /// <returns>List of entities.</returns>
-        public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, INavigation navigation)
+        public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation)
         {
             var sql = @"
                 SELECT  -- InquirySample

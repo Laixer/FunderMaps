@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -105,7 +105,7 @@ namespace FunderMaps.Data.Repositories
         public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
             => throw new NotImplementedException();
 
-        public override IAsyncEnumerable<Building> ListAllAsync(INavigation navigation)
+        public override IAsyncEnumerable<Building> ListAllAsync(Navigation navigation)
             => throw new NotImplementedException();
 
         public override Task UpdateAsync(Building entity)

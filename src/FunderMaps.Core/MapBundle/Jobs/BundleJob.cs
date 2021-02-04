@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using FunderMaps.BatchNode.Command;
-using FunderMaps.BatchNode.GeoInterface;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Threading.Command;
+using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
-namespace FunderMaps.BatchNode.Jobs.BundleBuilder
+namespace FunderMaps.Core.MapBundle.Jobs
 {
     /// <summary>
     ///     Bundle job entry.
@@ -23,7 +21,6 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
     {
         private const string TaskName = "BUNDLE_BUILDING";
 
-        protected readonly IBundleRepository _bundleRepository;
         protected readonly ILayerRepository _layerRepository;
         protected readonly IBlobStorageService _blobStorageService;
 
@@ -106,11 +103,9 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// </summary>
         public BundleJob(
             IConfiguration configuration,
-            IBundleRepository bundleRepository,
             ILayerRepository layerRepository,
             IBlobStorageService blobStorageService)
         {
-            _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
             _layerRepository = layerRepository ?? throw new ArgumentNullException(nameof(layerRepository));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
 
@@ -121,10 +116,9 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         ///     Build the geometry dataset from bundle.
         /// </summary>
         /// <param name="bundle">Bundle to build.</param>
-        /// <param name="layers">Layers to include in the output dataset.</param>
         /// <param name="input">Dataset input.</param>
         /// <param name="format">Output format.</param>
-        private async Task<DataSource> BuildBundleWithLayerAsync(Bundle bundle, IEnumerable<Layer> layers, DataSource input, GeometryFormat format)
+        private async Task<DataSource> BuildBundleWithLayerAsync(Bundle bundle, DataSource input, GeometryFormat format)
         {
             FormatProperty formatProperty = exportFormats.First(f => f.Format == format);
             string blobStoragePath = $"dist/ORG{bundle.OrganizationId}/BND{bundle.Id}/{formatProperty.FormatShortName}";
@@ -138,7 +132,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
             };
 
             int returnCode = 0;
-            foreach (var layer in layers)
+            await foreach (var layer in _layerRepository.ListAllFromBundleIdAsync(bundle.Id))
             {
                 // NOTE: Only check the return code in the next iteration. We cannot append to an
                 //       invalid dataset, however we can continue if only the last layer failed to
@@ -251,37 +245,23 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
                 throw new ArgumentNullException(nameof(context));
             }
 
-            var bundleBuildingContext = JsonSerializer.Deserialize<BundleBuildingContext>(context.Value as string, new()
-            {
-                PropertyNameCaseInsensitive = true,
-            });
-
-            // NOTE: The serializer will always return an object no matter the input value. Therefore we'll check
-            //       if the property BundleId was initialized to a non-empty value.
-            if (bundleBuildingContext.BundleId == Guid.Empty)
-            {
-                throw new ProtocolException("Invalid bundle building context");
-            }
-
+            var bundleBuildingContext = context.Value as BundleBuildingContext;
             if (bundleBuildingContext.Formats is null || !bundleBuildingContext.Formats.Any())
             {
                 Logger.LogWarning("No formats listed for export");
                 return;
             }
 
-            var formats = bundleBuildingContext.Formats.Distinct().ToList();
-            formats.RemoveAll(f => f == GeometryFormat.GeoPackage);
+            List<GeometryFormat> formatList = bundleBuildingContext.Formats.Distinct().ToList();
+            formatList.RemoveAll(f => f == GeometryFormat.GeoPackage);
 
-            Bundle bundle = await _bundleRepository.GetByIdAsync(bundleBuildingContext.BundleId);
-            IList<Layer> layers = await _layerRepository.ListAllFromBundleIdAsync(bundleBuildingContext.BundleId).ToListAsync();
+            DataSource localCacheDataSource = await BuildBundleWithLayerAsync(bundleBuildingContext.Bundle,
+                new PostreSQLDataSource(connectionString),
+                GeometryFormat.GeoPackage);
 
-            DataSource localCacheDataSource = await BuildBundleWithLayerAsync(bundle, layers,
-                input: PostreSQLDataSource.FromConnectionString(connectionString),
-                format: GeometryFormat.GeoPackage);
-
-            foreach (var format in formats)
+            foreach (var format in formatList)
             {
-                await BuildBundleAsync(bundle, localCacheDataSource, format);
+                await BuildBundleAsync(bundleBuildingContext.Bundle, localCacheDataSource, format);
             }
         }
 
@@ -292,7 +272,7 @@ namespace FunderMaps.BatchNode.Jobs.BundleBuilder
         /// <param name="value">The task payload.</param>
         /// <returns><c>True</c> if method handles task, false otherwise.</returns>
         public override bool CanHandle(string name, object value)
-            => name is not null && name.ToUpperInvariant() == TaskName && value is string;
+            => name is not null && name.ToUpperInvariant() == TaskName && value is BundleBuildingContext;
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

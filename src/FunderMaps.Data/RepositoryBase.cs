@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
@@ -127,9 +127,9 @@ namespace FunderMaps.Data
         ///     Convert navigation to query.
         /// </summary>
         /// <param name="cmdText">SQL query.</param>
-        /// <param name="navigation">Navigation instance of type <see cref="INavigation"/>.</param>
+        /// <param name="navigation">Navigation instance of type <see cref="Navigation"/>.</param>
         /// <param name="alias">Datasource alias.</param>
-        protected static void ConstructNavigation(string cmdText, INavigation navigation, string alias = null)
+        protected static void ConstructNavigation(string cmdText, Navigation navigation, string alias = null)
         {
             const string lineFeed = "\r\n";
 
@@ -173,7 +173,7 @@ namespace FunderMaps.Data
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
         /// </summary>
-        public abstract IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation);
+        public abstract IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation);
 
         /// <summary>
         ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>

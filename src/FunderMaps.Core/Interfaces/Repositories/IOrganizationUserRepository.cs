@@ -46,7 +46,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="organizationId">Organization identifier.</param>
         /// <param name="navigation">Recordset nagivation.</param>
         /// <returns>List of user identifiers.</returns>
-        IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation);
+        IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation);
 
         /// <summary>
         ///     List all organization members per role.
@@ -55,7 +55,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="organizationRole">Organization roles.</param>
         /// <param name="navigation">Recordset nagivation.</param>
         /// <returns>List of user identifiers.</returns>
-        IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, INavigation navigation);
+        IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, Navigation navigation);
 
         /// <summary>
         ///     Set user role within the organization.

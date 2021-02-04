@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using FunderMaps.BatchNode.Command;
+using FunderMaps.Core.Threading.Command;
 
-namespace FunderMaps.BatchNode.GeoInterface
+namespace FunderMaps.Core.MapBundle
 {
     internal class LayerSource
     {

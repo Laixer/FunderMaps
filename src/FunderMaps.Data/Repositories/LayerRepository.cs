@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -162,7 +162,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all layers.
         /// </summary>
         /// <returns>List of <see cref="Layer"/>.</returns>
-        public override async IAsyncEnumerable<Layer> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<Layer> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT  -- Layer

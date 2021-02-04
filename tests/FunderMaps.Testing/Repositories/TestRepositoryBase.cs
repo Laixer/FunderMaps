@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
@@ -88,7 +88,7 @@ namespace FunderMaps.Testing.Repositories
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>See <see cref="IAsyncEnumerable<TEntity>"/>.</returns>
-        public virtual IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation)
+        public virtual IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
             => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList, navigation));
 
         /// <summary>

@@ -15,11 +15,8 @@
             "cwd": "${workspaceFolder}/src/FunderMaps.BatchNode",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
-            "launchBrowser": {
-                "enabled": false
-            },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "DOTNET_ENVIRONMENT": "Development"
             }
         },
         {

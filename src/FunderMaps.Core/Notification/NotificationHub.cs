@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Notification
     /// </summary>
     internal class NotificationHub : AppServiceBase, INotifyService
     {
-        private const string TaskName = "notification";
+        private const string TaskName = "NOTIFICATION";
 
         private readonly BackgroundTaskScopedDispatcher _backgroundTaskDispatcher;
 
