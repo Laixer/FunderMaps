@@ -70,13 +70,9 @@ namespace FunderMaps.Core.Components
         /// <param name="templateName">Template name on disk.</param>
         public ITemplateParser FromTemplateFile(string order, string templateName)
         {
-            var fullBodyPath = Path.Combine(_appContext.applicationDirectory, string.Format(templatePath, order, templateName));
-            var fullHeaderPath = Path.Combine(_appContext.applicationDirectory, "Template/Email/Header.html");
-            var fullFooterPath = Path.Combine(_appContext.applicationDirectory, "Template/Email/Footer.html");
-
-            var body = File.ReadAllText(fullBodyPath);
-            var header = File.ReadAllText(fullHeaderPath);
-            var footer = File.ReadAllText(fullFooterPath);
+            string body = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, string.Format(templatePath, order, templateName)));
+            string header = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, "Template/Email/Header.html"));
+            string footer = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, "Template/Email/Footer.html"));
 
             template = Template.ParseLiquid(header + body + footer);
             return this;
