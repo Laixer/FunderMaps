@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace FunderMaps.BatchNode.Command
+namespace FunderMaps.Core.Threading.Command
 {
     /// <summary>
     ///     Command descriptor.
     /// </summary>
-    public class CommandInfo // TODO: Move to core
+    public class CommandInfo
     {
         /// <summary>
         ///     Command filename.

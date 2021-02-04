@@ -4,12 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.BatchNode.Command
+namespace FunderMaps.Core.Threading.Command
 {
     /// <summary>
     ///     Base class to command tasks.
@@ -100,6 +99,7 @@ namespace FunderMaps.BatchNode.Command
             processInfo.Environment["LANG"] = System.Environment.GetEnvironmentVariable("LANG");
             processInfo.Environment["LANGUAGE"] = System.Environment.GetEnvironmentVariable("LANGUAGE");
             processInfo.Environment["TERM"] = System.Environment.GetEnvironmentVariable("TERM");
+
             foreach (var environmentVariable in commandInfo.Environment)
             {
                 processInfo.Environment.Add(environmentVariable);
@@ -148,7 +148,7 @@ namespace FunderMaps.BatchNode.Command
         /// </summary>
         public string CreateDirectory(string name = null)
         {
-            var path = Path.Combine(Context.Workspace, name ?? Path.GetRandomFileName());
+            string path = Path.Combine(Context.Workspace, name ?? Path.GetRandomFileName());
             Directory.CreateDirectory(path);
             return path;
         }
@@ -215,7 +215,7 @@ namespace FunderMaps.BatchNode.Command
 
             HostEnvironment = context.ServiceProvider.GetRequiredService<IHostEnvironment>();
 
-            Context = new CommandTaskContext(context.Id)
+            Context = new(context.Id)
             {
                 CancellationToken = context.CancellationToken,
                 ServiceProvider = context.ServiceProvider,

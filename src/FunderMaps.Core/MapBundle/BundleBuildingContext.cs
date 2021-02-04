@@ -1,5 +1,5 @@
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using System;
 using System.Collections.Generic;
 
 namespace FunderMaps.Core.MapBundle
@@ -12,7 +12,7 @@ namespace FunderMaps.Core.MapBundle
         /// <summary>
         ///     The id of the bundle to process.
         /// </summary>
-        public Guid BundleId { get; init; }
+        public Bundle Bundle { get; init; }
 
         /// <summary>
         ///     Contains all formats we wish to export.

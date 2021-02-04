@@ -14,7 +14,7 @@ namespace FunderMaps.Core.IncidentReport
     /// <summary>
     ///     Service to the incidents.
     /// </summary>
-    internal class IncidentService : IIncidentService
+    internal class IncidentService : IIncidentService // TODO: inherit from AppServiceBase
     {
         private readonly IncidentOptions _options;
         private readonly Core.AppContext _appContext;

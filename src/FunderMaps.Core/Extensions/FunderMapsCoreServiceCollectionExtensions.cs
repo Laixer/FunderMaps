@@ -3,6 +3,7 @@ using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.MapBundle;
+using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Notification.Jobs;
 using FunderMaps.Core.Services;
@@ -66,6 +67,17 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        ///     Adds map bundle service.
+        /// </summary>
+        private static IServiceCollection AddMapBundle(this IServiceCollection services)
+        {
+            services.AddBatchJob<BundleJob>();
+            services.AddScoped<IBundleService, BundleHub>();
+
+            return services;
+        }
+
+        /// <summary>
         ///     Adds the <see cref="AppContext"/> to the container.
         /// </summary>
         private static IServiceCollection AddAppContext(this IServiceCollection services)
@@ -118,7 +130,6 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<INotifyService, NotificationHub>();
-            services.AddScoped<IBundleService, BundleHub>();
 
             // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
@@ -135,6 +146,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register the incident core service.
             services.AddIncident();
+
+            // Register the map bundle service.
+            services.AddMapBundle();
 
             // The application core (as well as many other components) depends upon the ability to dispatch
             // tasks to the background.

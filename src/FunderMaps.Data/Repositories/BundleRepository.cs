@@ -148,6 +148,46 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Get all recent changed bundles in our database.
+        /// </summary>
+        /// <param name="navigation">The navigation parameters.</param>
+        /// <returns>Collection of bundles.</returns>
+        public async IAsyncEnumerable<Bundle> ListAllRecentAsync(INavigation navigation)
+        {
+            var sql = @"
+                SELECT  b.id,
+                        b.organization_id,
+                        b.name,
+                        b.create_date,
+                        b.update_date,
+                        b.delete_date,
+                        b.layer_configuration
+                FROM    maplayer.bundle AS b
+                WHERE	b.create_date >= NOW() - INTERVAL '30 minutes'
+                OR		b.update_date >= NOW() - INTERVAL '30 minutes'";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n WHERE b.organization_id = @id";
+            }
+
+            ConstructNavigation(sql, navigation);
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("id", AppContext.TenantId);
+            }
+
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                yield return CacheEntity(MapFromReader(reader));
+            }
+        }
+
+        /// <summary>
         ///     Updates a <see cref="Bundle"/> in our database.
         /// </summary>
         /// <param name="entity">The updated bundle.</param>

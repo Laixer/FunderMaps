@@ -1,7 +1,6 @@
 using System;
-using FunderMaps.Core.Threading;
 
-namespace FunderMaps.BatchNode.Command
+namespace FunderMaps.Core.Threading.Command
 {
     /// <summary>
     ///     Context for executing a background task.
