@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Abstractions;
@@ -39,7 +39,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all users by organization.
         /// </summary>
         /// <returns>List of user identifiers.</returns>
-        public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
+        public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation)
         {
             var sql = @"
                 SELECT  user_id
@@ -58,7 +58,7 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, INavigation navigation)
+        public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, Navigation navigation)
         {
             var sql = @"
                 SELECT  user_id

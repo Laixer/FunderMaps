@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.MapLayer;
 using FunderMaps.Data.Extensions;
@@ -114,7 +114,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">The navigation parameters.</param>
         /// <returns>Collection of bundles.</returns>
-        public override async IAsyncEnumerable<Bundle> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<Bundle> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT  b.id,
@@ -152,7 +152,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="navigation">The navigation parameters.</param>
         /// <returns>Collection of bundles.</returns>
-        public async IAsyncEnumerable<Bundle> ListAllRecentAsync(INavigation navigation)
+        public async IAsyncEnumerable<Bundle> ListAllRecentAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT  b.id,

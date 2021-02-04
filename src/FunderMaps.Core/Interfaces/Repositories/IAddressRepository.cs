@@ -17,7 +17,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="query">Search query.</param>
         /// <param name="navigation">Return set by navigation.</param>
         /// <returns>List of <see cref="Address"/>.</returns>
-        IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation);
+        IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, Navigation navigation);
 
         /// <summary>
         ///     Get address by external id.

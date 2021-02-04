@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Entities;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -20,6 +19,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         ///     Retrieve all entities and filter on report.
         /// </summary>
         /// <returns>List of entities.</returns>
-        IAsyncEnumerable<InquirySample> ListAllAsync(int report, INavigation navigation);
+        IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation);
     }
 }

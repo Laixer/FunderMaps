@@ -1,5 +1,4 @@
 using FunderMaps.Core.Abstractions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Threading;
@@ -33,17 +32,6 @@ namespace FunderMaps.Core.MapBundle
             _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
         }
 
-        // TODO: REMOVE
-        class Nav : Interfaces.INavigation
-        {
-            public int Offset => 0;
-
-            public int Limit => 0;
-
-            public string SortColumn { get; set; }
-            public SortOrder SortOrder { get; set; }
-        }
-
         /// <summary>
         ///     Build bundles.
         /// </summary>
@@ -53,8 +41,8 @@ namespace FunderMaps.Core.MapBundle
         public async Task BuildAsync()
         {
             await foreach (var bundle in _random.Next(0, 10) == 0
-                ? _bundleRepository.ListAllAsync(new Nav())
-                : _bundleRepository.ListAllRecentAsync(new Nav()))
+                ? _bundleRepository.ListAllAsync(Navigation.All)
+                : _bundleRepository.ListAllRecentAsync(Navigation.All))
             {
                 _logger.LogDebug($"Enqueue bundle {bundle.Id}");
 

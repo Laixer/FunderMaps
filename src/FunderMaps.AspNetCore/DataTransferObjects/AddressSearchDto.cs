@@ -5,7 +5,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     /// <summary>
     ///     Address search DTO.
     /// </summary>
-    public sealed class AddressSearchDto : PaginationDto // TODO: record
+    public sealed record AddressSearchDto : PaginationDto
     {
         /// <summary>
         ///     Search query.

@@ -1,24 +1,35 @@
-﻿using FunderMaps.Core.Interfaces;
-using System;
-
-namespace FunderMaps.Data
+﻿namespace FunderMaps.Core
 {
+    /// <summary>
+    ///     Sorting order.
+    /// </summary>
+    public enum SortOrder
+    {
+        /// <summary>
+        ///     Ascending sorting.
+        /// </summary>
+        Ascending = 0,
+
+        /// <summary>
+        ///     Descending sorting.
+        /// </summary>
+        Descending = 1,
+    }
+
     /// <summary>
     ///     Navigation structure.
     /// </summary>
-    public class NavigationImpl<TOffset, TLimit>
-        where TOffset : IComparable, IComparable<TOffset>
-        where TLimit : IComparable, IComparable<TLimit>
+    public class Navigation
     {
         /// <summary>
         ///     Offset in list.
         /// </summary>
-        public TOffset Offset { get; set; }
+        public int Offset { get; set; }
 
         /// <summary>
         ///     Limit of items in list.
         /// </summary>
-        public TLimit Limit { get; set; }
+        public int Limit { get; set; }
 
         /// <summary>
         ///     Column to sort on.
@@ -29,13 +40,7 @@ namespace FunderMaps.Data
         ///     Sorting order.
         /// </summary>
         public SortOrder SortOrder { get; set; } = SortOrder.Ascending;
-    }
 
-    /// <summary>
-    ///     Navigation structure.
-    /// </summary>
-    public class Navigation : NavigationImpl<int, int>, INavigation
-    {
         /// <summary>
         ///     Return a single row.
         /// </summary>
