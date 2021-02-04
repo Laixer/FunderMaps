@@ -162,7 +162,7 @@ namespace FunderMaps.Core.IncidentReport
                 text = "Dit bericht wordt verstuurd wanneer een melding binnenkomt op het loket."
             };
 
-            await _notifyService.DispatchNotifyAsync(new()
+            await _notifyService.NotifyAsync(new()
             {
                 Recipients = recipients,
                 Subject = subject,
