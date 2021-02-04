@@ -147,17 +147,5 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         //     Assert.True(returnList.Count > 0);
         // }
-
-        [Fact]
-        public async Task GetLimitedAddressByQueryReturnMatchingAddressList()
-        {
-            // Act
-            var response = await _client.GetAsync($"api/address/suggest?query=laan&limit=2");
-            var returnList = await response.Content.ReadFromJsonAsync<List<AddressBuildingDto>>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(2, returnList.Count);
-        }
     }
 }
