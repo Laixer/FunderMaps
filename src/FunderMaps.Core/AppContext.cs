@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using FunderMaps.Core.Identity;
 
@@ -55,5 +57,10 @@ namespace FunderMaps.Core
         /// </summary>
         /// <remarks>If <see cref="User"/> exists, then <see cref="Tenant"/> exists.</remarks>
         public bool HasIdentity => User is not null;
+
+        /// <summary>
+        ///     Absolute path to the application directory.
+        /// </summary>
+        public string applicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     }
 }
