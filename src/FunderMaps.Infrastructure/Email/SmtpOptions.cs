@@ -7,11 +7,10 @@ namespace FunderMaps.Infrastructure.Email
     /// </summary>
     public sealed record SmtpOptions
     {
-        // FUTURE: Eventually rename to Smtp
         /// <summary>
         ///     Configuration section key.
         /// </summary>
-        public const string Section = "Email";
+        public const string Section = "Smtp";
 
         /// <summary>
         ///     SMTP server host.
@@ -22,11 +21,6 @@ namespace FunderMaps.Infrastructure.Email
         ///     SMTP server port.
         /// </summary>
         public int SmtpPort { get; set; }
-
-        /// <summary>
-        ///     SMTP server secure connection.
-        /// </summary>
-        public bool SmtpTls { get; set; }
 
         /// <summary>
         ///     SMTP authentication username.

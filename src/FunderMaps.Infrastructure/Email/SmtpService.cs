@@ -1,11 +1,13 @@
 ﻿using FunderMaps.Core.Email;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -42,6 +44,8 @@ namespace FunderMaps.Infrastructure.Email
         }
 
         private InternetAddress GetDefaultSender => new MailboxAddress(_options.DefaultSenderName, _options.DefaultSenderAddress);
+
+        private SecureSocketOptions TlsOptions => _options.SmtpPort == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.Auto;
 
         /// <summary>
         ///     Set the headers in the email message.
@@ -83,7 +87,8 @@ namespace FunderMaps.Infrastructure.Email
         ///     Send email message.
         /// </summary>
         /// <param name="emailMessage">Message to send.</param>
-        public async Task SendAsync(EmailMessage emailMessage)
+        /// <param name="token">Cancellation token.</param>
+        public async Task SendAsync(EmailMessage emailMessage, CancellationToken token)
         {
             MimeMessage message = new();
 
@@ -94,10 +99,10 @@ namespace FunderMaps.Infrastructure.Email
 
             using SmtpClient client = new();
 
-            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
-            await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
-            await client.SendAsync(message);
-            await client.DisconnectAsync(quit: true);
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, TlsOptions, token);
+            await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword, token);
+            await client.SendAsync(message, token);
+            await client.DisconnectAsync(quit: true, token);
 
             Logger.LogInformation($"Message sent with success");
         }
@@ -109,7 +114,7 @@ namespace FunderMaps.Infrastructure.Email
         {
             using SmtpClient client = new();
 
-            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, _options.SmtpTls);
+            await client.ConnectAsync(_options.SmtpServer, _options.SmtpPort, TlsOptions);
             await client.AuthenticateAsync(_options.SmtpUsername, _options.SmtpPassword);
             await client.NoOpAsync();
             await client.DisconnectAsync(quit: true);
