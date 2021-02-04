@@ -35,8 +35,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Built year.
         /// </summary>
-        [Required]
-        public DateTime BuiltYear { get; set; }
+        public DateTime? BuiltYear { get; set; }
 
         /// <summary>
         ///     Substructure.
