@@ -149,13 +149,28 @@ namespace FunderMaps.Core.IncidentReport
             List<string> recipients = new(_options.Recipients);
             recipients.Add(incident.Email);
 
+            string subject = $"Nieuwe melding: {incident.Id}";
+
+            object header = new
+            {
+                title = subject,
+                preheadertext = "Dit is een kopie van de door u verzonden melding in het funderingsloket."
+            };
+
+            object footer = new
+            {
+                text = "Dit bericht wordt verstuurd wanneer een melding binnenkomt op het loket."
+            };
+
             await _notifyService.DispatchNotifyAsync(new()
             {
                 Recipients = recipients,
-                Subject = $"Nieuwe melding: {incident.Id}",
+                Subject = subject,
                 Template = "incident",
                 Items = new Dictionary<string, object>
                 {
+                    { "header", header },
+                    { "footer", footer },
                     { "incident", incident },
                     { "address", address },
                     { "contact", incident.ContactNavigation }
