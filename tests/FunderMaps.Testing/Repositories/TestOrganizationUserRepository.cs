@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
@@ -45,10 +44,10 @@ namespace FunderMaps.Testing.Repositories
         public Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
             => Task.FromResult<bool>(DataStore.ItemList.Any(e => e.UserId == userId && e.OrganizationId == organizationId));
 
-        public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
+        public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation)
             => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Select(s => s.UserId), navigation));
 
-        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, INavigation navigation)
+        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, Navigation navigation)
             => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Where(s => organizationRole.Contains(s.OrganizationRole)).Select(s => s.UserId), navigation));
 
         public Task<Guid> GetOrganizationByUserIdAsync(Guid userId)

@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -203,7 +203,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="query">Search query.</param>
         /// <param name="navigation">The navigation parameters.</param>
         /// <returns><see cref="Address"/>.</returns>
-        public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
+        public async IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, Navigation navigation)
         {
             var sql = @"
                 SELECT  -- Address
@@ -245,7 +245,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all <see cref="Address"/>.
         /// </summary>
         /// <returns>List of <see cref="Address"/>.</returns>
-        public override async IAsyncEnumerable<Address> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<Address> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT  -- Address

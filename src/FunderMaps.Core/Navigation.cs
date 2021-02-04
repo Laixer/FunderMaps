@@ -1,11 +1,25 @@
-﻿using FunderMaps.Core.Interfaces;
-
-namespace FunderMaps.Data
+﻿namespace FunderMaps.Core
 {
+    /// <summary>
+    ///     Sorting order.
+    /// </summary>
+    public enum SortOrder
+    {
+        /// <summary>
+        ///     Ascending sorting.
+        /// </summary>
+        Ascending = 0,
+
+        /// <summary>
+        ///     Descending sorting.
+        /// </summary>
+        Descending = 1,
+    }
+
     /// <summary>
     ///     Navigation structure.
     /// </summary>
-    public class Navigation : INavigation
+    public class Navigation
     {
         /// <summary>
         ///     Offset in list.

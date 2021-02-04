@@ -14,6 +14,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="navigation">The navigation parameters.</param>
         /// <returns>Collection of bundles.</returns>
-        IAsyncEnumerable<Bundle> ListAllRecentAsync(INavigation navigation);
+        IAsyncEnumerable<Bundle> ListAllRecentAsync(Navigation navigation);
     }
 }

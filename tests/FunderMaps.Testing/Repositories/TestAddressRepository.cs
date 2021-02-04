@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
@@ -21,7 +21,7 @@ namespace FunderMaps.Testing.Repositories
             return Task.FromResult<Address>(DataStore.ItemList.FirstOrDefault(e => e.ExternalId == id && e.ExternalSource == source));
         }
 
-        public IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, INavigation navigation)
+        public IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, Navigation navigation)
         {
             var result = DataStore.ItemList.Where(e =>
             {

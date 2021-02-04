@@ -32,7 +32,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
         ///     Retrieve all <typeparamref name="TEntity"/>.
         /// </summary>
         /// <returns>List of <typeparamref name="TEntity"/>.</returns>
-        IAsyncEnumerable<TEntity> ListAllAsync(INavigation navigation);
+        IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation);
 
         /// <summary>
         ///     Create new <typeparamref name="TEntity"/>.

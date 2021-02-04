@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -233,7 +233,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all <see cref="InquiryFull"/>.
         /// </summary>
         /// <returns>List of <see cref="InquiryFull"/>.</returns>
-        public override async IAsyncEnumerable<InquiryFull> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<InquiryFull> ListAllAsync(Navigation navigation)
         {
             var sql = @"
                 SELECT  -- Inquiry
