@@ -10,15 +10,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// </summary>
     public interface IAddressRepository : IAsyncRepository<Address, string>
     {
-        // FUTURE: Remove
-        /// <summary>
-        ///     Get all adresses matching query.
-        /// </summary>
-        /// <param name="query">Search query.</param>
-        /// <param name="navigation">Return set by navigation.</param>
-        /// <returns>List of <see cref="Address"/>.</returns>
-        IAsyncEnumerable<Address> GetBySearchQueryAsync(string query, Navigation navigation);
-
         /// <summary>
         ///     Get address by external id.
         /// </summary>
