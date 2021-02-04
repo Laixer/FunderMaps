@@ -153,20 +153,17 @@ namespace FunderMaps.Core.IncidentReport
 
             object header = new
             {
-                title = subject,
-                preheadertext = "Dit is een kopie van de door u verzonden melding in het funderingsloket."
+                Title = subject,
+                Preheader = "Dit is een kopie van de door u verzonden melding in het funderingsloket."
             };
 
-            object footer = new
-            {
-                text = "Dit bericht wordt verstuurd wanneer een melding binnenkomt op het loket."
-            };
+            string footer = "Dit bericht wordt verstuurd wanneer een melding binnenkomt op het loket.";
 
             await _notifyService.NotifyAsync(new()
             {
                 Recipients = recipients,
                 Subject = subject,
-                Template = "incident",
+                Template = "Incident",
                 Items = new Dictionary<string, object>
                 {
                     { "header", header },
