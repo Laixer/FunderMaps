@@ -46,10 +46,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
-
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
             _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
