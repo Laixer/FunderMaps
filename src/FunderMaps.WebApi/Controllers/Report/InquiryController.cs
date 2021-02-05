@@ -26,6 +26,8 @@ namespace FunderMaps.WebApi.Controllers.Report
     {
         private readonly IMapper _mapper;
         private readonly Core.AppContext _appContext;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly INotifyService _notifyService;
@@ -36,12 +38,18 @@ namespace FunderMaps.WebApi.Controllers.Report
         public InquiryController(
             IMapper mapper,
             Core.AppContext appContext,
+            IOrganizationRepository organizationRepository,
+            IUserRepository userRepository,
             IInquiryRepository inquiryRepository,
             IBlobStorageService blobStorageService,
             INotifyService notificationService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+
+            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
             _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
@@ -203,13 +211,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set inquiry status to review by id.
         /// </summary>
         [HttpPost("{id:int}/status_review")]
-        public async Task<IActionResult> SetStatusReviewAsync(int id, [FromServices] IOrganizationRepository organizationRepository, [FromServices] IUserRepository userRepository)
+        public async Task<IActionResult> SetStatusReviewAsync(int id)
         {
             // Act.
             InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-            Organization organization = await organizationRepository.GetByIdAsync(_appContext.TenantId);
-            User creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
-            User reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+            User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+            User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
 
             // Transition.
             inquiry.State.TransitionToReview();
@@ -253,13 +261,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set inquiry status to rejected by id.
         /// </summary>
         [HttpPost("{id:int}/status_rejected")]
-        public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input, [FromServices] IOrganizationRepository organizationRepository, [FromServices] IUserRepository userRepository)
+        public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
         {
             // Act.
             InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-            Organization organization = await organizationRepository.GetByIdAsync(_appContext.TenantId);
-            User reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
-            User creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+            User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+            User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
             // Transition.
             inquiry.State.TransitionToRejected();
@@ -304,13 +312,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set inquiry status to done by id.
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id, [FromServices] IOrganizationRepository organizationRepository, [FromServices] IUserRepository userRepository)
+        public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
             InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-            Organization organization = await organizationRepository.GetByIdAsync(_appContext.TenantId);
-            User reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
-            User creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+            User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+            User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
             // Transition.
             inquiry.State.TransitionToDone();
