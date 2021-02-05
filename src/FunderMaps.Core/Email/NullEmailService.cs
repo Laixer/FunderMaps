@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 namespace FunderMaps.Core.Email
 {
     /// <summary>
-    ///     Dummy eamail service.
+    ///     Dummy email service.
     /// </summary>
     internal class NullEmailService : IEmailService
     {
@@ -17,7 +17,7 @@ namespace FunderMaps.Core.Email
         public Task SendAsync(EmailMessage emailMessage, CancellationToken token) => Task.CompletedTask;
 
         /// <summary>
-        ///     Test the batch service backend.
+        ///     Test the email service backend.
         /// </summary>
         public Task HealthCheck() => Task.CompletedTask;
     }
