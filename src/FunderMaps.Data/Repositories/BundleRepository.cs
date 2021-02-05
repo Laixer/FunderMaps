@@ -163,8 +163,8 @@ namespace FunderMaps.Data.Repositories
                         b.delete_date,
                         b.layer_configuration
                 FROM    maplayer.bundle AS b
-                WHERE	b.create_date >= NOW() - INTERVAL '30 minutes'
-                OR		b.update_date >= NOW() - INTERVAL '30 minutes'";
+                WHERE	b.create_date >= NOW() - INTERVAL '15 minutes'
+                OR		b.update_date >= NOW() - INTERVAL '15 minutes'";
 
             // FUTURE: Maybe move up.
             if (AppContext.HasIdentity)
