@@ -49,7 +49,7 @@ namespace FunderMaps.Core.MapBundle
         /// </remarks>>
         public async Task BuildAsync()
         {
-            await foreach (var bundle in _random.Next(0, randomInterval) == 0
+            await foreach (int bundle in _random.Next(0, randomInterval) == 0
                 ? _bundleRepository.ListAllAsync(Navigation.All)
                 : _bundleRepository.ListAllRecentAsync(Navigation.All))
             {
