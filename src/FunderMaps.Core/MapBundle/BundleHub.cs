@@ -1,4 +1,5 @@
 using FunderMaps.Core.Abstractions;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Threading;
@@ -49,7 +50,7 @@ namespace FunderMaps.Core.MapBundle
         /// </remarks>>
         public async Task BuildAsync()
         {
-            await foreach (var bundle in _random.Next(0, randomInterval) == 0
+            await foreach (Bundle bundle in _random.Next(0, randomInterval) == 0
                 ? _bundleRepository.ListAllAsync(Navigation.All)
                 : _bundleRepository.ListAllRecentAsync(Navigation.All))
             {
