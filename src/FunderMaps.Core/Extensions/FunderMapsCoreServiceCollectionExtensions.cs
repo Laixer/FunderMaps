@@ -135,7 +135,6 @@ namespace Microsoft.Extensions.DependencyInjection
             // NOTE: These services take time to initialize are used more often. Registering
             //       them as a singleton will keep the services alife for the entire lifetime
             //       of the application. Beware to add new services as singletons.
-            services.TryAddSingleton<IBatchService, NullBatchService>();
             services.TryAddSingleton<IEmailService, NullEmailService>();
             services.TryAddSingleton<IBlobStorageService, NullBlobStorageService>();
 
