@@ -26,6 +26,8 @@ namespace FunderMaps.WebApi.Controllers.Report
     {
         private readonly IMapper _mapper;
         private readonly Core.AppContext _appContext;
+        private readonly IOrganizationRepository _organizationRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IBlobStorageService _blobStorageService;
         private readonly INotifyService _notifyService;
@@ -36,12 +38,16 @@ namespace FunderMaps.WebApi.Controllers.Report
         public InquiryController(
             IMapper mapper,
             Core.AppContext appContext,
+            IOrganizationRepository organizationRepository,
+            IUserRepository userRepository,
             IInquiryRepository inquiryRepository,
             IBlobStorageService blobStorageService,
             INotifyService notificationService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
             _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
@@ -55,7 +61,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetStatsAsync()
         {
             // Map.
-            var output = new DatasetStatsDto
+            DatasetStatsDto output = new()
             {
                 Count = await _inquiryRepository.CountAsync(),
             };
@@ -134,7 +140,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 contentType: input.ContentType,
                 stream: input.OpenReadStream());
 
-            var output = new DocumentDto
+            DocumentDto output = new()
             {
                 Name = storeFileName,
             };
@@ -158,7 +164,7 @@ namespace FunderMaps.WebApi.Controllers.Report
                 hoursValid: 1);
 
             // Map.
-            var result = new BlobAccessLinkDto
+            BlobAccessLinkDto result = new()
             {
                 AccessLink = link
             };
@@ -197,32 +203,57 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
+        // TODO: Check permissions.
         // POST: api/inquiry/{id}/status_review
         /// <summary>
         ///     Set inquiry status to review by id.
         /// </summary>
         [HttpPost("{id:int}/status_review")]
-        public async Task<IActionResult> SetStatusReviewAsync(int id, StatusChangeDto input)
+        public async Task<IActionResult> SetStatusReviewAsync(int id)
         {
             // Act.
-            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+            User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+            User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
 
             // Transition.
             inquiry.State.TransitionToReview();
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notifyService.DispatchNotifyAsync(new()
+
+            string subject = $"FunderMaps - Rapportage ter review";
+
+            object header = new
             {
-                Recipients = new List<string> { "info@example.org" },
-                Content = input.Message,
-                Subject = "FunderMaps - Rapportage ter review",
+                Title = subject,
+                Preheader = "Rapportage ter review wordt aangeboden."
+            };
+
+            string footer = "Dit bericht wordt verstuurd wanneer een rapportage ter review wordt aangeboden.";
+
+            await _notifyService.NotifyAsync(new()
+            {
+                Recipients = new List<string> { reviewer.Email },
+                Subject = subject,
+                Template = "InquiryReview",
+                Items = new Dictionary<string, object>
+                {
+                    { "header", header },
+                    { "footer", footer },
+                    { "creator", creator.ToString() },
+                    { "organization", organization.ToString() },
+                    { "inquiry", inquiry },
+                    { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
+                },
             });
 
             // Return.
             return NoContent();
         }
 
+        // TODO: Check permissions.
         // POST: api/inquiry/{id}/status_rejected
         /// <summary>
         ///     Set inquiry status to rejected by id.
@@ -231,24 +262,49 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
         {
             // Act.
-            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+            User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+            User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
             // Transition.
             inquiry.State.TransitionToRejected();
 
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
-            await _notifyService.DispatchNotifyAsync(new Envelope
+
+            string subject = $"FunderMaps - Rapportage afgekeurd";
+
+            object header = new
             {
-                Recipients = new List<string> { "info@example.org" },
-                Content = input.Message,
-                Subject = "FunderMaps - Rapportage afgekeurd",
+                Title = subject,
+                Preheader = "Rapportage is afgekeurd."
+            };
+
+            string footer = "Dit bericht wordt verstuurd wanneer een rapportage is afgekeurd.";
+
+            await _notifyService.NotifyAsync(new()
+            {
+                Recipients = new List<string> { creator.Email },
+                Subject = subject,
+                Template = "InquiryRejected",
+                Items = new Dictionary<string, object>
+                {
+                    { "header", header },
+                    { "footer", footer },
+                    { "reviewer", reviewer.ToString() },
+                    { "organization", organization.ToString() },
+                    { "inquiry", inquiry },
+                    { "message", input.Message },
+                    { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
+                },
             });
 
             // Return.
             return NoContent();
         }
 
+        // TODO: Check permissions.
         // POST: api/inquiry/{id}/status_approved
         /// <summary>
         ///     Set inquiry status to done by id.
@@ -257,7 +313,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
-            var inquiry = await _inquiryRepository.GetByIdAsync(id);
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+            User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+            User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
             // Transition.
             inquiry.State.TransitionToDone();
@@ -265,10 +324,36 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
+            string subject = $"FunderMaps - Rapportage goedgekeurd";
+
+            object header = new
+            {
+                Title = subject,
+                Preheader = "Rapportage is goedgekeurd."
+            };
+
+            string footer = "Dit bericht wordt verstuurd wanneer een rapportage is goedgekeurd.";
+
+            await _notifyService.NotifyAsync(new()
+            {
+                Recipients = new List<string> { creator.Email },
+                Subject = "FunderMaps - Rapportage goedgekeurd",
+                Template = "InquiryApproved",
+                Items = new Dictionary<string, object>
+                {
+                    { "header", header },
+                    { "footer", footer },
+                    { "reviewer", reviewer.ToString() },
+                    { "organization", organization.ToString() },
+                    { "inquiry", inquiry },
+                },
+            });
+
             // Return.
             return NoContent();
         }
 
+        // TODO: Check permissions.
         // DELETE: api/inquiry/{id}
         /// <summary>
         ///     Delete inquiry by id.

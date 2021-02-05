@@ -24,7 +24,7 @@ namespace FunderMaps.Core.Notification
         ///     Notify by means of contacting.
         /// </summary>
         /// <param name="envelope">Envelope containing the notification.</param>
-        public async Task DispatchNotifyAsync(Envelope envelope)
+        public async Task NotifyAsync(Envelope envelope)
             => await _backgroundTaskDispatcher.EnqueueTaskAsync(TaskName, envelope);
     }
 }

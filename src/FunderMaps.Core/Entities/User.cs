@@ -65,7 +65,10 @@ namespace FunderMaps.Core.Entities
         ///     Print object as name.
         /// </summary>
         /// <returns>String representing user.</returns>
-        public override string ToString() => Email;
+        public override string ToString()
+            => !string.IsNullOrEmpty(GivenName)
+                ? (!string.IsNullOrEmpty(LastName) ? $"{GivenName} {LastName}" : GivenName)
+                : Email;
 
         /// <summary>
         ///     Initialize property defaults.
@@ -81,7 +84,7 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public override void InitializeDefaults(User other)
         {
-            if (other == null)
+            if (other is null)
             {
                 throw new ArgumentNullException(nameof(other));
             }

@@ -17,7 +17,6 @@ namespace FunderMaps.Core.IncidentReport
     internal class IncidentService : IIncidentService // TODO: inherit from AppServiceBase
     {
         private readonly IncidentOptions _options;
-        private readonly Core.AppContext _appContext;
         private readonly IContactRepository _contactRepository;
         private readonly IIncidentRepository _incidentRepository;
         private readonly IGeocoderTranslation _geocoderTranslation;
@@ -28,14 +27,12 @@ namespace FunderMaps.Core.IncidentReport
         /// </summary>
         public IncidentService(
             IOptions<IncidentOptions> options,
-            Core.AppContext appContext,
             IContactRepository contactRepository,
             IIncidentRepository incidentRepository,
             IGeocoderTranslation geocoderTranslation,
             INotifyService notificationService)
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(contactRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
@@ -149,16 +146,28 @@ namespace FunderMaps.Core.IncidentReport
             List<string> recipients = new(_options.Recipients);
             recipients.Add(incident.Email);
 
-            await _notifyService.DispatchNotifyAsync(new()
+            string subject = $"Nieuwe melding: {incident.Id}";
+
+            object header = new
+            {
+                Title = subject,
+                Preheader = "Dit is een kopie van de door u verzonden melding in het funderingsloket."
+            };
+
+            string footer = "Dit bericht wordt verstuurd wanneer een melding binnenkomt op het loket.";
+
+            await _notifyService.NotifyAsync(new()
             {
                 Recipients = recipients,
-                Subject = $"Nieuwe melding: {incident.Id}",
-                Template = "incident",
+                Subject = subject,
+                Template = "Incident",
                 Items = new Dictionary<string, object>
                 {
+                    { "header", header },
+                    { "footer", footer },
                     { "incident", incident },
                     { "address", address },
-                    { "contact", incident.ContactNavigation }
+                    { "contact", incident.ContactNavigation },
                 },
                 Extensions = new List<object> { new TranslationFunctions() },
             });
