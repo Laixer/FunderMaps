@@ -1,33 +1,33 @@
 ﻿namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
-    /// Represents the distribution of foundation risks.
+    ///     Represents the distribution of foundation risks.
     /// </summary>
-    public sealed class FoundationRiskDistribution
+    public sealed record FoundationRiskDistribution
     {
         /// <summary>
-        /// Percentage of foundations having risk A.
+        ///     Percentage of foundations having risk A.
         /// </summary>
-        public double PercentageA { get; set; }
+        public decimal PercentageA { get; set; }
 
         /// <summary>
-        /// Percentage of foundations having risk B.
+        ///     Percentage of foundations having risk B.
         /// </summary>
-        public double PercentageB { get; set; }
+        public decimal PercentageB { get; set; }
 
         /// <summary>
-        /// Percentage of foundations having risk C.
+        ///     Percentage of foundations having risk C.
         /// </summary>
-        public double PercentageC { get; set; }
+        public decimal PercentageC { get; set; }
 
         /// <summary>
-        /// Percentage of foundations having risk D.
+        ///     Percentage of foundations having risk D.
         /// </summary>
-        public double PercentageD { get; set; }
+        public decimal PercentageD { get; set; }
 
         /// <summary>
-        /// Percentage of foundations having risk E.
+        ///     Percentage of foundations having risk E.
         /// </summary>
-        public double PercentageE { get; set; }
+        public decimal PercentageE { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Bogus;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,13 +18,13 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public override ValueTask<int> AddAsync(InquirySample entity)
+        public override Task<int> AddAsync(InquirySample entity)
         {
             entity.Id = randomizer.Int(0, int.MaxValue);
             return base.AddAsync(entity);
         }
 
-        public IAsyncEnumerable<InquirySample> ListAllAsync(int report, INavigation navigation)
+        public IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation)
         {
             var result = DataStore.ItemList.Where(e => e.Inquiry == report);
             return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(result, navigation));

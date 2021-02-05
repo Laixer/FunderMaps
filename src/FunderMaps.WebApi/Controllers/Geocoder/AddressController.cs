@@ -5,7 +5,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -45,24 +44,6 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
 
             // Return.
             return Ok(output);
-        }
-
-        /// <summary>
-        ///     Get address suggestions.
-        /// </summary>
-        /// <param name="input">Address search query.</param>
-        /// <returns>List of matching addresses.</returns>
-        [HttpGet("suggest")]
-        public async Task<IActionResult> GetAllSuggestionAsync([FromQuery] AddressSearchDto input)
-        {
-            // Assign.
-            IAsyncEnumerable<Address> addressList = _addressRepository.GetBySearchQueryAsync(input.Query, input.Navigation);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList);
-
-            // Return.
-            return Ok(result);
         }
     }
 }

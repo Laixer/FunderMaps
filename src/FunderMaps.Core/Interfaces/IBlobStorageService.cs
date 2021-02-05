@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Interfaces
     /// <summary>
     ///     Store a file contents in a data store.
     /// </summary>
-    public interface IBlobStorageService
+    public interface IBlobStorageService : IServiceHealthCheck
     {
         /// <summary>
         ///     Check if a file exist in storage.
@@ -63,10 +63,5 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="directoryPath">Full path of the directory to delete.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>
         Task RemoveDirectoryAsync(string directoryPath);
-
-        /// <summary>
-        ///     Test the Amazon S3 service backend.
-        /// </summary>
-        Task TestService();
     }
 }

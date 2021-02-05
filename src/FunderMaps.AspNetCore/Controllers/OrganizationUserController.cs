@@ -46,7 +46,7 @@ namespace FunderMaps.AspNetCore.Controllers
             _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
         }
 
-        // POST: api/organization/user
+        // POST: organization/user
         /// <summary>
         ///     Add user to session organization.
         /// </summary>
@@ -70,7 +70,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return Ok(output);
         }
 
-        // GET: api/organization/user
+        // GET: organization/user
         /// <summary>
         ///     Get all users in the session organization.
         /// </summary>
@@ -92,7 +92,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return Ok(output);
         }
 
-        // PUT: api/organization/user/{id}
+        // PUT: organization/user/{id}
         /// <summary>
         ///     Update user in the session organization.
         /// </summary>
@@ -116,7 +116,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return NoContent();
         }
 
-        // POST: api/organization/user/{id}/change-organization-role
+        // POST: organization/user/{id}/change-organization-role
         /// <summary>
         ///     Set user organization role in the session organization.
         /// </summary>
@@ -137,7 +137,7 @@ namespace FunderMaps.AspNetCore.Controllers
         }
 
         // FUTURE: Remove old password from DTO
-        // POST: api/organization/user/{id}/change-password
+        // POST: organization/user/{id}/change-password
         /// <summary>
         ///     Set user password in the session organization.
         /// </summary>
@@ -159,7 +159,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return NoContent();
         }
 
-        // DELETE: api/organization/user/{id}
+        // DELETE: organization/user/{id}
         /// <summary>
         ///     Delete user in the session organization.
         /// </summary>

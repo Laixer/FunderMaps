@@ -1,16 +1,13 @@
-﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Infrastructure.BatchClient;
+﻿using FunderMaps.Core.Email;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
-    // FUTURE: Introduce a Startup class much like FunderMaps.WebApi.Startup
-
     /// <summary>
     ///     Provides extension methods for services from this assembly.
     /// </summary>
@@ -36,20 +33,12 @@ namespace Microsoft.Extensions.DependencyInjection
         private static void ConfigureExternalServices(IServiceCollection services)
         {
             // Remove all existing email services and inject local email service.
-            services.RemoveAll<IEmailService>();
-            services.Configure<EmailOptions>(Configuration.GetSection(EmailOptions.Section));
-            services.AddSingleton<IEmailService, EmailService>();
+            services.AddOrReplace<IEmailService, SmtpService>(ServiceLifetime.Singleton);
+            services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.Section));
 
             // Remove all existing file storage services and inject local file stoage service.
-            services.RemoveAll<IBlobStorageService>();
+            services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Singleton);
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
-            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
-
-            // Remove all existing batch services and inject local batch service.
-            services.AddSingleton<ChannelFactory>();
-            services.RemoveAll<IBatchService>();
-            services.Configure<BatchOptions>(Configuration.GetSection("Batch"));
-            services.AddScoped<IBatchService, BatchClient>();
         }
 
         /// <summary>
@@ -64,38 +53,13 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            using var serviceProviderScope = services.BuildServiceProvider().CreateScope();
-            Configuration = serviceProviderScope.ServiceProvider.GetRequiredService<IConfiguration>();
-            HostEnvironment = serviceProviderScope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+            // The startup essential properties can be used to setup components.
+            (Configuration, HostEnvironment) = services.BuildStartupProperties();
 
-            if (!HostEnvironment.IsDevelopment())
+            if (!HostEnvironment.IsDevelopment() || Configuration.GetValue<bool>("UseExternalServices", false))
             {
                 ConfigureExternalServices(services);
             }
-
-            return services;
-        }
-
-        /// <summary>
-        ///     Explicitly add <see cref="IBlobStorageService"/> to the services.
-        /// </summary>
-        /// <param name="services">The service collection.</param>
-        /// <param name="configuration">Configuration collection.</param>
-        /// <param name="configurationSection">The name of the configuration section.</param>
-        /// <returns>Chained <paramref name="services"/>.</returns>
-        public static IServiceCollection AddSpacesBlobStorageServices(this IServiceCollection services, IConfiguration configuration, string configurationSection)
-        {
-            if (services is null)
-            {
-                throw new ArgumentNullException(nameof(services));
-            }
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
-            services.Configure<BlobStorageOptions>(options => configuration.GetSection(configurationSection).Bind(options));
 
             return services;
         }

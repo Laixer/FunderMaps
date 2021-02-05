@@ -5,6 +5,7 @@ using FunderMaps.Core.Components;
 using FunderMaps.Testing.Extensions;
 using FunderMaps.Testing.Faker;
 using FunderMaps.Testing.Repositories;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http.Json;
@@ -34,10 +35,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 Email = sessionUser.Email,
                 Password = password,
             };
+            using var loggerFactory = LoggerFactory.Create(builder => { });
             using var random = new RandomGenerator();
             var client = _factory
                 .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(password) })
+                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random, loggerFactory.CreateLogger<PasswordHasher>()).HashPassword(password) })
                 .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
                 .CreateClient();
@@ -84,10 +86,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 Email = sessionUser.Email,
                 Password = password,
             };
+            using var loggerFactory = LoggerFactory.Create(builder => { });
             using var random = new RandomGenerator();
             var client = _factory
                 .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random).HashPassword(new Randomizer().Password(128)) })
+                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random, loggerFactory.CreateLogger<PasswordHasher>()).HashPassword(new Randomizer().Password(128)) })
                 .WithDataStoreItem(sessionOrganization)
                 .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
                 .CreateClient();

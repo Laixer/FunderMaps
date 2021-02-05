@@ -1,0 +1,72 @@
+﻿<!-- START MAIN CONTENT AREA -->
+<tr>
+	<td class="wrapper" style="font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 20px;">
+		<table border="0" cellpadding="0" cellspacing="0" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+			<tr>
+				<td style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
+					<p style="font-family: sans-serif; font-size: 22px; font-weight: bold; margin: 0;">Funderingsloket melding</p>
+					<p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Meldingnummer: {{ incident.id }}</p>
+					<p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Dit is een kopie van de door u verzonden melding in het funderingsloket.</b></p>
+					<hr>
+					<h3>Melding gegevens</h3>
+					<table style="margin-bottom: 1em;">
+						<tr>
+							<td>Adres</td>
+							<td>{{ address.full_address }}</td>
+						</tr>
+						<tr>
+							<td>Naam</td>
+							<td>{{ contact.name }}</td>
+						</tr>
+						<tr>
+							<td>Tel. nr</td>
+							<td>{{ contact.phone_number }}</td>
+						</tr>
+						<tr>
+							<td>E-mail</td>
+							<td>{{ contact.email }}</td>
+						</tr>
+					</table>
+					<hr>
+					<h3>Melding informatie</h3>
+					<table style="margin-bottom: 1em;">
+						<tr>
+							<td>Funderingstype</td>
+							<td>{{ incident.foundation_type | to_foundation_type }}</td>
+						</tr>
+						<tr>
+							<td>Bouwblok</td>
+							<td>{{ incident.chained_building | to_boolean }}</td>
+						</tr>
+						<tr>
+							<td>Eigenaar</td>
+							<td>{{ incident.owner | to_boolean }}</td>
+						</tr>
+						<tr>
+							<td>Herstel bij buren</td>
+							<td>{{ incident.neighbor_recovery | to_boolean }}</td>
+						</tr>
+						<tr>
+							<td>Schadeoorzaak</td>
+							<td>{{ incident.foundation_damage_cause | to_foundation_damage_cause }}</td>
+						</tr>
+						<tr>
+							<td>Schadekenmerken</td>
+							<td>{{ incident.foundation_damage_characteristics | array_to_foundation_damage_characteristics | array.join ", " }}</td>
+						</tr>
+						<tr>
+							<td>Omgevingskenmerken</td>
+							<td>{{ incident.environment_damage_characteristics | array_to_environment_damage_characteristics | array.join ", " }}</td>
+						</tr>
+					</table>
+					{% if incident.note %}
+					<hr>
+					<h3>Opmerking bij melding</h3>
+					<p>{{ incident.note }}</p>
+					{% endif %}
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+<!-- END MAIN CONTENT AREA -->

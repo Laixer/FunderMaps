@@ -2,11 +2,10 @@ using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Helpers;
+using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Webservice.Abstractions.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,34 +26,18 @@ namespace FunderMaps.Portal.Controllers
     public class IncidentPortalController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IContactRepository _contactRepository;
-        private readonly IIncidentRepository _incidentRepository;
-        private readonly IAddressRepository _addressRepository;
-        private readonly IProductService _productService;
         private readonly IBlobStorageService _blobStorageService;
-        private readonly INotifyService _notifyService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public IncidentPortalController(
-            IMapper mapper,
-            IContactRepository contactRepository,
-            IIncidentRepository incidentRepository,
-            IAddressRepository addressRepository,
-            IProductService productService,
-            IBlobStorageService blobStorageService,
-            INotifyService notifyService)
+        public IncidentPortalController(IMapper mapper, IBlobStorageService blobStorageService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
-            _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
-            _addressRepository = addressRepository ?? throw new ArgumentNullException(nameof(addressRepository));
-            _productService = productService ?? throw new ArgumentNullException(nameof(productService));
             _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-            _notifyService = notifyService ?? throw new ArgumentNullException(nameof(notifyService));
         }
 
+        // FUTURE: Return the result in an encrypted envelope.
         // POST: api/incident-portal/upload-document
         /// <summary>
         ///     Upload document to the backstore.
@@ -64,10 +47,10 @@ namespace FunderMaps.Portal.Controllers
         /// </remarks>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
-        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.IO.File.AllowedFileMimes)] IFormFile input)
+        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
         {
             // Act.
-            var storeFileName = Core.IO.Path.GetUniqueName(input.FileName);
+            var storeFileName = FileHelper.GetUniqueName(input.FileName);
             await _blobStorageService.StoreFileAsync(
                 containerName: Core.Constants.IncidentStorageFolderName,
                 fileName: storeFileName,
@@ -88,53 +71,16 @@ namespace FunderMaps.Portal.Controllers
         ///     Register new incident.
         /// </summary>
         [HttpPost("submit")]
-        public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input)
+        public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input, [FromServices] IIncidentService incidentService)
         {
             // Map.
             var incident = _mapper.Map<Incident>(input);
-            incident.Meta = new
-            {
-                UserAgent = Request.Headers["User-Agent"].ToString(),
-                RemoteAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Gateway = Constants.IncidentGateway,
-            };
 
             // Act.
-            // There does not have to be a contact, but if it exists we'll save it.
-            if (incident.ContactNavigation is not null && !string.IsNullOrEmpty(incident.ContactNavigation.Email))
-            {
-                await _contactRepository.AddAsync(incident.ContactNavigation);
-            }
-
-            // Act.
-            var id = await _incidentRepository.AddAsync(incident);
-
-            // Act.
-            await _notifyService.DispatchNotifyAsync("incident_notify", new()
-            {
-                Recipients = new List<string> { "info@fundermaps.com", "info@kcaf.nl" }, // TODO: Retrieve from config
-                Items = new Dictionary<string, string> { { "id", id } },
-            });
+            await incidentService.AddAsync(incident);
 
             // Return.
             return NoContent();
-        }
-
-        // TODO: Remove?
-        /// <summary>
-        ///     Get address suggestions.
-        /// </summary>
-        [HttpGet("address-suggest")]
-        public async Task<IActionResult> GetAllAddressSuggestionAsync([FromQuery] AddressSearchDto input)
-        {
-            // Assign.
-            IAsyncEnumerable<Address> addressList = _addressRepository.GetBySearchQueryAsync(input.Query, input.Navigation);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<AddressBuildingDto>, Address>(addressList, HttpContext.RequestAborted);
-
-            // Return.
-            return Ok(result);
         }
 
         // GET: api/incident-portal/risk
@@ -142,10 +88,10 @@ namespace FunderMaps.Portal.Controllers
         ///     Get the analysis product by buillding identifier.
         /// </summary>
         [HttpGet("risk")]
-        public async Task<IActionResult> GetRiskAnalysisAsync([Required] string id)
+        public async Task<IActionResult> GetRiskAnalysisAsync([Required] string id, [FromServices] IProductService productService)
         {
             // Assign.
-            IAsyncEnumerable<AnalysisProduct> productList = _productService.GetAnalysisAsync(AnalysisProductType.RiskPlus, id);
+            IAsyncEnumerable<AnalysisProduct> productList = productService.GetAnalysisAsync(AnalysisProductType.RiskPlus, id);
 
             // Map.
             var result = await _mapper.MapAsync<IList<AnalysisRiskPlusDto>, AnalysisProduct>(productList);

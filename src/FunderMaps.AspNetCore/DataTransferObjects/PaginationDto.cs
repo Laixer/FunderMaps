@@ -1,5 +1,5 @@
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Data;
+using System.ComponentModel.DataAnnotations;
+using FunderMaps.Core;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {
@@ -9,7 +9,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     /// <remarks>
     ///     Used to paginate datasets.
     /// </remarks>
-    public class PaginationDto
+    public record PaginationDto
     {
         /// <summary>
         ///     Recordset offset.
@@ -19,6 +19,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Recordset limit.
         /// </summary>
+        [Range(1, uint.MaxValue)]
         public int Limit { get; set; } = 25;
 
         /// <summary>
@@ -34,15 +35,12 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Get navigation from pagination.
         /// </summary>
-        public INavigation Navigation
+        public Navigation Navigation => new()
         {
-            get => new Navigation
-            {
-                Offset = Offset,
-                Limit = Limit != 0 ? Limit : 100,
-                SortColumn = SortOn,
-                SortOrder = SortAscending ? SortOrder.Ascending : SortOrder.Descending,
-            };
-        }
+            Offset = Offset,
+            Limit = Limit != 0 ? Limit : 100,
+            SortColumn = SortOn,
+            SortOrder = SortAscending ? SortOrder.Ascending : SortOrder.Descending,
+        };
     }
 }

@@ -1,19 +1,29 @@
 using System;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
-    ///     Extension methods for adding and replacing services to an <see cref="IServiceCollection"/>.
+    ///     Extension methods to the <see cref="IServiceCollection"/>.
     /// </summary>
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        ///     Replaces all services in <see cref="IServiceCollection"/> with the same service type as descriptor
-        ///     and adds descriptor to the collection. If the service is not found then a new descriptor is added
-        ///     to the <see cref="IServiceCollection"/>.
+        ///     Add or replace services to an <see cref="IServiceCollection"/>.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Only use this method to replace a service.
+        ///     </para>
+        ///     <para>
+        ///         Replaces all services in <see cref="IServiceCollection"/> with the same service type as descriptor
+        ///         and adds descriptor to the collection. If the service is not found then a new descriptor is added
+        ///         to the <see cref="IServiceCollection"/>.
+        ///     </para>
+        /// </remarks>
         public static IServiceCollection AddOrReplace<TService>(this IServiceCollection services, Func<IServiceProvider, object> implementationFactory, ServiceLifetime lifetime)
         {
             if (services is null)
@@ -31,19 +41,24 @@ namespace Microsoft.Extensions.DependencyInjection
                     services.Replace(new(typeof(TService), implementationFactory, service.Lifetime));
                 }
             }
-            else
-            {
-                services.Add(new(typeof(TService), implementationFactory, lifetime));
-            }
 
+            services.Add(new(typeof(TService), implementationFactory, lifetime));
             return services;
         }
 
         /// <summary>
-        ///     Replaces all services in <see cref="IServiceCollection"/> with the same service type as descriptor
-        ///     and adds descriptor to the collection. If the service is not found then a new descriptor is added
-        ///     to the <see cref="IServiceCollection"/>.
+        ///     Add or replace services to an <see cref="IServiceCollection"/>.
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Only use this method to replace a service.
+        ///     </para>
+        ///     <para>
+        ///         Replaces all services in <see cref="IServiceCollection"/> with the same service type as descriptor
+        ///         and adds descriptor to the collection. If the service is not found then a new descriptor is added
+        ///         to the <see cref="IServiceCollection"/>.
+        ///     </para>
+        /// </remarks>
         public static IServiceCollection AddOrReplace<TService, TImplementation>(this IServiceCollection services, ServiceLifetime lifetime)
         {
             if (services is null)
@@ -61,12 +76,23 @@ namespace Microsoft.Extensions.DependencyInjection
                     services.Replace(new(typeof(TService), typeof(TImplementation), service.Lifetime));
                 }
             }
-            else
+
+            services.Add(new(typeof(TService), typeof(TImplementation), lifetime));
+            return services;
+        }
+
+        /// <summary>
+        ///     Return <see cref="IConfiguration"/> and <see cref="IHostEnvironment"/> from <see cref="IServiceCollection"/>.
+        /// </summary>
+        public static (IConfiguration, IHostEnvironment) BuildStartupProperties(this IServiceCollection services)
+        {
+            if (services is null)
             {
-                services.Add(new(typeof(TService), typeof(TImplementation), lifetime));
+                throw new ArgumentNullException(nameof(services));
             }
 
-            return services;
+            ServiceProvider serviceProvider = services.BuildServiceProvider();
+            return (serviceProvider.GetRequiredService<IConfiguration>(), serviceProvider.GetRequiredService<IHostEnvironment>());
         }
     }
 }

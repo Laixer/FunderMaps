@@ -14,13 +14,13 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="name">Organization name.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        ValueTask<OrganizationProposal> GetByNameAsync(string name);
+        Task<OrganizationProposal> GetByNameAsync(string name);
 
         /// <summary>
         ///     Retrieve <see cref="OrganizationProposal"/> by email.
         /// </summary>
         /// <param name="email">Organization email.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        ValueTask<OrganizationProposal> GetByEmailAsync(string email);
+        Task<OrganizationProposal> GetByEmailAsync(string email);
     }
 }

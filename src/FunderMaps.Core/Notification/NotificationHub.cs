@@ -1,5 +1,5 @@
 using FunderMaps.Core.Abstractions;
-using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Threading;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
@@ -10,30 +10,22 @@ namespace FunderMaps.Core.Notification
     /// </summary>
     internal class NotificationHub : AppServiceBase, INotifyService
     {
-        private const string TaskName = "notification";
+        private const string TaskName = "NOTIFICATION";
 
-        private readonly IBatchService _batchService;
+        private readonly BackgroundTaskScopedDispatcher _backgroundTaskDispatcher;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public NotificationHub(AppContext appContext, IBatchService batchService)
-            => (AppContext, _batchService) = (appContext, batchService);
+        public NotificationHub(AppContext appContext, BackgroundTaskScopedDispatcher backgroundTaskDispatcher)
+            => (AppContext, _backgroundTaskDispatcher) = (appContext, backgroundTaskDispatcher);
 
         /// <summary>
         ///     Notify by means of contacting.
         /// </summary>
         /// <param name="envelope">Envelope containing the notification.</param>
-        public Task DispatchNotifyAsync(Envelope envelope)
-            => _batchService.EnqueueAsync(TaskName, envelope, AppContext.CancellationToken);
-
-        /// <summary>
-        ///     Notify by means of contacting.
-        /// </summary>
-        /// <param name="taskName">Name of the task to handle the job.</param>
-        /// <param name="envelope">Envelope containing the notification.</param>
-        public Task DispatchNotifyAsync(string taskName, Envelope envelope)
-            => _batchService.EnqueueAsync(taskName, envelope, AppContext.CancellationToken);
+        public async Task NotifyAsync(Envelope envelope)
+            => await _backgroundTaskDispatcher.EnqueueTaskAsync(TaskName, envelope);
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated

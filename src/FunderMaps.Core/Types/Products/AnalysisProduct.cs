@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Types.Products
     /// <summary>
     ///     Represents a model for the complete endpoint.
     /// </summary>
-    public sealed class AnalysisProduct : ProductBase
+    public sealed class AnalysisProduct
     {
         /// <summary>
         ///     Building identifier.

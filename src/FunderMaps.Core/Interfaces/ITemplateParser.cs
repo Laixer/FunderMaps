@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,6 +9,12 @@ namespace FunderMaps.Core.Interfaces
     /// </summary>
     public interface ITemplateParser
     {
+        /// <summary>
+        ///     Add object with name to the template context.
+        /// </summary>
+        /// <param name="contextItems">Dictionary with key and value objects.</param>
+        ITemplateParser AddObject(IDictionary<string, object> contextItems);
+
         /// <summary>
         ///     Add object with name to the template context.
         /// </summary>

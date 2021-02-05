@@ -1,12 +1,16 @@
 ﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.Email;
+using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.MapBundle;
+using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Notification;
+using FunderMaps.Core.Notification.Jobs;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
-using FunderMaps.Core.UseCases;
-using FunderMaps.Webservice.Abstractions.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using System;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -17,21 +21,58 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class FunderMapsCoreServiceCollectionExtensions
     {
         /// <summary>
+        ///     Configuration.
+        /// </summary>
+        public static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Host environment.
+        /// </summary>
+        public static IHostEnvironment HostEnvironment { get; set; }
+
+        /// <summary>
+        ///     Adds batch job to the task component.
+        /// </summary>
+        public static IServiceCollection AddBatchJob<TBatchJob>(this IServiceCollection services)
+        {
+            services.AddTransient(typeof(TBatchJob));
+            services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(TBatchJob)));
+
+            return services;
+        }
+
+        /// <summary>
         ///     Adds the core threading service to the container.
         /// </summary>
         private static IServiceCollection AddCoreThreading(this IServiceCollection services)
         {
-            // TODO: Read from config
             services.AddScoped<BackgroundTaskScopedDispatcher>();
             services.AddSingleton<DispatchManager>();
             services.AddTransient<BackgroundTaskDispatcher>();
-            // services.Configure<BackgroundWorkOptions>(options => configuration.GetSection("BackgroundWorkOptions").Bind(options));
-            services.Configure<BackgroundWorkOptions>(options =>
-            {
-                options.MaxQueueSize = 8192;
-                options.MaxWorkers = 2;
-                options.TimeoutDelay = TimeSpan.FromMinutes(30);
-            });
+            services.Configure<BackgroundWorkOptions>(Configuration.GetSection(BackgroundWorkOptions.Section));
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds incident reporting service.
+        /// </summary>
+        private static IServiceCollection AddIncident(this IServiceCollection services)
+        {
+            services.AddBatchJob<EmailJob>();
+            services.AddScoped<IIncidentService, IncidentService>();
+            services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds map bundle service.
+        /// </summary>
+        private static IServiceCollection AddMapBundle(this IServiceCollection services)
+        {
+            services.AddBatchJob<BundleJob>();
+            services.AddScoped<IBundleService, BundleHub>();
 
             return services;
         }
@@ -42,7 +83,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection AddAppContext(this IServiceCollection services)
         {
             services.AddSingleton<IAppContextFactory, AppContextFactory>();
-            services.AddScoped<FunderMaps.Core.AppContext>(sp => sp.GetRequiredService<IAppContextFactory>().Create());
+            services.AddScoped<FunderMaps.Core.AppContext>(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
 
             return services;
         }
@@ -66,6 +107,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
+            // The startup essential properties can be used to setup components.
+            (Configuration, HostEnvironment) = services.BuildStartupProperties();
+
             // Register core components in DI container.
             // NOTE: These services are rarely used and should therefore be
             //       registered as transient. They are re-instantiated on every
@@ -74,6 +118,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IPasswordHasher, PasswordHasher>();
             services.AddTransient<ITemplateParser, TemplateParser>();
             services.AddTransient<IGeocoderParser, GeocoderParser>();
+            services.AddTransient<IGeocoderTranslation, GeocoderTranslation>();
 
             // Register application context in DI container
             // NOTE: The application context *must* be registered with the container
@@ -82,14 +127,9 @@ namespace Microsoft.Extensions.DependencyInjection
             //       context if possible.
             services.AddAppContext();
 
-            // Register core use cases in DI container.
-            services.AddScoped<ProjectUseCase>();
-            services.AddScoped<RecoveryUseCase>();
-
             // Register core services in DI container.
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<INotifyService, NotificationHub>();
-            services.AddScoped<IBundleService, BundleHub>();
 
             // Register core services in DI container.
             // NOTE: These services take time to initialize are used more often. Registering
@@ -103,6 +143,12 @@ namespace Microsoft.Extensions.DependencyInjection
             // objects to memory. The memory cache may have already been registered with the container
             // by some other package, however we cannot expect this to be.
             services.AddMemoryCache();
+
+            // Register the incident core service.
+            services.AddIncident();
+
+            // Register the map bundle service.
+            services.AddMapBundle();
 
             // The application core (as well as many other components) depends upon the ability to dispatch
             // tasks to the background.

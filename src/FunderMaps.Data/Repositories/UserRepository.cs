@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -21,13 +21,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="User"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(User entity)
+        public override async Task<Guid> AddAsync(User entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             // FUTURE: normalized_email should be db trigger function
             var sql = @"
                 INSERT INTO application.user(
@@ -50,7 +45,7 @@ namespace FunderMaps.Data.Repositories
                     @role)
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             MapToWriter(context, entity);
 
@@ -63,13 +58,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.user";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -78,7 +73,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="User"/>.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -87,7 +82,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.user
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -96,6 +91,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, User entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("given_name", entity.GivenName);
             context.AddParameterWithValue("last_name", entity.LastName);
             context.AddParameterWithValue("email", entity.Email);
@@ -106,7 +106,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new User
+            => new()
             {
                 Id = reader.GetGuid(offset + 0),
                 GivenName = reader.GetSafeString(offset + 1),
@@ -123,7 +123,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns><see cref="User"/>.</returns>
-        public override async ValueTask<User> GetByIdAsync(Guid id)
+        public override async Task<User> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out User entity))
             {
@@ -144,7 +144,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   u.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -158,7 +158,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="User"/>.</returns>
-        public async ValueTask<User> GetByEmailAsync(string email)
+        public async Task<User> GetByEmailAsync(string email)
         {
             var sql = @"
                 SELECT  -- User
@@ -174,7 +174,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   u.normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -188,7 +188,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Number of failed signins.</returns>
-        public async ValueTask<uint> GetAccessFailedCountAsync(Guid id)
+        public async Task<uint> GetAccessFailedCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  access_failed_count
@@ -196,7 +196,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -208,7 +208,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Number of signins.</returns>
-        public async ValueTask<uint> GetLoginCountAsync(Guid id)
+        public async Task<uint> GetLoginCountAsync(Guid id)
         {
             var sql = @"
                 SELECT  login_count
@@ -216,7 +216,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -228,7 +228,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Datetime of last signin.</returns>
-        public async ValueTask<DateTime?> GetLastLoginAsync(Guid id)
+        public async Task<DateTime?> GetLastLoginAsync(Guid id)
         {
             var sql = @"
                 SELECT  last_login
@@ -236,7 +236,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -250,7 +250,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>Password hash as string.</returns>
-        public async ValueTask<string> GetPasswordHashAsync(Guid id)
+        public async Task<string> GetPasswordHashAsync(Guid id)
         {
             var sql = @"
                 SELECT  password_hash
@@ -258,7 +258,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -272,7 +272,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <returns>True if locked out, false otherwise.</returns>
-        public async ValueTask<bool> IsLockedOutAsync(Guid id)
+        public async Task<bool> IsLockedOutAsync(Guid id)
         {
             var sql = @"
                 SELECT EXISTS (
@@ -283,7 +283,7 @@ namespace FunderMaps.Data.Repositories
                     LIMIT   1
                 ) AS is_locked";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -294,13 +294,8 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all <see cref="User"/>.
         /// </summary>
         /// <returns>List of <see cref="User"/>.</returns>
-        public override async IAsyncEnumerable<User> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  u.id,
                         u.given_name,
@@ -312,9 +307,9 @@ namespace FunderMaps.Data.Repositories
                         u.role
                 FROM    application.user AS u";
 
-            ConstructNavigation(ref sql, navigation, "u");
+            ConstructNavigation(sql, navigation, "u");
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -326,9 +321,9 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="User"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(User entity)
+        public override async Task UpdateAsync(User entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -345,7 +340,7 @@ namespace FunderMaps.Data.Repositories
                         role = @role
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
 
@@ -359,14 +354,14 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Entity identifier.</param>
         /// <param name="passwordHash">New password hash.</param>
-        public async ValueTask SetPasswordHashAsync(Guid id, string passwordHash)
+        public async Task SetPasswordHashAsync(Guid id, string passwordHash)
         {
             var sql = @"
                 UPDATE  application.user
                 SET     password_hash = @password_hash
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("password_hash", passwordHash);
@@ -378,14 +373,14 @@ namespace FunderMaps.Data.Repositories
         ///     Increase signin failure count.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public async ValueTask BumpAccessFailed(Guid id)
+        public async Task BumpAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
                 SET     access_failed_count = access_failed_count + 1
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -396,14 +391,14 @@ namespace FunderMaps.Data.Repositories
         ///     Reset signin failure count.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public async ValueTask ResetAccessFailed(Guid id)
+        public async Task ResetAccessFailed(Guid id)
         {
             var sql = @"
                 UPDATE  application.user
                 SET     access_failed_count = 0
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -414,7 +409,7 @@ namespace FunderMaps.Data.Repositories
         ///     Register a new user login.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
-        public async ValueTask RegisterAccess(Guid id)
+        public async Task RegisterAccess(Guid id)
         {
             // FUTURE: db func
             // FUTURE: db trigger to update last_login
@@ -424,7 +419,7 @@ namespace FunderMaps.Data.Repositories
                         last_login = CURRENT_TIMESTAMP
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 

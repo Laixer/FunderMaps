@@ -11,6 +11,6 @@ namespace FunderMaps.AspNetCore.Authentication
         /// <summary>
         ///     Token valid time.
         /// </summary>
-        public TimeSpan Valid { get; set; }
+        public TimeSpan Valid { get; init; }
     }
 }

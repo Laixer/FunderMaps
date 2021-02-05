@@ -1,8 +1,7 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.Control;
 using FunderMaps.Data.Extensions;
 using System;
 using System.Collections.Generic;
@@ -21,13 +20,8 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="InquiryFull"/>.</returns>
-        public override async ValueTask<int> AddAsync(InquiryFull entity)
+        public override async Task<int> AddAsync(InquiryFull entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             var sql = @"
                 WITH attribution AS (
 	                INSERT INTO application.attribution(
@@ -68,7 +62,7 @@ namespace FunderMaps.Data.Repositories
                 FROM attribution
                 RETURNING id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
             context.AddParameterWithValue("user", AppContext.UserId);
@@ -84,7 +78,7 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
 				SELECT  COUNT(*)
@@ -92,7 +86,7 @@ namespace FunderMaps.Data.Repositories
                 JOIN 	application.attribution AS a ON a.id = i.attribution
 				WHERE   a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
@@ -103,7 +97,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="id">Entity object.</param>
-        public override async ValueTask DeleteAsync(int id)
+        public override async Task DeleteAsync(int id)
         {
             ResetCacheEntity(id);
 
@@ -115,7 +109,7 @@ namespace FunderMaps.Data.Repositories
                 AND     i.id = @id
                 AND     a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
@@ -125,6 +119,11 @@ namespace FunderMaps.Data.Repositories
 
         public static void MapToWriter(DbContext context, InquiryFull entity)
         {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
             context.AddParameterWithValue("document_name", entity.DocumentName);
             context.AddParameterWithValue("inspection", entity.Inspection);
             context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
@@ -138,7 +137,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         public static InquiryFull MapFromReader(DbDataReader reader, int offset = 0)
-            => new InquiryFull
+            => new()
             {
                 Id = reader.GetInt(offset + 0),
                 DocumentName = reader.GetSafeString(offset + 1),
@@ -150,22 +149,22 @@ namespace FunderMaps.Data.Repositories
                 DocumentFile = reader.GetSafeString(offset + 7),
                 Type = reader.GetFieldValue<InquiryType>(offset + 8),
                 StandardF3o = reader.GetBoolean(offset + 9),
-                Attribution = new AttributionControl
+                Attribution = new()
                 {
                     Reviewer = reader.GetFieldValue<Guid?>(offset + 10),
                     Creator = reader.GetGuid(offset + 11),
                     Owner = reader.GetGuid(offset + 12),
                     Contractor = reader.GetGuid(offset + 13),
                 },
-                State = new StateControl
+                State = new()
                 {
                     AuditStatus = reader.GetFieldValue<AuditStatus>(offset + 14),
                 },
-                Access = new AccessControl
+                Access = new()
                 {
                     AccessPolicy = reader.GetFieldValue<AccessPolicy>(offset + 15),
                 },
-                Record = new RecordControl
+                Record = new()
                 {
                     CreateDate = reader.GetDateTime(offset + 16),
                     UpdateDate = reader.GetSafeDateTime(offset + 17),
@@ -178,7 +177,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="InquiryFull"/>.</returns>
-        public override async ValueTask<InquiryFull> GetByIdAsync(int id)
+        public override async Task<InquiryFull> GetByIdAsync(int id)
         {
             if (TryGetEntity(id, out InquiryFull entity))
             {
@@ -220,7 +219,7 @@ namespace FunderMaps.Data.Repositories
                 AND     a.owner = @tenant
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
@@ -230,22 +229,12 @@ namespace FunderMaps.Data.Repositories
             return CacheEntity(MapFromReader(reader));
         }
 
-        public Task<InquiryFull> GetPublicAndByIdAsync(int id, Guid orgId)
-        {
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         ///     Retrieve all <see cref="InquiryFull"/>.
         /// </summary>
         /// <returns>List of <see cref="InquiryFull"/>.</returns>
-        public override async IAsyncEnumerable<InquiryFull> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<InquiryFull> ListAllAsync(Navigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  -- Inquiry
                         i.id,
@@ -279,9 +268,9 @@ namespace FunderMaps.Data.Repositories
                 JOIN 	application.attribution AS a ON a.id = i.attribution
                 WHERE   a.owner = @tenant";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
@@ -295,13 +284,8 @@ namespace FunderMaps.Data.Repositories
         ///     Update <see cref="InquiryFull"/>.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override async ValueTask UpdateAsync(InquiryFull entity)
+        public override async Task UpdateAsync(InquiryFull entity)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
-
             ResetCacheEntity(entity);
 
             var sql = @"
@@ -331,7 +315,7 @@ namespace FunderMaps.Data.Repositories
                     AND     i.id = @id
                     AND     a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", entity.Id);
             context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
@@ -350,7 +334,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="entity">Entity object.</param>
         public async Task SetAuditStatusAsync(int id, InquiryFull entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -365,7 +349,7 @@ namespace FunderMaps.Data.Repositories
                     AND     i.id = @id
                     AND     a.owner = @tenant";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
             context.AddParameterWithValue("tenant", AppContext.TenantId);

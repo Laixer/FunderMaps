@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Interfaces
     /// <summary>
     ///     Batch service.
     /// </summary>
-    public interface IBatchService
+    public interface IBatchService : IServiceHealthCheck
     {
         /// <summary>
         ///     Add task to batch queue.
@@ -24,10 +24,5 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="token">Cancellation token.</param>
         Task<DispatchManagerStatus> StatusAsync(CancellationToken token = default);
-
-        /// <summary>
-        ///     Test the batch service backend.
-        /// </summary>
-        Task TestService();
     }
 }

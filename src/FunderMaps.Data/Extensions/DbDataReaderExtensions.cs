@@ -16,7 +16,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Value as integer.</returns>
         public static int GetInt(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -32,7 +32,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Value as integer.</returns>
         public static uint GetUInt(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -48,7 +48,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Value as nullable integer.</returns>
         public static int? GetSafeInt(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -69,7 +69,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Value as nullable double.</returns>
         public static double? GetSafeDouble(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -90,7 +90,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Value as nullable float.</returns>
         public static float? GetSafeFloat(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -111,7 +111,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Value as nullable string.</returns>
         public static string GetSafeString(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -127,7 +127,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Datetime or null.</returns>
         public static DateTime? GetSafeDateTime(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -143,7 +143,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>Boolean or null.</returns>
         public static bool? GetSafeBoolean(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -159,7 +159,7 @@ namespace FunderMaps.Data.Extensions
         /// <returns>decimal or null.</returns>
         public static decimal? GetSafeDecimal(this DbDataReader reader, int ordinal)
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }
@@ -177,7 +177,7 @@ namespace FunderMaps.Data.Extensions
         public static TFieldType GetSafeFieldValue<TFieldType>(this DbDataReader reader, int ordinal)
             where TFieldType : class
         {
-            if (reader == null)
+            if (reader is null)
             {
                 throw new ArgumentNullException(nameof(reader));
             }

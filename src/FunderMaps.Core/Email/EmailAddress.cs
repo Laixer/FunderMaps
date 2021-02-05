@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Email
     /// <summary>
     ///     Email address.
     /// </summary>
-    public class EmailAddress
+    public record EmailAddress
     {
         /// <summary>
         ///     Name corresponding to address.

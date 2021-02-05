@@ -1,0 +1,25 @@
+{
+    "Jwt": {
+        "Issuer": "FunderMaps",
+        "Audience": "FunderMaps",
+        "TokenValidity": 60
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Warning"
+        }
+    },
+    "Batch": {
+        "ServiceUri": "https://staging.batch.fundermaps.com"
+    },
+    "Smtp": {
+        "SmtpPort": 465,
+        "DefaultSenderName": "FunderMaps",
+        "DefaultSenderAddress": "info@fundermaps.com"
+    },
+    "BlobStorage": {
+        "AccessKey": "5K6F45VBQEH6NRT6QMB7",
+        "ServiceUri": "https://ams3.digitaloceanspaces.com/",
+        "BlobStorageName": "fundermaps-staging"
+    }
+}

@@ -1,32 +1,33 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using FunderMaps.Core.Identity;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Core
 {
     // TODO:
     // - Culture
     /// <summary>
-    ///     Application context.
+    ///     Application context to the entire application.
     /// </summary>
+    /// <remarks>
+    ///     The application context carries the full application state per scope. On every scope
+    ///     a new application context is instanciated. The application context is present at all times
+    ///     within a service scope.
+    /// </remarks>
     public record AppContext
     {
         /// <summary>
         ///     Notifies when this call is aborted and thus request operations should be cancelled.
         /// </summary>
-        public CancellationToken CancellationToken { get; init; } = CancellationToken.None;
+        public CancellationToken CancellationToken { get; init; }
 
         /// <summary>
         ///     Gets or sets a key/value collection that can be used to share data within this scope.
         /// </summary>
         public Dictionary<object, object> Items { get; init; }
-
-        /// <summary>
-        ///     Memory cache.
-        /// </summary>
-        public IMemoryCache Cache { get; set; } // TODO: init  // TODO: remove
 
         /// <summary>
         ///     User identity.
@@ -55,6 +56,11 @@ namespace FunderMaps.Core
         ///     Indicates that identity has been set or not.
         /// </summary>
         /// <remarks>If <see cref="User"/> exists, then <see cref="Tenant"/> exists.</remarks>
-        public bool HasIdentity => User != null;
+        public bool HasIdentity => User is not null;
+
+        /// <summary>
+        ///     Absolute path to the application directory.
+        /// </summary>
+        public string applicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     }
 }

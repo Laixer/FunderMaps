@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -13,11 +15,32 @@ namespace FunderMaps.Core.Components
     /// </summary>
     public class TemplateParser : ITemplateParser
     {
+        private readonly AppContext _appContext;
+
         private const string templatePath = "Template/{0}/{1}.html";
 
         private Template template;
         private ScriptObject scriptObject = new();
         private TemplateContext templateContext = new();
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public TemplateParser(AppContext appContext) 
+            => _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+
+        /// <summary>
+        ///     Add object with name to the template context.
+        /// </summary>
+        /// <param name="contextItems">Dictionary with key and value objects.</param>
+        public ITemplateParser AddObject(IDictionary<string, object> contextItems)
+        {
+            foreach (var contextItem in contextItems)
+            {
+                scriptObject.Add(contextItem.Key, contextItem.Value);
+            }
+            return this;
+        }
 
         /// <summary>
         ///     Add object with name to the template context.
@@ -47,9 +70,11 @@ namespace FunderMaps.Core.Components
         /// <param name="templateName">Template name on disk.</param>
         public ITemplateParser FromTemplateFile(string order, string templateName)
         {
-            var applicationDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // TODO: Move to AppContext
-            var fullTemplatePath = Path.Combine(applicationDirectory, string.Format(templatePath, order, templateName));
-            template = Template.ParseLiquid(File.ReadAllText(fullTemplatePath), fullTemplatePath);
+            string body = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, string.Format(templatePath, order, templateName)));
+            string header = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, "Template/Email/Header.html"));
+            string footer = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, "Template/Email/Footer.html"));
+
+            template = Template.ParseLiquid(header + body + footer);
             return this;
         }
 

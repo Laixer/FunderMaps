@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
@@ -28,16 +27,15 @@ namespace FunderMaps.BatchNode
         /// <returns>See <see cref="IHostBuilder"/>.</returns>
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureServices(services =>
                 {
-                    webBuilder.ConfigureKestrel(options =>
-                    {
-                        options.ConfigureEndpointDefaults(config =>
-                        {
-                            config.Protocols = HttpProtocols.Http2;
-                        });
-                    });
-                    webBuilder.UseStartup<Startup>();
+                    // Configure FunderMaps services.
+                    services.AddFunderMapsCoreServices();
+                    services.AddFunderMapsInfrastructureServices();
+                    services.AddFunderMapsDataServices("FunderMapsConnection");
+
+                    // Add the task scheduler.
+                    services.AddHostedService<TimedHostedService>();
                 });
     }
 }

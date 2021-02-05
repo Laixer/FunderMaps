@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Authentication
     /// <summary>
     ///     Context returned from various authentication operations.
     /// </summary>
-    public class SignInContext
+    public record SignInContext
     {
         /// <summary>
         ///     Return result as Failed.

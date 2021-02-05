@@ -1,7 +1,9 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Email;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.AspNetCore.HealthChecks
 {
@@ -11,12 +13,13 @@ namespace FunderMaps.AspNetCore.HealthChecks
     public class EmailHealthCheck : IHealthCheck
     {
         private readonly IEmailService _emailService;
+        private readonly ILogger<EmailHealthCheck> _logger;
 
         /// <summary>
         ///     Create a new instance.
         /// </summary>
-        public EmailHealthCheck(IEmailService emailService)
-            => _emailService = emailService;
+        public EmailHealthCheck(IEmailService emailService, ILogger<EmailHealthCheck> logger)
+            => (_emailService, _logger) = (emailService, logger);
 
         /// <summary>
         ///     Runs the health check, returning the status of the component being checked.
@@ -26,9 +29,17 @@ namespace FunderMaps.AspNetCore.HealthChecks
         /// <returns>Instance of <see cref="HealthCheckResult"/>.</returns>
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
         {
-            // Operation throws if an error occurs.
-            await _emailService.TestService();
-            return HealthCheckResult.Healthy();
+            try
+            {
+                await _emailService.HealthCheck();
+                return HealthCheckResult.Healthy();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogTrace(exception, "Health check failed");
+
+                return HealthCheckResult.Unhealthy("email service");
+            }
         }
     }
 }

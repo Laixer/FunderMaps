@@ -12,6 +12,6 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         ///     User role in organization.
         /// </summary>
         [Required]
-        public OrganizationRole OrganizationRole { get; set; } // TODO: init
+        public OrganizationRole OrganizationRole { get; set; } // FUTURE: init
     }
 }

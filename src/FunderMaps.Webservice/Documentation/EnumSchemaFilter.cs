@@ -20,11 +20,11 @@ namespace FunderMaps.Webservice.Documentation
         /// <param name="context"><see cref="SchemaFilterContext"/></param>
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            if (schema == null)
+            if (schema is null)
             {
                 throw new ArgumentNullException(nameof(schema));
             }
-            if (context == null)
+            if (context is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }

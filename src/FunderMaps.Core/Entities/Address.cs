@@ -73,7 +73,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Full address.
         /// </summary>
-        public string FullAddress => $"{Street.Trim()} {BuildingNumber.Trim()}, {City.Trim()}";
+        public string FullAddress => $"{Street} {BuildingNumber}, {City}";
 
         // TODO: Obsolete
         /// <summary>

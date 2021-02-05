@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Identity
     public interface IUser
     {
         /// <summary>
-        ///     Unique identifier.
+        ///     Unique user identifier.
         /// </summary>
         Guid Id { get; set; }
 

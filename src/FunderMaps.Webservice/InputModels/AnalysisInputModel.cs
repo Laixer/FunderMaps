@@ -1,4 +1,4 @@
-﻿using FunderMaps.AspNetCore.InputModels;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types.Products;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,7 +7,7 @@ namespace FunderMaps.Webservice.InputModels
     /// <summary>
     ///     DTO for an analysis product request.
     /// </summary>
-    public sealed class AnalysisInputModel : PaginationInputModel
+    public sealed record AnalysisInputModel : PaginationDto
     {
         /// <summary>
         ///     Product type.

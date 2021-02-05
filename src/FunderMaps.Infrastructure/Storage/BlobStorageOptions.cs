@@ -2,11 +2,10 @@
 
 namespace FunderMaps.Infrastructure.Storage
 {
-    // TODO This might be too specific for S3.
     /// <summary>
     ///     Options for the blob storage service.
     /// </summary>
-    public sealed class BlobStorageOptions
+    public sealed record BlobStorageOptions
     {
         /// <summary>
         ///     Base service uri for blob storage service.

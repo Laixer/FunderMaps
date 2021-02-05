@@ -56,7 +56,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// </summary>
         public string InvoiceEmail { get; init; }
 
-        // TODO: Convert to geocoder address?
+        // FUTURE: Convert to geocoder address?
 
         /// <summary>
         ///     Street.

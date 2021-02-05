@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data.Abstractions;
 using System;
 using System.Threading.Tasks;
 
@@ -7,13 +8,20 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Log product hit.
     /// </summary>
-    internal class TelemetryRepository : DbContextBase, ITelemetryRepository
+    internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
     {
         /// <summary>
         ///     Log a product hit.
         /// </summary>
         /// <remarks>
-        ///     The <paramref name="hitCount"/> has a lower bound of 1.
+        ///     <para>
+        ///         The <paramref name="hitCount"/> has a lower bound of 1.
+        ///     </para>
+        ///     <para>
+        ///         This method is and should be fault-tolerant. If one of the
+        ///         necessary parameters is not passed, then behavior could
+        ///         be different.
+        ///     </para>
         /// </remarks>
         /// <param name="productName">Product name.</param>
         /// <param name="hitCount">Number of hits to log.</param>
@@ -39,7 +47,7 @@ namespace FunderMaps.Data.Repositories
                 DO UPDATE SET
                     count = pu.count + EXCLUDED.count";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);

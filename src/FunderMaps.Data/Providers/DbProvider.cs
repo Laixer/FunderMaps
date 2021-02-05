@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Providers
 {
-    // TODO: This is not testable. We want unit tests for this part.
-
     /// <summary>
     ///     Database provider.
     /// </summary>
@@ -49,7 +47,7 @@ namespace FunderMaps.Data.Providers
         /// <returns>See <see cref="DbCommand"/>.</returns>
         public virtual DbCommand CreateCommand(string cmdText, DbConnection connection)
         {
-            if (connection == null)
+            if (connection is null)
             {
                 throw new ArgumentNullException(nameof(connection));
             }

@@ -1,6 +1,7 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
+using FunderMaps.Data.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,20 +12,10 @@ namespace FunderMaps.Data.Repositories
     /// <summary>
     ///     Organization user repository.
     /// </summary>
-    internal class OrganizationUserRepository : DbContextBase, IOrganizationUserRepository
+    internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepository
     {
-        public async ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
+        public async Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {
-            if (organizationId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(organizationId));
-            }
-
-            if (userId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
             var sql = @"
                 INSERT INTO application.organization_user(
                     user_id,
@@ -35,7 +26,7 @@ namespace FunderMaps.Data.Repositories
                     @organization_id,
                     @role)";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
             context.AddParameterWithValue("organization_id", organizationId);
@@ -48,16 +39,16 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all users by organization.
         /// </summary>
         /// <returns>List of user identifiers.</returns>
-        public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
+        public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation)
         {
             var sql = @"
                 SELECT  user_id
                 FROM    application.organization_user
                 WHERE   organization_id = @organization_id";
 
-            ConstructNavigation(ref sql, navigation);
+            // ConstructNavigation(ref sql, navigation); // TODO:
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("organization_id", organizationId);
 
@@ -67,7 +58,7 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, INavigation navigation)
+        public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, Navigation navigation)
         {
             var sql = @"
                 SELECT  user_id
@@ -75,9 +66,9 @@ namespace FunderMaps.Data.Repositories
                 WHERE   organization_id = @organization_id
                 AND     role = ANY(@role)";
 
-            ConstructNavigation(ref sql, navigation);
+            // ConstructNavigation(ref sql, navigation); // TODO:
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("organization_id", organizationId);
             context.AddParameterWithValue("role", role);
@@ -88,18 +79,8 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
-        public async ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId)
+        public async Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
         {
-            if (organizationId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(organizationId));
-            }
-
-            if (userId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
             // FUTURE: database function
             var sql = @"
                 SELECT EXISTS (
@@ -110,7 +91,7 @@ namespace FunderMaps.Data.Repositories
                     LIMIT   1
                 )";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
             context.AddParameterWithValue("organization_id", organizationId);
@@ -118,14 +99,14 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<bool>();
         }
 
-        public async ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
+        public async Task<Guid> GetOrganizationByUserIdAsync(Guid userId)
         {
             var sql = @"
                 SELECT  organization_id
                 FROM    application.organization_user
                 WHERE   user_id = @user_id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
 
@@ -134,14 +115,14 @@ namespace FunderMaps.Data.Repositories
             return reader.GetGuid(0);
         }
 
-        public async ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
+        public async Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
         {
             var sql = @"
                 SELECT  role
                 FROM    application.organization_user
                 WHERE   user_id = @user_id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
 
@@ -157,7 +138,7 @@ namespace FunderMaps.Data.Repositories
                 SET     role = @role
                 WHERE   user_id = @user_id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("user_id", userId);
             context.AddParameterWithValue("role", role);

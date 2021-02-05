@@ -3,7 +3,7 @@ namespace FunderMaps.Core.Storage
     /// <summary>
     ///     Storage object settings.
     /// </summary>
-    public class StorageObject
+    public record StorageObject
     {
         /// <summary>
         ///     Specifies if the object is public accessable.

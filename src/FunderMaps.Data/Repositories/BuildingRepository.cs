@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
@@ -16,7 +16,7 @@ namespace FunderMaps.Data.Repositories
     /// </summary>
     internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
     {
-        protected override void SetCacheItem(KeyPair key, Building value, MemoryCacheEntryOptions options)
+        protected override void SetCacheItem(CacheKeyPair key, Building value, MemoryCacheEntryOptions options)
         {
             options.SlidingExpiration *= 2;
             options.AbsoluteExpirationRelativeToNow *= 2;
@@ -24,20 +24,20 @@ namespace FunderMaps.Data.Repositories
             base.SetCacheItem(key, value, options);
         }
 
-        public override ValueTask<string> AddAsync(Building entity)
+        public override Task<string> AddAsync(Building entity)
             => throw new NotImplementedException();
 
         /// <summary>
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    geocoder.building";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -46,7 +46,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="Incident"/>.
         /// </summary>
         /// <param name="id">Entity object.</param>
-        public override ValueTask DeleteAsync(string id)
+        public override Task DeleteAsync(string id)
             => throw new NotImplementedException();
 
         public static Building MapFromReader(DbDataReader reader, int offset = 0)
@@ -62,7 +62,7 @@ namespace FunderMaps.Data.Repositories
                 NeighborhoodId = reader.GetSafeString(offset + 7),
             };
 
-        public override async ValueTask<Building> GetByIdAsync(string id)
+        public override async Task<Building> GetByIdAsync(string id)
         {
             if (TryGetEntity(id, out Building entity))
             {
@@ -83,7 +83,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   b.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -105,10 +105,10 @@ namespace FunderMaps.Data.Repositories
         public Task<bool> IsInGeoFenceAsync(Guid userId, string buildingId)
             => throw new NotImplementedException();
 
-        public override IAsyncEnumerable<Building> ListAllAsync(INavigation navigation)
+        public override IAsyncEnumerable<Building> ListAllAsync(Navigation navigation)
             => throw new NotImplementedException();
 
-        public override ValueTask UpdateAsync(Building entity)
+        public override Task UpdateAsync(Building entity)
             => throw new NotImplementedException();
     }
 }

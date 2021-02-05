@@ -43,7 +43,6 @@ namespace FunderMaps.WebApi.Controllers.Application
         /// <summary>
         ///     Return all reviewers.
         /// </summary>
-        /// <remarks>Cache response for 1 hour.</remarks>
         [HttpGet("reviewer")]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {

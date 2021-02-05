@@ -104,6 +104,9 @@ namespace FunderMaps.Data.Providers
                 {
                     case Npgsql.PostgresErrorCodes.ForeignKeyViolation:
                         throw new ReferenceNotFoundException(exception.Message, exception);
+
+                    case Npgsql.PostgresErrorCodes.AdminShutdown:
+                        throw new ServiceUnavailableException(exception.Message, exception);
                 }
             }
 

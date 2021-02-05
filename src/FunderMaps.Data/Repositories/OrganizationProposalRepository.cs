@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
 using System;
@@ -19,9 +19,9 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="entity">Entity object.</param>
         /// <returns>Created <see cref="OrganizationProposal"/>.</returns>
-        public override async ValueTask<Guid> AddAsync(OrganizationProposal entity)
+        public override async Task<Guid> AddAsync(OrganizationProposal entity)
         {
-            if (entity == null)
+            if (entity is null)
             {
                 throw new ArgumentNullException(nameof(entity));
             }
@@ -32,7 +32,7 @@ namespace FunderMaps.Data.Repositories
                     @name,
                     @email)";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("name", entity.Name);
             context.AddParameterWithValue("email", entity.Email);
@@ -46,13 +46,13 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve number of entities.
         /// </summary>
         /// <returns>Number of entities.</returns>
-        public override async ValueTask<long> CountAsync()
+        public override async Task<long> CountAsync()
         {
             var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.create_organization_proposal";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             return await context.ScalarAsync<long>();
         }
@@ -61,7 +61,7 @@ namespace FunderMaps.Data.Repositories
         ///     Delete <see cref="OrganizationProposal"/>.
         /// </summary>
         /// <param name="id">Entity id.</param>
-        public override async ValueTask DeleteAsync(Guid id)
+        public override async Task DeleteAsync(Guid id)
         {
             ResetCacheEntity(id);
 
@@ -70,7 +70,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_proposal
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -78,7 +78,7 @@ namespace FunderMaps.Data.Repositories
         }
 
         private static OrganizationProposal MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new OrganizationProposal
+            => new()
             {
                 Id = reader.GetGuid(offset + 0),
                 Name = reader.GetSafeString(offset + 1),
@@ -90,7 +90,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="id">Unique identifier.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public override async ValueTask<OrganizationProposal> GetByIdAsync(Guid id)
+        public override async Task<OrganizationProposal> GetByIdAsync(Guid id)
         {
             if (TryGetEntity(id, out OrganizationProposal entity))
             {
@@ -106,7 +106,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   op.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
@@ -120,7 +120,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="name">Organization name.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetByNameAsync(string name)
+        public async Task<OrganizationProposal> GetByNameAsync(string name)
         {
             var sql = @"
                 SELECT  -- OrganizationProposal
@@ -131,7 +131,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   op.normalized_name = application.normalize(@name)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("@name", name);
 
@@ -145,7 +145,7 @@ namespace FunderMaps.Data.Repositories
         /// </summary>
         /// <param name="email">Unique identifier.</param>
         /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async ValueTask<OrganizationProposal> GetByEmailAsync(string email)
+        public async Task<OrganizationProposal> GetByEmailAsync(string email)
         {
             var sql = @"
                 SELECT  id,
@@ -155,7 +155,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   normalized_email = application.normalize(@email)
                 LIMIT   1";
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("email", email);
 
@@ -168,22 +168,17 @@ namespace FunderMaps.Data.Repositories
         ///     Retrieve all <see cref="OrganizationProposal"/>.
         /// </summary>
         /// <returns>List of <see cref="OrganizationProposal"/>.</returns>
-        public override async IAsyncEnumerable<OrganizationProposal> ListAllAsync(INavigation navigation)
+        public override async IAsyncEnumerable<OrganizationProposal> ListAllAsync(Navigation navigation)
         {
-            if (navigation == null)
-            {
-                throw new ArgumentNullException(nameof(navigation));
-            }
-
             var sql = @"
                 SELECT  id,
                         name,
                         email
                 FROM    application.organization_proposal";
 
-            ConstructNavigation(ref sql, navigation);
+            ConstructNavigation(sql, navigation);
 
-            await using var context = await DbContextFactory(sql);
+            await using var context = await DbContextFactory.CreateAsync(sql);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
@@ -195,7 +190,7 @@ namespace FunderMaps.Data.Repositories
         ///     Cannot update a proposal.
         /// </summary>
         /// <param name="entity">Entity object.</param>
-        public override ValueTask UpdateAsync(OrganizationProposal entity)
+        public override Task UpdateAsync(OrganizationProposal entity)
             => throw new InvalidOperationException();
     }
 }

@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using System;
@@ -31,7 +30,7 @@ namespace FunderMaps.Testing.Repositories
             DataStore = dataStore;
         }
 
-        public ValueTask AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
+        public Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
         {
             DataStore.Add(new OrganizationUserRecord
             {
@@ -39,23 +38,23 @@ namespace FunderMaps.Testing.Repositories
                 OrganizationId = organizationId,
                 OrganizationRole = role,
             });
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
-        public ValueTask<bool> IsUserInOrganization(Guid organizationId, Guid userId)
-            => new ValueTask<bool>(DataStore.ItemList.Any(e => e.UserId == userId && e.OrganizationId == organizationId));
+        public Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
+            => Task.FromResult<bool>(DataStore.ItemList.Any(e => e.UserId == userId && e.OrganizationId == organizationId));
 
-        public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, INavigation navigation)
+        public IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation)
             => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Select(s => s.UserId), navigation));
 
-        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, INavigation navigation)
+        public IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] organizationRole, Navigation navigation)
             => Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Where(s => organizationRole.Contains(s.OrganizationRole)).Select(s => s.UserId), navigation));
 
-        public ValueTask<Guid> GetOrganizationByUserIdAsync(Guid userId)
-            => new ValueTask<Guid>(DataStore.ItemList.First(e => e.UserId == userId).OrganizationId);
+        public Task<Guid> GetOrganizationByUserIdAsync(Guid userId)
+            => Task.FromResult<Guid>(DataStore.ItemList.First(e => e.UserId == userId).OrganizationId);
 
-        public ValueTask<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
-            => new ValueTask<OrganizationRole>(DataStore.ItemList.First(e => e.UserId == userId).OrganizationRole);
+        public Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
+            => Task.FromResult<OrganizationRole>(DataStore.ItemList.First(e => e.UserId == userId).OrganizationRole);
 
         public Task SetOrganizationRoleByUserIdAsync(Guid userId, OrganizationRole role)
         {

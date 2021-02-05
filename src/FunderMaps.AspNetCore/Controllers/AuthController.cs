@@ -28,7 +28,7 @@ namespace FunderMaps.AspNetCore.Controllers
             _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
         }
 
-        // POST: api/auth/signin
+        // POST: auth/signin
         /// <summary>
         ///     User sign in endpoint.
         /// </summary>
@@ -46,7 +46,7 @@ namespace FunderMaps.AspNetCore.Controllers
             return Ok(output);
         }
 
-        // GET: api/auth/token-refresh
+        // GET: auth/token-refresh
         /// <summary>
         ///     Refresh access token for user.
         /// </summary>

@@ -1,8 +1,13 @@
 namespace FunderMaps.Core.Abstractions
 {
+    // TODO: Add Logging ?
     /// <summary>
     ///     Application service base.
     /// </summary>
+    /// <remarks>
+    ///     The application service base should be the base class to
+    ///     all services in the application.
+    /// </remarks>
     public abstract class AppServiceBase
     {
         /// <summary>

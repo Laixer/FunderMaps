@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Types.Distributions;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
@@ -9,13 +9,87 @@ namespace FunderMaps.Core.Interfaces.Repositories
     public interface IStatisticsRepository
     {
         /// <summary>
-        ///     Get statistics product by id.
+        ///     Get foundation type distribution by id.
         /// </summary>
-        Task<StatisticsProduct> GetStatisticsProductByIdAsync(string id);
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id);
 
         /// <summary>
-        ///     Get statistics product by external id.
+        ///     Get foundation type distribution by external id.
         /// </summary>
-        Task<StatisticsProduct> GetStatisticsProductByExternalIdAsync(string id);
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get construction year distribution by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id);
+
+        /// <summary>
+        ///     Get construction year distribution by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get data collection percentage by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<decimal> GetDataCollectedPercentageByIdAsync(string id);
+
+        /// <summary>
+        ///     Get data collection percentage by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<decimal> GetDataCollectedPercentageByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get foundation risk distribution by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id);
+
+        /// <summary>
+        ///     Get foundation risk distribution by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get total building restored count by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<long> GetTotalBuildingRestoredCountByIdAsync(string id);
+
+        /// <summary>
+        ///     Get total building restored count by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<long> GetTotalBuildingRestoredCountByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get total incident count by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<long> GetTotalIncidentCountByIdAsync(string id);
+
+        /// <summary>
+        ///     Get total incident count by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<long> GetTotalIncidentCountByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get total report count by id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<long> GetTotalReportCountByIdAsync(string id);
+
+        /// <summary>
+        ///     Get total report count by external id.
+        /// </summary>
+        /// <param name="id">Neighborhood identifier.</param>
+        Task<long> GetTotalReportCountByExternalIdAsync(string id);
     }
 }

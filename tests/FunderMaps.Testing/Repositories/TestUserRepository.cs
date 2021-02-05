@@ -1,5 +1,5 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
@@ -49,37 +49,37 @@ namespace FunderMaps.Testing.Repositories
         ///     Add entity to data store.
         /// </summary>
         /// <param name="entity"></param>
-        public ValueTask<Guid> AddAsync(User entity)
+        public Task<Guid> AddAsync(User entity)
         {
             entity.Id = Guid.NewGuid();
             DataStore.Add(new UserRecord
             {
                 User = entity
             });
-            return new ValueTask<Guid>(entity.Id);
+            return Task.FromResult<Guid>(entity.Id);
         }
 
         /// <summary>
         ///     Count items in datastore.
         /// </summary>
         /// <returns>Number of items in data store.</returns>
-        public ValueTask<long> CountAsync()
-            => new ValueTask<long>(DataStore.Count);
+        public Task<long> CountAsync()
+            => Task.FromResult<long>(DataStore.Count);
 
-        public ValueTask BumpAccessFailed(Guid id)
+        public Task BumpAccessFailed(Guid id)
         {
             FindEntityById(id).AccessFailedCount++;
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
         /// <summary>
         ///     Remove entity from data store.
         /// </summary>
         /// <param name="id"></param>
-        public virtual ValueTask DeleteAsync(Guid id)
+        public virtual Task DeleteAsync(Guid id)
         {
             DataStore.ItemList.Remove(FindEntityById(id));
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -87,9 +87,9 @@ namespace FunderMaps.Testing.Repositories
         /// </summary>
         /// <param name="id">Entity primary key.</param>
         /// <returns>Instance of <see cref="TEntity"/>.</returns>
-        public ValueTask<User> GetByIdAsync(Guid id)
+        public Task<User> GetByIdAsync(Guid id)
         {
-            return new ValueTask<User>(FindEntityById(id).User);
+            return Task.FromResult<User>(FindEntityById(id).User);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace FunderMaps.Testing.Repositories
         /// </summary>
         /// <param name="navigation">Navigation options.</param>
         /// <returns>See <see cref="IAsyncEnumerable<TEntity>"/>.</returns>
-        public IAsyncEnumerable<User> ListAllAsync(INavigation navigation)
+        public IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
         {
             return Helper.AsAsyncEnumerable(Helper.ApplyNavigation(DataStore.ItemList.Select(s => s.User), navigation));
         }
@@ -106,60 +106,60 @@ namespace FunderMaps.Testing.Repositories
         ///     Update entity in data store.
         /// </summary>
         /// <param name="entity"></param>
-        public ValueTask UpdateAsync(User entity)
+        public Task UpdateAsync(User entity)
         {
             DataStore.ItemList[FindIndexById(entity.Id)].User = entity;
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
-        public ValueTask<uint> GetAccessFailedCountAsync(Guid id)
+        public Task<uint> GetAccessFailedCountAsync(Guid id)
         {
-            return new ValueTask<uint>(FindEntityById(id).AccessFailedCount);
+            return Task.FromResult<uint>(FindEntityById(id).AccessFailedCount);
         }
 
-        public ValueTask<User> GetByEmailAsync(string email)
+        public Task<User> GetByEmailAsync(string email)
         {
-            return new ValueTask<User>(DataStore.ItemList.FirstOrDefault(e => e.User.Email == email).User);
+            return Task.FromResult<User>(DataStore.ItemList.FirstOrDefault(e => e.User.Email == email).User);
         }
 
-        public ValueTask<DateTime?> GetLastLoginAsync(Guid id)
+        public Task<DateTime?> GetLastLoginAsync(Guid id)
         {
-            return new ValueTask<DateTime?>(FindEntityById(id).LastLogin);
+            return Task.FromResult<DateTime?>(FindEntityById(id).LastLogin);
         }
 
-        public ValueTask<uint> GetLoginCountAsync(Guid id)
+        public Task<uint> GetLoginCountAsync(Guid id)
         {
-            return new ValueTask<uint>(FindEntityById(id).AccessCount);
+            return Task.FromResult<uint>(FindEntityById(id).AccessCount);
         }
 
-        public ValueTask<string> GetPasswordHashAsync(Guid id)
+        public Task<string> GetPasswordHashAsync(Guid id)
         {
-            return new ValueTask<string>(FindEntityById(id).Password);
+            return Task.FromResult<string>(FindEntityById(id).Password);
         }
 
-        public ValueTask<bool> IsLockedOutAsync(Guid id)
+        public Task<bool> IsLockedOutAsync(Guid id)
         {
-            return new ValueTask<bool>(FindEntityById(id).IsLockedOut);
+            return Task.FromResult<bool>(FindEntityById(id).IsLockedOut);
         }
 
-        public ValueTask RegisterAccess(Guid id)
+        public Task RegisterAccess(Guid id)
         {
             UserRecord userRecord = FindEntityById(id);
             userRecord.AccessCount++;
             userRecord.LastLogin = DateTime.Now;
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
-        public ValueTask ResetAccessFailed(Guid id)
+        public Task ResetAccessFailed(Guid id)
         {
             FindEntityById(id).AccessFailedCount = 0;
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
-        public ValueTask SetPasswordHashAsync(Guid id, string passwordHash)
+        public Task SetPasswordHashAsync(Guid id, string passwordHash)
         {
             FindEntityById(id).Password = passwordHash;
-            return new ValueTask();
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using FunderMaps.Core.Interfaces;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FunderMaps.Core;
 
 namespace FunderMaps.Testing
 {
@@ -33,7 +33,7 @@ namespace FunderMaps.Testing
         /// <param name="list">Input enumerable.</param>
         /// <param name="navigation">Navigation rules.</param>
         /// <returns></returns>
-        public static IEnumerable<T> ApplyNavigation<T>(IEnumerable<T> list, INavigation navigation)
+        public static IEnumerable<T> ApplyNavigation<T>(IEnumerable<T> list, Navigation navigation)
         {
             if (navigation.Offset > 0)
             {

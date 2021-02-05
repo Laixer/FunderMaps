@@ -16,7 +16,7 @@ namespace FunderMaps.Testing.Repositories
         {
         }
 
-        public override ValueTask<int> AddAsync(InquiryFull entity)
+        public override Task<int> AddAsync(InquiryFull entity)
         {
             entity.Id = randomizer.Int(0, int.MaxValue);
             entity.State.AuditStatus = AuditStatus.Todo;

@@ -1,0 +1,37 @@
+{
+  "Jwt": {
+    "Issuer": "FunderMapsDev",
+    "Audience": "FunderMapsDev",
+    "TokenValidity": 5,
+    "SignatureKey": "dhfgdfubhgbdfghredfgregurhe78gh348yvt784tcno3qt74gntkuirdhg"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  },
+  "Incident": {
+    "ClientId": 12,
+    "Recipients": [
+      "info@fundermaps.com"
+    ]
+  },
+  "UseExternalServices": false,
+  "Smtp": {
+    "SmtpServer": "smtp.transip.email",
+    "SmtpPort": 465,
+    "SmtpUsername": "info@fundermaps.com",
+    "SmtpPassword": null,
+    "DefaultSenderName": "FunderMaps",
+    "DefaultSenderAddress": "info@fundermaps.com"
+  },
+  "ConnectionStrings": {
+    "FunderMapsConnection": null
+  },
+  "BlobStorage": {
+    "AccessKey": "LOUSAQJLIXLMIXKTKDW5",
+    "SecretKey": null,
+    "ServiceUri": "https://ams3.digitaloceanspaces.com/",
+    "BlobStorageName": "fundermaps-development"
+  }
+}
