@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
