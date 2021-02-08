@@ -24,7 +24,7 @@ namespace FunderMaps.Core.MapBundle
         ///     The interval is based on a 10 minute window. Increasing this value
         ///     will make it less likely to process all bundles.
         /// </remarks>
-        private const int randomInterval = 30;
+        private const int randomInterval = 12;
 
         private readonly ILogger _logger;
         private readonly IBundleRepository _bundleRepository;
