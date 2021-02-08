@@ -2,6 +2,7 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -95,10 +96,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     was successfully created within this <see cref="Inquiry"/>.
         /// </remarks>
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input)
+        public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
         {
+            Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
+
             // Map.
             var inquirySample = _mapper.Map<InquirySample>(input);
+            inquirySample.Address = address.Id;
             inquirySample.Inquiry = inquiryId;
 
             // Act.
