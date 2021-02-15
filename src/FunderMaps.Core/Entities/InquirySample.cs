@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.DataAnnotations;
-using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -29,9 +28,9 @@ namespace FunderMaps.Core.Entities
         public int Inquiry { get; set; }
 
         /// <summary>
-        ///     Address identifier.
+        ///     An address identifier.
         /// </summary>
-        [Required, Geocoder]
+        [Required]
         public string Address { get; set; }
 
         /// <summary>

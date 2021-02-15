@@ -2,6 +2,7 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,6 @@ namespace FunderMaps.WebApi.Controllers.Report
     public class InquirySampleController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly Core.AppContext _appContext;
         private readonly IInquiryRepository _inquiryRepository;
         private readonly IInquirySampleRepository _inquirySampleRepository;
 
@@ -28,12 +28,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         public InquirySampleController(
             IMapper mapper,
-            Core.AppContext appContext,
             IInquiryRepository inquiryRepository,
             IInquirySampleRepository inquirySampleRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
             _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
         }
@@ -46,7 +44,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetStatsAsync(int inquiryId)
         {
             // Map.
-            var output = new DatasetStatsDto
+            DatasetStatsDto output = new()
             {
                 Count = await _inquirySampleRepository.CountAsync(inquiryId),
             };
@@ -63,7 +61,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetAsync(int id)
         {
             // Act.
-            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+            InquirySample inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
 
             // Map.
             var output = _mapper.Map<InquirySampleDto>(inquirySample);
@@ -98,15 +96,18 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     was successfully created within this <see cref="Inquiry"/>.
         /// </remarks>
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input)
+        public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
         {
+            Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
+
             // Map.
             var inquirySample = _mapper.Map<InquirySample>(input);
+            inquirySample.Address = address.Id;
             inquirySample.Inquiry = inquiryId;
 
             // Act.
             // FUTURE: Too much logic
-            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
             if (!inquiry.State.AllowWrite)
             {
                 throw new EntityReadOnlyException();
@@ -141,7 +142,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             inquirySample.Inquiry = inquiryId;
 
             // Act.
-            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
             if (!inquiry.State.AllowWrite)
             {
                 throw new EntityReadOnlyException();
@@ -168,8 +169,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.
-            var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
-            var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+            InquirySample inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
             if (!inquiry.State.AllowWrite)
             {
                 throw new EntityReadOnlyException();

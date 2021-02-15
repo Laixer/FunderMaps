@@ -1,4 +1,5 @@
 using FunderMaps.Core.Abstractions;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Threading;
@@ -16,6 +17,15 @@ namespace FunderMaps.Core.MapBundle
     /// </summary>
     internal class BundleHub : AppServiceBase, IBundleService
     {
+        /// <summary>
+        ///     Random interval determines if all bundles will be processed.    
+        /// </summary>
+        /// <remarks>
+        ///     The interval is based on a 10 minute window. Increasing this value
+        ///     will make it less likely to process all bundles.
+        /// </remarks>
+        private const int randomInterval = 12;
+
         private readonly ILogger _logger;
         private readonly IBundleRepository _bundleRepository;
         private readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
@@ -40,7 +50,7 @@ namespace FunderMaps.Core.MapBundle
         /// </remarks>>
         public async Task BuildAsync()
         {
-            await foreach (var bundle in _random.Next(0, 10) == 0
+            await foreach (Bundle bundle in _random.Next(0, randomInterval) == 0
                 ? _bundleRepository.ListAllAsync(Navigation.All)
                 : _bundleRepository.ListAllRecentAsync(Navigation.All))
             {
