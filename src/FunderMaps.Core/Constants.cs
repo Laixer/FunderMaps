@@ -16,6 +16,11 @@ namespace FunderMaps.Core
         public const string InquiryStorageFolderName = "inquiry-report";
 
         /// <summary>
+        ///     Recovery storage destination folder name.
+        /// </summary>
+        public const string RecoveryStorageFolderName = "recovery-report";
+
+        /// <summary>
         ///     Allowed file mime types in the application.
         /// </summary>
         /// <remarks>
