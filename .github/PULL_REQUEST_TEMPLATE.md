@@ -14,4 +14,4 @@ Yes/No
 
 ### Additional information
 
-[x] Remove branch after merge (only features into develop)
+* [x] Remove branch after merge (only features into develop)
