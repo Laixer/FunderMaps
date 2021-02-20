@@ -29,7 +29,7 @@ namespace FunderMaps.Core.MapBundle
         private readonly ILogger _logger;
         private readonly IBundleRepository _bundleRepository;
         private readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
-        private readonly Random _random = new Random();
+        private readonly Random _random = new();
 
         /// <summary>
         ///     Create new instance.

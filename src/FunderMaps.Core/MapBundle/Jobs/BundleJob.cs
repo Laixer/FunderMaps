@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Threading.Command;
 using Microsoft.Extensions.Logging;
+using System.IO;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.MapBundle.Jobs
@@ -251,6 +252,8 @@ namespace FunderMaps.Core.MapBundle.Jobs
                 Logger.LogWarning("No formats listed for export");
                 return;
             }
+
+            await File.WriteAllTextAsync($"{context.Workspace}/BUNDLE", bundleBuildingContext.Bundle.ToString());
 
             List<GeometryFormat> formatList = bundleBuildingContext.Formats.Distinct().ToList();
             formatList.RemoveAll(f => f == GeometryFormat.GeoPackage);
