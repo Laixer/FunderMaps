@@ -57,7 +57,7 @@ namespace FunderMaps.Core.Threading
             // NOTE: Add one more worker than configured. This will set the lower bound to 1
             //       and will misalign the number of workers-to-CPU-core ratio. Doing so will
             //       always keep a single core free for other processes.
-            workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
+            workerPoolHandle = new(_options.MaxWorkers, (_options.MaxWorkers * 2));
 
             timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
