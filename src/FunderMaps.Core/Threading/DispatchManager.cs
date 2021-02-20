@@ -54,10 +54,8 @@ namespace FunderMaps.Core.Threading
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
-            // NOTE: Add one more worker than configured. This will set the lower bound to 1
-            //       and will misalign the number of workers-to-CPU-core ratio. Doing so will
-            //       always keep a single core free for other processes.
-            workerPoolHandle = new(_options.MaxWorkers, (_options.MaxWorkers * 2));
+            // NOTE: Allocate the worker requested and reserve twice as much.
+            workerPoolHandle = new(_options.Workers, (_options.Workers * 2));
 
             timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),

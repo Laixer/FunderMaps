@@ -21,7 +21,7 @@ namespace FunderMaps.Core.Threading
         ///     The amount of simultaneous running background workers
         ///     for synchronous work.
         /// </summary>
-        public int MaxWorkers { get; set; } = 2;
+        public int Workers { get; set; } = 2;
 
         /// <summary>
         ///     The time interval to wait before canceling a task.
