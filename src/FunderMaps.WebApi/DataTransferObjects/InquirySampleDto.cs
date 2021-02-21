@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -30,6 +30,12 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
+
+        /// <summary>
+        ///     Base measurement level.
+        /// </summary>
+        [Required]
+        public BaseMeasurementLevel BaseMeasurementLevel { get; set; }
 
         /// <summary>
         ///     Built year.

@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -231,6 +231,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("inquiry", entity.Inquiry);
             context.AddParameterWithValue("address", entity.Address);
             context.AddParameterWithValue("note", entity.Note);
+            context.AddParameterWithValue("base_measurement_level", entity.BaseMeasurementLevel);
             context.AddParameterWithValue("built_year", entity.BuiltYear);
             context.AddParameterWithValue("substructure", entity.Substructure);
             context.AddParameterWithValue("overall_quality", entity.OverallQuality);
@@ -680,6 +681,7 @@ namespace FunderMaps.Data.Repositories
                             note = @note,
                             built_year = @built_year,
                             substructure = @substructure,
+                            base_measurement_level = @base_measurement_level,
 
                             -- Foundation Assessment
                             overall_quality = @overall_quality,
