@@ -16,7 +16,14 @@
       "info@fundermaps.com"
     ]
   },
-  "UseExternalServices": false,
+  "UseExternalServices": true,
+  "BackgroundWorkOptions": {
+    "MaxQueueSize": 16,
+    "Workers": 1
+  },
+  "Batch": {
+    "Interval": 5
+  },
   "Smtp": {
     "SmtpServer": "smtp.transip.email",
     "SmtpPort": 465,

@@ -4,6 +4,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Threading;
 using FunderMaps.Core.Types;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace FunderMaps.Core.MapBundle
         ///     The random selection is based on the batch interval in minutes.
         ///     Increasing this value will make it less likely to process all bundles.
         /// </remarks>
-        private const int randomInterval = 12;
+        private readonly int randomInterval;
 
         private readonly ILogger _logger;
         private readonly IBundleRepository _bundleRepository;
@@ -34,12 +35,19 @@ namespace FunderMaps.Core.MapBundle
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleHub(AppContext appContext, ILogger<BundleHub> logger, IBundleRepository bundleRepository, BackgroundTaskDispatcher backgroundTaskDispatcher)
+        public BundleHub(
+            AppContext appContext,
+            ILogger<BundleHub> logger,
+            IBundleRepository bundleRepository,
+            BackgroundTaskDispatcher backgroundTaskDispatcher,
+            IConfiguration configuration)
         {
             AppContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
             _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
+
+            randomInterval = configuration.GetValue<int>("Bundle:RandomInterval", 10);
         }
 
         /// <summary>
