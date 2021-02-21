@@ -11,6 +11,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Threading.Command;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Threading;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.MapBundle.Jobs
@@ -21,6 +22,8 @@ namespace FunderMaps.Core.MapBundle.Jobs
     internal class BundleJob : CommandTask
     {
         private const string TaskName = "BUNDLE_BUILDING";
+
+        private static SemaphoreSlim storageHandle = new(1);
 
         protected readonly ILayerRepository _layerRepository;
         protected readonly IBlobStorageService _blobStorageService;
@@ -157,24 +160,38 @@ namespace FunderMaps.Core.MapBundle.Jobs
                 returnCode = await RunCommandAsync(command);
             }
 
-            // TODO: We can parallelize deletion of existing files with the uploading part by uploading to a temporary directory 
-            // and then moving it when both tasks are complete. For now we wait for deletion to complete before we upload into the destination directory.
+            // TODO: We can parallelize deletion of existing files with the uploading part by uploading to a
+            //       temporary directory and then moving it when both tasks are complete. For now we wait for
+            //       deletion to complete before we upload into the destination directory.
 
             Logger.LogTrace("Deleting existing files (if they exist)");
 
-            await _blobStorageService.RemoveDirectoryAsync(blobStoragePath);
+            // NOTE: The lock is too aggressive because the critical section is based on the
+            //       context of bundle (identifier). However a conditional lock such as DCL is
+            //       only conceivable when the thread is synchronized. Serialize entry to all
+            //       threads on this and similair sections is a second best solution.
+            await storageHandle.WaitAsync();
 
-            Logger.LogTrace("Start uploading exported bundle");
+            try
+            {
+                await _blobStorageService.RemoveDirectoryAsync(blobStoragePath);
 
-            await _blobStorageService.StoreDirectoryAsync(
-                directoryName: blobStoragePath,
-                directoryPath: fileDump.PathPrefix,
-                new Core.Storage.StorageObject
-                {
-                    ContentType = formatProperty.ContentType,
-                    CacheControl = "public, max-age=3600",
-                    IsPublic = true,
-                });
+                Logger.LogTrace("Start uploading exported bundle");
+
+                await _blobStorageService.StoreDirectoryAsync(
+                    directoryName: blobStoragePath,
+                    directoryPath: fileDump.PathPrefix,
+                    new Core.Storage.StorageObject
+                    {
+                        ContentType = formatProperty.ContentType,
+                        CacheControl = "public, max-age=3600",
+                        IsPublic = true,
+                    });
+            }
+            finally
+            {
+                storageHandle.Release();
+            }
 
             Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
 
@@ -212,23 +229,37 @@ namespace FunderMaps.Core.MapBundle.Jobs
 
             await RunCommandAsync(command);
 
-            // TODO: We can parallelize deletion of existing files with the uploading part by uploading to a temporary directory 
-            // and then moving it when both tasks are complete. For now we wait for deletion to complete before we upload into the destination directory.
+            // TODO: We can parallelize deletion of existing files with the uploading part by uploading to a
+            //       temporary directory and then moving it when both tasks are complete. For now we wait for
+            //       deletion to complete before we upload into the destination directory.
 
             Logger.LogTrace("Deleting existing files (if they exist)");
 
-            await _blobStorageService.RemoveDirectoryAsync(blobStoragePath);
+            // NOTE: The lock is too aggressive because the critical section is based on the
+            //       context of bundle (identifier). However a conditional lock such as DCL is
+            //       only conceivable when the thread is synchronized. Serialize entry to all
+            //       threads on this and similair sections is a second best solution.
+            await storageHandle.WaitAsync();
 
-            Logger.LogTrace($"Start uploading exported bundle");
+            try
+            {
+                await _blobStorageService.RemoveDirectoryAsync(blobStoragePath);
 
-            await _blobStorageService.StoreDirectoryAsync(
-                directoryName: blobStoragePath,
-                directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
-                {
-                    ContentType = formatProperty.ContentType,
-                    CacheControl = "public, max-age=3600",
-                    IsPublic = true,
-                });
+                Logger.LogTrace($"Start uploading exported bundle");
+
+                await _blobStorageService.StoreDirectoryAsync(
+                    directoryName: blobStoragePath,
+                    directoryPath: fileDump.PathPrefix, new Core.Storage.StorageObject
+                    {
+                        ContentType = formatProperty.ContentType,
+                        CacheControl = "public, max-age=3600",
+                        IsPublic = true,
+                    });
+            }
+            finally
+            {
+                storageHandle.Release();
+            }
 
             Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
 
