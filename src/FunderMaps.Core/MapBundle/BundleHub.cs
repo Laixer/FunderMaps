@@ -21,8 +21,8 @@ namespace FunderMaps.Core.MapBundle
         ///     Random interval determines if all bundles will be processed.    
         /// </summary>
         /// <remarks>
-        ///     The interval is based on a 10 minute window. Increasing this value
-        ///     will make it less likely to process all bundles.
+        ///     The random selection is based on the batch interval in minutes.
+        ///     Increasing this value will make it less likely to process all bundles.
         /// </remarks>
         private const int randomInterval = 12;
 
@@ -43,16 +43,24 @@ namespace FunderMaps.Core.MapBundle
         }
 
         /// <summary>
-        ///     Build bundles.
+        ///     Select the bundles which need to be rebuild.
         /// </summary>
         /// <remarks>
         ///     Try to process all the bundles once every so many times.
-        /// </remarks>>
+        /// </remarks>
+        private IAsyncEnumerable<Bundle> GetBuildCandidates()
+        {
+            return _random.Next(0, randomInterval) == 0
+                ? _bundleRepository.ListAllAsync(Navigation.All)
+                : _bundleRepository.ListAllRecentAsync(Navigation.All);
+        }
+
+        /// <summary>
+        ///     Send build candidates off to background worker.
+        /// </summary>
         public async Task BuildAsync()
         {
-            await foreach (Bundle bundle in _random.Next(0, randomInterval) == 0
-                ? _bundleRepository.ListAllAsync(Navigation.All)
-                : _bundleRepository.ListAllRecentAsync(Navigation.All))
+            await foreach (Bundle bundle in GetBuildCandidates())
             {
                 _logger.LogDebug($"Enqueue bundle {bundle.Id}");
 

@@ -29,6 +29,8 @@ namespace FunderMaps.BatchNode
             _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
+            // The default below is set in minutes.
+            // FUTURE: Maybe move this into a dedicated IOptions<> structure.
             intervalInMinutes = configuration.GetValue<int>("Batch:Interval", 10);
         }
 
