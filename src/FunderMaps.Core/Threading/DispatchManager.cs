@@ -132,7 +132,7 @@ namespace FunderMaps.Core.Threading
             // Run as long as there are items on the queue.
             async Task WorkerDelegate()
             {
-                _logger.LogDebug("Allocating new worker");
+                _logger.LogTrace("Allocating new worker");
 
                 await workerPoolHandle.WaitAsync();
 
@@ -197,7 +197,7 @@ namespace FunderMaps.Core.Threading
                 {
                     workerPoolHandle.Release();
 
-                    _logger.LogDebug("Free worker");
+                    _logger.LogTrace("Free worker");
                 }
             }
 
