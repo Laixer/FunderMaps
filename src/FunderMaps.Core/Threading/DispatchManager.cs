@@ -54,8 +54,7 @@ namespace FunderMaps.Core.Threading
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
-            // NOTE: Allocate the worker requested and reserve twice as much.
-            workerPoolHandle = new(_options.Workers, (_options.Workers * 2));
+            workerPoolHandle = new(_options.Workers);
 
             timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
