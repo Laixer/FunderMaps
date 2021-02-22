@@ -105,7 +105,7 @@ namespace FunderMaps.Core.Threading.Command
                 processInfo.Environment.Add(environmentVariable);
             }
 
-            Logger.LogDebug("Start system process");
+            Logger.LogTrace("Start system process");
 
             using var process = Process.Start(processInfo);
             if (process is null)
@@ -129,7 +129,7 @@ namespace FunderMaps.Core.Threading.Command
                 process.Kill(entireProcessTree: true);
             });
 
-            Logger.LogDebug("Wait for process to exit");
+            Logger.LogTrace("Wait for process to exit");
 
             process.WaitForExit();
 
@@ -138,7 +138,7 @@ namespace FunderMaps.Core.Threading.Command
 
             File.WriteAllText($"{Context.Workspace}/{process.Id}.rtn", process.ExitCode.ToString());
 
-            Logger.LogDebug($"Process exit with return code: {process.ExitCode}");
+            Logger.LogTrace($"Process exit with return code: {process.ExitCode}");
 
             return process.ExitCode;
         }
@@ -164,7 +164,7 @@ namespace FunderMaps.Core.Threading.Command
                 throw new ArgumentNullException(nameof(context));
             }
 
-            Logger.LogDebug("Setup workspace for job");
+            Logger.LogTrace("Setup workspace for job");
 
             context.Workspace = Path.Combine(Directory.GetCurrentDirectory(), $"workspace/job-{Context.Id}");
             Directory.CreateDirectory(context.Workspace);
@@ -188,7 +188,7 @@ namespace FunderMaps.Core.Threading.Command
                 throw new ArgumentNullException(nameof(context));
             }
 
-            Logger.LogDebug("Teardown workspace for job");
+            Logger.LogTrace("Teardown workspace for job");
 
             if (!context.KeepWorkspace)
             {

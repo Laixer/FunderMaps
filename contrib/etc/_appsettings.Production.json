@@ -10,9 +10,6 @@
             "Microsoft.AspNetCore.DataProtection": "Error"
         }
     },
-    "Batch": {
-        "ServiceUri": "https://batch.fundermaps.com"
-    },
     "Smtp": {
         "SmtpPort": 465,
         "DefaultSenderName": "FunderMaps",

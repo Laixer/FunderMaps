@@ -54,10 +54,7 @@ namespace FunderMaps.Core.Threading
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
-            // NOTE: Add one more worker than configured. This will set the lower bound to 1
-            //       and will misalign the number of workers-to-CPU-core ratio. Doing so will
-            //       always keep a single core free for other processes.
-            workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
+            workerPoolHandle = new(_options.Workers);
 
             timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
@@ -134,7 +131,7 @@ namespace FunderMaps.Core.Threading
             // Run as long as there are items on the queue.
             async Task WorkerDelegate()
             {
-                _logger.LogDebug("Allocating new worker");
+                _logger.LogTrace("Allocating new worker");
 
                 await workerPoolHandle.WaitAsync();
 
@@ -199,7 +196,7 @@ namespace FunderMaps.Core.Threading
                 {
                     workerPoolHandle.Release();
 
-                    _logger.LogDebug("Free worker");
+                    _logger.LogTrace("Free worker");
                 }
             }
 
