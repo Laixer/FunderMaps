@@ -82,7 +82,7 @@ namespace FunderMaps.Portal
 
             app.UseFunderMapsExceptionHandler("/oops");
 
-            app.UsePathBase(new PathString("/api"));
+            app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
