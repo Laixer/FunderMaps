@@ -92,7 +92,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Damage cause.
         /// </summary>
-        public FoundationDamageCause DamageCause { get; set; }
+        public FoundationDamageCause? DamageCause { get; set; }
 
         /// <summary>
         ///     Damage cause.
