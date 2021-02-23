@@ -32,12 +32,6 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public string Note { get; set; }
 
         /// <summary>
-        ///     Base measurement level.
-        /// </summary>
-        [Required]
-        public BaseMeasurementLevel BaseMeasurementLevel { get; set; }
-
-        /// <summary>
         ///     Built year.
         /// </summary>
         public DateTime? BuiltYear { get; set; }

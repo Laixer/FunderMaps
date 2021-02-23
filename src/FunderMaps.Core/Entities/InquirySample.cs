@@ -40,12 +40,6 @@ namespace FunderMaps.Core.Entities
         public string Note { get; set; }
 
         /// <summary>
-        ///     Base measurement level.
-        /// </summary>
-        [Required]
-        public BaseMeasurementLevel BaseMeasurementLevel { get; set; } = BaseMeasurementLevel.NAP;
-
-        /// <summary>
         ///     Built year.
         /// </summary>
         public DateTime? BuiltYear { get; set; }
@@ -356,7 +350,6 @@ namespace FunderMaps.Core.Entities
         public override void InitializeDefaults()
         {
             Id = 0;
-            BaseMeasurementLevel = BaseMeasurementLevel.NAP;
             CreateDate = DateTime.MinValue;
             UpdateDate = null;
             DeleteDate = null;
