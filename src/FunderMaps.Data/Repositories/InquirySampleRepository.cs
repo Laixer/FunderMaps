@@ -83,7 +83,8 @@ namespace FunderMaps.Data.Repositories
                     skewed_parallel,
                     skewed_perpendicular,
                     skewed_facade,
-                    settlement_speed)
+                    settlement_speed,
+                    skewed_window_frame)
                 VALUES (
                     @inquiry,
                     @address,
@@ -144,7 +145,8 @@ namespace FunderMaps.Data.Repositories
                     @skewed_parallel,
                     @skewed_perpendicular,
                     @skewed_facade,
-                    @settlement_speed)
+                    @settlement_speed,
+                    @skewed_window_frame)
                 RETURNING id";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
@@ -288,6 +290,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("skewed_perpendicular", entity.SkewedPerpendicular);
             context.AddParameterWithValue("skewed_facade", entity.SkewedFacade);
             context.AddParameterWithValue("settlement_speed", entity.SettlementSpeed);
+            context.AddParameterWithValue("skewed_window_frame", entity.SkewedWindowFrame);
         }
 
         private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
@@ -357,6 +360,7 @@ namespace FunderMaps.Data.Repositories
                 SkewedPerpendicular = reader.GetSafeDecimal(offset + 61),
                 SkewedFacade = reader.GetFieldValue<RotationType?>(offset + 62),
                 SettlementSpeed = reader.GetSafeDouble(offset + 63),
+                SkewedWindowFrame = reader.GetSafeBoolean(offset + 64)
             };
 
         /// <summary>
@@ -446,7 +450,8 @@ namespace FunderMaps.Data.Repositories
                         s.skewed_parallel,
                         s.skewed_perpendicular,
                         s.skewed_facade,
-                        s.settlement_speed
+                        s.settlement_speed,
+                        s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -545,7 +550,8 @@ namespace FunderMaps.Data.Repositories
                         s.skewed_parallel,
                         s.skewed_perpendicular,
                         s.skewed_facade,
-                        s.settlement_speed
+                        s.settlement_speed,
+                        s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -644,7 +650,8 @@ namespace FunderMaps.Data.Repositories
                         s.skewed_parallel,
                         s.skewed_perpendicular,
                         s.skewed_facade,
-                        s.settlement_speed
+                        s.settlement_speed,
+                        s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -740,7 +747,8 @@ namespace FunderMaps.Data.Repositories
                             skewed_parallel = @skewed_parallel,
                             skewed_perpendicular = @skewed_perpendicular,
                             skewed_facade = @skewed_facade,
-                            settlement_speed = @settlement_speed
+                            settlement_speed = @settlement_speed,
+                            skewed_window_frame = @skewed_window_frame
                     FROM 	application.attribution AS a, report.inquiry AS i
                     WHERE   i.id = s.inquiry
                     AND     a.id = i.attribution

@@ -337,6 +337,11 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public decimal? SettlementSpeed { get; set; }
 
         /// <summary>
+        ///     Skewed window and/or frame.
+        /// </summary>
+        public bool? SkewedWindowFrame { get; set; }
+
+        /// <summary>
         ///     Record create date.
         /// </summary>
         public DateTime CreateDate { get; set; }

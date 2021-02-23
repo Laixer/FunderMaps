@@ -345,6 +345,11 @@ namespace FunderMaps.Core.Entities
         public double? SettlementSpeed { get; set; }
 
         /// <summary>
+        ///     Skewed window and/or frame.
+        /// </summary>
+        public bool? SkewedWindowFrame { get; set; }
+
+        /// <summary>
         ///     Initialize properties from another entity.
         /// </summary>
         public override void InitializeDefaults()
