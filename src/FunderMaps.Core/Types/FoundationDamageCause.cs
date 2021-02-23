@@ -40,8 +40,6 @@ namespace FunderMaps.Core.Types
         /// </summary>
         BioInfection = 6,
 
-        /// Value 7 (Uknown) removed due to deprecation.
-
         /// <summary>
         ///     Fungus infection.
         /// </summary>

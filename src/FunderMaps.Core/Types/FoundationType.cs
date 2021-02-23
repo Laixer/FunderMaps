@@ -79,7 +79,5 @@ namespace FunderMaps.Core.Types
         ///     Other.
         /// </summary>
         Other = 14
-
-        /// Value 15 (Unknown) removed due to deprecation.
     }
 }
