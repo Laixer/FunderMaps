@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -38,12 +38,6 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         [DataType(DataType.MultilineText)]
         public string Note { get; set; }
-
-        /// <summary>
-        ///     Base measurement level.
-        /// </summary>
-        [Required]
-        public BaseMeasurementLevel BaseMeasurementLevel { get; set; } = BaseMeasurementLevel.NAP;
 
         /// <summary>
         ///     Built year.
@@ -106,7 +100,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Damage cause.
         /// </summary>
-        public FoundationDamageCause DamageCause { get; set; }
+        public FoundationDamageCause? DamageCause { get; set; }
 
         /// <summary>
         ///     Damage cause.
@@ -351,12 +345,16 @@ namespace FunderMaps.Core.Entities
         public double? SettlementSpeed { get; set; }
 
         /// <summary>
+        ///     Skewed window and/or frame.
+        /// </summary>
+        public bool? SkewedWindowFrame { get; set; }
+
+        /// <summary>
         ///     Initialize properties from another entity.
         /// </summary>
         public override void InitializeDefaults()
         {
             Id = 0;
-            BaseMeasurementLevel = BaseMeasurementLevel.NAP;
             CreateDate = DateTime.MinValue;
             UpdateDate = null;
             DeleteDate = null;

@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.Types
+namespace FunderMaps.Core.Types
 {
     /// <summary>
     ///     Foundation damage cause.
@@ -39,11 +39,6 @@
         ///     Bio infection.
         /// </summary>
         BioInfection = 6,
-
-        /// <summary>
-        ///     Unknown.
-        /// </summary>
-        Unknown = 7,
 
         /// <summary>
         ///     Fungus infection.

@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -92,7 +92,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Damage cause.
         /// </summary>
-        public FoundationDamageCause DamageCause { get; set; }
+        public FoundationDamageCause? DamageCause { get; set; }
 
         /// <summary>
         ///     Damage cause.
@@ -335,6 +335,11 @@ namespace FunderMaps.WebApi.DataTransferObjects
         ///     Settlement speed.
         /// </summary>
         public decimal? SettlementSpeed { get; set; }
+
+        /// <summary>
+        ///     Skewed window and/or frame.
+        /// </summary>
+        public bool? SkewedWindowFrame { get; set; }
 
         /// <summary>
         ///     Record create date.
