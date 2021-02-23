@@ -78,6 +78,6 @@ namespace FunderMaps.Core.Types
         /// <summary>
         ///     Other.
         /// </summary>
-        Other = 14
+        Other = 14,
     }
 }

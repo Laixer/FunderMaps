@@ -360,7 +360,7 @@ namespace FunderMaps.Data.Repositories
                 SkewedPerpendicular = reader.GetSafeDecimal(offset + 61),
                 SkewedFacade = reader.GetFieldValue<RotationType?>(offset + 62),
                 SettlementSpeed = reader.GetSafeDouble(offset + 63),
-                SkewedWindowFrame = reader.GetSafeBoolean(offset + 64)
+                SkewedWindowFrame = reader.GetSafeBoolean(offset + 64),
             };
 
         /// <summary>
