@@ -193,7 +193,7 @@ namespace FunderMaps.Core.MapBundle.Jobs
                 storageHandle.Release();
             }
 
-            Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
+            Logger.LogDebug($"Export of format {formatProperty.FormatName} done");
 
             return fileDump;
         }
@@ -261,7 +261,7 @@ namespace FunderMaps.Core.MapBundle.Jobs
                 storageHandle.Release();
             }
 
-            Logger.LogInformation($"Export of format {formatProperty.FormatName} done");
+            Logger.LogDebug($"Export of format {formatProperty.FormatName} done");
 
             return fileDump;
         }
