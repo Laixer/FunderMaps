@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,6 +22,7 @@ namespace FunderMaps.WebApi.Controllers.Report
     {
         private readonly IMapper _mapper;
         private readonly IRecoverySampleRepository _recoverySampleRepository;
+        private readonly IRecoveryRepository _recoveryRepository;
 
         /// <summary>
         ///     Create new instance.
@@ -77,7 +80,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             IAsyncEnumerable<RecoverySample> recoverySampleList = _recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation);
 
             // Map.
-            IList<RecoverySampleDto> output = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(recoverySampleList);
+            var output = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(recoverySampleList);
 
             // Return.
             return Ok(output);
@@ -87,6 +90,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Create recovery sample.
         /// </summary>
+        ///         /// <remarks>
+        ///     Transition <see cref="Recovery"/> into state pending if a <see cref="RecoverySample"/>
+        ///     was successfully created within this <see cref="Recovery"/>.
+        /// </remarks>
         [HttpPost]
         public async Task<IActionResult> CreateAsync(int recoveryId, [FromBody] RecoverySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
         {
@@ -98,7 +105,17 @@ namespace FunderMaps.WebApi.Controllers.Report
             recoverySample.Recovery = recoveryId;
 
             // Act.
+            // FUTURE: Too much logic
+            Recovery recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+            if (!recovery.State.AllowWrite)
+            {
+                throw new EntityReadOnlyException();
+            }
+
             recoverySample = await _recoverySampleRepository.AddGetAsync(recoverySample);
+
+            recovery.State.TransitionToPending();
+            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
             // Map.
             var output = _mapper.Map<RecoverySampleDto>(recoverySample);
@@ -120,8 +137,17 @@ namespace FunderMaps.WebApi.Controllers.Report
             recoverySample.Recovery = recoveryId;
 
             // Act.
+            // FUTURE: Too much logic
+            Recovery recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+            if (!recovery.State.AllowWrite)
+            {
+                throw new EntityReadOnlyException();
+            }
+
             await _recoverySampleRepository.UpdateAsync(recoverySample);
 
+            recovery.State.TransitionToPending();
+            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
             // Return.
             return NoContent();
         }

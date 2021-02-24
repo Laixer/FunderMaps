@@ -194,5 +194,36 @@ namespace FunderMaps.Data.Repositories
 
             await context.NonQueryAsync();
         }
+
+        /// <summary>
+        ///     Set <see cref="Recovery"/> audit status.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <param name="entity">Entity object.</param>
+        public async Task SetAuditStatusAsync(int id, Recovery entity)
+        {
+            if (entity is null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            ResetCacheEntity(id);
+
+            var sql = @"
+                    UPDATE  report.recovery AS r
+                    SET     audit_status = @status
+                    FROM 	application.attribution AS a
+                    WHERE   a.id = i.attribution
+                    AND     i.id = @id
+                    AND     a.owner = @tenant";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+            context.AddParameterWithValue("status", entity.State.AuditStatus);
+
+            await context.NonQueryAsync();
+        }
     }
 }
