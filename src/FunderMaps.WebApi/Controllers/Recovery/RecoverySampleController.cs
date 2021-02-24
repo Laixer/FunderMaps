@@ -60,7 +60,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             RecoverySample recoverySample = await _recoverySampleRepository.GetByIdAsync(id);
 
             // Map.
-            RecoverySampleDto output = _mapper.Map<RecoverySampleDto>(recoverySample);
+            var output = _mapper.Map<RecoverySampleDto>(recoverySample);
 
             // Return.
             return Ok(output);
@@ -93,7 +93,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
 
             // Map.
-            RecoverySample recoverySample = _mapper.Map<RecoverySample>(input);
+            var recoverySample = _mapper.Map<RecoverySample>(input);
             recoverySample.Address = address.Id;
             recoverySample.Recovery = recoveryId;
 
@@ -101,7 +101,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             recoverySample = await _recoverySampleRepository.AddGetAsync(recoverySample);
 
             // Map.
-            RecoverySampleDto output = _mapper.Map<RecoverySampleDto>(recoverySample);
+            var output = _mapper.Map<RecoverySampleDto>(recoverySample);
 
             // Return.
             return Ok(output);
@@ -115,7 +115,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDto input)
         {
             // Map.
-            RecoverySample recoverySample = _mapper.Map<RecoverySample>(input);
+            var recoverySample = _mapper.Map<RecoverySample>(input);
             recoverySample.Id = id;
             recoverySample.Recovery = recoveryId;
 

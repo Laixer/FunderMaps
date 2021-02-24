@@ -67,7 +67,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
 
             // Map.
-            RecoveryDto output = _mapper.Map<RecoveryDto>(recovery);
+            var output = _mapper.Map<RecoveryDto>(recovery);
 
             // Return.
             return Ok(output);
@@ -98,13 +98,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
         {
             // Map.
-            Recovery recovery = _mapper.Map<Recovery>(input);
+            var recovery = _mapper.Map<Recovery>(input);
 
             // Act.
             recovery = await _recoveryRepository.AddGetAsync(recovery);
 
             // Map.
-            RecoveryDto output = _mapper.Map<RecoveryDto>(recovery);
+            var output = _mapper.Map<RecoveryDto>(recovery);
 
             // Return.
             return Ok(output);
@@ -167,7 +167,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
         {
             // Map.
-            Recovery recovery = _mapper.Map<Recovery>(input);
+            var recovery = _mapper.Map<Recovery>(input);
             recovery.Id = id;
 
             // Act.
