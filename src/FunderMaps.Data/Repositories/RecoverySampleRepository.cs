@@ -182,7 +182,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            await using DbDataReader reader = await context.ReaderAsync();
+            await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
         }
@@ -215,7 +215,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
-            await foreach (DbDataReader reader in context.EnumerableReaderAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return MapFromReader(reader);
             }
@@ -260,7 +260,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("id", report);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
-            await foreach (DbDataReader reader in context.EnumerableReaderAsync())
+            await foreach (var reader in context.EnumerableReaderAsync())
             {
                 yield return CacheEntity(MapFromReader(reader));
             }
