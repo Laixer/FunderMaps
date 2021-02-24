@@ -248,8 +248,8 @@ namespace FunderMaps.Data.Repositories
                         s.permit,
                         s.permit_date
                 FROM    report.recovery_sample AS s
-                JOIN 	report.recovery AS r ON r.id = s.recovery
-                JOIN 	application.attribution AS a ON a.id = r.attribution
+                JOIN    report.recovery AS r ON r.id = s.recovery
+                JOIN    application.attribution AS a ON a.id = r.attribution
                 WHERE   a.owner = @tenant
                 AND     i.id = @id";
 
