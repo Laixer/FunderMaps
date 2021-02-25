@@ -171,9 +171,6 @@ namespace FunderMaps.Core.Threading.Command
             context.Workspace = Path.Combine(Directory.GetCurrentDirectory(), $"workspace/job-{Context.Id}");
             Directory.CreateDirectory(context.Workspace);
 
-            // NOTE: These files are created as a placeholder. Some operating systems
-            //       may cleanup unused temporary directories when disk space is sparse.
-            await File.Create($"{context.Workspace}/.lock").DisposeAsync();
             await File.WriteAllTextAsync($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
 
             Logger.LogTrace($"Workspace: {context.Workspace}");
