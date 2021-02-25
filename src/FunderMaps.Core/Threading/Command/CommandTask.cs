@@ -113,10 +113,12 @@ namespace FunderMaps.Core.Threading.Command
                 throw new ProcessException(processInfo.FileName);
             }
 
-            File.WriteAllText($"{Context.Workspace}/{process.Id}", process.StartInfo.FileName);
+            string processDirectory = CreateDirectory(process.Id.ToString());
 
-            using var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
-            using var stderrWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stderr");
+            File.WriteAllText($"{processDirectory}/command", $"{process.StartInfo.FileName} {string.Join(' ', process.StartInfo.ArgumentList)}");
+
+            using var stdoutWriter = File.CreateText($"{processDirectory}/stdout");
+            using var stderrWriter = File.CreateText($"{processDirectory}/stderr");
 
             process.OutputDataReceived += (sender, args) => stdoutWriter.WriteLine(args.Data);
             process.ErrorDataReceived += (sender, args) => stderrWriter.WriteLine(args.Data);
@@ -136,7 +138,7 @@ namespace FunderMaps.Core.Threading.Command
             stdoutWriter.Flush();
             stderrWriter.Flush();
 
-            File.WriteAllText($"{Context.Workspace}/{process.Id}.rtn", process.ExitCode.ToString());
+            File.WriteAllText($"{processDirectory}/exit", process.ExitCode.ToString());
 
             Logger.LogTrace($"Process exit with return code: {process.ExitCode}");
 
