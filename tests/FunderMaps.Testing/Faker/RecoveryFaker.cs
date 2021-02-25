@@ -18,6 +18,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.Type, f => f.PickRandom<RecoveryDocumentType>());
             RuleFor(f => f.DocumentFile, f => f.Internet.RemoteFileWithSecureUrl());
             RuleFor(f => f.DocumentDate, f => f.Date.Between(DateTime.Parse("1000-01-01"), DateTime.Now));
+            RuleFor(f => f.DocumentName, f => f.Commerce.Product());
         }
     }
 }

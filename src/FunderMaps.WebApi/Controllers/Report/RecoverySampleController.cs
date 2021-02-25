@@ -29,10 +29,13 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         public RecoverySampleController(
             IMapper mapper,
-            IRecoverySampleRepository recoverySampleRepository)
+            IRecoverySampleRepository recoverySampleRepository,
+            IRecoveryRepository recoveryRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _recoverySampleRepository = recoverySampleRepository ?? throw new ArgumentNullException(nameof(recoverySampleRepository));
+            _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
+
         }
 
         // GET: api/recovery/{id}/sample/stats
@@ -91,7 +94,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Create recovery sample.
         /// </summary>
         ///         /// <remarks>
-        ///     Transition <see cref="Recovery"/> into state pending if a <see cref="RecoverySample"/>
+        ///     Transition <see cref="Recovery"/> into <see cref="AuditStatus.Pending"/> if a <see cref="RecoverySample"/>
         ///     was successfully created within this <see cref="Recovery"/>.
         /// </remarks>
         [HttpPost]
@@ -128,6 +131,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Update recovery sample by id.
         /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Recovery"/> into <see cref="AuditStatus.Pending"/> if a <see cref="RecoverySample"/>
+        ///     was successfully updated within this <see cref="Recovery"/>.
+        /// </remarks>
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDto input)
         {
@@ -148,6 +155,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             recovery.State.TransitionToPending();
             await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+
             // Return.
             return NoContent();
         }
@@ -156,11 +164,28 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// <summary>
         ///     Delete recovery sample by id.
         /// </summary>
+        /// <remarks>
+        ///     Transition <see cref="Recovery"/> into <see cref="AuditStatus.Todo"/> if all <see cref="RecoverySample"/>
+        ///     within this <see cref="Recovery"/> are deleted.
+        /// </remarks>
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.
+            RecoverySample recoverySample = await _recoverySampleRepository.GetByIdAsync(id);
+            Recovery recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+            if (!recovery.State.AllowWrite)
+            {
+                throw new EntityReadOnlyException();
+            }
+
             await _recoverySampleRepository.DeleteAsync(id);
+
+            if (await _recoverySampleRepository.CountAsync(recoverySample.Recovery) == 0) 
+            {
+                recovery.State.TransitionToTodo();
+                await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+            }
 
             // Return.
             return NoContent();

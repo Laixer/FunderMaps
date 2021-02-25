@@ -31,12 +31,13 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Note.
         /// </summary>
+        [DataType(DataType.MultilineText)]
         public string Note { get; set; }
 
         /// <summary>
         ///     Address identifier.
         /// </summary>
-        [Required, Geocoder]
+        [Required]
         public string Address { get; set; }
 
         /// <summary>
@@ -80,16 +81,6 @@ namespace FunderMaps.Core.Entities
         public DateTime RecoveryDate { get; set; }
 
         /// <summary>
-        ///     Recovery object.
-        /// </summary>
-        public Recovery RecoveryNavigation { get; set; }
-
-        /// <summary>
-        ///     Address object.
-        /// </summary>
-        public Address AddressNavigation { get; set; }
-
-        /// <summary>
         ///     Initialize properties from another entity.
         /// </summary>
         public override void InitializeDefaults()
@@ -98,8 +89,6 @@ namespace FunderMaps.Core.Entities
             CreateDate = DateTime.MinValue;
             UpdateDate = null;
             DeleteDate = null;
-            RecoveryNavigation = null;
-            AddressNavigation = null;
         }
     }
 }

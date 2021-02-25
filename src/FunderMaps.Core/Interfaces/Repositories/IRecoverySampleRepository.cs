@@ -10,15 +10,15 @@ namespace FunderMaps.Core.Interfaces.Repositories
     public interface IRecoverySampleRepository : IAsyncRepository<RecoverySample, int>
     {
         /// <summary>
-        ///     Retrieve number of <see cref="RecoverySample"/> for a given report.
+        ///     Retrieve number of <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
         /// </summary>
         /// <returns>Number of <see cref="RecoverySample"/>.</returns>
-        Task<long> CountAsync(int report);
+        Task<long> CountAsync(int recovery);
 
         /// <summary>
-        ///     Retrieve all <see cref="RecoverySample"/> for a report.
+        ///     Retrieve all <see cref="RecoverySample"/> for a <see cref="Recovery"/>.
         /// </summary>
         /// <returns>List of <see cref="RecoverySample"/>.</returns>
-        IAsyncEnumerable<RecoverySample> ListAllAsync(int report, Navigation navigation);
+        IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation);
     }
 }

@@ -112,10 +112,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Retrieve number of <see cref="RecoverySample"/> for a given report.
+        ///     Retrieve number of <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
         /// </summary>
         /// <returns>Number of <see cref="RecoverySample"/>.</returns>
-        public async Task<long> CountAsync(int report)
+        public async Task<long> CountAsync(int recovery)
         {
             var sql = @"
                 SELECT  COUNT(*)
@@ -127,7 +127,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", report);
+            context.AddParameterWithValue("id", recovery);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<long>();
@@ -222,10 +222,10 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Retrieve all <see cref="RecoverySample"/> for a report.
+        ///     Retrieve all <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
         /// </summary>
         /// <returns>List of <see cref="RecoverySample"/>.</returns>
-        public async IAsyncEnumerable<RecoverySample> ListAllAsync(int report, Navigation navigation)
+        public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation)
         {
             var sql = @"
                 SELECT  -- RecoverySample
@@ -251,13 +251,13 @@ namespace FunderMaps.Data.Repositories
                 JOIN    report.recovery AS r ON r.id = s.recovery
                 JOIN    application.attribution AS a ON a.id = r.attribution
                 WHERE   a.owner = @tenant
-                AND     i.id = @id";
+                AND     r.id = @id";
 
             ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", report);
+            context.AddParameterWithValue("id", recovery);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await foreach (var reader in context.EnumerableReaderAsync())
