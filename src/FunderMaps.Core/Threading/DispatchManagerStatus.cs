@@ -14,5 +14,10 @@ namespace FunderMaps.Core.Threading
         ///     Number of jobs failed.
         /// </summary>
         public int JobsFailed { get; set; }
+
+        /// <summary>
+        ///     Number of jobs cancelled.
+        /// </summary>
+        public int CancelledFailed { get; set; }
     }
 }

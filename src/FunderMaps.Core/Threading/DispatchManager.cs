@@ -151,6 +151,11 @@ namespace FunderMaps.Core.Threading
                         var backgroundTask = serviceScope.ServiceProvider.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
 
+                        cts.Token.Register(() =>
+                        {
+                            _logger.LogWarning($"Cancelled background task {context.Id}");
+                        });
+
                         try
                         {
                             _logger.LogInformation($"Starting background task {context.Id}");
@@ -161,7 +166,14 @@ namespace FunderMaps.Core.Threading
 
                             await backgroundTask.ExecuteAsync(context);
 
-                            Status.JobsSucceeded++;
+                            if (cts.IsCancellationRequested)
+                            {
+                                Status.CancelledFailed++;
+                            }
+                            else
+                            {
+                                Status.JobsSucceeded++;
+                            }
                         }
                         catch (Exception e) // FUTURE: Check a specific exception
                         {
