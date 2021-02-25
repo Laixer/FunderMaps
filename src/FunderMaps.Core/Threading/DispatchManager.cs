@@ -151,6 +151,11 @@ namespace FunderMaps.Core.Threading
                         var backgroundTask = serviceScope.ServiceProvider.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
 
+                        cts.Token.Register(() =>
+                        {
+                            _logger.LogWarning($"Cancelled background task {context.Id}");
+                        });
+
                         try
                         {
                             _logger.LogInformation($"Starting background task {context.Id}");
@@ -161,21 +166,35 @@ namespace FunderMaps.Core.Threading
 
                             await backgroundTask.ExecuteAsync(context);
 
-                            Status.JobsSucceeded++;
-                        }
-                        catch (Exception e) // FUTURE: Check a specific exception
-                        {
-                            _logger.LogError($"background task {context.Id} failed");
-                            _logger.LogDebug(e, $"Exception in background task {context.Id}");
-
-                            if (context.RetryCount == 0)
+                            if (cts.IsCancellationRequested)
                             {
-                                context.RetryCount++;
-                                QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
+                                Status.CancelledFailed++;
                             }
                             else
                             {
-                                Status.JobsFailed++;
+                                Status.JobsSucceeded++;
+                            }
+                        }
+                        catch (Exception e) // FUTURE: Check a specific exception
+                        {
+                            if (cts.IsCancellationRequested)
+                            {
+                                Status.CancelledFailed++;
+                            }
+                            else
+                            {
+                                _logger.LogError($"background task {context.Id} failed");
+                                _logger.LogDebug(e, $"Exception in background task {context.Id}");
+
+                                if (context.RetryCount == 0)
+                                {
+                                    context.RetryCount++;
+                                    QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
+                                }
+                                else
+                                {
+                                    Status.JobsFailed++;
+                                }
                             }
                         }
                         finally
