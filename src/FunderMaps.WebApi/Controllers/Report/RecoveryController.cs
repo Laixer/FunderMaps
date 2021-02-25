@@ -9,6 +9,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -209,6 +210,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set recovery status to review by id.
         /// </summary>
         [HttpPost("{id:int}/status_review")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> SetStatusReviewAsync(int id)
         {
             // Act.
@@ -217,11 +219,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
             User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
 
-            // Check permissions.
-            if (_appContext.UserId != creator.Id)
-            { 
-                throw new AuthorizationException();
-            }
 
             // Transition.
             recovery.State.TransitionToReview();
@@ -264,6 +261,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set recovery status to rejected by id.
         /// </summary>
         [HttpPost("{id:int}/status_rejected")]
+        [Authorize(Policy = "VerifierAdministratorPolicy")]
         public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
         {
             // Act.
@@ -271,12 +269,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
             User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
             User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
-
-            // Check permissions.
-            if (_appContext.UserId != reviewer.Id)
-            {
-                throw new AuthorizationException();
-            }
 
             // Transition.
             recovery.State.TransitionToRejected();
@@ -320,6 +312,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Set recovery status to done by id.
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
+        [Authorize(Policy = "VerifierAdministratorPolicy")]
+
         public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
@@ -327,12 +321,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
             User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
             User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
-
-            // Check permissions.
-            if (_appContext.UserId != reviewer.Id)
-            {
-                throw new AuthorizationException();
-            }
 
             // Transition.
             recovery.State.TransitionToDone();
