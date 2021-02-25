@@ -19,5 +19,11 @@ namespace FunderMaps.Testing.Repositories
             entity.Id = randomizer.Int(0, int.MaxValue);
             return base.AddAsync(entity);
         }
+
+        public Task SetAuditStatusAsync(int id, Recovery entity)
+        {
+            DataStore.ItemList[FindIndexById(EntityPrimaryKey(entity))].State.AuditStatus = entity.State.AuditStatus;
+            return Task.CompletedTask;
+        }
     }
 }
