@@ -16,6 +16,17 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public int Id { get; set; }
 
         /// <summary>
+        ///     Client document identifier.
+        /// </summary>
+        /// <remarks>
+        ///     This is the document file name as the user gave it, *not* 
+        ///     the filename under which the document is stored. For that,
+        ///     see <see cref="DocumentFile"/>.
+        /// </remarks>
+        [Required(AllowEmptyStrings = false)]
+        public string DocumentName { get; set; }
+
+        /// <summary>
         ///     Note.
         /// </summary>
         public string Note { get; set; }
@@ -39,9 +50,29 @@ namespace FunderMaps.WebApi.DataTransferObjects
         public DateTime DocumentDate { get; set; }
 
         /// <summary>
-        ///     Attribution key.
+        ///     Report status.
         /// </summary>
-        public int Attribution { get; set; }
+        public AuditStatus AuditStatus { get; set; }
+
+        /// <summary>
+        ///     Reviewer identifier.
+        /// </summary>
+        public Guid? Reviewer { get; set; }
+
+        /// <summary>
+        ///     Creator identifier.
+        /// </summary>
+        public Guid Creator { get; set; }
+
+        /// <summary>
+        ///     Owner identifier.
+        /// </summary>
+        public Guid Owner { get; set; }
+
+        /// <summary>
+        ///     Contractor identifier.
+        /// </summary>
+        public Guid Contractor { get; set; }
 
         /// <summary>
         ///     Record access policy.
