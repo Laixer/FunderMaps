@@ -219,7 +219,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
             User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
 
-
             // Transition.
             recovery.State.TransitionToReview();
 
@@ -313,7 +312,6 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
         [Authorize(Policy = "VerifierAdministratorPolicy")]
-
         public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
