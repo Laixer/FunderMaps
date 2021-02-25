@@ -177,17 +177,24 @@ namespace FunderMaps.Core.Threading
                         }
                         catch (Exception e) // FUTURE: Check a specific exception
                         {
-                            _logger.LogError($"background task {context.Id} failed");
-                            _logger.LogDebug(e, $"Exception in background task {context.Id}");
-
-                            if (context.RetryCount == 0)
+                            if (cts.IsCancellationRequested)
                             {
-                                context.RetryCount++;
-                                QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
+                                Status.CancelledFailed++;
                             }
                             else
                             {
-                                Status.JobsFailed++;
+                                _logger.LogError($"background task {context.Id} failed");
+                                _logger.LogDebug(e, $"Exception in background task {context.Id}");
+
+                                if (context.RetryCount == 0)
+                                {
+                                    context.RetryCount++;
+                                    QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
+                                }
+                                else
+                                {
+                                    Status.JobsFailed++;
+                                }
                             }
                         }
                         finally
