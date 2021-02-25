@@ -174,7 +174,7 @@ namespace FunderMaps.Webservice
                 options.RoutePrefix = string.Empty;
             });
 
-            app.UsePathBase(new PathString("/api"));
+            app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
@@ -211,7 +211,7 @@ namespace FunderMaps.Webservice
                 options.RoutePrefix = string.Empty;
             });
 
-            app.UsePathBase(new PathString("/api"));
+            app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();

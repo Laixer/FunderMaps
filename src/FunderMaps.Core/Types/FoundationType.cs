@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.Types
+namespace FunderMaps.Core.Types
 {
     /// <summary>
     ///     Foundation type.
@@ -79,10 +79,5 @@
         ///     Other.
         /// </summary>
         Other = 14,
-
-        /// <summary>
-        ///     Unknown.
-        /// </summary>
-        Unknown = 15,
     }
 }

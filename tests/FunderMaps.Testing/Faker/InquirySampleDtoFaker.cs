@@ -1,4 +1,4 @@
-﻿using Bogus;
+using Bogus;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 
@@ -72,6 +72,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.SkewedPerpendicular, f => f.Random.Decimal(-50, 50));
             RuleFor(f => f.SkewedFacade, f => f.PickRandom<RotationType>());
             RuleFor(f => f.SettlementSpeed, f => f.Random.Decimal(-50, 50));
+            RuleFor(f => f.SkewedWindowFrame, f => f.Random.Bool());
         }
     }
 }

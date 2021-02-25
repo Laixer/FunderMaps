@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FunderMaps.Core.MapBundle;
+using Microsoft.Extensions.Configuration;
 
 namespace FunderMaps.BatchNode
 {
@@ -13,6 +14,8 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class TimedHostedService : IHostedService, IAsyncDisposable
     {
+        private readonly int intervalInMinutes;
+
         private readonly IServiceProvider _servicesProvider;
         private readonly ILogger<TimedHostedService> _logger;
 
@@ -21,8 +24,15 @@ namespace FunderMaps.BatchNode
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public TimedHostedService(IServiceProvider services, ILogger<TimedHostedService> logger)
-            => (_servicesProvider, _logger) = (services, logger);
+        public TimedHostedService(IServiceProvider serviceProvider, ILogger<TimedHostedService> logger, IConfiguration configuration)
+        {
+            _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            // The default below is set in minutes.
+            // FUTURE: Maybe move this into a dedicated IOptions<> structure.
+            intervalInMinutes = configuration.GetValue<int>("Batch:Interval", 10);
+        }
 
         /// <summary>
         ///     Triggered when the application host is ready to start the service.
@@ -31,7 +41,7 @@ namespace FunderMaps.BatchNode
         {
             _timer = new(Worker, null,
                 TimeSpan.Zero,
-                TimeSpan.FromMinutes(10));
+                TimeSpan.FromMinutes(intervalInMinutes));
 
             return Task.CompletedTask;
         }

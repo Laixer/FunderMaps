@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -83,7 +83,8 @@ namespace FunderMaps.Data.Repositories
                     skewed_parallel,
                     skewed_perpendicular,
                     skewed_facade,
-                    settlement_speed)
+                    settlement_speed,
+                    skewed_window_frame)
                 VALUES (
                     @inquiry,
                     @address,
@@ -144,7 +145,8 @@ namespace FunderMaps.Data.Repositories
                     @skewed_parallel,
                     @skewed_perpendicular,
                     @skewed_facade,
-                    @settlement_speed)
+                    @settlement_speed,
+                    @skewed_window_frame)
                 RETURNING id";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
@@ -288,6 +290,7 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("skewed_perpendicular", entity.SkewedPerpendicular);
             context.AddParameterWithValue("skewed_facade", entity.SkewedFacade);
             context.AddParameterWithValue("settlement_speed", entity.SettlementSpeed);
+            context.AddParameterWithValue("skewed_window_frame", entity.SkewedWindowFrame);
         }
 
         private static InquirySample MapFromReader(DbDataReader reader, int offset = 0)
@@ -300,64 +303,64 @@ namespace FunderMaps.Data.Repositories
                 CreateDate = reader.GetDateTime(offset + 4),
                 UpdateDate = reader.GetSafeDateTime(offset + 5),
                 DeleteDate = reader.GetSafeDateTime(offset + 6),
-                BaseMeasurementLevel = reader.GetFieldValue<BaseMeasurementLevel>(offset + 7),
-                BuiltYear = reader.GetSafeDateTime(offset + 8),
-                Substructure = reader.GetFieldValue<Substructure?>(offset + 9),
-                OverallQuality = reader.GetFieldValue<FoundationQuality?>(offset + 10),
-                WoodQuality = reader.GetFieldValue<WoodQuality?>(offset + 11),
-                ConstructionQuality = reader.GetFieldValue<Quality?>(offset + 12),
-                WoodCapacityHorizontalQuality = reader.GetFieldValue<Quality?>(offset + 13),
-                PileWoodCapacityVerticalQuality = reader.GetFieldValue<Quality?>(offset + 14),
-                CarryingCapacityQuality = reader.GetFieldValue<Quality?>(offset + 15),
-                MasonQuality = reader.GetFieldValue<Quality?>(offset + 16),
-                WoodQualityNecessity = reader.GetSafeBoolean(offset + 17),
-                ConstructionLevel = reader.GetSafeDecimal(offset + 18),
-                WoodLevel = reader.GetSafeDecimal(offset + 19),
-                PileDiameterTop = reader.GetSafeDecimal(offset + 20),
-                PileDiameterBottom = reader.GetSafeDecimal(offset + 21),
-                PileHeadLevel = reader.GetSafeDecimal(offset + 22),
-                PileTipLevel = reader.GetSafeDecimal(offset + 23),
-                FoundationDepth = reader.GetSafeDecimal(offset + 24),
-                MasonLevel = reader.GetSafeDecimal(offset + 25),
-                ConcreteChargerLength = reader.GetSafeDecimal(offset + 26),
-                PileDistanceLength = reader.GetSafeDecimal(offset + 27),
-                WoodPenetrationDepth = reader.GetSafeDecimal(offset + 28),
-                Cpt = reader.GetSafeString(offset + 29),
-                MonitoringWell = reader.GetSafeString(offset + 30),
-                GroundwaterLevelTemp = reader.GetSafeDecimal(offset + 31),
-                GroundLevel = reader.GetSafeDecimal(offset + 32),
-                GroundwaterLevelNet = reader.GetSafeDecimal(offset + 33),
-                FoundationType = reader.GetFieldValue<FoundationType?>(offset + 34),
-                EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(offset + 35),
-                RecoveryAdvised = reader.GetSafeBoolean(offset + 36),
-                DamageCause = reader.GetFieldValue<FoundationDamageCause>(offset + 37),
-                DamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics?>(offset + 38),
-                ConstructionPile = reader.GetFieldValue<ConstructionPile?>(offset + 39),
-                WoodType = reader.GetFieldValue<WoodType?>(offset + 40),
-                WoodEncroachement = reader.GetFieldValue<WoodEncroachement?>(offset + 41),
-                CrackIndoorRestored = reader.GetSafeBoolean(offset + 42),
-                CrackIndoorType = reader.GetFieldValue<CrackType?>(offset + 43),
-                CrackIndoorSize = reader.GetSafeDecimal(offset + 44),
-                CrackFacadeFrontRestored = reader.GetSafeBoolean(offset + 45),
-                CrackFacadeFrontType = reader.GetFieldValue<CrackType?>(offset + 46),
-                CrackFacadeFrontSize = reader.GetSafeDecimal(offset + 47),
-                CrackFacadeBackRestored = reader.GetSafeBoolean(offset + 48),
-                CrackFacadeBackType = reader.GetFieldValue<CrackType?>(offset + 49),
-                CrackFacadeBackSize = reader.GetSafeDecimal(offset + 50),
-                CrackFacadeLeftRestored = reader.GetSafeBoolean(offset + 51),
-                CrackFacadeLeftType = reader.GetFieldValue<CrackType?>(offset + 52),
-                CrackFacadeLeftSize = reader.GetSafeDecimal(offset + 53),
-                CrackFacadeRightRestored = reader.GetSafeBoolean(offset + 54),
-                CrackFacadeRightType = reader.GetFieldValue<CrackType?>(offset + 55),
-                CrackFacadeRightSize = reader.GetSafeDecimal(offset + 56),
-                DeformedFacade = reader.GetSafeBoolean(offset + 57),
-                ThresholdUpdownSkewed = reader.GetSafeBoolean(offset + 58),
-                ThresholdFrontLevel = reader.GetSafeDecimal(offset + 59),
-                ThresholdBackLevel = reader.GetSafeDecimal(offset + 60),
-                SkewedParallel = reader.GetSafeDecimal(offset + 61),
-                SkewedPerpendicular = reader.GetSafeDecimal(offset + 62),
-                SkewedFacade = reader.GetFieldValue<RotationType?>(offset + 63),
-                SettlementSpeed = reader.GetSafeDouble(offset + 64),
+                BuiltYear = reader.GetSafeDateTime(offset + 7),
+                Substructure = reader.GetFieldValue<Substructure?>(offset + 8),
+                OverallQuality = reader.GetFieldValue<FoundationQuality?>(offset + 9),
+                WoodQuality = reader.GetFieldValue<WoodQuality?>(offset + 10),
+                ConstructionQuality = reader.GetFieldValue<Quality?>(offset + 11),
+                WoodCapacityHorizontalQuality = reader.GetFieldValue<Quality?>(offset + 12),
+                PileWoodCapacityVerticalQuality = reader.GetFieldValue<Quality?>(offset + 13),
+                CarryingCapacityQuality = reader.GetFieldValue<Quality?>(offset + 14),
+                MasonQuality = reader.GetFieldValue<Quality?>(offset + 15),
+                WoodQualityNecessity = reader.GetSafeBoolean(offset + 16),
+                ConstructionLevel = reader.GetSafeDecimal(offset + 17),
+                WoodLevel = reader.GetSafeDecimal(offset + 18),
+                PileDiameterTop = reader.GetSafeDecimal(offset + 19),
+                PileDiameterBottom = reader.GetSafeDecimal(offset + 20),
+                PileHeadLevel = reader.GetSafeDecimal(offset + 21),
+                PileTipLevel = reader.GetSafeDecimal(offset + 22),
+                FoundationDepth = reader.GetSafeDecimal(offset + 23),
+                MasonLevel = reader.GetSafeDecimal(offset + 24),
+                ConcreteChargerLength = reader.GetSafeDecimal(offset + 25),
+                PileDistanceLength = reader.GetSafeDecimal(offset + 26),
+                WoodPenetrationDepth = reader.GetSafeDecimal(offset + 27),
+                Cpt = reader.GetSafeString(offset + 28),
+                MonitoringWell = reader.GetSafeString(offset + 29),
+                GroundwaterLevelTemp = reader.GetSafeDecimal(offset + 30),
+                GroundLevel = reader.GetSafeDecimal(offset + 31),
+                GroundwaterLevelNet = reader.GetSafeDecimal(offset + 32),
+                FoundationType = reader.GetFieldValue<FoundationType?>(offset + 33),
+                EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(offset + 34),
+                RecoveryAdvised = reader.GetSafeBoolean(offset + 35),
+                DamageCause = reader.GetFieldValue<FoundationDamageCause?>(offset + 36),
+                DamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics?>(offset + 37),
+                ConstructionPile = reader.GetFieldValue<ConstructionPile?>(offset + 38),
+                WoodType = reader.GetFieldValue<WoodType?>(offset + 39),
+                WoodEncroachement = reader.GetFieldValue<WoodEncroachement?>(offset + 40),
+                CrackIndoorRestored = reader.GetSafeBoolean(offset + 41),
+                CrackIndoorType = reader.GetFieldValue<CrackType?>(offset + 42),
+                CrackIndoorSize = reader.GetSafeDecimal(offset + 43),
+                CrackFacadeFrontRestored = reader.GetSafeBoolean(offset + 44),
+                CrackFacadeFrontType = reader.GetFieldValue<CrackType?>(offset + 45),
+                CrackFacadeFrontSize = reader.GetSafeDecimal(offset + 46),
+                CrackFacadeBackRestored = reader.GetSafeBoolean(offset + 47),
+                CrackFacadeBackType = reader.GetFieldValue<CrackType?>(offset + 48),
+                CrackFacadeBackSize = reader.GetSafeDecimal(offset + 49),
+                CrackFacadeLeftRestored = reader.GetSafeBoolean(offset + 50),
+                CrackFacadeLeftType = reader.GetFieldValue<CrackType?>(offset + 51),
+                CrackFacadeLeftSize = reader.GetSafeDecimal(offset + 52),
+                CrackFacadeRightRestored = reader.GetSafeBoolean(offset + 53),
+                CrackFacadeRightType = reader.GetFieldValue<CrackType?>(offset + 54),
+                CrackFacadeRightSize = reader.GetSafeDecimal(offset + 55),
+                DeformedFacade = reader.GetSafeBoolean(offset + 56),
+                ThresholdUpdownSkewed = reader.GetSafeBoolean(offset + 57),
+                ThresholdFrontLevel = reader.GetSafeDecimal(offset + 58),
+                ThresholdBackLevel = reader.GetSafeDecimal(offset + 59),
+                SkewedParallel = reader.GetSafeDecimal(offset + 60),
+                SkewedPerpendicular = reader.GetSafeDecimal(offset + 61),
+                SkewedFacade = reader.GetFieldValue<RotationType?>(offset + 62),
+                SettlementSpeed = reader.GetSafeDouble(offset + 63),
+                SkewedWindowFrame = reader.GetSafeBoolean(offset + 64),
             };
 
         /// <summary>
@@ -381,7 +384,6 @@ namespace FunderMaps.Data.Repositories
                         s.create_date,
                         s.update_date,
                         s.delete_date,
-                        s.base_measurement_level,
                         s.built_year,
                         s.substructure,
 
@@ -448,7 +450,8 @@ namespace FunderMaps.Data.Repositories
                         s.skewed_parallel,
                         s.skewed_perpendicular,
                         s.skewed_facade,
-                        s.settlement_speed
+                        s.settlement_speed,
+                        s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -481,7 +484,6 @@ namespace FunderMaps.Data.Repositories
                         s.create_date,
                         s.update_date,
                         s.delete_date,
-                        s.base_measurement_level,
                         s.built_year,
                         s.substructure,
 
@@ -548,7 +550,8 @@ namespace FunderMaps.Data.Repositories
                         s.skewed_parallel,
                         s.skewed_perpendicular,
                         s.skewed_facade,
-                        s.settlement_speed
+                        s.settlement_speed,
+                        s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -581,7 +584,6 @@ namespace FunderMaps.Data.Repositories
                         s.create_date,
                         s.update_date,
                         s.delete_date,
-                        s.base_measurement_level,
                         s.built_year,
                         s.substructure,
 
@@ -648,7 +650,8 @@ namespace FunderMaps.Data.Repositories
                         s.skewed_parallel,
                         s.skewed_perpendicular,
                         s.skewed_facade,
-                        s.settlement_speed
+                        s.settlement_speed,
+                        s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
@@ -744,7 +747,8 @@ namespace FunderMaps.Data.Repositories
                             skewed_parallel = @skewed_parallel,
                             skewed_perpendicular = @skewed_perpendicular,
                             skewed_facade = @skewed_facade,
-                            settlement_speed = @settlement_speed
+                            settlement_speed = @settlement_speed,
+                            skewed_window_frame = @skewed_window_frame
                     FROM 	application.attribution AS a, report.inquiry AS i
                     WHERE   i.id = s.inquiry
                     AND     a.id = i.attribution

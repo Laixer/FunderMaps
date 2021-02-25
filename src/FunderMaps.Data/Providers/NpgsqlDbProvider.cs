@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.MapLayer;
 using FunderMaps.Core.Exceptions;
 using Microsoft.Extensions.Configuration;
@@ -48,7 +48,6 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<ApplicationRole>("application.role");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<AuditStatus>("report.audit_status");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<BaseMeasurementLevel>("report.base_measurement_level");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BuildingType>("geocoder.building_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BuiltYearSource>("report.built_year_source");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<BundleStatus>("maplayer.bundle_status");

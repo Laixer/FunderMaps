@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6a40b18c-a809-4e79-b65e-1c2402ba7e79",
+		"_postman_id": "8dc8ba47-b860-4bc2-8b69-63901d248853",
 		"name": "FunderMaps.WebApi",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -14,7 +14,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "597b6f45-a65f-4f22-8404-a244ecfd283d",
 								"exec": [
 									"pm.environment.set(\"inquiry_id\", pm.response.json()[\"id\"])",
 									""
@@ -248,8 +247,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Inquiry Sample",
@@ -260,7 +258,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e6df0981-98c3-4318-85c9-c7c71d2e6e85",
 								"exec": [
 									"pm.environment.set(\"inquiry_sample_id\", pm.response.json()[\"id\"])",
 									""
@@ -405,7 +402,6 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"id": "6390e9c8-b672-4f90-b637-0c45ed32cf2a",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -415,15 +411,407 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "c0f5d9a9-027c-4c92-8e84-6c9030e3d3b4",
 						"type": "text/javascript",
 						"exec": [
 							""
 						]
 					}
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
+		},
+		{
+			"name": "Recovery",
+			"item": [
+				{
+					"name": "Create Recovery",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.set('randomRecoveryType', _.random(0, 4));\r",
+									"\r",
+									"const zeroPad = (num, places) => String(num).padStart(places, '0')\r",
+									"pm.globals.set('randomDateTime', `${_.random(1970, 2020)}-${zeroPad(_.random(1,12), 2)}-${zeroPad(_.random(1,28), 2)}`);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"recovery_id\", pm.response.json()[\"id\"])\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"documentDate\": \"{{randomDateTime}}\",\r\n    \"documentFile\": \"{{$randomCommonFileName}}\",\r\n    \"type\": {{randomRecoveryType}},\r\n    \"attribution\": 207\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery Document",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}/download",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}",
+								"download"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Recovery",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Recovery",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.set('randomRecoveryType', _.random(0, 4));\r",
+									"\r",
+									"const zeroPad = (num, places) => String(num).padStart(places, '0')\r",
+									"pm.globals.set('randomDateTime', `${_.random(1970, 2020)}-${zeroPad(_.random(1,12), 2)}-${zeroPad(_.random(1,28), 2)}`);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"documentDate\": \"{{randomDateTime}}\",\r\n    \"documentFile\": \"3516cbe8-c70a-47ef-8d85-30139b972c28.txt\",\r\n    \"type\": {{randomRecoveryType}},\r\n    \"attribution\": 1,\r\n    \"accessPolicy\": 1,\r\n    \"createDate\": \"{{randomDateTime}}\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recovery",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Recovery Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "input",
+									"type": "file",
+									"src": "file.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery/upload-document",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"upload-document"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Recovery Sample",
+			"item": [
+				{
+					"name": "Create Recovery Sample",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.globals.set('randomRecoveryType', _.random(0, 4));\r",
+									"\r",
+									"const zeroPad = (num, places) => String(num).padStart(places, '0')\r",
+									"pm.globals.set('randomDateTime', `${_.random(1970, 2020)}-${zeroPad(_.random(1,12), 2)}-${zeroPad(_.random(1,28), 2)}`);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"recovery_sample_id\", pm.response.json()[\"id\"])\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"permit\": \"{{$randomBsBuzz}}\",\r\n    \"permitDate\": \"{{randomDateTime}}\",\r\n    \"recoveryDate\": \"{{randomDateTime}}\",\r\n    \"facade\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}/sample",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}",
+								"sample"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery Sample",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/2/sample/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"2",
+								"sample",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Recovery Sample Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/4",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Recovery Sample",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const zeroPad = (num, places) => String(num).padStart(places, '0')\r",
+									"const facades = [];\r",
+									"for (var i = 0; i < _.random(0,10); i++) {\r",
+									"    facades.push(_.random(0,3));\r",
+									"}\r",
+									"\r",
+									"pm.globals.set('randomRecoveryType', _.random(0, 4));\r",
+									"pm.globals.set('randomDateTime', `${_.random(1970, 2020)}-${zeroPad(_.random(1,12), 2)}-${zeroPad(_.random(1,28), 2)}`);\r",
+									"pm.globals.set('randomRecoveryDate', `${_.random(1970, 2020)}-${zeroPad(_.random(1,12), 2)}-${zeroPad(_.random(1,28), 2)}`);\r",
+									"pm.globals.set('randomFacadeArray', facades);\r",
+									"pm.globals.set('randomPileType', _.random(0, 2));\r",
+									"pm.globals.set('ramdomRecoveryType', _.random(0, 5));\r",
+									"pm.globals.set('randomRecoveryStatus', _.random(0, 2));\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"note\": \"{{$randomLoremSentences}}\",\r\n    \"address\": \"gfm-91f5141a92fa485f9a2d39c1c12b5390\",\r\n    \"status\": {{randomRecoveryStatus}},\r\n    \"permit\": \"{{$randomBsBuzz}}\",\r\n    \"permitDate\": \"{{randomDateTime}}\",\r\n    \"recoveryDate\": \"{{randomRecoveryDate}}\",\r\n    \"facade\": [{{randomFacadeArray}}],\r\n    \"pileType\": {{randomPileType}},\r\n    \"type\": {{randomRecoveryType}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}/sample/{{recovery_sample_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}",
+								"sample",
+								"{{recovery_sample_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Recovery Sample",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recovery/{{recovery_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"recovery",
+								"{{recovery_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
 			"name": "Incident",
@@ -526,8 +914,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Portal",
@@ -601,7 +988,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "e797d256-94e5-4105-a4e5-3db4fcd08fec",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -644,181 +1030,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Recovery",
-			"item": [
-				{
-					"name": "Create Recovery",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"DocumentDate\": \"2012-03-29\",\r\n    \"DocumentFile\": \"https://sjaak.org\",\r\n    \"Type\": 2\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/recovery",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Recovery",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/recovery/4",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery",
-								"4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Recovery",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/recovery",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Recovery",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"note\": \"Another note here\",\r\n    \"type\": 3,\r\n    \"documentFile\": \"https://sjaak.com\",\r\n    \"documentDate\": \"2012-03-28T00:00:00\",\r\n    \"attribution\": 1,\r\n    \"accessPolicy\": 1,\r\n    \"createDate\": \"2020-07-09T15:58:03.64524+02:00\",\r\n    \"updateDate\": null,\r\n    \"deleteDate\": null\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/recovery/4",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery",
-								"4"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Recovery",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/recovery/4",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery",
-								"4"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		},
-		{
-			"name": "Recovery Sample",
-			"item": [
-				{
-					"name": "Create Recovery Sample",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"Note\": \"{{$randomLoremSentences}}\",\r\n    \"Address\": \"gfm-00000163c7e04fa9a562688df1e077b9\",\r\n    \"Permit\": \"hbfdhkbgf\",\r\n    \"permitDate\": \"2003-05-16\",\r\n    \"recoveryDate\": \"1993-02-08\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/recovery/2/sample",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery",
-								"2",
-								"sample"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Recovery Sample",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/api/recovery/2/sample/3",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"recovery",
-								"2",
-								"sample",
-								"3"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Address",
@@ -829,7 +1041,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6c1ebdf2-db3a-4a77-9fa9-5d369aec5233",
 								"exec": [
 									"if (pm.response.json().length > 0) {",
 									"    pm.environment.set(\"address_id\", pm.response.json()[0][\"id\"])",
@@ -885,8 +1096,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "User",
@@ -936,8 +1146,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Organization",
@@ -1063,8 +1272,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Auth",
@@ -1075,7 +1283,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8ebf073e-4565-404f-899b-45141809fa72",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1119,7 +1326,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b0b413d2-c9dd-41b9-a31a-f63e6df5e31f",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
@@ -1148,8 +1354,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Layer",
@@ -1193,8 +1398,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Bundle",
@@ -1218,8 +1422,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		},
 		{
 			"name": "Get Version",
@@ -1227,7 +1430,6 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "078c21a2-1c5d-46a6-be23-512ea17660a7",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -1272,7 +1474,6 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "3ebcc69f-221f-4b22-a15e-ec01715380eb",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1282,7 +1483,6 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "0fd6968f-d16c-43c5-b8fa-62944bef5b84",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -1292,15 +1492,12 @@
 	],
 	"variable": [
 		{
-			"id": "fdeb86b0-5477-4cf1-8fba-3102275909a4",
 			"key": "base_url",
 			"value": ""
 		},
 		{
-			"id": "e32129cc-0a44-499c-b697-11ac932f0c7a",
 			"key": "bearer_token",
 			"value": ""
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

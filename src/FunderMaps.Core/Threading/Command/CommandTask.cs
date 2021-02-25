@@ -105,7 +105,7 @@ namespace FunderMaps.Core.Threading.Command
                 processInfo.Environment.Add(environmentVariable);
             }
 
-            Logger.LogDebug("Start system process");
+            Logger.LogTrace("Start system process");
 
             using var process = Process.Start(processInfo);
             if (process is null)
@@ -113,10 +113,12 @@ namespace FunderMaps.Core.Threading.Command
                 throw new ProcessException(processInfo.FileName);
             }
 
-            File.WriteAllText($"{Context.Workspace}/{process.Id}", process.StartInfo.FileName);
+            string processDirectory = CreateDirectory(process.Id.ToString());
 
-            using var stdoutWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stdout");
-            using var stderrWriter = File.CreateText($"{Context.Workspace}/{process.Id}.stderr");
+            File.WriteAllText($"{processDirectory}/command", $"{process.StartInfo.FileName} {string.Join(' ', process.StartInfo.ArgumentList)}");
+
+            using var stdoutWriter = File.CreateText($"{processDirectory}/stdout");
+            using var stderrWriter = File.CreateText($"{processDirectory}/stderr");
 
             process.OutputDataReceived += (sender, args) => stdoutWriter.WriteLine(args.Data);
             process.ErrorDataReceived += (sender, args) => stderrWriter.WriteLine(args.Data);
@@ -129,16 +131,16 @@ namespace FunderMaps.Core.Threading.Command
                 process.Kill(entireProcessTree: true);
             });
 
-            Logger.LogDebug("Wait for process to exit");
+            Logger.LogTrace("Wait for process to exit");
 
             process.WaitForExit();
 
             stdoutWriter.Flush();
             stderrWriter.Flush();
 
-            File.WriteAllText($"{Context.Workspace}/{process.Id}.rtn", process.ExitCode.ToString());
+            File.WriteAllText($"{processDirectory}/exit", process.ExitCode.ToString());
 
-            Logger.LogDebug($"Process exit with return code: {process.ExitCode}");
+            Logger.LogTrace($"Process exit with return code: {process.ExitCode}");
 
             return process.ExitCode;
         }
@@ -164,14 +166,11 @@ namespace FunderMaps.Core.Threading.Command
                 throw new ArgumentNullException(nameof(context));
             }
 
-            Logger.LogDebug("Setup workspace for job");
+            Logger.LogTrace("Setup workspace for job");
 
             context.Workspace = Path.Combine(Directory.GetCurrentDirectory(), $"workspace/job-{Context.Id}");
             Directory.CreateDirectory(context.Workspace);
 
-            // NOTE: These files are created as a placeholder. Some operating systems
-            //       may cleanup unused temporary directories when disk space is sparse.
-            await File.Create($"{context.Workspace}/.lock").DisposeAsync();
             await File.WriteAllTextAsync($"{context.Workspace}/{TaskIdName}", Context.Id.ToString());
 
             Logger.LogTrace($"Workspace: {context.Workspace}");
@@ -188,7 +187,7 @@ namespace FunderMaps.Core.Threading.Command
                 throw new ArgumentNullException(nameof(context));
             }
 
-            Logger.LogDebug("Teardown workspace for job");
+            Logger.LogTrace("Teardown workspace for job");
 
             if (!context.KeepWorkspace)
             {

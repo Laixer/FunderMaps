@@ -54,10 +54,7 @@ namespace FunderMaps.Core.Threading
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
 
-            // NOTE: Add one more worker than configured. This will set the lower bound to 1
-            //       and will misalign the number of workers-to-CPU-core ratio. Doing so will
-            //       always keep a single core free for other processes.
-            workerPoolHandle = new(_options.MaxWorkers + 1, (_options.MaxWorkers * 2) + 1);
+            workerPoolHandle = new(_options.Workers);
 
             timer = new(obj => LaunchWorker(), null,
                 TimeSpan.FromMinutes(2),
@@ -134,7 +131,7 @@ namespace FunderMaps.Core.Threading
             // Run as long as there are items on the queue.
             async Task WorkerDelegate()
             {
-                _logger.LogDebug("Allocating new worker");
+                _logger.LogTrace("Allocating new worker");
 
                 await workerPoolHandle.WaitAsync();
 
@@ -154,6 +151,11 @@ namespace FunderMaps.Core.Threading
                         var backgroundTask = serviceScope.ServiceProvider.GetRequiredService(taskBucket.TaskType) as BackgroundTask;
                         BackgroundTaskContext context = taskBucket.Context;
 
+                        cts.Token.Register(() =>
+                        {
+                            _logger.LogWarning($"Cancelled background task {context.Id}");
+                        });
+
                         try
                         {
                             _logger.LogInformation($"Starting background task {context.Id}");
@@ -164,21 +166,35 @@ namespace FunderMaps.Core.Threading
 
                             await backgroundTask.ExecuteAsync(context);
 
-                            Status.JobsSucceeded++;
-                        }
-                        catch (Exception e) // FUTURE: Check a specific exception
-                        {
-                            _logger.LogError($"background task {context.Id} failed");
-                            _logger.LogDebug(e, $"Exception in background task {context.Id}");
-
-                            if (context.RetryCount == 0)
+                            if (cts.IsCancellationRequested)
                             {
-                                context.RetryCount++;
-                                QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
+                                Status.CancelledFailed++;
                             }
                             else
                             {
-                                Status.JobsFailed++;
+                                Status.JobsSucceeded++;
+                            }
+                        }
+                        catch (Exception e) // FUTURE: Check a specific exception
+                        {
+                            if (cts.IsCancellationRequested)
+                            {
+                                Status.CancelledFailed++;
+                            }
+                            else
+                            {
+                                _logger.LogError($"background task {context.Id} failed");
+                                _logger.LogDebug(e, $"Exception in background task {context.Id}");
+
+                                if (context.RetryCount == 0)
+                                {
+                                    context.RetryCount++;
+                                    QueueTaskItem(taskBucket, TimeSpan.FromMinutes(5));
+                                }
+                                else
+                                {
+                                    Status.JobsFailed++;
+                                }
                             }
                         }
                         finally
@@ -199,7 +215,7 @@ namespace FunderMaps.Core.Threading
                 {
                     workerPoolHandle.Release();
 
-                    _logger.LogDebug("Free worker");
+                    _logger.LogTrace("Free worker");
                 }
             }
 

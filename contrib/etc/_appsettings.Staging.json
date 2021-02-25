@@ -9,9 +9,6 @@
             "Default": "Warning"
         }
     },
-    "Batch": {
-        "ServiceUri": "https://staging.batch.fundermaps.com"
-    },
     "Smtp": {
         "SmtpPort": 465,
         "DefaultSenderName": "FunderMaps",

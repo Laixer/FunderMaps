@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Control;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,7 +9,7 @@ namespace FunderMaps.Core.Entities
     /// <summary>
     ///     Foundation recovery entity.
     /// </summary>
-    public sealed class Recovery : AttributionControl<Recovery, int>
+    public sealed class Recovery : IdentifiableEntity<Recovery, int>, IAttribution, IStateControl, IAccessControl, IRecordControl
     {
         /// <summary>
         ///     Create new instance.
@@ -45,5 +46,31 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         [Required]
         public DateTime DocumentDate { get; set; }
+
+        /// <summary>
+        ///     Client document identifier.
+        /// </summary>
+        [Required(AllowEmptyStrings = false)]
+        public string DocumentName { get; set; }
+
+        /// <summary>
+        ///     Attribution control.
+        /// </summary>
+        public AttributionControl Attribution { get; set; }
+
+        /// <summary>
+        ///     State control.
+        /// </summary>
+        public StateControl State { get; set; }
+
+        /// <summary>
+        ///     Access control.
+        /// </summary>
+        public AccessControl Access { get; set; }
+
+        /// <summary>
+        ///     Record control.
+        /// </summary>
+        public RecordControl Record { get; set; }
     }
 }
