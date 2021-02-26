@@ -36,20 +36,19 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: Setup database
+    - uses: actions/checkout@v2
+
+    - name: Setup database schema
       run: |
         psql -d postgres -c "CREATE DATABASE fundermaps"
         psql -c "CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public"
         psql -c "CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\" WITH SCHEMA public"
-        pwd
         psql < database/fundermaps.sql
       env:
         PGDATABASE: fundermaps
         PGHOST: localhost
         PGUSER: postgres
         PGPASSWORD: postgres
-
-    - uses: actions/checkout@v2
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
