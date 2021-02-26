@@ -37,8 +37,10 @@ jobs:
 
     steps:
     - name: Test pg
-      run: psql -d postgres -h localhost -U postgres -c "select now()"
+      run: psql -d postgres -c "select now()"
       env:
+        PGHOST: localhost
+        PGUSER: postgres
         PGPASSWORD: postgres
 
     - uses: actions/checkout@v2
