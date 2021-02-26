@@ -38,7 +38,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup database schema
+    - name: Setup database
       run: |
         psql -d postgres < database/environment.sql
 

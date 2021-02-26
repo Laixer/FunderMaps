@@ -15,10 +15,20 @@ SET row_security = off;
 
 
 --
+-- Name: fundermaps; Type: ROLE; Schema: -; Owner: postgres
+--
+
+CREATE ROLE fundermaps WITH  NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOLOGIN NOREPLICATION NOBYPASSRLS;
+
+
+--
 -- Name: fundermaps; Type: DATABASE; Schema: -; Owner: fundermaps
 --
 
 CREATE DATABASE fundermaps WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE = 'en_US.UTF-8' LC_CTYPE = 'en_US.UTF-8';
+
+
+ALTER DATABASE fundermaps OWNER TO fundermaps;
 
 
 \connect fundermaps
