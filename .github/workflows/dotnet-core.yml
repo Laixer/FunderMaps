@@ -34,6 +34,11 @@ jobs:
           --health-retries 5
 
     steps:
+    - name: Test pg
+      run: psql -d postgres -h postgres -U postgres -c "select now()"
+      env:
+        PGPASSWORD: postgres
+
     - uses: actions/checkout@v2
 
     - name: Setup .NET Core
