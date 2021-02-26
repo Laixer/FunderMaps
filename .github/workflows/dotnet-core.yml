@@ -39,7 +39,9 @@ jobs:
     - name: Setup database
       run: |
         psql -d postgres -c "CREATE DATABASE fundermaps"
-        psql -c "CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;"
+        psql -c "CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public"
+        psql -c "CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public"
+        psql < database/fundermaps.sql
       env:
         PGDATABASE: fundermaps
         PGHOST: localhost
