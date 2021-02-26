@@ -36,16 +36,12 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: Test pg
-      run: psql -d postgres -c "CREATE DATABASE fundermaps"
+    - name: Setup database
+      run: |
+        psql -d postgres -c "CREATE DATABASE fundermaps"
+        psql -c "CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;"
       env:
-        PGHOST: localhost
-        PGUSER: postgres
-        PGPASSWORD: postgres
-
-    - name: Test pg 2
-      run: psql -d fundermaps -c "CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;"
-      env:
+        PGDATABASE: fundermaps
         PGHOST: localhost
         PGUSER: postgres
         PGPASSWORD: postgres
