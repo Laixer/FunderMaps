@@ -18,7 +18,35 @@ SET row_security = off;
 -- Name: fundermaps; Type: ROLE; Schema: -; Owner: postgres
 --
 
-CREATE ROLE fundermaps WITH  NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOLOGIN NOREPLICATION NOBYPASSRLS;
+CREATE ROLE fundermaps WITH NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT NOLOGIN NOREPLICATION NOBYPASSRLS;
+
+
+--
+-- Name: fundermaps_batch; Type: ROLE; Schema: -; Owner: postgres
+--
+
+CREATE ROLE fundermaps_batch WITH NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS;
+
+
+--
+-- Name: fundermaps_portal; Type: ROLE; Schema: -; Owner: postgres
+--
+
+CREATE ROLE fundermaps_portal WITH NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS;
+
+
+--
+-- Name: fundermaps_webapp; Type: ROLE; Schema: -; Owner: postgres
+--
+
+CREATE ROLE fundermaps_webapp WITH NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS;
+
+
+--
+-- Name: fundermaps_webservice; Type: ROLE; Schema: -; Owner: postgres
+--
+
+CREATE ROLE fundermaps_webservice WITH NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS;
 
 
 --

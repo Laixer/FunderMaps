@@ -41,6 +41,7 @@ jobs:
     - name: Setup database
       run: |
         psql -d postgres < database/environment.sql
+        psql < database/fundermaps.sql
 
       env:
         PGDATABASE: fundermaps
