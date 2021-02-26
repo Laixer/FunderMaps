@@ -43,6 +43,12 @@ jobs:
         PGUSER: postgres
         PGPASSWORD: postgres
 
+    - name: Test pg 2
+      run: psql -d fundermaps -c "CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;"
+      env:
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPASSWORD: postgres
 
     - uses: actions/checkout@v2
 
