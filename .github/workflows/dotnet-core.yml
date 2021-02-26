@@ -40,9 +40,8 @@ jobs:
 
     - name: Setup database schema
       run: |
-#        psql -d postgres -c "CREATE DATABASE fundermaps"
         psql -d postgres < database/environment.sql
-#        psql < database/fundermaps.sql
+
       env:
         PGDATABASE: fundermaps
         PGHOST: localhost
