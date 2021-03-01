@@ -2,12 +2,10 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.Components;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
@@ -95,8 +93,6 @@ namespace FunderMaps.AspNetCore
                 //       Some components require the HttpContext and its features when the
                 //       related service is being resolved within the scope.
                 services.AddHttpContextAccessor();
-
-                services.AddOrReplace<IAppContextFactory, AspAppContextFactory>(ServiceLifetime.Singleton);
 
                 services.AddHealthChecks()
                     .AddCheck<IOHealthCheck>("io_health_check")

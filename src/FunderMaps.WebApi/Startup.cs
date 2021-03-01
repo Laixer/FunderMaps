@@ -129,6 +129,8 @@ namespace FunderMaps.WebApi
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseAspAppContext();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -158,6 +160,8 @@ namespace FunderMaps.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {

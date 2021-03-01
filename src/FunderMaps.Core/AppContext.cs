@@ -22,22 +22,22 @@ namespace FunderMaps.Core
         /// <summary>
         ///     Notifies when this call is aborted and thus request operations should be cancelled.
         /// </summary>
-        public CancellationToken CancellationToken { get; init; }
+        public CancellationToken CancellationToken { get; set; }
 
         /// <summary>
         ///     Gets or sets a key/value collection that can be used to share data within this scope.
         /// </summary>
-        public Dictionary<object, object> Items { get; init; }
+        public Dictionary<object, object> Items { get; set; }
 
         /// <summary>
         ///     User identity.
         /// </summary>
-        public IUser User { get; init; }
+        public IUser User { get; set; }
 
         /// <summary>
         ///     Tenant identity.
         /// </summary>
-        public ITenant Tenant { get; init; }
+        public ITenant Tenant { get; set; }
 
         // FUTURE: Maybe move up
         /// <summary>
