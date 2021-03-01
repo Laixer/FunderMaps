@@ -22,6 +22,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public StateTransitionException()
+            : base("Requested entity cannot change state.")
         {
         }
 

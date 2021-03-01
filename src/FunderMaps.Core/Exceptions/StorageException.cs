@@ -10,6 +10,14 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Create new instance.
         /// </summary>
+        public StorageException()
+            : base("Application was unable to process the request.")
+        {
+        }
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public StorageException(string message)
             : base(message)
         {
@@ -23,11 +31,5 @@ namespace FunderMaps.Core.Exceptions
         {
         }
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public StorageException()
-        {
-        }
     }
 }

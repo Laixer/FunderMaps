@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public ServiceUnavailableException()
+            : base("Internal service was unable to process the request.")
         {
         }
 

@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public EntityReadOnlyException()
+            : base("Requested entity is immutable.")
         {
         }
 

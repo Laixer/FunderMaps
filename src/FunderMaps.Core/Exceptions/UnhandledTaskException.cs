@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public UnhandledTaskException()
+            : base("Application was unable to process the request.")
         {
         }
 

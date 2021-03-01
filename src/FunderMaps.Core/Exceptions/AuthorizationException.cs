@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public AuthorizationException()
+            : base("Access to resource forbidden.")
         {
         }
 

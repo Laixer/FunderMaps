@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public InvalidCredentialException()
+            : base("Action failed with provided credentials.")
         {
         }
 

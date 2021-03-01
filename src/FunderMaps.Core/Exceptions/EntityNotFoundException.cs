@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public EntityNotFoundException()
+            : base("Requested entity not found.")
         {
         }
 

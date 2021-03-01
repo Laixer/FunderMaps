@@ -31,20 +31,20 @@ namespace FunderMaps.AspNetCore
         public ErrorMessage Map(FunderMapsCoreException exception)
             => exception switch
             {
-                AuthenticationException _ => BuildMessage("Login attempt failed with provided credentials.", HttpStatusCode.Unauthorized),
-                AuthorizationException _ => BuildMessage("Access to resource forbidden.", HttpStatusCode.Forbidden),
-                EntityNotFoundException _ => BuildMessage("Requested entity not found.", HttpStatusCode.NotFound),
-                EntityReadOnlyException _ => BuildMessage("Requested entity is immutable.", HttpStatusCode.Locked),
-                InvalidCredentialException _ => BuildMessage("Action failed with provided credentials.", HttpStatusCode.Forbidden),
-                InvalidIdentifierException _ => BuildMessage("Action failed with provided identifier.", HttpStatusCode.BadRequest),
-                OperationAbortedException _ => BuildMessage("Operation was aborted by client.", HttpStatusCode.BadRequest),
-                ProcessException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
-                QueueOverflowException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
-                ReferenceNotFoundException _ => BuildMessage("Referenced entity not found.", HttpStatusCode.NotFound),
-                ServiceUnavailableException _ => BuildMessage("Internal service was unable to process the request.", HttpStatusCode.ServiceUnavailable),
-                StateTransitionException _ => BuildMessage("Requested entity cannot change state.", HttpStatusCode.NotAcceptable),
-                StorageException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
-                UnhandledTaskException _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError),
+                AuthenticationException _ => BuildMessage(exception.Message, HttpStatusCode.Unauthorized),
+                AuthorizationException _ => BuildMessage(exception.Message, HttpStatusCode.Forbidden),
+                EntityNotFoundException _ => BuildMessage(exception.Message, HttpStatusCode.NotFound),
+                EntityReadOnlyException _ => BuildMessage(exception.Message, HttpStatusCode.Locked),
+                InvalidCredentialException _ => BuildMessage(exception.Message, HttpStatusCode.Forbidden),
+                InvalidIdentifierException _ => BuildMessage(exception.Message, HttpStatusCode.BadRequest),
+                OperationAbortedException _ => BuildMessage(exception.Message, HttpStatusCode.BadRequest),
+                ProcessException _ => BuildMessage(exception.Message, HttpStatusCode.InternalServerError),
+                QueueOverflowException _ => BuildMessage(exception.Message, HttpStatusCode.InternalServerError),
+                ReferenceNotFoundException _ => BuildMessage(exception.Message, HttpStatusCode.NotFound),
+                ServiceUnavailableException _ => BuildMessage(exception.Message, HttpStatusCode.ServiceUnavailable),
+                StateTransitionException _ => BuildMessage(exception.Message, HttpStatusCode.NotAcceptable),
+                StorageException _ => BuildMessage(exception.Message, HttpStatusCode.InternalServerError),
+                UnhandledTaskException _ => BuildMessage(exception.Message, HttpStatusCode.InternalServerError),
                 _ => BuildMessage("Application was unable to process the request.", HttpStatusCode.InternalServerError)
             };
     }

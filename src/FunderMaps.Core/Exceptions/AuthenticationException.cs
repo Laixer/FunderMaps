@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public AuthenticationException()
+            : base("Login attempt failed with provided credentials.")
         {
         }
 

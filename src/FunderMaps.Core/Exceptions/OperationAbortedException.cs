@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public OperationAbortedException()
+            : base("Operation was aborted by client.")
         {
         }
 

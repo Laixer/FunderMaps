@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions
         ///     Create new instance.
         /// </summary>
         public InvalidIdentifierException()
+            : base("Action failed with provided identifier.")
         {
         }
 
