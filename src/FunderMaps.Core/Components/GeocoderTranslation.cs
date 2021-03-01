@@ -35,7 +35,7 @@ namespace FunderMaps.Core.Components
             {
                 GeocoderDatasource.FunderMaps => await _addressRepository.GetByIdAsync(id),
                 GeocoderDatasource.NlBagAddress => await _addressRepository.GetByExternalIdAsync(id, ExternalDataSource.NlBag),
-                _ => throw new EntityNotFoundException(),
+                _ => throw new EntityNotFoundException("Requested address entity could not be found."),
             };
     }
 }
