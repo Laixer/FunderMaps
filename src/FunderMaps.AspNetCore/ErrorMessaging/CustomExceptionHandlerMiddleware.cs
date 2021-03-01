@@ -31,7 +31,8 @@ namespace FunderMaps.AspNetCore.ErrorMessaging
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public CustomExceptionHandlerMiddleware(RequestDelegate next,
+        public CustomExceptionHandlerMiddleware(
+            RequestDelegate next,
             IOptions<CustomExceptionHandlerOptions> options,
             ILoggerFactory loggerFactory,
             IExceptionMapper<TException> mapper)

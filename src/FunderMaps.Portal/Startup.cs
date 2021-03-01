@@ -88,6 +88,8 @@ namespace FunderMaps.Portal
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseAspAppContext();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -117,6 +119,8 @@ namespace FunderMaps.Portal
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
