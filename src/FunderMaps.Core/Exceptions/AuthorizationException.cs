@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace FunderMaps.Core.Exceptions
 {
@@ -10,12 +10,12 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Access to resource forbidden."; } }
+        public new const string Title = "Access to resource forbidden.";
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-                public AuthorizationException()
+        public AuthorizationException()
         {
         }
 

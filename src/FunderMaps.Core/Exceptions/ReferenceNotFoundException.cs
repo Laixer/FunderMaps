@@ -10,7 +10,8 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Referenced entity not found."; } }
+        public new const string Title = "Referenced entity not found.";
+
 
         /// <summary>
         ///     Create new instance.

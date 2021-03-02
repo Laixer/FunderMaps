@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace FunderMaps.Core.Exceptions
 {
@@ -10,7 +10,8 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Application was unable to process the request."; } }
+        public new const string Title = "Application was unable to process the request.";
+
 
         /// <summary>
         ///     Create new instance.
@@ -34,6 +35,5 @@ namespace FunderMaps.Core.Exceptions
             : base(message, innerException)
         {
         }
-
     }
 }

@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using System;
 
 namespace FunderMaps.Core.Exceptions
@@ -11,7 +11,8 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Requested entity cannot change state."; } }
+        public new const string Title = "Requested entity cannot change state.";
+
 
         /// <summary>
         ///     State in which entity currently operates.

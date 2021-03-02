@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace FunderMaps.Core.Exceptions
 {
@@ -10,7 +10,8 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Requested entity not found."; } }
+        public new const string Title = "Requested entity not found.";
+
 
         /// <summary>
         ///     Create new instance.

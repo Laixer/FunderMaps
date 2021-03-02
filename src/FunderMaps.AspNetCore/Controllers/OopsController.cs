@@ -46,22 +46,14 @@ namespace FunderMaps.AspNetCore.Controllers
             var error = HttpContext.Features.Get<IExceptionHandlerFeature>();
 
             // If the error message is set and we can find it in our map, return specific problem.
-            if (error is not null && _dictionary.ContainsKey(error.Error.GetType()))
+            if (_dictionary.TryGetValue(error.Error.GetType(), out HttpStatusCode statusCode))
             {
-                var detail = error.Error.Message;
-                var innerException = error.Error.InnerException;
-                while (innerException is not null)
-                {
-                    if (!String.IsNullOrEmpty(innerException.Message)) {
-                        detail += $" {innerException.GetType().Name}: {innerException.Message}";
-                    }
-                    innerException = innerException.InnerException;
-                }
+                var ( title, message ) = error.Error as FunderMapsCoreException;
 
                 return Problem(
-                    title: ((FunderMapsCoreException)error.Error).Title,
-                    statusCode: (int)_dictionary.GetValueOrDefault(error.Error.GetType(), HttpStatusCode.InternalServerError),
-                    detail: detail);
+                    title: title,
+                    statusCode: (int)statusCode,
+                    detail: message);
 
             }
 

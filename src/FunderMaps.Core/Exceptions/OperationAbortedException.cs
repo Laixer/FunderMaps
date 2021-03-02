@@ -10,7 +10,8 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Operation was aborted by client."; } }
+        public new const string Title = "Operation was aborted by client.";
+
 
         /// <summary>
         ///     Create new instance.

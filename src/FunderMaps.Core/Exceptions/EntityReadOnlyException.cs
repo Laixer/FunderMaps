@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace FunderMaps.Core.Exceptions
 {
@@ -10,7 +10,8 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public override string Title { get { return "Requested entity is immutable."; } }
+        public new const string Title = "Requested entity is immutable.";
+
 
         /// <summary>
         ///     Create new instance.
