@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public class InvalidIdentifierException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Action failed with provided identifier."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public InvalidIdentifierException()
-            : base("Action failed with provided identifier.")
         {
         }
 

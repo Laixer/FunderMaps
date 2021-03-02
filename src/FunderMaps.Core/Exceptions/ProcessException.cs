@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public sealed class ProcessException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Application was unable to process the request."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public ProcessException()
-            : base("Application was unable to process the request.")
         {
         }
 

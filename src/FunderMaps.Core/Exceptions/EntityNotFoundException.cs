@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public class EntityNotFoundException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Requested entity not found."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public EntityNotFoundException()
-            : base("Requested entity not found.")
         {
         }
 

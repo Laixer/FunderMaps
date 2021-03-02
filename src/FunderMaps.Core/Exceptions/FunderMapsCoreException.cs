@@ -13,6 +13,11 @@ namespace FunderMaps.Core.Exceptions
     public abstract class FunderMapsCoreException : Exception
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public virtual string Title { get { return "Application was unable to process the request."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public FunderMapsCoreException()

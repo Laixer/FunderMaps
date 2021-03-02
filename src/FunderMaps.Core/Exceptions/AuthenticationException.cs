@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public class AuthenticationException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Login attempt failed with provided credentials."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public AuthenticationException()
-            : base("Login attempt failed with provided credentials.")
         {
         }
 

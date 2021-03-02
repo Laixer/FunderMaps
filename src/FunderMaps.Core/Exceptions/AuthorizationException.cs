@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public class AuthorizationException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Access to resource forbidden."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthorizationException()
-            : base("Access to resource forbidden.")
+                public AuthorizationException()
         {
         }
 

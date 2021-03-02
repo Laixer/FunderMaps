@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public class UnhandledTaskException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Application was unable to process the request."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public UnhandledTaskException()
-            : base("Application was unable to process the request.")
         {
         }
 

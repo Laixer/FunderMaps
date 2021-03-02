@@ -85,7 +85,6 @@ namespace FunderMaps.AspNetCore
 
                 // Register components from reference assemblies.
                 services.AddFunderMapsCoreServices();
-                services.AddFunderMapsExceptionMapper();
 
                 // NOTE: Register the HttpContextAccessor service to the container.
                 //       The HttpContextAccessor exposes a singleton holding the

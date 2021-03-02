@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public sealed class OperationAbortedException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Operation was aborted by client."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public OperationAbortedException()
-            : base("Operation was aborted by client.")
         {
         }
 

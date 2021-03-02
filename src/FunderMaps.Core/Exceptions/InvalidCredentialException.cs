@@ -8,10 +8,14 @@ namespace FunderMaps.Core.Exceptions
     public class InvalidCredentialException : FunderMapsCoreException
     {
         /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title { get { return "Action failed with provided credentials."; } }
+
+        /// <summary>
         ///     Create new instance.
         /// </summary>
         public InvalidCredentialException()
-            : base("Action failed with provided credentials.")
         {
         }
 
