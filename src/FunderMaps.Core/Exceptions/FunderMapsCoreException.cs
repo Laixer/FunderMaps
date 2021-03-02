@@ -1,4 +1,4 @@
-using AutoMapper;
+using FunderMaps.Core.Extensions;
 using System;
 using System.Runtime.Serialization;
 

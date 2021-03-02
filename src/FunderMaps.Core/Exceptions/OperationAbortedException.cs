@@ -12,7 +12,6 @@ namespace FunderMaps.Core.Exceptions
         /// </summary>
         public override string Title => "Operation was aborted by client.";
 
-
         /// <summary>
         ///     Create new instance.
         /// </summary>

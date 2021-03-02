@@ -12,12 +12,10 @@ namespace FunderMaps.Core.Exceptions
         /// </summary>
         public override string Title => "Referenced entity not found.";
 
-
         /// <summary>
         ///     Create new instance.
         /// </summary>
         public ReferenceNotFoundException()
-            : base()
         {
         }
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AutoMapper
+namespace FunderMaps.Core.Extensions
 {
     /// <summary>
     ///     Exception extension methods.
@@ -20,7 +20,7 @@ namespace AutoMapper
         /// </summary>
         public static IEnumerable<Exception> GetInnerExceptions(this Exception _exception)
         {
-            while (_exception != null)
+            while (_exception is not null)
             {
                 yield return _exception;
                 _exception = _exception.InnerException;

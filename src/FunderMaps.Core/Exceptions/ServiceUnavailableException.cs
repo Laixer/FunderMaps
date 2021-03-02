@@ -12,7 +12,6 @@ namespace FunderMaps.Core.Exceptions
         /// </summary>
         public override string Title => "Internal service was unable to process the request.";
 
-
         /// <summary>
         ///     Create new instance.
         /// </summary>

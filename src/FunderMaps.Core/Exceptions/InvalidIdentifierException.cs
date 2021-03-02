@@ -12,7 +12,6 @@ namespace FunderMaps.Core.Exceptions
         /// </summary>
         public override string Title => "Action failed with provided identifier.";
 
-
         /// <summary>
         ///     Create new instance.
         /// </summary>

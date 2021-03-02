@@ -12,7 +12,6 @@ namespace FunderMaps.Core.Exceptions
         /// </summary>
         public override string Title => "Requested entity not found.";
 
-
         /// <summary>
         ///     Create new instance.
         /// </summary>
