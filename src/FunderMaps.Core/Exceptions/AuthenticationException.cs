@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Login attempt failed with provided credentials.";
+        public override string Title => "Login attempt failed with provided credentials.";
 
         /// <summary>
         ///     Create new instance.

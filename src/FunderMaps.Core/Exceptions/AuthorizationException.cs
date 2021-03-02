@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Access to resource forbidden.";
+        public override string Title => "Access to resource forbidden.";
 
         /// <summary>
         ///     Create new instance.

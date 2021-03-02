@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Action failed with provided identifier.";
+        public override string Title => "Action failed with provided identifier.";
 
 
         /// <summary>

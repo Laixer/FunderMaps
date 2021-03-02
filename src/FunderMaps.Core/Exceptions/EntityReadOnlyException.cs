@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Requested entity is immutable.";
+        public override string Title => "Requested entity is immutable.";
 
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Requested entity not found.";
+        public override string Title => "Requested entity not found.";
 
 
         /// <summary>

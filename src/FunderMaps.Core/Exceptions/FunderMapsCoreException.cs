@@ -16,7 +16,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public const string Title = "Application was unable to process the request.";
+        public virtual string Title => "Application was unable to process the request.";
 
         /// <summary>
         ///     Create new instance.

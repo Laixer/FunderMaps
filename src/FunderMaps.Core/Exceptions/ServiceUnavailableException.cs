@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Internal service was unable to process the request.";
+        public override string Title => "Internal service was unable to process the request.";
 
 
         /// <summary>

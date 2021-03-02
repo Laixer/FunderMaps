@@ -11,8 +11,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Requested entity cannot change state.";
-
+        public override string Title => "Requested entity cannot change state.";
 
         /// <summary>
         ///     State in which entity currently operates.

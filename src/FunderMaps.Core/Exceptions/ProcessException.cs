@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     Exception title
         /// </summary>
-        public new const string Title = "Application was unable to process the request.";
+        public override string Title => "Application was unable to process the request.";
 
 
         /// <summary>
