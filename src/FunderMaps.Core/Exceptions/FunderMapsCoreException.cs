@@ -1,5 +1,7 @@
-using FunderMaps.Core.Extensions;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Exceptions
@@ -11,7 +13,7 @@ namespace FunderMaps.Core.Exceptions
     ///     All exception in this assembly ought to inherit from this
     ///     exception
     /// </remarks>
-    public abstract class FunderMapsCoreException : Exception
+    public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception>
     {
         /// <summary>
         ///     Exception title
@@ -58,7 +60,28 @@ namespace FunderMaps.Core.Exceptions
         public void Deconstruct(out string title, out string message)
         {
             title = Title;
-            message = this.GetMessageWithInner();
+            message = string.Join($"; caused by: ", this.Select(e => $"{ e.Message }"));
+        }
+
+        /// <summary>
+        ///     IEnumerable interface implementation
+        /// </summary>
+        public IEnumerator<Exception> GetEnumerator()
+        {
+            Exception _exception = this;
+            while (_exception is not null)
+            {
+                yield return _exception;
+                _exception = _exception.InnerException;
+            }
+        }
+
+        /// <summary>
+        ///     IEnumerable interface implementation
+        /// </summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

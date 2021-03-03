@@ -54,7 +54,6 @@ namespace FunderMaps.AspNetCore.Controllers
                     title: title,
                     statusCode: (int)statusCode,
                     detail: message);
-
             }
 
             logger.LogWarning($"Cannot return configured error message from exception, return generic problem");
