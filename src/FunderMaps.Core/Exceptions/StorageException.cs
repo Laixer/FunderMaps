@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace FunderMaps.Core.Exceptions
 {
@@ -7,6 +7,18 @@ namespace FunderMaps.Core.Exceptions
     /// </summary>
     public class StorageException : FunderMapsCoreException
     {
+        /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title => "Application was unable to process the request.";
+
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public StorageException()
+        {
+        }
+
         /// <summary>
         ///     Create new instance.
         /// </summary>
@@ -20,13 +32,6 @@ namespace FunderMaps.Core.Exceptions
         /// </summary>
         public StorageException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public StorageException()
         {
         }
     }
