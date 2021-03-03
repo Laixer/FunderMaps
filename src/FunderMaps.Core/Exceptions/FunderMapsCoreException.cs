@@ -60,7 +60,7 @@ namespace FunderMaps.Core.Exceptions
         public void Deconstruct(out string title, out string message)
         {
             title = Title;
-            message = string.Join($"; caused by: ", this.Select(e => $"{ e.Message }"));
+            message = string.Join("; caused by: ", this.Select(e => e.Message));
         }
 
         /// <summary>
@@ -79,9 +79,6 @@ namespace FunderMaps.Core.Exceptions
         /// <summary>
         ///     IEnumerable interface implementation
         /// </summary>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
