@@ -4690,6 +4690,7 @@ GRANT USAGE ON SCHEMA application TO fundermaps_batch;
 GRANT USAGE ON SCHEMA data TO fundermaps_webapp;
 GRANT USAGE ON SCHEMA data TO fundermaps_webservice;
 GRANT USAGE ON SCHEMA data TO fundermaps_portal;
+GRANT USAGE ON SCHEMA data TO fundermaps_batch;
 
 
 --
