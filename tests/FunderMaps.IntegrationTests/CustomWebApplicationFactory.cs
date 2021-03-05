@@ -24,15 +24,6 @@ namespace FunderMaps.IntegrationTests
             services.AddSingleton(typeof(DataStore<>));
 
             // Repositories
-            services.AddScoped<IAnalysisRepository, TestAnalysisRepository>();
-            services.AddScoped<IContactRepository, TestContactRepository>();
-            services.AddScoped<IIncidentRepository, TestIncidentRepository>();
-            services.AddScoped<IInquiryRepository, TestInquiryRepository>();
-            services.AddScoped<IInquirySampleRepository, TestInquirySampleRepository>();
-            services.AddScoped<IRecoveryRepository, TestRecoveryRepository>();
-            services.AddScoped<IRecoverySampleRepository, TestRecoverySampleRepository>();
-            services.AddScoped<IStatisticsRepository, TestStatisticsRepository>();
-            services.AddScoped<ITelemetryRepository, TestTrackingRepository>();
             services.AddScoped<IUserRepository, TestUserRepository>();
             services.AddScoped<IOrganizationProposalRepository, TestOrganizationProposalRepository>();
             services.AddScoped<IOrganizationRepository, TestOrganizationRepository>();
