@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -34,7 +35,7 @@ namespace FunderMaps.Core.Components
             {
                 GeocoderDatasource.FunderMaps => await _addressRepository.GetByIdAsync(id),
                 GeocoderDatasource.NlBagAddress => await _addressRepository.GetByExternalIdAsync(id, ExternalDataSource.NlBag),
-                _ => throw new InvalidOperationException(), // TODO
+                _ => throw new EntityNotFoundException("Requested address entity could not be found."),
             };
     }
 }

@@ -77,16 +77,17 @@ namespace FunderMaps.Portal
         /// </remarks>
         public static void ConfigureDevelopment(IApplicationBuilder app)
         {
-            app.UseDeveloperExceptionPage();
             app.UseCors();
 
-            app.UseFunderMapsExceptionHandler("/oops");
+            app.UseExceptionHandler("/oops");
 
             app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -110,13 +111,13 @@ namespace FunderMaps.Portal
 
             app.UseExceptionHandler("/oops");
 
-            app.UseFunderMapsExceptionHandler("/oops");
-
             app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {

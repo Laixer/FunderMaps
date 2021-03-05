@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Types;
+using FunderMaps.Core.Types;
 using System;
 
 namespace FunderMaps.Core.Exceptions
@@ -8,6 +8,11 @@ namespace FunderMaps.Core.Exceptions
     /// </summary>
     public class StateTransitionException : FunderMapsCoreException
     {
+        /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title => "Requested entity cannot change state.";
+
         /// <summary>
         ///     State in which entity currently operates.
         /// </summary>

@@ -165,7 +165,7 @@ namespace FunderMaps.Webservice
             app.UseDeveloperExceptionPage();
             app.UseCors();
 
-            app.UseFunderMapsExceptionHandler("/oops");
+            app.UseExceptionHandler("/oops");
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -179,6 +179,8 @@ namespace FunderMaps.Webservice
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -202,8 +204,6 @@ namespace FunderMaps.Webservice
 
             app.UseExceptionHandler("/oops");
 
-            app.UseFunderMapsExceptionHandler("/oops");
-
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
@@ -216,6 +216,8 @@ namespace FunderMaps.Webservice
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -240,13 +242,13 @@ namespace FunderMaps.Webservice
 
             app.UseExceptionHandler("/oops");
 
-            app.UseFunderMapsExceptionHandler("/oops");
-
             app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
