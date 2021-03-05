@@ -43,7 +43,8 @@ jobs:
         psql -q -d postgres < database/environment.sql
         psql -q < database/fundermaps_base.sql
         psql -q < database/fundermaps_permissions.sql
-        psql -q < database/seed.sql
+        psql -q < database/data/seed.sql
+        psql -q < database/data/precompute.sql
 
       env:
         PGDATABASE: fundermaps
