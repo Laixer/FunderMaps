@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.AspNetCore.DataTransferObjects;
@@ -325,15 +325,15 @@ namespace FunderMaps.IntegrationTests.Portal
         //     Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         // }
 
-        // [Fact]
-        // public async Task CreateEmptyBodyReturnBadRequest()
-        // {
-        //     // Act.
-        //     var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
+        [Fact]
+        public async Task CreateEmptyBodyReturnBadRequest()
+        {
+            // Act.
+            var response = await _client.PostAsJsonAsync<IncidentDto>("api/incident-portal/submit", null);
 
-        //     // Assert.
-        //     Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        // }
+            // Assert.
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
 
         [Fact]
         public async Task UploadEmptyFormReturnBadRequest()
@@ -387,19 +387,5 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
             Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
-
-        // [Theory]
-        // [InlineData("0000XX")]
-        // [InlineData("1111YY")]
-        // public async Task GetAllAddressByQueryReturnEmptyList(string query)
-        // {
-        //     // Act
-        //     var response = await _client.GetAsync($"api/incident-portal/address-suggest?query={query}");
-        //     var returnList = await response.Content.ReadFromJsonAsync<List<Address>>();
-
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Empty(returnList);
-        // }
     }
 }
