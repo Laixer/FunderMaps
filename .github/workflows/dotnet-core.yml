@@ -43,7 +43,9 @@ jobs:
         psql -q -d postgres < database/environment.sql
         psql -q < database/fundermaps_base.sql
         psql -q < database/fundermaps_permissions.sql
-        psql -q < database/data/seed.sql
+        psql -q < database/data/seed_geocoder.sql
+        psql -q < database/data/seed_data.sql
+        psql -q < database/data/seed_maplayer.sql
         psql -q < database/data/precompute.sql
 
       env:
