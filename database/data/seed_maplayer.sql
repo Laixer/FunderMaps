@@ -14,17 +14,6 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: bundle; Type: TABLE DATA; Schema: maplayer; Owner: fundermaps
---
-
-COPY maplayer.bundle (id, organization_id, name, create_date, update_date, delete_date, layer_configuration) FROM stdin;
-4b3e9bc5-a348-4222-96cd-bd82c2a80928	11cdc51f-3ba6-4e3c-b975-dfed4f054c31	Funderingsdata	2020-11-16 16:26:19.76405+00	2020-11-17 15:13:41.426731+00	\N	{"Layers": [{"LayerId": "c7ccf095-cf77-4f41-813a-68b493f7c6cb", "ColumnNames": ["*"]}, {"LayerId": "22bcc8a3-fd28-4184-822b-f66e3e79e4b7", "ColumnNames": ["*"]}, {"LayerId": "73258fb5-54a4-4d0c-a85f-e0ca2313e67f", "ColumnNames": ["*"]}, {"LayerId": "16cc1db0-5f09-4673-9e07-e5ac573fc1b7", "ColumnNames": ["*"]}, {"LayerId": "0f7cc50c-b831-486e-be07-c22c85943f21", "ColumnNames": ["*"]}]}
-3bb146ab-74d7-4db0-9904-b06433c91c69	11cdc51f-3ba6-4e3c-b975-dfed4f054c31	Incidenten	2020-12-17 11:31:23.42017+00	\N	\N	{"Layers": [{"LayerId": "cc1cc6ca-6408-4a01-b16c-850c09cdb9c5", "ColumnNames": ["category", "geom"]}]}
-82c1a1ce-5f41-4282-9608-9bf921b2744b	11cdc51f-3ba6-4e3c-b975-dfed4f054c31	Rapportages en incidenten	2020-11-17 15:10:49.963911+00	2021-02-05 15:05:18.719074+00	\N	{"Layers": [{"LayerId": "2d151f64-778d-40b6-ac21-40675b7c5c35", "ColumnNames": ["*"]}, {"LayerId": "5742df10-53fe-44da-b449-2c0c926deab6", "ColumnNames": ["*"]}, {"LayerId": "75709b4f-d82e-4d62-9be3-07cb2ca00cec", "ColumnNames": ["*"]}, {"LayerId": "307e6489-feb3-4be8-919c-4b5392fee8fb", "ColumnNames": ["*"]}]}
-\.
-
-
---
 -- Data for Name: layer; Type: TABLE DATA; Schema: maplayer; Owner: fundermaps
 --
 

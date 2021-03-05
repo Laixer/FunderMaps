@@ -47,9 +47,10 @@ GRANT USAGE ON SCHEMA geocoder TO fundermaps_batch;
 -- Name: SCHEMA maplayer; Type: ACL; Schema: -; Owner: fundermaps
 --
 
-GRANT USAGE ON SCHEMA maplayer TO fundermaps_batch;
 GRANT USAGE ON SCHEMA maplayer TO fundermaps_webapp;
 GRANT USAGE ON SCHEMA maplayer TO fundermaps_webservice;
+GRANT USAGE ON SCHEMA maplayer TO fundermaps_portal;
+GRANT USAGE ON SCHEMA maplayer TO fundermaps_batch;
 
 
 --
