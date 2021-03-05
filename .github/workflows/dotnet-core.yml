@@ -47,6 +47,7 @@ jobs:
         psql -q < database/data/seed_data.sql
         psql -q < database/data/seed_maplayer.sql
         psql -q < database/data/precompute.sql
+        psql -c "ALTER USER fundermaps_webapp WITH PASSWORD 'postgres'"
 
       env:
         PGDATABASE: fundermaps
