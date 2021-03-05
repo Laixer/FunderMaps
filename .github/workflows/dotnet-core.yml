@@ -40,7 +40,7 @@ jobs:
 
     - name: Setup database
       run: |
-        psql -q -d postgres < database/environment.sql
+        psql -q -d postgres < database/instance.sql.sql
         psql -q < database/fundermaps_base.sql
         psql -q < database/fundermaps_permissions.sql
         psql -q < database/data/seed_geocoder.sql
