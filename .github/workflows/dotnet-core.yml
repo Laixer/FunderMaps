@@ -42,6 +42,7 @@ jobs:
       run: |
         psql -d postgres < database/environment.sql
         psql < database/fundermaps_base.sql
+        psql < database/fundermaps_permissions.sql
 
       env:
         PGDATABASE: fundermaps
