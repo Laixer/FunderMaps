@@ -20,8 +20,39 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgis/postgis
+        ports:
+          - 5432:5432
+
+        env:
+          POSTGRES_PASSWORD: postgres
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
+
+    - name: Setup database
+      run: |
+        psql -q -d postgres < database/instance.sql
+        psql -q < database/fundermaps_base.sql
+        psql -q < database/fundermaps_permissions.sql
+        psql -q < database/data/seed_geocoder.sql
+        psql -q < database/data/seed_data.sql
+        psql -q < database/data/seed_maplayer.sql
+        psql -q < database/data/precompute.sql
+
+      env:
+        PGDATABASE: fundermaps
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPASSWORD: postgres
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
