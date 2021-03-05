@@ -215,14 +215,6 @@ GRANT ALL ON TYPE report.audit_status TO fundermaps_webservice;
 
 
 --
--- Name: TYPE base_measurement_level; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT ALL ON TYPE report.base_measurement_level TO fundermaps_webapp;
-GRANT ALL ON TYPE report.base_measurement_level TO fundermaps_webservice;
-
-
---
 -- Name: TYPE construction_pile; Type: ACL; Schema: report; Owner: fundermaps
 --
 
@@ -794,15 +786,6 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.analysis_address TO fundermaps_web
 
 
 --
--- Name: TABLE building_ownership; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.building_ownership TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.building_ownership TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE data.building_ownership TO fundermaps_portal;
-
-
---
 -- Name: TABLE district; Type: ACL; Schema: geocoder; Owner: fundermaps
 --
 
@@ -930,15 +913,6 @@ GRANT SELECT,REFERENCES ON TABLE data.statistics_product_inquiries TO fundermaps
 
 
 --
--- Name: TABLE subsidence_hex; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.subsidence_hex TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.subsidence_hex TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE data.subsidence_hex TO fundermaps_portal;
-
-
---
 -- Name: TABLE building_all; Type: ACL; Schema: geocoder; Owner: fundermaps
 --
 
@@ -1027,13 +1001,6 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.building_hotspot TO fundermaps
 
 
 --
--- Name: TABLE building_ownership; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.building_ownership TO fundermaps_batch;
-
-
---
 -- Name: TABLE bundle; Type: ACL; Schema: maplayer; Owner: fundermaps
 --
 
@@ -1061,13 +1028,6 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.foundation_risk TO fundermaps_
 --
 
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.incident TO fundermaps_batch;
-
-
---
--- Name: TABLE incident_aggregate; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.incident_aggregate TO fundermaps_batch;
 
 
 --
@@ -1130,24 +1090,10 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE report.recovery TO fundermaps_webservic
 
 
 --
--- Name: TABLE recovery_sample_type; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.recovery_sample_type TO fundermaps_batch;
-
-
---
 -- Name: TABLE subsidence; Type: ACL; Schema: maplayer; Owner: fundermaps
 --
 
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.subsidence TO fundermaps_batch;
-
-
---
--- Name: TABLE subsidence_hex; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE maplayer.subsidence_hex TO fundermaps_batch;
 
 
 --
