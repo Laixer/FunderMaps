@@ -40,9 +40,10 @@ jobs:
 
     - name: Setup database
       run: |
-        psql -d postgres < database/environment.sql
-        psql < database/fundermaps_base.sql
-        psql < database/fundermaps_permissions.sql
+        psql -q -d postgres < database/environment.sql
+        psql -q < database/fundermaps_base.sql
+        psql -q < database/fundermaps_permissions.sql
+        psql -q < database/seed.sql
 
       env:
         PGDATABASE: fundermaps
