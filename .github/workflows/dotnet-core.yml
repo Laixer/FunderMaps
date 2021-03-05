@@ -41,13 +41,16 @@ jobs:
     - name: Setup database
       run: |
         psql -q -d postgres < database/instance.sql
+        psql -q -c "ALTER USER fundermaps_batch WITH PASSWORD 'postgres'"
+        psql -q -c "ALTER USER fundermaps_webapp WITH PASSWORD 'postgres'"
+        psql -q -c "ALTER USER fundermaps_portal WITH PASSWORD 'postgres'"
+        psql -q -c "ALTER USER fundermaps_webservice WITH PASSWORD 'postgres'"
         psql -q < database/fundermaps_base.sql
         psql -q < database/fundermaps_permissions.sql
         psql -q < database/data/seed_geocoder.sql
         psql -q < database/data/seed_data.sql
         psql -q < database/data/seed_maplayer.sql
         psql -q < database/data/precompute.sql
-        psql -c "ALTER USER fundermaps_webapp WITH PASSWORD 'postgres'"
 
       env:
         PGDATABASE: fundermaps

@@ -1,7 +1,4 @@
-﻿using FunderMaps.Core.Entities;
-using FunderMaps.Core.Types;
-using FunderMaps.AspNetCore.DataTransferObjects;
-using System.Collections.Generic;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -10,7 +7,6 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Geocoder
 {
-    // FUTURE: Use DTO
     public class AddressTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
         private readonly HttpClient _client;
@@ -22,33 +18,19 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
                 .CreateClient();
         }
 
-        [Fact]
-        public async Task GetAddressByIdReturnSingleAddress()
+        [Theory]
+        [InlineData("gfm-e64c5905ac7d412a8f075c1967da0271", "gfm-e64c5905ac7d412a8f075c1967da0271")]
+        [InlineData("NL.IMBAG.NUMMERAANDUIDING.0503200000019584", "gfm-04fff5ffdfb543e1853cee4c2b64ddf6")]
+        [InlineData("0503200000018972", "gfm-612986f77f12468d92ee545a0b8a5b84")]
+        public async Task GetAddressByIdReturnSingleAddress(string address, string expected)
         {
             // Act
-            var response = await _client.GetAsync("api/address/gfm-e64c5905ac7d412a8f075c1967da0271");
+            var response = await _client.GetAsync($"api/address/{address}");
             var returnObject = await response.Content.ReadFromJsonAsync<AddressBuildingDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("gfm-e64c5905ac7d412a8f075c1967da0271", returnObject.AddressId);
+            Assert.Equal(expected, returnObject.AddressId);
         }
-
-        // [Theory]
-        // [InlineData("kade")]
-        // [InlineData("4621E")]
-        // [InlineData("5707KM")]
-        // [InlineData("straat")]
-        // [InlineData("hage")]
-        // public async Task GetAllAddressByQueryReturnMatchingAddressList(string query)
-        // {
-        //     // Act
-        //     var response = await _client.GetAsync($"api/address/suggest?query={query}");
-        //     var returnList = await response.Content.ReadFromJsonAsync<List<AddressBuildingDto>>();
-
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.True(returnList.Count > 0);
-        // }
     }
 }
