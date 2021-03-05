@@ -71,9 +71,10 @@ jobs:
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
     - name: Test
-      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
+      run: dotnet test --filter FunderMaps.IntegrationTests.Backend.Geocoder
       env:
         Jwt__Issuer: "FunderMapsTest"
         Jwt__Audience: "FunderMapsTest"
         Jwt__TokenValidity: 10
         Jwt__SignatureKey: somelargetextstringusedinsignatures
+        ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp;Password=postgres"
