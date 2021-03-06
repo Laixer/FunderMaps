@@ -37,7 +37,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.ItemCount);
-            Assert.Equal("2628TC", returnObject.Items.First().PostalCode);
+            Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
         }
 
         [Theory]
@@ -56,7 +56,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.ItemCount);
-            Assert.Equal("2611VK", returnObject.Items.First().PostalCode);
+            Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
         }
 
         [Theory]
@@ -75,7 +75,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.ItemCount);
-            Assert.Equal("2613RH", returnObject.Items.First().PostalCode);
+            Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
         }
 
         [Fact]
