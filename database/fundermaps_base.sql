@@ -4449,7 +4449,7 @@ ALTER TABLE ONLY application.organization_user
 --
 
 ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT product_telemetry_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
