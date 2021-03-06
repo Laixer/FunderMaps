@@ -27,7 +27,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task SignInReturnSuccessAndToken()
         {
             // Arrange
-            var client = Factory.CreateClient();
+            var client = Factory.CreateUnauthorizedClient();
 
             // Act
             var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
@@ -65,7 +65,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task SignInInvalidCredentialsReturnError()
         {
             // Arrange
-            var client = Factory.CreateClient();
+            var client = Factory.CreateUnauthorizedClient();
 
             // Act
             var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()

@@ -13,19 +13,20 @@ using FunderMaps.Webservice;
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
-    public class WebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
-    {
-    }
-
     public class AuthWebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
     {
         private readonly HttpClient administratorBackendAppClient;
         private readonly HttpClient publicBackendAppClient;
+        private readonly HttpClient localAppClient;
 
-        public SignInSecurityTokenDto AuthToken { get; set; }
+        public SignInSecurityTokenDto AuthToken { get; private set; }
         public OrganizationProposalDto OrganizationProposal { get; private set; }
         public OrganizationSetupDto OrganizationSetup { get; private set; }
         public OrganizationDto Organization { get; private set; }
+
+        public class WebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
+        {
+        }
 
         public AuthWebserviceWebApplicationFactory()
         {
@@ -35,6 +36,9 @@ namespace FunderMaps.IntegrationTests.Webservice
                 .CreateClient();
 
             publicBackendAppClient = new BackendWebApplicationFactory()
+                .CreateClient();
+
+            localAppClient = new WebserviceWebApplicationFactory()
                 .CreateClient();
 
             OrganizationProposal = new OrganizationProposalDtoFaker().Generate();
@@ -78,10 +82,13 @@ namespace FunderMaps.IntegrationTests.Webservice
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthToken.Token);
         }
 
+        public HttpClient CreateUnauthorizedClient() => localAppClient;
+
         protected override void Dispose(bool disposing)
         {
             TeardownOrganization().Wait();
 
+            localAppClient.Dispose();
             publicBackendAppClient.Dispose();
             administratorBackendAppClient.Dispose();
 
