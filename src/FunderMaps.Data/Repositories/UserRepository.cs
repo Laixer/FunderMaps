@@ -40,7 +40,7 @@ namespace FunderMaps.Data.Repositories
                     @email,
                     application.normalize(@email),
                     @avatar,
-                    @job_title,
+                    NULLIF(trim(@job_title), ''),
                     @phone_number,
                     @role)
                 RETURNING id";
@@ -335,7 +335,7 @@ namespace FunderMaps.Data.Repositories
                 SET     given_name = @given_name,
                         last_name = @last_name,
                         avatar = @avatar,
-                        job_title = @job_title,
+                        job_title = NULLIF(trim(@job_title), ''),
                         phone_number = @phone_number,
                         role = @role
                 WHERE   id = @id";

@@ -91,7 +91,8 @@ namespace FunderMaps.Data.Repositories
                     document_date,
                     document_file,
                     document_name)
-                SELECT @note,
+                SELECT
+                    NULLIF(trim(@note), ''),
                     attribution_id,
                     @access_policy,
                     @type,
@@ -266,7 +267,7 @@ namespace FunderMaps.Data.Repositories
                     
                     -- Recovery
                     UPDATE  report.recovery AS r
-                    SET     note = @note,
+                    SET     note = NULLIF(trim(@note), ''),
                             access_policy = @access_policy,
                             type = @type,
                             document_date = @document_date,
