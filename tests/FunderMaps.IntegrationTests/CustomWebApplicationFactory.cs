@@ -22,12 +22,6 @@ namespace FunderMaps.IntegrationTests
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(DataStore<>));
-
-            // Repositories
-            services.AddScoped<IUserRepository, TestUserRepository>();
-            services.AddScoped<IOrganizationProposalRepository, TestOrganizationProposalRepository>();
-            services.AddScoped<IOrganizationRepository, TestOrganizationRepository>();
-            services.AddScoped<IOrganizationUserRepository, TestOrganizationUserRepository>();
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)

@@ -42,12 +42,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetOrganizationProposalByIdReturnSingleOrganizationProposa()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
                 .CreateClient();
+            var organization = await client.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
             // Act
             var response = await client.GetAsync($"api/organization/proposal/{organization.Id}");
@@ -62,12 +61,14 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetAllOrganizationProposalReturnPageOrganizationProposal()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().GenerateRange(0, 10);
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
                 .CreateClient();
+            for (int i = 0; i < 10; i++)
+            {
+                await client.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            }
 
             // Act
             var response = await client.GetAsync("api/organization/proposal");
@@ -75,19 +76,18 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnList);
+            Assert.True(returnList.Count >= 10);
         }
 
         [Fact]
         public async Task DeleteOrganizationProposalReturnNoContent()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
                 .CreateClient();
+            var organization = await client.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
             // Act
             var response = await client.DeleteAsync($"api/organization/proposal/{organization.Id}");
@@ -121,11 +121,14 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetOrganizationProposalByIdReturnForbidden(ApplicationRole role)
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
+            var client1 = _factory
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .CreateClient();
+            var organization = await client1.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act
@@ -141,11 +144,17 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetAllOrganizationProposalReturnForbidden(ApplicationRole role)
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().GenerateRange(0, 10);
+            var client1 = _factory
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .CreateClient();
+            for (int i = 0; i < 10; i++)
+            {
+                await client1.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            }
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreList(organization)
                 .CreateClient();
 
             // Act
@@ -161,11 +170,14 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task DeleteOrganizationProposalReturnForbidden(ApplicationRole role)
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
+            var client1 = _factory
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .CreateClient();
+            var organization = await client1.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
             var client = _factory
                 .ConfigureAuthentication(options => options.User.Role = role)
                 .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
                 .CreateClient();
 
             // Act

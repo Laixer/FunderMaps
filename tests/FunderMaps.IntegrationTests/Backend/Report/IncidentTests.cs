@@ -13,13 +13,11 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 {
     public class IncidentTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
         private readonly HttpClient _client;
 
         public IncidentTests(AuthBackendWebApplicationFactory factory)
         {
-            _factory = factory;
-            _client = _factory
+            _client = factory
                 .WithAuthenticationStores()
                 .CreateClient();
         }
