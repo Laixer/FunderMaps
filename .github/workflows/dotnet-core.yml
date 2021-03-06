@@ -51,7 +51,6 @@ jobs:
         psql -q < database/data/seed_data.sql
         psql -q < database/data/seed_maplayer.sql
         psql -q < database/data/precompute.sql
-        psql -c "select distinct id,external_id from data.analysis_address aa limit 50"
 
       env:
         PGDATABASE: fundermaps
@@ -76,7 +75,7 @@ jobs:
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
     - name: Test
-      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter "FunderMaps.IntegrationTests.Webservice.AnalysisTests"
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Webservice
       env:
         Jwt__Issuer: "FunderMapsTest"
         Jwt__Audience: "FunderMapsTest"
