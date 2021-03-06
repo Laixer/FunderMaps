@@ -3086,7 +3086,7 @@ ALTER TABLE maplayer.building_hotspot OWNER TO fundermaps;
 CREATE TABLE maplayer.bundle (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     organization_id uuid NOT NULL,
-    name text,
+    name text NOT NULL,
     create_date timestamp with time zone DEFAULT now() NOT NULL,
     update_date timestamp with time zone,
     delete_date timestamp with time zone,
