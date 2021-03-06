@@ -51,7 +51,7 @@ jobs:
         psql -q < database/data/seed_data.sql
         psql -q < database/data/seed_maplayer.sql
         psql -q < database/data/precompute.sql
-        psql -c "select id,external_id from data.analysis_address aa limit 10"
+        psql -c "select distinct id,external_id from data.analysis_address aa limit 50"
 
       env:
         PGDATABASE: fundermaps

@@ -31,7 +31,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/analysis?product={product}&id=gfm-feebcfb9d4404d519742467b8fa693d8");
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=gfm-948cb2c2909c4c948de5ba468499b441");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
             // Assert.
@@ -50,7 +50,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.PAND.0503100000027112");
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.PAND.0503100000000714");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
             // Assert.
@@ -69,7 +69,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503100000009414");
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503100000000714");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
             // Assert.
@@ -85,7 +85,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/analysis?product=135385&id=gfm-db4ea7b2c14f4220a87a3101529f5db1");
+            var response = await client.GetAsync($"api/product/analysis?product=135385&id=gfm-948cb2c2909c4c948de5ba468499b441");
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
