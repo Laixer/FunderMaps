@@ -1,4 +1,6 @@
-﻿using FunderMaps.Testing.Faker;
+﻿using FunderMaps.Core.Types;
+using FunderMaps.Testing.Faker;
+using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -19,11 +21,13 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task SetupOrganizationReturnOrganization()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
             var organizationSetup = new OrganizationSetupDtoFaker().Generate();
-            var client = _factory
-                .WithDataStoreItem(organization)
+            var client1 = new AuthBackendWebApplicationFactory()
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
                 .CreateClient();
+            var organization = await client1.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            var client = _factory.CreateClient();
 
             // Act
             var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", organizationSetup);
