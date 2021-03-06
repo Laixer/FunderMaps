@@ -1,12 +1,11 @@
 ﻿using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Core.Components;
+using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Backend;
 using FunderMaps.Testing.Extensions;
 using FunderMaps.Testing.Faker;
-using FunderMaps.Testing.Repositories;
-using Microsoft.Extensions.Logging;
+using FunderMaps.WebApi.DataTransferObjects;
 using System;
 using System.Net;
 using System.Net.Http.Json;
@@ -15,7 +14,6 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
-    // NOTE: This was copied from the WebApi tests.
     /// <summary>
     ///     Tests our authentication.
     /// </summary>
@@ -32,25 +30,25 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task SignInReturnSuccessAndToken()
         {
             // Arrange
-            var sessionUser = new UserFaker().Generate();
-            var sessionOrganization = new OrganizationFaker().Generate();
-            var password = new Randomizer().Password(128);
+            var client1 = new AuthBackendWebApplicationFactory()
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .CreateClient();
+            var organizationProp = await client1.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            var client2 = new BackendWebApplicationFactory()
+                .CreateClient();
+            var organizationSetup = new OrganizationSetupDtoFaker().Generate();
+            var organization = await client2.PostAsJsonAsync($"api/organization/{organizationProp.Id}/setup", organizationSetup);
+            var client3 = _factory
+                .CreateClient();
             var signIn = new SignInInputModel
             {
-                Email = sessionUser.Email,
-                Password = password,
+                Email = organizationSetup.Email,
+                Password = organizationSetup.Password,
             };
-            using var loggerFactory = LoggerFactory.Create(builder => { });
-            using var random = new RandomGenerator();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random, loggerFactory.CreateLogger<PasswordHasher>()).HashPassword(password) })
-                .WithDataStoreItem(sessionOrganization)
-                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
-                .CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", signIn);
+            var response = await client3.PostAsJsonAsync("api/auth/signin", signIn);
             var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
             // Assert
@@ -83,25 +81,25 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task SignInInvalidCredentialsReturnError()
         {
             // Arrange
-            var sessionUser = new UserFaker().Generate();
-            var sessionOrganization = new OrganizationFaker().Generate();
-            var password = new Randomizer().Password(128);
+            var client1 = new AuthBackendWebApplicationFactory()
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .CreateClient();
+            var organizationProp = await client1.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            var client2 = new BackendWebApplicationFactory()
+                .CreateClient();
+            var organizationSetup = new OrganizationSetupDtoFaker().Generate();
+            var organization = await client2.PostAsJsonAsync($"api/organization/{organizationProp.Id}/setup", organizationSetup);
+            var client3 = _factory
+                .CreateClient();
             var signIn = new SignInInputModel
             {
-                Email = sessionUser.Email,
-                Password = password,
+                Email = organizationSetup.Email,
+                Password = new Randomizer().Password(64),
             };
-            using var loggerFactory = LoggerFactory.Create(builder => { });
-            using var random = new RandomGenerator();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random, loggerFactory.CreateLogger<PasswordHasher>()).HashPassword(new Randomizer().Password(128)) })
-                .WithDataStoreItem(sessionOrganization)
-                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
-                .CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", signIn);
+            var response = await client3.PostAsJsonAsync("api/auth/signin", signIn);
             var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
             // Assert

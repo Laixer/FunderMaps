@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Testing;
-using FunderMaps.Testing.Repositories;
+﻿using FunderMaps.Testing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -14,11 +12,6 @@ namespace FunderMaps.IntegrationTests
     {
         public CustomWebApplicationFactory() => ClientOptions.HandleCookies = false;
 
-        protected virtual void ConfigureServices(IServiceCollection services)
-        {
-            //services.Remove(services.SingleOrDefault(d => d.ServiceType.Name == "DbProvider"));
-        }
-
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
             services.AddSingleton(typeof(DataStore<>));
@@ -26,7 +19,6 @@ namespace FunderMaps.IntegrationTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(ConfigureServices);
             builder.ConfigureTestServices(ConfigureTestServices);
         }
 
