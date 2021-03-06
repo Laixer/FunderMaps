@@ -15,7 +15,6 @@ namespace FunderMaps.Testing.Faker
         public IncidentDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Replace("FIR######-#####"));
-            RuleFor(f => f.ClientId, f => f.Random.Number(1, 99));
             RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>());
             RuleFor(f => f.ChainedBuilding, f => f.Random.Bool());
             RuleFor(f => f.Owner, f => f.Random.Bool());
