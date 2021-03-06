@@ -23,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductByIdReturnProduct()
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/statistics?id=gfm-6aae47cb5aa4416abdf19d98ba8218ac");
@@ -38,7 +38,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductByExternalIdReturnProduct()
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/statistics?id=BU05031403");
@@ -57,7 +57,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetByIdInvalidAddressThrows(string address)
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/statistics?id={address}");

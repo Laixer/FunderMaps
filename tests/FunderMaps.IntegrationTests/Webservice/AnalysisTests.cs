@@ -28,7 +28,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductByIdReturnProduct(AnalysisProductType product)
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/analysis?product={product}&id=gfm-feebcfb9d4404d519742467b8fa693d8");
@@ -47,7 +47,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductByExternalIdReturnProduct(AnalysisProductType product)
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.PAND.0503100000027112");
@@ -66,7 +66,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductByExternalIdBag1ReturnProduct(AnalysisProductType product)
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503100000009414");
@@ -82,7 +82,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetByIdInvalidProductThrows()
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/analysis?product=135385&id=gfm-db4ea7b2c14f4220a87a3101529f5db1");
@@ -99,7 +99,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetByIdInvalidAddressThrows(string address)
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/analysis?product={AnalysisProductType.Complete}&id={address}");
@@ -112,7 +112,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task GetProductWithoutRequestMethodThrows()
         {
             // Arrange
-            var client = Factory.CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act.
             var response = await client.GetAsync($"api/product/analysis?product={AnalysisProductType.Complete}");
