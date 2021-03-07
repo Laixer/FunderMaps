@@ -59,9 +59,9 @@ namespace FunderMaps.WebApi.Controllers.Application
 
             // Act.
             // FUTURE: Do in 1 call.
-            var userId = await _userRepository.AddAsync(user);
-            await _signinService.SetPasswordAsync(userId, input.Password);
-            await _organizationUserRepository.AddAsync(id, userId, input.OrganizationRole);
+            user = await _userRepository.AddGetAsync(user);
+            await _signinService.SetPasswordAsync(user.Id, input.Password);
+            await _organizationUserRepository.AddAsync(id, user.Id, input.OrganizationRole);
 
             // Map.
             var output = _mapper.Map<UserDto>(user);
