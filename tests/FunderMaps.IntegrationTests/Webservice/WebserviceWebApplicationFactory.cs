@@ -13,7 +13,7 @@ using FunderMaps.Webservice;
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
-    public class AuthWebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>, Xunit.IAsyncLifetime
+    public class AuthWebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
     {
         private readonly HttpClient administratorBackendAppClient;
         private readonly HttpClient publicBackendAppClient;
@@ -37,8 +37,15 @@ namespace FunderMaps.IntegrationTests.Webservice
             publicBackendAppClient = new BackendWebApplicationFactory()
                 .CreateClient();
 
+        }
+
+        public override async Task InitializeAsync()
+        {
             OrganizationProposal = new OrganizationProposalDtoFaker().Generate();
             OrganizationSetup = new OrganizationSetupDtoFaker().Generate();
+
+            await ConfigureOrganizationAsync();
+            await SignInAsync();
         }
 
         protected async virtual Task ConfigureOrganizationAsync()
@@ -87,13 +94,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             base.Dispose(disposing);
         }
 
-        public async Task InitializeAsync()
-        {
-            await ConfigureOrganizationAsync();
-            await SignInAsync();
-        }
-
-        public async Task DisposeAsync()
+        public override async Task DisposeAsync()
         {
             await TeardownOrganization();
         }

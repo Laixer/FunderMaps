@@ -4,13 +4,17 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace FunderMaps.IntegrationTests
 {
-    public abstract class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>
+    public abstract class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IAsyncLifetime
          where TStartup : class
     {
         public CustomWebApplicationFactory() => ClientOptions.HandleCookies = false;
+
+        public virtual Task InitializeAsync() => Task.CompletedTask;
 
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
@@ -39,5 +43,7 @@ namespace FunderMaps.IntegrationTests
 
             return this;
         }
+
+        public virtual Task DisposeAsync() => Task.CompletedTask;
     }
 }
