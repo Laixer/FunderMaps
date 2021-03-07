@@ -82,7 +82,6 @@ namespace FunderMaps.IntegrationTests.Webservice
         }
 
         [Theory]
-        [InlineData("/")]
         [InlineData("api/user")]
         [InlineData("api/auth/token-refresh")]
         public async Task RefreshSignInReturnUnauthorized(string uri)
