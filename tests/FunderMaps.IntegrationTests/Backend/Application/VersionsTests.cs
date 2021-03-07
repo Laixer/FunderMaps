@@ -7,18 +7,19 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 {
     public class VersionsTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private AuthBackendWebApplicationFactory Factory { get; }
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public VersionsTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+            => Factory = factory;
 
         [Fact]
         public async Task GetEndpointsReturnSuccessAndCorrectContentType()
         {
             // Arrange
-            var client = _factory.CreateClient();
+            using var client = Factory.CreateUnauthorizedClient();
 
             // Act
             var response = await client.GetAsync("api/version");

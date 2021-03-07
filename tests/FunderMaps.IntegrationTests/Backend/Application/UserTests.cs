@@ -1,8 +1,6 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Core.Entities;
 using FunderMaps.Testing.Faker;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -11,40 +9,37 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 {
     public class UserTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
-        private readonly HttpClient _client;
+        private AuthBackendWebApplicationFactory Factory { get; }
 
-        private readonly User sessionUser = new UserFaker().Generate();
-
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public UserTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-            _client = _factory
-                .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithAuthenticationStores()
-                .CreateClient();
-        }
+            => Factory = factory;
 
         [Fact]
         public async Task GetUserFromSessionReturnSingleUser()
         {
+            // Arrange
+            using var client = Factory.CreateClient();
+
             // Act
-            var response = await _client.GetAsync("api/user");
+            var response = await client.GetAsync("api/user");
             var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(sessionUser.Id, returnObject.Id);
+            Assert.Equal(Factory.Superuser.User.Id, returnObject.Id);
         }
 
         [Fact]
         public async Task UpdateUserFromSessionReturnNoContent()
         {
             // Arrange
-            var newUser = new UserFaker().Generate();
+            using var client = Factory.CreateClient();
 
             // Act
-            var response = await _client.PutAsJsonAsync("api/user", newUser);
+            var response = await client.PutAsJsonAsync("api/user", new UserFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

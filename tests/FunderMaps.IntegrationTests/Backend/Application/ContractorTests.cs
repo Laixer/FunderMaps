@@ -1,5 +1,4 @@
-﻿using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
+﻿using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -8,26 +7,23 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    // FUTURE: navigation test
-
+    // FUTURE: Test other roles
     public class ContractorTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private AuthBackendWebApplicationFactory Factory { get; }
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public ContractorTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+            => Factory = factory;
 
         [Fact]
         public async Task GetAllContractorReturnAllContractor()
         {
             // Arrange
-            var organization = new OrganizationFaker().Generate(10);
-            var client = _factory
-                .WithAuthenticationStores()
-                .WithDataStoreList(organization)
-                .CreateClient();
+            using var client = Factory.CreateClient();
+            await Factory.CreateOrganizationAsync();
 
             // Act
             var response = await client.GetAsync("api/contractor");
@@ -35,9 +31,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(10, returnList.Count);
-            Assert.True(response.Headers.CacheControl.Public);
-            Assert.NotNull(response.Headers.CacheControl.MaxAge);
+            Assert.True(returnList.Count >= 2);
         }
     }
 }
