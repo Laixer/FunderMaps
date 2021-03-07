@@ -75,7 +75,7 @@ jobs:
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
     - name: Test
-      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Backend
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Backend.Application
       env:
         Jwt__Issuer: "FunderMapsTest"
         Jwt__Audience: "FunderMapsTest"

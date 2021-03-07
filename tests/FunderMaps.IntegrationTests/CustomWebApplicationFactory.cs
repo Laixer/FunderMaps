@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -24,6 +25,10 @@ namespace FunderMaps.IntegrationTests
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(ConfigureTestServices);
+            builder.ConfigureLogging(options =>
+            {
+                options.AddFilter(logLevel => logLevel >= LogLevel.Error);
+            });
         }
 
         public virtual CustomWebApplicationFactory<TStartup> WithDataStoreItem<TItem>(TItem item)
