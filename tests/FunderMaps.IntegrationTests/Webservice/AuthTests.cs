@@ -80,5 +80,21 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
             Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
+
+        [Theory]
+        [InlineData("/")]
+        [InlineData("api/user")]
+        [InlineData("api/auth/token-refresh")]
+        public async Task RefreshSignInReturnUnauthorized(string uri)
+        {
+            // Arrange
+            using var client = Factory.CreateUnauthorizedClient();
+
+            // Act
+            var response = await client.GetAsync(uri);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
     }
 }
