@@ -90,7 +90,6 @@ namespace FunderMaps.IntegrationTests.Backend
             AuthToken = await SignInAsync();
         }
 
-        // TODO: Register all objects to be disposed
         public async virtual Task<(OrganizationSetupDto, OrganizationDto, UserDto)> CreateOrganizationAsync(bool track = true)
         {
             using var administratorClient = CreateAdminClient();
@@ -109,7 +108,6 @@ namespace FunderMaps.IntegrationTests.Backend
                 organizationTrackList.Add(organization);
             }
 
-            // Act
             var organizationUsers = await administratorClient.GetFromJsonAsync<List<UserDto>>($"api/admin/organization/{organization.Id}/user");
             return (organizationSetup, organization, organizationUsers.First());
         }

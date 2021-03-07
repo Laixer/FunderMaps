@@ -9,7 +9,7 @@ namespace FunderMaps.IntegrationTests
     /// </summary>
     public class FileUploadContent : MultipartFormDataContent
     {
-        private Faker faker = new Faker();
+        private Faker faker = new();
 
         private HttpContent byteContent;
 
