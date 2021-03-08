@@ -27,6 +27,9 @@ namespace FunderMaps.IntegrationTests.Backend
         public UserPair Reader { get; private set; }
         public OrganizationDto Organization { get; private set; }
 
+         // TODO: Temp solution, should always cleanup
+        public bool Cleanup { get; set; } = true;
+
         private List<OrganizationDto> organizationTrackList = new();
 
         public record UserPair
@@ -165,7 +168,10 @@ namespace FunderMaps.IntegrationTests.Backend
 
         public override async Task DisposeAsync()
         {
-            await TeardownOrganization();
+            if (Cleanup) // TODO: Temp solution, should always cleanup
+            {
+                await TeardownOrganization();
+            }
         }
     }
 }
