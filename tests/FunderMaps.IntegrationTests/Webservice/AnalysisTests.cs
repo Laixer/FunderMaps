@@ -78,6 +78,44 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
         }
 
+        [Theory]
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalAddressIdReturnProduct(AnalysisProductType product)
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.NUMMERAANDUIDING.0503200000096292");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
+        }
+
+        [Theory]
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalAddressIdBag1ReturnProduct(AnalysisProductType product)
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503200000096292");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
+        }
+
         [Fact]
         public async Task GetByIdInvalidProductThrows()
         {
