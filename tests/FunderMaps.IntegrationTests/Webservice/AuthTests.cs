@@ -32,8 +32,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Act
             var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
             {
-                Email = Factory.OrganizationSetup.Email,
-                Password = Factory.OrganizationSetup.Password,
+                Email = Factory.Superuser.User.Email,
+                Password = Factory.Superuser.Password,
             });
             var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
@@ -70,7 +70,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Act
             var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
             {
-                Email = Factory.OrganizationSetup.Email,
+                Email = Factory.Superuser.User.Email,
                 Password = new Randomizer().Password(64),
             });
             var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();

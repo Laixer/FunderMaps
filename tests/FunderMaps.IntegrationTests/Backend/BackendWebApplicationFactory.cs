@@ -14,10 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FunderMaps.IntegrationTests.Backend
 {
-    public class BackendWebApplicationFactory : CustomWebApplicationFactory<Startup> // TODO: remove
-    {
-    }
-
     public class AuthBackendWebApplicationFactory : AuthWebApplicationFactory<Startup> // TODO": Change inherit
     {
         public SignInSecurityTokenDto AuthToken { get; private set; }
@@ -27,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Backend
         public UserPair Reader { get; private set; }
         public OrganizationDto Organization { get; private set; }
 
-         // TODO: Temp solution, should always cleanup
+        // TODO: Temp solution, should always cleanup
         public bool Cleanup { get; set; } = true;
 
         private List<OrganizationDto> organizationTrackList = new();

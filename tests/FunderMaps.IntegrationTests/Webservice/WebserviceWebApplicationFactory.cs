@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -7,72 +6,59 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Backend;
-using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
 using FunderMaps.Webservice;
+using static FunderMaps.IntegrationTests.Backend.AuthBackendWebApplicationFactory;
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
     public class AuthWebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
     {
-        private readonly HttpClient administratorBackendAppClient;
-        private readonly HttpClient publicBackendAppClient;
+        private readonly AuthBackendWebApplicationFactory backendAppClient = new();
 
         public SignInSecurityTokenDto AuthToken { get; private set; }
-        public OrganizationProposalDto OrganizationProposal { get; private set; }
-        public OrganizationSetupDto OrganizationSetup { get; private set; }
+        public UserPair Superuser => backendAppClient.Superuser;
+        public UserPair Verifier => backendAppClient.Verifier;
+        public UserPair Writer => backendAppClient.Writer;
+        public UserPair Reader => backendAppClient.Reader;
         public OrganizationDto Organization { get; private set; }
 
         public class WebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
         {
         }
 
+        public class AdminWebserviceWebApplicationFactory : AuthWebApplicationFactory<Startup>
+        {
+        }
+
         public AuthWebserviceWebApplicationFactory()
         {
-            administratorBackendAppClient = new AuthBackendWebApplicationFactory()
-                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
-                .WithAuthenticationStores()
-                .CreateClient();
-
-            publicBackendAppClient = new BackendWebApplicationFactory()
-                .CreateClient();
-
         }
 
         public override async Task InitializeAsync()
         {
-            OrganizationProposal = new OrganizationProposalDtoFaker().Generate();
-            OrganizationSetup = new OrganizationSetupDtoFaker().Generate();
+            await backendAppClient.InitializeAsync();
 
-            await ConfigureOrganizationAsync();
-            await SignInAsync();
+            AuthToken = await SignInAsync();
         }
 
-        protected async virtual Task ConfigureOrganizationAsync()
+        // protected async virtual Task ConfigureOrganizationAsync()
+        // {
+        //     OrganizationProposal = await administratorBackendAppClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", OrganizationProposal);
+
+        //     await publicBackendAppClient.PostAsJsonAsync($"api/organization/{OrganizationProposal.Id}/setup", OrganizationSetup);
+
+        //     Organization = await administratorBackendAppClient.GetFromJsonAsync<OrganizationDto>($"api/admin/organization/{OrganizationProposal.Id}");
+        // }
+
+        protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
         {
-            OrganizationProposal = await administratorBackendAppClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", OrganizationProposal);
+            using var publicClient = CreateUnauthorizedClient();
 
-            await publicBackendAppClient.PostAsJsonAsync($"api/organization/{OrganizationProposal.Id}/setup", OrganizationSetup);
-
-            Organization = await administratorBackendAppClient.GetFromJsonAsync<OrganizationDto>($"api/admin/organization/{OrganizationProposal.Id}");
-        }
-
-        protected async virtual Task SignInAsync()
-        {
-            AuthToken = await publicBackendAppClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInInputModel>("api/auth/signin", new()
+            return await publicClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInInputModel>("api/auth/signin", new()
             {
-                Email = OrganizationSetup.Email,
-                Password = OrganizationSetup.Password,
+                Email = Superuser.User.Email,
+                Password = Superuser.Password,
             });
-        }
-
-        protected async virtual Task TeardownOrganization()
-        {
-            foreach (var user in await administratorBackendAppClient.GetFromJsonAsync<IList<OrganizationUserDto>>($"api/admin/organization/{Organization.Id}/user"))
-            {
-                await administratorBackendAppClient.DeleteAsync($"api/admin/organization/{Organization.Id}/user/{user.Id}");
-            }
-            await administratorBackendAppClient.DeleteAsync($"api/admin/organization/{Organization.Id}");
         }
 
         protected override void ConfigureClient(HttpClient client)
@@ -82,21 +68,26 @@ namespace FunderMaps.IntegrationTests.Webservice
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthToken.Token);
         }
 
+        public HttpClient CreateAdminClient()
+            => new AdminWebserviceWebApplicationFactory()
+                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
+                .WithAuthenticationStores()
+                .CreateClient();
+
         public HttpClient CreateUnauthorizedClient()
             => new WebserviceWebApplicationFactory()
                 .CreateClient();
 
         protected override void Dispose(bool disposing)
         {
-            publicBackendAppClient.Dispose();
-            administratorBackendAppClient.Dispose();
+            backendAppClient.Dispose();
 
             base.Dispose(disposing);
         }
 
         public override async Task DisposeAsync()
         {
-            await TeardownOrganization();
+            await backendAppClient.DisposeAsync();
         }
     }
 }
