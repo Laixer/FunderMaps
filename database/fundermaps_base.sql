@@ -490,7 +490,7 @@ CREATE TYPE report.construction_pile AS ENUM (
     'pressed',
     'perished',
     'decay',
-    'rootgrowth'
+    'root_growth'
 );
 
 
