@@ -27,7 +27,6 @@ jobs:
           - 5432:5432
 
         env:
-          # POSTGRES_PASSWORD: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
 
         options: >-
@@ -42,10 +41,6 @@ jobs:
     - name: Setup database
       run: |
         psql -q -d postgres < database/instance.sql
-        psql -q -c "ALTER USER fundermaps_batch WITH PASSWORD 'postgres'"
-        psql -q -c "ALTER USER fundermaps_webapp WITH PASSWORD 'postgres'"
-        psql -q -c "ALTER USER fundermaps_portal WITH PASSWORD 'postgres'"
-        psql -q -c "ALTER USER fundermaps_webservice WITH PASSWORD 'postgres'"
         psql -q < database/fundermaps_base.sql
         psql -q < database/fundermaps_permissions.sql
         psql -q < database/data/seed_geocoder.sql
@@ -85,4 +80,4 @@ jobs:
         Jwt__SignatureKey: somelargetextstringusedinsignatures
         Incident__ClientId: 42
         Incident__Recipients__0: info@example.com
-        ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp;Password=postgres"
+        ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp"
