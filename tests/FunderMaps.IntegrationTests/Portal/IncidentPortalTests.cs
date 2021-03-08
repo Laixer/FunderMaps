@@ -33,13 +33,14 @@ namespace FunderMaps.IntegrationTests.Portal
                 .Generate();
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
+        // TODO
         // [Theory]
         // [InlineData("gfm-asdkkgfsljshdf")]
         // [InlineData("aaa-invalidid")]
@@ -50,9 +51,10 @@ namespace FunderMaps.IntegrationTests.Portal
         //     var incident = new IncidentDtoFaker()
         //         .RuleFor(f => f.Address, f => address)
         //         .Generate();
+        //     using var client = Factory.CreateClient();
 
         //     // Act.
-        //     var response = await _client.PostAsJsonAsync("api/incident-portal/submit", incident);
+        //     var response = await client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
         //     // Assert.
         //     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -74,11 +76,11 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.NotNull(returnObject.Name);
         }
 
-        [Fact]
-        public async Task GetRiskAnalysisReturnAnalysis()
+        [Theory]
+        [InlineData("gfm-9627e072a5ce4e31a051242d51e0ef3a")]
+        public async Task GetRiskAnalysisReturnAnalysis(string address)
         {
             // Arrange
-            var address = "gfm-9627e072a5ce4e31a051242d51e0ef3a";
             using var client = Factory.CreateClient();
 
             // Act
@@ -175,7 +177,7 @@ namespace FunderMaps.IntegrationTests.Portal
 
         [Theory]
         [MemberData(nameof(RegressionCreateInvalidEnumReturnBadRequestData))]
-        public async Task RegressionCreateInvalidEnumReturnBadRequest(IncidentDto incident)
+        public async Task CreateInvalidEnumReturnBadRequest(IncidentDto incident)
         {
             // Arrange
             using var client = Factory.CreateClient();
@@ -191,7 +193,7 @@ namespace FunderMaps.IntegrationTests.Portal
         }
 
         [Fact]
-        public async Task RegressionCreateInvalidPhoneReturnBadRequest()
+        public async Task CreateInvalidPhoneReturnBadRequest()
         {
             // Arrange
             var incident = new IncidentDtoFaker()

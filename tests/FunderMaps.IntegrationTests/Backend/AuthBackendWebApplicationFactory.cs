@@ -148,7 +148,6 @@ namespace FunderMaps.IntegrationTests.Backend
 
         public HttpClient CreateAdminClient()
             => new AdminWebApplicationFactory()
-                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
                 .CreateClient();
 
         public HttpClient CreateUnauthorizedClient()
