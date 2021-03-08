@@ -11,16 +11,13 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 {
     public class InquirySampleTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
-        private readonly HttpClient _client;
+        private AuthBackendWebApplicationFactory Factory { get; }
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public InquirySampleTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-            _client = _factory
-                .WithAuthenticationStores()
-                .CreateClient();
-        }
+            => Factory = factory;
 
         // [Fact]
         // public async Task CreateInquirySampleReturnInquirySample()

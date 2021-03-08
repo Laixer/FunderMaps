@@ -13,36 +13,39 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 {
     public class IncidentTests : IClassFixture<AuthBackendWebApplicationFactory>
     {
-        private readonly HttpClient _client;
+        private AuthBackendWebApplicationFactory Factory { get; }
 
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public IncidentTests(AuthBackendWebApplicationFactory factory)
+            => Factory = factory;
+
+        [Fact]
+        public async Task CreateIncidentReturnIncident()
         {
-            _client = factory
-                .WithAuthenticationStores()
-                .CreateClient();
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
+            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
         }
-
-        // [Fact]
-        // public async Task CreateIncidentReturnIncident()
-        // {
-        //     // Act
-        //     var response = await _client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
-        //     var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
-
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-        //     Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        // }
 
         [Fact]
         public async Task UploadDocumentReturnDocument()
         {
             // Arrange
             using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
+            using var client = Factory.CreateClient();
 
             // Act
-            var response = await _client.PostAsync("api/incident/upload-document", formContent);
+            var response = await client.PostAsync("api/incident/upload-document", formContent);
             var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
 
             // Assert
