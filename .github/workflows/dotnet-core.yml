@@ -69,7 +69,7 @@ jobs:
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
-    - name: Integration tests backend
+    - name: Testing Backend
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Backend
       env:
         ASPNETCORE_ENVIRONMENT: Production
@@ -82,7 +82,7 @@ jobs:
         Incident__Recipients__0: info@example.com
         ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp"
 
-    - name: Integration tests portal
+    - name: Testing Portal
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Portal
       env:
         ASPNETCORE_ENVIRONMENT: Production
@@ -95,7 +95,7 @@ jobs:
         Incident__Recipients__0: info@example.com
         ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_portal"
 
-    - name: Integration tests webservice
+    - name: Testing Webservice
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Webservice
       env:
         ASPNETCORE_ENVIRONMENT: Production
