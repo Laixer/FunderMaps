@@ -30,11 +30,11 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Arrange
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.GetAsync($"api/product/analysis?product={product}&id=gfm-948cb2c2909c4c948de5ba468499b441");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
@@ -49,11 +49,11 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Arrange
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.PAND.0503100000000714");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
@@ -68,11 +68,11 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Arrange
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503100000000714");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
@@ -84,10 +84,10 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Arrange
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.GetAsync($"api/product/analysis?product=135385&id=gfm-948cb2c2909c4c948de5ba468499b441");
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -101,10 +101,10 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Arrange
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.GetAsync($"api/product/analysis?product={AnalysisProductType.Complete}&id={address}");
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
@@ -114,10 +114,10 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Arrange
             using var client = Factory.CreateClient();
 
-            // Act.
+            // Act
             var response = await client.GetAsync($"api/product/analysis?product={AnalysisProductType.Complete}");
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }

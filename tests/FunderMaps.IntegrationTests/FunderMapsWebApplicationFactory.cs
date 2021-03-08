@@ -21,6 +21,9 @@ namespace FunderMaps.IntegrationTests
 
         public virtual Task InitializeAsync() => Task.CompletedTask;
 
+        /// <summary>
+        ///     Configure test host services.
+        /// </summary>
         protected virtual void ConfigureTestServices(IServiceCollection services)
         {
         }

@@ -22,6 +22,9 @@ namespace FunderMaps.IntegrationTests
             return this;
         }
 
+        /// <summary>
+        ///     Configure test host services.
+        /// </summary>
         protected override void ConfigureTestServices(IServiceCollection services)
         {
             services.AddSingleton<TestAuthenticationSchemeOptions>();
