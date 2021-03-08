@@ -823,15 +823,6 @@ GRANT SELECT,REFERENCES ON TABLE data.groundwater_level TO fundermaps_portal;
 
 
 --
--- Name: TABLE neighborhood_land; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.neighborhood_land TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.neighborhood_land TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE data.neighborhood_land TO fundermaps_portal;
-
-
---
 -- Name: TABLE statistics_product_buildings_restored; Type: ACL; Schema: data; Owner: fundermaps
 --
 

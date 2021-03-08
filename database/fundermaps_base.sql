@@ -2584,31 +2584,6 @@ COMMENT ON TABLE data.groundwater_level IS 'Groundwater levels from PDOK.';
 
 
 --
--- Name: neighborhood_land; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.neighborhood_land AS
- SELECT n.id,
-    n.external_id,
-    n.external_source,
-    n.district_id,
-    n.name,
-    n.water,
-    n.geom
-   FROM geocoder.neighborhood n
-  WHERE (n.water IS FALSE);
-
-
-ALTER TABLE data.neighborhood_land OWNER TO fundermaps;
-
---
--- Name: VIEW neighborhood_land; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON VIEW data.neighborhood_land IS 'Contains all entries from geocoder.neighborhood which are not bodies of water.';
-
-
---
 -- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
 --
 
