@@ -2,9 +2,7 @@
 using FunderMaps.Testing.Faker;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -25,10 +23,13 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task CreateIncidentReturnIncident()
         {
             // Arrange
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/incident", new IncidentDtoFaker().Generate());
+            var response = await client.PostAsJsonAsync("api/incident", incident);
             var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
             // Assert
@@ -53,65 +54,58 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.NotNull(returnObject.Name);
         }
 
-        // [Fact]
-        // public async Task GetIncidentByIdReturnSingleIncident()
-        // {
-        //     // Arrange
-        //     var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+        [Fact]
+        public async Task GetIncidentByIdReturnSingleIncident()
+        {
+            // Arrange
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", incident);
 
-        //     // Act
-        //     var response = await _client.GetAsync($"api/incident/{incident.Id}");
-        //     var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+            // Act
+            var response = await client.GetAsync($"api/incident/{incident.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-        //     Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+        }
 
-        // [Fact]
-        // public async Task GetAllIncidentReturnNavigationIncident()
-        // {
-        //     // Arrange
-        //     for (int i = 0; i < 10; i++)
-        //     {
-        //         await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
-        //     }
+        [Fact]
+        public async Task UpdateIncidentReturnNoContent()
+        {
+            // Arrange
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", incident);
 
-        //     // Act
-        //     var response = await _client.GetAsync($"api/incident?limit=10");
-        //     var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
+            // Act
+            var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", new IncidentDtoFaker().Generate());
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Equal(10, returnList.Count);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
 
-        // [Fact]
-        // public async Task UpdateIncidentReturnNoContent()
-        // {
-        //     // Arrange
-        //     var newIncident = new IncidentDtoFaker().Generate();
-        //     var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
+        [Fact]
+        public async Task DeleteIncidentReturnNoContent()
+        {
+            // Arrange
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", incident);
 
-        //     // Act
-        //     var response = await _client.PutAsJsonAsync($"api/incident/{incident.Id}", newIncident);
+            // Act
+            var response = await client.DeleteAsync($"api/incident/{incident.Id}");
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        // }
-
-        // [Fact]
-        // public async Task DeleteIncidentReturnNoContent()
-        // {
-        //     // Arrange
-        //     var incident = await _client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", new IncidentDtoFaker().Generate());
-
-        //     // Act
-        //     var response = await _client.DeleteAsync($"api/incident/{incident.Id}");
-
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
     }
 }
