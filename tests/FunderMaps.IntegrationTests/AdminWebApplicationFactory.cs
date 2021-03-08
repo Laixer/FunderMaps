@@ -53,11 +53,11 @@ namespace FunderMaps.IntegrationTests
             {
                 var claims = new[]
                 {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organization.Id.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()),
-            };
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Role, user.Role.ToString()),
+                    new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organization.Id.ToString()),
+                    new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()),
+                };
 
                 ClaimsIdentity identity = new(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
 
