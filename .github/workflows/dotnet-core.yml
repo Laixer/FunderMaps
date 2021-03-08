@@ -78,6 +78,7 @@ jobs:
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Backend
       env:
         ASPNETCORE_ENVIRONMENT: Production
+        UseExternalServices: False
         Jwt__Issuer: "FunderMapsTest"
         Jwt__Audience: "FunderMapsTest"
         Jwt__TokenValidity: 10

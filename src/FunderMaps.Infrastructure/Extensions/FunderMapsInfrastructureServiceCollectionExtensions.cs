@@ -56,7 +56,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // The startup essential properties can be used to setup components.
             (Configuration, HostEnvironment) = services.BuildStartupProperties();
 
-            if (!HostEnvironment.IsDevelopment() || Configuration.GetValue<bool>("UseExternalServices", false))
+            if (Configuration.GetValue<bool>("UseExternalServices", true))
             {
                 ConfigureExternalServices(services);
             }
