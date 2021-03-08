@@ -797,15 +797,6 @@ GRANT SELECT,REFERENCES ON TABLE geocoder.district TO fundermaps_batch;
 
 
 --
--- Name: TABLE district_land; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.district_land TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.district_land TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE data.district_land TO fundermaps_portal;
-
-
---
 -- Name: TABLE geographic_region; Type: ACL; Schema: data; Owner: fundermaps
 --
 

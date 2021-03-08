@@ -2521,31 +2521,6 @@ COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.
 
 
 --
--- Name: district_land; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.district_land AS
- SELECT d.id,
-    d.external_id,
-    d.external_source,
-    d.municipality_id,
-    d.name,
-    d.water,
-    d.geom
-   FROM geocoder.district d
-  WHERE (NOT d.water);
-
-
-ALTER TABLE data.district_land OWNER TO fundermaps;
-
---
--- Name: VIEW district_land; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON VIEW data.district_land IS 'View containing all districts that are bodies not water.';
-
-
---
 -- Name: geographic_region; Type: TABLE; Schema: data; Owner: fundermaps
 --
 
