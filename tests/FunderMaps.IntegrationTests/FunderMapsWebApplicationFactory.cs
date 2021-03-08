@@ -8,10 +8,16 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests
 {
-    public abstract class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IAsyncLifetime
+    /// <summary>
+    ///     FunderMaps webapplication factory.
+    /// </summary>
+    public abstract class FunderMapsWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IAsyncLifetime
          where TStartup : class
     {
-        public CustomWebApplicationFactory() => ClientOptions.HandleCookies = false;
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public FunderMapsWebApplicationFactory() => ClientOptions.HandleCookies = false;
 
         public virtual Task InitializeAsync() => Task.CompletedTask;
 
@@ -19,6 +25,9 @@ namespace FunderMaps.IntegrationTests
         {
         }
 
+        /// <summary>
+        ///     Configure the application host.
+        /// </summary>
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.ConfigureTestServices(ConfigureTestServices);

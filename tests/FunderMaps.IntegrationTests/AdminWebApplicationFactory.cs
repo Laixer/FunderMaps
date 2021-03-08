@@ -5,10 +5,16 @@ using System;
 
 namespace FunderMaps.IntegrationTests
 {
-    public abstract class AuthWebApplicationFactory<TStartup> : CustomWebApplicationFactory<TStartup>
+    /// <summary>
+    ///     FunderMaps webapplication factory.
+    /// </summary>
+    public abstract class AdminWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
         where TStartup : class
     {
-        public AuthWebApplicationFactory<TStartup> ConfigureAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public AdminWebApplicationFactory<TStartup> ConfigureAuthentication(Action<TestAuthenticationSchemeOptions> initializer = null)
         {
             var authPrincipal = Services.GetService<TestAuthenticationSchemeOptions>();
             initializer?.Invoke(authPrincipal);
@@ -20,8 +26,7 @@ namespace FunderMaps.IntegrationTests
         {
             services.AddSingleton<TestAuthenticationSchemeOptions>();
 
-            services.AddAuthentication("Test")
-                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+            services.AddAuthentication("Test").AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", null);
         }
     }
 }

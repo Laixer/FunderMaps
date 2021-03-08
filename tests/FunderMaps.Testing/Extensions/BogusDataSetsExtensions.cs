@@ -1,6 +1,5 @@
 using Bogus;
 using Bogus.DataSets;
-using System.Collections.Generic;
 
 namespace FunderMaps.Testing.Extensions
 {
@@ -16,18 +15,12 @@ namespace FunderMaps.Testing.Extensions
                 ".txt",
             };
 
-            if (providedFileExt != null)
+            if (providedFileExt is not null)
             {
                 fileExt = providedFileExt;
             }
 
             return internet.UrlWithPath("https", internet.DomainName(), internet.Random.ArrayElement(fileExt));
-        }
-
-        public static List<T> GenerateRange<T>(this Faker<T> faker, int min = int.MinValue, int max = int.MaxValue)
-             where T : class
-        {
-            return faker.Generate(new Randomizer().Int(min, max));
         }
 
         public static string Password(this Randomizer randomizer, int length = 12)

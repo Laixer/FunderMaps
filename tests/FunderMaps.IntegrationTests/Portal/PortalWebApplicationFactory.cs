@@ -2,7 +2,7 @@ using FunderMaps.Portal;
 
 namespace FunderMaps.IntegrationTests.Portal
 {
-    public class PortalWebApplicationFactory : CustomWebApplicationFactory<Startup>
+    public class PortalWebApplicationFactory : FunderMapsWebApplicationFactory<Startup>
     {
     }
 }

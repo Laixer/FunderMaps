@@ -10,11 +10,10 @@ using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi;
 using FunderMaps.WebApi.DataTransferObjects;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FunderMaps.IntegrationTests.Backend
 {
-    public class AuthBackendWebApplicationFactory : AuthWebApplicationFactory<Startup> // TODO": Change inherit
+    public class AuthBackendWebApplicationFactory : FunderMapsWebApplicationFactory<Startup>
     {
         public SignInSecurityTokenDto AuthToken { get; private set; }
         public UserPair Superuser { get; private set; }
@@ -34,17 +33,12 @@ namespace FunderMaps.IntegrationTests.Backend
             public string Password { get; init; }
         }
 
-        public class BackendWebApplicationFactory : CustomWebApplicationFactory<Startup>
+        public class BackendWebApplicationFactory : FunderMapsWebApplicationFactory<Startup>
         {
         }
 
-        public class AdminWebApplicationFactory : AuthWebApplicationFactory<Startup>
+        public class AdminWebApplicationFactory : AdminWebApplicationFactory<Startup>
         {
-        }
-
-        protected override void ConfigureTestServices(IServiceCollection services) // TODO: Remove
-        {
-            //
         }
 
         public override async Task InitializeAsync()

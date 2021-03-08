@@ -10,7 +10,7 @@ using static FunderMaps.IntegrationTests.Backend.AuthBackendWebApplicationFactor
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
-    public class AuthWebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
+    public class AuthWebserviceWebApplicationFactory : FunderMapsWebApplicationFactory<Startup>
     {
         private readonly AuthBackendWebApplicationFactory backendAppClient = new();
 
@@ -21,7 +21,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public UserPair Reader => backendAppClient.Reader;
         public OrganizationDto Organization { get; private set; }
 
-        public class WebserviceWebApplicationFactory : CustomWebApplicationFactory<Startup>
+        public class WebserviceWebApplicationFactory : FunderMapsWebApplicationFactory<Startup>
         {
         }
 
