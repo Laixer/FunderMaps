@@ -2616,16 +2616,13 @@ COMMENT ON VIEW data.statistics_product_buildings_restored IS 'Contains statisti
 --
 
 CREATE VIEW data.statistics_product_construction_years AS
- WITH series AS (
-         SELECT (generate_series(90, 200) * 10) AS year_from,
-            ((generate_series(90, 200) * 10) + 9) AS year_to
-        )
  SELECT b.neighborhood_id,
-    s.year_from,
-    count(s.year_from) AS count
-   FROM (geocoder.building b
-     JOIN series s ON (((date_part('year'::text, (b.built_year)::date) >= (s.year_from)::double precision) AND (date_part('year'::text, (b.built_year)::date) <= (s.year_to)::double precision))))
-  GROUP BY b.neighborhood_id, s.year_from;
+    date_part('year'::text, decade.decade)::integer AS year_from,
+    count(decade.decade) AS count
+   FROM geocoder.building b,
+    LATERAL date_trunc('decade'::text, b.built_year::timestamp with time zone) decade(decade)
+  WHERE b.built_year IS NOT NULL
+  GROUP BY b.neighborhood_id, decade.decade;
 
 
 ALTER TABLE data.statistics_product_construction_years OWNER TO fundermaps;

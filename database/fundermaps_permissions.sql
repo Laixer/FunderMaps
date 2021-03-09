@@ -767,6 +767,7 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE report.inquiry TO fundermaps_webservice
 
 GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.inquiry_sample TO fundermaps_webapp;
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE report.inquiry_sample TO fundermaps_webservice;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE report.inquiry_sample TO fundermaps_portal;
 
 
 --
@@ -1102,6 +1103,7 @@ GRANT SELECT,USAGE ON SEQUENCE report.inquiry_id_seq TO fundermaps_webservice;
 
 GRANT ALL ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webapp;
 GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webservice;
+GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_portal;
 
 
 --
