@@ -5,6 +5,7 @@ namespace FunderMaps.Testing.Extensions
 {
     public static class BogusDataSetsExtensions
     {
+        // FUTURE: Secure path may not be necessary anymore
         public static string RemoteFileWithSecureUrl(this Internet internet, string[] providedFileExt = null)
         {
             var fileExt = new string[]
@@ -24,8 +25,6 @@ namespace FunderMaps.Testing.Extensions
         }
 
         public static string Password(this Randomizer randomizer, int length = 12)
-        {
-            return randomizer.String2(length, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
-        }
+            => randomizer.String2(length, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
     }
 }

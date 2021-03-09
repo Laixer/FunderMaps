@@ -12,6 +12,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class InquiryDtoFaker : Faker<InquiryDto>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public InquiryDtoFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);

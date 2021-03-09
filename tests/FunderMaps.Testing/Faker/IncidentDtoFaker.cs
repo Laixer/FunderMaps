@@ -12,6 +12,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class IncidentDtoFaker : Faker<IncidentDto>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public IncidentDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Replace("FIR######-#####"));
