@@ -11,7 +11,7 @@ namespace FunderMaps.Testing.Faker
         public OrganizationProposalDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Uuid());
-            RuleFor(f => f.Name, f => f.Company.CompanyName()); /////
+            RuleFor(f => f.Name, f => f.Company.CompanyName());
             RuleFor(f => f.Email, f => f.Internet.Email());
         }
     }
