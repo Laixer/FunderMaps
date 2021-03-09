@@ -1710,7 +1710,7 @@ ALTER TABLE data.building_geographic_region OWNER TO fundermaps;
 -- Name: TABLE building_geographic_region; Type: COMMENT; Schema: data; Owner: fundermaps
 --
 
-COMMENT ON TABLE data.building_geographic_region IS 'Contains an st_intersects between geocoder.building and data.geographic_region.';
+COMMENT ON TABLE data.building_geographic_region IS 'Contains an st_intersects between geocoder.building and geographic region.';
 
 
 --
@@ -2494,50 +2494,6 @@ ALTER TABLE geocoder.district OWNER TO fundermaps;
 --
 
 COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.';
-
-
---
--- Name: geographic_region; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.geographic_region (
-    id integer NOT NULL,
-    objectid bigint,
-    code text,
-    name text,
-    geom public.geometry(Geometry,4326)
-);
-
-
-ALTER TABLE data.geographic_region OWNER TO fundermaps;
-
---
--- Name: TABLE geographic_region; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON TABLE data.geographic_region IS 'Geographic regions from our national georegister (PDOK / Kadaster).';
-
-
---
--- Name: geographic_region_id_seq; Type: SEQUENCE; Schema: data; Owner: fundermaps
---
-
-CREATE SEQUENCE data.geographic_region_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE data.geographic_region_id_seq OWNER TO fundermaps;
-
---
--- Name: geographic_region_id_seq; Type: SEQUENCE OWNED BY; Schema: data; Owner: fundermaps
---
-
-ALTER SEQUENCE data.geographic_region_id_seq OWNED BY data.geographic_region.id;
 
 
 --
@@ -3634,13 +3590,6 @@ ALTER TABLE ONLY application.attribution ALTER COLUMN id SET DEFAULT nextval('ap
 
 
 --
--- Name: geographic_region id; Type: DEFAULT; Schema: data; Owner: fundermaps
---
-
-ALTER TABLE ONLY data.geographic_region ALTER COLUMN id SET DEFAULT nextval('data.geographic_region_id_seq'::regclass);
-
-
---
 -- Name: inquiry id; Type: DEFAULT; Schema: report; Owner: fundermaps
 --
 
@@ -3966,13 +3915,6 @@ CREATE INDEX analysis_foundation_indicative_id_idx ON data.analysis_foundation_i
 --
 
 CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk USING btree (id);
-
-
---
--- Name: geographic_region_geom_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX geographic_region_geom_idx ON data.geographic_region USING gist (geom);
 
 
 --

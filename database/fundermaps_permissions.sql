@@ -798,23 +798,6 @@ GRANT SELECT,REFERENCES ON TABLE geocoder.district TO fundermaps_batch;
 
 
 --
--- Name: TABLE geographic_region; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.geographic_region TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE data.geographic_region TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE data.geographic_region TO fundermaps_portal;
-
-
---
--- Name: SEQUENCE geographic_region_id_seq; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT,USAGE ON SEQUENCE data.geographic_region_id_seq TO fundermaps_webapp;
-GRANT SELECT,USAGE ON SEQUENCE data.geographic_region_id_seq TO fundermaps_webservice;
-
-
---
 -- Name: TABLE groundwater_level; Type: ACL; Schema: data; Owner: fundermaps
 --
 
