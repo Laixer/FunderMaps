@@ -31,7 +31,7 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1, returnObject.ItemCount);
+            Assert.True(returnObject.ItemCount >= 1);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1, returnObject.ItemCount);
+            Assert.True(returnObject.ItemCount >= 1);
         }
 
         [Theory]

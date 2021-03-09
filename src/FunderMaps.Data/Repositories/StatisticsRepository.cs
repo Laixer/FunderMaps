@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
+    // FUTURE: Change function names and view names.
+
     /// <summary>
     ///     Repository for statistics.
     /// </summary>
@@ -225,7 +227,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<decimal>();
+            return await context.ScalarAsync<decimal>(resultGuard: false);
         }
 
         /// <summary>
@@ -258,7 +260,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<decimal>();
+            return await context.ScalarAsync<decimal>(resultGuard: false);
         }
 
         /// <summary>
@@ -397,7 +399,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            return await context.ScalarAsync<long>(resultGuard: false);
         }
 
         /// <summary>
@@ -430,17 +432,18 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            return await context.ScalarAsync<long>(resultGuard: false);
         }
 
         /// <summary>
         ///     Get total incident count by id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        public async Task<long> GetTotalIncidentCountByIdAsync(string id)
+        public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id)
         {
             var sql = @"
                 SELECT  -- IncidentCount
+                        spi.year,
                         spi.count
                 FROM    data.statistics_product_incidents AS spi
                 JOIN    geocoder.neighborhood n ON n.id = spi.neighborhood_id
@@ -452,8 +455,6 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            sql += $"\r\n LIMIT 1";
-
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
@@ -463,17 +464,28 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            List<IncidentYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
         }
 
         /// <summary>
         ///     Get total incident count by external id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        public async Task<long> GetTotalIncidentCountByExternalIdAsync(string id)
+        public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByExternalIdAsync(string id)
         {
             var sql = @"
                 SELECT  -- IncidentCount
+                        spi.year,
                         spi.count
                 FROM    data.statistics_product_incidents AS spi
                 JOIN    geocoder.neighborhood n ON n.id = spi.neighborhood_id
@@ -485,7 +497,55 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
             }
 
-            sql += $"\r\n LIMIT 1";
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
+
+            List<IncidentYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
+        }
+
+        /// <summary>
+        ///     Get total incident count by id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id)
+        {
+            // FUTURE: Maybe move query to db?
+            var sql = @"
+				SELECT  -- Incident
+                        year.year, 
+                        count(i.id) AS count
+                FROM    report.incident i
+                JOIN	geocoder.address a ON i.address::text = a.id::text
+                JOIN	geocoder.building b ON a.building_id::text = b.id::text
+                JOIN	geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
+                JOIN	geocoder.district d ON d.id::text = n.district_id::text
+                JOIN	geocoder.municipality m ON m.id = d.municipality_id,
+                LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+                WHERE	n.id = @id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            }
+
+            sql += $"\r\n GROUP BY m.id, year.year";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -496,17 +556,78 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            List<IncidentYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
+        }
+
+        /// <summary>
+        ///     Get total incident count by external id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByExternalIdAsync(string id)
+        {
+            // FUTURE: Maybe move query to db?
+            var sql = @"
+				SELECT  -- Incident
+                        year.year, 
+                        count(i.id) AS count
+                FROM    report.incident i
+                JOIN	geocoder.address a ON i.address::text = a.id::text
+                JOIN	geocoder.building b ON a.building_id::text = b.id::text
+                JOIN	geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
+                JOIN	geocoder.district d ON d.id::text = n.district_id::text
+                JOIN	geocoder.municipality m ON m.id = d.municipality_id,
+                LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+                WHERE	n.external_id = @id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            }
+
+            sql += $"\r\n GROUP BY m.id, year.year";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
+
+            List<IncidentYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
         }
 
         /// <summary>
         ///     Get total report count by id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        public async Task<long> GetTotalReportCountByIdAsync(string id)
+        public async Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id)
         {
             var sql = @"
                 SELECT  -- ReportCount
+                        spi2.year,
                         spi2.count
                 FROM    data.statistics_product_inquiries AS spi2
                 JOIN    geocoder.neighborhood n ON n.id = spi2.neighborhood_id
@@ -529,17 +650,28 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            List<InquiryYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
         }
 
         /// <summary>
         ///     Get total report count by external id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        public async Task<long> GetTotalReportCountByExternalIdAsync(string id)
+        public async Task<List<InquiryYearPair>> GetTotalReportCountByExternalIdAsync(string id)
         {
             var sql = @"
                 SELECT  -- ReportCount
+                        spi2.year,
                         spi2.count
                 FROM    data.statistics_product_inquiries AS spi2
                 JOIN    geocoder.neighborhood n ON n.id = spi2.neighborhood_id
@@ -562,7 +694,117 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            List<InquiryYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
+        }
+
+        /// <summary>
+        ///     Get total report count by id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id)
+        {
+            // FUTURE: Maybe move query to db?
+            var sql = @"
+				SELECT  -- ReportCount
+                        year.year,
+                        count(i.id) AS count
+                FROM    report.inquiry_sample i
+                JOIN    geocoder.address a ON i.address::text = a.id::text
+                JOIN    geocoder.building b ON a.building_id::text = b.id::text
+                JOIN    geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
+                JOIN    geocoder.district d ON d.id::text = n.district_id::text
+                JOIN    geocoder.municipality m ON m.id = d.municipality_id,
+                LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+                WHERE	n.id = @id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            }
+
+            sql += $"\r\n GROUP BY m.id, year.year";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
+
+            List<InquiryYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
+        }
+
+        /// <summary>
+        ///     Get total report count by external id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByExternalIdAsync(string id)
+        {
+            // FUTURE: Maybe move query to db?
+            var sql = @"
+				SELECT  -- ReportCount
+                        year.year,
+                        count(i.id) AS count
+                FROM    report.inquiry_sample i
+                JOIN    geocoder.address a ON i.address::text = a.id::text
+                JOIN    geocoder.building b ON a.building_id::text = b.id::text
+                JOIN    geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
+                JOIN    geocoder.district d ON d.id::text = n.district_id::text
+                JOIN    geocoder.municipality m ON m.id = d.municipality_id,
+                LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+                WHERE   n.external_id = @id";
+
+            // FUTURE: Maybe move up.
+            if (AppContext.HasIdentity)
+            {
+                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            }
+
+            sql += $"\r\n GROUP BY m.id, year.year";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            if (AppContext.HasIdentity)
+            {
+                context.AddParameterWithValue("user_id", AppContext.UserId);
+            }
+
+            List<InquiryYearPair> pairs = new();
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                pairs.Add(new()
+                {
+                    Year = reader.GetInt(0),
+                    TotalCount = reader.GetInt(1)
+                });
+            }
+
+            return pairs;
         }
     }
 }
