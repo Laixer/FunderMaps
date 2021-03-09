@@ -316,30 +316,6 @@ COMMENT ON TYPE data.foundation_risk_indication IS 'Enum representing the founda
 
 
 --
--- Name: product; Type: TYPE; Schema: data; Owner: fundermaps
---
-
-CREATE TYPE data.product AS ENUM (
-    'analysis_building_data',
-    'analysis_foundation',
-    'analysis_foundation_plus',
-    'analysis_costs',
-    'analysis_complete',
-    'analysis_building_description',
-    'analysis_risk',
-    'statistics_foundation_ratio',
-    'statistics_construction_years',
-    'statistics_foundation_risk',
-    'statistics_data_collected',
-    'statistics_buildings_restored',
-    'statistics_incidents',
-    'statistics_reports'
-);
-
-
-ALTER TYPE data.product OWNER TO fundermaps;
-
---
 -- Name: reliability; Type: TYPE; Schema: data; Owner: fundermaps
 --
 
