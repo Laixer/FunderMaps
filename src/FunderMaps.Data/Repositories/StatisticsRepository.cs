@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Data.Abstractions;
@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
+    // FUTURE: Change function names and view names.
+
     /// <summary>
     ///     Repository for statistics.
     /// </summary>
@@ -225,7 +227,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<decimal>();
+            return await context.ScalarAsync<decimal>(resultGuard: false);
         }
 
         /// <summary>
@@ -258,7 +260,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<decimal>();
+            return await context.ScalarAsync<decimal>(resultGuard: false);
         }
 
         /// <summary>
@@ -397,7 +399,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            return await context.ScalarAsync<long>(resultGuard: false);
         }
 
         /// <summary>
@@ -430,7 +432,7 @@ namespace FunderMaps.Data.Repositories
                 context.AddParameterWithValue("user_id", AppContext.UserId);
             }
 
-            return await context.ScalarAsync<long>();
+            return await context.ScalarAsync<long>(resultGuard: false);
         }
 
         /// <summary>
