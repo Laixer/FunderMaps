@@ -2759,18 +2759,14 @@ COMMENT ON COLUMN report.incident.delete_date IS 'Timestamp of soft delete';
 --
 
 CREATE VIEW data.statistics_product_incidents AS
- SELECT DISTINCT ON (x.neighborhood_id) x.neighborhood_id,
-    x.count
-   FROM ( SELECT b.neighborhood_id,
-            count(*) AS count
-           FROM ((report.incident i
-             JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
-             JOIN geocoder.building b ON (((a.building_id)::text = (b.id)::text)))
-          GROUP BY b.neighborhood_id
-        UNION
-         SELECT b.neighborhood_id,
-            0 AS count
-           FROM geocoder.building b) x;
+ SELECT b.neighborhood_id,
+    year.year,
+    count(i.id) AS count
+   FROM report.incident i
+     JOIN geocoder.address a ON i.address::text = a.id::text
+     JOIN geocoder.building b ON a.building_id::text = b.id::text,
+    LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+  GROUP BY b.neighborhood_id, year.year;
 
 
 ALTER TABLE data.statistics_product_incidents OWNER TO fundermaps;
@@ -2787,18 +2783,14 @@ COMMENT ON VIEW data.statistics_product_incidents IS 'Contains statistics on the
 --
 
 CREATE VIEW data.statistics_product_inquiries AS
- SELECT DISTINCT ON (x.neighborhood_id) x.neighborhood_id,
-    x.count
-   FROM ( SELECT b.neighborhood_id,
-            count(*) AS count
-           FROM ((report.inquiry_sample i
-             JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
-             JOIN geocoder.building b ON (((a.building_id)::text = (b.id)::text)))
-          GROUP BY b.neighborhood_id
-        UNION
-         SELECT b.neighborhood_id,
-            0 AS count
-           FROM geocoder.building b) x;
+ SELECT b.neighborhood_id,
+    year.year,
+    count(i.id) AS count
+   FROM report.inquiry_sample i
+     JOIN geocoder.address a ON i.address::text = a.id::text
+     JOIN geocoder.building b ON a.building_id::text = b.id::text,
+    LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+  GROUP BY b.neighborhood_id, year.year;
 
 
 ALTER TABLE data.statistics_product_inquiries OWNER TO fundermaps;
