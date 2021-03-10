@@ -1,5 +1,4 @@
-﻿#if _DISABLED
-using FunderMaps.AspNetCore.DataTransferObjects;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Testing.Faker;
 using System.Collections.Generic;
 using System.Net;
@@ -88,7 +87,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Fact(Skip = "Somehow fails")]
+        [Fact]
         public async Task GetAllOrganizationReturnForbidden()
         {
             // Arrange
@@ -101,7 +100,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Fact(Skip = "Somehow fails")]
+        [Fact]
         public async Task UpdateOrganizationReturnForbidden()
         {
             // Arrange
@@ -114,7 +113,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Fact(Skip = "Somehow fails")]
+        [Fact]
         public async Task DeleteOrganizationReturnForbidden()
         {
             // Arrange
@@ -128,4 +127,3 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
     }
 }
-#endif

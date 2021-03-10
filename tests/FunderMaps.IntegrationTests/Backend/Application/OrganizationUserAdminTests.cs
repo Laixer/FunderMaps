@@ -1,5 +1,4 @@
-﻿#if _DISABLED
-using FunderMaps.AspNetCore.DataTransferObjects;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Testing.Faker;
 using System.Collections.Generic;
 using System.Net;
@@ -165,4 +164,3 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
     }
 }
-#endif
