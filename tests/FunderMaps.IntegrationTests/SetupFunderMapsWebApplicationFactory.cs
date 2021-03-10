@@ -45,7 +45,10 @@ namespace FunderMaps.IntegrationTests
             Reader = await CreateUserAsync(Organization, OrganizationRole.Reader);
         }
 
-        public async virtual Task<(OrganizationDto, UserPair)> CreateOrganizationAsync()
+        /// <summary>
+        ///     Create organization with superuser.
+        /// </summary>
+        protected async virtual Task<(OrganizationDto, UserPair)> CreateOrganizationAsync()
         {
             var organizationProposal = new OrganizationProposalDtoFaker().Generate();
             organizationProposal = await _httpClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", organizationProposal);
@@ -64,7 +67,10 @@ namespace FunderMaps.IntegrationTests
             });
         }
 
-        public async virtual Task<UserPair> CreateUserAsync(OrganizationDto organization, OrganizationRole role)
+        /// <summary>
+        ///     Create organization user with organization specified role.
+        /// </summary>
+        protected async virtual Task<UserPair> CreateUserAsync(OrganizationDto organization, OrganizationRole role)
         {
             var organizationUserPassword = new OrganizationUserPasswordDtoFaker().Generate();
             organizationUserPassword.OrganizationRole = role;
@@ -77,6 +83,9 @@ namespace FunderMaps.IntegrationTests
             };
         }
 
+        /// <summary>
+        ///     Remove the created objects.
+        /// </summary>
         // protected async virtual Task TeardownOrganization()
         // {
         // foreach (var user in await _httpClient.GetFromJsonAsync<IList<OrganizationUserDto>>($"api/admin/organization/{Organization.Id}/user"))

@@ -1,6 +1,6 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
+﻿#if _DISABLED
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -128,3 +128,4 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
     }
 }
+#endif

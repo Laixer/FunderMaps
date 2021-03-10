@@ -29,6 +29,9 @@ namespace FunderMaps.IntegrationTests
         public override async Task InitializeAsync()
             => AuthToken = await SignInAsync();
 
+        /// <summary>
+        ///     Create a user session for the given user.
+        /// </summary>
         protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
             => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInInputModel>("api/auth/signin", new()
             {
