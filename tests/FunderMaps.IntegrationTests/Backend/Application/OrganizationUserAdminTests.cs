@@ -8,14 +8,14 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationUserAdminTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class OrganizationUserAdminTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationUserAdminTests(AuthBackendWebApplicationFactory factory)
+        public OrganizationUserAdminTests(BackendFixtureFactory factory)
             => Factory = factory;
 
         [Fact]
@@ -23,10 +23,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
 
             // Assert
@@ -39,11 +38,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
-            var response = await client.GetAsync($"api/admin/organization/{organization.Id}/user");
+            var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}/user");
             var returnList = await response.Content.ReadFromJsonAsync<List<UserDto>>();
 
             // Assert
@@ -56,11 +54,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}/user/{user.Id}", new UserDtoFaker().Generate());
+            var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}", new UserDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -71,11 +68,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user/{user.Id}/change-organization-role", new ChangeOrganizationRoleDtoFaker().Generate());
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}/change-organization-role", new ChangeOrganizationRoleDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -86,11 +82,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user/{user.Id}/change-password", new ChangePasswordDtoFaker().Generate());
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}/change-password", new ChangePasswordDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -101,11 +96,10 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{user.Id}");
+            var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -116,10 +110,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -130,12 +123,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var adminClient = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/admin/organization/{organization.Id}/user");
+            var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}/user");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -146,12 +138,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var adminClient = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            var user = await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var user = await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}/user/{user.Id}", new UserDtoFaker().Generate());
+            var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}", new UserDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -162,12 +153,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var adminClient = Factory.CreateAdminClient();
-            var (_, organization, _) = await Factory.CreateOrganizationAsync();
-            var user = await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var user = await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{user.Id}");
+            var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

@@ -1,4 +1,5 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using System.Net;
 using System.Net.Http.Json;
@@ -7,21 +8,25 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class OrganizationTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationTests(AuthBackendWebApplicationFactory factory)
+        public OrganizationTests(BackendFixtureFactory factory)
             => Factory = factory;
 
-        [Fact]
-        public async Task GetOrganizationFromSessionReturnSingleOrganization()
+        [Theory]
+        [InlineData(OrganizationRole.Superuser)]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        [InlineData(OrganizationRole.Reader)]
+        public async Task GetOrganizationFromSessionReturnSingleOrganization(OrganizationRole role)
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(role);
 
             // Act
             var response = await client.GetAsync("api/organization");
@@ -36,7 +41,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task UpdateOrganizationFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
 
             // Act
             var response = await client.PutAsJsonAsync("api/organization", new OrganizationFaker().Generate());
@@ -45,21 +50,20 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        // TODO:
-        // [Theory]
-        // [InlineData(OrganizationRole.Verifier)]
-        // [InlineData(OrganizationRole.Writer)]
-        // [InlineData(OrganizationRole.Reader)]
-        // public async Task UpdateOrganizationFromSessionReturnForbidden(OrganizationRole organizationRole)
-        // {
-        //     // Arrange
-        //     using var client = Factory.CreateClient();
+        [Theory]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        [InlineData(OrganizationRole.Reader)]
+        public async Task UpdateOrganizationFromSessionReturnForbidden(OrganizationRole role)
+        {
+            // Arrange
+            using var client = Factory.CreateClient(role);
 
-        //     // Act
-        //     var response = await client.PutAsJsonAsync("api/organization", new OrganizationFaker().Generate());
+            // Act
+            var response = await client.PutAsJsonAsync("api/organization", new OrganizationFaker().Generate());
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
     }
 }

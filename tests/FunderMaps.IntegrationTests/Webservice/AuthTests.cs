@@ -13,14 +13,14 @@ namespace FunderMaps.IntegrationTests.Webservice
     /// <summary>
     ///     Tests our authentication.
     /// </summary>
-    public class AuthTests : IClassFixture<AuthWebserviceWebApplicationFactory>
+    public class AuthTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private AuthWebserviceWebApplicationFactory Factory { get; }
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthTests(AuthWebserviceWebApplicationFactory factory)
+        public AuthTests(WebserviceFixtureFactory factory)
             => Factory = factory;
 
         [Fact]

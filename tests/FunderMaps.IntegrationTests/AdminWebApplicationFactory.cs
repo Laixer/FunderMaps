@@ -16,7 +16,7 @@ namespace FunderMaps.IntegrationTests
     /// <summary>
     ///     FunderMaps webapplication factory.
     /// </summary>
-    public abstract class AdminWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
+    public class AdminWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
         where TStartup : class
     {
         private class TestAuthenticationSchemeOptions : AuthenticationSchemeOptions

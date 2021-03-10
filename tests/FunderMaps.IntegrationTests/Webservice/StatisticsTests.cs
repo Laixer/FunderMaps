@@ -9,14 +9,14 @@ namespace FunderMaps.IntegrationTests.Webservice
     /// <summary>
     ///     Integration test for the statistics controller.
     /// </summary>
-    public class StatisticsTests : IClassFixture<AuthWebserviceWebApplicationFactory>
+    public class StatisticsTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private AuthWebserviceWebApplicationFactory Factory { get; }
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance and setup the test data.
         /// </summary>
-        public StatisticsTests(AuthWebserviceWebApplicationFactory factory)
+        public StatisticsTests(WebserviceFixtureFactory factory)
             => Factory = factory;
 
         [Fact]

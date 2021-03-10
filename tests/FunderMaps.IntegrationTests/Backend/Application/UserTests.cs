@@ -7,14 +7,14 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class UserTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class UserTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public UserTests(AuthBackendWebApplicationFactory factory)
+        public UserTests(BackendFixtureFactory factory)
             => Factory = factory;
 
         [Fact]
@@ -29,7 +29,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(Factory.Superuser.User.Id, returnObject.Id);
+            Assert.Equal(Factory.Reader.User.Id, returnObject.Id);
         }
 
         [Fact]

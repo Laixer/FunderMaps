@@ -8,14 +8,14 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationProposalTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class OrganizationProposalTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationProposalTests(AuthBackendWebApplicationFactory factory)
+        public OrganizationProposalTests(BackendFixtureFactory factory)
             => Factory = factory;
 
         [Fact]

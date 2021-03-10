@@ -5,14 +5,14 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
-    public class VersionsTests : IClassFixture<AuthWebserviceWebApplicationFactory>
+    public class VersionsTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private AuthWebserviceWebApplicationFactory Factory { get; }
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public VersionsTests(AuthWebserviceWebApplicationFactory factory)
+        public VersionsTests(WebserviceFixtureFactory factory)
             => Factory = factory;
 
         [Fact]

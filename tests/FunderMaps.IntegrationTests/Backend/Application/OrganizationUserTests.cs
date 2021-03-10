@@ -1,4 +1,5 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using System.Collections.Generic;
 using System.Net;
@@ -8,21 +9,21 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationUserTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class OrganizationUserTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationUserTests(AuthBackendWebApplicationFactory factory)
+        public OrganizationUserTests(BackendFixtureFactory factory)
             => Factory = factory;
 
         [Fact]
         public async Task CreateOrganizationUserFromSessionReturnOrganizationUser()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
 
             // Act
             var response = await client.PostAsJsonAsync("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
@@ -37,7 +38,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetAllOrganizationUserFromSessionReturnAllOrganizationUser()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
 
             // Act
             var response = await client.GetAsync("api/organization/user");
@@ -52,7 +53,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task UpdateOrganizationUserFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
@@ -66,7 +67,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task ChangeOrganizationUserRoleFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
@@ -80,7 +81,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task ChangeOrganizationUserPasswordFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
@@ -94,7 +95,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task DeleteOrganizationUserFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
@@ -104,54 +105,56 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        // [Theory]
-        // [InlineData(OrganizationRole.Verifier)]
-        // [InlineData(OrganizationRole.Writer)]
-        // [InlineData(OrganizationRole.Reader)]
-        // public async Task CreateOrganizationUserFromSessionReturnForbidden(OrganizationRole organizationRole)
-        // {
-        //     // Arrange
-        //     using var client = Factory.CreateClient();
+        [Theory]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        [InlineData(OrganizationRole.Reader)]
+        public async Task CreateOrganizationUserFromSessionReturnForbidden(OrganizationRole role)
+        {
+            // Arrange
+            using var client = Factory.CreateClient(role);
 
-        //     // Act
-        //     var response = await client.PostAsJsonAsync("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
+            // Act
+            var response = await client.PostAsJsonAsync("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
 
-        // [Theory]
-        // [InlineData(OrganizationRole.Verifier)]
-        // [InlineData(OrganizationRole.Writer)]
-        // [InlineData(OrganizationRole.Reader)]
-        // public async Task UpdateOrganizationUserFromSessionReturnForbidden(OrganizationRole organizationRole)
-        // {
-        //     // Arrange
-        //     using var superuserClient = Factory.CreateClient();
-        //     var user = await superuserClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
+        [Theory]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        [InlineData(OrganizationRole.Reader)]
+        public async Task UpdateOrganizationUserFromSessionReturnForbidden(OrganizationRole role)
+        {
+            // Arrange
+            using var superuserClient = Factory.CreateClient(OrganizationRole.Superuser);
+            var user = await superuserClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
+            using var client = Factory.CreateClient(role);
 
-        //     // Act
-        //     var response = await client.PutAsJsonAsync($"api/organization/user/{user.Id}", new UserDtoFaker().Generate());
+            // Act
+            var response = await client.PutAsJsonAsync($"api/organization/user/{user.Id}", new UserDtoFaker().Generate());
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
 
-        // [Theory]
-        // [InlineData(OrganizationRole.Verifier)]
-        // [InlineData(OrganizationRole.Writer)]
-        // [InlineData(OrganizationRole.Reader)]
-        // public async Task DeleteOrganizationUserFromSessionReturnForbidden(OrganizationRole organizationRole)
-        // {
-        //     // Arrange
-        //     using var superuserClient = Factory.CreateClient();
-        //     var user = await superuserClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
+        [Theory]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        [InlineData(OrganizationRole.Reader)]
+        public async Task DeleteOrganizationUserFromSessionReturnForbidden(OrganizationRole role)
+        {
+            // Arrange
+            using var superuserClient = Factory.CreateClient(OrganizationRole.Superuser);
+            var user = await superuserClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
+            using var client = Factory.CreateClient(role);
 
-        //     // Act
-        //     var response = await client.DeleteAsync($"api/organization/user/{user.Id}");
+            // Act
+            var response = await client.DeleteAsync($"api/organization/user/{user.Id}");
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
     }
 }

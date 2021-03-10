@@ -1,4 +1,5 @@
-﻿using FunderMaps.WebApi.DataTransferObjects;
+﻿using FunderMaps.Core.Types;
+using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Json;
@@ -7,22 +8,24 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    // FUTURE: Test other roles
-    public class ReviewerTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class ReviewerTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ReviewerTests(AuthBackendWebApplicationFactory factory)
+        public ReviewerTests(BackendFixtureFactory factory)
             => Factory = factory;
 
-        [Fact]
-        public async Task GetAllReviewerReturnAllReviewer()
+        [Theory]
+        [InlineData(OrganizationRole.Superuser)]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        public async Task GetAllReviewerReturnAllReviewer(OrganizationRole role)
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(role);
 
             // Act
             var response = await client.GetAsync("api/reviewer");
@@ -31,6 +34,19 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(returnList.Count > 0);
+        }
+
+        [Fact]
+        public async Task GetAllReviewerReturnForbidden()
+        {
+            // Arrange
+            using var client = Factory.CreateClient(OrganizationRole.Reader);
+
+            // Act
+            var response = await client.GetAsync("api/reviewer");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
     }
 }

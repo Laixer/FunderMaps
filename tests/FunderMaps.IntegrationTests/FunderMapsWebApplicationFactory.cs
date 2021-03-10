@@ -11,7 +11,7 @@ namespace FunderMaps.IntegrationTests
     /// <summary>
     ///     FunderMaps webapplication factory.
     /// </summary>
-    public abstract class FunderMapsWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IAsyncLifetime
+    public class FunderMapsWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IAsyncLifetime
          where TStartup : class
     {
         /// <summary>
@@ -19,6 +19,9 @@ namespace FunderMaps.IntegrationTests
         /// </summary>
         public FunderMapsWebApplicationFactory() => ClientOptions.HandleCookies = false;
 
+        /// <summary>
+        ///     Called immediately after the class has been created, before it is used.
+        /// </summary>
         public virtual Task InitializeAsync() => Task.CompletedTask;
 
         /// <summary>
@@ -40,6 +43,9 @@ namespace FunderMaps.IntegrationTests
             });
         }
 
+        /// <summary>
+        ///     Called when an object is no longer needed.
+        /// </summary>
         public virtual Task DisposeAsync() => Task.CompletedTask;
     }
 }

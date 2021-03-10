@@ -5,14 +5,14 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class VersionsTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class VersionsTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public VersionsTests(AuthBackendWebApplicationFactory factory)
+        public VersionsTests(BackendFixtureFactory factory)
             => Factory = factory;
 
         [Fact]

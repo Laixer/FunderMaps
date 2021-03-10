@@ -11,18 +11,15 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Report
 {
-    public class InquiryTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class InquiryTests : IClassFixture<BackendFixtureFactory>
     {
-        private AuthBackendWebApplicationFactory Factory { get; }
+        private BackendFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public InquiryTests(AuthBackendWebApplicationFactory factory)
-        {
-            factory.Cleanup = false;
-            Factory = factory;
-        }
+        public InquiryTests(BackendFixtureFactory factory)
+            => Factory = factory;
 
         [Fact]
         public async Task CreateInquiryReturnInquiry()
