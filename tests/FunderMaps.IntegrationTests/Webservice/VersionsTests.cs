@@ -1,18 +1,18 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Application
+namespace FunderMaps.IntegrationTests.Webservice
 {
-    public class VersionsTests : IClassFixture<BackendFixtureFactory>
+    public class VersionsTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private BackendFixtureFactory Factory { get; }
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public VersionsTests(BackendFixtureFactory factory)
+        public VersionsTests(WebserviceFixtureFactory factory)
             => Factory = factory;
 
         [Fact]

@@ -31,7 +31,7 @@ namespace FunderMaps.Core.Types
             {
                 throw new ArgumentOutOfRangeException(nameof(decadeStart));
             }
-            
+
             return new Years
             {
                 YearFrom = DateTimeOffsetHelper.FromYear(decadeStart),

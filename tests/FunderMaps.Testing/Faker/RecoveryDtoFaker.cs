@@ -11,6 +11,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class RecoveryDtoFaker : Faker<RecoveryDto>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public RecoveryDtoFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);

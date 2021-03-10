@@ -1,6 +1,7 @@
-﻿using Bogus;
+using Bogus;
 using Bogus.Extensions;
 using Bogus.Extensions.UnitedStates;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Testing.Extensions;
 using System;
@@ -10,12 +11,12 @@ namespace FunderMaps.Testing.Faker
     /// <summary>
     ///     Faker for <see cref="Organization"/>.
     /// </summary>
-    public class OrganizationFaker : Faker<Organization>
+    public class OrganizationDtoFaker : Faker<OrganizationDto>
     {
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationFaker()
+        public OrganizationDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Uuid());
             RuleFor(f => f.Name, f => f.Company.CompanyName());

@@ -2,6 +2,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Scriban.Runtime;
@@ -143,6 +144,7 @@ namespace FunderMaps.Core.IncidentReport
             incident.Address = address.Id;
             incident.ClientId = _options.ClientId;
             incident.Meta = meta;
+            incident.AuditStatus = AuditStatus.Todo;
 
             await _contactRepository.AddAsync(incident.ContactNavigation);
             incident = await _incidentRepository.AddGetAsync(incident);

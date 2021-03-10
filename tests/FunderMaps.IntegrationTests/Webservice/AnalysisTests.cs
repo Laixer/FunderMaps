@@ -1,11 +1,7 @@
-﻿#if _DISABLE
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Testing.Faker;
-using FunderMaps.Webservice.ResponseModels;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -15,179 +11,152 @@ namespace FunderMaps.IntegrationTests.Webservice
     /// <summary>
     ///     Integration test for the analysis controller.
     /// </summary>
-    public class AnalysisTests : IClassFixture<AuthWebserviceWebApplicationFactory>
+    public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private const int ItemCount = 100;
-
-        private readonly HttpClient client;
-        private readonly List<AnalysisProduct> analysisProducts;
-        private readonly List<StatisticsProduct> statisticsProducts;
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance and setup the test data.
         /// </summary>
-        public AnalysisTests(AuthWebserviceWebApplicationFactory factory)
-        {
-            // Arrange.
-            analysisProducts = new AnalysisProductFaker().Generate(ItemCount);
-            statisticsProducts = new StatisticsProductFaker().Generate(ItemCount);
-
-            // Link analysis product to statistics product by neighborhood id.
-            for (int i = 0; i < ItemCount; i++)
-            {
-                statisticsProducts[i].NeighborhoodId = analysisProducts[i].NeighborhoodId;
-            }
-
-            client = factory
-                .WithAuthenticationStores()
-                .WithDataStoreList(analysisProducts)
-                .WithDataStoreList(statisticsProducts)
-                .CreateClient();
-        }
+        public AnalysisTests(WebserviceFixtureFactory factory)
+            => Factory = factory;
 
         [Theory]
-        [InlineData(AnalysisProductType.BuildingData)]
-        [InlineData(AnalysisProductType.Complete)]
-        [InlineData(AnalysisProductType.Costs)]
         [InlineData(AnalysisProductType.Foundation)]
-        [InlineData(AnalysisProductType.FoundationPlus)]
-        [InlineData(AnalysisProductType.Risk)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
         public async Task GetProductByIdReturnProduct(AnalysisProductType product)
         {
-            // Arrange.
-            var expectedAnalysisProduct = analysisProducts[0];
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?product={product}&id={expectedAnalysisProduct.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisCompleteResponseModel>>();
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=gfm-948cb2c2909c4c948de5ba468499b441");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1U, returnObject.ModelCount);
-            Assert.Equal(expectedAnalysisProduct.Id, returnObject.Models.First().Id);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
         }
 
         [Theory]
-        [InlineData(AnalysisProductType.BuildingData)]
-        [InlineData(AnalysisProductType.Complete)]
-        [InlineData(AnalysisProductType.Costs)]
         [InlineData(AnalysisProductType.Foundation)]
-        [InlineData(AnalysisProductType.FoundationPlus)]
-        [InlineData(AnalysisProductType.Risk)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
         public async Task GetProductByExternalIdReturnProduct(AnalysisProductType product)
         {
-            // Arrange.
-            var expectedAnalysisProduct = analysisProducts[0];
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?product={product}&bagid={expectedAnalysisProduct.ExternalId}");
-            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisCompleteResponseModel>>();
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.PAND.0503100000000714");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1U, returnObject.ModelCount);
-            Assert.Equal(expectedAnalysisProduct.Id, returnObject.Models.First().Id);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
         }
 
         [Theory]
-        [InlineData(AnalysisProductType.BuildingData)]
-        [InlineData(AnalysisProductType.Complete)]
-        [InlineData(AnalysisProductType.Costs)]
         [InlineData(AnalysisProductType.Foundation)]
-        [InlineData(AnalysisProductType.FoundationPlus)]
-        [InlineData(AnalysisProductType.Risk)]
-        public async Task GetProductByQueryReturnProduct(AnalysisProductType product)
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalIdBag1ReturnProduct(AnalysisProductType product)
         {
-            // Arrange.
-            var expectedAnalysisProduct = analysisProducts[0];
-            var expectedStatisticsProduct = statisticsProducts[1];
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?product={product}&query=thisismyquerystring&limit=1");
-            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisCompleteResponseModel>>();
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503100000000714");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
 
-            // Assert.
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1U, returnObject.ModelCount);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
         }
 
         [Theory]
-        [InlineData(1, 0)]
-        [InlineData(16, 0)]
-        [InlineData(55, 0)]
-        [InlineData(1, 3)]
-        [InlineData(16, 7)]
-        [InlineData(55, 4)]
-        public async Task Navigation(uint limit, uint offset)
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalAddressIdReturnProduct(AnalysisProductType product)
         {
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?limit={limit}&offset={offset}&product={AnalysisProductType.Complete}&query=thisismyquerystring");
-            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisCompleteResponseModel>>();
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Assert.
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=NL.IMBAG.NUMMERAANDUIDING.0503200000096292");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
+
+            // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(limit, returnObject.ModelCount);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
+        }
+
+        [Theory]
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalAddressIdBag1ReturnProduct(AnalysisProductType product)
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={product}&id=0503200000096292");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<AnalysisDto>>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(1, returnObject.ItemCount);
+            Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
         }
 
         [Fact]
         public async Task GetByIdInvalidProductThrows()
         {
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?product=135385&id=fsdhfkdljshfkljh");
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
-        }
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product=135385&id=gfm-948cb2c2909c4c948de5ba468499b441");
 
-        [Theory]
-        [InlineData(AnalysisProductType.BuildingData, "id=342ffdsfsd9478&bagid=4289374423")]
-        [InlineData(AnalysisProductType.BuildingData, "id=342947dsf8&query=dskljhfkjshf")]
-        [InlineData(AnalysisProductType.BuildingData, "bagid=sadfdsaf&query=myquery")]
-        [InlineData(AnalysisProductType.BuildingData, "id=487239847&bagid=sadfdsaf&query=myquery")]
-        public async Task GetProductByMultipleRequestMethodsThrows(AnalysisProductType product, string queryString)
-        {
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?product={product}&{queryString}");
-
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
-        }
-
-        [Fact]
-        public async Task GetProductWithoutRequestMethodThrows()
-        {
-            // Act.
-            var product = AnalysisProductType.BuildingData;
-            var response = await client.GetAsync($"api/analysis/get?product={product}");
-
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Theory]
         [InlineData("id=3kjhr834dhfjdeh")]
         [InlineData("bagid=4928374hfdkjsfh")]
         [InlineData("query=thisismyquerystringyes")]
-        public async Task GetWithoutProductThrows(string queryString)
+        [InlineData("fdshjbf438gi")]
+        public async Task GetByIdInvalidAddressThrows(string address)
         {
-            // Act.
-            var response = await client.GetAsync($"api/analysis/get?{queryString}");
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={AnalysisProductType.Complete}&id={address}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(0, 0)]
-        [InlineData(0, 6)]
-        public async Task GetProductInvalidNavigationThrows(uint limit, uint offset)
+        [Fact]
+        public async Task GetProductWithoutRequestMethodThrows()
         {
-            // Act
-            var response = await client.GetAsync($"api/analysis/get?limit={limit}&offset={offset}&product={AnalysisProductType.Complete}&query=thisismyquerystring");
+            // Arrange
+            using var client = Factory.CreateClient();
 
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
+            // Act
+            var response = await client.GetAsync($"api/product/analysis?product={AnalysisProductType.Complete}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
-#endif

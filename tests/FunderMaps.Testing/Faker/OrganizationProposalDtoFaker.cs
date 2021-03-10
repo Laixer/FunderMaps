@@ -8,6 +8,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class OrganizationProposalDtoFaker : Faker<OrganizationProposalDto>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public OrganizationProposalDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Uuid());

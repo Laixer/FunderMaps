@@ -57,6 +57,8 @@ namespace FunderMaps.AspNetCore
             mapper.CreateMap<FoundationRiskDistribution, FoundationRiskDistributionResponseModel>();
             mapper.CreateMap<FoundationTypeDistribution, FoundationTypeDistributionResponseModel>();
             mapper.CreateMap<FoundationTypePair, FoundationTypePairResponseModel>();
+            mapper.CreateMap<IncidentYearPair, IncidentYearPairResponseModel>();
+            mapper.CreateMap<InquiryYearPair, InquiryYearPairResponseModel>();
         }
 
         /// <summary>

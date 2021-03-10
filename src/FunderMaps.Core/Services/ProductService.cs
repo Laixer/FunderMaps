@@ -40,7 +40,9 @@ namespace FunderMaps.Core.Services
                 FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(id),
                 TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(id),
                 TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(id),
+                MunicipalityIncidentCount = await _statisticsRepository.GetMunicipalityIncidentCountByIdAsync(id),
                 TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(id),
+                MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByIdAsync(id),
             };
 
         private async Task<StatisticsProduct> GetStatisticsByExternalIdAsync(string id)
@@ -52,7 +54,9 @@ namespace FunderMaps.Core.Services
                 FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByExternalIdAsync(id),
                 TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByExternalIdAsync(id),
                 TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByExternalIdAsync(id),
+                MunicipalityIncidentCount = await _statisticsRepository.GetMunicipalityIncidentCountByExternalIdAsync(id),
                 TotalReportCount = await _statisticsRepository.GetTotalReportCountByExternalIdAsync(id),
+                MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByExternalIdAsync(id),
             };
 
         /// <summary>

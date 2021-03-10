@@ -316,30 +316,6 @@ COMMENT ON TYPE data.foundation_risk_indication IS 'Enum representing the founda
 
 
 --
--- Name: product; Type: TYPE; Schema: data; Owner: fundermaps
---
-
-CREATE TYPE data.product AS ENUM (
-    'analysis_building_data',
-    'analysis_foundation',
-    'analysis_foundation_plus',
-    'analysis_costs',
-    'analysis_complete',
-    'analysis_building_description',
-    'analysis_risk',
-    'statistics_foundation_ratio',
-    'statistics_construction_years',
-    'statistics_foundation_risk',
-    'statistics_data_collected',
-    'statistics_buildings_restored',
-    'statistics_incidents',
-    'statistics_reports'
-);
-
-
-ALTER TYPE data.product OWNER TO fundermaps;
-
---
 -- Name: reliability; Type: TYPE; Schema: data; Owner: fundermaps
 --
 
@@ -490,7 +466,7 @@ CREATE TYPE report.construction_pile AS ENUM (
     'pressed',
     'perished',
     'decay',
-    'rootgrowth'
+    'root_growth'
 );
 
 
@@ -1734,7 +1710,7 @@ ALTER TABLE data.building_geographic_region OWNER TO fundermaps;
 -- Name: TABLE building_geographic_region; Type: COMMENT; Schema: data; Owner: fundermaps
 --
 
-COMMENT ON TABLE data.building_geographic_region IS 'Contains an st_intersects between geocoder.building and data.geographic_region.';
+COMMENT ON TABLE data.building_geographic_region IS 'Contains an st_intersects between geocoder.building and geographic region.';
 
 
 --
@@ -2521,75 +2497,6 @@ COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.
 
 
 --
--- Name: district_land; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.district_land AS
- SELECT d.id,
-    d.external_id,
-    d.external_source,
-    d.municipality_id,
-    d.name,
-    d.water,
-    d.geom
-   FROM geocoder.district d
-  WHERE (NOT d.water);
-
-
-ALTER TABLE data.district_land OWNER TO fundermaps;
-
---
--- Name: VIEW district_land; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON VIEW data.district_land IS 'View containing all districts that are bodies not water.';
-
-
---
--- Name: geographic_region; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.geographic_region (
-    id integer NOT NULL,
-    objectid bigint,
-    code text,
-    name text,
-    geom public.geometry(Geometry,4326)
-);
-
-
-ALTER TABLE data.geographic_region OWNER TO fundermaps;
-
---
--- Name: TABLE geographic_region; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON TABLE data.geographic_region IS 'Geographic regions from our national georegister (PDOK / Kadaster).';
-
-
---
--- Name: geographic_region_id_seq; Type: SEQUENCE; Schema: data; Owner: fundermaps
---
-
-CREATE SEQUENCE data.geographic_region_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE data.geographic_region_id_seq OWNER TO fundermaps;
-
---
--- Name: geographic_region_id_seq; Type: SEQUENCE OWNED BY; Schema: data; Owner: fundermaps
---
-
-ALTER SEQUENCE data.geographic_region_id_seq OWNED BY data.geographic_region.id;
-
-
---
 -- Name: groundwater_level; Type: TABLE; Schema: data; Owner: fundermaps
 --
 
@@ -2606,31 +2513,6 @@ ALTER TABLE data.groundwater_level OWNER TO fundermaps;
 --
 
 COMMENT ON TABLE data.groundwater_level IS 'Groundwater levels from PDOK.';
-
-
---
--- Name: neighborhood_land; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.neighborhood_land AS
- SELECT n.id,
-    n.external_id,
-    n.external_source,
-    n.district_id,
-    n.name,
-    n.water,
-    n.geom
-   FROM geocoder.neighborhood n
-  WHERE (n.water IS FALSE);
-
-
-ALTER TABLE data.neighborhood_land OWNER TO fundermaps;
-
---
--- Name: VIEW neighborhood_land; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON VIEW data.neighborhood_land IS 'Contains all entries from geocoder.neighborhood which are not bodies of water.';
 
 
 --
@@ -2666,16 +2548,13 @@ COMMENT ON VIEW data.statistics_product_buildings_restored IS 'Contains statisti
 --
 
 CREATE VIEW data.statistics_product_construction_years AS
- WITH series AS (
-         SELECT (generate_series(90, 200) * 10) AS year_from,
-            ((generate_series(90, 200) * 10) + 9) AS year_to
-        )
  SELECT b.neighborhood_id,
-    s.year_from,
-    count(s.year_from) AS count
-   FROM (geocoder.building b
-     JOIN series s ON (((date_part('year'::text, (b.built_year)::date) >= (s.year_from)::double precision) AND (date_part('year'::text, (b.built_year)::date) <= (s.year_to)::double precision))))
-  GROUP BY b.neighborhood_id, s.year_from;
+    date_part('year'::text, decade.decade)::integer AS year_from,
+    count(decade.decade) AS count
+   FROM geocoder.building b,
+    LATERAL date_trunc('decade'::text, b.built_year::timestamp with time zone) decade(decade)
+  WHERE b.built_year IS NOT NULL
+  GROUP BY b.neighborhood_id, decade.decade;
 
 
 ALTER TABLE data.statistics_product_construction_years OWNER TO fundermaps;
@@ -2809,18 +2688,14 @@ COMMENT ON COLUMN report.incident.delete_date IS 'Timestamp of soft delete';
 --
 
 CREATE VIEW data.statistics_product_incidents AS
- SELECT DISTINCT ON (x.neighborhood_id) x.neighborhood_id,
-    x.count
-   FROM ( SELECT b.neighborhood_id,
-            count(*) AS count
-           FROM ((report.incident i
-             JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
-             JOIN geocoder.building b ON (((a.building_id)::text = (b.id)::text)))
-          GROUP BY b.neighborhood_id
-        UNION
-         SELECT b.neighborhood_id,
-            0 AS count
-           FROM geocoder.building b) x;
+ SELECT b.neighborhood_id,
+    year.year,
+    count(i.id) AS count
+   FROM report.incident i
+     JOIN geocoder.address a ON i.address::text = a.id::text
+     JOIN geocoder.building b ON a.building_id::text = b.id::text,
+    LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+  GROUP BY b.neighborhood_id, year.year;
 
 
 ALTER TABLE data.statistics_product_incidents OWNER TO fundermaps;
@@ -2837,18 +2712,14 @@ COMMENT ON VIEW data.statistics_product_incidents IS 'Contains statistics on the
 --
 
 CREATE VIEW data.statistics_product_inquiries AS
- SELECT DISTINCT ON (x.neighborhood_id) x.neighborhood_id,
-    x.count
-   FROM ( SELECT b.neighborhood_id,
-            count(*) AS count
-           FROM ((report.inquiry_sample i
-             JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
-             JOIN geocoder.building b ON (((a.building_id)::text = (b.id)::text)))
-          GROUP BY b.neighborhood_id
-        UNION
-         SELECT b.neighborhood_id,
-            0 AS count
-           FROM geocoder.building b) x;
+ SELECT b.neighborhood_id,
+    year.year,
+    count(i.id) AS count
+   FROM report.inquiry_sample i
+     JOIN geocoder.address a ON i.address::text = a.id::text
+     JOIN geocoder.building b ON a.building_id::text = b.id::text,
+    LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+  GROUP BY b.neighborhood_id, year.year;
 
 
 ALTER TABLE data.statistics_product_inquiries OWNER TO fundermaps;
@@ -3719,13 +3590,6 @@ ALTER TABLE ONLY application.attribution ALTER COLUMN id SET DEFAULT nextval('ap
 
 
 --
--- Name: geographic_region id; Type: DEFAULT; Schema: data; Owner: fundermaps
---
-
-ALTER TABLE ONLY data.geographic_region ALTER COLUMN id SET DEFAULT nextval('data.geographic_region_id_seq'::regclass);
-
-
---
 -- Name: inquiry id; Type: DEFAULT; Schema: report; Owner: fundermaps
 --
 
@@ -4051,13 +3915,6 @@ CREATE INDEX analysis_foundation_indicative_id_idx ON data.analysis_foundation_i
 --
 
 CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk USING btree (id);
-
-
---
--- Name: geographic_region_geom_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX geographic_region_geom_idx ON data.geographic_region USING gist (geom);
 
 
 --
@@ -4449,7 +4306,7 @@ ALTER TABLE ONLY application.organization_user
 --
 
 ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE SET NULL;
+    ADD CONSTRAINT product_telemetry_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --

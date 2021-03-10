@@ -1,105 +1,138 @@
 ﻿using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Report
 {
-    public class InquirySampleTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class InquirySampleTests : IClassFixture<BackendFixtureFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
-        private readonly HttpClient _client;
+        private BackendFixtureFactory Factory { get; }
 
-        public InquirySampleTests(AuthBackendWebApplicationFactory factory)
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public InquirySampleTests(BackendFixtureFactory factory)
+            => Factory = factory;
+
+        [Fact]
+        public async Task CreateInquirySampleReturnInquirySample()
         {
-            _factory = factory;
-            _client = _factory
-                .WithAuthenticationStores()
-                .CreateClient();
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
+                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .Generate();
+            var sample = new InquirySampleDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", sample);
+            var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(inquiry.Id, returnObject.Inquiry);
         }
 
-        // [Fact]
-        // public async Task CreateInquirySampleReturnInquirySample()
-        // {
-        //     // Arrange
-        //     var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
+        [Fact]
+        public async Task GetInquirySampleByIdReturnSingleInquirySample()
+        {
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
+                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .Generate();
+            var sample = new InquirySampleDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
+            sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
-        //     // Act
-        //     var response = await _client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
-        //     var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
+            // Act
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
+            var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Equal(inquiry.Id, returnObject.Inquiry);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(sample.Id, returnObject.Id);
+            Assert.Equal(inquiry.Id, returnObject.Inquiry);
+        }
 
-        // [Fact]
-        // public async Task GetInquirySampleByIdReturnSingleInquirySample()
-        // {
-        //     // Arrange
-        //     var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
-        //     var sample = await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
+        [Fact]
+        public async Task GetAllInquirySampleReturnNavigationInquirySample()
+        {
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
+                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .Generate();
+            var sample = new InquirySampleDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
+            sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
-        //     // Act
-        //     var response = await _client.GetAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
-        //     var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
+            // Act
+            var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample?limit=10");
+            var returnList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>();
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Equal(sample.Id, returnObject.Id);
-        //     Assert.Equal(inquiry.Id, returnObject.Inquiry);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(returnList.Count >= 1);
+        }
 
-        // [Fact]
-        // public async Task GetAllInquirySampleReturnNavigationInquirySample()
-        // {
-        //     // Arrange
-        //     var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
-        //     for (int i = 0; i < 10; i++)
-        //     {
-        //         await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
-        //     }
+        [Fact]
+        public async Task UpdateInquirySampleReturnNoContent()
+        {
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
+                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .Generate();
+            var samples = new InquirySampleDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate(2);
+            using var client = Factory.CreateClient();
+            inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
+            var sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", samples.First());
 
-        //     // Act
-        //     var response = await _client.GetAsync($"api/inquiry/{inquiry.Id}/sample?limit=10");
-        //     var returnList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>();
+            // Act
+            var response = await client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", samples.Last());
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Equal(10, returnList.Count);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
 
-        // [Fact]
-        // public async Task UpdateInquirySampleReturnNoContent()
-        // {
-        //     // Arrange
-        //     var newSample = new InquirySampleFaker().Generate();
-        //     var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
-        //     var sample = await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
+        [Fact]
+        public async Task DeleteInquirySampleReturnNoContent()
+        {
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
+                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .Generate();
+            var sample = new InquirySampleDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = Factory.CreateClient();
+            inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
+            sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
-        //     // Act
-        //     var response = await _client.PutAsJsonAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}", newSample);
+            // Act
+            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        // }
-
-        // [Fact]
-        // public async Task DeleteInquirySampleReturnNoContent()
-        // {
-        //     // Arrange
-        //     var inquiry = await _client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", new InquiryDtoFaker().Generate());
-        //     var sample = await _client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", new InquirySampleDtoFaker().Generate());
-
-        //     // Act
-        //     var response = await _client.DeleteAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
-
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        // }
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
     }
 }

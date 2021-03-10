@@ -54,7 +54,7 @@ namespace FunderMaps.Webservice.Controllers
 
         // GET: api/product/analysis
         /// <summary>
-        ///     Request a analysis product.
+        ///     Request an analysis product.
         /// </summary>
         [HttpGet("analysis")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]

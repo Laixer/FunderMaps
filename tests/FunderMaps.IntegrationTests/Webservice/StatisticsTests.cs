@@ -1,9 +1,5 @@
-﻿#if _DISABLE
-using FunderMaps.Core.Types.Products;
-using FunderMaps.Testing.Faker;
-using FunderMaps.Webservice.ResponseModels;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -13,86 +9,61 @@ namespace FunderMaps.IntegrationTests.Webservice
     /// <summary>
     ///     Integration test for the statistics controller.
     /// </summary>
-    public class StatisticsTests : IClassFixture<AuthWebserviceWebApplicationFactory>
+    public class StatisticsTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private readonly HttpClient client;
-        private readonly StatisticsProduct statisticsProduct;
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance and setup the test data.
         /// </summary>
-        public StatisticsTests(AuthWebserviceWebApplicationFactory factory)
-        {
-            // Arrange.
-            statisticsProduct = new StatisticsProductFaker().Generate();
-            client = factory
-                .WithAuthenticationStores()
-                .WithDataStoreItem(statisticsProduct)
-                .CreateClient();
-        }
+        public StatisticsTests(WebserviceFixtureFactory factory)
+            => Factory = factory;
 
-        [Theory]
-        [InlineData(StatisticsProductType.BuildingsRestored)]
-        [InlineData(StatisticsProductType.ConstructionYears)]
-        [InlineData(StatisticsProductType.DataCollected)]
-        [InlineData(StatisticsProductType.FoundationRatio)]
-        [InlineData(StatisticsProductType.FoundationRisk)]
-        [InlineData(StatisticsProductType.Incidents)]
-        [InlineData(StatisticsProductType.Reports)]
-        public async Task GetProductByNeighborhoodCodeReturnProduct(StatisticsProductType product)
+        [Fact]
+        public async Task GetProductByIdReturnProduct()
         {
+            // Arrange
+            using var client = Factory.CreateClient();
+
             // Act.
-            var response = await client.GetAsync($"api/statistics/get?product={product}&neighborhoodCode={statisticsProduct.NeighborhoodCode}");
-            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsBuildingsRestoredResponseModel>>();
+            var response = await client.GetAsync($"api/product/statistics?id=gfm-6aae47cb5aa4416abdf19d98ba8218ac");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsDto>>();
 
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal((uint)1, returnObject.ModelCount);
+            Assert.True(returnObject.ItemCount >= 1);
         }
 
         [Fact]
-        public async Task GetInvalidProductThrows()
+        public async Task GetProductByExternalIdReturnProduct()
         {
+            // Arrange
+            using var client = Factory.CreateClient();
+
             // Act.
-            var response = await client.GetAsync($"api/statistics/get?product=298376");
+            var response = await client.GetAsync($"api/product/statistics?id=BU05031403");
+            var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsDto>>();
 
             // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
-        }
-
-        [Fact]
-        public async Task GetProductWithoutRequestMethodThrows()
-        {
-            // Act.
-            var response = await client.GetAsync($"api/statistics/get?product={StatisticsProductType.FoundationRatio}");
-
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(returnObject.ItemCount >= 1);
         }
 
         [Theory]
-        [InlineData("neigborhoodCode=3kjhr834dhfjdeh")]
-        public async Task GetByQueryWithoutProductThrows(string queryString)
+        [InlineData("id=3kjhr834dhfjdeh")]
+        [InlineData("bagid=4928374hfdkjsfh")]
+        [InlineData("query=thisismyquerystringyes")]
+        [InlineData("fdshjbf438gi")]
+        public async Task GetByIdInvalidAddressThrows(string address)
         {
+            // Arrange
+            using var client = Factory.CreateClient();
+
             // Act.
-            var response = await client.GetAsync($"api/statistics/get?{queryString}");
+            var response = await client.GetAsync($"api/product/statistics?id={address}");
 
             // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
-        }
-
-        [Theory]
-        [InlineData(0, 0)]
-        [InlineData(0, 9)]
-        public async Task GetProductByQueryInvalidNavigationThrows(uint limit, uint offset)
-
-        {
-            // Act.
-            var response = await client.GetAsync($"api/statistics/get?limit={limit}&offset={offset}&product={StatisticsProductType.ConstructionYears}&query=thisismyquerystring");
-
-            // Assert.
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode); // FUTURE Change when error handling is correct
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
 }
-#endif

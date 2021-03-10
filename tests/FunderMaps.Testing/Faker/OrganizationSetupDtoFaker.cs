@@ -9,6 +9,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class OrganizationSetupDtoFaker : Faker<OrganizationSetupDto>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public OrganizationSetupDtoFaker()
         {
             RuleFor(f => f.Email, f => f.Internet.Email());
