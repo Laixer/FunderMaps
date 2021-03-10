@@ -72,8 +72,10 @@ namespace FunderMaps.IntegrationTests
         /// </summary>
         protected async virtual Task<UserPair> CreateUserAsync(OrganizationDto organization, OrganizationRole role)
         {
-            var organizationUserPassword = new OrganizationUserPasswordDtoFaker().Generate();
-            organizationUserPassword.OrganizationRole = role;
+            var organizationUserPassword = new OrganizationUserPasswordDtoFaker()
+                .RuleFor(f => f.Role, f => ApplicationRole.User)
+                .RuleFor(f => f.OrganizationRole, f => role)
+                .Generate();
             var user = await _httpClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{organization.Id}/user", organizationUserPassword);
 
             return new UserPair
