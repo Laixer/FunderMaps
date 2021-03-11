@@ -2705,7 +2705,7 @@ COMMENT ON VIEW data.statistics_product_inquiries IS 'Contains statistics on the
 
 CREATE TABLE data.subsidence_hex (
     velocity double precision NOT NULL,
-    geom public.geometry
+    geom public.geometry(MultiPolygon,4326) NOT NULL
 );
 
 
@@ -3894,24 +3894,10 @@ CREATE UNIQUE INDEX organization_normalized_email_idx ON application.organizatio
 
 
 --
--- Name: organization_normalized_name_idx; Type: INDEX; Schema: application; Owner: fundermaps
---
-
-CREATE UNIQUE INDEX organization_normalized_name_idx ON application.organization USING btree (normalized_name) WHERE (normalized_name IS NOT NULL);
-
-
---
 -- Name: organization_proposal_normalized_email_idx; Type: INDEX; Schema: application; Owner: fundermaps
 --
 
 CREATE INDEX organization_proposal_normalized_email_idx ON application.organization_proposal USING btree (normalized_email);
-
-
---
--- Name: organization_proposal_normalized_name_idx; Type: INDEX; Schema: application; Owner: fundermaps
---
-
-CREATE UNIQUE INDEX organization_proposal_normalized_name_idx ON application.organization_proposal USING btree (normalized_name) WHERE (normalized_name IS NOT NULL);
 
 
 --
