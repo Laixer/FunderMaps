@@ -2,6 +2,8 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;
+using FunderMaps.Core.Types;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Scriban.Runtime;
 using System;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Core.IncidentReport
 {
+    // FUTURE: Revamp this service.
     /// <summary>
     ///     Service to the incidents.
     /// </summary>
@@ -21,6 +24,7 @@ namespace FunderMaps.Core.IncidentReport
         private readonly IIncidentRepository _incidentRepository;
         private readonly IGeocoderTranslation _geocoderTranslation;
         private readonly INotifyService _notifyService;
+        private readonly ILogger<IncidentService> _logger;
 
         /// <summary>
         ///     Create new instance.
@@ -30,13 +34,15 @@ namespace FunderMaps.Core.IncidentReport
             IContactRepository contactRepository,
             IIncidentRepository incidentRepository,
             IGeocoderTranslation geocoderTranslation,
-            INotifyService notificationService)
+            INotifyService notificationService,
+            ILogger<IncidentService> logger)
         {
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(contactRepository));
             _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
             _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
             _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         // TODO: This is a temporary solution.
@@ -138,6 +144,7 @@ namespace FunderMaps.Core.IncidentReport
             incident.Address = address.Id;
             incident.ClientId = _options.ClientId;
             incident.Meta = meta;
+            incident.AuditStatus = AuditStatus.Todo;
 
             await _contactRepository.AddAsync(incident.ContactNavigation);
             incident = await _incidentRepository.AddGetAsync(incident);
@@ -171,6 +178,8 @@ namespace FunderMaps.Core.IncidentReport
                 },
                 Extensions = new List<object> { new TranslationFunctions() },
             });
+
+            _logger.LogInformation($"New incident from {incident.Email} was recorded.");
 
             return incident;
         }

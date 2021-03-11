@@ -11,9 +11,14 @@ namespace FunderMaps.IntegrationTests
         public string Type { get; set; }
 
         /// <summary>
-        ///     Error message.
+        ///     Error title.
         /// </summary>
         public string Title { get; set; }
+
+        /// <summary>
+        ///     Error detail.
+        /// </summary>
+        public string Detail { get; set; }
 
         /// <summary>
         ///     Error status code.

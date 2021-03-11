@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types.Distributions;
+﻿using System.Collections.Generic;
+using FunderMaps.Core.Types.Distributions;
 
 namespace FunderMaps.Core.Types.Products
 {
@@ -36,11 +37,21 @@ namespace FunderMaps.Core.Types.Products
         /// <summary>
         ///     Total amount of incidents in the given region.
         /// </summary>
-        public long TotalIncidentCount { get; set; }
+        public IEnumerable<IncidentYearPair> TotalIncidentCount { get; set; }
+
+        /// <summary>
+        ///     Total amount of incidents in the given region.
+        /// </summary>
+        public IEnumerable<IncidentYearPair> MunicipalityIncidentCount { get; set; }
 
         /// <summary>
         ///     Total amount of reports in the given region.
         /// </summary>
-        public long TotalReportCount { get; set; }
+        public IEnumerable<InquiryYearPair> TotalReportCount { get; set; }
+
+        /// <summary>
+        ///     Total amount of reports in the given region.
+        /// </summary>
+        public IEnumerable<InquiryYearPair> MunicipalityReportCount { get; set; }
     }
 }

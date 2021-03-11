@@ -1,4 +1,5 @@
 ﻿using FunderMaps.Core.Types.Distributions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
@@ -72,24 +73,48 @@ namespace FunderMaps.Core.Interfaces.Repositories
         ///     Get total incident count by id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        Task<long> GetTotalIncidentCountByIdAsync(string id);
+        Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id);
 
         /// <summary>
         ///     Get total incident count by external id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        Task<long> GetTotalIncidentCountByExternalIdAsync(string id);
+        Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get total incident count by id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id);
+
+        /// <summary>
+        ///     Get total incident count by external id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByExternalIdAsync(string id);
 
         /// <summary>
         ///     Get total report count by id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        Task<long> GetTotalReportCountByIdAsync(string id);
+        Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id);
 
         /// <summary>
         ///     Get total report count by external id.
         /// </summary>
         /// <param name="id">Neighborhood identifier.</param>
-        Task<long> GetTotalReportCountByExternalIdAsync(string id);
+        Task<List<InquiryYearPair>> GetTotalReportCountByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Get total report count by id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id);
+
+        /// <summary>
+        ///     Get total report count by external id.
+        /// </summary>
+        /// <param name="id">Municipality identifier.</param>
+        Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByExternalIdAsync(string id);
     }
 }

@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using FunderMaps.Testing.Extensions;
-using FunderMaps.Testing.Faker;
+﻿using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
@@ -10,44 +8,36 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class OrganizationProposalTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class OrganizationProposalTests : IClassFixture<BackendFixtureFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private BackendFixtureFactory Factory { get; }
 
-        public OrganizationProposalTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public OrganizationProposalTests(BackendFixtureFactory factory)
+            => Factory = factory;
 
         [Fact]
         public async Task CreateOrganizationProposalReturnOrganizationProposal()
         {
             // Arrange
-            var organization = new OrganizationProposalDtoFaker().Generate();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
-                .WithAuthenticationStores()
-                .CreateClient();
+            using var client = Factory.CreateAdminClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/organization/proposal", organization);
+            var response = await client.PostAsJsonAsync("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
             var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
         }
 
         [Fact]
-        public async Task GetOrganizationProposalByIdReturnSingleOrganizationProposa()
+        public async Task GetOrganizationProposalByIdReturnSingleOrganizationProposal()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
-                .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
-                .CreateClient();
+            using var client = Factory.CreateAdminClient();
+            var organization = await client.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
             // Act
             var response = await client.GetAsync($"api/organization/proposal/{organization.Id}");
@@ -55,19 +45,14 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
         }
 
         [Fact]
         public async Task GetAllOrganizationProposalReturnPageOrganizationProposal()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().GenerateRange(0, 10);
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
-                .WithAuthenticationStores()
-                .WithDataStoreList(organization)
-                .CreateClient();
+            using var client = Factory.CreateAdminClient();
+            await client.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
             // Act
             var response = await client.GetAsync("api/organization/proposal");
@@ -75,19 +60,15 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnList);
+            Assert.True(returnList.Count >= 2);
         }
 
         [Fact]
         public async Task DeleteOrganizationProposalReturnNoContent()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = ApplicationRole.Administrator)
-                .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
-                .CreateClient();
+            using var client = Factory.CreateAdminClient();
+            var organization = await client.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
             // Act
             var response = await client.DeleteAsync($"api/organization/proposal/{organization.Id}");
@@ -96,37 +77,26 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ApplicationRole.User)]
-        [InlineData(ApplicationRole.Guest)]
-        public async Task CreateOrganizationProposalReturnForbidden(ApplicationRole role)
+        [Fact]
+        public async Task CreateOrganizationProposalReturnForbidden()
         {
             // Arrange
-            var organization = new OrganizationProposalDtoFaker().Generate();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = role)
-                .WithAuthenticationStores()
-                .CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/organization/proposal", organization);
+            var response = await client.PostAsJsonAsync("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ApplicationRole.User)]
-        [InlineData(ApplicationRole.Guest)]
-        public async Task GetOrganizationProposalByIdReturnForbidden(ApplicationRole role)
+        [Fact]
+        public async Task GetOrganizationProposalByIdReturnForbidden()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = role)
-                .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
-                .CreateClient();
+            using var adminClient = Factory.CreateAdminClient();
+            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.GetAsync($"api/organization/proposal/{organization.Id}");
@@ -135,18 +105,13 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ApplicationRole.User)]
-        [InlineData(ApplicationRole.Guest)]
-        public async Task GetAllOrganizationProposalReturnForbidden(ApplicationRole role)
+        [Fact]
+        public async Task GetAllOrganizationProposalReturnForbidden()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().GenerateRange(0, 10);
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = role)
-                .WithAuthenticationStores()
-                .WithDataStoreList(organization)
-                .CreateClient();
+            using var adminClient = Factory.CreateAdminClient();
+            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.GetAsync("api/organization/proposal");
@@ -155,18 +120,13 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(ApplicationRole.User)]
-        [InlineData(ApplicationRole.Guest)]
-        public async Task DeleteOrganizationProposalReturnForbidden(ApplicationRole role)
+        [Fact]
+        public async Task DeleteOrganizationProposalReturnForbidden()
         {
             // Arrange
-            var organization = new OrganizationProposalFaker().Generate();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User.Role = role)
-                .WithAuthenticationStores()
-                .WithDataStoreItem(organization)
-                .CreateClient();
+            using var adminClient = Factory.CreateAdminClient();
+            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.DeleteAsync($"api/organization/proposal/{organization.Id}");

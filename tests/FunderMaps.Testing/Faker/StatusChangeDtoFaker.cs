@@ -8,6 +8,9 @@ namespace FunderMaps.Testing.Faker
     /// </summary>
     public class StatusChangeDtoFaker : Faker<StatusChangeDto>
     {
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
         public StatusChangeDtoFaker()
         {
             RuleFor(f => f.Message, f => f.Lorem.Text());

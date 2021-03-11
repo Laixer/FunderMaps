@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using FunderMaps.AspNetCore.Authentication;
+﻿using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -118,16 +116,17 @@ namespace FunderMaps.WebApi
         /// </remarks>
         public static void ConfigureDevelopment(IApplicationBuilder app)
         {
-            app.UseDeveloperExceptionPage();
             app.UseCors();
 
-            app.UseFunderMapsExceptionHandler("/oops");
+            app.UseExceptionHandler("/oops");
 
             app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -151,13 +150,13 @@ namespace FunderMaps.WebApi
 
             app.UseExceptionHandler("/oops");
 
-            app.UseFunderMapsExceptionHandler("/oops");
-
             app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {

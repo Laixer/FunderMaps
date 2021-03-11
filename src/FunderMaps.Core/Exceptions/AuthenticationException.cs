@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace FunderMaps.Core.Exceptions
 {
@@ -7,6 +7,11 @@ namespace FunderMaps.Core.Exceptions
     /// </summary>
     public class AuthenticationException : FunderMapsCoreException
     {
+        /// <summary>
+        ///     Exception title
+        /// </summary>
+        public override string Title => "Login attempt failed with provided credentials.";
+
         /// <summary>
         ///     Create new instance.
         /// </summary>

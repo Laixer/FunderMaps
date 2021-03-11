@@ -42,7 +42,7 @@ namespace FunderMaps.Data.Repositories
                 VALUES (
                     @schema_name,
                     @table_name,
-                    @name)
+                    trim(@name))
                 RETURNING id";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
@@ -200,7 +200,7 @@ namespace FunderMaps.Data.Repositories
                     UPDATE  maplayer.layer
                     SET     schema_name = @schema_name,
                             table_name = @table_name,
-                            name = @name,
+                            name = trim(@name),
                             markup = @markup
                     WHERE   id = @id";
 

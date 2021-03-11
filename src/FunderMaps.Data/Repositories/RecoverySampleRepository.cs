@@ -78,7 +78,7 @@ namespace FunderMaps.Data.Repositories
                 VALUES (
                     @recovery,
                     @address,
-                    @note,
+                    NULLIF(trim(@note), ''),
                     @status,
                     @type,
                     @pile_type,
@@ -272,7 +272,7 @@ namespace FunderMaps.Data.Repositories
                     UPDATE  report.recovery_sample
                     SET     recovery = @recovery,
                             address = @address,
-                            note = @note,
+                            note = NULLIF(trim(@note), ''),
                             status = @status,
                             type = @type,
                             pile_type = @pile_type,

@@ -20,8 +20,27 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgis/postgis:12-master
+        ports:
+          - 5432:5432
+
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup database
+      run: ./scripts/loaddb.sh
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -39,10 +58,41 @@ jobs:
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
-    - name: Test
-      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
+    - name: Testing Backend
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Backend
       env:
+        ASPNETCORE_ENVIRONMENT: Production
+        UseExternalServices: False
         Jwt__Issuer: "FunderMapsTest"
         Jwt__Audience: "FunderMapsTest"
         Jwt__TokenValidity: 10
         Jwt__SignatureKey: somelargetextstringusedinsignatures
+        Incident__ClientId: 42
+        Incident__Recipients__0: info@example.com
+        ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp"
+
+    - name: Testing Portal
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Portal
+      env:
+        ASPNETCORE_ENVIRONMENT: Production
+        UseExternalServices: False
+        Jwt__Issuer: "FunderMapsTest"
+        Jwt__Audience: "FunderMapsTest"
+        Jwt__TokenValidity: 10
+        Jwt__SignatureKey: somelargetextstringusedinsignatures
+        Incident__ClientId: 42
+        Incident__Recipients__0: info@example.com
+        ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_portal"
+
+    # - name: Testing Webservice
+    #   run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Webservice
+    #   env:
+    #     ASPNETCORE_ENVIRONMENT: Production
+    #     UseExternalServices: False
+    #     Jwt__Issuer: "FunderMapsTest"
+    #     Jwt__Audience: "FunderMapsTest"
+    #     Jwt__TokenValidity: 10
+    #     Jwt__SignatureKey: somelargetextstringusedinsignatures
+    #     Incident__ClientId: 42
+    #     Incident__Recipients__0: info@example.com
+    #     ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webservice"

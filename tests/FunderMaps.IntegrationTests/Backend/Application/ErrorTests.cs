@@ -4,14 +4,15 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    public class ErrorTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class ErrorTests : IClassFixture<BackendFixtureFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private BackendFixtureFactory Factory { get; }
 
-        public ErrorTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public ErrorTests(BackendFixtureFactory factory)
+            => Factory = factory;
 
         [Theory]
         [InlineData("/")]
@@ -20,9 +21,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetEndpointsReturnNotFound(string uri)
         {
             // Arrange
-            var client = _factory
-                .WithAuthenticationStores()
-                .CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.GetAsync(uri);
@@ -36,9 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetEndpointsReturnMethodNotAllowed(string uri)
         {
             // Arrange
-            var client = _factory
-                .WithAuthenticationStores()
-                .CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.PostAsync(uri, null);

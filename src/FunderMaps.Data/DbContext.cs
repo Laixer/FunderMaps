@@ -220,13 +220,17 @@ namespace FunderMaps.Data
         {
             try
             {
-                TResult result = (TResult)await Command.ExecuteScalarAsync(AppContext.CancellationToken);
-                if (result is null && resultGuard)
+                var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
+                if (result is null)
                 {
-                    throw new EntityNotFoundException();
+                    if (resultGuard)
+                    {
+                        throw new EntityNotFoundException();
+                    }
+                    return default;
                 }
 
-                return result;
+                return (TResult)result;
             }
             catch (DbException exception)
             {

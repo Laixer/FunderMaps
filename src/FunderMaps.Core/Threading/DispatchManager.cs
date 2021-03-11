@@ -139,8 +139,7 @@ namespace FunderMaps.Core.Threading
                 {
                     while (workerQueue.TryDequeue(out var taskBucket))
                     {
-                        // Setup scope per task. We know for a fact that at there does not exist
-                        // an active service provider from this. The scope is valid until the end
+                        // Setup scope per task. The scope is valid until the end
                         // of the tasks lifespan. Tasks can resolve any service within their scope.
                         using var serviceScope = _serviceScopeFactory.CreateScope();
 

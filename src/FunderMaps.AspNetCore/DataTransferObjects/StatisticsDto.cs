@@ -117,6 +117,38 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
     }
 
     /// <summary>
+    ///     Response model representing how incidents per year.
+    /// </summary>
+    public record IncidentYearPairResponseModel
+    {
+        /// <summary>
+        ///     Per year statistics.
+        /// </summary>
+        public int Year { get; init; }
+
+        /// <summary>
+        ///     Total amount of items that fall into this decade.
+        /// </summary>
+        public uint TotalCount { get; init; }
+    }
+
+    /// <summary>
+    ///     Response model representing how inquiries per year.
+    /// </summary>
+    public record InquiryYearPairResponseModel
+    {
+        /// <summary>
+        ///     Per year statistics.
+        /// </summary>
+        public int Year { get; init; }
+
+        /// <summary>
+        ///     Total amount of items that fall into this decade.
+        /// </summary>
+        public uint TotalCount { get; init; }
+    }
+
+    /// <summary>
     ///     Statistics DTO.
     /// </summary>
     public record StatisticsDto
@@ -150,11 +182,21 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Total amount of incidents in the given region.
         /// </summary>
-        public int? TotalIncidentCount { get; init; }
+        public IEnumerable<IncidentYearPairResponseModel> TotalIncidentCount { get; init; }
+
+        /// <summary>
+        ///     Total amount of incidents in the given region.
+        /// </summary>
+        public IEnumerable<IncidentYearPairResponseModel> MunicipalityIncidentCount { get; init; }
 
         /// <summary>
         ///     Total amount of reports in the given region.
         /// </summary>
-        public int? TotalReportCount { get; init; }
+        public IEnumerable<InquiryYearPairResponseModel> TotalReportCount { get; init; }
+
+        /// <summary>
+        ///     Total amount of reports in the given region.
+        /// </summary>
+        public IEnumerable<InquiryYearPairResponseModel> MunicipalityReportCount { get; init; }
     }
 }

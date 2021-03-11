@@ -29,7 +29,7 @@ namespace FunderMaps.Data.Repositories
                     layers)
                 VALUES (
                     @organization_id,
-                    @name,
+                    trim(@name),
                     @layers)
                 RETURNING id";
 
@@ -195,7 +195,7 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                     UPDATE  maplayer.bundle
-                    SET     name = @name,
+                    SET     name = trim(@name),
                             layer_configuration = @layer_configuration::jsonb
                     WHERE   id = @id";
 

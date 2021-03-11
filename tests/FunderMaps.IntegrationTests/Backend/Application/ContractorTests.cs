@@ -1,4 +1,4 @@
-﻿using FunderMaps.Testing.Faker;
+﻿using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
@@ -8,26 +8,25 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
 {
-    // FUTURE: navigation test
-
-    public class ContractorTests : IClassFixture<AuthBackendWebApplicationFactory>
+    public class ContractorTests : IClassFixture<BackendFixtureFactory>
     {
-        private readonly AuthBackendWebApplicationFactory _factory;
+        private BackendFixtureFactory Factory { get; }
 
-        public ContractorTests(AuthBackendWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public ContractorTests(BackendFixtureFactory factory)
+            => Factory = factory;
 
-        [Fact]
-        public async Task GetAllContractorReturnAllContractor()
+        [Theory]
+        [InlineData(OrganizationRole.Superuser)]
+        [InlineData(OrganizationRole.Verifier)]
+        [InlineData(OrganizationRole.Writer)]
+        [InlineData(OrganizationRole.Reader)]
+        public async Task GetAllContractorReturnAllContractor(OrganizationRole role)
         {
             // Arrange
-            var organization = new OrganizationFaker().Generate(10);
-            var client = _factory
-                .WithAuthenticationStores()
-                .WithDataStoreList(organization)
-                .CreateClient();
+            using var client = Factory.CreateClient(role);
 
             // Act
             var response = await client.GetAsync("api/contractor");
@@ -35,9 +34,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(10, returnList.Count);
-            Assert.True(response.Headers.CacheControl.Public);
-            Assert.NotNull(response.Headers.CacheControl.MaxAge);
+            Assert.True(returnList.Count >= 1);
         }
     }
 }

@@ -8,7 +8,6 @@ using FunderMaps.Webservice.Documentation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -165,7 +164,7 @@ namespace FunderMaps.Webservice
             app.UseDeveloperExceptionPage();
             app.UseCors();
 
-            app.UseFunderMapsExceptionHandler("/oops");
+            app.UseExceptionHandler("/oops");
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
@@ -179,6 +178,8 @@ namespace FunderMaps.Webservice
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -202,8 +203,6 @@ namespace FunderMaps.Webservice
 
             app.UseExceptionHandler("/oops");
 
-            app.UseFunderMapsExceptionHandler("/oops");
-
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
@@ -216,6 +215,8 @@ namespace FunderMaps.Webservice
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {
@@ -240,13 +241,13 @@ namespace FunderMaps.Webservice
 
             app.UseExceptionHandler("/oops");
 
-            app.UseFunderMapsExceptionHandler("/oops");
-
             app.UsePathBase(new("/api"));
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseAspAppContext();
 
             app.UseEndpoints(endpoints =>
             {

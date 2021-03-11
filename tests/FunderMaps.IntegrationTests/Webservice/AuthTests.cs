@@ -1,12 +1,7 @@
 ﻿using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
-using FunderMaps.Core.Components;
-using FunderMaps.IntegrationTests.Backend;
 using FunderMaps.Testing.Extensions;
-using FunderMaps.Testing.Faker;
-using FunderMaps.Testing.Repositories;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http.Json;
@@ -15,42 +10,31 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice
 {
-    // NOTE: This was copied from the WebApi tests.
     /// <summary>
     ///     Tests our authentication.
     /// </summary>
-    public class AuthTests : IClassFixture<AuthWebserviceWebApplicationFactory>
+    public class AuthTests : IClassFixture<WebserviceFixtureFactory>
     {
-        private readonly AuthWebserviceWebApplicationFactory _factory;
+        private WebserviceFixtureFactory Factory { get; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthTests(AuthWebserviceWebApplicationFactory factory) => _factory = factory;
+        public AuthTests(WebserviceFixtureFactory factory)
+            => Factory = factory;
 
         [Fact]
         public async Task SignInReturnSuccessAndToken()
         {
             // Arrange
-            var sessionUser = new UserFaker().Generate();
-            var sessionOrganization = new OrganizationFaker().Generate();
-            var password = new Randomizer().Password(128);
-            var signIn = new SignInInputModel
-            {
-                Email = sessionUser.Email,
-                Password = password,
-            };
-            using var loggerFactory = LoggerFactory.Create(builder => { });
-            using var random = new RandomGenerator();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random, loggerFactory.CreateLogger<PasswordHasher>()).HashPassword(password) })
-                .WithDataStoreItem(sessionOrganization)
-                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
-                .CreateClient();
+            using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", signIn);
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            {
+                Email = Factory.Superuser.User.Email,
+                Password = Factory.Superuser.Password,
+            });
             var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
             // Assert
@@ -64,9 +48,7 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task RefreshSignInReturnSuccessAndToken()
         {
             // Arrange
-            var client = _factory
-                .WithAuthenticationStores()
-                .CreateClient();
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.GetAsync("api/auth/token-refresh");
@@ -83,25 +65,14 @@ namespace FunderMaps.IntegrationTests.Webservice
         public async Task SignInInvalidCredentialsReturnError()
         {
             // Arrange
-            var sessionUser = new UserFaker().Generate();
-            var sessionOrganization = new OrganizationFaker().Generate();
-            var password = new Randomizer().Password(128);
-            var signIn = new SignInInputModel
-            {
-                Email = sessionUser.Email,
-                Password = password,
-            };
-            using var loggerFactory = LoggerFactory.Create(builder => { });
-            using var random = new RandomGenerator();
-            var client = _factory
-                .ConfigureAuthentication(options => options.User = sessionUser)
-                .WithDataStoreItem(new UserRecord { User = sessionUser, Password = new PasswordHasher(random, loggerFactory.CreateLogger<PasswordHasher>()).HashPassword(new Randomizer().Password(128)) })
-                .WithDataStoreItem(sessionOrganization)
-                .WithDataStoreItem(new OrganizationUserRecord { UserId = sessionUser.Id, OrganizationId = sessionOrganization.Id })
-                .CreateClient();
+            using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", signIn);
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            {
+                Email = Factory.Superuser.User.Email,
+                Password = new Randomizer().Password(64),
+            });
             var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
             // Assert
@@ -111,14 +82,12 @@ namespace FunderMaps.IntegrationTests.Webservice
         }
 
         [Theory]
-        [InlineData("/")]
         [InlineData("api/user")]
         [InlineData("api/auth/token-refresh")]
         public async Task RefreshSignInReturnUnauthorized(string uri)
         {
             // Arrange
-            using var factory = new BackendWebApplicationFactory();
-            var client = factory.CreateClient();
+            using var client = Factory.CreateUnauthorizedClient();
 
             // Act
             var response = await client.GetAsync(uri);
