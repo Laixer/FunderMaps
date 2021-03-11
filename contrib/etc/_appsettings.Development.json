@@ -33,7 +33,7 @@
     "DefaultSenderAddress": "info@fundermaps.com"
   },
   "ConnectionStrings": {
-    "FunderMapsConnection": null
+    "FunderMapsConnection": "Server=localhost;Database=fundermaps;User Id=fundermaps"
   },
   "BlobStorage": {
     "AccessKey": "LOUSAQJLIXLMIXKTKDW5",

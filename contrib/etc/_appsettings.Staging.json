@@ -2,11 +2,12 @@
     "Jwt": {
         "Issuer": "FunderMaps",
         "Audience": "FunderMaps",
-        "TokenValidity": 60
+        "TokenValidity": 10
     },
     "Logging": {
         "LogLevel": {
-            "Default": "Warning"
+            "Default": "Warning",
+            "Microsoft.AspNetCore.DataProtection": "Error"
         }
     },
     "Smtp": {
