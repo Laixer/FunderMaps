@@ -18,7 +18,7 @@ namespace FunderMaps.Testing.Faker
         public IncidentDtoFaker()
         {
             RuleFor(f => f.Id, f => f.Random.Replace("FIR######-#####"));
-            RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>().OrNull(f, .3f));;
+            RuleFor(f => f.FoundationType, f => f.PickRandom<FoundationType>().OrNull(f, .3f));
             RuleFor(f => f.ChainedBuilding, f => f.Random.Bool());
             RuleFor(f => f.Owner, f => f.Random.Bool());
             RuleFor(f => f.FoundationRecovery, f => f.Random.Bool());
@@ -33,7 +33,7 @@ namespace FunderMaps.Testing.Faker
             RuleFor(f => f.EnvironmentDamageCharacteristics, f => f.Random.ArrayElements((EnvironmentDamageCharacteristics[])Enum.GetValues(typeof(EnvironmentDamageCharacteristics))));
             RuleFor(f => f.Email, f => f.Internet.Email());
             RuleFor(f => f.Name, f => f.Person.FullName.OrNull(f, .3f));
-            RuleFor(f => f.PhoneNumber, f => f.Phone.PhoneNumber("###########").OrNull(f, .3f));
+            RuleFor(f => f.PhoneNumber, f => f.Phone.PhoneNumber("###########").OrNull(f, .9f));
             RuleFor(f => f.Address, f => $"gfm-{f.Random.Hash(32)}");
         }
     }
