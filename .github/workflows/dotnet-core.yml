@@ -40,19 +40,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Setup database
-      run: |
-        psql -q -d postgres < database/instance.sql
-        psql -q < database/fundermaps_base.sql
-        psql -q < database/fundermaps_permissions.sql
-        psql -q < database/data/seed_geocoder.sql
-        psql -q < database/data/seed_data.sql
-        psql -q < database/data/seed_maplayer.sql
-        psql -q < database/data/precompute.sql
-
-      env:
-        PGDATABASE: fundermaps
-        PGHOST: localhost
-        PGUSER: postgres
+      run: ./scripts/loaddb.sh
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
