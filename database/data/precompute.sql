@@ -14,6 +14,13 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Data for Name: building_type; Type: TABLE DATA; Schema: data; Owner: fundermaps
+--
+
+REFRESH MATERIALIZED VIEW "data".building_type WITH DATA;
+
+
+--
 -- Data for Name: analysis_foundation_indicative; Type: TABLE DATA; Schema: data; Owner: fundermaps
 --
 

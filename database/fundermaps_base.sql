@@ -1,6 +1,9 @@
 --
--- FunderMaps database
+-- PostgreSQL database dump
 --
+
+-- Dumped from database version 13.2 (Debian 13.2-1.pgdg100+1)
+-- Dumped by pg_dump version 13.2 (Debian 13.2-1.pgdg100+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,33 +15,6 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
-
-
---
--- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
-
---
--- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
-
-
---
--- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
-
 
 --
 -- Name: application; Type: SCHEMA; Schema: -; Owner: fundermaps
@@ -111,6 +87,34 @@ ALTER SCHEMA report OWNER TO fundermaps;
 --
 
 COMMENT ON SCHEMA report IS 'Schema containing everything with regards to reports, inquiries and incidents.';
+
+
+--
+-- Name: postgis; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgis; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions';
+
+
+--
+-- Name: uuid-ossp; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION "uuid-ossp"; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION "uuid-ossp" IS 'generate universally unique identifiers (UUIDs)';
 
 
 --
@@ -224,23 +228,6 @@ COMMENT ON TYPE application.role IS 'Enum representing a user role.';
 
 
 --
--- Name: storage_identifier; Type: DOMAIN; Schema: application; Owner: fundermaps
---
-
-CREATE DOMAIN application.storage_identifier AS text
-	CONSTRAINT url CHECK (starts_with(VALUE, 'https://'::text));
-
-
-ALTER DOMAIN application.storage_identifier OWNER TO fundermaps;
-
---
--- Name: DOMAIN storage_identifier; Type: COMMENT; Schema: application; Owner: fundermaps
---
-
-COMMENT ON DOMAIN application.storage_identifier IS 'Domain for a link to remotely stored file.';
-
-
---
 -- Name: user_id; Type: DOMAIN; Schema: application; Owner: fundermaps
 --
 
@@ -254,23 +241,6 @@ ALTER DOMAIN application.user_id OWNER TO fundermaps;
 --
 
 COMMENT ON DOMAIN application.user_id IS 'Domain for a user identifier.';
-
-
---
--- Name: bag_id; Type: DOMAIN; Schema: data; Owner: fundermaps
---
-
-CREATE DOMAIN data.bag_id AS text
-	CONSTRAINT bag_id_check CHECK ((length(VALUE) = 16));
-
-
-ALTER DOMAIN data.bag_id OWNER TO fundermaps;
-
---
--- Name: DOMAIN bag_id; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON DOMAIN data.bag_id IS 'Domain for a BAG id, restricting the character length to 16.';
 
 
 --
@@ -1006,23 +976,6 @@ COMMENT ON DOMAIN report.size IS 'Domain for the size of an object.';
 
 
 --
--- Name: storage_identifier; Type: DOMAIN; Schema: report; Owner: fundermaps
---
-
-CREATE DOMAIN report.storage_identifier AS text
-	CONSTRAINT url CHECK (starts_with(VALUE, 'https://'::text));
-
-
-ALTER DOMAIN report.storage_identifier OWNER TO fundermaps;
-
---
--- Name: DOMAIN storage_identifier; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON DOMAIN report.storage_identifier IS 'Domain for a link to remotely stored file.';
-
-
---
 -- Name: substructure; Type: TYPE; Schema: report; Owner: fundermaps
 --
 
@@ -1314,18 +1267,18 @@ COMMENT ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.g
 -- Name: normalize(text); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
-CREATE FUNCTION application.normalize(text) RETURNS text
+CREATE FUNCTION application."normalize"(text) RETURNS text
     LANGUAGE sql
     AS $_$SELECT trim(upper($1))$_$;
 
 
-ALTER FUNCTION application.normalize(text) OWNER TO fundermaps;
+ALTER FUNCTION application."normalize"(text) OWNER TO fundermaps;
 
 --
--- Name: FUNCTION normalize(text); Type: COMMENT; Schema: application; Owner: fundermaps
+-- Name: FUNCTION "normalize"(text); Type: COMMENT; Schema: application; Owner: fundermaps
 --
 
-COMMENT ON FUNCTION application.normalize(text) IS 'Normalize the input so it can be compared.';
+COMMENT ON FUNCTION application."normalize"(text) IS 'Normalize the input so it can be compared.';
 
 
 --
@@ -1347,27 +1300,6 @@ ALTER FUNCTION application.organization_email_free(email text) OWNER TO funderma
 --
 
 COMMENT ON FUNCTION application.organization_email_free(email text) IS 'Check if organization email is in use.';
-
-
---
--- Name: organization_name_free(text); Type: FUNCTION; Schema: application; Owner: fundermaps
---
-
-CREATE FUNCTION application.organization_name_free(name text) RETURNS boolean
-    LANGUAGE sql
-    AS $_$SELECT NOT EXISTS (
-	SELECT 1 FROM application.organization 
-	WHERE normalized_name = application.normalize($1)
-)$_$;
-
-
-ALTER FUNCTION application.organization_name_free(name text) OWNER TO fundermaps;
-
---
--- Name: FUNCTION organization_name_free(name text); Type: COMMENT; Schema: application; Owner: fundermaps
---
-
-COMMENT ON FUNCTION application.organization_name_free(name text) IS 'Check if organization name is in use.';
 
 
 --
@@ -1610,8 +1542,7 @@ CREATE TABLE application.organization_proposal (
     normalized_name text NOT NULL,
     email application.email NOT NULL,
     normalized_email text NOT NULL,
-    CONSTRAINT organization_proposal_email_chk CHECK (application.organization_email_free((email)::text)),
-    CONSTRAINT organization_proposal_name_chk CHECK (application.organization_name_free(name))
+    CONSTRAINT organization_proposal_email_chk CHECK (application.organization_email_free((email)::text))
 );
 
 
@@ -1714,6 +1645,76 @@ COMMENT ON TABLE data.building_geographic_region IS 'Contains an st_intersects b
 
 
 --
+-- Name: address; Type: TABLE; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE TABLE geocoder.address (
+    id geocoder.geocoder_id NOT NULL,
+    building_number text NOT NULL,
+    postal_code text,
+    street text NOT NULL,
+    is_active boolean NOT NULL,
+    external_id text NOT NULL,
+    external_source geocoder.data_source NOT NULL,
+    city text NOT NULL,
+    building_id geocoder.geocoder_id
+);
+
+
+ALTER TABLE geocoder.address OWNER TO fundermaps;
+
+--
+-- Name: TABLE address; Type: COMMENT; Schema: geocoder; Owner: fundermaps
+--
+
+COMMENT ON TABLE geocoder.address IS 'Contains all addresses in our own format, including a tsvector column to enable full text search.';
+
+
+--
+-- Name: building; Type: TABLE; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE TABLE geocoder.building (
+    id geocoder.geocoder_id NOT NULL,
+    built_year geocoder.year,
+    is_active boolean NOT NULL,
+    geom public.geometry(MultiPolygon,4326),
+    external_id text NOT NULL,
+    external_source geocoder.data_source NOT NULL,
+    building_type geocoder.building_type,
+    neighborhood_id geocoder.geocoder_id
+);
+
+
+ALTER TABLE geocoder.building OWNER TO fundermaps;
+
+--
+-- Name: TABLE building; Type: COMMENT; Schema: geocoder; Owner: fundermaps
+--
+
+COMMENT ON TABLE geocoder.building IS 'Contains all buildings in our own format.';
+
+
+--
+-- Name: building_type; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
+--
+
+CREATE MATERIALIZED VIEW data.building_type AS
+ SELECT building.id,
+    'shed'::geocoder.building_type AS building_type
+   FROM ( SELECT ba.id
+           FROM geocoder.building ba
+          WHERE (public.st_area((ba.geom)::public.geography, true) < (20)::double precision)
+        EXCEPT
+         SELECT a.building_id
+           FROM geocoder.address a
+          WHERE (a.building_id IS NOT NULL)) building
+  WITH NO DATA;
+
+
+ALTER TABLE data.building_type OWNER TO fundermaps;
+
+--
 -- Name: premise_z; Type: TABLE; Schema: data; Owner: fundermaps
 --
 
@@ -1793,31 +1794,6 @@ COMMENT ON TABLE data.subsidence IS 'Contains subsidence data for buildings. Thi
 
 
 --
--- Name: building; Type: TABLE; Schema: geocoder; Owner: fundermaps
---
-
-CREATE TABLE geocoder.building (
-    id geocoder.geocoder_id NOT NULL,
-    built_year geocoder.year,
-    is_active boolean NOT NULL,
-    geom public.geometry(MultiPolygon,4326),
-    external_id text NOT NULL,
-    external_source geocoder.data_source NOT NULL,
-    building_type geocoder.building_type,
-    neighborhood_id geocoder.geocoder_id
-);
-
-
-ALTER TABLE geocoder.building OWNER TO fundermaps;
-
---
--- Name: TABLE building; Type: COMMENT; Schema: geocoder; Owner: fundermaps
---
-
-COMMENT ON TABLE geocoder.building IS 'Contains all buildings in our own format.';
-
-
---
 -- Name: building_active; Type: VIEW; Schema: geocoder; Owner: fundermaps
 --
 
@@ -1859,11 +1835,12 @@ CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
     s.velocity,
     b.geom,
     'concrete'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (date_part('year'::text, (b.built_year)::date) > (1970)::double precision)
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1970)::double precision))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1876,11 +1853,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (10.5)::double precision) AND (gr.code <> 'hz'::text))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1893,11 +1871,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (10.5)::double precision) AND (gr.code = 'hz'::text))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (10.5)::double precision) AND (gr.code = 'hz'::text))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1910,11 +1889,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (10.5)::double precision) AND (gr.code = 'hz'::text))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (10.5)::double precision) AND (gr.code = 'hz'::text))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1927,11 +1907,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'wood_charger'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1944,11 +1925,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1961,11 +1943,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (10.5)::double precision))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (10.5)::double precision))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1978,11 +1961,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (date_part('year'::text, (b.built_year)::date) < (1700)::double precision)
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -1995,11 +1979,12 @@ UNION ALL
     s.velocity,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
-   FROM (((geocoder.building_active b
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (10.5)::double precision))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (10.5)::double precision))
   WITH NO DATA;
 
 
@@ -2034,12 +2019,13 @@ CREATE MATERIALIZED VIEW data.analysis_foundation_risk AS
     s.velocity,
     b.geom,
     'a'::data.foundation_risk_indication AS foundation_risk
-   FROM ((((geocoder.building_active b
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (date_part('year'::text, (b.built_year)::date) > (1970)::double precision)
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1970)::double precision))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -2053,12 +2039,13 @@ UNION ALL
     s.velocity,
     b.geom,
     'b'::data.foundation_risk_indication AS foundation_risk
-   FROM ((((geocoder.building_active b
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -2072,12 +2059,13 @@ UNION ALL
     s.velocity,
     b.geom,
     'c'::data.foundation_risk_indication AS foundation_risk
-   FROM ((((geocoder.building_active b
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -2091,12 +2079,13 @@ UNION ALL
     s.velocity,
     b.geom,
     'd'::data.foundation_risk_indication AS foundation_risk
-   FROM ((((geocoder.building_active b
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))))
 UNION ALL
  SELECT b.id,
     b.external_id,
@@ -2110,42 +2099,17 @@ UNION ALL
     s.velocity,
     b.geom,
     'e'::data.foundation_risk_indication AS foundation_risk
-   FROM ((((geocoder.building_active b
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1.0)::double precision))))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND ((z.elevation_roof - z.elevation_ground) >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND ((z.elevation_roof - z.elevation_ground) < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1.0)::double precision))))
   WITH NO DATA;
 
 
 ALTER TABLE data.analysis_foundation_risk OWNER TO fundermaps;
-
---
--- Name: address; Type: TABLE; Schema: geocoder; Owner: fundermaps
---
-
-CREATE TABLE geocoder.address (
-    id geocoder.geocoder_id NOT NULL,
-    building_number text NOT NULL,
-    postal_code text,
-    street text NOT NULL,
-    is_active boolean NOT NULL,
-    external_id text NOT NULL,
-    external_source geocoder.data_source NOT NULL,
-    city text NOT NULL,
-    building_id geocoder.geocoder_id
-);
-
-
-ALTER TABLE geocoder.address OWNER TO fundermaps;
-
---
--- Name: TABLE address; Type: COMMENT; Schema: geocoder; Owner: fundermaps
---
-
-COMMENT ON TABLE geocoder.address IS 'Contains all addresses in our own format, including a tsvector column to enable full text search.';
-
 
 --
 -- Name: neighborhood; Type: TABLE; Schema: geocoder; Owner: fundermaps
@@ -2473,28 +2437,51 @@ CREATE VIEW data.analysis_address AS
 ALTER TABLE data.analysis_address OWNER TO fundermaps;
 
 --
--- Name: district; Type: TABLE; Schema: geocoder; Owner: fundermaps
+-- Name: building_cluster; Type: VIEW; Schema: data; Owner: fundermaps
 --
 
-CREATE TABLE geocoder.district (
-    id geocoder.geocoder_id NOT NULL,
-    external_id text NOT NULL,
-    external_source geocoder.data_source NOT NULL,
-    municipality_id geocoder.geocoder_id NOT NULL,
-    name text NOT NULL,
-    water boolean NOT NULL,
-    geom public.geometry(MultiPolygon,4326) NOT NULL
+CREATE VIEW data.building_cluster AS
+ WITH RECURSIVE graph AS (
+         SELECT b.id,
+            array_agg(b2.id) AS connects
+           FROM (geocoder.building_active b
+             JOIN geocoder.building_active b2 ON ((public.st_intersects(b.geom, b2.geom) AND ((b.built_year)::date = (b2.built_year)::date) AND ((b.id)::text <> (b2.id)::text) AND ((abs((public.st_area((b.geom)::public.geography, true) - public.st_area((b2.geom)::public.geography, true))) / public.st_area((b.geom)::public.geography, true)) < (0.1)::double precision))))
+          WHERE (b.built_year IS NOT NULL)
+          GROUP BY b.id
+        ), final AS (
+         SELECT s1.id,
+            s1.id AS root,
+            s1.connects,
+            ARRAY[s1.id] AS ex
+           FROM graph s1
+        UNION
+         SELECT s1.id,
+            s2.root,
+            s1.connects,
+            (ARRAY[s1.id] || ARRAY[s2.id])
+           FROM (graph s1
+             JOIN final s2 ON (((ARRAY[s1.id] <@ s2.connects) AND (NOT (ARRAY[s1.id] <@ s2.ex)))))
+        )
+ SELECT f.root,
+    cluster.cluster
+   FROM final f,
+    LATERAL unnest(f.connects) cluster(cluster)
+  ORDER BY f.root;
+
+
+ALTER TABLE data.building_cluster OWNER TO fundermaps;
+
+--
+-- Name: building_ownership; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.building_ownership (
+    building_id geocoder.geocoder_id NOT NULL,
+    owner text NOT NULL
 );
 
 
-ALTER TABLE geocoder.district OWNER TO fundermaps;
-
---
--- Name: TABLE district; Type: COMMENT; Schema: geocoder; Owner: fundermaps
---
-
-COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.';
-
+ALTER TABLE data.building_ownership OWNER TO fundermaps;
 
 --
 -- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
@@ -2530,11 +2517,11 @@ COMMENT ON VIEW data.statistics_product_buildings_restored IS 'Contains statisti
 
 CREATE VIEW data.statistics_product_construction_years AS
  SELECT b.neighborhood_id,
-    date_part('year'::text, decade.decade)::integer AS year_from,
+    (date_part('year'::text, decade.decade))::integer AS year_from,
     count(decade.decade) AS count
    FROM geocoder.building b,
-    LATERAL date_trunc('decade'::text, b.built_year::timestamp with time zone) decade(decade)
-  WHERE b.built_year IS NOT NULL
+    LATERAL date_trunc('decade'::text, (b.built_year)::timestamp with time zone) decade(decade)
+  WHERE (b.built_year IS NOT NULL)
   GROUP BY b.neighborhood_id, decade.decade;
 
 
@@ -2605,12 +2592,12 @@ ALTER TABLE data.statistics_product_foundation_type OWNER TO fundermaps;
 
 CREATE TABLE report.incident (
     id text NOT NULL,
-    foundation_type report.foundation_type NOT NULL,
+    foundation_type report.foundation_type,
     chained_building boolean NOT NULL,
     owner boolean NOT NULL,
     foundation_recovery boolean NOT NULL,
     neightbor_recovery boolean NOT NULL,
-    foundation_damage_cause report.foundation_damage_cause NOT NULL,
+    foundation_damage_cause report.foundation_damage_cause,
     document_file text[],
     note text,
     contact text,
@@ -2672,10 +2659,10 @@ CREATE VIEW data.statistics_product_incidents AS
  SELECT b.neighborhood_id,
     year.year,
     count(i.id) AS count
-   FROM report.incident i
-     JOIN geocoder.address a ON i.address::text = a.id::text
-     JOIN geocoder.building b ON a.building_id::text = b.id::text,
-    LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+   FROM ((report.incident i
+     JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
+     JOIN geocoder.building b ON (((a.building_id)::text = (b.id)::text))),
+    LATERAL CAST((date_part('year'::text, i.create_date))::integer AS integer) year(year)
   GROUP BY b.neighborhood_id, year.year;
 
 
@@ -2696,10 +2683,10 @@ CREATE VIEW data.statistics_product_inquiries AS
  SELECT b.neighborhood_id,
     year.year,
     count(i.id) AS count
-   FROM report.inquiry_sample i
-     JOIN geocoder.address a ON i.address::text = a.id::text
-     JOIN geocoder.building b ON a.building_id::text = b.id::text,
-    LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
+   FROM ((report.inquiry_sample i
+     JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
+     JOIN geocoder.building b ON (((a.building_id)::text = (b.id)::text))),
+    LATERAL CAST((date_part('year'::text, i.create_date))::integer AS integer) year(year)
   GROUP BY b.neighborhood_id, year.year;
 
 
@@ -2711,6 +2698,18 @@ ALTER TABLE data.statistics_product_inquiries OWNER TO fundermaps;
 
 COMMENT ON VIEW data.statistics_product_inquiries IS 'Contains statistics on the amount of inquries for a given neighborhood. This can be filtered on neighborhood_id.';
 
+
+--
+-- Name: subsidence_hex; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.subsidence_hex (
+    velocity double precision NOT NULL,
+    geom public.geometry
+);
+
+
+ALTER TABLE data.subsidence_hex OWNER TO fundermaps;
 
 --
 -- Name: building_all; Type: VIEW; Schema: geocoder; Owner: fundermaps
@@ -2796,6 +2795,30 @@ ALTER TABLE geocoder.country OWNER TO fundermaps;
 --
 
 COMMENT ON TABLE geocoder.country IS 'Contains all countries in our own format.';
+
+
+--
+-- Name: district; Type: TABLE; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE TABLE geocoder.district (
+    id geocoder.geocoder_id NOT NULL,
+    external_id text NOT NULL,
+    external_source geocoder.data_source NOT NULL,
+    municipality_id geocoder.geocoder_id NOT NULL,
+    name text NOT NULL,
+    water boolean NOT NULL,
+    geom public.geometry(MultiPolygon,4326) NOT NULL
+);
+
+
+ALTER TABLE geocoder.district OWNER TO fundermaps;
+
+--
+-- Name: TABLE district; Type: COMMENT; Schema: geocoder; Owner: fundermaps
+--
+
+COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.';
 
 
 --
@@ -2932,6 +2955,20 @@ CREATE VIEW maplayer.building_hotspot AS
 ALTER TABLE maplayer.building_hotspot OWNER TO fundermaps;
 
 --
+-- Name: building_ownership; Type: VIEW; Schema: maplayer; Owner: fundermaps
+--
+
+CREATE VIEW maplayer.building_ownership AS
+ SELECT bo.building_id AS id,
+    bo.owner,
+    b.geom
+   FROM (data.building_ownership bo
+     JOIN geocoder.building_active b ON (((bo.building_id)::text = (b.id)::text)));
+
+
+ALTER TABLE maplayer.building_ownership OWNER TO fundermaps;
+
+--
 -- Name: bundle; Type: TABLE; Schema: maplayer; Owner: fundermaps
 --
 
@@ -2972,15 +3009,8 @@ ALTER TABLE maplayer.foundation_indicative OWNER TO fundermaps;
 CREATE VIEW maplayer.foundation_risk AS
  SELECT afr.id,
     afr.geom,
-    afr.foundation_risk,
-    afr.built_year,
-    afr.external_id,
-    addr.postal_code,
-    addr.street,
-    addr.building_number,
-    addr.city
-   FROM (data.analysis_foundation_risk afr
-     LEFT JOIN geocoder.address addr ON (((afr.id)::text = (addr.building_id)::text)))
+    afr.foundation_risk
+   FROM data.analysis_foundation_risk afr
   WHERE (afr.is_active = true);
 
 
@@ -3006,6 +3036,27 @@ CREATE VIEW maplayer.incident AS
 
 
 ALTER TABLE maplayer.incident OWNER TO fundermaps;
+
+--
+-- Name: incident_aggregate; Type: VIEW; Schema: maplayer; Owner: fundermaps
+--
+
+CREATE VIEW maplayer.incident_aggregate AS
+ SELECT COALESCE(mi.total, (0)::bigint) AS incidents,
+    m.geom
+   FROM (geocoder.municipality m
+     LEFT JOIN ( SELECT m_1.id,
+            count(m_1.id) AS total
+           FROM (((((report.incident i
+             JOIN geocoder.address a ON (((a.id)::text = (i.address)::text)))
+             JOIN geocoder.building_active ba ON (((ba.id)::text = (a.building_id)::text)))
+             JOIN geocoder.neighborhood n ON (((n.id)::text = (ba.neighborhood_id)::text)))
+             JOIN geocoder.district d ON (((d.id)::text = (n.district_id)::text)))
+             JOIN geocoder.municipality m_1 ON (((m_1.id)::text = (d.municipality_id)::text)))
+          GROUP BY m_1.id) mi ON (((mi.id)::text = (m.id)::text)));
+
+
+ALTER TABLE maplayer.incident_aggregate OWNER TO fundermaps;
 
 --
 -- Name: incident_aggregate_category; Type: VIEW; Schema: maplayer; Owner: fundermaps
@@ -3040,15 +3091,17 @@ ALTER TABLE maplayer.incident_aggregate_category OWNER TO fundermaps;
 CREATE VIEW maplayer.inquiry AS
  WITH inquiry_rank AS (
          SELECT ris.id,
+            i.id AS inquiry_id,
             i.type,
             b.geom,
-            row_number() OVER (PARTITION BY b.id ORDER BY COALESCE(i.update_date, i.create_date) DESC) AS rank
+            row_number() OVER (PARTITION BY b.id ORDER BY i.document_date DESC) AS rank
            FROM (((report.inquiry_sample ris
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
              JOIN geocoder.building_active b ON (((addr.building_id)::text = (b.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
         )
  SELECT ik.id,
+    ik.inquiry_id,
     ik.type,
     ik.geom
    FROM inquiry_rank ik
@@ -3064,16 +3117,18 @@ ALTER TABLE maplayer.inquiry OWNER TO fundermaps;
 CREATE VIEW maplayer.inquiry_sample_damage_cause AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
+            i.id AS inquiry_id,
             b.geom,
             ris.damage_cause,
             ris.foundation_type,
-            row_number() OVER (PARTITION BY b.id ORDER BY COALESCE(i.update_date, i.create_date) DESC) AS rank
+            row_number() OVER (PARTITION BY b.id ORDER BY i.document_date DESC) AS rank
            FROM (((report.inquiry_sample ris
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
              JOIN geocoder.building b ON (((addr.building_id)::text = (b.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
         )
  SELECT ik.id,
+    ik.inquiry_id,
     ik.geom,
     ik.damage_cause
    FROM inquiry_sample_rank ik
@@ -3089,6 +3144,7 @@ ALTER TABLE maplayer.inquiry_sample_damage_cause OWNER TO fundermaps;
 CREATE VIEW maplayer.inquiry_sample_enforcement_term AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
+            i.id AS inquiry_id,
             b.geom,
             date_part('years'::text, age((
                 CASE ris.enforcement_term
@@ -3104,7 +3160,7 @@ CREATE VIEW maplayer.inquiry_sample_enforcement_term AS
                     WHEN 'term40'::report.enforcement_term THEN (i.document_date + '40 years'::interval)
                     ELSE NULL::timestamp without time zone
                 END)::timestamp with time zone, CURRENT_TIMESTAMP)) AS enforcement_term,
-            row_number() OVER (PARTITION BY b.id ORDER BY COALESCE(i.update_date, i.create_date) DESC) AS rank
+            row_number() OVER (PARTITION BY b.id ORDER BY i.document_date DESC) AS rank
            FROM (((report.inquiry_sample ris
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
              JOIN geocoder.building b ON (((addr.building_id)::text = (b.id)::text)))
@@ -3112,6 +3168,7 @@ CREATE VIEW maplayer.inquiry_sample_enforcement_term AS
           WHERE (ris.enforcement_term IS NOT NULL)
         )
  SELECT ik.id,
+    ik.inquiry_id,
     ik.geom,
     ik.enforcement_term
    FROM inquiry_sample_rank ik
@@ -3127,16 +3184,19 @@ ALTER TABLE maplayer.inquiry_sample_enforcement_term OWNER TO fundermaps;
 CREATE VIEW maplayer.inquiry_sample_foundation_type AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
+            i.id AS inquiry_id,
             b.geom,
             ris.foundation_type,
-            row_number() OVER (PARTITION BY b.id ORDER BY COALESCE(i.update_date, i.create_date) DESC) AS rank
+            row_number() OVER (PARTITION BY b.id ORDER BY i.document_date DESC) AS rank
            FROM (((report.inquiry_sample ris
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
              JOIN geocoder.building b ON (((addr.building_id)::text = (b.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE (ris.foundation_type IS NOT NULL)
+          WHERE ((ris.foundation_type IS NOT NULL) AND (NOT ((addr.id)::text IN ( SELECT recovery_sample.address
+                   FROM report.recovery_sample))))
         )
  SELECT ik.id,
+    ik.inquiry_id,
     ik.geom,
     ik.foundation_type
    FROM inquiry_sample_rank ik
@@ -3152,9 +3212,10 @@ ALTER TABLE maplayer.inquiry_sample_foundation_type OWNER TO fundermaps;
 CREATE VIEW maplayer.inquiry_sample_quality AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
+            i.id AS inquiry_id,
             b.geom,
             ris.overall_quality,
-            row_number() OVER (PARTITION BY b.id ORDER BY COALESCE(i.update_date, i.create_date) DESC) AS rank
+            row_number() OVER (PARTITION BY b.id ORDER BY i.document_date DESC) AS rank
            FROM (((report.inquiry_sample ris
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
              JOIN geocoder.building b ON (((addr.building_id)::text = (b.id)::text)))
@@ -3162,6 +3223,7 @@ CREATE VIEW maplayer.inquiry_sample_quality AS
           WHERE (ris.overall_quality IS NOT NULL)
         )
  SELECT ik.id,
+    ik.inquiry_id,
     ik.geom,
     ik.overall_quality
    FROM inquiry_sample_rank ik
@@ -3186,6 +3248,89 @@ CREATE TABLE maplayer.layer (
 ALTER TABLE maplayer.layer OWNER TO fundermaps;
 
 --
+-- Name: recovery; Type: TABLE; Schema: report; Owner: fundermaps
+--
+
+CREATE TABLE report.recovery (
+    id integer NOT NULL,
+    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_date timestamp with time zone,
+    delete_date timestamp with time zone,
+    note text,
+    attribution integer NOT NULL,
+    access_policy application.access_policy DEFAULT 'private'::application.access_policy NOT NULL,
+    type report.recovery_document_type DEFAULT 'unknown'::report.recovery_document_type NOT NULL,
+    document_date date NOT NULL,
+    document_file text NOT NULL,
+    audit_status report.audit_status DEFAULT 'todo'::report.audit_status NOT NULL,
+    document_name text NOT NULL
+);
+
+
+ALTER TABLE report.recovery OWNER TO fundermaps;
+
+--
+-- Name: TABLE recovery; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON TABLE report.recovery IS 'Contains recovery operations.';
+
+
+--
+-- Name: COLUMN recovery.create_date; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.create_date IS 'Timestamp of record creation, set by insert';
+
+
+--
+-- Name: COLUMN recovery.update_date; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.update_date IS 'Timestamp of last record update, automatically updated on record modification';
+
+
+--
+-- Name: COLUMN recovery.delete_date; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.delete_date IS 'Timestamp of soft delete';
+
+
+--
+-- Name: COLUMN recovery.document_name; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.document_name IS 'User provided document name';
+
+
+--
+-- Name: recovery_sample_type; Type: VIEW; Schema: maplayer; Owner: fundermaps
+--
+
+CREATE VIEW maplayer.recovery_sample_type AS
+ WITH recovery_sample_rank AS (
+         SELECT rs.id,
+            r.id AS recovery_id,
+            b.geom,
+            rs.type,
+            row_number() OVER (PARTITION BY b.id ORDER BY r.document_date DESC) AS rank
+           FROM (((report.recovery_sample rs
+             JOIN geocoder.address addr ON (((rs.address)::text = (addr.id)::text)))
+             JOIN geocoder.building b ON (((addr.building_id)::text = (b.id)::text)))
+             JOIN report.recovery r ON ((rs.recovery = r.id)))
+        )
+ SELECT rk.id,
+    rk.recovery_id,
+    rk.geom,
+    rk.type
+   FROM recovery_sample_rank rk
+  WHERE (rk.rank = 1);
+
+
+ALTER TABLE maplayer.recovery_sample_type OWNER TO fundermaps;
+
+--
 -- Name: subsidence; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
@@ -3198,6 +3343,18 @@ CREATE VIEW maplayer.subsidence AS
 
 
 ALTER TABLE maplayer.subsidence OWNER TO fundermaps;
+
+--
+-- Name: subsidence_hex; Type: VIEW; Schema: maplayer; Owner: fundermaps
+--
+
+CREATE VIEW maplayer.subsidence_hex AS
+ SELECT sh.velocity,
+    sh.geom
+   FROM data.subsidence_hex sh;
+
+
+ALTER TABLE maplayer.subsidence_hex OWNER TO fundermaps;
 
 --
 -- Name: incident_id_seq; Type: SEQUENCE; Schema: report; Owner: fundermaps
@@ -3406,101 +3563,6 @@ ALTER SEQUENCE report.project_sample_id_seq OWNED BY report.project_sample.id;
 
 
 --
--- Name: project_sample_inquiry_sample; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.project_sample_inquiry_sample (
-    project_sample_id integer,
-    inquiry_sample_id integer
-);
-
-
-ALTER TABLE report.project_sample_inquiry_sample OWNER TO fundermaps;
-
---
--- Name: TABLE project_sample_inquiry_sample; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.project_sample_inquiry_sample IS 'Linking table between report.project_sample and report.inquiry_sample.';
-
-
---
--- Name: project_sample_recovery_sample; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.project_sample_recovery_sample (
-    project_sample_id integer,
-    recovery_sample_id integer
-);
-
-
-ALTER TABLE report.project_sample_recovery_sample OWNER TO fundermaps;
-
---
--- Name: TABLE project_sample_recovery_sample; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.project_sample_recovery_sample IS 'Linking table between report.project_sample and report.recovery_sample.';
-
-
---
--- Name: recovery; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.recovery (
-    id integer NOT NULL,
-    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date timestamp with time zone,
-    delete_date timestamp with time zone,
-    note text,
-    attribution integer NOT NULL,
-    access_policy application.access_policy DEFAULT 'private'::application.access_policy NOT NULL,
-    type report.recovery_document_type DEFAULT 'unknown'::report.recovery_document_type NOT NULL,
-    document_date date NOT NULL,
-    document_file text NOT NULL,
-    audit_status report.audit_status DEFAULT 'todo'::report.audit_status NOT NULL,
-    document_name text NOT NULL
-);
-
-
-ALTER TABLE report.recovery OWNER TO fundermaps;
-
---
--- Name: TABLE recovery; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.recovery IS 'Contains recovery operations.';
-
-
---
--- Name: COLUMN recovery.create_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.create_date IS 'Timestamp of record creation, set by insert';
-
-
---
--- Name: COLUMN recovery.update_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.update_date IS 'Timestamp of last record update, automatically updated on record modification';
-
-
---
--- Name: COLUMN recovery.delete_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.delete_date IS 'Timestamp of soft delete';
-
-
---
--- Name: COLUMN recovery.document_name; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.document_name IS 'User provided document name';
-
-
---
 -- Name: recovery_id_seq; Type: SEQUENCE; Schema: report; Owner: fundermaps
 --
 
@@ -3542,25 +3604,6 @@ ALTER TABLE report.recovery_sample_id_seq OWNER TO fundermaps;
 --
 
 ALTER SEQUENCE report.recovery_sample_id_seq OWNED BY report.recovery_sample.id;
-
-
---
--- Name: recovery_sample_inquiry_sample; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.recovery_sample_inquiry_sample (
-    recovery_sample_id integer,
-    inquiry_sample_id integer
-);
-
-
-ALTER TABLE report.recovery_sample_inquiry_sample OWNER TO fundermaps;
-
---
--- Name: TABLE recovery_sample_inquiry_sample; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.recovery_sample_inquiry_sample IS 'Linking table between report.recovery_sample and report.inquiry_sample.';
 
 
 --
@@ -3682,6 +3725,14 @@ ALTER TABLE ONLY data.building_geographic_region
 
 ALTER TABLE ONLY data.building_groundwater_level
     ADD CONSTRAINT building_groundwater_level_pkey PRIMARY KEY (building_id);
+
+
+--
+-- Name: building_ownership building_ownership_pkey; Type: CONSTRAINT; Schema: data; Owner: fundermaps
+--
+
+ALTER TABLE ONLY data.building_ownership
+    ADD CONSTRAINT building_ownership_pkey PRIMARY KEY (building_id);
 
 
 --
@@ -3899,10 +3950,31 @@ CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk US
 
 
 --
+-- Name: building_type_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX building_type_id_idx ON data.building_type USING btree (id);
+
+
+--
 -- Name: premise_z_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
 CREATE INDEX premise_z_id_idx ON data.premise_z USING btree (building_id);
+
+
+--
+-- Name: subsidence_hex_geom_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX subsidence_hex_geom_idx ON data.subsidence_hex USING gist (geom);
+
+
+--
+-- Name: subsidence_hex_velocity_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX subsidence_hex_velocity_idx ON data.subsidence_hex USING btree (velocity);
 
 
 --
@@ -4301,6 +4373,14 @@ ALTER TABLE ONLY data.building_groundwater_level
 
 
 --
+-- Name: building_ownership building_ownership_building_fkey; Type: FK CONSTRAINT; Schema: data; Owner: fundermaps
+--
+
+ALTER TABLE ONLY data.building_ownership
+    ADD CONSTRAINT building_ownership_building_fkey FOREIGN KEY (building_id) REFERENCES geocoder.building(id);
+
+
+--
 -- Name: subsidence subsidence_building_fk; Type: FK CONSTRAINT; Schema: data; Owner: fundermaps
 --
 
@@ -4429,43 +4509,11 @@ ALTER TABLE ONLY report.project_sample
 
 
 --
--- Name: project_sample_inquiry_sample project_sample_inquiry_sample_inquiry_sample_id_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample_inquiry_sample
-    ADD CONSTRAINT project_sample_inquiry_sample_inquiry_sample_id_fkey FOREIGN KEY (inquiry_sample_id) REFERENCES report.inquiry_sample(id) ON UPDATE RESTRICT ON DELETE CASCADE;
-
-
---
--- Name: project_sample_inquiry_sample project_sample_inquiry_sample_project_sample_id_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample_inquiry_sample
-    ADD CONSTRAINT project_sample_inquiry_sample_project_sample_id_fkey FOREIGN KEY (project_sample_id) REFERENCES report.project_sample(id) ON UPDATE RESTRICT ON DELETE CASCADE;
-
-
---
 -- Name: project_sample project_sample_project_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
 --
 
 ALTER TABLE ONLY report.project_sample
     ADD CONSTRAINT project_sample_project_fkey FOREIGN KEY (project) REFERENCES report.project(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: project_sample_recovery_sample project_sample_recovery_sample_project_sample_id_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample_recovery_sample
-    ADD CONSTRAINT project_sample_recovery_sample_project_sample_id_fkey FOREIGN KEY (project_sample_id) REFERENCES report.project_sample(id) ON UPDATE RESTRICT ON DELETE CASCADE;
-
-
---
--- Name: project_sample_recovery_sample project_sample_recovery_sample_recovery_sample_id_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample_recovery_sample
-    ADD CONSTRAINT project_sample_recovery_sample_recovery_sample_id_fkey FOREIGN KEY (recovery_sample_id) REFERENCES report.recovery_sample(id) ON UPDATE RESTRICT ON DELETE CASCADE;
 
 
 --
@@ -4501,24 +4549,1137 @@ ALTER TABLE ONLY report.recovery_sample
 
 
 --
--- Name: recovery_sample_inquiry_sample recovery_sample_inquiry_sample_inquiry_sample_id_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.recovery_sample_inquiry_sample
-    ADD CONSTRAINT recovery_sample_inquiry_sample_inquiry_sample_id_fkey FOREIGN KEY (inquiry_sample_id) REFERENCES report.inquiry_sample(id) ON UPDATE RESTRICT ON DELETE CASCADE;
-
-
---
--- Name: recovery_sample_inquiry_sample recovery_sample_inquiry_sample_recovery_sample_id_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.recovery_sample_inquiry_sample
-    ADD CONSTRAINT recovery_sample_inquiry_sample_recovery_sample_id_fkey FOREIGN KEY (recovery_sample_id) REFERENCES report.recovery_sample(id) ON UPDATE RESTRICT ON DELETE CASCADE;
-
-
---
 -- Name: recovery_sample recovery_sample_recovery_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
 --
 
 ALTER TABLE ONLY report.recovery_sample
     ADD CONSTRAINT recovery_sample_recovery_fkey FOREIGN KEY (recovery) REFERENCES report.recovery(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: SCHEMA application; Type: ACL; Schema: -; Owner: fundermaps
+--
+
+GRANT USAGE ON SCHEMA application TO fundermaps_webapp;
+GRANT USAGE ON SCHEMA application TO fundermaps_webservice;
+GRANT USAGE ON SCHEMA application TO fundermaps_portal;
+GRANT USAGE ON SCHEMA application TO fundermaps_batch;
+
+
+--
+-- Name: SCHEMA data; Type: ACL; Schema: -; Owner: fundermaps
+--
+
+GRANT USAGE ON SCHEMA data TO fundermaps_webapp;
+GRANT USAGE ON SCHEMA data TO fundermaps_webservice;
+GRANT USAGE ON SCHEMA data TO fundermaps_portal;
+GRANT USAGE ON SCHEMA data TO fundermaps_batch;
+
+
+--
+-- Name: SCHEMA geocoder; Type: ACL; Schema: -; Owner: fundermaps
+--
+
+GRANT USAGE ON SCHEMA geocoder TO fundermaps_webapp;
+GRANT USAGE ON SCHEMA geocoder TO fundermaps_webservice;
+GRANT USAGE ON SCHEMA geocoder TO fundermaps_portal;
+GRANT USAGE ON SCHEMA geocoder TO fundermaps_batch;
+
+
+--
+-- Name: SCHEMA maplayer; Type: ACL; Schema: -; Owner: fundermaps
+--
+
+GRANT USAGE ON SCHEMA maplayer TO fundermaps_webapp;
+GRANT USAGE ON SCHEMA maplayer TO fundermaps_webservice;
+GRANT USAGE ON SCHEMA maplayer TO fundermaps_portal;
+GRANT USAGE ON SCHEMA maplayer TO fundermaps_batch;
+
+
+--
+-- Name: SCHEMA report; Type: ACL; Schema: -; Owner: fundermaps
+--
+
+GRANT USAGE ON SCHEMA report TO fundermaps_webapp;
+GRANT USAGE ON SCHEMA report TO fundermaps_webservice;
+GRANT USAGE ON SCHEMA report TO fundermaps_portal;
+GRANT USAGE ON SCHEMA report TO fundermaps_batch;
+
+
+--
+-- Name: TYPE access_policy; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.access_policy TO fundermaps_webapp;
+GRANT ALL ON TYPE application.access_policy TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE email; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.email TO fundermaps_webapp;
+GRANT ALL ON TYPE application.email TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE organization_id; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.organization_id TO fundermaps_webapp;
+GRANT ALL ON TYPE application.organization_id TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE organization_role; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.organization_role TO fundermaps_webapp;
+GRANT ALL ON TYPE application.organization_role TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE phone; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.phone TO fundermaps_webapp;
+GRANT ALL ON TYPE application.phone TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE role; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.role TO fundermaps_webapp;
+GRANT ALL ON TYPE application.role TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE user_id; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE application.user_id TO fundermaps_webapp;
+GRANT ALL ON TYPE application.user_id TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE foundation_category; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE data.foundation_category TO fundermaps_webapp;
+GRANT ALL ON TYPE data.foundation_category TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE foundation_risk_indication; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE data.foundation_risk_indication TO fundermaps_webapp;
+GRANT ALL ON TYPE data.foundation_risk_indication TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE reliability; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE data.reliability TO fundermaps_webapp;
+GRANT ALL ON TYPE data.reliability TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE building_type; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE geocoder.building_type TO fundermaps_webapp;
+GRANT ALL ON TYPE geocoder.building_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE data_source; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE geocoder.data_source TO fundermaps_webapp;
+GRANT ALL ON TYPE geocoder.data_source TO fundermaps_webservice;
+
+
+--
+-- Name: FUNCTION geocoder_generate_id(); Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION geocoder.geocoder_generate_id() TO fundermaps_webapp;
+GRANT ALL ON FUNCTION geocoder.geocoder_generate_id() TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE geocoder_id; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE geocoder.geocoder_id TO fundermaps_webapp;
+GRANT ALL ON TYPE geocoder.geocoder_id TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE year; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE geocoder.year TO fundermaps_webapp;
+GRANT ALL ON TYPE geocoder.year TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE audit_status; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.audit_status TO fundermaps_webapp;
+GRANT ALL ON TYPE report.audit_status TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE construction_pile; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.construction_pile TO fundermaps_webapp;
+GRANT ALL ON TYPE report.construction_pile TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE construction_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.construction_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.construction_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE crack_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.crack_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.crack_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE diameter; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.diameter TO fundermaps_webapp;
+GRANT ALL ON TYPE report.diameter TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE enforcement_term; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.enforcement_term TO fundermaps_webapp;
+GRANT ALL ON TYPE report.enforcement_term TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE environment_damage_characteristics; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.environment_damage_characteristics TO fundermaps_webapp;
+GRANT ALL ON TYPE report.environment_damage_characteristics TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE facade; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.facade TO fundermaps_webapp;
+GRANT ALL ON TYPE report.facade TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE foundation_damage_cause; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.foundation_damage_cause TO fundermaps_webapp;
+GRANT ALL ON TYPE report.foundation_damage_cause TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE foundation_damage_characteristics; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.foundation_damage_characteristics TO fundermaps_webapp;
+GRANT ALL ON TYPE report.foundation_damage_characteristics TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE foundation_quality; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.foundation_quality TO fundermaps_webapp;
+GRANT ALL ON TYPE report.foundation_quality TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE foundation_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.foundation_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.foundation_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE height; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.height TO fundermaps_webapp;
+GRANT ALL ON TYPE report.height TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE incident_question_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.incident_question_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.incident_question_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE inquiry_status; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.inquiry_status TO fundermaps_webapp;
+GRANT ALL ON TYPE report.inquiry_status TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE inquiry_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.inquiry_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.inquiry_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE length; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.length TO fundermaps_webapp;
+GRANT ALL ON TYPE report.length TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE pile_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.pile_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.pile_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE project_sample_status; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.project_sample_status TO fundermaps_webapp;
+GRANT ALL ON TYPE report.project_sample_status TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE quality; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.quality TO fundermaps_webapp;
+GRANT ALL ON TYPE report.quality TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE recovery_document_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.recovery_document_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.recovery_document_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE recovery_status; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.recovery_status TO fundermaps_webapp;
+GRANT ALL ON TYPE report.recovery_status TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE recovery_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.recovery_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.recovery_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE rotation_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.rotation_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.rotation_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE size; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.size TO fundermaps_webapp;
+GRANT ALL ON TYPE report.size TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE substructure; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.substructure TO fundermaps_webapp;
+GRANT ALL ON TYPE report.substructure TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE wood_encroachement; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.wood_encroachement TO fundermaps_webapp;
+GRANT ALL ON TYPE report.wood_encroachement TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE wood_quality; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.wood_quality TO fundermaps_webapp;
+GRANT ALL ON TYPE report.wood_quality TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE wood_type; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.wood_type TO fundermaps_webapp;
+GRANT ALL ON TYPE report.wood_type TO fundermaps_webservice;
+
+
+--
+-- Name: TYPE year; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON TYPE report.year TO fundermaps_webapp;
+GRANT ALL ON TYPE report.year TO fundermaps_webservice;
+
+
+--
+-- Name: FUNCTION create_geofence(json); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_geofence(json) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION create_organization(organization_id application.organization_id, email text, password_hash text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_organization(organization_id application.organization_id, email text, password_hash text) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION create_organization_proposal(organization_name text, email text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_organization_proposal(organization_name text, email text) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION create_organization_user(organization_id application.organization_id, email text, password_hash text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_organization_user(organization_id application.organization_id, email text, password_hash text) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION create_organization_user(organization_id application.organization_id, email text, password_hash text, organization_role application.organization_role); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_organization_user(organization_id application.organization_id, email text, password_hash text, organization_role application.organization_role) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION create_user(email text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_user(email text) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION create_user(email text, password_hash text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.create_user(email text, password_hash text) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION is_geometry_in_fence(user_id uuid, geom public.geometry); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_portal;
+GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_batch;
+
+
+--
+-- Name: FUNCTION "normalize"(text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_portal;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_batch;
+
+
+--
+-- Name: FUNCTION organization_email_free(email text); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.organization_email_free(email text) TO fundermaps_webapp;
+
+
+--
+-- Name: FUNCTION get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type); Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) TO fundermaps_portal;
+
+
+--
+-- Name: FUNCTION fir_generate_id(client_id integer); Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION report.fir_generate_id(client_id integer) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION report.fir_generate_id(client_id integer) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION report.fir_generate_id(client_id integer) TO fundermaps_portal;
+
+
+--
+-- Name: FUNCTION last_record_update(); Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION report.last_record_update() TO fundermaps_webapp;
+GRANT ALL ON FUNCTION report.last_record_update() TO fundermaps_webservice;
+GRANT ALL ON FUNCTION report.last_record_update() TO fundermaps_portal;
+
+
+--
+-- Name: TABLE attribution; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.attribution TO fundermaps_webapp;
+GRANT SELECT ON TABLE application.attribution TO fundermaps_webservice;
+GRANT SELECT ON TABLE application.attribution TO fundermaps_batch;
+GRANT SELECT ON TABLE application.attribution TO fundermaps_portal;
+
+
+--
+-- Name: SEQUENCE attribution_id_seq; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE application.attribution_id_seq TO fundermaps_webapp;
+GRANT ALL ON SEQUENCE application.attribution_id_seq TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE contact; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,TRIGGER,UPDATE ON TABLE application.contact TO fundermaps_webapp;
+GRANT SELECT ON TABLE application.contact TO fundermaps_webservice;
+GRANT SELECT,INSERT,REFERENCES,TRIGGER,UPDATE ON TABLE application.contact TO fundermaps_portal;
+GRANT SELECT ON TABLE application.contact TO fundermaps_batch;
+
+
+--
+-- Name: TABLE organization; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.organization TO fundermaps_webapp;
+GRANT SELECT ON TABLE application.organization TO fundermaps_webservice;
+GRANT SELECT ON TABLE application.organization TO fundermaps_batch;
+GRANT SELECT ON TABLE application.organization TO fundermaps_portal;
+
+
+--
+-- Name: TABLE organization_proposal; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.organization_proposal TO fundermaps_webapp;
+GRANT SELECT ON TABLE application.organization_proposal TO fundermaps_webservice;
+GRANT SELECT ON TABLE application.organization_proposal TO fundermaps_batch;
+GRANT SELECT ON TABLE application.organization_proposal TO fundermaps_portal;
+
+
+--
+-- Name: TABLE organization_user; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.organization_user TO fundermaps_webapp;
+GRANT SELECT ON TABLE application.organization_user TO fundermaps_webservice;
+GRANT SELECT ON TABLE application.organization_user TO fundermaps_batch;
+GRANT SELECT ON TABLE application.organization_user TO fundermaps_portal;
+
+
+--
+-- Name: TABLE product_telemetry; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.product_telemetry TO fundermaps_webapp;
+GRANT SELECT,INSERT,UPDATE ON TABLE application.product_telemetry TO fundermaps_webservice;
+GRANT SELECT ON TABLE application.product_telemetry TO fundermaps_batch;
+GRANT SELECT ON TABLE application.product_telemetry TO fundermaps_portal;
+
+
+--
+-- Name: TABLE "user"; Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application."user" TO fundermaps_webapp;
+GRANT SELECT,UPDATE ON TABLE application."user" TO fundermaps_webservice;
+GRANT SELECT ON TABLE application."user" TO fundermaps_batch;
+GRANT SELECT ON TABLE application."user" TO fundermaps_portal;
+
+
+--
+-- Name: TABLE building_geographic_region; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_geographic_region TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_geographic_region TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.building_geographic_region TO fundermaps_portal;
+
+
+--
+-- Name: TABLE address; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.address TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.address TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.address TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.address TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_type; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_type TO fundermaps_portal;
+GRANT SELECT ON TABLE data.building_type TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_type TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE premise_z; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.premise_z TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.premise_z TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.premise_z TO fundermaps_portal;
+
+
+--
+-- Name: TABLE premise_z_normalized; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.premise_z_normalized TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.premise_z_normalized TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.premise_z_normalized TO fundermaps_portal;
+
+
+--
+-- Name: TABLE subsidence; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.subsidence TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.subsidence TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.subsidence TO fundermaps_portal;
+
+
+--
+-- Name: TABLE building_active; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_active TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_active TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_active TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_active TO fundermaps_batch;
+
+
+--
+-- Name: TABLE analysis_foundation_indicative; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_portal;
+GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE building_groundwater_level; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_portal;
+
+
+--
+-- Name: TABLE analysis_foundation_risk; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_portal;
+GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE neighborhood; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.neighborhood TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.neighborhood TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.neighborhood TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.neighborhood TO fundermaps_batch;
+
+
+--
+-- Name: TABLE inquiry; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.inquiry TO fundermaps_webapp;
+
+
+--
+-- Name: TABLE inquiry_sample; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.inquiry_sample TO fundermaps_webapp;
+GRANT SELECT ON TABLE report.inquiry_sample TO fundermaps_portal;
+GRANT SELECT ON TABLE report.inquiry_sample TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE recovery_sample; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.recovery_sample TO fundermaps_webapp;
+
+
+--
+-- Name: TABLE analysis_address; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.analysis_address TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.analysis_address TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.analysis_address TO fundermaps_portal;
+
+
+--
+-- Name: TABLE building_cluster; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_cluster TO fundermaps_portal;
+GRANT SELECT ON TABLE data.building_cluster TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_cluster TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE building_ownership; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_ownership TO fundermaps_portal;
+GRANT SELECT ON TABLE data.building_ownership TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_ownership TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE statistics_product_buildings_restored; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_portal;
+
+
+--
+-- Name: TABLE statistics_product_construction_years; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_portal;
+
+
+--
+-- Name: TABLE statistics_product_data_collected; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_portal;
+
+
+--
+-- Name: TABLE statistics_product_foundation_risk; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_foundation_risk TO fundermaps_portal;
+GRANT SELECT ON TABLE data.statistics_product_foundation_risk TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_foundation_risk TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE statistics_product_foundation_type; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_foundation_type TO fundermaps_portal;
+GRANT SELECT ON TABLE data.statistics_product_foundation_type TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_foundation_type TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE incident; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.incident TO fundermaps_webapp;
+GRANT SELECT ON TABLE report.incident TO fundermaps_webservice;
+GRANT SELECT,INSERT,REFERENCES,TRIGGER,UPDATE ON TABLE report.incident TO fundermaps_portal;
+
+
+--
+-- Name: TABLE statistics_product_incidents; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_incidents TO fundermaps_portal;
+GRANT SELECT ON TABLE data.statistics_product_incidents TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_incidents TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE statistics_product_inquiries; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.statistics_product_inquiries TO fundermaps_portal;
+GRANT SELECT ON TABLE data.statistics_product_inquiries TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.statistics_product_inquiries TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE subsidence_hex; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.subsidence_hex TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.subsidence_hex TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.subsidence_hex TO fundermaps_portal;
+
+
+--
+-- Name: TABLE building_all; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_all TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_all TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_all TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_all TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_encoded_geom; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_encoded_geom TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_encoded_geom TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_encoded_geom TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_encoded_geom TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_inactive; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_inactive TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_inactive TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_inactive TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.building_inactive TO fundermaps_batch;
+
+
+--
+-- Name: TABLE country; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.country TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.country TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.country TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.country TO fundermaps_batch;
+
+
+--
+-- Name: TABLE district; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.district TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.district TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.district TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.district TO fundermaps_batch;
+
+
+--
+-- Name: TABLE municipality; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.municipality TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.municipality TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.municipality TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.municipality TO fundermaps_batch;
+
+
+--
+-- Name: TABLE state; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.state TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.state TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.state TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.state TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.building TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_built_year; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.building_built_year TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_height; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.building_height TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_hotspot; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.building_hotspot TO fundermaps_batch;
+
+
+--
+-- Name: TABLE building_ownership; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.building_ownership TO fundermaps_batch;
+
+
+--
+-- Name: TABLE bundle; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_batch;
+
+
+--
+-- Name: TABLE foundation_indicative; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.foundation_indicative TO fundermaps_batch;
+
+
+--
+-- Name: TABLE foundation_risk; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.foundation_risk TO fundermaps_batch;
+
+
+--
+-- Name: TABLE incident; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.incident TO fundermaps_batch;
+
+
+--
+-- Name: TABLE incident_aggregate; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.incident_aggregate TO fundermaps_batch;
+
+
+--
+-- Name: TABLE incident_aggregate_category; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.incident_aggregate_category TO fundermaps_batch;
+
+
+--
+-- Name: TABLE inquiry; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.inquiry TO fundermaps_batch;
+
+
+--
+-- Name: TABLE inquiry_sample_damage_cause; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.inquiry_sample_damage_cause TO fundermaps_batch;
+
+
+--
+-- Name: TABLE inquiry_sample_enforcement_term; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.inquiry_sample_enforcement_term TO fundermaps_batch;
+
+
+--
+-- Name: TABLE inquiry_sample_foundation_type; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.inquiry_sample_foundation_type TO fundermaps_batch;
+
+
+--
+-- Name: TABLE inquiry_sample_quality; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.inquiry_sample_quality TO fundermaps_batch;
+
+
+--
+-- Name: TABLE layer; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.layer TO fundermaps_batch;
+
+
+--
+-- Name: TABLE recovery; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.recovery TO fundermaps_webapp;
+
+
+--
+-- Name: TABLE recovery_sample_type; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.recovery_sample_type TO fundermaps_batch;
+
+
+--
+-- Name: TABLE subsidence; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.subsidence TO fundermaps_batch;
+
+
+--
+-- Name: TABLE subsidence_hex; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.subsidence_hex TO fundermaps_batch;
+
+
+--
+-- Name: SEQUENCE incident_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.incident_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.incident_id_seq TO fundermaps_webservice;
+GRANT ALL ON SEQUENCE report.incident_id_seq TO fundermaps_portal;
+
+
+--
+-- Name: SEQUENCE inquiry_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.inquiry_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.inquiry_id_seq TO fundermaps_webservice;
+
+
+--
+-- Name: SEQUENCE inquiry_sample_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webservice;
+GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_portal;
+
+
+--
+-- Name: TABLE project; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.project TO fundermaps_webapp;
+
+
+--
+-- Name: SEQUENCE project_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.project_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.project_id_seq TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE project_sample; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.project_sample TO fundermaps_webapp;
+
+
+--
+-- Name: SEQUENCE project_sample_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.project_sample_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.project_sample_id_seq TO fundermaps_webservice;
+
+
+--
+-- Name: SEQUENCE recovery_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.recovery_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.recovery_id_seq TO fundermaps_webservice;
+
+
+--
+-- Name: SEQUENCE recovery_sample_id_seq; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT ALL ON SEQUENCE report.recovery_sample_id_seq TO fundermaps_webapp;
+GRANT SELECT,USAGE ON SEQUENCE report.recovery_sample_id_seq TO fundermaps_webservice;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
