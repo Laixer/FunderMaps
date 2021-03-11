@@ -2497,25 +2497,6 @@ COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.
 
 
 --
--- Name: groundwater_level; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.groundwater_level (
-    level double precision,
-    geom public.geometry(Polygon,4326)
-);
-
-
-ALTER TABLE data.groundwater_level OWNER TO fundermaps;
-
---
--- Name: TABLE groundwater_level; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON TABLE data.groundwater_level IS 'Groundwater levels from PDOK.';
-
-
---
 -- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
 --
 
@@ -3915,20 +3896,6 @@ CREATE INDEX analysis_foundation_indicative_id_idx ON data.analysis_foundation_i
 --
 
 CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk USING btree (id);
-
-
---
--- Name: groundwater_level_geom_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX groundwater_level_geom_idx ON data.groundwater_level USING gist (geom);
-
-
---
--- Name: groundwater_level_level_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX groundwater_level_level_idx ON data.groundwater_level USING btree (level);
 
 
 --
