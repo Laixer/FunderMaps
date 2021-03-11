@@ -15,6 +15,48 @@ SET row_security = off;
 
 
 --
+-- Name: fundermaps; Type: DATABASE; Schema: -; Owner: fundermaps
+--
+
+DROP DATABASE IF EXISTS fundermaps;
+
+
+--
+-- Name: fundermaps_webservice; Type: ROLE; Schema: -; Owner: postgres
+--
+
+DROP ROLE IF EXISTS fundermaps_webservice;
+
+
+--
+-- Name: fundermaps_webapp; Type: ROLE; Schema: -; Owner: postgres
+--
+
+DROP ROLE IF EXISTS fundermaps_webapp;
+
+
+--
+-- Name: fundermaps_portal; Type: ROLE; Schema: -; Owner: postgres
+--
+
+DROP ROLE IF EXISTS fundermaps_portal;
+
+
+--
+-- Name: fundermaps_batch; Type: ROLE; Schema: -; Owner: postgres
+--
+
+DROP ROLE IF EXISTS fundermaps_batch;
+
+
+--
+-- Name: fundermaps; Type: ROLE; Schema: -; Owner: postgres
+--
+
+DROP ROLE IF EXISTS fundermaps;
+
+
+--
 -- Name: fundermaps; Type: ROLE; Schema: -; Owner: postgres
 --
 

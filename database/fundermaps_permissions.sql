@@ -152,14 +152,6 @@ GRANT ALL ON TYPE data.foundation_risk_indication TO fundermaps_webservice;
 
 
 --
--- Name: TYPE product; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT ALL ON TYPE data.product TO fundermaps_webapp;
-GRANT ALL ON TYPE data.product TO fundermaps_webservice;
-
-
---
 -- Name: TYPE reliability; Type: ACL; Schema: data; Owner: fundermaps
 --
 
