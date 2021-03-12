@@ -141,14 +141,22 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        [Fact]
-        public async Task SignInInvalidRequestReturnBadRequest()
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData(null, "")]
+        [InlineData("", null)]
+        [InlineData("", "")]
+        public async Task SignInInvalidRequestReturnBadRequest(string email, string password)
         {
             // Arrange
             using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel());
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            {
+                Email = email,
+                Password = password,
+            });
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
