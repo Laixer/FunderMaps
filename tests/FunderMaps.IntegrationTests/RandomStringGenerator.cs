@@ -14,13 +14,9 @@ namespace FunderMaps.IntegrationTests
         /// </summary>
         public RandomStringGeneratorP1()
         {
-            for (int i = 0; i < 50; i++)
-            {
-                var p1 = randomizer.String2(randomizer.Int(0, 128), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
+            var p1 = randomizer.String2(randomizer.Int(0, 128), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
 
-                Add(p1);
-            }
-
+            Add(p1);
         }
     }
 
@@ -36,13 +32,10 @@ namespace FunderMaps.IntegrationTests
         /// </summary>
         public RandomStringGeneratorP2()
         {
-            for (int i = 0; i < 50; i++)
-            {
-                var p1 = randomizer.String2(randomizer.Int(0, 128), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
-                var p2 = randomizer.String2(randomizer.Int(0, 128), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
+            var p1 = randomizer.String2(randomizer.Int(0, 128), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
+            var p2 = randomizer.String2(randomizer.Int(0, 128), "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-==+`~");
 
-                Add(p1, p2);
-            }
+            Add(p1, p2);
         }
     }
 }
