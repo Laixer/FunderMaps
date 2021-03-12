@@ -3,15 +3,16 @@ using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
+[assembly: ApiController]
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
 namespace FunderMaps.AspNetCore
 {
