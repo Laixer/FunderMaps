@@ -81,6 +81,19 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
+        [Fact]
+        public async Task SignInInvalidRequestReturnBadRequest()
+        {
+            // Arrange
+            using var client = Factory.CreateUnauthorizedClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel());
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
         [Theory]
         [InlineData("api/user")]
         [InlineData("api/auth/token-refresh")]

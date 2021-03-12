@@ -142,7 +142,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task SignInInvalidRequestReturnError()
+        public async Task SignInInvalidRequestReturnBadRequest()
         {
             // Arrange
             using var client = Factory.CreateUnauthorizedClient();
