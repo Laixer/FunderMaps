@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     User password.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Password { get; set; }
     }
 }
