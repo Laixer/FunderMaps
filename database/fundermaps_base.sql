@@ -2705,7 +2705,7 @@ COMMENT ON VIEW data.statistics_product_inquiries IS 'Contains statistics on the
 
 CREATE TABLE data.subsidence_hex (
     velocity double precision NOT NULL,
-    geom public.geometry(MultiPolygon,4326) NOT NULL
+    geom public.geometry(Polygon,4326) NOT NULL
 );
 
 

@@ -163,6 +163,24 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Theory]
+        [ClassData(typeof(RandomStringGeneratorP2))]
+        public async Task SignInRandomDataReturnNot500(string email, string password)
+        {
+            // Arrange
+            using var client = Factory.CreateUnauthorizedClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            {
+                Email = email,
+                Password = password,
+            });
+
+            // Assert
+            Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
+        }
+
+        [Theory]
         [InlineData("api/user")]
         [InlineData("api/auth/token-refresh")]
         public async Task RefreshSignInReturnUnauthorized(string uri)
