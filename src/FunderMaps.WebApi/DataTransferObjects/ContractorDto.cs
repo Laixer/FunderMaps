@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Gets or sets the name for the contractor.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Name { get; set; }
     }
 }

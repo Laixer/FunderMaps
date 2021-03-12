@@ -25,6 +25,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        // GET: api/address
         /// <summary>
         ///     Get address by identifier.
         /// </summary>

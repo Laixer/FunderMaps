@@ -10,7 +10,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Status change message.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Message { get; set; }
     }
 }

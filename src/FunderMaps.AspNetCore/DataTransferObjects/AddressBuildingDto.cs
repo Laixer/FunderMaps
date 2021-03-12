@@ -24,7 +24,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Building number.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string BuildingNumber { get; init; }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Street name.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Street { get; init; }
 
         /// <summary>

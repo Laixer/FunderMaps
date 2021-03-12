@@ -46,7 +46,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     External data source id.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string ExternalId { get; set; }
 
         /// <summary>

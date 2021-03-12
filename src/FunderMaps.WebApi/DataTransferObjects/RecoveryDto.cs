@@ -23,7 +23,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         ///     the filename under which the document is stored. For that,
         ///     see <see cref="DocumentFile"/>.
         /// </remarks>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string DocumentName { get; set; }
 
         /// <summary>
