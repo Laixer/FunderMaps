@@ -1,6 +1,9 @@
 --
--- FunderMaps database seeder
+-- PostgreSQL database dump
 --
+
+-- Dumped from database version 12.6 (Debian 12.6-1.pgdg100+1)
+-- Dumped by pg_dump version 12.6 (Ubuntu 12.6-0ubuntu0.20.10.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -12,6 +15,14 @@ SET check_function_bodies = false;
 SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
+
+--
+-- Data for Name: bundle; Type: TABLE DATA; Schema: maplayer; Owner: fundermaps
+--
+
+COPY maplayer.bundle (id, organization_id, name, create_date, update_date, delete_date, layer_configuration) FROM stdin;
+\.
+
 
 --
 -- Data for Name: layer; Type: TABLE DATA; Schema: maplayer; Owner: fundermaps
@@ -30,3 +41,9 @@ f42a6826-c3a0-48b1-8c96-6c9ef753ed46	maplayer	inquiry_sample_foundation_type	Vas
 cc1cc6ca-6408-4a01-b16c-850c09cdb9c5	maplayer	incident_aggregate_category	Incidenten Gemeente Category	{"type": "case", "column": "category", "values": [{"color": "gray", "label": "Geen of nauwelijks", "match": "0"}, {"color": "yellow", "label": "Enkele", "match": "1"}, {"color": "blue", "label": "Meerdere", "match": "2"}]}
 75709b4f-d82e-4d62-9be3-07cb2ca00cec	maplayer	inquiry_sample_damage_cause	Oorzaak Schade	{"type": "case_multimatch", "column": "damage_cause", "values": [{"color": "#55B5A7", "label": "Ontwateringsdiepte", "match": ["drainage"]}, {"color": "#4B8FBF", "label": "Overbelasting", "match": ["overcharge"]}, {"color": "#4145C9", "label": "Bacteriële aantasting", "match": ["bio_fungus_infection", "bio_infection"]}, {"color": "#8936D4", "label": "Schimmelaantasting", "match": ["fungus_infection", "drystand", "bio_fungus_infection"]}, {"color": "#DE2CCF", "label": "Bodemdaling", "match": ["subsidence"]}, {"color": "#D2386F", "label": "Planten en wortels", "match": ["vegetation"]}, {"color": "#C75D43", "label": "Aardbeving", "match": ["gas", "vibrations"]}, {"color": "#BBA14F", "label": "Partieel funderingsherstel", "match": ["partial_foundation_recovery"]}, {"color": "#95B05A", "label": "Constructiefout", "match": ["construction_flaw", "foundation_flaw", "construction_heave"]}, {"color": "#6EA466", "label": "Negatieve kleef", "match": ["negative_cling", "overcharge_negative_cling"]}, {"color": "#6A6C70", "label": "Onbekend", "match": ["unknown"]}]}
 \.
+
+
+--
+-- PostgreSQL database dump complete
+--
+
