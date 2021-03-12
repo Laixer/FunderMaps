@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.2 (Debian 13.2-1.pgdg100+1)
--- Dumped by pg_dump version 13.2 (Debian 13.2-1.pgdg100+1)
+-- Dumped from database version 12.6 (Debian 12.6-1.pgdg100+1)
+-- Dumped by pg_dump version 12.6 (Ubuntu 12.6-0ubuntu0.20.10.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1267,18 +1267,18 @@ COMMENT ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.g
 -- Name: normalize(text); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
-CREATE FUNCTION application."normalize"(text) RETURNS text
+CREATE FUNCTION application.normalize(text) RETURNS text
     LANGUAGE sql
     AS $_$SELECT trim(upper($1))$_$;
 
 
-ALTER FUNCTION application."normalize"(text) OWNER TO fundermaps;
+ALTER FUNCTION application.normalize(text) OWNER TO fundermaps;
 
 --
--- Name: FUNCTION "normalize"(text); Type: COMMENT; Schema: application; Owner: fundermaps
+-- Name: FUNCTION normalize(text); Type: COMMENT; Schema: application; Owner: fundermaps
 --
 
-COMMENT ON FUNCTION application."normalize"(text) IS 'Normalize the input so it can be compared.';
+COMMENT ON FUNCTION application.normalize(text) IS 'Normalize the input so it can be compared.';
 
 
 --
@@ -5012,13 +5012,13 @@ GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public
 
 
 --
--- Name: FUNCTION "normalize"(text); Type: ACL; Schema: application; Owner: fundermaps
+-- Name: FUNCTION normalize(text); Type: ACL; Schema: application; Owner: fundermaps
 --
 
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webapp;
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webservice;
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_portal;
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_batch;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_portal;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_batch;
 
 
 --
@@ -5486,6 +5486,7 @@ GRANT SELECT ON TABLE maplayer.building_ownership TO fundermaps_batch;
 --
 
 GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_batch;
+GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_webapp;
 
 
 --
@@ -5563,6 +5564,7 @@ GRANT SELECT ON TABLE maplayer.inquiry_sample_quality TO fundermaps_batch;
 --
 
 GRANT SELECT ON TABLE maplayer.layer TO fundermaps_batch;
+GRANT SELECT ON TABLE maplayer.layer TO fundermaps_webapp;
 
 
 --

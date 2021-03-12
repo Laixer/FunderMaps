@@ -33,7 +33,11 @@ namespace FunderMaps.WebApi.Controllers.MapLayer
         /// <summary>
         ///     Return all layers.
         /// </summary>
-        [HttpGet, ResponseCache(Duration = 8 * 60 * 60)]
+        /// <remarks>
+        ///     Cache response for 8 hours. Layers will not change often.
+        ///     Layers are tenant independent.
+        /// </remarks>
+        [HttpGet, ResponseCache(Duration = 60 * 60 * 8)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
