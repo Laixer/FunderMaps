@@ -4,6 +4,7 @@ using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.HealthChecks;
+using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
@@ -83,7 +84,7 @@ namespace FunderMaps.AspNetCore
                 // FUTURE: Only load specific parts.
                 // NOTE: This will register all controllers in the FunderMaps.AspNetCore
                 //       assemly regardless of authentication and authorization.
-                services.AddControllers()
+                services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)))
                     .AddFunderMapsAssembly();
 
                 // Register components from reference assemblies.
