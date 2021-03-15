@@ -1,4 +1,5 @@
-﻿using FunderMaps.Testing.Faker;
+﻿using FunderMaps.AspNetCore.InputModels;
+using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using System.Net.Http.Json;
@@ -22,11 +23,36 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var adminClient = Factory.CreateAdminClient();
-            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
-            using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", new OrganizationSetupDtoFaker().Generate());
+            var response = await adminClient.PostAsJsonAsync("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            // Arrange
+            using var client = Factory.CreateUnauthorizedClient();
+            var newObject = new OrganizationSetupDtoFaker().Generate();
+
+            // Act
+            response = await client.PostAsJsonAsync($"api/organization/{returnObject.Id}/setup", newObject);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            // Act
+            response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            {
+                Email = newObject.Email,
+                Password = newObject.Password,
+            });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            // Act
+            response = await adminClient.DeleteAsync($"api/admin/organization/{returnObject.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
