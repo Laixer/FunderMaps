@@ -21,11 +21,12 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Fact]
         public async Task OrganizationProposalLifeCycle()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
             var organizationProposal = await TestStub.CreateProposalAsync(Factory);
 
             {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
                 // Act
                 var response = await client.GetAsync($"api/organization/proposal/{organizationProposal.Id}");
                 var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
@@ -35,6 +36,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             }
 
             {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
                 // Act
                 var response = await client.GetAsync("api/organization/proposal");
                 var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationProposalDto>>();
@@ -45,6 +49,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             }
 
             {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
                 // Act
                 var response = await client.DeleteAsync($"api/organization/proposal/{organizationProposal.Id}");
 
@@ -54,61 +61,64 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
-        public async Task CreateOrganizationProposalReturnForbidden()
+        public async Task OrganizationProposalLifeCycleForbidden()
         {
-            // Arrange
-            using var client = Factory.CreateClient();
+            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
 
-            // Act
-            var response = await client.PostAsJsonAsync("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
+                // Act
+                var response = await client.PostAsJsonAsync("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
 
-        [Fact]
-        public async Task GetOrganizationProposalByIdReturnForbidden()
-        {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.GetAsync($"api/organization/proposal/{organization.Id}");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
+                // Act
+                var response = await client.GetAsync($"api/organization/proposal/{organizationProposal.Id}");
 
-        [Fact]
-        public async Task GetAllOrganizationProposalReturnForbidden()
-        {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.GetAsync("api/organization/proposal");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
+                // Act
+                var response = await client.GetAsync("api/organization/proposal");
 
-        [Fact]
-        public async Task DeleteOrganizationProposalReturnForbidden()
-        {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.DeleteAsync($"api/organization/proposal/{organization.Id}");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+                // Act
+                var response = await client.DeleteAsync($"api/organization/proposal/{organizationProposal.Id}");
+
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
+                // Act
+                var response = await client.DeleteAsync($"api/organization/proposal/{organizationProposal.Id}");
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
         }
     }
 }

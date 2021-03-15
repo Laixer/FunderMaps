@@ -1,129 +1,109 @@
-﻿// using FunderMaps.AspNetCore.DataTransferObjects;
-// using FunderMaps.Testing.Faker;
-// using System.Collections.Generic;
-// using System.Net;
-// using System.Net.Http.Json;
-// using System.Threading.Tasks;
-// using Xunit;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Testing.Faker;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using Xunit;
 
-// namespace FunderMaps.IntegrationTests.Backend.Application
-// {
-//     public class OrganizationAdminTests : IClassFixture<BackendFixtureFactory>
-//     {
-//         private BackendFixtureFactory Factory { get; }
+namespace FunderMaps.IntegrationTests.Backend.Application
+{
+    public class OrganizationAdminTests : IClassFixture<BackendFixtureFactory>
+    {
+        private BackendFixtureFactory Factory { get; }
 
-//         /// <summary>
-//         ///     Create new instance.
-//         /// </summary>
-//         public OrganizationAdminTests(BackendFixtureFactory factory)
-//             => Factory = factory;
+        /// <summary>
+        ///     Create new instance.
+        /// </summary>
+        public OrganizationAdminTests(BackendFixtureFactory factory)
+            => Factory = factory;
 
-//         [Fact]
-//         public async Task GetOrganizationByIdReturnSingleOrganization()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateAdminClient();
+        [Fact]
+        public async Task OrganizationLifeCycle()
+        {
+            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
+            var organizationSetup = await TestStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await TestStub.GetOrganizationAsync(Factory, organizationProposal);
 
-//             // Act
-//             var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}");
-//             var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-//             Assert.Equal(Factory.Organization.Id, returnObject.Id);
-//         }
+                // Act
+                var response = await client.GetAsync("api/admin/organization");
+                var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationDto>>();
 
-//         [Fact]
-//         public async Task GetAllOrganizationReturnPageOrganization()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateAdminClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnList.Count >= 1);
+            }
 
-//             // Act
-//             var response = await client.GetAsync("api/admin/organization");
-//             var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationDto>>();
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-//             Assert.True(returnList.Count >= 1);
-//         }
+                // Act
+                var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}", new OrganizationDtoFaker().Generate());
 
-//         [Fact]
-//         public async Task UpdateOrganizationReturnNoContent()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateAdminClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
 
-//             // Act
-//             var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}", new OrganizationDtoFaker().Generate());
+            await TestStub.RemoveOrganizationAsync(Factory, organization);
+        }
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-//         }
+        [Fact]
+        public async Task OrganizationLifeCycleForbidden()
+        {
+            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
+            var organizationSetup = await TestStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await TestStub.GetOrganizationAsync(Factory, organizationProposal);
 
-//         [Fact(Skip = "Prevents other tests from running")]
-//         public async Task DeleteOrganizationReturnNoContent()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateAdminClient();
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-//             // Act
-//             var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}");
+                // Act
+                var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-//         }
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-//         [Fact]
-//         public async Task GetOrganizationByIdReturnForbidden()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateClient();
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-//             // Act
-//             var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}");
+                // Act
+                var response = await client.GetAsync("api/admin/organization");
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-//         }
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-//         [Fact]
-//         public async Task GetAllOrganizationReturnForbidden()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateClient();
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-//             // Act
-//             var response = await client.GetAsync("api/admin/organization");
+                // Act
+                var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}", new OrganizationDtoFaker().Generate());
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-//         }
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-//         [Fact]
-//         public async Task UpdateOrganizationReturnForbidden()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateClient();
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-//             // Act
-//             var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}", new OrganizationDtoFaker().Generate());
+                // Act
+                var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}");
 
-//             // Assert
-//             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-//         }
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-//         [Fact]
-//         public async Task DeleteOrganizationReturnForbidden()
-//         {
-//             // Arrange
-//             using var client = Factory.CreateClient();
-
-//             // Act
-//             var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}");
-
-//             // Assert
-//             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-//         }
-//     }
-// }
+            await TestStub.RemoveOrganizationAsync(Factory, organization);
+        }
+    }
+}
