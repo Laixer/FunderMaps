@@ -26,23 +26,10 @@ namespace FunderMaps.IntegrationTests.Webservice
         [Fact]
         public async Task SignInReturnSuccessAndToken()
         {
-            // Arrange
-            using var client = Factory.CreateUnauthorizedClient();
-
-            // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
-            {
-                Email = "Javier40@yahoo.com",
-                Password = "fundermaps",
-            });
-            var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject.Id);
-            Assert.NotNull(returnObject.Token);
-            Assert.NotNull(returnObject.Issuer);
-            Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
+            await TestStub.LoginAsync(Factory, "Javier40@yahoo.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "Freda@contoso.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "patsy@contoso.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "lester@contoso.com", "fundermaps");
         }
 
         [Fact]
