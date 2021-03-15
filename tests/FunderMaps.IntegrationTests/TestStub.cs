@@ -100,5 +100,43 @@ namespace FunderMaps.IntegrationTests
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
+
+        public static async Task<OrganizationUserPasswordDto> CreateOrganizationUserAsync<TStartup>(FixtureFactory<TStartup> factory, OrganizationDto organization)
+            where TStartup : class
+        {
+            // Arrange
+            using var client = factory.CreateAdminClient();
+            var newObject = new OrganizationUserPasswordDtoFaker().Generate();
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newObject);
+            var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(newObject.GivenName, returnObject.GivenName);
+            Assert.Equal(newObject.LastName, returnObject.LastName);
+            Assert.Equal(newObject.Avatar, returnObject.Avatar);
+
+            // FUTURE: Add more checks.
+
+            return newObject with
+            {
+                Id = returnObject.Id
+            };
+        }
+
+        public static async Task DeleteOrganizationUserAsync<TStartup>(FixtureFactory<TStartup> factory, OrganizationDto organization, UserDto user)
+            where TStartup : class
+        {
+            // Arrange
+            using var client = factory.CreateAdminClient();
+
+            // Act
+            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{user.Id}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
     }
 }

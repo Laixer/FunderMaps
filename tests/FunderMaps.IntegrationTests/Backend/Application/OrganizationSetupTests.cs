@@ -19,7 +19,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var organizationProposal = await TestStub.CreateProposalAsync(Factory);
             var organizationSetup = await TestStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await TestStub.GetOrganizationAsync(Factory, organizationProposal);
-
             await TestStub.LoginAsync(Factory, organizationSetup.Email, organizationSetup.Password);
             await TestStub.RemoveOrganizationAsync(Factory, organization);
         }
