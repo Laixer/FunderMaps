@@ -11,7 +11,7 @@ using Xunit;
 namespace FunderMaps.IntegrationTests
 {
     /// <summary>
-    ///     Generate random theory data.
+    ///     Teststub for all FunderMaps tests.
     /// </summary>
     public static class TestStub
     {
@@ -107,6 +107,7 @@ namespace FunderMaps.IntegrationTests
             return returnObject;
         }
 
+        // TODO: Rename to Delete...
         public static async Task RemoveOrganizationAsync<TStartup>(FixtureFactory<TStartup> factory, OrganizationDto organization)
             where TStartup : class
         {
