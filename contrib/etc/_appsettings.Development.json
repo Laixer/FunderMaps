@@ -16,7 +16,7 @@
       "info@fundermaps.com"
     ]
   },
-  "UseExternalServices": true,
+  "UseExternalServices": false,
   "BackgroundWorkOptions": {
     "MaxQueueSize": 16,
     "Workers": 1

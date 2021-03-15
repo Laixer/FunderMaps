@@ -21,7 +21,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Fact]
         public async Task OrganizationProposalLifeCycle()
         {
-            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
 
             {
                 // Arrange
@@ -63,7 +63,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Fact]
         public async Task OrganizationProposalLifeCycleForbidden()
         {
-            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
 
             {
                 // Arrange

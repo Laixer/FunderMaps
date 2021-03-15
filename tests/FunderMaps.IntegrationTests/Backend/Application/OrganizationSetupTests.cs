@@ -16,11 +16,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Fact]
         public async Task OrganizationSetupLifeCycle()
         {
-            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
-            var organizationSetup = await TestStub.CreateOrganizationAsync(Factory, organizationProposal);
-            var organization = await TestStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
             await TestStub.LoginAsync(Factory, organizationSetup.Email, organizationSetup.Password);
-            await TestStub.RemoveOrganizationAsync(Factory, organization);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
     }
 }

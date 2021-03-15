@@ -21,9 +21,9 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         [Fact]
         public async Task OrganizationLifeCycle()
         {
-            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
-            var organizationSetup = await TestStub.CreateOrganizationAsync(Factory, organizationProposal);
-            var organization = await TestStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
             {
                 // Arrange
@@ -49,15 +49,15 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             }
 
-            await TestStub.RemoveOrganizationAsync(Factory, organization);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
 
         [Fact]
         public async Task OrganizationLifeCycleForbidden()
         {
-            var organizationProposal = await TestStub.CreateProposalAsync(Factory);
-            var organizationSetup = await TestStub.CreateOrganizationAsync(Factory, organizationProposal);
-            var organization = await TestStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
             {
                 // Arrange
@@ -103,7 +103,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
             }
 
-            await TestStub.RemoveOrganizationAsync(Factory, organization);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
     }
 }
