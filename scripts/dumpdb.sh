@@ -1,4 +1,11 @@
 #!/bin/bash
+# Copyright (c) 2021 Laixer B.V.
+#
+# Dump the database to workspace.
+#
+# Run script from the workspace root and make
+# sure the database runs on localhost.
+
 set -e
 
 pg_dump -h localhost -U postgres -d fundermaps -s -N public -f database/fundermaps_base.sql

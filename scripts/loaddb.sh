@@ -1,4 +1,11 @@
 #!/bin/bash
+# Copyright (c) 2021 Laixer B.V.
+#
+# Load the database from workspace.
+#
+# Run script from the workspace root and make
+# sure the database runs on localhost.
+
 set -e
 
 createuser -h localhost -U postgres -L fundermaps
