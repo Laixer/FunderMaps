@@ -4,23 +4,26 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.InputModels;
+
 namespace FunderMaps.IntegrationTests
 {
     public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
         where TStartup : class
     {
         private HttpClient _httpClient;
-        private UserPair _user;
+        private string _username;
+        private string _password;
 
         public SignInSecurityTokenDto AuthToken { get; private set; }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthFunderMapsWebApplicationFactory(HttpClient httpClient, UserPair user)
+        public AuthFunderMapsWebApplicationFactory(HttpClient httpClient, string username, string password)
         {
             _httpClient = httpClient;
-            _user = user;
+            _username = username;
+            _password = password;
         }
 
         /// <summary>
@@ -35,8 +38,8 @@ namespace FunderMaps.IntegrationTests
         protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
             => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInInputModel>("api/auth/signin", new()
             {
-                Email = _user.User.Email,
-                Password = _user.Password,
+                Email = _username,
+                Password = _password,
             });
 
         protected override void ConfigureClient(HttpClient client)
