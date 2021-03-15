@@ -38,6 +38,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
+            Assert.NotNull(returnObject.Issuer);
             Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
@@ -59,6 +60,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
+            Assert.NotNull(returnObject.Issuer);
             Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
@@ -80,6 +82,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
+            Assert.NotNull(returnObject.Issuer);
             Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
@@ -101,6 +104,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
+            Assert.NotNull(returnObject.Issuer);
             Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
@@ -118,6 +122,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
+            Assert.NotNull(returnObject.Issuer);
             Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
