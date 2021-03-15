@@ -2870,25 +2870,6 @@ COMMENT ON TABLE geocoder.state IS 'Contains all states in our own format.';
 
 
 --
--- Name: building; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.building AS
- SELECT ba.id,
-    ba.geom,
-    ba.external_id,
-    (date_part('year'::text, (ba.built_year)::date))::integer AS built_year,
-    addr.postal_code,
-    addr.street,
-    addr.building_number,
-    addr.city
-   FROM (geocoder.building_active ba
-     LEFT JOIN geocoder.address addr ON (((ba.id)::text = (addr.building_id)::text)));
-
-
-ALTER TABLE maplayer.building OWNER TO fundermaps;
-
---
 -- Name: building_built_year; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
@@ -5449,13 +5430,6 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.state TO fundermaps_webapp;
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.state TO fundermaps_webservice;
 GRANT SELECT,REFERENCES ON TABLE geocoder.state TO fundermaps_portal;
 GRANT SELECT,REFERENCES ON TABLE geocoder.state TO fundermaps_batch;
-
-
---
--- Name: TABLE building; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.building TO fundermaps_batch;
 
 
 --
