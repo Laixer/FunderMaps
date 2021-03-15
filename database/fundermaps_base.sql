@@ -2997,7 +2997,12 @@ CREATE VIEW maplayer.foundation_indicative AS
   WHERE ((afi.is_active = true) AND (NOT ((afi.id)::text IN ( SELECT addr.building_id
            FROM (report.inquiry_sample ris
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-          WHERE ((ris.foundation_type IS NOT NULL) AND (addr.building_id IS NOT NULL))))));
+          WHERE ((ris.foundation_type IS NOT NULL) AND (addr.building_id IS NOT NULL))
+        UNION
+         SELECT addr.building_id
+           FROM (report.recovery_sample rs
+             JOIN geocoder.address addr ON (((rs.address)::text = (addr.id)::text)))
+          WHERE (addr.building_id IS NOT NULL)))));
 
 
 ALTER TABLE maplayer.foundation_indicative OWNER TO fundermaps;
