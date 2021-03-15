@@ -19,7 +19,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Recordset limit.
         /// </summary>
-        [Range(1, uint.MaxValue)]
+        [Range(1, 10000)]
         public int Limit { get; set; } = 25;
 
         /// <summary>
