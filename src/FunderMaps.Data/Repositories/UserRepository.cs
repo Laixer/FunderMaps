@@ -408,6 +408,7 @@ namespace FunderMaps.Data.Repositories
         /// <param name="id">Entity identifier.</param>
         public async Task RegisterAccess(Guid id)
         {
+            // FUTURE: Maybe call SP directly.
             var sql = @"
                 SELECT application.log_access(@id)";
 
@@ -415,7 +416,7 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            await context.NonQueryAsync();
+            await context.NonQueryAsync(affectedGuard: false);
         }
     }
 }
