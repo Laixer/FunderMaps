@@ -408,13 +408,8 @@ namespace FunderMaps.Data.Repositories
         /// <param name="id">Entity identifier.</param>
         public async Task RegisterAccess(Guid id)
         {
-            // FUTURE: db func
-            // FUTURE: db trigger to update last_login
             var sql = @"
-                UPDATE  application.user
-                SET     login_count = login_count + 1,
-                        last_login = CURRENT_TIMESTAMP
-                WHERE   id = @id";
+                SELECT application.log_access(@id)";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

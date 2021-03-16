@@ -1264,6 +1264,22 @@ COMMENT ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.g
 
 
 --
+-- Name: log_access(application.user_id); Type: FUNCTION; Schema: application; Owner: fundermaps
+--
+
+CREATE FUNCTION application.log_access(id application.user_id) RETURNS void
+    LANGUAGE sql
+    AS $_$
+UPDATE  application.user
+SET     login_count = login_count + 1,
+        last_login = CURRENT_TIMESTAMP
+WHERE   id = $1
+;$_$;
+
+
+ALTER FUNCTION application.log_access(id application.user_id) OWNER TO fundermaps;
+
+--
 -- Name: normalize(text); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
@@ -1282,7 +1298,7 @@ COMMENT ON FUNCTION application.normalize(text) IS 'Normalize the input so it ca
 
 
 --
--- Name: normalize_email(); Type: FUNCTION; Schema: application; Owner: postgres
+-- Name: normalize_email(); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
 CREATE FUNCTION application.normalize_email() RETURNS trigger
@@ -1295,10 +1311,10 @@ END;
 $$;
 
 
-ALTER FUNCTION application.normalize_email() OWNER TO postgres;
+ALTER FUNCTION application.normalize_email() OWNER TO fundermaps;
 
 --
--- Name: FUNCTION normalize_email(); Type: COMMENT; Schema: application; Owner: postgres
+-- Name: FUNCTION normalize_email(); Type: COMMENT; Schema: application; Owner: fundermaps
 --
 
 COMMENT ON FUNCTION application.normalize_email() IS 'Normalize email after insert.';
@@ -5028,6 +5044,14 @@ GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public
 
 
 --
+-- Name: FUNCTION log_access(id application.user_id); Type: ACL; Schema: application; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION application.log_access(id application.user_id) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application.log_access(id application.user_id) TO fundermaps_webservice;
+
+
+--
 -- Name: FUNCTION normalize(text); Type: ACL; Schema: application; Owner: fundermaps
 --
 
@@ -5038,7 +5062,7 @@ GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_batch;
 
 
 --
--- Name: FUNCTION normalize_email(); Type: ACL; Schema: application; Owner: postgres
+-- Name: FUNCTION normalize_email(); Type: ACL; Schema: application; Owner: fundermaps
 --
 
 GRANT ALL ON FUNCTION application.normalize_email() TO fundermaps_webapp;
