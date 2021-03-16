@@ -29,7 +29,6 @@ namespace FunderMaps.Data.Repositories
 
         public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
         {
-            // TODO: normalized_email should be db trigger function
             var sql = @"
 	            SELECT application.create_organization(
                     @id,

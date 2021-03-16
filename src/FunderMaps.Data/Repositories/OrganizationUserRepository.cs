@@ -79,6 +79,7 @@ namespace FunderMaps.Data.Repositories
             }
         }
 
+        // TODO: This should not be necessary
         public async Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
         {
             // FUTURE: database function

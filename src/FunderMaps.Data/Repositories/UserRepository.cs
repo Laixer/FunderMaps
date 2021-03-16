@@ -23,13 +23,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="User"/>.</returns>
         public override async Task<Guid> AddAsync(User entity)
         {
-            // FUTURE: normalized_email should be db trigger function
             var sql = @"
                 INSERT INTO application.user(
                     given_name,
                     last_name,
                     email,
-                    normalized_email,
                     avatar,
                     job_title,
                     phone_number,
@@ -38,7 +36,6 @@ namespace FunderMaps.Data.Repositories
                     @given_name,
                     @last_name,
                     @email,
-                    application.normalize(@email),
                     @avatar,
                     NULLIF(trim(@job_title), ''),
                     @phone_number,

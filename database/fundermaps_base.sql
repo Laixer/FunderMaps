@@ -1282,6 +1282,29 @@ COMMENT ON FUNCTION application.normalize(text) IS 'Normalize the input so it ca
 
 
 --
+-- Name: normalize_email(); Type: FUNCTION; Schema: application; Owner: postgres
+--
+
+CREATE FUNCTION application.normalize_email() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	NEW.normalized_email = application.normalize(NEW.email);
+	RETURN NEW;
+END;
+$$;
+
+
+ALTER FUNCTION application.normalize_email() OWNER TO postgres;
+
+--
+-- Name: FUNCTION normalize_email(); Type: COMMENT; Schema: application; Owner: postgres
+--
+
+COMMENT ON FUNCTION application.normalize_email() IS 'Normalize email after insert.';
+
+
+--
 -- Name: organization_email_free(text); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
@@ -4209,6 +4232,13 @@ CREATE INDEX recovery_type_idx ON report.recovery USING btree (type);
 
 
 --
+-- Name: user set_normalized_email; Type: TRIGGER; Schema: application; Owner: fundermaps
+--
+
+CREATE TRIGGER set_normalized_email BEFORE INSERT OR UPDATE ON application."user" FOR EACH ROW EXECUTE FUNCTION application.normalize_email();
+
+
+--
 -- Name: bundle bundle_trigger_update; Type: TRIGGER; Schema: maplayer; Owner: fundermaps
 --
 
@@ -5005,6 +5035,14 @@ GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webapp;
 GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webservice;
 GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_portal;
 GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_batch;
+
+
+--
+-- Name: FUNCTION normalize_email(); Type: ACL; Schema: application; Owner: postgres
+--
+
+GRANT ALL ON FUNCTION application.normalize_email() TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application.normalize_email() TO fundermaps_webservice;
 
 
 --
