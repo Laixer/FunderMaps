@@ -272,13 +272,7 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> IsLockedOutAsync(Guid id)
         {
             var sql = @"
-                SELECT EXISTS (
-                    SELECT  *
-                    FROM    application.user
-                    WHERE   id = @id
-                    AND     lockout_end > NOW()
-                    LIMIT   1
-                ) AS is_locked";
+                SELECT application.is_locked_out(@id)";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
