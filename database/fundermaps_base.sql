@@ -1898,7 +1898,7 @@ CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
      LEFT JOIN data.premise_z_normalized z ON (((z.building_id)::text = (b.id)::text)))
      LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
      LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1970)::double precision))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
 UNION ALL
  SELECT b.id,
     b.external_id,
