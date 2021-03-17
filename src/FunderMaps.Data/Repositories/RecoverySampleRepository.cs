@@ -188,6 +188,7 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
+        // TODO: Filter per tenant?
         /// <summary>
         ///     Retrieve all <see cref="RecoverySample"/>.
         /// </summary>
@@ -211,7 +212,8 @@ namespace FunderMaps.Data.Repositories
                         s.permit,
                         s.permit_date,
                         s.recovery_date
-                FROM    report.recovery_sample AS s";
+                FROM    report.recovery_sample AS s
+                ORDER BY s.create_date DESC";
 
             ConstructNavigation(sql, navigation);
 
@@ -250,7 +252,8 @@ namespace FunderMaps.Data.Repositories
                 JOIN    report.recovery AS r ON r.id = s.recovery
                 JOIN    application.attribution AS a ON a.id = r.attribution
                 WHERE   a.owner = @tenant
-                AND     r.id = @id";
+                AND     r.id = @id
+                ORDER BY s.create_date DESC";
 
             ConstructNavigation(sql, navigation);
 
