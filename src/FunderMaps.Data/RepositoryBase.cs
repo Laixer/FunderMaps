@@ -137,14 +137,6 @@ namespace FunderMaps.Data
                 return cmdText;
             }
 
-            // TODO: This is free-format input with a high potential for bugs/malicious SQL.
-            // FUTURE: Can we improve stability and readability here?
-            // if (!string.IsNullOrEmpty(navigation.SortColumn))
-            // {
-            //     var column = alias is not null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
-            //     cmdText += $"\r\n ORDER BY {column} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
-            // }
-
             if (navigation.Offset > 0)
             {
                 cmdText += $"\r\n OFFSET {navigation.Offset}";
