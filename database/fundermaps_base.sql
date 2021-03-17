@@ -1740,7 +1740,7 @@ CREATE TABLE geocoder.building (
     external_id text NOT NULL,
     external_source geocoder.data_source NOT NULL,
     building_type geocoder.building_type,
-    neighborhood_id geocoder.geocoder_id
+    neighborhood_id geocoder.geocoder_id NOT NULL
 );
 
 
