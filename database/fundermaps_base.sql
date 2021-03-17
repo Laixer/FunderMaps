@@ -4418,6 +4418,14 @@ ALTER TABLE ONLY data.building_ownership
 
 
 --
+-- Name: premise_z premise_z_building_fkey; Type: FK CONSTRAINT; Schema: data; Owner: fundermaps
+--
+
+ALTER TABLE ONLY data.premise_z
+    ADD CONSTRAINT premise_z_building_fkey FOREIGN KEY (building_id) REFERENCES geocoder.building(id);
+
+
+--
 -- Name: subsidence subsidence_building_fk; Type: FK CONSTRAINT; Schema: data; Owner: fundermaps
 --
 
