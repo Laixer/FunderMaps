@@ -1736,7 +1736,7 @@ CREATE TABLE geocoder.building (
     id geocoder.geocoder_id NOT NULL,
     built_year geocoder.year,
     is_active boolean NOT NULL,
-    geom public.geometry(MultiPolygon,4326),
+    geom public.geometry(MultiPolygon,4326) NOT NULL,
     external_id text NOT NULL,
     external_source geocoder.data_source NOT NULL,
     building_type geocoder.building_type,

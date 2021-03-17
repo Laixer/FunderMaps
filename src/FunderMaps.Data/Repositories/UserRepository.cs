@@ -66,6 +66,8 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        // FUTURE: If user is in use it violates foreign key constraint, returning
+        //         a ReferenceNotFoundException, which is invalid.
         /// <summary>
         ///     Delete <see cref="User"/>.
         /// </summary>
