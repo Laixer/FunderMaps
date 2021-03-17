@@ -17,27 +17,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         Task<User> GetByEmailAsync(string email);
 
         /// <summary>
-        ///     Get signin faillure count.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Number of failed signins.</returns>
-        Task<uint> GetAccessFailedCountAsync(Guid id);
-
-        /// <summary>
-        ///     Get signin count.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Number of signins.</returns>
-        Task<uint> GetLoginCountAsync(Guid id);
-
-        /// <summary>
-        ///     Get last sign in.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Datetime of last signin.</returns>
-        Task<DateTime?> GetLastLoginAsync(Guid id);
-
-        /// <summary>
         ///     Get password hash.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
