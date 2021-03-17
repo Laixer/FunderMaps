@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
@@ -68,7 +69,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             {
                 // Arrange
-                using var client = Factory.CreateClient();
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
                 var newObject = new RecoverySampleDtoFaker()
                     .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                     .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
@@ -81,7 +82,59 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             }
 
-            await ReportStub.DeleteRecoverySampleAsync(Factory, recovery, sample);
+            await ReportStub.DeleteRecoveryAsync(Factory, recovery);
+        }
+
+        [Theory]
+        [InlineData("status_approved")]
+        [InlineData("status_rejected")]
+        public async Task RecoverySampleStatusLifeCycle(string uri)
+        {
+            var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/status_review", new StatusChangeDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Verifier);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/{uri}", new StatusChangeDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ReportStub.DeleteRecoveryAsync(Factory, recovery);
+        }
+
+        [Fact]
+        public async Task RecoverySampleDeleteLifeCycle()
+        {
+            var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+                // Act
+                var response = await client.DeleteAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}");
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
             await ReportStub.DeleteRecoveryAsync(Factory, recovery);
         }
 
@@ -89,13 +142,33 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task RecoveryLifeCycleForbidden()
         {
             var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
 
             {
                 // Arrange
                 using var client = Factory.CreateClient();
+                var newObject = new RecoverySampleDtoFaker()
+                    .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    .Generate();
 
                 // Act
-                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/status_review", new StatusChangeDtoFaker().Generate());
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/sample", newObject);
+
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+                var newObject = new RecoverySampleDtoFaker()
+                    .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    .Generate();
+
+                // Act
+                var response = await client.PutAsJsonAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}", newObject);
 
                 // Assert
                 Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -106,18 +179,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient();
 
                 // Act
-                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/status_approved", new StatusChangeDtoFaker().Generate());
-
-                // Assert
-                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-            }
-
-            {
-                // Arrange
-                using var client = Factory.CreateClient();
-
-                // Act
-                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/status_rejected", new StatusChangeDtoFaker().Generate());
+                var response = await client.DeleteAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}");
 
                 // Assert
                 Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
