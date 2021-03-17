@@ -36,7 +36,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             Address address = await geocoderTranslation.GetAddressIdAsync(id);
 
             // Map.
-            var output = _mapper.Map<AddressBuildingDto>(address);
+            var output = _mapper.Map<AddressDto>(address);
 
             // Return.
             return Ok(output);

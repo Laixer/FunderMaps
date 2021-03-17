@@ -40,19 +40,18 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("external_source", entity.ExternalSource);
         }
 
-        public static Address MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        public static Address MapFromReader(DbDataReader reader, int offset = 0)
             => new()
             {
-                Id = reader.GetSafeString(offset + 0),
-                BuildingNumber = reader.GetSafeString(offset + 1),
-                PostalCode = reader.GetSafeString(offset + 2),
-                Street = reader.GetSafeString(offset + 3),
-                IsActive = reader.GetBoolean(offset + 4),
-                ExternalId = reader.GetSafeString(offset + 5),
-                ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset + 6),
-                City = reader.GetSafeString(offset + 7),
-                BuildingId = reader.GetSafeString(offset + 8),
-                BuildingNavigation = fullMap ? BuildingRepository.MapFromReader(reader, offset + 9) : null,
+                Id = reader.GetSafeString(offset++),
+                BuildingNumber = reader.GetSafeString(offset++),
+                PostalCode = reader.GetSafeString(offset++),
+                Street = reader.GetSafeString(offset++),
+                IsActive = reader.GetBoolean(offset++),
+                ExternalId = reader.GetSafeString(offset++),
+                ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset++),
+                City = reader.GetSafeString(offset++),
+                BuildingId = reader.GetSafeString(offset++),
             };
 
         /// <summary>
@@ -123,19 +122,8 @@ namespace FunderMaps.Data.Repositories
                         a.external_id,
                         a.external_source,
                         a.city,
-                        a.building_id,
-
-                        -- Building
-                        b.id,
-                        b.building_type,
-                        b.built_year,
-                        b.is_active,
-                        b.external_id, 
-                        b.external_source, 
-                        b.geom,
-                        b.neighborhood_id
+                        a.building_id
                 FROM    geocoder.address AS a
-                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id
                 WHERE   a.external_id = upper(@external_id)
                 AND     a.external_source = @external_source
                 LIMIT   1";
@@ -147,7 +135,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return CacheEntity(MapFromReader(reader, fullMap: true));
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -194,7 +182,7 @@ namespace FunderMaps.Data.Repositories
 
             await using var reader = await context.ReaderAsync();
 
-            return CacheEntity(MapFromReader(reader, fullMap: true));
+            return CacheEntity(MapFromReader(reader));
         }
 
         /// <summary>
@@ -233,7 +221,7 @@ namespace FunderMaps.Data.Repositories
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {
-                yield return CacheEntity(MapFromReader(reader, fullMap: true));
+                yield return CacheEntity(MapFromReader(reader));
             }
         }
 

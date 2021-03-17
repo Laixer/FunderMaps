@@ -71,7 +71,6 @@ namespace Microsoft.Extensions.DependencyInjection
             // NOTE: Keep the order in which they are directory listed
             services.AddContextRepository<IAddressRepository, AddressRepository>();
             services.AddContextRepository<IAnalysisRepository, AnalysisRepository>();
-            services.AddContextRepository<IBuildingRepository, BuildingRepository>();
             services.AddContextRepository<IBundleRepository, BundleRepository>();
             services.AddContextRepository<IContactRepository, ContactRepository>();
             services.AddContextRepository<IIncidentRepository, IncidentRepository>();
