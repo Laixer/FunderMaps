@@ -37,7 +37,6 @@ namespace FunderMaps.WebApi.Controllers.Report
             Core.AppContext appContext,
             IContactRepository contactRepository,
             IIncidentRepository incidentRepository,
-            IAddressRepository addressRepository,
             IBlobStorageService blobStorageService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
