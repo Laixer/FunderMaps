@@ -38,21 +38,21 @@ namespace FunderMaps.Data.Repositories
         public static RecoverySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
             => new()
             {
-                Id = reader.GetInt(offset + 0),
-                Recovery = reader.GetInt(offset + 1),
-                Address = reader.GetSafeString(offset + 2),
-                CreateDate = reader.GetDateTime(offset + 3),
-                UpdateDate = reader.GetSafeDateTime(offset + 4),
-                DeleteDate = reader.GetSafeDateTime(offset + 5),
-                Note = reader.GetSafeString(offset + 6),
-                Status = reader.GetFieldValue<RecoveryStatus>(offset + 7),
-                Type = reader.GetFieldValue<RecoveryType>(offset + 8),
-                PileType = reader.GetFieldValue<PileType>(offset + 9),
-                Contractor = reader.GetFieldValue<Guid?>(offset + 10),
-                Facade = reader.GetFieldValue<Facade[]>(offset + 11),
-                Permit = reader.GetSafeString(offset + 12),
-                PermitDate = reader.GetDateTime(offset + 13),
-                RecoveryDate = reader.GetDateTime(offset + 14),
+                Id = reader.GetInt(offset++),
+                Recovery = reader.GetInt(offset++),
+                Address = reader.GetSafeString(offset++),
+                CreateDate = reader.GetDateTime(offset++),
+                UpdateDate = reader.GetSafeDateTime(offset++),
+                DeleteDate = reader.GetSafeDateTime(offset++),
+                Note = reader.GetSafeString(offset++),
+                Status = reader.GetFieldValue<RecoveryStatus>(offset++),
+                Type = reader.GetFieldValue<RecoveryType>(offset++),
+                PileType = reader.GetFieldValue<PileType>(offset++),
+                Contractor = reader.GetFieldValue<Guid?>(offset++),
+                Facade = reader.GetFieldValue<Facade[]>(offset++),
+                Permit = reader.GetSafeString(offset++),
+                PermitDate = reader.GetDateTime(offset++),
+                RecoveryDate = reader.GetDateTime(offset++),
             };
 
         /// <summary>
@@ -159,22 +159,23 @@ namespace FunderMaps.Data.Repositories
         public override async Task<RecoverySample> GetByIdAsync(int id)
         {
             var sql = @"
-                SELECT  id,
-                        recovery,
-                        address,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        note,
-                        status,
-                        type,
-                        pile_type,
-                        contractor,
-                        facade,
-                        permit,
-                        permit_date,
-                        recovery_date
-                FROM    report.recovery_sample
+                SELECT  -- RecoverySample
+                        s.id,
+                        s.recovery,
+                        s.address,
+                        s.create_date,
+                        s.update_date,
+                        s.delete_date,
+                        s.note,
+                        s.status,
+                        s.type,
+                        s.pile_type,
+                        s.contractor,
+                        s.facade,
+                        s.permit,
+                        s.permit_date,
+                        s.recovery_date
+                FROM    report.recovery_sample AS s
                 WHERE   id = @id
                 LIMIT   1";
 
@@ -194,22 +195,23 @@ namespace FunderMaps.Data.Repositories
         public override async IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation)
         {
             var sql = @"
-                SELECT  id,
-                        recovery,
-                        address,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        note,
-                        status,
-                        type,
-                        pile_type,
-                        contractor,
-                        facade,
-                        permit,
-                        permit_date,
-                        recovery_date
-                FROM    report.recovery_sample";
+                SELECT  -- RecoverySample
+                        s.id,
+                        s.recovery,
+                        s.address,
+                        s.create_date,
+                        s.update_date,
+                        s.delete_date,
+                        s.note,
+                        s.status,
+                        s.type,
+                        s.pile_type,
+                        s.contractor,
+                        s.facade,
+                        s.permit,
+                        s.permit_date,
+                        s.recovery_date
+                FROM    report.recovery_sample AS s";
 
             ConstructNavigation(sql, navigation);
 
@@ -232,21 +234,18 @@ namespace FunderMaps.Data.Repositories
                         s.id,
                         s.recovery,
                         s.address,
-                        s.note,
                         s.create_date,
                         s.update_date,
                         s.delete_date,
-
-                        -- Recovery
+                        s.note,
                         s.status,
                         s.type,
-                        s.facade,
-                        s.recovery_date,
+                        s.pile_type,
                         s.contractor,
-
-                        -- Permit
+                        s.facade,
                         s.permit,
-                        s.permit_date
+                        s.permit_date,
+                        s.recovery_date
                 FROM    report.recovery_sample AS s
                 JOIN    report.recovery AS r ON r.id = s.recovery
                 JOIN    application.attribution AS a ON a.id = r.attribution

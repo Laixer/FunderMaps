@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
@@ -30,6 +31,19 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient();
 
                 // Act
+                var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample/stats");
+                var returnObject = await response.Content.ReadFromJsonAsync<DatasetStatsDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnObject.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+
+                // Act
                 var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample/{sample.Id}");
                 var returnObject = await response.Content.ReadFromJsonAsync<RecoverySampleDto>();
 
@@ -40,16 +54,16 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             }
 
             {
-                // // Arrange
-                // using var client = Factory.CreateClient();
+                // Arrange
+                using var client = Factory.CreateClient();
 
-                // // Act
-                // var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample");
-                // var returnList = await response.Content.ReadFromJsonAsync<List<RecoverySampleDto>>();
+                // Act
+                var response = await client.GetAsync($"api/recovery/{recovery.Id}/sample");
+                var returnList = await response.Content.ReadFromJsonAsync<List<RecoverySampleDto>>();
 
-                // // Assert
-                // Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                // Assert.True(returnList.Count >= 1);
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnList.Count >= 1);
             }
 
             {
