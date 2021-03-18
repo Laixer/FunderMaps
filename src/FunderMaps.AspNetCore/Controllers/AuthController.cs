@@ -1,7 +1,6 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.InputModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -34,7 +33,7 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<IActionResult> SignInAsync([FromBody] SignInInputModel input)
+        public async Task<IActionResult> SignInAsync([FromBody] SignInDto input)
         {
             // Act.
             TokenContext context = await _authenticationHelper.SignInAsync(input.Email, input.Password);

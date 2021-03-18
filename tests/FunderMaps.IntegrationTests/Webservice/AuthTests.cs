@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Testing.Extensions;
 using System;
 using System.Net;
@@ -57,7 +56,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
             {
                 Email = "lester@contoso.com",
                 Password = new Randomizer().Password(64),
@@ -81,7 +80,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
             {
                 Email = email,
                 Password = password,
@@ -99,7 +98,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
             {
                 Email = email,
                 Password = password,

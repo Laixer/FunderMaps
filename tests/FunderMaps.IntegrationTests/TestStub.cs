@@ -3,7 +3,6 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.InputModels;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests
@@ -37,7 +36,7 @@ namespace FunderMaps.IntegrationTests
             using var client = factory.CreateClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
             {
                 Email = username,
                 Password = password,

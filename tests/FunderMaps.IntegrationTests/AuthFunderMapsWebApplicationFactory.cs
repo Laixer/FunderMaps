@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.InputModels;
 
 namespace FunderMaps.IntegrationTests
 {
@@ -36,7 +35,7 @@ namespace FunderMaps.IntegrationTests
         ///     Create a user session for the given user.
         /// </summary>
         protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
-            => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInInputModel>("api/auth/signin", new()
+            => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInDto>("api/auth/signin", new()
             {
                 Email = _username,
                 Password = _password,
