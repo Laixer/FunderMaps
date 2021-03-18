@@ -555,7 +555,8 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.inquiry_sample AS s
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant";
+                WHERE   a.owner = @tenant
+                ORDER BY s.create_date DESC";
 
             ConstructNavigation(sql, navigation);
 
@@ -656,7 +657,8 @@ namespace FunderMaps.Data.Repositories
                 JOIN 	report.inquiry AS i ON i.id = s.inquiry
                 JOIN 	application.attribution AS a ON a.id = i.attribution
                 WHERE   a.owner = @tenant
-                AND     i.id = @id";
+                AND     i.id = @id
+                ORDER BY s.create_date DESC";
 
             ConstructNavigation(sql, navigation);
 

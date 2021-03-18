@@ -259,14 +259,15 @@ namespace FunderMaps.Data.Repositories
 
                         -- Access control
                         i.access_policy,
-		                
+
                         -- Record control
                         i.create_date,
-		                i.update_date,
-		                i.delete_date
+                        i.update_date,
+                        i.delete_date
                 FROM    report.inquiry AS i
                 JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant";
+                WHERE   a.owner = @tenant
+                ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
             ConstructNavigation(sql, navigation);
 

@@ -116,55 +116,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Retrieve <see cref="OrganizationProposal"/> by id.
-        /// </summary>
-        /// <param name="name">Organization name.</param>
-        /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async Task<OrganizationProposal> GetByNameAsync(string name)
-        {
-            var sql = @"
-                SELECT  -- OrganizationProposal
-                        op.id,
-                        op.name,
-                        op.email
-                FROM    application.organization_proposal AS op
-                WHERE   op.normalized_name = application.normalize(@name)
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("@name", name);
-
-            await using var reader = await context.ReaderAsync();
-
-            return CacheEntity(MapFromReader(reader));
-        }
-
-        /// <summary>
-        ///     Retrieve <see cref="OrganizationProposal"/> by id.
-        /// </summary>
-        /// <param name="email">Unique identifier.</param>
-        /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public async Task<OrganizationProposal> GetByEmailAsync(string email)
-        {
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email
-                FROM    application.organization_proposal
-                WHERE   normalized_email = application.normalize(@email)
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("email", email);
-
-            await using var reader = await context.ReaderAsync();
-
-            return CacheEntity(MapFromReader(reader));
-        }
-
-        /// <summary>
         ///     Retrieve all <see cref="OrganizationProposal"/>.
         /// </summary>
         /// <returns>List of <see cref="OrganizationProposal"/>.</returns>

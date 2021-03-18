@@ -2934,9 +2934,13 @@ COMMENT ON TABLE geocoder.state IS 'Contains all states in our own format.';
 CREATE VIEW maplayer.building_built_year AS
  SELECT ba.id,
     ba.geom,
-    (date_part('year'::text, (ba.built_year)::date))::integer AS built_year
-   FROM (geocoder.building_active ba
-     LEFT JOIN geocoder.address addr ON (((ba.id)::text = (addr.building_id)::text)));
+    (date_part('year'::text, COALESCE((( SELECT is2.built_year
+           FROM (geocoder.address addr
+             JOIN report.inquiry_sample is2 ON (((is2.address)::text = (addr.id)::text)))
+          WHERE ((ba.id)::text = (addr.building_id)::text)
+          ORDER BY COALESCE(is2.update_date, is2.create_date) DESC
+         LIMIT 1))::date, (ba.built_year)::date)))::integer AS built_year
+   FROM geocoder.building_active ba;
 
 
 ALTER TABLE maplayer.building_built_year OWNER TO fundermaps;

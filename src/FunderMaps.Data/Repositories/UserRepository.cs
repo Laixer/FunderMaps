@@ -183,68 +183,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Get signin faillure count.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Number of failed signins.</returns>
-        public async Task<uint> GetAccessFailedCountAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  access_failed_count
-                FROM    application.user
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            return await context.ScalarAsync<uint>();
-        }
-
-        /// <summary>
-        ///     Get signin count.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Number of signins.</returns>
-        public async Task<uint> GetLoginCountAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  login_count
-                FROM    application.user
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            return await context.ScalarAsync<uint>();
-        }
-
-        /// <summary>
-        ///     Get last sign in.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Datetime of last signin.</returns>
-        public async Task<DateTime?> GetLastLoginAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  last_login
-                FROM    application.user
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            await using var reader = await context.ReaderAsync();
-
-            return reader.GetSafeDateTime(0);
-        }
-
-        /// <summary>
         ///     Get password hash.
         /// </summary>
         /// <param name="id">Entity identifier.</param>

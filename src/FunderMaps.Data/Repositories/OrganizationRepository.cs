@@ -112,34 +112,34 @@ namespace FunderMaps.Data.Repositories
             context.AddParameterWithValue("postal_country", entity.PostalCountry);
         }
 
-        private static Organization MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        private static Organization MapFromReader(DbDataReader reader, int offset = 0)
             => new()
             {
-                Id = reader.GetGuid(offset + 0),
-                Name = reader.GetSafeString(offset + 1),
-                Email = reader.GetSafeString(offset + 2),
-                PhoneNumber = reader.GetSafeString(offset + 3),
-                RegistrationNumber = reader.GetSafeString(offset + 4),
-                BrandingLogo = reader.GetSafeString(offset + 5),
-                InvoiceName = reader.GetSafeString(offset + 6),
-                InvoicePoBox = reader.GetSafeString(offset + 7),
-                InvoiceEmail = reader.GetSafeString(offset + 8),
-                HomeStreet = reader.GetSafeString(offset + 9),
-                HomeAddressNumber = reader.GetSafeInt(offset + 10),
-                HomeAddressNumberPostfix = reader.GetSafeString(offset + 11),
-                HomeCity = reader.GetSafeString(offset + 12),
-                HomePostbox = reader.GetSafeString(offset + 13),
-                HomeZipcode = reader.GetSafeString(offset + 14),
-                HomeState = reader.GetSafeString(offset + 15),
-                HomeCountry = reader.GetSafeString(offset + 16),
-                PostalStreet = reader.GetSafeString(offset + 17),
-                PostalAddressNumber = reader.GetSafeInt(offset + 18),
-                PostalAddressNumberPostfix = reader.GetSafeString(offset + 19),
-                PostalCity = reader.GetSafeString(offset + 20),
-                PostalPostbox = reader.GetSafeString(offset + 21),
-                PostalZipcode = reader.GetSafeString(offset + 22),
-                PostalState = reader.GetSafeString(offset + 23),
-                PostalCountry = reader.GetSafeString(offset + 24),
+                Id = reader.GetGuid(offset++),
+                Name = reader.GetSafeString(offset++),
+                Email = reader.GetSafeString(offset++),
+                PhoneNumber = reader.GetSafeString(offset++),
+                RegistrationNumber = reader.GetSafeString(offset++),
+                BrandingLogo = reader.GetSafeString(offset++),
+                InvoiceName = reader.GetSafeString(offset++),
+                InvoicePoBox = reader.GetSafeString(offset++),
+                InvoiceEmail = reader.GetSafeString(offset++),
+                HomeStreet = reader.GetSafeString(offset++),
+                HomeAddressNumber = reader.GetSafeInt(offset++),
+                HomeAddressNumberPostfix = reader.GetSafeString(offset++),
+                HomeCity = reader.GetSafeString(offset++),
+                HomePostbox = reader.GetSafeString(offset++),
+                HomeZipcode = reader.GetSafeString(offset++),
+                HomeState = reader.GetSafeString(offset++),
+                HomeCountry = reader.GetSafeString(offset++),
+                PostalStreet = reader.GetSafeString(offset++),
+                PostalAddressNumber = reader.GetSafeInt(offset++),
+                PostalAddressNumberPostfix = reader.GetSafeString(offset++),
+                PostalCity = reader.GetSafeString(offset++),
+                PostalPostbox = reader.GetSafeString(offset++),
+                PostalZipcode = reader.GetSafeString(offset++),
+                PostalState = reader.GetSafeString(offset++),
+                PostalCountry = reader.GetSafeString(offset++),
             };
 
         /// <summary>
@@ -187,98 +187,6 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
-
-            await using var reader = await context.ReaderAsync();
-
-            return CacheEntity(MapFromReader(reader));
-        }
-
-        /// <summary>
-        ///     Retrieve <see cref="Organization"/> by email and password hash.
-        /// </summary>
-        /// <param name="name">Organization name.</param>
-        /// <returns><see cref="Organization"/>.</returns>
-        public async Task<Organization> GetByNameAsync(string name)
-        {
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email,
-                        phone_number,
-                        registration_number,
-                        branding_logo,
-                        invoice_name,
-                        invoice_po_box,
-                        invoice_email,
-                        home_address,
-                        home_address_number,
-                        home_address_number_postfix,
-                        home_city,
-                        home_postbox,
-                        home_zipcode,
-                        home_state,
-                        home_country,
-                        postal_address,
-                        postal_address_number,
-                        postal_address_number_postfix,
-                        postal_city,
-                        postal_postbox,
-                        postal_zipcode,
-                        postal_state,
-                        postal_country
-                FROM    application.organization
-                WHERE   normalized_name = application.normalize(@name)
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("name", name);
-
-            await using var reader = await context.ReaderAsync();
-
-            return CacheEntity(MapFromReader(reader));
-        }
-
-        /// <summary>
-        ///     Retrieve <see cref="Organization"/> by email and password hash.
-        /// </summary>
-        /// <param name="email">Unique identifier.</param>
-        /// <returns><see cref="Organization"/>.</returns>
-        public async Task<Organization> GetByEmailAsync(string email)
-        {
-            var sql = @"
-                SELECT  id,
-                        name,
-                        email,
-                        phone_number,
-                        registration_number,
-                        branding_logo,
-                        invoice_name,
-                        invoice_po_box,
-                        invoice_email,
-                        home_address,
-                        home_address_number,
-                        home_address_number_postfix,
-                        home_city,
-                        home_postbox,
-                        home_zipcode,
-                        home_state,
-                        home_country,
-                        postal_address,
-                        postal_address_number,
-                        postal_address_number_postfix,
-                        postal_city,
-                        postal_postbox,
-                        postal_zipcode,
-                        postal_state,
-                        postal_country
-                FROM    application.organization
-                WHERE   normalized_email = application.normalize(@email)
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("email", email);
 
             await using var reader = await context.ReaderAsync();
 
