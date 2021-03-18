@@ -1862,12 +1862,7 @@ COMMENT ON VIEW geocoder.building_active IS 'Contains all entries from geocoder.
 
 CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'concrete'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1878,12 +1873,7 @@ CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1894,12 +1884,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1910,12 +1895,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code = 'hz'::text))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1926,12 +1906,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code = 'hz'::text))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'wood_charger'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1942,12 +1917,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1958,12 +1928,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1974,12 +1939,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (10.5)::double precision))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -1990,12 +1950,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision))
 UNION ALL
  SELECT b.id,
-    b.external_id,
-    b.external_source,
-    b.built_year,
     bh.height,
-    gr.code,
-    s.velocity,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
    FROM ((((geocoder.building_active b
@@ -3846,13 +3801,6 @@ CREATE INDEX organization_proposal_normalized_email_idx ON application.organizat
 --
 
 CREATE UNIQUE INDEX user_normalized_email_idx ON application."user" USING btree (normalized_email) WHERE (normalized_email IS NOT NULL);
-
-
---
--- Name: analysis_foundation_indicative_external_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX analysis_foundation_indicative_external_id_idx ON data.analysis_foundation_indicative USING btree (external_id);
 
 
 --
