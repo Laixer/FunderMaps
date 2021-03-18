@@ -25,6 +25,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
+        // GET: api/address
         /// <summary>
         ///     Get address by identifier.
         /// </summary>
@@ -35,7 +36,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
             Address address = await geocoderTranslation.GetAddressIdAsync(id);
 
             // Map.
-            var output = _mapper.Map<AddressBuildingDto>(address);
+            var output = _mapper.Map<AddressDto>(address);
 
             // Return.
             return Ok(output);

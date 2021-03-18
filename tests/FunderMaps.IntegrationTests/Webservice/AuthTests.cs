@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.InputModels;
 using FunderMaps.Testing.Extensions;
 using System;
 using System.Net;
@@ -26,22 +25,10 @@ namespace FunderMaps.IntegrationTests.Webservice
         [Fact]
         public async Task SignInReturnSuccessAndToken()
         {
-            // Arrange
-            using var client = Factory.CreateUnauthorizedClient();
-
-            // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
-            {
-                Email = Factory.Superuser.User.Email,
-                Password = Factory.Superuser.Password,
-            });
-            var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject.Id);
-            Assert.NotNull(returnObject.Token);
-            Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
+            await TestStub.LoginAsync(Factory, "Javier40@yahoo.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "Freda@contoso.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "patsy@contoso.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "lester@contoso.com", "fundermaps");
         }
 
         [Fact]
@@ -58,6 +45,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject.Id);
             Assert.NotNull(returnObject.Token);
+            Assert.NotNull(returnObject.Issuer);
             Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
         }
 
@@ -68,9 +56,9 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateUnauthorizedClient();
 
             // Act
-            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInInputModel()
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
             {
-                Email = Factory.Superuser.User.Email,
+                Email = "lester@contoso.com",
                 Password = new Randomizer().Password(64),
             });
             var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
@@ -79,6 +67,45 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
             Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
             Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Theory]
+        [InlineData(null, null)]
+        [InlineData(null, "")]
+        [InlineData("", null)]
+        [InlineData("", "")]
+        public async Task SignInInvalidRequestReturnBadRequest(string email, string password)
+        {
+            // Arrange
+            using var client = Factory.CreateUnauthorizedClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+            {
+                Email = email,
+                Password = password,
+            });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [ClassData(typeof(RandomStringGeneratorP2))]
+        public async Task SignInRandomDataReturnNot500(string email, string password)
+        {
+            // Arrange
+            using var client = Factory.CreateUnauthorizedClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+            {
+                Email = email,
+                Password = password,
+            });
+
+            // Assert
+            Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Theory]

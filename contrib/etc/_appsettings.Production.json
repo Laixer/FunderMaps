@@ -7,7 +7,8 @@
     "Logging": {
         "LogLevel": {
             "Default": "Warning",
-            "Microsoft.AspNetCore.DataProtection": "Error"
+            "Microsoft.AspNetCore.DataProtection": "Error",
+            "FunderMaps": "Information"
         }
     },
     "Smtp": {

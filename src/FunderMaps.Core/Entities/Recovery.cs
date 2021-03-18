@@ -50,7 +50,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Client document identifier.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string DocumentName { get; set; }
 
         /// <summary>

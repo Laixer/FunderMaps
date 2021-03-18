@@ -41,7 +41,6 @@ namespace FunderMaps.WebApi
             services.AddAutoMapper(typeof(Startup));
 
             // Add the authentication layer.
-            services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

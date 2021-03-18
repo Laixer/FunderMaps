@@ -2,7 +2,7 @@
   "Jwt": {
     "Issuer": "FunderMapsDev",
     "Audience": "FunderMapsDev",
-    "TokenValidity": 5,
+    "TokenValidity": 60,
     "SignatureKey": "dhfgdfubhgbdfghredfgregurhe78gh348yvt784tcno3qt74gntkuirdhg"
   },
   "Logging": {
@@ -16,7 +16,7 @@
       "info@fundermaps.com"
     ]
   },
-  "UseExternalServices": true,
+  "UseExternalServices": false,
   "BackgroundWorkOptions": {
     "MaxQueueSize": 16,
     "Workers": 1

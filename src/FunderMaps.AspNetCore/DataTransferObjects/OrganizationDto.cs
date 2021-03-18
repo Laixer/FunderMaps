@@ -16,7 +16,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Gets or sets the name for the organization.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Name { get; init; }
 
         /// <summary>

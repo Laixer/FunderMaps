@@ -17,19 +17,5 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <param name="passwordHash">Superuser password.</param>
         /// <returns>Created <see cref="Organization"/> identifier.</returns>
         Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash);
-
-        /// <summary>
-        ///     Retrieve <see cref="Organization"/> by name.
-        /// </summary>
-        /// <param name="name">Organization name.</param>
-        /// <returns><see cref="Organization"/>.</returns>
-        Task<Organization> GetByNameAsync(string name);
-
-        /// <summary>
-        ///     Retrieve <see cref="Organization"/> by email.
-        /// </summary>
-        /// <param name="email">Organization email.</param>
-        /// <returns><see cref="Organization"/>.</returns>
-        Task<Organization> GetByEmailAsync(string email);
     }
 }

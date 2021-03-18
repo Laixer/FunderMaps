@@ -10,7 +10,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Document output name.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Name { get; init; }
     }
 }

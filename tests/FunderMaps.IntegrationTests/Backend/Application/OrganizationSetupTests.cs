@@ -1,8 +1,4 @@
-﻿using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
-using System.Net;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
@@ -18,18 +14,13 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             => Factory = factory;
 
         [Fact]
-        public async Task SetupOrganizationReturnOrganization()
+        public async Task OrganizationSetupLifeCycle()
         {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            var organization = await adminClient.PostAsJsonGetFromJsonAsync<OrganizationProposalDto, OrganizationProposalDto>("api/organization/proposal", new OrganizationProposalDtoFaker().Generate());
-            using var client = Factory.CreateUnauthorizedClient();
-
-            // Act
-            var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", new OrganizationSetupDtoFaker().Generate());
-
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
+            await TestStub.LoginAsync(Factory, organizationSetup.Email, organizationSetup.Password);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
     }
 }

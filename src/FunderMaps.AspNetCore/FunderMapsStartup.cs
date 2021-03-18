@@ -3,15 +3,17 @@ using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
+using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
+[assembly: ApiController]
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
 namespace FunderMaps.AspNetCore
 {
@@ -25,16 +27,10 @@ namespace FunderMaps.AspNetCore
         /// </summary>
         private static void ConfigureMapper(IMapperConfigurationExpression mapper)
         {
-            mapper.CreateMap<Address, AddressBuildingDto>()
-                .IncludeMembers(src => src.BuildingNavigation)
-                .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
-                .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
-                .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
-
+            mapper.CreateMap<Address, AddressDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisFoundationDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisCompleteDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisRiskPlusDto>();
-            mapper.CreateMap<Building, AddressBuildingDto>().ReverseMap();
             mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
             mapper.CreateMap<Incident, IncidentDto>()
                 .IncludeMembers(src => src.ContactNavigation)
@@ -82,11 +78,14 @@ namespace FunderMaps.AspNetCore
                 // FUTURE: Only load specific parts.
                 // NOTE: This will register all controllers in the FunderMaps.AspNetCore
                 //       assemly regardless of authentication and authorization.
-                services.AddControllers()
+                services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)))
                     .AddFunderMapsAssembly();
 
                 // Register components from reference assemblies.
                 services.AddFunderMapsCoreServices();
+
+                // Adds the core authentication service to the container.
+                services.AddScoped<SignInService>();
 
                 // NOTE: Register the HttpContextAccessor service to the container.
                 //       The HttpContextAccessor exposes a singleton holding the

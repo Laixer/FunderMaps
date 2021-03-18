@@ -19,111 +19,91 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             => Factory = factory;
 
         [Fact]
-        public async Task GetOrganizationByIdReturnSingleOrganization()
+        public async Task OrganizationLifeCycle()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
-            // Act
-            var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(Factory.Organization.Id, returnObject.Id);
+                // Act
+                var response = await client.GetAsync("api/admin/organization");
+                var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationDto>>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnList.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
+                // Act
+                var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}", new OrganizationDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
 
         [Fact]
-        public async Task GetAllOrganizationReturnPageOrganization()
+        public async Task OrganizationLifeCycleForbidden()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
-            // Act
-            var response = await client.GetAsync("api/admin/organization");
-            var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationDto>>();
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count >= 1);
-        }
+                // Act
+                var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
 
-        [Fact]
-        public async Task UpdateOrganizationReturnNoContent()
-        {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}", new OrganizationDtoFaker().Generate());
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+                // Act
+                var response = await client.GetAsync("api/admin/organization");
 
-        [Fact(Skip = "Prevents other tests from running")]
-        public async Task DeleteOrganizationReturnNoContent()
-        {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+                // Act
+                var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}", new OrganizationDtoFaker().Generate());
 
-        [Fact]
-        public async Task GetOrganizationByIdReturnForbidden()
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
+                // Act
+                var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}");
 
-        [Fact]
-        public async Task GetAllOrganizationReturnForbidden()
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.GetAsync("api/admin/organization");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task UpdateOrganizationReturnForbidden()
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}", new OrganizationDtoFaker().Generate());
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task DeleteOrganizationReturnForbidden()
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
     }
 }

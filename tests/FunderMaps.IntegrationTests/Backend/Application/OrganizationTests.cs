@@ -1,6 +1,7 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 using FunderMaps.Testing.Faker;
+using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(Factory.Organization.Id, returnObject.Id);
+            Assert.Equal(Guid.Parse("05203318-6c55-43c1-a6a6-bb8c83f930c3"), returnObject.Id);
         }
 
         [Fact]
@@ -42,12 +43,22 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateClient(OrganizationRole.Superuser);
+            var updateObject = new OrganizationFaker().Generate();
 
             // Act
-            var response = await client.PutAsJsonAsync("api/organization", new OrganizationFaker().Generate());
+            var response = await client.PutAsJsonAsync("api/organization", updateObject);
+
+            // Act
+            var returnObject = await client.GetFromJsonAsync<OrganizationDto>("api/organization");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(updateObject.PhoneNumber, returnObject.PhoneNumber);
+            Assert.Equal(updateObject.RegistrationNumber, returnObject.RegistrationNumber);
+            Assert.Equal(updateObject.BrandingLogo, returnObject.BrandingLogo);
+            Assert.Equal(updateObject.InvoiceName, returnObject.InvoiceName);
+            Assert.Equal(updateObject.InvoicePoBox, returnObject.InvoicePoBox);
+            Assert.Equal(updateObject.InvoiceEmail, returnObject.InvoiceEmail);
         }
 
         [Theory]

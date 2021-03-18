@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Authentication;
+﻿using FunderMaps.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System;
 

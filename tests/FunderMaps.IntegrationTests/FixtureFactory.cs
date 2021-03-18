@@ -1,40 +1,29 @@
 using System.Net.Http;
 using System.Threading.Tasks;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests
 {
-    public abstract class FixtureFactory<TSetup, TLocal> : IAsyncLifetime
-        where TSetup : class
-        where TLocal : class
+    public abstract class FixtureFactory<TStartup> : IAsyncLifetime
+        where TStartup : class
     {
-        private SetupFunderMapsWebApplicationFactory<TLocal> setupAppClient;
-        private AuthFunderMapsWebApplicationFactory<TLocal> superuserAppClient;
-        private AuthFunderMapsWebApplicationFactory<TLocal> verifierAppClient;
-        private AuthFunderMapsWebApplicationFactory<TLocal> writerAppClient;
-        private AuthFunderMapsWebApplicationFactory<TLocal> readerAppClient;
-
-        public OrganizationDto Organization => setupAppClient.Organization;
-        public UserPair Superuser => setupAppClient.Superuser;
-        public UserPair Verifier => setupAppClient.Verifier;
-        public UserPair Writer => setupAppClient.Writer;
-        public UserPair Reader => setupAppClient.Reader;
+        private AuthFunderMapsWebApplicationFactory<TStartup> adminAppClient;
+        private AuthFunderMapsWebApplicationFactory<TStartup> superuserAppClient;
+        private AuthFunderMapsWebApplicationFactory<TStartup> verifierAppClient;
+        private AuthFunderMapsWebApplicationFactory<TStartup> writerAppClient;
+        private AuthFunderMapsWebApplicationFactory<TStartup> readerAppClient;
 
         public async Task InitializeAsync()
         {
-            using HttpClient adminClient = CreateSetupClient();
-            setupAppClient = new(adminClient);
-
-            await setupAppClient.InitializeAsync();
-
             using HttpClient client = CreateUnauthorizedClient();
-            superuserAppClient = new(client, Superuser);
-            verifierAppClient = new(client, Verifier);
-            writerAppClient = new(client, Writer);
-            readerAppClient = new(client, Reader);
+            adminAppClient = new(client, "admin@fundermaps.com", "fundermaps");
+            superuserAppClient = new(client, "Javier40@yahoo.com", "fundermaps");
+            verifierAppClient = new(client, "Freda@contoso.com", "fundermaps");
+            writerAppClient = new(client, "patsy@contoso.com", "fundermaps");
+            readerAppClient = new(client, "lester@contoso.com", "fundermaps");
 
+            await adminAppClient.InitializeAsync();
             await superuserAppClient.InitializeAsync();
             await verifierAppClient.InitializeAsync();
             await writerAppClient.InitializeAsync();
@@ -42,12 +31,7 @@ namespace FunderMaps.IntegrationTests
         }
 
         public HttpClient CreateAdminClient()
-            => new AdminWebApplicationFactory<TLocal>()
-                .CreateClient();
-
-        public HttpClient CreateSetupClient()
-            => new AdminWebApplicationFactory<TSetup>()
-                .CreateClient();
+            => adminAppClient.CreateClient();
 
         public HttpClient CreateClient(OrganizationRole role = OrganizationRole.Reader)
             => role switch
@@ -59,7 +43,7 @@ namespace FunderMaps.IntegrationTests
             };
 
         public HttpClient CreateUnauthorizedClient()
-            => new FunderMapsWebApplicationFactory<TLocal>()
+            => new FunderMapsWebApplicationFactory<TStartup>()
                 .CreateClient();
 
         public async Task DisposeAsync()
@@ -68,7 +52,7 @@ namespace FunderMaps.IntegrationTests
             await writerAppClient.DisposeAsync();
             await verifierAppClient.DisposeAsync();
             await superuserAppClient.DisposeAsync();
-            await setupAppClient.DisposeAsync();
+            await adminAppClient.DisposeAsync();
         }
     }
 }

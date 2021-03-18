@@ -16,7 +16,7 @@ namespace FunderMaps.WebApi.DataTransferObjects
         /// <summary>
         ///     Organization name.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Name { get; set; }
 
         /// <summary>

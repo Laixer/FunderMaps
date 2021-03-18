@@ -129,31 +129,25 @@ namespace FunderMaps.Data
         /// <param name="cmdText">SQL query.</param>
         /// <param name="navigation">Navigation instance of type <see cref="Navigation"/>.</param>
         /// <param name="alias">Datasource alias.</param>
-        protected static void ConstructNavigation(string cmdText, Navigation navigation, string alias = null)
+        /// <returns>The altered SQL query.</returns>
+        protected static string ConstructNavigation(string cmdText, Navigation navigation, string alias = null)
         {
-            const string lineFeed = "\r\n";
-
             if (navigation is null)
             {
-                return;
+                return cmdText;
             }
 
-            // FUTURE: Can we improve stability and readability here?
-            if (!string.IsNullOrEmpty(navigation.SortColumn))
+            if (navigation.Offset > 0)
             {
-                var column = alias is not null ? $"{alias}.{navigation.SortColumn}" : navigation.SortColumn;
-                cmdText += $"{lineFeed} ORDER BY {column} {(navigation.SortOrder == SortOrder.Ascending ? "ASC" : "DESC")}";
+                cmdText += $"\r\n OFFSET {navigation.Offset}";
             }
 
-            if (navigation.Offset != 0)
+            if (navigation.Limit > 0)
             {
-                cmdText += $"{lineFeed} OFFSET {navigation.Offset}";
+                cmdText += $"\r\n LIMIT {navigation.Limit}";
             }
 
-            if (navigation.Limit != 0)
-            {
-                cmdText += $"{lineFeed} LIMIT {navigation.Limit}";
-            }
+            return cmdText;
         }
 
         /// <summary>

@@ -40,25 +40,24 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
 
-        // TODO
-        // [Theory]
-        // [InlineData("gfm-asdkkgfsljshdf")]
-        // [InlineData("aaa-invalidid")]
-        // [InlineData("gfm-correctid")]
-        // public async Task CreateIncidentReturnNotFound(string address)
-        // {
-        //     // Arrange.
-        //     var incident = new IncidentDtoFaker()
-        //         .RuleFor(f => f.Address, f => address)
-        //         .Generate();
-        //     using var client = Factory.CreateClient();
+        [Theory]
+        [InlineData("gfm-asdkkgfsljshdf")]
+        [InlineData("aaa-invalidid")]
+        [InlineData("gfm-correctid")]
+        public async Task CreateIncidentReturnNotFound(string address)
+        {
+            // Arrange.
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => address)
+                .Generate();
+            using var client = Factory.CreateClient();
 
-        //     // Act.
-        //     var response = await client.PostAsJsonAsync("api/incident-portal/submit", incident);
+            // Act.
+            var response = await client.PostAsJsonAsync("api/incident-portal/submit", incident);
 
-        //     // Assert.
-        //     Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        // }
+            // Assert.
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
 
         [Fact]
         public async Task UploadDocumentReturnDocument()

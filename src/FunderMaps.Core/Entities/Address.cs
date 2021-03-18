@@ -26,7 +26,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Building number.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string BuildingNumber { get; set; }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Street name.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Street { get; set; }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     External data source id.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string ExternalId { get; set; }
 
         /// <summary>
@@ -74,12 +74,6 @@ namespace FunderMaps.Core.Entities
         ///     Full address.
         /// </summary>
         public string FullAddress => $"{Street} {BuildingNumber}, {City}";
-
-        // TODO: Obsolete
-        /// <summary>
-        ///     Building identifier.
-        /// </summary>
-        public Building BuildingNavigation { get; set; }
 
         /// <summary>
         ///     Print object as name.

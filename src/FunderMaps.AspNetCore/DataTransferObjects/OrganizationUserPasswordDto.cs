@@ -10,7 +10,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     User password.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Password { get; init; }
     }
 }

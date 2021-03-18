@@ -18,7 +18,7 @@ namespace FunderMaps.Webservice.InputModels
         /// <summary>
         ///     Input identifier.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Id { get; set; }
     }
 }

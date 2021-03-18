@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core;
-using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace FunderMaps.AspNetCore.Components
+namespace FunderMaps.AspNetCore.Middleware
 {
     /// <summary>
     ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.

@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.Authentication
+﻿namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
     ///     FunderMaps claim types.

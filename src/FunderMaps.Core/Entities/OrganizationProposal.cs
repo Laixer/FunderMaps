@@ -24,7 +24,7 @@ namespace FunderMaps.Core.Entities
         /// <summary>
         ///     Proposed organization name.
         /// </summary>
-        [Required(AllowEmptyStrings = false)]
+        [Required]
         public string Name { get; set; }
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         ///     Foundation type.
         /// </summary>
         [EnumDataType(typeof(FoundationType))]
-        public FoundationType FoundationType { get; init; }
+        public FoundationType? FoundationType { get; init; }
 
         /// <summary>
         ///     Building chained to another building.
@@ -47,7 +47,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         ///     Foundation damage cause.
         /// </summary>
         [EnumDataType(typeof(FoundationDamageCause))]
-        public FoundationDamageCause FoundationDamageCause { get; init; }
+        public FoundationDamageCause? FoundationDamageCause { get; init; }
 
         /// <summary>
         ///     Document name.

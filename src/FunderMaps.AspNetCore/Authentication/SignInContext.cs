@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace FunderMaps.Core.Authentication
+namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
     ///     Context returned from various authentication operations.

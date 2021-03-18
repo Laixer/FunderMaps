@@ -6,6 +6,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -98,6 +99,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     was successfully created within this <see cref="Recovery"/>.
         /// </remarks>
         [HttpPost]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> CreateAsync(int recoveryId, [FromBody] RecoverySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
         {
             Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
@@ -136,6 +138,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     was successfully updated within this <see cref="Recovery"/>.
         /// </remarks>
         [HttpPut("{id:int}")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDto input)
         {
             // Map.
@@ -169,6 +172,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     within this <see cref="Recovery"/> are deleted.
         /// </remarks>
         [HttpDelete("{id:int}")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.

@@ -2,7 +2,6 @@
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -111,6 +110,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Create recovery.
         /// </summary>
         [HttpPost]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
         {
             // Map.
@@ -132,6 +132,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
         {
             // Act.
@@ -180,6 +181,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Update recovery by id.
         /// </summary>
         [HttpPut("{id:int}")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
         {
             // Map.
@@ -360,6 +362,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Delete recovery by id.
         /// </summary>
         [HttpDelete("{id:int}")]
+        [Authorize(Policy = "SuperuserAdministratorPolicy")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.

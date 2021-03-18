@@ -23,13 +23,11 @@ namespace FunderMaps.Data.Repositories
         /// <returns>Created <see cref="User"/>.</returns>
         public override async Task<Guid> AddAsync(User entity)
         {
-            // FUTURE: normalized_email should be db trigger function
             var sql = @"
                 INSERT INTO application.user(
                     given_name,
                     last_name,
                     email,
-                    normalized_email,
                     avatar,
                     job_title,
                     phone_number,
@@ -38,7 +36,6 @@ namespace FunderMaps.Data.Repositories
                     @given_name,
                     @last_name,
                     @email,
-                    application.normalize(@email),
                     @avatar,
                     NULLIF(trim(@job_title), ''),
                     @phone_number,
@@ -69,6 +66,8 @@ namespace FunderMaps.Data.Repositories
             return await context.ScalarAsync<long>();
         }
 
+        // FUTURE: If user is in use it violates foreign key constraint, returning
+        //         a ReferenceNotFoundException, which is invalid.
         /// <summary>
         ///     Delete <see cref="User"/>.
         /// </summary>
@@ -184,68 +183,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Get signin faillure count.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Number of failed signins.</returns>
-        public async Task<uint> GetAccessFailedCountAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  access_failed_count
-                FROM    application.user
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            return await context.ScalarAsync<uint>();
-        }
-
-        /// <summary>
-        ///     Get signin count.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Number of signins.</returns>
-        public async Task<uint> GetLoginCountAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  login_count
-                FROM    application.user
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            return await context.ScalarAsync<uint>();
-        }
-
-        /// <summary>
-        ///     Get last sign in.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>Datetime of last signin.</returns>
-        public async Task<DateTime?> GetLastLoginAsync(Guid id)
-        {
-            var sql = @"
-                SELECT  last_login
-                FROM    application.user
-                WHERE   id = @id
-                LIMIT   1";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            await using var reader = await context.ReaderAsync();
-
-            return reader.GetSafeDateTime(0);
-        }
-
-        /// <summary>
         ///     Get password hash.
         /// </summary>
         /// <param name="id">Entity identifier.</param>
@@ -275,13 +212,7 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> IsLockedOutAsync(Guid id)
         {
             var sql = @"
-                SELECT EXISTS (
-                    SELECT  *
-                    FROM    application.user
-                    WHERE   id = @id
-                    AND     lockout_end > NOW()
-                    LIMIT   1
-                ) AS is_locked";
+                SELECT application.is_locked_out(@id)";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -411,19 +342,15 @@ namespace FunderMaps.Data.Repositories
         /// <param name="id">Entity identifier.</param>
         public async Task RegisterAccess(Guid id)
         {
-            // FUTURE: db func
-            // FUTURE: db trigger to update last_login
+            // FUTURE: Maybe call SP directly.
             var sql = @"
-                UPDATE  application.user
-                SET     login_count = login_count + 1,
-                        last_login = CURRENT_TIMESTAMP
-                WHERE   id = @id";
+                SELECT application.log_access(@id)";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            await context.NonQueryAsync();
+            await context.NonQueryAsync(affectedGuard: false);
         }
     }
 }

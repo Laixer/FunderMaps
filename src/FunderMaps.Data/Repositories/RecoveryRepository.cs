@@ -233,7 +233,8 @@ namespace FunderMaps.Data.Repositories
 		                r.delete_date
                 FROM    report.recovery AS r
                 JOIN 	application.attribution AS a ON a.id = r.attribution
-                WHERE   a.owner = @tenant";
+                WHERE   a.owner = @tenant
+                ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
             ConstructNavigation(sql, navigation);
 

@@ -19,148 +19,148 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             => Factory = factory;
 
         [Fact]
-        public async Task CreateOrganizationUserReturnOrganizationUser()
+        public async Task OrganizationUserLifeCycle()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
+            await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
 
-            // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
-            var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
+                // Act
+                var response = await client.GetAsync($"api/admin/organization/{organization.Id}/user");
+                var returnList = await response.Content.ReadFromJsonAsync<List<UserDto>>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnList.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
+                // Act
+                var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser.Id}", new UserDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ApplicationStub.DeleteOrganizationUserAsync(Factory, organization, organizationUser);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
 
         [Fact]
-        public async Task GetAllOrganizationUserReturnAllOrganizationUser()
+        public async Task OrganizationUserLifeCycleChangeRole()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
-            await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
+            await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
 
-            // Act
-            var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}/user");
-            var returnList = await response.Content.ReadFromJsonAsync<List<UserDto>>();
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count >= 2);
+                // Act
+                var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser.Id}/change-organization-role", new ChangeOrganizationRoleDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ApplicationStub.DeleteOrganizationUserAsync(Factory, organization, organizationUser);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
 
         [Fact]
-        public async Task UpdateOrganizationUserReturnNoContent()
+        public async Task OrganizationUserLifeCycleChangePassword()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
+            await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
 
-            // Act
-            var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}", new UserDtoFaker().Generate());
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+                var newObject = new ChangePasswordDtoFaker().Generate();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+                // Act
+                var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser.Id}/change-password", newObject);
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+                await TestStub.LoginAsync(Factory, organizationUser.Email, newObject.NewPassword);
+            }
+
+            await ApplicationStub.DeleteOrganizationUserAsync(Factory, organization, organizationUser);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
 
         [Fact]
-        public async Task ChangeOrganizationUserRoleReturnNoContent()
+        public async Task OrganizationUserLifeCycleForbidden()
         {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
+            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
+            var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
+            await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
 
-            // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}/change-organization-role", new ChangeOrganizationRoleDtoFaker().Generate());
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+                // Act
+                var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
 
-        [Fact]
-        public async Task ChangeOrganizationUserPasswordReturnNoContent()
-        {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}/change-password", new ChangePasswordDtoFaker().Generate());
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+                // Act
+                var response = await client.GetAsync($"api/admin/organization/{organization.Id}/user");
 
-        [Fact]
-        public async Task DeleteOrganizationUserReturnNoContent()
-        {
-            // Arrange
-            using var client = Factory.CreateAdminClient();
-            var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+                // Act
+                var response = await client.PutAsJsonAsync($"api/admin/organization/{organization.Id}/user/{organizationUser.Id}", new UserDtoFaker().Generate());
 
-        [Fact]
-        public async Task CreateOrganizationUserReturnForbidden()
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
+                // Act
+                var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{organizationUser.Id}");
 
-        [Fact]
-        public async Task GetAllOrganizationUserReturnForbidden()
-        {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
-            using var client = Factory.CreateClient();
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
 
-            // Act
-            var response = await client.GetAsync($"api/admin/organization/{Factory.Organization.Id}/user");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task UpdateOrganizationUserReturnForbidden()
-        {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            var user = await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.PutAsJsonAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}", new UserDtoFaker().Generate());
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task DeleteOrganizationUserReturnForbidden()
-        {
-            // Arrange
-            using var adminClient = Factory.CreateAdminClient();
-            var user = await adminClient.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>($"api/admin/organization/{Factory.Organization.Id}/user", new OrganizationUserPasswordDtoFaker().Generate());
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{Factory.Organization.Id}/user/{user.Id}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            await ApplicationStub.DeleteOrganizationUserAsync(Factory, organization, organizationUser);
+            await ApplicationStub.DeleteOrganizationAsync(Factory, organization);
         }
     }
 }

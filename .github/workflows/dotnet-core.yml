@@ -84,15 +84,15 @@ jobs:
         Incident__Recipients__0: info@example.com
         ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_portal"
 
-    # - name: Testing Webservice
-    #   run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Webservice
-    #   env:
-    #     ASPNETCORE_ENVIRONMENT: Production
-    #     UseExternalServices: False
-    #     Jwt__Issuer: "FunderMapsTest"
-    #     Jwt__Audience: "FunderMapsTest"
-    #     Jwt__TokenValidity: 10
-    #     Jwt__SignatureKey: somelargetextstringusedinsignatures
-    #     Incident__ClientId: 42
-    #     Incident__Recipients__0: info@example.com
-    #     ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webservice"
+    - name: Testing Webservice
+      run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.IntegrationTests.Webservice
+      env:
+        ASPNETCORE_ENVIRONMENT: Production
+        UseExternalServices: False
+        Jwt__Issuer: "FunderMapsTest"
+        Jwt__Audience: "FunderMapsTest"
+        Jwt__TokenValidity: 10
+        Jwt__SignatureKey: somelargetextstringusedinsignatures
+        Incident__ClientId: 42
+        Incident__Recipients__0: info@example.com
+        ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webservice"

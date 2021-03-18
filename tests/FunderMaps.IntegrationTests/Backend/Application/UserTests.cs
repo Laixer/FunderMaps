@@ -1,5 +1,6 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Testing.Faker;
+using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -29,7 +30,8 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(Factory.Reader.User.Id, returnObject.Id);
+            Assert.Equal(Guid.Parse("1a93cfb3-f097-4697-a998-71cdd9cfaead"), returnObject.Id);
+            Assert.Equal("lester@contoso.com", returnObject.Email);
         }
 
         [Fact]
@@ -37,12 +39,20 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateClient();
+            var updateObject = new UserFaker().Generate();
 
             // Act
-            var response = await client.PutAsJsonAsync("api/user", new UserFaker().Generate());
+            var response = await client.PutAsJsonAsync("api/user", updateObject);
+
+            // Act
+            var returnObject = await client.GetFromJsonAsync<UserDto>("api/user");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(updateObject.GivenName, returnObject.GivenName);
+            Assert.Equal(updateObject.LastName, returnObject.LastName);
+            Assert.Equal(updateObject.JobTitle, returnObject.JobTitle);
+            Assert.Equal(updateObject.PhoneNumber, returnObject.PhoneNumber);
         }
     }
 }

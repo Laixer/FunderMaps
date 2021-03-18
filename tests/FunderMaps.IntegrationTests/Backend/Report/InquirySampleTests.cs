@@ -1,5 +1,6 @@
 ﻿using FunderMaps.Testing.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -24,8 +25,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var inquiry = new InquiryDtoFaker()
-                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
-                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
@@ -47,8 +48,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var inquiry = new InquiryDtoFaker()
-                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
-                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
@@ -72,8 +73,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var inquiry = new InquiryDtoFaker()
-                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
-                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
@@ -96,8 +97,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var inquiry = new InquiryDtoFaker()
-                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
-                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
             var samples = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
@@ -118,8 +119,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var inquiry = new InquiryDtoFaker()
-                .RuleFor(f => f.Reviewer, f => Factory.Verifier.User.Id)
-                .RuleFor(f => f.Contractor, f => Factory.Organization.Id)
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")

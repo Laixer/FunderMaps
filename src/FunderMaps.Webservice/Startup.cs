@@ -44,7 +44,6 @@ namespace FunderMaps.Webservice
         private void StartupConfigureServices(IServiceCollection services)
         {
             // Add the authentication layer.
-            services.AddFunderMapsCoreAuthentication();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
