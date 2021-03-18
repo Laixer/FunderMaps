@@ -17,6 +17,14 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Data for Name: building_elevation; Type: TABLE DATA; Schema: data; Owner: fundermaps
+--
+
+COPY data.building_elevation (building_id, ground, roof) FROM stdin;
+\.
+
+
+--
 -- Data for Name: building_geographic_region; Type: TABLE DATA; Schema: data; Owner: fundermaps
 --
 
@@ -37,14 +45,6 @@ COPY data.building_groundwater_level (building_id, level) FROM stdin;
 --
 
 COPY data.building_ownership (building_id, owner) FROM stdin;
-\.
-
-
---
--- Data for Name: premise_z; Type: TABLE DATA; Schema: data; Owner: fundermaps
---
-
-COPY data.premise_z (building_id, ground_00, ground_10, ground_20, ground_30, ground_40, ground_50, roof_25, rmse_25, roof_50, rmse_50, roof_75, rmse_75, roof_90, rmse_90, roof_95, rmse_95, roof_99, rmse_99, roof_flat, nr_ground_pts, nr_roof_pts, height_valid) FROM stdin;
 \.
 
 
