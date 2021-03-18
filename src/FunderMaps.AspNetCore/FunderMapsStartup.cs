@@ -84,6 +84,9 @@ namespace FunderMaps.AspNetCore
                 // Register components from reference assemblies.
                 services.AddFunderMapsCoreServices();
 
+                // Adds the core authentication service to the container.
+                services.AddScoped<SignInService>();
+
                 // NOTE: Register the HttpContextAccessor service to the container.
                 //       The HttpContextAccessor exposes a singleton holding the
                 //       HttpContext within a scoped resolver, or null outside the scope.

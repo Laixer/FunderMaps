@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core;
-using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Entities;
 using Microsoft.AspNetCore.Http;
 

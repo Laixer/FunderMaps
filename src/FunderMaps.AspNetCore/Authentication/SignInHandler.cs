@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Authentication;
-using FunderMaps.Core.Exceptions;
+﻿using FunderMaps.Core.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System;
 using System.Security.Claims;

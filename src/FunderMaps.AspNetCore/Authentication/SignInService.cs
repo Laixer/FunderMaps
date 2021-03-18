@@ -8,7 +8,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.Authentication
+namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
     ///     Provides the APIs for authentication.
