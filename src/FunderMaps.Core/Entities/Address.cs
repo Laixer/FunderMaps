@@ -75,12 +75,6 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public string FullAddress => $"{Street} {BuildingNumber}, {City}";
 
-        // TODO: Obsolete
-        /// <summary>
-        ///     Building identifier.
-        /// </summary>
-        public Building BuildingNavigation { get; set; }
-
         /// <summary>
         ///     Print object as name.
         /// </summary>

@@ -2789,32 +2789,6 @@ CREATE VIEW geocoder.building_all AS
 ALTER TABLE geocoder.building_all OWNER TO fundermaps;
 
 --
--- Name: building_encoded_geom; Type: VIEW; Schema: geocoder; Owner: fundermaps
---
-
-CREATE VIEW geocoder.building_encoded_geom AS
- SELECT building.id,
-    building.built_year,
-    building.is_active,
-    encode((public.st_asgeojson(building.geom))::bytea, 'hex'::text) AS geom,
-    building.external_id,
-    building.external_source,
-    building.building_type,
-    building.neighborhood_id
-   FROM geocoder.building
-  WHERE (building.geom IS NOT NULL);
-
-
-ALTER TABLE geocoder.building_encoded_geom OWNER TO fundermaps;
-
---
--- Name: VIEW building_encoded_geom; Type: COMMENT; Schema: geocoder; Owner: fundermaps
---
-
-COMMENT ON VIEW geocoder.building_encoded_geom IS 'Contains all entries from geocoder.building and encode geom as safe string.';
-
-
---
 -- Name: building_inactive; Type: VIEW; Schema: geocoder; Owner: fundermaps
 --
 
@@ -5471,16 +5445,6 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_all TO fundermaps_web
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_all TO fundermaps_webservice;
 GRANT SELECT,REFERENCES ON TABLE geocoder.building_all TO fundermaps_portal;
 GRANT SELECT,REFERENCES ON TABLE geocoder.building_all TO fundermaps_batch;
-
-
---
--- Name: TABLE building_encoded_geom; Type: ACL; Schema: geocoder; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_encoded_geom TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_encoded_geom TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE geocoder.building_encoded_geom TO fundermaps_portal;
-GRANT SELECT,REFERENCES ON TABLE geocoder.building_encoded_geom TO fundermaps_batch;
 
 
 --

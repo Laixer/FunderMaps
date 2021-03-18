@@ -27,16 +27,10 @@ namespace FunderMaps.AspNetCore
         /// </summary>
         private static void ConfigureMapper(IMapperConfigurationExpression mapper)
         {
-            mapper.CreateMap<Address, AddressBuildingDto>()
-                .IncludeMembers(src => src.BuildingNavigation)
-                .ForMember(dest => dest.AddressId, o => o.MapFrom(src => src.Id))
-                .ForMember(dest => dest.BuildingId, o => o.MapFrom(src => src.BuildingNavigation.Id))
-                .ForMember(dest => dest.BuildingGeometry, o => o.MapFrom(src => src.BuildingNavigation.Geometry));
-
+            mapper.CreateMap<Address, AddressDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisFoundationDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisCompleteDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisRiskPlusDto>();
-            mapper.CreateMap<Building, AddressBuildingDto>().ReverseMap();
             mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
             mapper.CreateMap<Incident, IncidentDto>()
                 .IncludeMembers(src => src.ContactNavigation)
