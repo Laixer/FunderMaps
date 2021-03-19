@@ -21,9 +21,9 @@ SET row_security = off;
 --
 
 COPY report.incident (id, foundation_type, chained_building, owner, foundation_recovery, neightbor_recovery, foundation_damage_cause, document_file, note, contact, create_date, update_date, delete_date, foundation_damage_characteristics, environment_damage_characteristics, address, meta, audit_status, internal_note, question_type) FROM stdin;
-FIR122021-12500	wood	f	t	t	t	drystand	{deposit.dwf,adapter_e_enable.viv}	\N	Brady_Gorczany17@gmail.com	2021-03-19 15:50:26.566311+00	\N	\N	{crack,jamming_door_window,skewed}	{sagging_sewer_connection,vegetation_nearby}	gfm-351cc5645ab7457b92d3629e8c163f0b	{"SessionUser": "1a93cfb3-f097-4697-a998-71cdd9cfaead", "SessionOrganization": "05203318-6c55-43c1-a6a6-bb8c83f930c3"}	todo	\N	financial
-FIR122021-12502	wood	t	t	f	t	bio_fungus_infection	{payment_credit_card_account_dynamic.jsonld,tasty_steel_keyboard_input_b2b.xdm}	\N	Jany_Ritchie24@yahoo.com	2021-03-19 15:50:38.136926+00	\N	\N	{threshold_below_subsurface}	{increasing_traffic,vegetation_nearby,sewage_leakage,sagging_cables_pipes,low_ground_water,construction_nearby,foundation_damage_nearby,elevation}	gfm-351cc5645ab7457b92d3629e8c163f0b	{"SessionUser": "1a93cfb3-f097-4697-a998-71cdd9cfaead", "SessionOrganization": "05203318-6c55-43c1-a6a6-bb8c83f930c3"}	todo	\N	research
-FIR122021-12504	no_pile_strips	t	t	t	f	drainage	{circuit_object_based_sas.svgz,valley_deposit_synthesizing.qwd,background.fxp}	sunt	Zetta81@hotmail.com	2021-03-19 15:50:46.847066+00	\N	\N	{crawlspace_flooding,threshold_below_subsurface,skewed}	{flooding,sagging_cables_pipes,subsidence,construction_nearby,increasing_traffic,sagging_sewer_connection,low_ground_water,vegetation_nearby,sewage_leakage,foundation_damage_nearby}	gfm-351cc5645ab7457b92d3629e8c163f0b	{"SessionUser": "1a93cfb3-f097-4697-a998-71cdd9cfaead", "SessionOrganization": "05203318-6c55-43c1-a6a6-bb8c83f930c3"}	todo	\N	buy_sell
+FIR122021-1	wood	f	t	t	t	drystand	{deposit.dwf,adapter_e_enable.viv}	\N	Brady_Gorczany17@gmail.com	2021-03-19 15:50:26.566311+00	\N	\N	{crack,jamming_door_window,skewed}	{sagging_sewer_connection,vegetation_nearby}	gfm-351cc5645ab7457b92d3629e8c163f0b	{"SessionUser": "1a93cfb3-f097-4697-a998-71cdd9cfaead", "SessionOrganization": "05203318-6c55-43c1-a6a6-bb8c83f930c3"}	todo	\N	financial
+FIR122021-2	wood	t	t	f	t	bio_fungus_infection	{payment_credit_card_account_dynamic.jsonld,tasty_steel_keyboard_input_b2b.xdm}	\N	Jany_Ritchie24@yahoo.com	2021-03-19 15:50:38.136926+00	\N	\N	{threshold_below_subsurface}	{increasing_traffic,vegetation_nearby,sewage_leakage,sagging_cables_pipes,low_ground_water,construction_nearby,foundation_damage_nearby,elevation}	gfm-351cc5645ab7457b92d3629e8c163f0b	{"SessionUser": "1a93cfb3-f097-4697-a998-71cdd9cfaead", "SessionOrganization": "05203318-6c55-43c1-a6a6-bb8c83f930c3"}	todo	\N	research
+FIR122021-3	no_pile_strips	t	t	t	f	drainage	{circuit_object_based_sas.svgz,valley_deposit_synthesizing.qwd,background.fxp}	sunt	Zetta81@hotmail.com	2021-03-19 15:50:46.847066+00	\N	\N	{crawlspace_flooding,threshold_below_subsurface,skewed}	{flooding,sagging_cables_pipes,subsidence,construction_nearby,increasing_traffic,sagging_sewer_connection,low_ground_water,vegetation_nearby,sewage_leakage,foundation_damage_nearby}	gfm-351cc5645ab7457b92d3629e8c163f0b	{"SessionUser": "1a93cfb3-f097-4697-a998-71cdd9cfaead", "SessionOrganization": "05203318-6c55-43c1-a6a6-bb8c83f930c3"}	todo	\N	buy_sell
 \.
 
 
@@ -64,6 +64,8 @@ COPY report.project_sample (id, project, create_date, update_date, delete_date, 
 --
 
 COPY report.recovery (id, create_date, update_date, delete_date, note, attribution, access_policy, type, document_date, document_file, audit_status, document_name) FROM stdin;
+1	2021-03-19 15:53:29.756599+00	2021-03-19 15:53:30.01+00	\N	\N	1	public	archive_report	1409-08-15	https://gerardo.info/branding.pdf	pending	rubber_homogeneous.opml
+2	2021-03-19 15:58:20.489823+00	2021-03-19 15:58:20.762597+00	\N	Delectus id est id praesentium nemo iusto eius quo. At voluptatem laudantium reprehenderit quis illo maxime provident. Eligendi laboriosam voluptatem praesentium. Rem dolor voluptatem placeat. Enim est cumque consequatur voluptatem.	2	private	owner_evidence	1838-07-04	https://maximilian.name/reactive/info-mediaries/sweden.pdf	pending	liberian_dollar.mpc
 \.
 
 
@@ -72,6 +74,8 @@ COPY report.recovery (id, create_date, update_date, delete_date, note, attributi
 --
 
 COPY report.recovery_sample (id, recovery, address, create_date, update_date, delete_date, note, status, type, pile_type, contractor, facade, permit, permit_date, recovery_date) FROM stdin;
+1	1	gfm-351cc5645ab7457b92d3629e8c163f0b	2021-03-19 15:53:29.845684+00	2021-03-19 15:53:30.005427+00	\N	Aliquam harum aut.	requested	beam_on_pile	press	62af863e-2021-4438-a5ea-730ed3db9eda	{sidewall_right,front,sidewall_left}	Fish	1996-03-02	2003-12-27
+2	2	gfm-351cc5645ab7457b92d3629e8c163f0b	2021-03-19 15:58:20.582106+00	2021-03-19 15:58:20.757614+00	\N	Voluptatem exercitationem et deleniti. Molestiae eveniet et dolorem non est. Recusandae facere voluptatem earum ullam ut rerum totam. Nulla dolor facere dolorem. Rerum dolor ut officia numquam est nisi eos et.	requested	unknown	press	62af863e-2021-4438-a5ea-730ed3db9eda	{sidewall_right}	Pizza	2001-04-11	2006-10-09
 \.
 
 
@@ -79,49 +83,49 @@ COPY report.recovery_sample (id, recovery, address, create_date, update_date, de
 -- Name: incident_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.incident_id_seq', 12500, false);
+SELECT pg_catalog.setval('report.incident_id_seq', 10000, false);
 
 
 --
 -- Name: inquiry_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.inquiry_id_seq', 1, false);
+SELECT pg_catalog.setval('report.inquiry_id_seq', 10000, false);
 
 
 --
 -- Name: inquiry_sample_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.inquiry_sample_id_seq', 1, false);
+SELECT pg_catalog.setval('report.inquiry_sample_id_seq', 10000, false);
 
 
 --
 -- Name: project_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.project_id_seq', 1, false);
+SELECT pg_catalog.setval('report.project_id_seq', 10000, false);
 
 
 --
 -- Name: project_sample_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.project_sample_id_seq', 1, false);
+SELECT pg_catalog.setval('report.project_sample_id_seq', 10000, false);
 
 
 --
 -- Name: recovery_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.recovery_id_seq', 1, false);
+SELECT pg_catalog.setval('report.recovery_id_seq', 10000, true);
 
 
 --
 -- Name: recovery_sample_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('report.recovery_sample_id_seq', 1, false);
+SELECT pg_catalog.setval('report.recovery_sample_id_seq', 10000, true);
 
 
 --

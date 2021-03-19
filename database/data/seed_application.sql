@@ -45,6 +45,8 @@ aadc6b80-b447-443b-b4ed-fdfcb00976f2	Patsy	Brekke	patsy@contoso.com	PATSY@CONTOS
 --
 
 COPY application.attribution (id, reviewer, creator, owner, contractor) FROM stdin;
+1	21c403fe-45fc-4106-9551-3aada1bbdec3	aadc6b80-b447-443b-b4ed-fdfcb00976f2	05203318-6c55-43c1-a6a6-bb8c83f930c3	62af863e-2021-4438-a5ea-730ed3db9eda
+2	21c403fe-45fc-4106-9551-3aada1bbdec3	aadc6b80-b447-443b-b4ed-fdfcb00976f2	05203318-6c55-43c1-a6a6-bb8c83f930c3	62af863e-2021-4438-a5ea-730ed3db9eda
 \.
 
 
@@ -92,7 +94,7 @@ COPY application.product_telemetry (user_id, organization_id, product, count, me
 -- Name: attribution_id_seq; Type: SEQUENCE SET; Schema: application; Owner: fundermaps
 --
 
-SELECT pg_catalog.setval('application.attribution_id_seq', 1, false);
+SELECT pg_catalog.setval('application.attribution_id_seq', 10000, false);
 
 
 --
