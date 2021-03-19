@@ -29,7 +29,11 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         /// <summary>
         ///     Get address by identifier.
         /// </summary>
-        [HttpGet("{id}")]
+        /// <remarks>
+        ///     Cache response for 8 hours. Addresses will not change often.
+        ///     Contractors are tenant independent.
+        /// </remarks>
+        [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 8)]
         public async Task<IActionResult> GetAsync(string id, [FromServices] IGeocoderTranslation geocoderTranslation)
         {
             // Assign.
