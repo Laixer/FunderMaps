@@ -32,6 +32,8 @@ FIR122021-3	no_pile_strips	t	t	t	f	drainage	{circuit_object_based_sas.svgz,valle
 --
 
 COPY report.inquiry (id, document_name, inspection, joint_measurement, floor_measurement, create_date, update_date, delete_date, note, document_date, document_file, attribution, access_policy, type, standard_f3o, audit_status) FROM stdin;
+1	Bacon	t	f	t	2021-03-19 19:27:52.151182+00	2021-03-19 19:27:52.341727+00	\N	\N	1823-09-23	https://kameron.biz/homogeneous.pdf	3	public	foundation_research	f	pending
+2	Sausages	f	t	t	2021-03-19 19:28:01.74776+00	2021-03-19 19:28:01.941455+00	\N	Dolorem sit nemo necessitatibus illum et voluptates.	1410-01-24	https://emily.com/dale.gif	4	public	second_opinion	t	pending
 \.
 
 
@@ -40,6 +42,8 @@ COPY report.inquiry (id, document_name, inspection, joint_measurement, floor_mea
 --
 
 COPY report.inquiry_sample (id, inquiry, address, create_date, update_date, delete_date, note, built_year, substructure, overall_quality, wood_quality, construction_quality, wood_capacity_horizontal_quality, pile_wood_capacity_vertical_quality, carrying_capacity_quality, mason_quality, wood_quality_necessity, construction_level, wood_level, pile_diameter_top, pile_diameter_bottom, pile_head_level, pile_tip_level, foundation_depth, mason_level, concrete_charger_length, pile_distance_length, wood_penetration_depth, cpt, monitoring_well, groundwater_level_temp, groundlevel, groundwater_level_net, foundation_type, enforcement_term, recovery_advised, damage_cause, damage_characteristics, construction_pile, wood_type, wood_encroachement, crack_indoor_restored, crack_indoor_type, crack_indoor_size, crack_facade_front_restored, crack_facade_front_type, crack_facade_front_size, crack_facade_back_restored, crack_facade_back_type, crack_facade_back_size, crack_facade_left_restored, crack_facade_left_type, crack_facade_left_size, crack_facade_right_restored, crack_facade_right_type, crack_facade_right_size, deformed_facade, threshold_updown_skewed, threshold_front_level, threshold_back_level, skewed_parallel, skewed_perpendicular, skewed_facade, settlement_speed, skewed_window_frame) FROM stdin;
+1	1	gfm-351cc5645ab7457b92d3629e8c163f0b	2021-03-19 19:27:52.309562+00	\N	\N	\N	\N	\N	\N	\N	\N	large	small	\N	\N	\N	\N	15.39	-25.02	\N	\N	15.23	36.17	\N	\N	23.90	\N	Chips	Shoes	-48.03	\N	\N	wood	term05	t	negative_cling	jamming_door_window	punched	pine	\N	\N	big	9.44	t	very_small	0.95	t	big	\N	f	\N	\N	t	mediocre	4.33	f	f	\N	\N	\N	\N	nil	-16.4465279627808	f
+2	2	gfm-351cc5645ab7457b92d3629e8c163f0b	2021-03-19 19:28:01.911134+00	\N	\N	Non deleniti labore facere sapiente. Laboriosam aperiam est. Odio exercitationem consectetur quia accusantium eligendi vero. Pariatur quo quo laborum et quasi aliquid nemo. Et voluptatem quod est voluptas ipsam.	\N	crawlspace	mediocre_good	area2	\N	\N	\N	\N	\N	t	30.57	\N	-27.34	\N	\N	15.10	\N	\N	\N	-8.95	4.53	Sausages	\N	14.35	\N	\N	concrete	\N	f	bio_fungus_infection	\N	pinched	spruce	bio_infection	f	\N	2.88	t	small	\N	\N	\N	\N	\N	very_small	4.34	\N	\N	1.52	\N	t	-10.64	-23.56	-9.33	\N	\N	\N	\N
 \.
 
 

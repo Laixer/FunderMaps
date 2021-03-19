@@ -47,6 +47,8 @@ aadc6b80-b447-443b-b4ed-fdfcb00976f2	Patsy	Brekke	patsy@contoso.com	PATSY@CONTOS
 COPY application.attribution (id, reviewer, creator, owner, contractor) FROM stdin;
 1	21c403fe-45fc-4106-9551-3aada1bbdec3	aadc6b80-b447-443b-b4ed-fdfcb00976f2	05203318-6c55-43c1-a6a6-bb8c83f930c3	62af863e-2021-4438-a5ea-730ed3db9eda
 2	21c403fe-45fc-4106-9551-3aada1bbdec3	aadc6b80-b447-443b-b4ed-fdfcb00976f2	05203318-6c55-43c1-a6a6-bb8c83f930c3	62af863e-2021-4438-a5ea-730ed3db9eda
+3	21c403fe-45fc-4106-9551-3aada1bbdec3	1a93cfb3-f097-4697-a998-71cdd9cfaead	05203318-6c55-43c1-a6a6-bb8c83f930c3	62af863e-2021-4438-a5ea-730ed3db9eda
+4	21c403fe-45fc-4106-9551-3aada1bbdec3	1a93cfb3-f097-4697-a998-71cdd9cfaead	05203318-6c55-43c1-a6a6-bb8c83f930c3	62af863e-2021-4438-a5ea-730ed3db9eda
 \.
 
 
