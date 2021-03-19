@@ -53,6 +53,9 @@ COPY application.attribution (id, reviewer, creator, owner, contractor) FROM std
 --
 
 COPY application.contact (email, name, phone_number) FROM stdin;
+Brady_Gorczany17@gmail.com	Ed Kuphal	\N
+Jany_Ritchie24@yahoo.com	Ryan Thompson	\N
+Zetta81@hotmail.com	Gary Kohler	\N
 \.
 
 

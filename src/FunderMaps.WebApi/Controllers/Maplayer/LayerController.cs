@@ -54,7 +54,11 @@ namespace FunderMaps.WebApi.Controllers.MapLayer
         /// <summary>
         ///     Return layer by id.
         /// </summary>
-        [HttpGet("{id}")]
+        /// <remarks>
+        ///     Cache response for 8 hours. Layers will not change often.
+        ///     Layers are tenant independent.
+        /// </remarks>
+        [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 8)]
         public async Task<IActionResult> GetAsync(Guid id)
         {
             // Act.
