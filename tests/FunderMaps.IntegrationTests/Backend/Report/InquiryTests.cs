@@ -203,5 +203,22 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
         }
+
+        [Fact]
+        public async Task CreateInquirySameReviewerCreatorReturnForbidden()
+        {
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("1a93cfb3-f097-4697-a998-71cdd9cfaead"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                .Generate();
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
     }
 }
