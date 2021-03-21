@@ -46,7 +46,7 @@ namespace FunderMaps.WebApi.Controllers.Application
         /// <summary>
         ///     Return all reviewers.
         /// </summary>
-        [HttpGet("reviewer")]
+        [HttpGet("reviewer"), ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // README: XXX: Response caching is a test
