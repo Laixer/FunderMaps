@@ -89,27 +89,13 @@ namespace FunderMaps.Data.Repositories
             }
 
             context.AddParameterWithValue("phone_number", entity.PhoneNumber);
-            context.AddParameterWithValue("registration_number", entity.RegistrationNumber);
             context.AddParameterWithValue("branding_logo", entity.BrandingLogo);
-            context.AddParameterWithValue("invoice_name", entity.InvoiceName);
-            context.AddParameterWithValue("invoice_po_box", entity.InvoicePoBox);
-            context.AddParameterWithValue("invoice_email", entity.InvoiceEmail);
             context.AddParameterWithValue("home_address", entity.HomeStreet);
             context.AddParameterWithValue("home_address_number", entity.HomeAddressNumber);
             context.AddParameterWithValue("home_address_number_postfix", entity.HomeAddressNumberPostfix);
             context.AddParameterWithValue("home_city", entity.HomeCity);
             context.AddParameterWithValue("home_postbox", entity.HomePostbox);
             context.AddParameterWithValue("home_zipcode", entity.HomeZipcode);
-            context.AddParameterWithValue("home_state", entity.HomeState);
-            context.AddParameterWithValue("home_country", entity.HomeCountry);
-            context.AddParameterWithValue("postal_address", entity.PostalStreet);
-            context.AddParameterWithValue("postal_address_number", entity.PostalAddressNumber);
-            context.AddParameterWithValue("postal_address_number_postfix", entity.PostalAddressNumberPostfix);
-            context.AddParameterWithValue("postal_city", entity.PostalCity);
-            context.AddParameterWithValue("postal_postbox", entity.PostalPostbox);
-            context.AddParameterWithValue("postal_zipcode", entity.PostalZipcode);
-            context.AddParameterWithValue("postal_state", entity.PostalState);
-            context.AddParameterWithValue("postal_country", entity.PostalCountry);
         }
 
         private static Organization MapFromReader(DbDataReader reader, int offset = 0)
@@ -119,27 +105,13 @@ namespace FunderMaps.Data.Repositories
                 Name = reader.GetSafeString(offset++),
                 Email = reader.GetSafeString(offset++),
                 PhoneNumber = reader.GetSafeString(offset++),
-                RegistrationNumber = reader.GetSafeString(offset++),
                 BrandingLogo = reader.GetSafeString(offset++),
-                InvoiceName = reader.GetSafeString(offset++),
-                InvoicePoBox = reader.GetSafeString(offset++),
-                InvoiceEmail = reader.GetSafeString(offset++),
                 HomeStreet = reader.GetSafeString(offset++),
                 HomeAddressNumber = reader.GetSafeInt(offset++),
                 HomeAddressNumberPostfix = reader.GetSafeString(offset++),
                 HomeCity = reader.GetSafeString(offset++),
                 HomePostbox = reader.GetSafeString(offset++),
                 HomeZipcode = reader.GetSafeString(offset++),
-                HomeState = reader.GetSafeString(offset++),
-                HomeCountry = reader.GetSafeString(offset++),
-                PostalStreet = reader.GetSafeString(offset++),
-                PostalAddressNumber = reader.GetSafeInt(offset++),
-                PostalAddressNumberPostfix = reader.GetSafeString(offset++),
-                PostalCity = reader.GetSafeString(offset++),
-                PostalPostbox = reader.GetSafeString(offset++),
-                PostalZipcode = reader.GetSafeString(offset++),
-                PostalState = reader.GetSafeString(offset++),
-                PostalCountry = reader.GetSafeString(offset++),
             };
 
         /// <summary>
@@ -159,27 +131,13 @@ namespace FunderMaps.Data.Repositories
                         name,
                         email,
                         phone_number,
-                        registration_number,
                         branding_logo,
-                        invoice_name,
-                        invoice_po_box,
-                        invoice_email,
                         home_address,
                         home_address_number,
                         home_address_number_postfix,
                         home_city,
                         home_postbox,
-                        home_zipcode,
-                        home_state,
-                        home_country,
-                        postal_address,
-                        postal_address_number,
-                        postal_address_number_postfix,
-                        postal_city,
-                        postal_postbox,
-                        postal_zipcode,
-                        postal_state,
-                        postal_country
+                        home_zipcode
                 FROM    application.organization
                 WHERE   id = @id
                 LIMIT   1";
@@ -204,27 +162,13 @@ namespace FunderMaps.Data.Repositories
                         name,
                         email,
                         phone_number,
-                        registration_number,
                         branding_logo,
-                        invoice_name,
-                        invoice_po_box,
-                        invoice_email,
                         home_address,
                         home_address_number,
                         home_address_number_postfix,
                         home_city,
                         home_postbox,
-                        home_zipcode,
-                        home_state,
-                        home_country,
-                        postal_address,
-                        postal_address_number,
-                        postal_address_number_postfix,
-                        postal_city,
-                        postal_postbox,
-                        postal_zipcode,
-                        postal_state,
-                        postal_country
+                        home_zipcode
                 FROM    application.organization";
 
             sql = ConstructNavigation(sql, navigation);
@@ -248,27 +192,13 @@ namespace FunderMaps.Data.Repositories
             var sql = @"
                 UPDATE  application.organization
                 SET     phone_number = @phone_number,
-                        registration_number = @registration_number,
                         branding_logo = @branding_logo,
-                        invoice_name = @invoice_name,
-                        invoice_po_box = @invoice_po_box,
-                        invoice_email = @invoice_email,
                         home_address = @home_address,
                         home_address_number = @home_address_number,
                         home_address_number_postfix = @home_address_number_postfix,
                         home_city = @home_city,
                         home_postbox = @home_postbox,
-                        home_zipcode = @home_zipcode,
-                        home_state = @home_state,
-                        home_country = @home_country,
-                        postal_address = @postal_address,
-                        postal_address_number = @postal_address_number,
-                        postal_address_number_postfix = @postal_address_number_postfix,
-                        postal_city = @postal_city,
-                        postal_postbox = @postal_postbox,
-                        postal_zipcode = @postal_zipcode,
-                        postal_state = @postal_state,
-                        postal_country = @postal_country
+                        home_zipcode = @home_zipcode
                 WHERE   id = @id";
 
             await using var context = await DbContextFactory.CreateAsync(sql);

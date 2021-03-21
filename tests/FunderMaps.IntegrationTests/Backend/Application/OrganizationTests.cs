@@ -43,7 +43,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateClient(OrganizationRole.Superuser);
-            var updateObject = new OrganizationFaker().Generate();
+            var updateObject = new OrganizationDtoFaker().Generate();
 
             // Act
             var response = await client.PutAsJsonAsync("api/organization", updateObject);
@@ -54,11 +54,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             Assert.Equal(updateObject.PhoneNumber, returnObject.PhoneNumber);
-            Assert.Equal(updateObject.RegistrationNumber, returnObject.RegistrationNumber);
             Assert.Equal(updateObject.BrandingLogo, returnObject.BrandingLogo);
-            Assert.Equal(updateObject.InvoiceName, returnObject.InvoiceName);
-            Assert.Equal(updateObject.InvoicePoBox, returnObject.InvoicePoBox);
-            Assert.Equal(updateObject.InvoiceEmail, returnObject.InvoiceEmail);
         }
 
         [Theory]
@@ -71,7 +67,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             using var client = Factory.CreateClient(role);
 
             // Act
-            var response = await client.PutAsJsonAsync("api/organization", new OrganizationFaker().Generate());
+            var response = await client.PutAsJsonAsync("api/organization", new OrganizationDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
