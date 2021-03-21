@@ -236,7 +236,7 @@ namespace FunderMaps.Data.Repositories
                 WHERE   a.owner = @tenant
                 ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

@@ -238,7 +238,7 @@ namespace FunderMaps.Data.Repositories
                         u.role
                 FROM    application.user AS u";
 
-            ConstructNavigation(sql, navigation, "u");
+            sql = ConstructNavigation(sql, navigation, "u");
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

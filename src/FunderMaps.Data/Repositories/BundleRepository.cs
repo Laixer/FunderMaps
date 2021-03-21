@@ -132,7 +132,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n WHERE b.organization_id = @id";
             }
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -172,7 +172,7 @@ namespace FunderMaps.Data.Repositories
                 sql += $"\r\n WHERE b.organization_id = @id";
             }
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

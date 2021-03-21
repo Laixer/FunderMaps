@@ -127,7 +127,7 @@ namespace FunderMaps.Data.Repositories
                         email
                 FROM    application.organization_proposal";
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
