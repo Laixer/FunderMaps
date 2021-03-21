@@ -173,7 +173,7 @@ namespace FunderMaps.Data.Repositories
                         l.markup
                 FROM    maplayer.layer AS l";
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

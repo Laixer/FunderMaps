@@ -140,7 +140,7 @@ namespace FunderMaps.Data.Repositories
                         c.phone_number
                 FROM    application.contact AS c";
 
-            ConstructNavigation(sql, navigation, "c");
+            sql = ConstructNavigation(sql, navigation, "c");
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

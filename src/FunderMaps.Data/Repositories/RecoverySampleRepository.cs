@@ -215,7 +215,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    report.recovery_sample AS s
                 ORDER BY s.create_date DESC";
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -255,7 +255,7 @@ namespace FunderMaps.Data.Repositories
                 AND     r.id = @id
                 ORDER BY s.create_date DESC";
 
-            ConstructNavigation(sql, navigation);
+            sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

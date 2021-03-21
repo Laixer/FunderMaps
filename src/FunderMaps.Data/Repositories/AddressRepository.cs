@@ -204,7 +204,7 @@ namespace FunderMaps.Data.Repositories
                 FROM    geocoder.address AS a
                 JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
 
-            ConstructNavigation(sql, navigation, "a");
+            sql = ConstructNavigation(sql, navigation, "a");
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

@@ -68,7 +68,7 @@ namespace FunderMaps.Core.Entities
         public override string ToString()
             => !string.IsNullOrEmpty(GivenName)
                 ? (!string.IsNullOrEmpty(LastName) ? $"{GivenName} {LastName}" : GivenName)
-                : Email;
+                : (!string.IsNullOrEmpty(Email) ? Email : Id.ToString());
 
         /// <summary>
         ///     Initialize property defaults.

@@ -4,7 +4,7 @@ using System;
 namespace FunderMaps.Core.Exceptions
 {
     /// <summary>
-    ///     Indicading state transition failed/.
+    ///     Indicading state transition failed.
     /// </summary>
     public class StateTransitionException : FunderMapsCoreException
     {

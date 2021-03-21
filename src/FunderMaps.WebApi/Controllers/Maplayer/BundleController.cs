@@ -33,7 +33,7 @@ namespace FunderMaps.WebApi.Controllers.MapLayer
         /// <summary>
         ///     Return all bundles.
         /// </summary>
-        [HttpGet]
+        [HttpGet, ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
             // Act.

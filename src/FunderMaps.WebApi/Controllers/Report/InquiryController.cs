@@ -2,6 +2,7 @@
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -113,6 +114,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Map.
             var inquiry = _mapper.Map<InquiryFull>(input);
+            if (_appContext.UserId == input.Reviewer)
+            {
+                throw new AuthorizationException();
+            }
 
             // Act.
             inquiry = await _inquiryRepository.AddGetAsync(inquiry);
@@ -183,6 +188,12 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Map.
             var inquiry = _mapper.Map<InquiryFull>(input);
             inquiry.Id = id;
+
+            InquiryFull inquiry_existing = await _inquiryRepository.GetByIdAsync(id);
+            if (inquiry_existing.Attribution.Creator == input.Reviewer)
+            {
+                throw new AuthorizationException();
+            }
 
             // Act.
             await _inquiryRepository.UpdateAsync(inquiry);
