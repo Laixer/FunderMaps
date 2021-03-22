@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using FunderMaps.WebApi.DataTransferObjects;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="OrganizationProposalDto"/>.

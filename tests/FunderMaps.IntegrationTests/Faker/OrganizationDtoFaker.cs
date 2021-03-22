@@ -1,11 +1,11 @@
 using Bogus;
+using Bogus.DataSets;
 using Bogus.Extensions;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
-using FunderMaps.Testing.Extensions;
 using System;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="Organization"/>.

@@ -1,6 +1,5 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Bogus;
 
 namespace FunderMaps.IntegrationTests
 {
@@ -9,7 +8,7 @@ namespace FunderMaps.IntegrationTests
     /// </summary>
     public class FileUploadContent : MultipartFormDataContent
     {
-        private Faker faker = new();
+        private Bogus.Faker faker = new();
 
         private HttpContent byteContent;
 

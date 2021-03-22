@@ -4,7 +4,7 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 using System.Linq;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="UserDto"/>.

@@ -1,6 +1,6 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
-using FunderMaps.Testing.Faker;
+using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
 using System.Collections.Generic;

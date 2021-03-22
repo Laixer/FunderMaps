@@ -1,4 +1,4 @@
-﻿using FunderMaps.Testing.Faker;
+﻿using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;

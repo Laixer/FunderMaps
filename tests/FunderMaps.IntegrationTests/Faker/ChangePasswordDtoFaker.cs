@@ -1,8 +1,8 @@
 using Bogus;
+using Bogus.DataSets;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Testing.Extensions;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="ChangePasswordDto"/>.

@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Types;
-using FunderMaps.Testing.Faker;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using System;
 using System.Collections.Generic;
@@ -8,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
+using FunderMaps.IntegrationTests.Faker;
 
 namespace FunderMaps.IntegrationTests.Portal
 {
@@ -248,7 +248,7 @@ namespace FunderMaps.IntegrationTests.Portal
                 mediaType: "application/pdf",
                 fileExtension: "pdf",
                 byteContentLength: 0);
-            using var client = Factory.CreateClient();            
+            using var client = Factory.CreateClient();
 
             // Act
             var response = await client.PostAsync("api/incident-portal/upload-document", formContent);

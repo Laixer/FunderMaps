@@ -2,7 +2,7 @@ using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="ChangeOrganizationRoleDto"/>.
