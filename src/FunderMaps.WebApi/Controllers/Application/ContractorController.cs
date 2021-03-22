@@ -4,7 +4,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,16 +17,14 @@ namespace FunderMaps.WebApi.Controllers.Application
     public class ContractorController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly IMemoryCache _cache;
         private readonly IOrganizationRepository _organizationRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ContractorController(IMapper mapper, IMemoryCache cache, IOrganizationRepository organizationRepository)
+        public ContractorController(IMapper mapper, IOrganizationRepository organizationRepository)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         }
 
@@ -42,20 +39,11 @@ namespace FunderMaps.WebApi.Controllers.Application
         [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 8)]
         public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
         {
-            // README: XXX: Response caching is a test
+            // Assign.
+            IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);
 
-            // Fetch.
-            if (!_cache.TryGetValue(nameof(ContractorDto), out IList<ContractorDto> result))
-            {
-                // Assign.
-                IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);
-
-                // Map.
-                result = await _mapper.MapAsync<IList<ContractorDto>, Organization>(organizationList);
-
-                // Set.
-                _cache.Set(nameof(ContractorDto), result, TimeSpan.FromHours(1));
-            }
+            // Map.
+            var result = await _mapper.MapAsync<IList<ContractorDto>, Organization>(organizationList);
 
             // Return.
             return Ok(result);
