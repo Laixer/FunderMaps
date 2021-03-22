@@ -6,224 +6,224 @@ namespace FunderMaps.Core.Types.Products
     /// <summary>
     ///     Represents a model for the complete endpoint.
     /// </summary>
-    public sealed class AnalysisProduct
+    public sealed record AnalysisProduct
     {
         /// <summary>
         ///     Building identifier.
         /// </summary>
         [Geocoder]
-        public string Id { get; set; }
+        public string Id { get; init; }
 
         /// <summary>
         ///     Building external identifier.
         /// </summary>
-        public string ExternalId { get; set; }
+        public string ExternalId { get; init; }
 
         /// <summary>
         ///     Postal code
         /// </summary>
-        public string PostalCode { get; set; }
+        public string PostalCode { get; init; }
 
         /// <summary>
         ///     Represents the external data source of this building.
         /// </summary>
-        public ExternalDataSource? ExternalSource { get; set; }
+        public ExternalDataSource? ExternalSource { get; init; }
 
         /// <summary>
         ///     Built year.
         /// </summary>
-        public DateTimeOffset ConstructionYear { get; set; }
+        public DateTimeOffset ConstructionYear { get; init; }
 
         /// <summary>
         ///     Built year source.
         /// </summary>
-        public BuiltYearSource ConstructionYearSource { get; set; }
+        public BuiltYearSource ConstructionYearSource { get; init; }
 
         /// <summary>
         ///     Address identifier.
         /// </summary>
         [Geocoder]
-        public string AddressId { get; set; }
+        public string AddressId { get; init; }
 
         /// <summary>
         ///     Address external identifier.
         /// </summary>
-        public string AddressExternalId { get; set; }
+        public string AddressExternalId { get; init; }
 
         /// <summary>
         ///     Neighborhood identifier.
         /// </summary>
         [Geocoder]
-        public string NeighborhoodId { get; set; }
+        public string NeighborhoodId { get; init; }
 
         /// <summary>
         ///     Represents the ground water level.
         /// </summary>
-        public double? GroundWaterLevel { get; set; }
+        public double? GroundWaterLevel { get; init; }
 
         /// <summary>
         ///     Soil code.
         /// </summary>
-        public string Soil { get; set; }
+        public string Soil { get; init; }
 
         /// <summary>
         ///     Represents the height of this building.
         /// </summary>
-        public double? BuildingHeight { get; set; }
+        public double? BuildingHeight { get; init; }
 
         /// <summary>
         ///     Ground level in meters.
         /// </summary>
-        public double? GroundLevel { get; set; }
+        public double? GroundLevel { get; init; }
 
         /// <summary>
         ///     Cone penetration test name.
         /// </summary>
-        public string Cpt { get; set; }
+        public string Cpt { get; init; }
 
         /// <summary>
         ///     Monitoring well.
         /// </summary>
-        public string MonitoringWell { get; set; }
+        public string MonitoringWell { get; init; }
 
         /// <summary>
         ///     Recovery advised.
         /// </summary>
-        public bool? RecoveryAdvised { get; set; }
+        public bool? RecoveryAdvised { get; init; }
 
         /// <summary>
         ///     Damage cause.
         /// </summary>
-        public FoundationDamageCause? DamageCause { get; set; }
+        public FoundationDamageCause? DamageCause { get; init; }
 
         /// <summary>
         ///     Substructure.
         /// </summary>
-        public Substructure? Substructure { get; set; }
+        public Substructure? Substructure { get; init; }
 
         /// <summary>
         ///     Client document identifier.
         /// </summary>
-        public string DocumentName { get; set; }
+        public string DocumentName { get; init; }
 
         /// <summary>
         ///     Original document creation.
         /// </summary>
-        public DateTime? DocumentDate { get; set; }
+        public DateTime? DocumentDate { get; init; }
 
         /// <summary>
         ///     Report type.
         /// </summary>
-        public InquiryType? InquiryType { get; set; }
+        public InquiryType? InquiryType { get; init; }
 
         /// <summary>
         ///     Foundation recovery type.
         /// </summary>
-        public RecoveryDocumentType? RecoveryType { get; set; }
+        public RecoveryDocumentType? RecoveryType { get; init; }
 
         /// <summary>
         ///     Foundation recovery status.
         /// </summary>
-        public RecoveryStatus? RecoveryStatus { get; set; }
+        public RecoveryStatus? RecoveryStatus { get; init; }
 
         /// <summary>
         ///     Building surface area in square meters.
         /// </summary>
-        public double? SurfaceArea { get; set; }
+        public double? SurfaceArea { get; init; }
 
         /// <summary>
         ///     Address living surface area in square meters.
         /// </summary>
-        public double? LivingArea { get; set; }
+        public double? LivingArea { get; init; }
 
         /// <summary>
         ///     Foundation bearing ground layer.
         /// </summary>
-        public double? FoundationBearingLayer { get; set; }
+        public double? FoundationBearingLayer { get; init; }
 
         /// <summary>
         ///     Represents the estimated restoration costs for this building.
         /// </summary>
-        public double? RestorationCosts { get; set; }
+        public double? RestorationCosts { get; init; }
 
         /// <summary>
         ///     Description for restoration costs.
         /// </summary>
-        public string DescriptionRestorationCosts { get; set; }
+        public string DescriptionRestorationCosts { get; init; }
 
         /// <summary>
         ///     Foundation type.
         /// </summary>
-        public FoundationType? FoundationType { get; set; }
+        public FoundationType? FoundationType { get; init; }
 
         /// <summary>
         ///     Foundation type reliability.
         /// </summary>
-        public Reliability FoundationTypeReliability { get; set; }
+        public Reliability FoundationTypeReliability { get; init; }
 
         /// <summary>
         ///     Represents the period of drought (droogstand) for this building.
         /// </summary>
-        public double? Drystand { get; set; }
+        public double? Drystand { get; init; }
 
         /// <summary>
         ///     Foundation type reliability.
         /// </summary>
-        public Reliability DrystandReliability { get; set; }
+        public Reliability DrystandReliability { get; init; }
 
         /// <summary>
         ///     Represents the foundation risk for this building.
         /// </summary>
-        public FoundationRisk? DrystandRisk { get; set; }
+        public FoundationRisk? DrystandRisk { get; init; }
 
         /// <summary>
         ///     Description for drystand.
         /// </summary>
-        public string DescriptionDrystand { get; set; }
+        public string DescriptionDrystand { get; init; }
 
         /// <summary>
         ///     Dewatering depth.
         /// </summary>
-        public double? DewateringDepth { get; set; }
+        public double? DewateringDepth { get; init; }
 
         /// <summary>
         ///     Dewatering depth reliability.
         /// </summary>
-        public Reliability DewateringDepthReliability { get; set; }
+        public Reliability DewateringDepthReliability { get; init; }
 
         /// <summary>
         ///     Dewatering depth risk.
         /// </summary>
-        public FoundationRisk? DewateringDepthRisk { get; set; }
+        public FoundationRisk? DewateringDepthRisk { get; init; }
 
         /// <summary>
         ///     Description for dewatering depth.
         /// </summary>
-        public string DescriptionDewateringDepth { get; set; }
+        public string DescriptionDewateringDepth { get; init; }
 
         /// <summary>
         ///     Biological infection.
         /// </summary>
-        public string BioInfection { get; set; }
+        public string BioInfection { get; init; }
 
         /// <summary>
         ///     Biological infection reliability.
         /// </summary>
-        public Reliability BioInfectionReliability { get; set; }
+        public Reliability BioInfectionReliability { get; init; }
 
         /// <summary>
         ///     Biological infection risk.
         /// </summary>
-        public FoundationRisk? BioInfectionRisk { get; set; }
+        public FoundationRisk? BioInfectionRisk { get; init; }
 
         /// <summary>
         ///     Description for biological infection.
         /// </summary>
-        public string DescriptionBioInfection { get; set; }
+        public string DescriptionBioInfection { get; init; }
 
         /// <summary>
         ///     Statistisch per region.
         /// </summary>
-        public StatisticsProduct Statistics { get; set; }
+        public StatisticsProduct Statistics { get; init; }
     }
 }

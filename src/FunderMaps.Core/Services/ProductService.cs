@@ -59,6 +59,54 @@ namespace FunderMaps.Core.Services
                 MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByExternalIdAsync(id),
             };
 
+        private string DescriptionDrystand(FoundationRisk? risk, double? drystand)
+            => risk switch
+            {
+                var risk_low when
+                    risk_low == FoundationRisk.A ||
+                    risk_low == FoundationRisk.B => $"Er komt doorgaans geen droogstand voor. Er is een veilige marge van {drystand}m dat het grondwater hoger staat dan het hoogstgelegen funderingshout. Hierdoor kan het funderingshout niet rotten door een tekort aan zuurstof.",
+
+                var risk_medium when
+                    risk_medium == FoundationRisk.C ||
+                    risk_medium == FoundationRisk.D => $"Er kan een droogstand van ca. {drystand}m van het hoogstgelegen funderingshout voorkomen maar deze bevindt zich doorgaans in een acceptabele marge. Bij wijzigende omstandigheden kan de situatie verergeren waardoor het funderingshout regelmatig droog kan komen te staan en het hout kan gaan rotten. Na jarenlange droogstand kan het draagvermogen van de fundering zijn aangetast waardoor het pand kan gaan deformeren. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.​",
+
+                FoundationRisk.E => $"Er kan een droogstand van ca. {drystand}m van het hoogstgelegen funderingshout voorkomen. Hierdoor kan het funderingshout regelmatig droog komen te staan waardoor het hout kan gaan rotten. Na jarenlange droogstand kan het draagvermogen van de fundering zijn aangetast waardoor het pand kan gaan deformeren. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.",
+
+                _ => "Onbekend",
+            };
+
+        private string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth)
+            => risk switch
+            {
+                var risk_low when
+                    risk_low == FoundationRisk.A ||
+                    risk_low == FoundationRisk.B => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] laag.​",
+
+                var risk_medium when
+                    risk_medium == FoundationRisk.C ||
+                    risk_medium == FoundationRisk.D => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] gemiddeld.​",
+
+                FoundationRisk.E => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] verhoogd.",
+
+                _ => "Onbekend",
+            };
+
+        private string DescriptionBioInfection(FoundationRisk? risk)
+            => risk switch
+            {
+                var risk_low when
+                    risk_low == FoundationRisk.A ||
+                    risk_low == FoundationRisk.B => "Toepassing van grenen palen is hoogstwaarschijnlijk niet toegepast bij dit adres gelet op de diepteligging van de draagkrachtige zandlaag. Deze ligt dieper dan 10 m onder het maaiveld. Grenen palen zijn zelden langer dan 10 m. Toepassing is daarmee onwaarschijnlijk.​",
+
+                var risk_medium when
+                    risk_medium == FoundationRisk.C ||
+                    risk_medium == FoundationRisk.D => "Toepassing van grenen palen kan voorkomen bij dit adres gelet op de diepteligging van de ondiepe draagkrachtige zandlaag. Grenen palen zijn zelden langer dan 10 m. Grenen palen zijn gevoelig voor bacteriële aantasting waardoor het hout van buitenaf wordt aangetast over de gehele lengte van de paal. Het draagvermogen van de paal neemt daarmee af waardoor het pand gaat verzakken. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.​",
+
+                FoundationRisk.E => "Grenen palen zijn hoogstwaarschijnlijk toegepast bij dit adres, gelet op de diepteligging van de ondiepe draagkrachtige zandlaag en het bouwjaar. Grenen palen zijn zelden langer dan 10 m. Grenen palen zijn gevoelig voor bacteriële aantasting waardoor het hout van buitenaf wordt aangetast over de gehele lengte van de paal. Het draagvermogen van de paal neemt daarmee af waardoor het pand gaat verzakken. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.",
+
+                _ => "Onbekend",
+            };
+
         /// <summary>
         ///     Get an analysis product.
         /// </summary>
@@ -74,21 +122,19 @@ namespace FunderMaps.Core.Services
                 _ => throw new InvalidIdentifierException(),
             })
             {
-                // FUTURE: Retrieve the description from a service.
-                product.DescriptionDrystand = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
-                product.DescriptionDewateringDepth = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
-                product.DescriptionBioInfection = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
-                product.DescriptionRestorationCosts = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
-
-                switch (productType)
+                yield return product with
                 {
-                    case AnalysisProductType.RiskPlus:
-                    case AnalysisProductType.Complete:
-                        product.Statistics = await GetStatisticsByIdAsync(product.NeighborhoodId);
-                        break;
-                };
+                    DescriptionDrystand = DescriptionDrystand(product.DrystandRisk, product.Drystand),
+                    DescriptionDewateringDepth = DescriptionDewateringDepth(product.DewateringDepthRisk, product.DewateringDepth),
+                    DescriptionBioInfection = DescriptionBioInfection(product.BioInfectionRisk),
 
-                yield return product;
+                    Statistics = productType switch
+                    {
+                        AnalysisProductType.RiskPlus => await GetStatisticsByIdAsync(product.NeighborhoodId),
+                        AnalysisProductType.Complete => await GetStatisticsByIdAsync(product.NeighborhoodId),
+                        _ => null,
+                    },
+                };
             }
         }
 
