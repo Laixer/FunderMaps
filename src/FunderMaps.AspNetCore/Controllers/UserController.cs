@@ -1,6 +1,6 @@
 using AutoMapper;
-using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -25,17 +25,17 @@ namespace FunderMaps.AspNetCore.Controllers
         private readonly IMapper _mapper;
         private readonly Core.AppContext _appContext;
         private readonly IUserRepository _userRepository;
-        private readonly SignInService _signinService;
+        private readonly SignInService _signInService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public UserController(IMapper mapper, Core.AppContext appContext, IUserRepository userRepository, SignInService signinService)
+        public UserController(IMapper mapper, Core.AppContext appContext, IUserRepository userRepository, SignInService signInService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
+            _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
         }
 
         // GET: user
@@ -81,12 +81,12 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
             // Act.
-            if (!await _signinService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
+            if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
             {
                 throw new InvalidCredentialException();
             }
 
-            await _signinService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
+            await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
 
             // Return.
             return NoContent();

@@ -25,7 +25,7 @@ namespace FunderMaps.AspNetCore.Middleware
             { typeof(ProcessException), HttpStatusCode.InternalServerError },
             { typeof(QueueOverflowException), HttpStatusCode.InternalServerError },
             { typeof(ReferenceNotFoundException), HttpStatusCode.NotFound },
-            { typeof(ServiceUnavailableException), HttpStatusCode.NotAcceptable },
+            { typeof(ServiceUnavailableException), HttpStatusCode.ServiceUnavailable },
             { typeof(StateTransitionException), HttpStatusCode.Forbidden },
             { typeof(StorageException), HttpStatusCode.InternalServerError },
             { typeof(UnhandledTaskException), HttpStatusCode.InternalServerError },
