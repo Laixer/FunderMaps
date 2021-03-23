@@ -774,7 +774,8 @@ CREATE TYPE report.inquiry_type AS ENUM (
     'inspectionpit',
     'foundation_research',
     'additional_research',
-    'ground_water_level_research'
+    'ground_water_level_research',
+    'soil_investigation'
 );
 
 
