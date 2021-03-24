@@ -62,15 +62,19 @@ namespace FunderMaps.Core.Services
         private string DescriptionDrystand(FoundationRisk? risk, double? drystand)
             => risk switch
             {
-                var risk_low when
+                var risk_low when (
                     risk_low == FoundationRisk.A ||
-                    risk_low == FoundationRisk.B => $"Er komt doorgaans geen droogstand voor. Er is een veilige marge van {drystand}m dat het grondwater hoger staat dan het hoogstgelegen funderingshout. Hierdoor kan het funderingshout niet rotten door een tekort aan zuurstof.",
+                    risk_low == FoundationRisk.B) &&
+                    drystand is not null => $"Er komt doorgaans geen droogstand voor. Er is een veilige marge van {drystand}m dat het grondwater hoger staat dan het hoogstgelegen funderingshout. Hierdoor kan het funderingshout niet rotten door een tekort aan zuurstof.",
 
-                var risk_medium when
+                var risk_medium when (
                     risk_medium == FoundationRisk.C ||
-                    risk_medium == FoundationRisk.D => $"Er kan een droogstand van ca. {drystand}m van het hoogstgelegen funderingshout voorkomen maar deze bevindt zich doorgaans in een acceptabele marge. Bij wijzigende omstandigheden kan de situatie verergeren waardoor het funderingshout regelmatig droog kan komen te staan en het hout kan gaan rotten. Na jarenlange droogstand kan het draagvermogen van de fundering zijn aangetast waardoor het pand kan gaan deformeren. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.​",
+                    risk_medium == FoundationRisk.D) &&
+                    drystand is not null => $"Er kan een droogstand van ca. {drystand}m van het hoogstgelegen funderingshout voorkomen maar deze bevindt zich doorgaans in een acceptabele marge. Bij wijzigende omstandigheden kan de situatie verergeren waardoor het funderingshout regelmatig droog kan komen te staan en het hout kan gaan rotten. Na jarenlange droogstand kan het draagvermogen van de fundering zijn aangetast waardoor het pand kan gaan deformeren. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.​",
 
-                FoundationRisk.E => $"Er kan een droogstand van ca. {drystand}m van het hoogstgelegen funderingshout voorkomen. Hierdoor kan het funderingshout regelmatig droog komen te staan waardoor het hout kan gaan rotten. Na jarenlange droogstand kan het draagvermogen van de fundering zijn aangetast waardoor het pand kan gaan deformeren. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.",
+                var risk_low when (
+                    risk_low == FoundationRisk.E) &&
+                    drystand is not null => $"Er kan een droogstand van ca. {drystand}m van het hoogstgelegen funderingshout voorkomen. Hierdoor kan het funderingshout regelmatig droog komen te staan waardoor het hout kan gaan rotten. Na jarenlange droogstand kan het draagvermogen van de fundering zijn aangetast waardoor het pand kan gaan deformeren. Indien dit in vergevorderd stadium is, zijn er scheuren in de gevel zichtbaar, klemmen ramen en deuren en vertoont het gevelaanzicht tekenen van verzakkingen.",
 
                 _ => "Onbekend",
             };
@@ -78,15 +82,19 @@ namespace FunderMaps.Core.Services
         private string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth)
             => risk switch
             {
-                var risk_low when
+                var risk_low when (
                     risk_low == FoundationRisk.A ||
-                    risk_low == FoundationRisk.B => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] laag.​",
+                    risk_low == FoundationRisk.B) &&
+                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] laag.​",
 
-                var risk_medium when
+                var risk_medium when (
                     risk_medium == FoundationRisk.C ||
-                    risk_medium == FoundationRisk.D => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] gemiddeld.​",
+                    risk_medium == FoundationRisk.D) &&
+                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] gemiddeld.​",
 
-                FoundationRisk.E => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] verhoogd.",
+                var risk_low when (
+                    risk_low == FoundationRisk.E) &&
+                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] verhoogd.",
 
                 _ => "Onbekend",
             };
