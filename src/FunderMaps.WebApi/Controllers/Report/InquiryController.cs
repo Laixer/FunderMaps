@@ -218,6 +218,27 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
+        // POST: api/inquiry/{id}/reset
+        /// <summary>
+        ///     Reset inquiry status to pending by id.
+        /// </summary>
+        [HttpPost("{id:int}/reset")]
+        [Authorize(Policy = "SuperuserAdministratorPolicy")]
+        public async Task<IActionResult> ResetAsync(int id)
+        {
+            // Act.
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
+            inquiry.State.TransitionToPending();
+
+            // Act.
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+            // Return.
+            return NoContent();
+        }
+
         // POST: api/inquiry/{id}/status_review
         /// <summary>
         ///     Set inquiry status to review by id.

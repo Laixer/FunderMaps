@@ -85,6 +85,37 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             await ReportStub.DeleteRecoveryAsync(Factory, recovery);
         }
 
+        [Fact]
+        public async Task RecoverySampleResetLifeCycle()
+        {
+            var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/status_review", new StatusChangeDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Superuser);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/reset", new { });
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ReportStub.DeleteRecoveryAsync(Factory, recovery);
+        }
+
         [Theory]
         [InlineData("status_approved")]
         [InlineData("status_rejected")]
@@ -110,6 +141,17 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
                 // Act
                 var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/{uri}", new StatusChangeDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Superuser);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/reset", new { });
 
                 // Assert
                 Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
@@ -202,6 +202,27 @@ namespace FunderMaps.WebApi.Controllers.Report
                 // Act.
                 await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
             }
+
+            // Return.
+            return NoContent();
+        }
+
+        // POST: api/recovery/{id}/reset
+        /// <summary>
+        ///     Reset recovery status to pending by id.
+        /// </summary>
+        [HttpPost("{id:int}/reset")]
+        [Authorize(Policy = "SuperuserAdministratorPolicy")]
+        public async Task<IActionResult> ResetAsync(int id)
+        {
+            // Act.
+            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+
+            // Transition.
+            recovery.State.TransitionToPending();
+
+            // Act.
+            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
             // Return.
             return NoContent();
