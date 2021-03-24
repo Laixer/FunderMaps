@@ -79,22 +79,22 @@ namespace FunderMaps.Core.Services
                 _ => "Onbekend",
             };
 
-        private string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth)
+        private string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth, string soil)
             => risk switch
             {
                 var risk_low when (
                     risk_low == FoundationRisk.A ||
                     risk_low == FoundationRisk.B) &&
-                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] laag.​",
+                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit {soil} laag.​",
 
                 var risk_medium when (
                     risk_medium == FoundationRisk.C ||
                     risk_medium == FoundationRisk.D) &&
-                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] gemiddeld.​",
+                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit {soil} gemiddeld.​",
 
                 var risk_low when (
                     risk_low == FoundationRisk.E) &&
-                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit [[soil]] verhoogd.",
+                    dewateringDepth is not null => $"De gemiddelde grondwaterlevelfluctuatie is {dewateringDepth}m. Bij deze waarden is de kans op verzakkingen van een fundering op staal bij de ondergrond die bestaat uit {soil} verhoogd.",
 
                 _ => "Onbekend",
             };
@@ -133,7 +133,7 @@ namespace FunderMaps.Core.Services
                 yield return product with
                 {
                     DescriptionDrystand = DescriptionDrystand(product.DrystandRisk, product.Drystand),
-                    DescriptionDewateringDepth = DescriptionDewateringDepth(product.DewateringDepthRisk, product.DewateringDepth),
+                    DescriptionDewateringDepth = DescriptionDewateringDepth(product.DewateringDepthRisk, product.DewateringDepth, product.Soil),
                     DescriptionBioInfection = DescriptionBioInfection(product.BioInfectionRisk),
 
                     Statistics = productType switch
