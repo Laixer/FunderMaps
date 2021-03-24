@@ -20,6 +20,7 @@
         /// </summary>
         Done = 2,
 
+        // TODO: Remove.
         /// <summary>
         ///     Discarded.
         /// </summary>
