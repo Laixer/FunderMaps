@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
@@ -162,7 +162,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
             Uri link = await _blobStorageService.GetAccessLinkAsync(
-                containerName: Core.Constants.InquiryStorageFolderName,
+                containerName: Core.Constants.RecoveryStorageFolderName,
                 fileName: recovery.DocumentFile,
                 hoursValid: 1);
 
