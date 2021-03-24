@@ -20,6 +20,22 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             => Factory = factory;
 
         [Fact]
+        public async Task UploadDocumentReturnDocument()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync("api/incident/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Name);
+        }
+
+        [Fact]
         public async Task CreateIncidentReturnIncident()
         {
             // Arrange
@@ -36,22 +52,6 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
             Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        }
-
-        [Fact]
-        public async Task UploadDocumentReturnDocument()
-        {
-            // Arrange
-            using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.PostAsync("api/incident/upload-document", formContent);
-            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject.Name);
         }
 
         [Fact]

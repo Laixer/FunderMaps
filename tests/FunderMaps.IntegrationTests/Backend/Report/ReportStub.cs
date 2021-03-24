@@ -35,6 +35,27 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             return returnObject;
         }
 
+        public static async Task<InquiryDto> CreateInquiryAsync(BackendFixtureFactory factory)
+        {
+            // Arrange
+            var inquiry = new InquiryDtoFaker()
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                .Generate();
+            using var client = factory.CreateClient(OrganizationRole.Writer);
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
+            var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            Assert.Null(returnObject.UpdateDate);
+
+            return returnObject;
+        }
+
         public static async Task DeleteRecoveryAsync(BackendFixtureFactory factory, RecoveryDto recovery)
         {
             // Arrange
@@ -42,6 +63,18 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Act
             var response = await client.DeleteAsync($"api/recovery/{recovery.Id}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        public static async Task DeleteInquiryAsync(BackendFixtureFactory factory, InquiryDto inquiry)
+        {
+            // Arrange
+            using var client = factory.CreateClient(OrganizationRole.Superuser);
+
+            // Act
+            var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
