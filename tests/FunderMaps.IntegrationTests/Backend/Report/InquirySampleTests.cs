@@ -1,4 +1,5 @@
-﻿using FunderMaps.IntegrationTests.Faker;
+﻿using FunderMaps.Core.Types;
+using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
 
             // Act
@@ -54,7 +55,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
@@ -79,7 +80,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
@@ -103,7 +104,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var samples = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate(2);
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             var sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", samples.First());
 
@@ -125,7 +126,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 

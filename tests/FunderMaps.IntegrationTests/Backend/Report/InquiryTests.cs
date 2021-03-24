@@ -30,7 +30,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
 
             // Act
             var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
@@ -47,7 +47,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
 
             // Act
             var response = await client.PostAsync("api/inquiry/upload-document", formContent);
@@ -66,7 +66,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
 
             // Act
@@ -87,7 +87,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
 
             // Act
@@ -107,7 +107,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate(2);
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             var inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiries.First());
 
             // Act
@@ -128,7 +128,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
@@ -152,13 +152,14 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
             await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/status_review", new StatusChangeDtoFaker().Generate());
 
             // Act
-            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{uri}", new StatusChangeDtoFaker().Generate());
+            using var client2 = Factory.CreateClient(OrganizationRole.Verifier);
+            var response = await client2.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/{uri}", new StatusChangeDtoFaker().Generate());
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -172,7 +173,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
 
             // Act
@@ -193,7 +194,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             var sample = new InquirySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Superuser);
             inquiry = await client.PostAsJsonGetFromJsonAsync<InquiryDto, InquiryDto>("api/inquiry", inquiry);
             sample = await client.PostAsJsonGetFromJsonAsync<InquirySampleDto, InquirySampleDto>($"api/inquiry/{inquiry.Id}/sample", sample);
 
@@ -209,10 +210,10 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             // Arrange
             var inquiry = new InquiryDtoFaker()
-                .RuleFor(f => f.Reviewer, f => Guid.Parse("1a93cfb3-f097-4697-a998-71cdd9cfaead"))
+                .RuleFor(f => f.Reviewer, f => Guid.Parse("aadc6b80-b447-443b-b4ed-fdfcb00976f2"))
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
 
             // Act
             var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
