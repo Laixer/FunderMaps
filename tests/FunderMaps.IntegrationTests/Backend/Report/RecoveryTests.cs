@@ -199,5 +199,43 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             await ReportStub.DeleteRecoveryAsync(Factory, recovery);
         }
+
+        [Fact]
+        public async Task RecoverySelfReviewForbidden()
+        {
+            var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
+                var newObject = new RecoveryDtoFaker()
+                    .RuleFor(f => f.Reviewer, f => Guid.Parse("aadc6b80-b447-443b-b4ed-fdfcb00976f2"))
+                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    .Generate();
+
+                // Act
+                var response = await client.PostAsJsonAsync("api/recovery", newObject);
+
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+                var newObject = new RecoveryDtoFaker()
+                    .RuleFor(f => f.Reviewer, f => Guid.Parse("aadc6b80-b447-443b-b4ed-fdfcb00976f2"))
+                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    .Generate();
+
+                // Act
+                var response = await client.PutAsJsonAsync($"api/recovery/{recovery.Id}", newObject);
+
+                // Assert
+                Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            }
+
+            await ReportStub.DeleteRecoveryAsync(Factory, recovery);
+        }
     }
 }
