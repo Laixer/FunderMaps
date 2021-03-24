@@ -181,7 +181,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
-        public async Task RecoveryLifeCycleForbidden()
+        public async Task RecoverySampleLifeCycleForbidden()
         {
             var recovery = await ReportStub.CreateRecoveryAsync(Factory);
             var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);

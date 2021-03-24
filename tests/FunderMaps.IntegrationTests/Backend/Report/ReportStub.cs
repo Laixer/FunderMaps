@@ -95,6 +95,26 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(recovery.Id, returnObject.Recovery);
+            Assert.Equal(newObject.Address, returnObject.Address);
+
+            return returnObject;
+        }
+
+        public static async Task<InquirySampleDto> CreateInquirySampleAsync(BackendFixtureFactory factory, InquiryDto inquiry)
+        {
+            using var client = factory.CreateClient(OrganizationRole.Writer);
+            var newObject = new InquirySampleDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+
+            // Act
+            var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", newObject);
+            var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(inquiry.Id, returnObject.Inquiry);
             Assert.Equal(newObject.Address, returnObject.Address);
 
             return returnObject;
