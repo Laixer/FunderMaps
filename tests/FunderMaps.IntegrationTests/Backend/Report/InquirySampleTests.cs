@@ -85,7 +85,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
-        public async Task IinquirySampleResetLifeCycle()
+        public async Task InquirySampleResetLifeCycle()
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
             var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
@@ -118,7 +118,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         [Theory]
         [InlineData("status_approved")]
         [InlineData("status_rejected")]
-        public async Task IinquirySampleStatusLifeCycle(string uri)
+        public async Task InquirySampleStatusLifeCycle(string uri)
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
             var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
@@ -160,7 +160,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
-        public async Task IinquirySampleDeleteLifeCycle()
+        public async Task InquirySampleDeleteLifeCycle()
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
             var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
