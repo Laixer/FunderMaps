@@ -2726,9 +2726,10 @@ CREATE VIEW maplayer.building_built_year AS
  SELECT ba.id,
     ba.geom,
     (date_part('year'::text, COALESCE((( SELECT is2.built_year
-           FROM (geocoder.address addr
+           FROM ((geocoder.address addr
              JOIN report.inquiry_sample is2 ON (((is2.address)::text = (addr.id)::text)))
-          WHERE ((ba.id)::text = (addr.building_id)::text)
+             JOIN report.inquiry i ON ((i.id = is2.inquiry)))
+          WHERE (((ba.id)::text = (addr.building_id)::text) AND (i.document_date > (ba.built_year)::date))
           ORDER BY COALESCE(is2.update_date, is2.create_date) DESC
          LIMIT 1))::date, (ba.built_year)::date)))::integer AS built_year
    FROM geocoder.building_active ba;
@@ -2827,9 +2828,11 @@ CREATE VIEW maplayer.foundation_indicative AS
     afi.foundation_type
    FROM data.analysis_foundation_indicative afi
   WHERE (NOT ((afi.id)::text IN ( SELECT addr.building_id
-           FROM (report.inquiry_sample ris
+           FROM (((report.inquiry_sample ris
+             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
              JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-          WHERE ((ris.foundation_type IS NOT NULL) AND (addr.building_id IS NOT NULL))
+             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
+          WHERE ((ris.foundation_type IS NOT NULL) AND (i.document_date > (ba.built_year)::date))
         UNION
          SELECT addr.building_id
            FROM (report.recovery_sample rs
@@ -2928,11 +2931,13 @@ CREATE VIEW maplayer.inquiry AS
          SELECT ris.id,
             i.id AS inquiry_id,
             i.type,
-            ab.geom,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY i.document_date DESC) AS rank
-           FROM ((report.inquiry_sample ris
-             JOIN geocoder.address_building ab ON (((ris.address)::text = (ab.address_id)::text)))
+            ba.geom,
+            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
+           FROM (((report.inquiry_sample ris
+             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
+             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
+          WHERE (i.document_date > (ba.built_year)::date)
         )
  SELECT ik.id,
     ik.inquiry_id,
@@ -2952,13 +2957,15 @@ CREATE VIEW maplayer.inquiry_sample_damage_cause AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
             i.id AS inquiry_id,
-            ab.geom,
+            ba.geom,
             ris.damage_cause,
             ris.foundation_type,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY i.document_date DESC) AS rank
-           FROM ((report.inquiry_sample ris
-             JOIN geocoder.address_building ab ON (((ris.address)::text = (ab.address_id)::text)))
+            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
+           FROM (((report.inquiry_sample ris
+             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
+             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
+          WHERE (i.document_date > (ba.built_year)::date)
         )
  SELECT ik.id,
     ik.inquiry_id,
@@ -2978,7 +2985,7 @@ CREATE VIEW maplayer.inquiry_sample_enforcement_term AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
             i.id AS inquiry_id,
-            ab.geom,
+            ba.geom,
             date_part('years'::text, age((
                 CASE ris.enforcement_term
                     WHEN 'term05'::report.enforcement_term THEN (i.document_date + '5 years'::interval)
@@ -2993,11 +3000,12 @@ CREATE VIEW maplayer.inquiry_sample_enforcement_term AS
                     WHEN 'term40'::report.enforcement_term THEN (i.document_date + '40 years'::interval)
                     ELSE NULL::timestamp without time zone
                 END)::timestamp with time zone, CURRENT_TIMESTAMP)) AS enforcement_term,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY i.document_date DESC) AS rank
-           FROM ((report.inquiry_sample ris
-             JOIN geocoder.address_building ab ON (((ris.address)::text = (ab.address_id)::text)))
+            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
+           FROM (((report.inquiry_sample ris
+             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
+             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE (ris.enforcement_term IS NOT NULL)
+          WHERE ((ris.enforcement_term IS NOT NULL) AND (i.document_date > (ba.built_year)::date))
         )
  SELECT ik.id,
     ik.inquiry_id,
@@ -3017,14 +3025,15 @@ CREATE VIEW maplayer.inquiry_sample_foundation_type AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
             i.id AS inquiry_id,
-            ab.geom,
+            ba.geom,
             ris.foundation_type,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY i.document_date DESC) AS rank
-           FROM ((report.inquiry_sample ris
-             JOIN geocoder.address_building ab ON (((ris.address)::text = (ab.address_id)::text)))
+            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
+           FROM (((report.inquiry_sample ris
+             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
+             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE ((ris.foundation_type IS NOT NULL) AND (NOT ((ris.address)::text IN ( SELECT recovery_sample.address
-                   FROM report.recovery_sample))))
+          WHERE ((ris.foundation_type IS NOT NULL) AND (NOT ((addr.id)::text IN ( SELECT recovery_sample.address
+                   FROM report.recovery_sample))) AND (i.document_date > (ba.built_year)::date))
         )
  SELECT ik.id,
     ik.inquiry_id,
@@ -3044,13 +3053,14 @@ CREATE VIEW maplayer.inquiry_sample_quality AS
  WITH inquiry_sample_rank AS (
          SELECT ris.id,
             i.id AS inquiry_id,
-            ab.geom,
+            ba.geom,
             ris.overall_quality,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY i.document_date DESC) AS rank
-           FROM ((report.inquiry_sample ris
-             JOIN geocoder.address_building ab ON (((ris.address)::text = (ab.address_id)::text)))
+            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
+           FROM (((report.inquiry_sample ris
+             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
+             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
              JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE (ris.overall_quality IS NOT NULL)
+          WHERE ((ris.overall_quality IS NOT NULL) AND (i.document_date > (ba.built_year)::date))
         )
  SELECT ik.id,
     ik.inquiry_id,
