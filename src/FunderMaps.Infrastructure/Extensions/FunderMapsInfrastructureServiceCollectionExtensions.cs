@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Remove all existing file storage services and inject local file stoage service.
             services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
-            services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Singleton);
+            services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Transient);
         }
 
         /// <summary>
