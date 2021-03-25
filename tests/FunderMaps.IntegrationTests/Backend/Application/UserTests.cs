@@ -54,5 +54,34 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(updateObject.JobTitle, returnObject.JobTitle);
             Assert.Equal(updateObject.PhoneNumber, returnObject.PhoneNumber);
         }
+
+        [Fact]
+        public async Task ChangePasswordFromSessionReturnNoContent()
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+            var newObject = new ChangePasswordDtoFaker()
+                .RuleFor(f => f.OldPassword, f => "fundermaps")
+                .Generate();
+
+            // Act
+            var response = await client.PostAsJsonAsync("user/change-password", newObject);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            await TestStub.LoginAsync(Factory, "lester@contoso.com", newObject.NewPassword);
+
+            response = await client.PostAsJsonAsync("user/change-password", new ChangePasswordDto()
+            {
+                OldPassword = newObject.NewPassword,
+                NewPassword = "fundermaps",
+            });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            await TestStub.LoginAsync(Factory, "lester@contoso.com", "fundermaps");
+        }
     }
 }
