@@ -48,22 +48,6 @@ COPY report.inquiry_sample (id, inquiry, address, create_date, update_date, dele
 
 
 --
--- Data for Name: project; Type: TABLE DATA; Schema: report; Owner: fundermaps
---
-
-COPY report.project (id, dossier, note, start_date, end_date, create_date, update_date, delete_date, adviser, creator, lead) FROM stdin;
-\.
-
-
---
--- Data for Name: project_sample; Type: TABLE DATA; Schema: report; Owner: fundermaps
---
-
-COPY report.project_sample (id, project, create_date, update_date, delete_date, note, status, contact, address) FROM stdin;
-\.
-
-
---
 -- Data for Name: recovery; Type: TABLE DATA; Schema: report; Owner: fundermaps
 --
 
@@ -102,20 +86,6 @@ SELECT pg_catalog.setval('report.inquiry_id_seq', 10000, false);
 --
 
 SELECT pg_catalog.setval('report.inquiry_sample_id_seq', 10000, false);
-
-
---
--- Name: project_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
---
-
-SELECT pg_catalog.setval('report.project_id_seq', 10000, false);
-
-
---
--- Name: project_sample_id_seq; Type: SEQUENCE SET; Schema: report; Owner: fundermaps
---
-
-SELECT pg_catalog.setval('report.project_sample_id_seq', 10000, false);
 
 
 --
