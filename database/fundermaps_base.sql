@@ -825,34 +825,6 @@ COMMENT ON TYPE report.pile_type IS 'Enum representing the type of pile.';
 
 
 --
--- Name: project_sample_status; Type: TYPE; Schema: report; Owner: fundermaps
---
-
-CREATE TYPE report.project_sample_status AS ENUM (
-    'contacted',
-    'quotation_reserach',
-    'research_in_progress',
-    'research_pending',
-    'research_canceled',
-    'quotation_recovery',
-    'waiting_on_permit',
-    'recovery_in_progress',
-    'recovery_pending',
-    'recovery_canceled',
-    'none'
-);
-
-
-ALTER TYPE report.project_sample_status OWNER TO fundermaps;
-
---
--- Name: TYPE project_sample_status; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TYPE report.project_sample_status IS 'Enum representing the status of taking a sample for a project.';
-
-
---
 -- Name: quality; Type: TYPE; Schema: report; Owner: fundermaps
 --
 
@@ -3272,154 +3244,6 @@ ALTER SEQUENCE report.inquiry_sample_id_seq OWNED BY report.inquiry_sample.id;
 
 
 --
--- Name: project; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.project (
-    id integer NOT NULL,
-    dossier text,
-    note text,
-    start_date date NOT NULL,
-    end_date date,
-    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date timestamp with time zone,
-    delete_date timestamp with time zone,
-    adviser application.user_id,
-    creator application.user_id,
-    lead application.user_id,
-    CONSTRAINT project_range_chk CHECK ((end_date > start_date))
-);
-
-
-ALTER TABLE report.project OWNER TO fundermaps;
-
---
--- Name: TABLE project; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.project IS 'Contains projects.';
-
-
---
--- Name: COLUMN project.dossier; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project.dossier IS 'User provided dossier number, must be unique';
-
-
---
--- Name: COLUMN project.create_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project.create_date IS 'Timestamp of record creation, set by insert';
-
-
---
--- Name: COLUMN project.update_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project.update_date IS 'Timestamp of last record update, automatically updated on record modification';
-
-
---
--- Name: COLUMN project.delete_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project.delete_date IS 'Timestamp of soft delete';
-
-
---
--- Name: project_id_seq; Type: SEQUENCE; Schema: report; Owner: fundermaps
---
-
-CREATE SEQUENCE report.project_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE report.project_id_seq OWNER TO fundermaps;
-
---
--- Name: project_id_seq; Type: SEQUENCE OWNED BY; Schema: report; Owner: fundermaps
---
-
-ALTER SEQUENCE report.project_id_seq OWNED BY report.project.id;
-
-
---
--- Name: project_sample; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.project_sample (
-    id integer NOT NULL,
-    project integer NOT NULL,
-    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date timestamp with time zone,
-    delete_date timestamp with time zone,
-    note text,
-    status report.project_sample_status DEFAULT 'none'::report.project_sample_status NOT NULL,
-    contact text,
-    address geocoder.geocoder_id NOT NULL
-);
-
-
-ALTER TABLE report.project_sample OWNER TO fundermaps;
-
---
--- Name: TABLE project_sample; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.project_sample IS 'Contains sample data for projects.';
-
-
---
--- Name: COLUMN project_sample.create_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project_sample.create_date IS 'Timestamp of record creation, set by insert';
-
-
---
--- Name: COLUMN project_sample.update_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project_sample.update_date IS 'Timestamp of last record update, automatically updated on record modification';
-
-
---
--- Name: COLUMN project_sample.delete_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.project_sample.delete_date IS 'Timestamp of soft delete';
-
-
---
--- Name: project_sample_id_seq; Type: SEQUENCE; Schema: report; Owner: fundermaps
---
-
-CREATE SEQUENCE report.project_sample_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE report.project_sample_id_seq OWNER TO fundermaps;
-
---
--- Name: project_sample_id_seq; Type: SEQUENCE OWNED BY; Schema: report; Owner: fundermaps
---
-
-ALTER SEQUENCE report.project_sample_id_seq OWNED BY report.project_sample.id;
-
-
---
 -- Name: recovery_id_seq; Type: SEQUENCE; Schema: report; Owner: fundermaps
 --
 
@@ -3482,20 +3306,6 @@ ALTER TABLE ONLY report.inquiry ALTER COLUMN id SET DEFAULT nextval('report.inqu
 --
 
 ALTER TABLE ONLY report.inquiry_sample ALTER COLUMN id SET DEFAULT nextval('report.inquiry_sample_id_seq'::regclass);
-
-
---
--- Name: project id; Type: DEFAULT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project ALTER COLUMN id SET DEFAULT nextval('report.project_id_seq'::regclass);
-
-
---
--- Name: project_sample id; Type: DEFAULT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample ALTER COLUMN id SET DEFAULT nextval('report.project_sample_id_seq'::regclass);
 
 
 --
@@ -3702,30 +3512,6 @@ ALTER TABLE ONLY report.inquiry
 
 ALTER TABLE ONLY report.inquiry_sample
     ADD CONSTRAINT inquiry_sample_pkey PRIMARY KEY (id);
-
-
---
--- Name: project project_dossier_key; Type: CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project
-    ADD CONSTRAINT project_dossier_key UNIQUE (dossier);
-
-
---
--- Name: project project_pkey; Type: CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project
-    ADD CONSTRAINT project_pkey PRIMARY KEY (id);
-
-
---
--- Name: project_sample project_sample_pkey; Type: CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample
-    ADD CONSTRAINT project_sample_pkey PRIMARY KEY (id);
 
 
 --
@@ -4109,20 +3895,6 @@ CREATE TRIGGER update_date_record BEFORE UPDATE ON report.inquiry_sample FOR EAC
 
 
 --
--- Name: project update_date_record; Type: TRIGGER; Schema: report; Owner: fundermaps
---
-
-CREATE TRIGGER update_date_record BEFORE UPDATE ON report.project FOR EACH ROW EXECUTE FUNCTION report.last_record_update();
-
-
---
--- Name: project_sample update_date_record; Type: TRIGGER; Schema: report; Owner: fundermaps
---
-
-CREATE TRIGGER update_date_record BEFORE UPDATE ON report.project_sample FOR EACH ROW EXECUTE FUNCTION report.last_record_update();
-
-
---
 -- Name: recovery update_date_record; Type: TRIGGER; Schema: report; Owner: fundermaps
 --
 
@@ -4318,54 +4090,6 @@ ALTER TABLE ONLY report.inquiry
 
 ALTER TABLE ONLY report.inquiry_sample
     ADD CONSTRAINT inquiry_sample_inquiry_fkey FOREIGN KEY (inquiry) REFERENCES report.inquiry(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: project project_adviser_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project
-    ADD CONSTRAINT project_adviser_fkey FOREIGN KEY (adviser) REFERENCES application."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: project project_creator_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project
-    ADD CONSTRAINT project_creator_fkey FOREIGN KEY (creator) REFERENCES application."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: project project_lead_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project
-    ADD CONSTRAINT project_lead_fkey FOREIGN KEY (lead) REFERENCES application."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: project_sample project_sample_address_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample
-    ADD CONSTRAINT project_sample_address_fkey FOREIGN KEY (address) REFERENCES geocoder.address(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: project_sample project_sample_contact_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample
-    ADD CONSTRAINT project_sample_contact_fkey FOREIGN KEY (contact) REFERENCES application.contact(email) ON UPDATE CASCADE ON DELETE RESTRICT;
-
-
---
--- Name: project_sample project_sample_project_fkey; Type: FK CONSTRAINT; Schema: report; Owner: fundermaps
---
-
-ALTER TABLE ONLY report.project_sample
-    ADD CONSTRAINT project_sample_project_fkey FOREIGN KEY (project) REFERENCES report.project(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -4720,14 +4444,6 @@ GRANT ALL ON TYPE report.length TO fundermaps_webservice;
 
 GRANT ALL ON TYPE report.pile_type TO fundermaps_webapp;
 GRANT ALL ON TYPE report.pile_type TO fundermaps_webservice;
-
-
---
--- Name: TYPE project_sample_status; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT ALL ON TYPE report.project_sample_status TO fundermaps_webapp;
-GRANT ALL ON TYPE report.project_sample_status TO fundermaps_webservice;
 
 
 --
@@ -5472,36 +5188,6 @@ GRANT SELECT,USAGE ON SEQUENCE report.inquiry_id_seq TO fundermaps_webservice;
 GRANT ALL ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webapp;
 GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webservice;
 GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_portal;
-
-
---
--- Name: TABLE project; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.project TO fundermaps_webapp;
-
-
---
--- Name: SEQUENCE project_id_seq; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT ALL ON SEQUENCE report.project_id_seq TO fundermaps_webapp;
-GRANT SELECT,USAGE ON SEQUENCE report.project_id_seq TO fundermaps_webservice;
-
-
---
--- Name: TABLE project_sample; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.project_sample TO fundermaps_webapp;
-
-
---
--- Name: SEQUENCE project_sample_id_seq; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT ALL ON SEQUENCE report.project_sample_id_seq TO fundermaps_webapp;
-GRANT SELECT,USAGE ON SEQUENCE report.project_sample_id_seq TO fundermaps_webservice;
 
 
 --
