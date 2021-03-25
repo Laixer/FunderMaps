@@ -3,7 +3,7 @@ using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="RecoverySampleDto"/>.

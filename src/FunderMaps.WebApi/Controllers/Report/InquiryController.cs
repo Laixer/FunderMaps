@@ -9,6 +9,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -110,6 +111,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Create inquiry.
         /// </summary>
         [HttpPost]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
         {
             // Map.
@@ -135,6 +137,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         /// </summary>
         [HttpPost("upload-document")]
         [RequestSizeLimit(128 * 1024 * 1024)]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
         {
             // Act.
@@ -162,8 +165,8 @@ namespace FunderMaps.WebApi.Controllers.Report
         public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
         {
             // Act.
-            var inquiry = await _inquiryRepository.GetByIdAsync(id);
-            var link = await _blobStorageService.GetAccessLinkAsync(
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+            Uri link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: Core.Constants.InquiryStorageFolderName,
                 fileName: inquiry.DocumentFile,
                 hoursValid: 1);
@@ -183,6 +186,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     Update inquiry by id.
         /// </summary>
         [HttpPut("{id:int}")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDto input)
         {
             // Map.
@@ -214,12 +218,33 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
-        // TODO: Check permissions.
+        // POST: api/inquiry/{id}/reset
+        /// <summary>
+        ///     Reset inquiry status to pending by id.
+        /// </summary>
+        [HttpPost("{id:int}/reset")]
+        [Authorize(Policy = "SuperuserAdministratorPolicy")]
+        public async Task<IActionResult> ResetAsync(int id)
+        {
+            // Act.
+            InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+
+            // Transition.
+            inquiry.State.TransitionToPending();
+
+            // Act.
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+            // Return.
+            return NoContent();
+        }
+
         // POST: api/inquiry/{id}/status_review
         /// <summary>
         ///     Set inquiry status to review by id.
         /// </summary>
         [HttpPost("{id:int}/status_review")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> SetStatusReviewAsync(int id)
         {
             // Act.
@@ -264,12 +289,12 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
-        // TODO: Check permissions.
         // POST: api/inquiry/{id}/status_rejected
         /// <summary>
         ///     Set inquiry status to rejected by id.
         /// </summary>
         [HttpPost("{id:int}/status_rejected")]
+        [Authorize(Policy = "VerifierAdministratorPolicy")]
         public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
         {
             // Act.
@@ -315,12 +340,12 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
-        // TODO: Check permissions.
         // POST: api/inquiry/{id}/status_approved
         /// <summary>
         ///     Set inquiry status to done by id.
         /// </summary>
         [HttpPost("{id:int}/status_approved")]
+        [Authorize(Policy = "VerifierAdministratorPolicy")]
         public async Task<IActionResult> SetStatusApprovedAsync(int id)
         {
             // Act.
@@ -364,12 +389,12 @@ namespace FunderMaps.WebApi.Controllers.Report
             return NoContent();
         }
 
-        // TODO: Check permissions.
         // DELETE: api/inquiry/{id}
         /// <summary>
         ///     Delete inquiry by id.
         /// </summary>
         [HttpDelete("{id:int}")]
+        [Authorize(Policy = "SuperuserAdministratorPolicy")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.

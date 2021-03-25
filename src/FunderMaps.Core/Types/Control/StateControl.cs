@@ -61,22 +61,8 @@ namespace FunderMaps.Core.Types.Control
         /// <summary>
         ///     Move state to pending.
         /// </summary>
-        /// <remarks>
-        ///     Can move to this state from:
-        ///     <list type="bullet">
-        ///         <item>Todo</item>
-        ///         <item>Pending</item>
-        ///         <item>Rejected</item>
-        ///     </list>
-        /// </remarks>
         public void TransitionToPending()
         {
-            if (AuditStatus != AuditStatus.Todo
-                && AuditStatus != AuditStatus.Rejected
-                && AuditStatus != AuditStatus.Pending)
-            {
-                throw new StateTransitionException(AuditStatus, AuditStatus.Pending);
-            }
             AuditStatus = AuditStatus.Pending;
         }
 
@@ -132,28 +118,6 @@ namespace FunderMaps.Core.Types.Control
                 throw new StateTransitionException(AuditStatus, AuditStatus.Rejected);
             }
             AuditStatus = AuditStatus.Rejected;
-        }
-
-        /// <summary>
-        ///     Move state to discarded.
-        /// </summary>
-        /// <remarks>
-        ///     Can move to this state from:
-        ///     <list type="bullet">
-        ///         <item>Todo</item>
-        ///         <item>Pending</item>
-        ///         <item>PendingReview</item>
-        ///         <item>Done</item>
-        ///         <item>Rejected</item>
-        ///     </list>
-        /// </remarks>
-        public void TransitionToDiscarded()
-        {
-            if (AuditStatus == AuditStatus.Done)
-            {
-                throw new StateTransitionException(AuditStatus, AuditStatus.Discarded);
-            }
-            AuditStatus = AuditStatus.Discarded;
         }
     }
 }

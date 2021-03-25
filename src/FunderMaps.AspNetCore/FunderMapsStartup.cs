@@ -2,16 +2,22 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
+using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
+using FunderMaps.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 [assembly: ApiController]
 [assembly: HostingStartup(typeof(FunderMaps.AspNetCore.FunderMapsStartup))]
@@ -22,6 +28,16 @@ namespace FunderMaps.AspNetCore
     /// </summary>
     public class FunderMapsStartup : IHostingStartup
     {
+        /// <summary>
+        ///     Configuration.
+        /// </summary>
+        public static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Host environment.
+        /// </summary>
+        public static IHostEnvironment HostEnvironment { get; set; }
+
         /// <summary>
         ///     Use this method to add entity and object mapping configurations.
         /// </summary>
@@ -73,6 +89,9 @@ namespace FunderMaps.AspNetCore
 
             builder.ConfigureServices(services =>
             {
+                // The startup essential properties can be used to setup components.
+                (Configuration, HostEnvironment) = services.BuildStartupProperties();
+
                 services.AddAutoMapper(mapper => ConfigureMapper(mapper));
 
                 // FUTURE: Only load specific parts.
@@ -84,8 +103,35 @@ namespace FunderMaps.AspNetCore
                 // Register components from reference assemblies.
                 services.AddFunderMapsCoreServices();
 
+                {
+                    // Add the authentication layer.
+                    services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+                        .AddJwtBearer(options =>
+                        {
+                            options.SaveToken = false;
+                            options.TokenValidationParameters = new JwtTokenValidationParameters
+                            {
+                                ValidIssuer = Configuration.GetJwtIssuer(),
+                                ValidAudience = Configuration.GetJwtAudience(),
+                                IssuerSigningKey = Configuration.GetJwtSigningKey(),
+                                Valid = Configuration.GetJwtTokenExpirationInMinutes(),
+                            };
+                        });
+
+                    // Add the authorization layer.
+                    services.AddAuthorization(options =>
+                        {
+                            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                                .RequireAuthenticatedUser()
+                                .Build();
+
+                            options.AddFunderMapsPolicy();
+                        });
+                }
+
                 // Adds the core authentication service to the container.
                 services.AddScoped<SignInService>();
+                services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
 
                 // NOTE: Register the HttpContextAccessor service to the container.
                 //       The HttpContextAccessor exposes a singleton holding the

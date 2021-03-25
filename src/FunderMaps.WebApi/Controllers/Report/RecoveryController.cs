@@ -2,6 +2,7 @@
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -115,6 +116,10 @@ namespace FunderMaps.WebApi.Controllers.Report
         {
             // Map.
             var recovery = _mapper.Map<Recovery>(input);
+            if (_appContext.UserId == input.Reviewer)
+            {
+                throw new AuthorizationException();
+            }
 
             // Act.
             recovery = await _recoveryRepository.AddGetAsync(recovery);
@@ -162,7 +167,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             // Act.
             Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
             Uri link = await _blobStorageService.GetAccessLinkAsync(
-                containerName: Core.Constants.InquiryStorageFolderName,
+                containerName: Core.Constants.RecoveryStorageFolderName,
                 fileName: recovery.DocumentFile,
                 hoursValid: 1);
 
@@ -188,6 +193,12 @@ namespace FunderMaps.WebApi.Controllers.Report
             var recovery = _mapper.Map<Recovery>(input);
             recovery.Id = id;
 
+            Recovery recovery_existing = await _recoveryRepository.GetByIdAsync(id);
+            if (recovery_existing.Attribution.Creator == input.Reviewer)
+            {
+                throw new AuthorizationException();
+            }
+
             // Act.
             await _recoveryRepository.UpdateAsync(recovery);
 
@@ -202,6 +213,27 @@ namespace FunderMaps.WebApi.Controllers.Report
                 // Act.
                 await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
             }
+
+            // Return.
+            return NoContent();
+        }
+
+        // POST: api/recovery/{id}/reset
+        /// <summary>
+        ///     Reset recovery status to pending by id.
+        /// </summary>
+        [HttpPost("{id:int}/reset")]
+        [Authorize(Policy = "SuperuserAdministratorPolicy")]
+        public async Task<IActionResult> ResetAsync(int id)
+        {
+            // Act.
+            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+
+            // Transition.
+            recovery.State.TransitionToPending();
+
+            // Act.
+            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
             // Return.
             return NoContent();

@@ -3,7 +3,7 @@ using Bogus.Extensions;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 
-namespace FunderMaps.Testing.Faker
+namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
     ///     Faker for <see cref="InquirySampleDto"/>.

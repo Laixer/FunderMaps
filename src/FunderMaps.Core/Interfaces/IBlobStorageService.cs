@@ -11,14 +11,6 @@ namespace FunderMaps.Core.Interfaces
     public interface IBlobStorageService : IServiceHealthCheck
     {
         /// <summary>
-        ///     Check if a file exist in storage.
-        /// </summary>
-        /// <param name="containerName">Storage container.</param>
-        /// <param name="fileName">File name.</param>
-        /// <returns>True if file exist, false otherwise.</returns>
-        Task<bool> FileExistsAsync(string containerName, string fileName);
-
-        /// <summary>
         ///     Retrieve file access link as uri.
         /// </summary>
         /// <param name="containerName">Storage container.</param>
@@ -26,14 +18,6 @@ namespace FunderMaps.Core.Interfaces
         /// <param name="hoursValid">How long the link is valid in hours.</param>
         /// <returns>The generated link.</returns>
         Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
-
-        /// <summary>
-        ///     Store the file in the data store.
-        /// </summary>
-        /// <param name="containerName">Storage container.</param>
-        /// <param name="fileName">File name.</param>
-        /// <param name="stream">Content stream.</param>
-        Task StoreFileAsync(string containerName, string fileName, Stream stream);
 
         // FUTURE: Refactor
         /// <summary>

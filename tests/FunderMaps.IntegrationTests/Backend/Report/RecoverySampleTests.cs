@@ -1,6 +1,6 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
-using FunderMaps.Testing.Faker;
+using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System;
 using System.Collections.Generic;
@@ -85,6 +85,37 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             await ReportStub.DeleteRecoveryAsync(Factory, recovery);
         }
 
+        [Fact]
+        public async Task RecoverySampleResetLifeCycle()
+        {
+            var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/status_review", new StatusChangeDtoFaker().Generate());
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Superuser);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/reset", new { });
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ReportStub.DeleteRecoveryAsync(Factory, recovery);
+        }
+
         [Theory]
         [InlineData("status_approved")]
         [InlineData("status_rejected")]
@@ -115,6 +146,17 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
             }
 
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Superuser);
+
+                // Act
+                var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/reset", new { });
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
             await ReportStub.DeleteRecoveryAsync(Factory, recovery);
         }
 
@@ -139,7 +181,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
-        public async Task RecoveryLifeCycleForbidden()
+        public async Task RecoverySampleLifeCycleForbidden()
         {
             var recovery = await ReportStub.CreateRecoveryAsync(Factory);
             var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);

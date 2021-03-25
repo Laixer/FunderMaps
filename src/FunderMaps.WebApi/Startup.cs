@@ -1,8 +1,4 @@
-﻿using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.Authorization;
-using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FunderMaps.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -40,31 +36,6 @@ namespace FunderMaps.WebApi
         {
             services.AddAutoMapper(typeof(Startup));
 
-            // Add the authentication layer.
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.SaveToken = false;
-                    options.TokenValidationParameters = new JwtTokenValidationParameters
-                    {
-                        ValidIssuer = Configuration.GetJwtIssuer(),
-                        ValidAudience = Configuration.GetJwtAudience(),
-                        IssuerSigningKey = Configuration.GetJwtSigningKey(),
-                        Valid = Configuration.GetJwtTokenExpirationInMinutes(),
-                    };
-                })
-                .AddJwtBearerTokenProvider();
-
-            // Add the authorization layer.
-            services.AddAuthorization(options =>
-                {
-                    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                        .RequireAuthenticatedUser()
-                        .Build();
-
-                    options.AddFunderMapsPolicy();
-                });
-
             services.AddLocalization(options =>
             {
                 options.ResourcesPath = "Resources";
@@ -73,9 +44,6 @@ namespace FunderMaps.WebApi
             // Register components from reference assemblies.
             services.AddFunderMapsInfrastructureServices();
             services.AddFunderMapsDataServices("FunderMapsConnection");
-
-            // Configure project specific services.
-            services.AddTransient<SignInHandler>();
         }
 
         /// <summary>

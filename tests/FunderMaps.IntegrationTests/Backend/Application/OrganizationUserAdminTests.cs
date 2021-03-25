@@ -1,4 +1,5 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.Testing.Faker;
 using System.Collections.Generic;
 using System.Net;

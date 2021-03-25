@@ -66,8 +66,13 @@
         FoundationResearch = 11,
 
         /// <summary>
-        ///     Groundwaterlevel research
+        ///     Groundwaterlevel research.
         /// </summary>
         GroundWaterLevelResearch = 12,
+
+        /// <summary>
+        ///     Soil investigation.
+        /// </summary>
+        SoilInvestigation = 13,
     }
 }

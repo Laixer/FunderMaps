@@ -1,6 +1,7 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,15 +17,15 @@ namespace FunderMaps.AspNetCore.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly SignInHandler _authenticationHelper;
+        private readonly SignInService _signInService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public AuthController(IMapper mapper, SignInHandler authenticationHelper)
+        public AuthController(IMapper mapper, SignInService signInService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authenticationHelper = authenticationHelper ?? throw new ArgumentNullException(nameof(authenticationHelper));
+            _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
         }
 
         // POST: auth/signin
@@ -36,7 +37,7 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> SignInAsync([FromBody] SignInDto input)
         {
             // Act.
-            TokenContext context = await _authenticationHelper.SignInAsync(input.Email, input.Password);
+            TokenContext context = await _signInService.PasswordSignInAsync(input.Email, input.Password);
 
             // Map.
             var output = _mapper.Map<SignInSecurityTokenDto>(context);
@@ -53,7 +54,7 @@ namespace FunderMaps.AspNetCore.Controllers
         public async Task<IActionResult> RefreshSignInAsync()
         {
             // Act.
-            TokenContext context = await _authenticationHelper.RefreshSignInAsync(User);
+            TokenContext context = await _signInService.SignInAsync(User);
 
             // Map.
             var output = _mapper.Map<SignInSecurityTokenDto>(context);

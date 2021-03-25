@@ -1,7 +1,7 @@
-using Bogus;
-using Bogus.DataSets;
+// using Bogus;
+// using Bogus.DataSets;
 
-namespace FunderMaps.Testing.Extensions
+namespace Bogus.DataSets
 {
     public static class BogusDataSetsExtensions
     {

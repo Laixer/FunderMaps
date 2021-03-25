@@ -1,11 +1,7 @@
-using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
-using FunderMaps.Extensions;
 using FunderMaps.Webservice.Documentation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -43,36 +39,8 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         private void StartupConfigureServices(IServiceCollection services)
         {
-            // Add the authentication layer.
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.SaveToken = false;
-                    options.TokenValidationParameters = new JwtTokenValidationParameters
-                    {
-                        ValidIssuer = Configuration.GetJwtIssuer(),
-                        ValidAudience = Configuration.GetJwtAudience(),
-                        IssuerSigningKey = Configuration.GetJwtSigningKey(),
-                        Valid = Configuration.GetJwtTokenExpirationInMinutes(),
-                    };
-                })
-                .AddJwtBearerTokenProvider();
-
-            // Add the authorization layer.
-            services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-
-                options.AddFunderMapsPolicy();
-            });
-
             // Register components from reference assemblies.
             services.AddFunderMapsDataServices("FunderMapsConnection");
-
-            // Configure project specific services.
-            services.AddTransient<SignInHandler>();
 
             // Override default product service by tracking variant of product service.
             services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());

@@ -1,6 +1,6 @@
 using AutoMapper;
-using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -27,7 +27,7 @@ namespace FunderMaps.AspNetCore.Controllers
         private readonly Core.AppContext _appContext;
         private readonly IUserRepository _userRepository;
         private readonly IOrganizationUserRepository _organizationUserRepository;
-        private readonly SignInService _signinService;
+        private readonly SignInService _signInService;
 
         /// <summary>
         ///     Create new instance.
@@ -37,13 +37,13 @@ namespace FunderMaps.AspNetCore.Controllers
             Core.AppContext appContext,
             IUserRepository userRepository,
             IOrganizationUserRepository organizationUserRepository,
-            SignInService signinService)
+            SignInService signInService)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-            _signinService = signinService ?? throw new ArgumentNullException(nameof(signinService));
+            _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
         }
 
         // POST: organization/user
@@ -60,7 +60,7 @@ namespace FunderMaps.AspNetCore.Controllers
             // Act.
             // FUTURE: Do in 1 call.
             user = await _userRepository.AddGetAsync(user);
-            await _signinService.SetPasswordAsync(user.Id, input.Password);
+            await _signInService.SetPasswordAsync(user.Id, input.Password);
             await _organizationUserRepository.AddAsync(_appContext.TenantId, user.Id, input.OrganizationRole);
 
             // Map.
@@ -153,7 +153,7 @@ namespace FunderMaps.AspNetCore.Controllers
             }
 
             // Act.
-            await _signinService.SetPasswordAsync(id, input.NewPassword);
+            await _signInService.SetPasswordAsync(id, input.NewPassword);
 
             // Return.
             return NoContent();

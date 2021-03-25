@@ -5,6 +5,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -96,6 +97,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     was successfully created within this <see cref="Inquiry"/>.
         /// </remarks>
         [HttpPost]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
         {
             Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
@@ -134,6 +136,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     was successfully updated within this <see cref="Inquiry"/>.
         /// </remarks>
         [HttpPut("{id:int}")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySampleDto input)
         {
             // Map.
@@ -166,6 +169,7 @@ namespace FunderMaps.WebApi.Controllers.Report
         ///     within this <see cref="Inquiry"/> are deleted.
         /// </remarks>
         [HttpDelete("{id:int}")]
+        [Authorize(Policy = "WriterAdministratorPolicy")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             // Act.
