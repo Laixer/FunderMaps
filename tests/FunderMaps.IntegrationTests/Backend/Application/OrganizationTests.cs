@@ -36,6 +36,8 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(Guid.Parse("05203318-6c55-43c1-a6a6-bb8c83f930c3"), returnObject.Id);
+            Assert.NotNull(returnObject.Name);
+            Assert.NotNull(returnObject.Email);
         }
 
         [Fact]
