@@ -13,15 +13,6 @@ namespace FunderMaps.Core.Services
     internal class NullBlobStorageService : IBlobStorageService
     {
         /// <summary>
-        ///     Check if a file exist in storage.
-        /// </summary>
-        /// <param name="containerName">Storage container.</param>
-        /// <param name="fileName">File name.</param>
-        /// <returns>True if file exist, false otherwise.</returns>
-        public Task<bool> FileExistsAsync(string containerName, string fileName)
-            => Task.FromResult(false);
-
-        /// <summary>
         ///     Retrieve file access link as uri.
         /// </summary>
         /// <param name="containerName">Storage container.</param>
@@ -30,15 +21,6 @@ namespace FunderMaps.Core.Services
         /// <returns>The generated link.</returns>
         public Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
             => Task.FromResult(new Uri("https://localhost/blob"));
-
-        /// <summary>
-        ///     Store the file in the data store.
-        /// </summary>
-        /// <param name="containerName">Storage container.</param>
-        /// <param name="fileName">File name.</param>
-        /// <param name="stream">Content stream.</param>
-        public Task StoreFileAsync(string containerName, string fileName, Stream stream)
-            => Task.CompletedTask;
 
         /// <summary>
         ///     Stores a file in Amazon S3.
