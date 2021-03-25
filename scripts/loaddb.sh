@@ -20,4 +20,4 @@ psql -h localhost -U postgres -d fundermaps -v ON_ERROR_STOP=1 < database/data/s
 psql -h localhost -U postgres -d fundermaps -v ON_ERROR_STOP=1 < database/data/seed_data.sql
 psql -h localhost -U postgres -d fundermaps -v ON_ERROR_STOP=1 < database/data/seed_maplayer.sql
 psql -h localhost -U postgres -d fundermaps -v ON_ERROR_STOP=1 < database/data/seed_report.sql
-psql -h localhost -U postgres -d fundermaps -v ON_ERROR_STOP=1 < database/data/precompute.sql
+psql -h localhost -U postgres -d fundermaps -v ON_ERROR_STOP=1 < database/precompute.sql
