@@ -23,14 +23,14 @@ namespace FunderMaps.Infrastructure.Storage
     ///     This creates an <see cref="IAmazonS3"/> client once in its constructor.
     ///     Register this service as a singleton if dependency injection is used.
     /// </remarks>
-    internal class SpacesBlobStorageService : IBlobStorageService, IDisposable
+    internal class SpacesBlobStorageService : IBlobStorageService
     {
         private static readonly byte MaxKeys = 255;
-        private static readonly byte ConcurrentServiceRequests = 10;
 
         private readonly BlobStorageOptions _options;
-        private readonly IAmazonS3 client;
         private readonly ILogger<SpacesBlobStorageService> _logger;
+        private readonly AWSCredentials _awsCredentials;
+        private readonly AmazonS3Config _clientConfig;
 
         /// <summary>
         ///     Create new instance.
@@ -40,52 +40,17 @@ namespace FunderMaps.Infrastructure.Storage
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            client = new AmazonS3Client(new BasicAWSCredentials(_options.AccessKey, _options.SecretKey),
-                new AmazonS3Config
-                {
-                    ServiceURL = _options.ServiceUri.AbsoluteUri
-                });
+            _awsCredentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
+            _clientConfig = new()
+            {
+                ServiceURL = _options.ServiceUri.AbsoluteUri
+            };
         }
 
         /// <summary>
-        ///     Called on graceful shutdown.
+        ///     Create a new Amazon S3 client.
         /// </summary>
-        public void Dispose() => client.Dispose();
-
-        // TODO Amazon has no clean way to check for object existence.
-        /// <summary>
-        ///     Checks if a file exists or not.
-        /// </summary>
-        /// <param name="containerName">The container name.</param>
-        /// <param name="fileName">The file name.</param>
-        /// <returns>Boolean result.</returns>
-        public async Task<bool> FileExistsAsync(string containerName, string fileName)
-        {
-            try
-            {
-                // TODO Maybe use list keys with a filter?
-
-                var result = await client.GetObjectAsync(new GetObjectRequest
-                {
-                    BucketName = _options.BlobStorageName,
-                    Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}"
-                });
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                // This type of exception indicates that the file does not exist.
-                if (e is AmazonS3Exception && ((AmazonS3Exception)e).ErrorCode == "NoSuchKey")
-                {
-                    return false;
-                }
-
-                _logger.LogError("Could not check file existence in Spaces using S3");
-
-                throw new StorageException("Could not check file existence", e);
-            }
-        }
+        protected AmazonS3Client CreateClient => new(_awsCredentials, _clientConfig);
 
         /// <summary>
         ///     Gets an access uri for a given file.
@@ -98,7 +63,7 @@ namespace FunderMaps.Infrastructure.Storage
         {
             try
             {
-                var url = client.GetPreSignedURL(new GetPreSignedUrlRequest
+                var url = CreateClient.GetPreSignedURL(new GetPreSignedUrlRequest
                 {
                     BucketName = _options.BlobStorageName,
                     Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
@@ -115,31 +80,6 @@ namespace FunderMaps.Infrastructure.Storage
             }
         }
 
-        /// <summary>
-        ///     Stores a file.
-        /// </summary>
-        /// <param name="containerName">The container name.</param>
-        /// <param name="fileName">The file name.</param>
-        /// <param name="stream">See <see cref="Stream"/>.</param>
-        /// <returns>See <see cref="ValueTask"/>.</returns>
-        public async Task StoreFileAsync(string containerName, string fileName, Stream stream)
-        {
-            try
-            {
-                var key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}";
-                using var transferUtility = new TransferUtility(client);
-
-                await transferUtility.UploadAsync(stream, _options.BlobStorageName, key);
-            }
-            catch (AmazonS3Exception e)
-            {
-                _logger.LogError("Could not store file to Spaces using S3");
-
-                throw new StorageException("Could not store file", e);
-            }
-        }
-
-        // FUTURE: Refactor
         /// <summary>
         ///     Stores a file.
         /// </summary>
@@ -170,7 +110,7 @@ namespace FunderMaps.Infrastructure.Storage
                     request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
                 }
 
-                using TransferUtility transferUtility = new(client);
+                using TransferUtility transferUtility = new(CreateClient);
                 await transferUtility.UploadAsync(request);
             }
             catch (AmazonS3Exception e)
@@ -181,7 +121,6 @@ namespace FunderMaps.Infrastructure.Storage
             }
         }
 
-        // FUTURE: Refactor
         /// <summary>
         ///     Stores a directory.
         /// </summary>
@@ -211,17 +150,8 @@ namespace FunderMaps.Infrastructure.Storage
                     uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding;
                 };
 
-                TransferUtilityConfig config = new()
-                {
-                    // Note: This is currently set to the default value of 10. I did some benchmarking on 23 dec 2020 
-                    //       and discovered that turning this value up will cause some unstable behaviour resulting in
-                    //       the task throwing an exception and being cancelled. Setting this to 20 seemed to work fine, 
-                    //       however 50 or above seems to result in crashes. I've left it on 10 for now to be safe for use 
-                    //       in production. Worth investigating later for a major performance increase!
-                    ConcurrentServiceRequests = ConcurrentServiceRequests
-                };
-
-                await new TransferUtility(client, config).UploadDirectoryAsync(request);
+                using TransferUtility transferUtility = new(CreateClient);
+                await transferUtility.UploadDirectoryAsync(request);
             }
             catch (AmazonS3Exception e)
             {
@@ -253,9 +183,9 @@ namespace FunderMaps.Infrastructure.Storage
 
                 List<Task> tasklist = new();
 
-                for (ListObjectsV2Response response = await client.ListObjectsV2Async(request);
+                for (ListObjectsV2Response response = await CreateClient.ListObjectsV2Async(request);
                     response.IsTruncated;
-                    request.ContinuationToken = response.NextContinuationToken, response = await client.ListObjectsV2Async(request))
+                    request.ContinuationToken = response.NextContinuationToken, response = await CreateClient.ListObjectsV2Async(request))
                 {
                     // TODO; Move this into for loop
                     if (response.S3Objects.Count <= 0)
@@ -263,7 +193,7 @@ namespace FunderMaps.Infrastructure.Storage
                         break;
                     }
 
-                    Task deleteTask = client.DeleteObjectsAsync(new()
+                    Task deleteTask = CreateClient.DeleteObjectsAsync(new()
                     {
                         BucketName = _options.BlobStorageName,
                         Objects = response.S3Objects.Select(x => new KeyVersion()
@@ -291,7 +221,7 @@ namespace FunderMaps.Infrastructure.Storage
         ///     Test the Amazon S3 service backend.
         /// </summary>
         public async Task HealthCheck()
-            => await client.ListBucketsAsync();
+            => await CreateClient.ListBucketsAsync();
     }
 }
 #pragma warning restore CA1812 // Internal class is never instantiated
