@@ -6,6 +6,8 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 using FunderMaps.IntegrationTests.Faker;
+using System.Net.Http;
+using System.Collections.Generic;
 
 namespace FunderMaps.IntegrationTests.Backend.Report
 {
@@ -36,76 +38,121 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
-        public async Task CreateIncidentReturnIncident()
+        public async Task UploadEmptyFormReturnBadRequest()
         {
             // Arrange
-            var incident = new IncidentDtoFaker()
-                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
-                .Generate();
-            using var client = Factory.CreateClient();
+            using var formContent = new MultipartFormDataContent();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
 
             // Act
-            var response = await client.PostAsJsonAsync("api/incident", incident);
-            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+            var response = await client.PostAsync("api/incident/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Fact]
-        public async Task GetIncidentByIdReturnSingleIncident()
+        public async Task UploadEmptyDocumentReturnBadRequest()
         {
             // Arrange
-            var incident = new IncidentDtoFaker()
-                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
-                .Generate();
-            using var client = Factory.CreateClient();
-            incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", incident);
+            using var formContent = new FileUploadContent(
+                mediaType: "application/pdf",
+                fileExtension: "pdf",
+                byteContentLength: 0);
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
 
             // Act
-            var response = await client.GetAsync($"api/incident/{incident.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+            var response = await client.PostAsync("api/incident/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
-            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Fact]
-        public async Task UpdateIncidentReturnNoContent()
+        public async Task UploadForbiddenDocumentReturnBadRequest()
         {
             // Arrange
-            var incident = new IncidentDtoFaker()
-                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
-                .Generate();
-            using var client = Factory.CreateClient();
-            incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", incident);
+            using var formContent = new FileUploadContent(
+                mediaType: "font/woff",
+                fileExtension: "woff");
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
 
             // Act
-            var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", new IncidentDtoFaker().Generate());
+            var response = await client.PostAsync("api/incident/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
             // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
 
         [Fact]
-        public async Task DeleteIncidentReturnNoContent()
+        public async Task IncidentLifeCycle()
         {
-            // Arrange
-            var incident = new IncidentDtoFaker()
-                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
-                .Generate();
-            using var client = Factory.CreateClient();
-            incident = await client.PostAsJsonGetFromJsonAsync<IncidentDto, IncidentDto>("api/incident", incident);
+            var incident = await ReportStub.CreateIncidentAsync(Factory);
 
-            // Act
-            var response = await client.DeleteAsync($"api/incident/{incident.Id}");
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+                // Act
+                var response = await client.GetAsync($"api/incident/stats");
+                var returnObject = await response.Content.ReadFromJsonAsync<DatasetStatsDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnObject.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+
+                // Act
+                var response = await client.GetAsync($"api/incident/{incident.Id}");
+                var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+                Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+
+                // Act
+                var response = await client.GetAsync($"api/incident");
+                var returnList = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnList.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient(OrganizationRole.Writer);
+                var newObject = new IncidentDtoFaker()
+                    .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                    .Generate();
+
+                // Act
+                var response = await client.PutAsJsonAsync($"api/incident/{incident.Id}", newObject);
+
+                // Assert
+                Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            }
+
+            await ReportStub.DeleteIncidentAsync(Factory, incident);
         }
     }
 }

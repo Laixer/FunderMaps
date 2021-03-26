@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -56,6 +57,26 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             return returnObject;
         }
 
+        public static async Task<IncidentDto> CreateIncidentAsync(BackendFixtureFactory factory)
+        {
+            // Arrange
+            var incident = new IncidentDtoFaker()
+                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .Generate();
+            using var client = factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsJsonAsync("api/incident", incident);
+            var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
+            Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
+
+            return returnObject;
+        }
+
         public static async Task DeleteRecoveryAsync(BackendFixtureFactory factory, RecoveryDto recovery)
         {
             // Arrange
@@ -75,6 +96,18 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Act
             var response = await client.DeleteAsync($"api/inquiry/{inquiry.Id}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        public static async Task DeleteIncidentAsync(BackendFixtureFactory factory, IncidentDto incident)
+        {
+            // Arrange
+            using var client = factory.CreateClient();
+
+            // Act
+            var response = await client.DeleteAsync($"api/incident/{incident.Id}");
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
