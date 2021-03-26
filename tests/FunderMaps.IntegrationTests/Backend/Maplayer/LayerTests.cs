@@ -5,7 +5,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Geocoder
+namespace FunderMaps.IntegrationTests.Backend.Maplayer
 {
     public class LayerTests : IClassFixture<BackendFixtureFactory>
     {
@@ -30,6 +30,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal("Funderingsrisico", returnObject.Name);
+            Assert.True(response.Headers.CacheControl.Public);
         }
 
         [Fact]
@@ -45,6 +46,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(returnObject.Count >= 10);
+            Assert.True(response.Headers.CacheControl.Public);
         }
     }
 }

@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY maplayer.bundle (id, organization_id, name, create_date, update_date, delete_date, layer_configuration) FROM stdin;
+a1537d6c-71c1-483b-978f-103450b9345e	05203318-6c55-43c1-a6a6-bb8c83f930c3	Gebouw	2021-03-26 09:05:29.2066+00	\N	\N	{"Layers": [{"LayerId": "c7ccf095-cf77-4f41-813a-68b493f7c6cb", "ColumnNames": ["id", "built_year", "geom"]}, {"LayerId": "782bc8e1-ff0f-48aa-9f0d-10232392ceda", "ColumnNames": ["id", "building_height", "geom"]}, {"LayerId": "22bcc8a3-fd28-4184-822b-f66e3e79e4b7", "ColumnNames": ["id", "velocity", "geom"]}, {"LayerId": "806d560e-2931-46d9-a06b-644491a335e8", "ColumnNames": ["id", "owner", "geom"]}]}
 \.
 
 
