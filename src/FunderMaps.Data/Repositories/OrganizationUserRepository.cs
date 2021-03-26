@@ -46,7 +46,8 @@ namespace FunderMaps.Data.Repositories
                 FROM    application.organization_user
                 WHERE   organization_id = @organization_id";
 
-            // ConstructNavigation(ref sql, navigation); // TODO:
+            // TODO:
+            // sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -66,7 +67,8 @@ namespace FunderMaps.Data.Repositories
                 WHERE   organization_id = @organization_id
                 AND     role = ANY(@role)";
 
-            // ConstructNavigation(ref sql, navigation); // TODO:
+            // TODO:
+            // sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

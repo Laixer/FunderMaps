@@ -3,7 +3,6 @@ using System;
 
 namespace FunderMaps.Core.Entities
 {
-    // TODO: Remove
     // FUTURE: Remove in the long term.
     /// <summary>
     ///     Record control.

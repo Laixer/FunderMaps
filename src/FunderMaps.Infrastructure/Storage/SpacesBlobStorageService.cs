@@ -162,7 +162,7 @@ namespace FunderMaps.Infrastructure.Storage
         }
 
         /// <summary>
-        ///     Removes a directory.
+        ///     Remove directory and its contents.
         /// </summary>
         /// <param name="directoryPath">Full path of the directory to delete.</param>
         /// <returns>See <see cref="ValueTask"/>.</returns>

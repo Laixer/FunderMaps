@@ -10,6 +10,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <summary>
         ///     Check if backend is online.
         /// </summary>
-        Task<bool> IsAlive();
+        Task<bool> IsAliveAsync();
     }
 }

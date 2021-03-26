@@ -121,7 +121,7 @@ namespace FunderMaps.WebApi.Controllers.Report
             Incident incident = await _incidentRepository.GetByIdAsync(id);
             Uri link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: Core.Constants.IncidentStorageFolderName,
-                fileName: incident.DocumentFile[0], // TODO
+                fileName: incident.DocumentFile[0], // FUTURE: Return all documents or select per index.
                 hoursValid: 1);
 
             // Map.
