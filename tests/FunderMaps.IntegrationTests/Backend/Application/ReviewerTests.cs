@@ -33,7 +33,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnList.Count > 0);
+            Assert.True(returnList.Count >= 1);
         }
 
         [Fact]

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -21,16 +20,14 @@ namespace FunderMaps.WebApi.Controllers.Application
     [AllowAnonymous]
     public class OrganizationSetupController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IOrganizationRepository _organizationRepository;
         private readonly IPasswordHasher _passwordHasher;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public OrganizationSetupController(IMapper mapper, IOrganizationRepository organizationRepository, IPasswordHasher passwordHasher)
+        public OrganizationSetupController(IOrganizationRepository organizationRepository, IPasswordHasher passwordHasher)
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
             _passwordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         }

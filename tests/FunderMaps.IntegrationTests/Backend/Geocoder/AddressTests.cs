@@ -59,7 +59,6 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
         [InlineData(OrganizationRole.Superuser)]
         [InlineData(OrganizationRole.Verifier)]
         [InlineData(OrganizationRole.Writer)]
-        [InlineData(OrganizationRole.Reader)]
         public async Task GetAddressByIdReturnOk(OrganizationRole role)
         {
             // Arrange
