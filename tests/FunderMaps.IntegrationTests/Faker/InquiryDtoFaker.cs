@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using Bogus.DataSets;
 using Bogus.Extensions;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -24,7 +23,7 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.FloorMeasurement, f => f.Random.Bool());
             RuleFor(f => f.Note, f => f.Lorem.Text().OrNull(f, .7f));
             RuleFor(f => f.DocumentDate, f => f.Date.Between(DateTime.Parse("1000-01-01"), DateTime.Now));
-            RuleFor(f => f.DocumentFile, f => f.Internet.RemoteFileWithSecureUrl());
+            RuleFor(f => f.DocumentFile, f => f.System.FileName());
             RuleFor(f => f.Type, f => f.PickRandom<InquiryType>());
             RuleFor(f => f.StandardF3o, f => f.Random.Bool(0.3f));
             RuleFor(f => f.AuditStatus, f => f.PickRandom<AuditStatus>());

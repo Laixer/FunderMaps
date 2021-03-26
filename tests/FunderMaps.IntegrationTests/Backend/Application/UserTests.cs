@@ -39,7 +39,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         {
             // Arrange
             using var client = Factory.CreateClient();
-            var updateObject = new UserFaker().Generate();
+            var updateObject = new UserDtoFaker().Generate();
 
             // Act
             var response = await client.PutAsJsonAsync("api/user", updateObject);
