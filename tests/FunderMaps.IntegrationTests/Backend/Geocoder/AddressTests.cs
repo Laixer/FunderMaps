@@ -35,6 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             Assert.Equal("2612PA", returnObject.PostalCode);
             Assert.Equal("Poortweg", returnObject.Street);
             Assert.Equal("Delft", returnObject.City);
+            Assert.True(response.Headers.CacheControl.Public);
         }
 
         [Theory]
@@ -53,6 +54,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(expected, returnObject.Id);
+            Assert.True(response.Headers.CacheControl.Public);
         }
 
         [Theory]
@@ -69,6 +71,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(response.Headers.CacheControl.Public);
         }
     }
 }
