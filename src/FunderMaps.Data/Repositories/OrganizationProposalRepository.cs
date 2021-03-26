@@ -50,7 +50,7 @@ namespace FunderMaps.Data.Repositories
         {
             var sql = @"
                 SELECT  COUNT(*)
-                FROM    application.create_organization_proposal";
+                FROM    application.organization_proposal";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 

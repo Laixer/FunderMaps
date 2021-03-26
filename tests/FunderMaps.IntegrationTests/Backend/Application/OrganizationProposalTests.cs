@@ -29,7 +29,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 using var client = Factory.CreateAdminClient();
 
                 // Act
-                var response = await client.GetAsync($"api/organization/stats");
+                var response = await client.GetAsync("api/organization/proposal/stats");
                 var returnObject = await response.Content.ReadFromJsonAsync<DatasetStatsDto>();
 
                 // Assert
