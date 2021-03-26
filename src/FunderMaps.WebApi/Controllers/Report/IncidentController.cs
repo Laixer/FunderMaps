@@ -110,11 +110,11 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
-        // GET: api/inquiry/download
+        // GET: api/incident/{id}/download
         /// <summary>
         ///     Retrieve document access link.
         /// </summary>
-        [HttpGet("{id:int}/download")]
+        [HttpGet("{id}/download")]
         public async Task<IActionResult> GetDocumentAccessLinkAsync([Incident] string id)
         {
             // Act.

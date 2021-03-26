@@ -119,6 +119,19 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient();
 
                 // Act
+                var response = await client.GetAsync($"api/recovery/{recovery.Id}/download");
+                var returnObject = await response.Content.ReadFromJsonAsync<BlobAccessLinkDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal("https", returnObject.AccessLink.Scheme);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+
+                // Act
                 var response = await client.GetAsync($"api/recovery/stats");
                 var returnObject = await response.Content.ReadFromJsonAsync<DatasetStatsDto>();
 
