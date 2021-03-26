@@ -37,6 +37,7 @@ ff1ee265-29aa-4eff-beb1-cf02609a909c	\N	\N	Javier40@yahoo.com	JAVIER40@YAHOO.COM
 21c403fe-45fc-4106-9551-3aada1bbdec3	\N	Kihn	Freda@contoso.com	FREDA@CONTOSO.COM	f	\N	soldier	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	80186700424	f	\N	0	user	\N	0	f
 1a93cfb3-f097-4697-a998-71cdd9cfaead	Lester	Bednar	lester@contoso.com	LESTER@CONTOSO.COM	f	https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/373.jpg	actor	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	55505763052	f	\N	0	user	\N	0	f
 aadc6b80-b447-443b-b4ed-fdfcb00976f2	Patsy	Brekke	patsy@contoso.com	PATSY@CONTOSO.COM	f	\N	decorator	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	59539557702	f	\N	0	user	\N	0	f
+ab403d16-e428-4a75-9eec-3dd08b294988	\N	\N	corene@contoso.com	CORENE@CONTOSO.COM	f	\N	\N	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	\N	0	user	\N	0	f
 \.
 
 
@@ -81,6 +82,7 @@ ff1ee265-29aa-4eff-beb1-cf02609a909c	05203318-6c55-43c1-a6a6-bb8c83f930c3	superu
 21c403fe-45fc-4106-9551-3aada1bbdec3	05203318-6c55-43c1-a6a6-bb8c83f930c3	verifier
 aadc6b80-b447-443b-b4ed-fdfcb00976f2	05203318-6c55-43c1-a6a6-bb8c83f930c3	writer
 1a93cfb3-f097-4697-a998-71cdd9cfaead	05203318-6c55-43c1-a6a6-bb8c83f930c3	reader
+ab403d16-e428-4a75-9eec-3dd08b294988	05203318-6c55-43c1-a6a6-bb8c83f930c3	reader
 \.
 
 

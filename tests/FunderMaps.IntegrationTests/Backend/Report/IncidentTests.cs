@@ -102,13 +102,24 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 // Arrange
                 using var client = Factory.CreateClient();
 
-                // Act
-                var response = await client.GetAsync($"api/incident/{incident.Id}/download");
-                var returnObject = await response.Content.ReadFromJsonAsync<BlobAccessLinkDto>();
+                if (incident.DocumentFile.Length > 0)
+                {
+                    // Act
+                    var response = await client.GetAsync($"api/incident/{incident.Id}/download");
+                    var returnObject = await response.Content.ReadFromJsonAsync<BlobAccessLinkDto>();
 
-                // Assert
-                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                Assert.Equal("https", returnObject.AccessLink.Scheme);
+                    // Assert
+                    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                    Assert.Equal("https", returnObject.AccessLink.Scheme);
+                }
+                else
+                {
+                    // Act
+                    var response = await client.GetAsync($"api/incident/{incident.Id}/download");
+
+                    // Assert
+                    Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+                }
             }
 
             {

@@ -22,7 +22,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task GetUserFromSessionReturnSingleUser()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateAlterClient();
 
             // Act
             var response = await client.GetAsync("api/user");
@@ -30,15 +30,15 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(Guid.Parse("1a93cfb3-f097-4697-a998-71cdd9cfaead"), returnObject.Id);
-            Assert.Equal("lester@contoso.com", returnObject.Email);
+            Assert.Equal(Guid.Parse("ab403d16-e428-4a75-9eec-3dd08b294988"), returnObject.Id);
+            Assert.Equal("corene@contoso.com", returnObject.Email);
         }
 
         [Fact]
         public async Task UpdateUserFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateAlterClient();
             var updateObject = new UserDtoFaker().Generate();
 
             // Act
@@ -59,7 +59,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task ChangePasswordFromSessionReturnNoContent()
         {
             // Arrange
-            using var client = Factory.CreateClient();
+            using var client = Factory.CreateAlterClient();
             var newObject = new ChangePasswordDtoFaker()
                 .RuleFor(f => f.OldPassword, f => "fundermaps")
                 .Generate();
@@ -70,7 +70,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-            await TestStub.LoginAsync(Factory, "lester@contoso.com", newObject.NewPassword);
+            await TestStub.LoginAsync(Factory, "corene@contoso.com", newObject.NewPassword);
 
             response = await client.PostAsJsonAsync("user/change-password", new ChangePasswordDto()
             {
@@ -81,7 +81,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-            await TestStub.LoginAsync(Factory, "lester@contoso.com", "fundermaps");
+            await TestStub.LoginAsync(Factory, "corene@contoso.com", "fundermaps");
         }
     }
 }
