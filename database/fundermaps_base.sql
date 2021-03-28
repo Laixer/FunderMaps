@@ -3653,6 +3653,13 @@ CREATE INDEX address_streetname_idx ON geocoder.address USING btree (lower(stree
 
 
 --
+-- Name: building_active_idx; Type: INDEX; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE INDEX building_active_idx ON geocoder.building USING btree (id) WHERE (is_active AND (geom IS NOT NULL));
+
+
+--
 -- Name: building_construction_year_idx; Type: INDEX; Schema: geocoder; Owner: fundermaps
 --
 
@@ -3828,6 +3835,13 @@ CREATE INDEX inquiry_document_date_idx ON report.inquiry USING btree (document_d
 
 
 --
+-- Name: inquiry_sample_address_idx; Type: INDEX; Schema: report; Owner: fundermaps
+--
+
+CREATE INDEX inquiry_sample_address_idx ON report.inquiry_sample USING btree (address);
+
+
+--
 -- Name: inquiry_type_idx; Type: INDEX; Schema: report; Owner: fundermaps
 --
 
@@ -3839,6 +3853,13 @@ CREATE INDEX inquiry_type_idx ON report.inquiry USING btree (type);
 --
 
 CREATE INDEX recovery_access_policy_idx ON report.recovery USING btree (access_policy);
+
+
+--
+-- Name: recovery_sample_address_idx; Type: INDEX; Schema: report; Owner: fundermaps
+--
+
+CREATE INDEX recovery_sample_address_idx ON report.recovery_sample USING btree (address);
 
 
 --
