@@ -3551,7 +3551,7 @@ CREATE INDEX organization_fence_idx ON application.organization USING gist (fenc
 -- Name: organization_normalized_email_idx; Type: INDEX; Schema: application; Owner: fundermaps
 --
 
-CREATE UNIQUE INDEX organization_normalized_email_idx ON application.organization USING btree (normalized_email) WHERE (normalized_email IS NOT NULL);
+CREATE UNIQUE INDEX organization_normalized_email_idx ON application.organization USING btree (normalized_email);
 
 
 --
@@ -3565,7 +3565,7 @@ CREATE INDEX organization_proposal_normalized_email_idx ON application.organizat
 -- Name: user_normalized_email_idx; Type: INDEX; Schema: application; Owner: fundermaps
 --
 
-CREATE UNIQUE INDEX user_normalized_email_idx ON application."user" USING btree (normalized_email) WHERE (normalized_email IS NOT NULL);
+CREATE UNIQUE INDEX user_normalized_email_idx ON application."user" USING btree (normalized_email);
 
 
 --
