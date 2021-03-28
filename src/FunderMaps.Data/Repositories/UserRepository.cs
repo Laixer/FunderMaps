@@ -205,23 +205,6 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
-        ///     Whether or not user is locked out.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>True if locked out, false otherwise.</returns>
-        public async Task<bool> IsLockedOutAsync(Guid id)
-        {
-            var sql = @"
-                SELECT application.is_locked_out(@id)";
-
-            await using var context = await DbContextFactory.CreateAsync(sql);
-
-            context.AddParameterWithValue("id", id);
-
-            return await context.ScalarAsync<bool>();
-        }
-
-        /// <summary>
         ///     Retrieve all <see cref="User"/>.
         /// </summary>
         /// <returns>List of <see cref="User"/>.</returns>
