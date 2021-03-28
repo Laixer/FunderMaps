@@ -1237,25 +1237,6 @@ COMMENT ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.g
 
 
 --
--- Name: is_locked_out(application.user_id); Type: FUNCTION; Schema: application; Owner: fundermaps
---
-
-CREATE FUNCTION application.is_locked_out(id application.user_id) RETURNS boolean
-    LANGUAGE sql
-    AS $_$
-SELECT EXISTS (
-    SELECT  id
-    FROM    application.user
-    WHERE   id = $1
-    AND     lockout_end > NOW()
-    LIMIT   1
-)
-;$_$;
-
-
-ALTER FUNCTION application.is_locked_out(id application.user_id) OWNER TO fundermaps;
-
---
 -- Name: log_access(application.user_id); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
@@ -1623,7 +1604,6 @@ CREATE TABLE application."user" (
     password_hash text,
     phone_number application.phone,
     two_factor_enabled boolean DEFAULT false NOT NULL,
-    lockout_end timestamp with time zone,
     access_failed_count integer DEFAULT 0 NOT NULL,
     role application.role DEFAULT 'user'::application.role NOT NULL,
     last_login timestamp with time zone,
@@ -4622,14 +4602,6 @@ GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public
 GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webservice;
 GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_portal;
 GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_batch;
-
-
---
--- Name: FUNCTION is_locked_out(id application.user_id); Type: ACL; Schema: application; Owner: fundermaps
---
-
-GRANT ALL ON FUNCTION application.is_locked_out(id application.user_id) TO fundermaps_webservice;
-GRANT ALL ON FUNCTION application.is_locked_out(id application.user_id) TO pg_execute_server_program;
 
 
 --
