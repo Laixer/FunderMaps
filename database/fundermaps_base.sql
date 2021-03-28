@@ -1801,6 +1801,7 @@ COMMENT ON VIEW geocoder.building_active IS 'Contains all entries from geocoder.
 
 CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'concrete'::report.foundation_type AS foundation_type
@@ -1812,6 +1813,7 @@ CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
@@ -1823,6 +1825,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
@@ -1834,6 +1837,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code = 'hz'::text))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
@@ -1845,6 +1849,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code = 'hz'::text))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'wood_charger'::report.foundation_type AS foundation_type
@@ -1856,6 +1861,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
@@ -1867,6 +1873,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
@@ -1878,6 +1885,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (10.5)::double precision))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'no_pile'::report.foundation_type AS foundation_type
@@ -1889,6 +1897,7 @@ UNION ALL
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     bh.height,
     b.geom,
     'wood'::report.foundation_type AS foundation_type
@@ -1921,6 +1930,7 @@ ALTER TABLE data.building_groundwater_level OWNER TO fundermaps;
 
 CREATE MATERIALIZED VIEW data.analysis_foundation_risk AS
  SELECT b.id,
+    b.neighborhood_id,
     gr.code,
     gwl.level AS groundwater_level,
     b.geom,
@@ -1934,6 +1944,7 @@ CREATE MATERIALIZED VIEW data.analysis_foundation_risk AS
   WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     gr.code,
     gwl.level AS groundwater_level,
     b.geom,
@@ -1947,6 +1958,7 @@ UNION ALL
   WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height > (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     gr.code,
     gwl.level AS groundwater_level,
     b.geom,
@@ -1960,6 +1972,7 @@ UNION ALL
   WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     gr.code,
     gwl.level AS groundwater_level,
     b.geom,
@@ -1973,6 +1986,7 @@ UNION ALL
   WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))))
 UNION ALL
  SELECT b.id,
+    b.neighborhood_id,
     gr.code,
     gwl.level AS groundwater_level,
     b.geom,
@@ -1988,30 +2002,6 @@ UNION ALL
 
 
 ALTER TABLE data.analysis_foundation_risk OWNER TO fundermaps;
-
---
--- Name: neighborhood; Type: TABLE; Schema: geocoder; Owner: fundermaps
---
-
-CREATE TABLE geocoder.neighborhood (
-    id geocoder.geocoder_id NOT NULL,
-    external_id text NOT NULL,
-    external_source geocoder.data_source NOT NULL,
-    district_id geocoder.geocoder_id NOT NULL,
-    name text NOT NULL,
-    water boolean NOT NULL,
-    geom public.geometry(MultiPolygon,4326) NOT NULL
-);
-
-
-ALTER TABLE geocoder.neighborhood OWNER TO fundermaps;
-
---
--- Name: TABLE neighborhood; Type: COMMENT; Schema: geocoder; Owner: fundermaps
---
-
-COMMENT ON TABLE geocoder.neighborhood IS 'Contains all neighborhoods in our own format.';
-
 
 --
 -- Name: inquiry; Type: TABLE; Schema: report; Owner: fundermaps
@@ -2247,7 +2237,7 @@ CREATE VIEW data.analysis_address AS
     a.id AS address_id,
     a.external_id AS address_external_id,
     a.postal_code,
-    n.id AS neighborhood_id,
+    afr.neighborhood_id,
     afr.groundwater_level,
     afr.code AS soil,
     be.roof AS building_height,
@@ -2302,9 +2292,8 @@ CREATE VIEW data.analysis_address AS
     NULL::text AS bio_infection,
     'indicative'::data.reliability AS bio_infection_reliability,
     afr.foundation_risk AS bio_infection_risk
-   FROM ((((((((geocoder.address a
+   FROM (((((((geocoder.address a
      JOIN geocoder.building_active b ON (((a.building_id)::text = (b.id)::text)))
-     JOIN geocoder.neighborhood n ON (((b.neighborhood_id)::text = (n.id)::text)))
      JOIN data.analysis_foundation_indicative afi ON (((afi.id)::text = (b.id)::text)))
      JOIN data.analysis_foundation_risk afr ON (((afr.id)::text = (b.id)::text)))
      LEFT JOIN data.building_elevation be ON (((be.building_id)::text = (b.id)::text)))
@@ -2440,12 +2429,11 @@ COMMENT ON VIEW data.statistics_product_data_collected IS 'Contains statistics o
 --
 
 CREATE VIEW data.statistics_product_foundation_risk AS
- SELECT ba.neighborhood_id,
+ SELECT afr.neighborhood_id,
     afr.foundation_risk,
-    (((count(afr.foundation_risk))::numeric / sum(count(afr.foundation_risk)) OVER (PARTITION BY ba.neighborhood_id)) * (100)::numeric) AS percentage
-   FROM (geocoder.building_active ba
-     JOIN data.analysis_foundation_risk afr ON (((afr.id)::text = (ba.id)::text)))
-  GROUP BY ba.neighborhood_id, afr.foundation_risk;
+    (((count(afr.foundation_risk))::numeric / sum(count(afr.foundation_risk)) OVER (PARTITION BY afr.neighborhood_id)) * (100)::numeric) AS percentage
+   FROM data.analysis_foundation_risk afr
+  GROUP BY afr.neighborhood_id, afr.foundation_risk;
 
 
 ALTER TABLE data.statistics_product_foundation_risk OWNER TO fundermaps;
@@ -2455,12 +2443,11 @@ ALTER TABLE data.statistics_product_foundation_risk OWNER TO fundermaps;
 --
 
 CREATE VIEW data.statistics_product_foundation_type AS
- SELECT ba.neighborhood_id,
+ SELECT afi.neighborhood_id,
     afi.foundation_type,
-    (((count(afi.foundation_type))::numeric / sum(count(afi.foundation_type)) OVER (PARTITION BY ba.neighborhood_id)) * (100)::numeric) AS percentage
-   FROM (geocoder.building_active ba
-     JOIN data.analysis_foundation_indicative afi ON (((afi.id)::text = (ba.id)::text)))
-  GROUP BY ba.neighborhood_id, afi.foundation_type;
+    (((count(afi.foundation_type))::numeric / sum(count(afi.foundation_type)) OVER (PARTITION BY afi.neighborhood_id)) * (100)::numeric) AS percentage
+   FROM data.analysis_foundation_indicative afi
+  GROUP BY afi.neighborhood_id, afi.foundation_type;
 
 
 ALTER TABLE data.statistics_product_foundation_type OWNER TO fundermaps;
@@ -2672,6 +2659,30 @@ ALTER TABLE geocoder.municipality OWNER TO fundermaps;
 --
 
 COMMENT ON TABLE geocoder.municipality IS 'Contains all municipalities in our own format.';
+
+
+--
+-- Name: neighborhood; Type: TABLE; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE TABLE geocoder.neighborhood (
+    id geocoder.geocoder_id NOT NULL,
+    external_id text NOT NULL,
+    external_source geocoder.data_source NOT NULL,
+    district_id geocoder.geocoder_id NOT NULL,
+    name text NOT NULL,
+    water boolean NOT NULL,
+    geom public.geometry(MultiPolygon,4326) NOT NULL
+);
+
+
+ALTER TABLE geocoder.neighborhood OWNER TO fundermaps;
+
+--
+-- Name: TABLE neighborhood; Type: COMMENT; Schema: geocoder; Owner: fundermaps
+--
+
+COMMENT ON TABLE geocoder.neighborhood IS 'Contains all neighborhoods in our own format.';
 
 
 --
@@ -3563,10 +3574,24 @@ CREATE INDEX analysis_foundation_indicative_id_idx ON data.analysis_foundation_i
 
 
 --
+-- Name: analysis_foundation_indicative_neighborhood_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX analysis_foundation_indicative_neighborhood_id_idx ON data.analysis_foundation_indicative USING btree (neighborhood_id);
+
+
+--
 -- Name: analysis_foundation_risk_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
 CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk USING btree (id);
+
+
+--
+-- Name: analysis_foundation_risk_neighborhood_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX analysis_foundation_risk_neighborhood_id_idx ON data.analysis_foundation_risk USING btree (neighborhood_id);
 
 
 --
@@ -4852,16 +4877,6 @@ GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webservice;
 
 
 --
--- Name: TABLE neighborhood; Type: ACL; Schema: geocoder; Owner: fundermaps
---
-
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.neighborhood TO fundermaps_webapp;
-GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.neighborhood TO fundermaps_webservice;
-GRANT SELECT,REFERENCES ON TABLE geocoder.neighborhood TO fundermaps_portal;
-GRANT SELECT,REFERENCES ON TABLE geocoder.neighborhood TO fundermaps_batch;
-
-
---
 -- Name: TABLE inquiry; Type: ACL; Schema: report; Owner: fundermaps
 --
 
@@ -5020,6 +5035,16 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.municipality TO fundermaps_web
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.municipality TO fundermaps_webservice;
 GRANT SELECT,REFERENCES ON TABLE geocoder.municipality TO fundermaps_portal;
 GRANT SELECT,REFERENCES ON TABLE geocoder.municipality TO fundermaps_batch;
+
+
+--
+-- Name: TABLE neighborhood; Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.neighborhood TO fundermaps_webapp;
+GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.neighborhood TO fundermaps_webservice;
+GRANT SELECT,REFERENCES ON TABLE geocoder.neighborhood TO fundermaps_portal;
+GRANT SELECT,REFERENCES ON TABLE geocoder.neighborhood TO fundermaps_batch;
 
 
 --
