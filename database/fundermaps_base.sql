@@ -3661,6 +3661,13 @@ CREATE INDEX building_geom_idx ON geocoder.building USING gist (geom);
 
 
 --
+-- Name: building_neighborhood_active_idx; Type: INDEX; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE INDEX building_neighborhood_active_idx ON geocoder.building USING btree (neighborhood_id) WHERE (is_active AND (geom IS NOT NULL));
+
+
+--
 -- Name: building_neighborhood_idx; Type: INDEX; Schema: geocoder; Owner: fundermaps
 --
 
