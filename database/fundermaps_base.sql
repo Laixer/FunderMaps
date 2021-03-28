@@ -1918,7 +1918,7 @@ ALTER TABLE data.analysis_foundation_indicative OWNER TO fundermaps;
 
 CREATE TABLE data.building_groundwater_level (
     building_id geocoder.geocoder_id NOT NULL,
-    level double precision
+    level double precision NOT NULL
 );
 
 
@@ -3592,6 +3592,13 @@ CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk US
 --
 
 CREATE INDEX analysis_foundation_risk_neighborhood_id_idx ON data.analysis_foundation_risk USING btree (neighborhood_id);
+
+
+--
+-- Name: building_elevation_available_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX building_elevation_available_idx ON data.building_elevation USING btree (building_id) WHERE ((roof IS NOT NULL) AND (ground IS NOT NULL));
 
 
 --
