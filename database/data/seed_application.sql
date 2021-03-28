@@ -31,13 +31,13 @@ COPY application.organization (id, name, normalized_name, email, phone_number, b
 -- Data for Name: user; Type: TABLE DATA; Schema: application; Owner: fundermaps
 --
 
-COPY application."user" (id, given_name, last_name, email, normalized_email, email_confirmed, avatar, job_title, password_hash, phone_number, two_factor_enabled, lockout_end, access_failed_count, role, last_login, login_count, phone_number_confirmed) FROM stdin;
-eda54685-a2c1-4d0e-98d8-d63faccc8a9f	Administrator	\N	admin@fundermaps.com	ADMIN@FUNDERMAPS.COM	f	\N	Administrator	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	\N	0	administrator	\N	0	f
-ff1ee265-29aa-4eff-beb1-cf02609a909c	\N	\N	Javier40@yahoo.com	JAVIER40@YAHOO.COM	f	\N	\N	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	\N	0	user	\N	0	f
-21c403fe-45fc-4106-9551-3aada1bbdec3	\N	Kihn	Freda@contoso.com	FREDA@CONTOSO.COM	f	\N	soldier	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	80186700424	f	\N	0	user	\N	0	f
-1a93cfb3-f097-4697-a998-71cdd9cfaead	Lester	Bednar	lester@contoso.com	LESTER@CONTOSO.COM	f	https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/373.jpg	actor	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	55505763052	f	\N	0	user	\N	0	f
-aadc6b80-b447-443b-b4ed-fdfcb00976f2	Patsy	Brekke	patsy@contoso.com	PATSY@CONTOSO.COM	f	\N	decorator	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	59539557702	f	\N	0	user	\N	0	f
-ab403d16-e428-4a75-9eec-3dd08b294988	\N	\N	corene@contoso.com	CORENE@CONTOSO.COM	f	\N	\N	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	\N	0	user	\N	0	f
+COPY application."user" (id, given_name, last_name, email, normalized_email, email_confirmed, avatar, job_title, password_hash, phone_number, two_factor_enabled, access_failed_count, role, last_login, login_count, phone_number_confirmed) FROM stdin;
+eda54685-a2c1-4d0e-98d8-d63faccc8a9f	Administrator	\N	admin@fundermaps.com	ADMIN@FUNDERMAPS.COM	f	\N	Administrator	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	0	administrator	\N	0	f
+ff1ee265-29aa-4eff-beb1-cf02609a909c	\N	\N	Javier40@yahoo.com	JAVIER40@YAHOO.COM	f	\N	\N	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	0	user	\N	0	f
+21c403fe-45fc-4106-9551-3aada1bbdec3	\N	Kihn	Freda@contoso.com	FREDA@CONTOSO.COM	f	\N	soldier	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	80186700424	f	0	user	\N	0	f
+1a93cfb3-f097-4697-a998-71cdd9cfaead	Lester	Bednar	lester@contoso.com	LESTER@CONTOSO.COM	f	https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/373.jpg	actor	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	55505763052	f	0	user	\N	0	f
+aadc6b80-b447-443b-b4ed-fdfcb00976f2	Patsy	Brekke	patsy@contoso.com	PATSY@CONTOSO.COM	f	\N	decorator	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	59539557702	f	0	user	\N	0	f
+ab403d16-e428-4a75-9eec-3dd08b294988	\N	\N	corene@contoso.com	CORENE@CONTOSO.COM	f	\N	\N	AcoX6S+JSGn42iAC48JcoKYmWDUjWpb9jgbY92QvK9jTpU3G2EvFZNiU3rMUgHQ16g==	\N	f	0	user	\N	0	f
 \.
 
 
