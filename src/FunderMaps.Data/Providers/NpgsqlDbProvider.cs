@@ -66,7 +66,6 @@ namespace FunderMaps.Data.Providers
             NpgsqlConnection.GlobalTypeMapper.MapEnum<InquiryType>("report.inquiry_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<PileType>("report.pile_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ProjectSampleStatus>("report.project_sample_status");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<Quality>("report.quality");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryDocumentType>("report.recovery_document_type");
             NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryStatus>("report.recovery_status");
