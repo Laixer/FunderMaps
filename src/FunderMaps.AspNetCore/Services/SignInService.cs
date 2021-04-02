@@ -130,8 +130,7 @@ namespace FunderMaps.AspNetCore.Services
         /// <returns>Instance of <see cref="TokenContext"/>.</returns>
         public virtual async Task<TokenContext> PasswordSignInAsync(string email, string password)
         {
-            IUser user = await UserRepository.GetByEmailAsync(email);
-            if (user is null)
+            if (await UserRepository.GetByEmailAsync(email) is not IUser user)
             {
                 throw new AuthenticationException();
             }
