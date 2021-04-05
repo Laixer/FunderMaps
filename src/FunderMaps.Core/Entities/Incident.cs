@@ -34,7 +34,7 @@ namespace FunderMaps.Core.Entities
         ///     Foundation type.
         /// </summary>
         [EnumDataType(typeof(FoundationType))]
-        public FoundationType FoundationType { get; set; }
+        public FoundationType? FoundationType { get; set; }
 
         /// <summary>
         ///     Building chained to another building.
