@@ -13,6 +13,7 @@ namespace FunderMaps.IntegrationTests
         private AuthFunderMapsWebApplicationFactory<TStartup> verifierAppClient;
         private AuthFunderMapsWebApplicationFactory<TStartup> writerAppClient;
         private AuthFunderMapsWebApplicationFactory<TStartup> readerAppClient;
+        private AuthFunderMapsWebApplicationFactory<TStartup> alterAppClient;
 
         public async Task InitializeAsync()
         {
@@ -22,16 +23,21 @@ namespace FunderMaps.IntegrationTests
             verifierAppClient = new(client, "Freda@contoso.com", "fundermaps");
             writerAppClient = new(client, "patsy@contoso.com", "fundermaps");
             readerAppClient = new(client, "lester@contoso.com", "fundermaps");
+            alterAppClient = new(client, "corene@contoso.com", "fundermaps");
 
             await adminAppClient.InitializeAsync();
             await superuserAppClient.InitializeAsync();
             await verifierAppClient.InitializeAsync();
             await writerAppClient.InitializeAsync();
             await readerAppClient.InitializeAsync();
+            await alterAppClient.InitializeAsync();
         }
 
         public HttpClient CreateAdminClient()
             => adminAppClient.CreateClient();
+
+        public HttpClient CreateAlterClient()
+            => alterAppClient.CreateClient();
 
         public HttpClient CreateClient(OrganizationRole role = OrganizationRole.Reader)
             => role switch

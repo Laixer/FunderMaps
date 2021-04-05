@@ -15,8 +15,6 @@ namespace FunderMaps.Core.Types.MapLayer
         [Required]
         public Guid LayerId { get; set; }
 
-        // TODO Min length attribute?
-        // TODO Must contain geom attribute?
         /// <summary>
         ///     Collection of selected column names.
         /// </summary>

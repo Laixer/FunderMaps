@@ -188,7 +188,6 @@ namespace FunderMaps.Data.Repositories
             return MapFromReader(reader);
         }
 
-        // TODO: Filter per tenant?
         /// <summary>
         ///     Retrieve all <see cref="RecoverySample"/>.
         /// </summary>
@@ -213,11 +212,16 @@ namespace FunderMaps.Data.Repositories
                         s.permit_date,
                         s.recovery_date
                 FROM    report.recovery_sample AS s
+                JOIN    report.recovery AS r ON r.id = s.recovery
+                JOIN    application.attribution AS a ON a.id = r.attribution
+                WHERE   a.owner = @tenant
                 ORDER BY s.create_date DESC";
 
             sql = ConstructNavigation(sql, navigation);
 
             await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await foreach (var reader in context.EnumerableReaderAsync())
             {

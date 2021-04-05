@@ -110,18 +110,23 @@ namespace FunderMaps.WebApi.Controllers.Report
             return Ok(output);
         }
 
-        // GET: api/inquiry/download
+        // GET: api/incident/{id}/download
         /// <summary>
         ///     Retrieve document access link.
         /// </summary>
-        [HttpGet("{id:int}/download")]
+        [HttpGet("{id}/download")]
         public async Task<IActionResult> GetDocumentAccessLinkAsync([Incident] string id)
         {
             // Act.
             Incident incident = await _incidentRepository.GetByIdAsync(id);
+            if (incident.DocumentFile is null)
+            {
+                return NoContent();
+            }
+
             Uri link = await _blobStorageService.GetAccessLinkAsync(
                 containerName: Core.Constants.IncidentStorageFolderName,
-                fileName: incident.DocumentFile[0], // TODO
+                fileName: incident.DocumentFile[0], // FUTURE: Return all documents or select per index.
                 hoursValid: 1);
 
             // Map.

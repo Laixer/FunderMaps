@@ -16,7 +16,7 @@ namespace FunderMaps.Data.Repositories
         ///     Explicit check on result, not all commands are submitted
         ///     to the database.
         /// </remarks>
-        public async Task<bool> IsAlive() // TODO: Rename to IsAliveAsync
+        public async Task<bool> IsAliveAsync()
         {
             var sql = @"SELECT 1";
 

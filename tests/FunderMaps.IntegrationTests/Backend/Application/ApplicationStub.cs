@@ -88,9 +88,11 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(newObject.GivenName, returnObject.GivenName);
             Assert.Equal(newObject.LastName, returnObject.LastName);
+            Assert.Equal(newObject.Email, returnObject.Email);
             Assert.Equal(newObject.Avatar, returnObject.Avatar);
-
-            // FUTURE: Add more checks.
+            Assert.Equal(newObject.JobTitle, returnObject.JobTitle);
+            Assert.Equal(newObject.PhoneNumber, returnObject.PhoneNumber);
+            Assert.Equal(newObject.Role, returnObject.Role);
 
             return newObject with
             {

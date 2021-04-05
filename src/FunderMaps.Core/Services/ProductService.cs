@@ -59,6 +59,9 @@ namespace FunderMaps.Core.Services
                 MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByExternalIdAsync(id),
             };
 
+        /// <summary>
+        ///     Generate drystand description text.
+        /// </summary>
         private string DescriptionDrystand(FoundationRisk? risk, double? drystand)
             => risk switch
             {
@@ -79,6 +82,9 @@ namespace FunderMaps.Core.Services
                 _ => "Onbekend",
             };
 
+        /// <summary>
+        ///     Generate dewatering depth description text.
+        /// </summary>
         private string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth, string soil)
             => risk switch
             {
@@ -99,6 +105,9 @@ namespace FunderMaps.Core.Services
                 _ => "Onbekend",
             };
 
+        /// <summary>
+        ///     Generate bioinfection description text.
+        /// </summary>
         private string DescriptionBioInfection(FoundationRisk? risk)
             => risk switch
             {

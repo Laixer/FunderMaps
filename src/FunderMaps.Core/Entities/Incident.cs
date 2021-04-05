@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities
 {
-    // TODO inherit from StateControl?
     /// <summary>
     ///     Indicent entity.
     /// </summary>
@@ -35,7 +34,7 @@ namespace FunderMaps.Core.Entities
         ///     Foundation type.
         /// </summary>
         [EnumDataType(typeof(FoundationType))]
-        public FoundationType FoundationType { get; set; }
+        public FoundationType? FoundationType { get; set; }
 
         /// <summary>
         ///     Building chained to another building.

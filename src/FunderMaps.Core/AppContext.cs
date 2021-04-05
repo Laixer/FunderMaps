@@ -7,8 +7,6 @@ using FunderMaps.Core.Identity;
 
 namespace FunderMaps.Core
 {
-    // TODO:
-    // - Culture
     /// <summary>
     ///     Application context to the entire application.
     /// </summary>

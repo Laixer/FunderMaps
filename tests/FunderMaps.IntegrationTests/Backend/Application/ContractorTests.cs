@@ -35,6 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(returnList.Count >= 1);
+            Assert.True(response.Headers.CacheControl.Public);
         }
     }
 }

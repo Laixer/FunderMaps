@@ -31,7 +31,7 @@ namespace FunderMaps.WebApi.Controllers.Application
             _organizationProposalRepository = organizationProposalRepository ?? throw new ArgumentNullException(nameof(organizationProposalRepository));
         }
 
-        // GET: api/organization/stats
+        // GET: api/organization/proposal/stats
         /// <summary>
         ///     Return organization proposal statistics.
         /// </summary>

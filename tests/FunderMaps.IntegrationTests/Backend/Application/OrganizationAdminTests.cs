@@ -30,12 +30,40 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 using var client = Factory.CreateAdminClient();
 
                 // Act
+                var response = await client.GetAsync("api/admin/organization/stats");
+                var returnList = await response.Content.ReadFromJsonAsync<DatasetStatsDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnList.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
+                // Act
                 var response = await client.GetAsync("api/admin/organization");
                 var returnList = await response.Content.ReadFromJsonAsync<List<OrganizationDto>>();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
                 Assert.True(returnList.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
+                // Act
+                var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
+                var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal(organization.Id, returnObject.Id);
+                Assert.NotNull(organization.Name);
+                Assert.NotNull(organization.Email);
             }
 
             {

@@ -25,6 +25,78 @@ namespace FunderMaps.IntegrationTests.Portal
             => Factory = factory;
 
         [Fact]
+        public async Task UploadDocumentReturnDocument()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject.Name);
+        }
+
+        [Fact]
+        public async Task UploadEmptyFormReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new MultipartFormDataContent();
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Fact]
+        public async Task UploadEmptyDocumentReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(
+                mediaType: "application/pdf",
+                fileExtension: "pdf",
+                byteContentLength: 0);
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Fact]
+        public async Task UploadForbiddenDocumentReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(
+                mediaType: "font/woff",
+                fileExtension: "woff");
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Fact]
         public async Task CreateIncidentReturnOk()
         {
             // Arrange
@@ -57,38 +129,6 @@ namespace FunderMaps.IntegrationTests.Portal
 
             // Assert.
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        }
-
-        [Fact]
-        public async Task UploadDocumentReturnDocument()
-        {
-            // Arrange
-            using var formContent = new FileUploadContent(mediaType: "application/pdf", fileExtension: "pdf");
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
-            var returnObject = await response.Content.ReadFromJsonAsync<DocumentDto>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject.Name);
-        }
-
-        [Theory]
-        [InlineData("gfm-9627e072a5ce4e31a051242d51e0ef3a")]
-        public async Task GetRiskAnalysisReturnAnalysis(string address)
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.GetAsync($"api/incident-portal/risk?id={address}");
-            var returnObject = await response.Content.ReadFromJsonAsync<IList<AnalysisRiskPlusDto>>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject[0].NeighborhoodId);
         }
 
         [Theory]
@@ -223,60 +263,20 @@ namespace FunderMaps.IntegrationTests.Portal
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-        [Fact]
-        public async Task UploadEmptyFormReturnBadRequest()
+        [Theory]
+        [InlineData("gfm-9627e072a5ce4e31a051242d51e0ef3a")]
+        public async Task GetRiskAnalysisReturnAnalysis(string address)
         {
             // Arrange
-            using var formContent = new MultipartFormDataContent();
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+            var response = await client.GetAsync($"api/incident-portal/risk?id={address}");
+            var returnObject = await response.Content.ReadFromJsonAsync<IList<AnalysisRiskPlusDto>>();
 
             // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        [Fact]
-        public async Task UploadEmptyDocumentReturnBadRequest()
-        {
-            // Arrange
-            using var formContent = new FileUploadContent(
-                mediaType: "application/pdf",
-                fileExtension: "pdf",
-                byteContentLength: 0);
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
-        }
-
-        [Fact]
-        public async Task UploadForbiddenDocumentReturnBadRequest()
-        {
-            // Arrange
-            using var formContent = new FileUploadContent(
-                mediaType: "font/woff",
-                fileExtension: "woff");
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.PostAsync("api/incident-portal/upload-document", formContent);
-            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
-            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject[0].NeighborhoodId);
         }
     }
 }

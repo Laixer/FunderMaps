@@ -95,7 +95,7 @@ namespace FunderMaps.AspNetCore.Services
         /// </summary>
         /// <param name="principal">The principal to sign in.</param>
         /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-        public virtual async Task<TokenContext> SignInAsync(ClaimsPrincipal principal)
+        public virtual ValueTask<TokenContext> SignInAsync(ClaimsPrincipal principal)
         {
             if (principal is null)
             {
@@ -114,19 +114,12 @@ namespace FunderMaps.AspNetCore.Services
                 throw new AuthenticationException();
             }
 
-            if (await UserRepository.IsLockedOutAsync(user.Id))
-            {
-                Logger.LogWarning($"User '{user}' is currently locked out.");
-
-                throw new AuthenticationException();
-            }
-
             Logger.LogTrace($"User '{user}' sign in was successful.");
 
             principal = PrincipalProvider.CreateTenantUserPrincipal(user, tenant,
                 Enum.Parse<OrganizationRole>(claim.Value),
                 JwtBearerDefaults.AuthenticationScheme);
-            return TokenProvider.GetTokenContext(principal);
+            return new(TokenProvider.GetTokenContext(principal));
         }
 
         /// <summary>
@@ -137,16 +130,8 @@ namespace FunderMaps.AspNetCore.Services
         /// <returns>Instance of <see cref="TokenContext"/>.</returns>
         public virtual async Task<TokenContext> PasswordSignInAsync(string email, string password)
         {
-            IUser user = await UserRepository.GetByEmailAsync(email);
-            if (user is null)
+            if (await UserRepository.GetByEmailAsync(email) is not IUser user)
             {
-                throw new AuthenticationException();
-            }
-
-            if (await UserRepository.IsLockedOutAsync(user.Id))
-            {
-                Logger.LogWarning($"User '{user}' is currently locked out.");
-
                 throw new AuthenticationException();
             }
 

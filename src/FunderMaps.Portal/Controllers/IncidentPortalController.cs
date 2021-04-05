@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 #pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.Portal.Controllers
 {
-    // TODO: Rename and refactor controller
+    // FUTURE: Split the logic into two separate controllers.
     /// <summary>
     ///     Endpoint controller for incident operations.
     /// </summary>

@@ -24,13 +24,6 @@ namespace FunderMaps.Core.Interfaces.Repositories
         Task<string> GetPasswordHashAsync(Guid id);
 
         /// <summary>
-        ///     Whether or not user is locked out.
-        /// </summary>
-        /// <param name="id">Entity identifier.</param>
-        /// <returns>True if locked out, false otherwise.</returns>
-        Task<bool> IsLockedOutAsync(Guid id);
-
-        /// <summary>
         ///     Update user password.
         /// </summary>
         /// <param name="id">Entity identifier.</param>

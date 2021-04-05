@@ -1,4 +1,5 @@
-﻿using FunderMaps.IntegrationTests.Faker;
+﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Collections.Generic;
 using System.Net;
@@ -28,11 +29,25 @@ namespace FunderMaps.IntegrationTests.Backend.Application
                 using var client = Factory.CreateAdminClient();
 
                 // Act
+                var response = await client.GetAsync("api/organization/proposal/stats");
+                var returnObject = await response.Content.ReadFromJsonAsync<DatasetStatsDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.True(returnObject.Count >= 1);
+            }
+
+            {
+                // Arrange
+                using var client = Factory.CreateAdminClient();
+
+                // Act
                 var response = await client.GetAsync($"api/organization/proposal/{organizationProposal.Id}");
                 var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal(organizationProposal.Id, returnObject.Id);
             }
 
             {

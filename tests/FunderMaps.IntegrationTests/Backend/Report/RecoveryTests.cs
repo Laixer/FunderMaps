@@ -5,6 +5,7 @@ using FunderMaps.WebApi.DataTransferObjects;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -52,9 +53,79 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         }
 
         [Fact]
+        public async Task UploadEmptyFormReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new MultipartFormDataContent();
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+            // Act
+            var response = await client.PostAsync("api/recovery/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Fact]
+        public async Task UploadEmptyDocumentReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(
+                mediaType: "application/pdf",
+                fileExtension: "pdf",
+                byteContentLength: 0);
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+            // Act
+            var response = await client.PostAsync("api/recovery/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        [Fact]
+        public async Task UploadForbiddenDocumentReturnBadRequest()
+        {
+            // Arrange
+            using var formContent = new FileUploadContent(
+                mediaType: "font/woff",
+                fileExtension: "woff");
+            using var client = Factory.CreateClient(OrganizationRole.Writer);
+
+            // Act
+            var response = await client.PostAsync("api/recovery/upload-document", formContent);
+            var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
+            Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+
+        [Fact]
         public async Task RecoveryLifeCycle()
         {
             var recovery = await ReportStub.CreateRecoveryAsync(Factory);
+
+            {
+                // Arrange
+                using var client = Factory.CreateClient();
+
+                // Act
+                var response = await client.GetAsync($"api/recovery/{recovery.Id}/download");
+                var returnObject = await response.Content.ReadFromJsonAsync<BlobAccessLinkDto>();
+
+                // Assert
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Equal("https", returnObject.AccessLink.Scheme);
+            }
 
             {
                 // Arrange

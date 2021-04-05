@@ -35,6 +35,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             Assert.Equal("2612PA", returnObject.PostalCode);
             Assert.Equal("Poortweg", returnObject.Street);
             Assert.Equal("Delft", returnObject.City);
+            Assert.True(response.Headers.CacheControl.Public);
         }
 
         [Theory]
@@ -53,13 +54,13 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(expected, returnObject.Id);
+            Assert.True(response.Headers.CacheControl.Public);
         }
 
         [Theory]
         [InlineData(OrganizationRole.Superuser)]
         [InlineData(OrganizationRole.Verifier)]
         [InlineData(OrganizationRole.Writer)]
-        [InlineData(OrganizationRole.Reader)]
         public async Task GetAddressByIdReturnOk(OrganizationRole role)
         {
             // Arrange
@@ -70,6 +71,7 @@ namespace FunderMaps.IntegrationTests.Backend.Geocoder
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(response.Headers.CacheControl.Public);
         }
     }
 }

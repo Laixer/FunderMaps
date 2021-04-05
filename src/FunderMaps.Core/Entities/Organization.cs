@@ -45,9 +45,6 @@ namespace FunderMaps.Core.Entities
         /// </summary>
         public string BrandingLogo { get; set; }
 
-        // TODO: Convert to geocoder address?
-        // TODO: Drop the PO box?
-
         /// <summary>
         ///     Street.
         /// </summary>

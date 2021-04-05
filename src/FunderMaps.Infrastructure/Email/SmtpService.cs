@@ -15,7 +15,6 @@ namespace FunderMaps.Infrastructure.Email
 {
     // FUTURE: Catch ex.
     // FUTURE: We can configure much more and we will in a next release.
-    // TODO: Check input.
     /// <summary>
     ///     Send email to the MTA.
     /// </summary>
