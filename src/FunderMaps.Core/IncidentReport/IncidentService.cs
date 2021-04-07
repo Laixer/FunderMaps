@@ -51,7 +51,7 @@ namespace FunderMaps.Core.IncidentReport
         {
             public static string ToBoolean(bool value) => value ? "Ja" : "Nee";
 
-            public static string ToFoundationType(Core.Types.FoundationType value)
+            public static string ToFoundationType(Core.Types.FoundationType? value)
                 => value switch
                 {
                     Core.Types.FoundationType.Wood => "Hout",
@@ -72,7 +72,7 @@ namespace FunderMaps.Core.IncidentReport
                     _ => "Onbekend",
                 };
 
-            public static string ToFoundationDamageCause(Core.Types.FoundationDamageCause value)
+            public static string ToFoundationDamageCause(Core.Types.FoundationDamageCause? value)
                 => value switch
                 {
                     Core.Types.FoundationDamageCause.Drainage => "Ontwateringsdiepte onvoldoende",
@@ -94,7 +94,7 @@ namespace FunderMaps.Core.IncidentReport
                     _ => "Onbekend",
                 };
 
-            public static string ToFoundationDamageCharacteristics(Core.Types.FoundationDamageCharacteristics value)
+            public static string ToFoundationDamageCharacteristics(Core.Types.FoundationDamageCharacteristics? value)
                 => value switch
                 {
                     Core.Types.FoundationDamageCharacteristics.JammingDoorWindow => "Klemmende ramen/deuren",
@@ -108,9 +108,9 @@ namespace FunderMaps.Core.IncidentReport
                 };
 
             public static IEnumerable<string> ArrayToFoundationDamageCharacteristics(IEnumerable<Core.Types.FoundationDamageCharacteristics> values)
-                => values.Select(value => ToFoundationDamageCharacteristics(value));
+                => values?.Select(value => ToFoundationDamageCharacteristics(value));
 
-            public static string ToEnvironmentDamageCharacteristics(Core.Types.EnvironmentDamageCharacteristics value)
+            public static string ToEnvironmentDamageCharacteristics(Core.Types.EnvironmentDamageCharacteristics? value)
                 => value switch
                 {
                     Core.Types.EnvironmentDamageCharacteristics.Subsidence => "Bodemdaling",
@@ -128,7 +128,7 @@ namespace FunderMaps.Core.IncidentReport
                 };
 
             public static IEnumerable<string> ArrayToEnvironmentDamageCharacteristics(IEnumerable<Core.Types.EnvironmentDamageCharacteristics> values)
-                => values.Select(value => ToEnvironmentDamageCharacteristics(value));
+                => values?.Select(value => ToEnvironmentDamageCharacteristics(value));
         }
 
         // FUTURE: split logic, hard to read.
