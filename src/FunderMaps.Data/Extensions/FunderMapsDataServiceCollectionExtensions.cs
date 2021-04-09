@@ -111,7 +111,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddFunderMapsDataServices();
             services.AddSingleton<DbProvider, NpgsqlDbProvider>();
-            services.AddTransient<Npgsql.Logging.NpgsqlLogger, DataNpgsqlLogger>();
+            // services.AddTransient<Npgsql.Logging.NpgsqlLogger, DataNpgsqlLogger>();
             services.Configure<DbProviderOptions>(options =>
             {
                 options.ConnectionStringName = dbConfigName;

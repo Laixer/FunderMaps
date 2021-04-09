@@ -19,28 +19,28 @@ namespace FunderMaps.Data.Providers
     {
         private string _connectionString;
 
-        class Loggert : INpgsqlLoggingProvider
-        {
-            private NpgsqlLogger _logger;
+        // class Loggert : INpgsqlLoggingProvider
+        // {
+        //     private NpgsqlLogger _logger;
             
-            public Loggert(NpgsqlLogger logger)
-            {
-                _logger = logger;
-            }
+        //     public Loggert(NpgsqlLogger logger)
+        //     {
+        //         _logger = logger;
+        //     }
 
-            public NpgsqlLogger CreateLogger(string name)
-            {
-                return _logger;
-            }
-        }
+        //     public NpgsqlLogger CreateLogger(string name)
+        //     {
+        //         return _logger;
+        //     }
+        // }
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public NpgsqlDbProvider(NpgsqlLogger npgsqlLogger, IConfiguration configuration, IOptions<DbProviderOptions> options)
+        public NpgsqlDbProvider(/*NpgsqlLogger npgsqlLogger,*/ IConfiguration configuration, IOptions<DbProviderOptions> options)
             : base(configuration, options)
         {
-            NpgsqlLogManager.Provider = new Loggert(npgsqlLogger);
+            // NpgsqlLogManager.Provider = new Loggert(npgsqlLogger);
             NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
             NpgsqlConnectionStringBuilder connectionStringBuilder = new(configuration.GetConnectionString(_options.ConnectionStringName));
