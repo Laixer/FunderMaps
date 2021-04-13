@@ -57,11 +57,9 @@ namespace FunderMaps.Core.MapBundle
         ///     Try to process all the bundles once every so many times.
         /// </remarks>
         private IAsyncEnumerable<Bundle> GetBuildCandidates()
-        {
-            return _random.Next(0, randomInterval) == 0
+            => _random.Next(0, randomInterval) == 0
                 ? _bundleRepository.ListAllAsync(Navigation.All)
                 : _bundleRepository.ListAllRecentAsync(Navigation.All);
-        }
 
         /// <summary>
         ///     Send build candidates off to background worker.

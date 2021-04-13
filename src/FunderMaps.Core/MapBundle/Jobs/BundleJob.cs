@@ -62,6 +62,14 @@ namespace FunderMaps.Core.MapBundle.Jobs
                 Extension = ".json",
                 ContentType = "application/json",
             },
+            new FormatProperty
+            {
+                Format = GeometryFormat.GeoJSONSeq,
+                FormatName = "GeoJSONSeq",
+                FormatShortName = "JSON",
+                Extension = ".json",
+                ContentType = "application/json",
+            },
         };
 
         private string connectionString;
