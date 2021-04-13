@@ -28,23 +28,22 @@ namespace FunderMaps.Data.Repositories
                         spft.foundation_type,
                         round(spft.percentage::numeric, 2)
                 FROM    data.statistics_product_foundation_type AS spft
-                JOIN    geocoder.neighborhood n ON n.id = spft.neighborhood_id 
-                WHERE   n.id = @id";
+                WHERE   spft.neighborhood_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<FoundationTypePair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -77,19 +76,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<FoundationTypePair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -118,23 +117,22 @@ namespace FunderMaps.Data.Repositories
                         spcy.year_from,
                         spcy.count
                 FROM    data.statistics_product_construction_years AS spcy
-                JOIN    geocoder.neighborhood n ON n.id = spcy.neighborhood_id 
-                WHERE   n.id = @id";
+                WHERE   spcy.neighborhood_id  = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<ConstructionYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -167,19 +165,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<ConstructionYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -207,14 +205,13 @@ namespace FunderMaps.Data.Repositories
                 SELECT  -- DataCollected
                         round(spdc.percentage::numeric, 2)
                 FROM    data.statistics_product_data_collected AS spdc
-                JOIN    geocoder.neighborhood n ON n.id = spdc.neighborhood_id
-                WHERE   n.id = @id";
+                WHERE   spdc.neighborhood_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             sql += $"\r\n LIMIT 1";
 
@@ -222,10 +219,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             return await context.ScalarAsync<decimal>(resultGuard: false);
         }
@@ -244,10 +241,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             sql += $"\r\n LIMIT 1";
 
@@ -255,10 +252,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             return await context.ScalarAsync<decimal>(resultGuard: false);
         }
@@ -274,23 +271,22 @@ namespace FunderMaps.Data.Repositories
                         spfr.foundation_risk,
                         round(spfr.percentage::numeric, 2)
                 FROM    data.statistics_product_foundation_risk AS spfr
-                JOIN    geocoder.neighborhood n ON n.id = spfr.neighborhood_id 
-                WHERE   n.id = @id";
+                WHERE   spfr.neighborhood_id  = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             Dictionary<FoundationRisk, decimal> map = new()
             {
@@ -331,19 +327,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             Dictionary<FoundationRisk, decimal> map = new()
             {
@@ -379,14 +375,13 @@ namespace FunderMaps.Data.Repositories
                 SELECT  -- BuildingRestoredCount
                         spbr.count
                 FROM    data.statistics_product_buildings_restored AS spbr
-                JOIN    geocoder.neighborhood n ON n.id = spbr.neighborhood_id
-                WHERE   n.id = @id";
+                WHERE   spbr.neighborhood_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             sql += $"\r\n LIMIT 1";
 
@@ -394,10 +389,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             return await context.ScalarAsync<long>(resultGuard: false);
         }
@@ -416,10 +411,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             sql += $"\r\n LIMIT 1";
 
@@ -427,10 +422,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             return await context.ScalarAsync<long>(resultGuard: false);
         }
@@ -446,23 +441,22 @@ namespace FunderMaps.Data.Repositories
                         spi.year,
                         spi.count
                 FROM    data.statistics_product_incidents AS spi
-                JOIN    geocoder.neighborhood n ON n.id = spi.neighborhood_id
-                WHERE   n.id = @id";
+                WHERE   spi.neighborhood_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<IncidentYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -492,19 +486,19 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<IncidentYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -540,10 +534,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE	n.id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            // }
 
             sql += $"\r\n GROUP BY m.id, year.year";
 
@@ -551,10 +545,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<IncidentYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -590,10 +584,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE	n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            // }
 
             sql += $"\r\n GROUP BY m.id, year.year";
 
@@ -601,10 +595,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<IncidentYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -630,14 +624,13 @@ namespace FunderMaps.Data.Repositories
                         spi2.year,
                         spi2.count
                 FROM    data.statistics_product_inquiries AS spi2
-                JOIN    geocoder.neighborhood n ON n.id = spi2.neighborhood_id
-                WHERE   n.id = @id";
+                WHERE   spi2.neighborhood_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             sql += $"\r\n LIMIT 1";
 
@@ -645,10 +638,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<InquiryYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -678,10 +671,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, n.geom)";
+            // }
 
             sql += $"\r\n LIMIT 1";
 
@@ -689,10 +682,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<InquiryYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -728,10 +721,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE	n.id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            // }
 
             sql += $"\r\n GROUP BY m.id, year.year";
 
@@ -739,10 +732,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<InquiryYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())
@@ -778,10 +771,10 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id";
 
             // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     sql += $"\r\n AND application.is_geometry_in_fence(@user_id, m.geom)";
+            // }
 
             sql += $"\r\n GROUP BY m.id, year.year";
 
@@ -789,10 +782,10 @@ namespace FunderMaps.Data.Repositories
 
             context.AddParameterWithValue("id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
+            // if (AppContext.HasIdentity)
+            // {
+            //     context.AddParameterWithValue("user_id", AppContext.UserId);
+            // }
 
             List<InquiryYearPair> pairs = new();
             await foreach (var reader in context.EnumerableReaderAsync())

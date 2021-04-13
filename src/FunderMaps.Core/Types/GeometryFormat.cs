@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.Types
+namespace FunderMaps.Core.Types
 {
     /// <summary>
     ///     Represents a type of export format.
@@ -24,5 +24,10 @@
         ///     GeoJSON.
         /// </summary>
         GeoJSON = 3,
+
+        /// <summary>
+        ///     GeoJSON Sequential.
+        /// </summary>
+        GeoJSONSeq = 4,
     }
 }

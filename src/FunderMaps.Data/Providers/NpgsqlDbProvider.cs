@@ -7,6 +7,7 @@ using Npgsql;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using Npgsql.Logging;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Providers
@@ -18,13 +19,31 @@ namespace FunderMaps.Data.Providers
     {
         private string _connectionString;
 
+        // class Loggert : INpgsqlLoggingProvider
+        // {
+        //     private NpgsqlLogger _logger;
+            
+        //     public Loggert(NpgsqlLogger logger)
+        //     {
+        //         _logger = logger;
+        //     }
+
+        //     public NpgsqlLogger CreateLogger(string name)
+        //     {
+        //         return _logger;
+        //     }
+        // }
+
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
+        public NpgsqlDbProvider(/*NpgsqlLogger npgsqlLogger,*/ IConfiguration configuration, IOptions<DbProviderOptions> options)
             : base(configuration, options)
         {
-            var connectionStringBuilder = new NpgsqlConnectionStringBuilder(configuration.GetConnectionString(_options.ConnectionStringName));
+            // NpgsqlLogManager.Provider = new Loggert(npgsqlLogger);
+            NpgsqlLogManager.IsParameterLoggingEnabled = true;
+
+            NpgsqlConnectionStringBuilder connectionStringBuilder = new(configuration.GetConnectionString(_options.ConnectionStringName));
 
             connectionStringBuilder.Timeout = _options.ConnectionTimeout > 0 ? _options.ConnectionTimeout : connectionStringBuilder.Timeout;
             connectionStringBuilder.MinPoolSize = _options.MinPoolSize > 0 ? _options.MinPoolSize : connectionStringBuilder.MinPoolSize;

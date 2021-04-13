@@ -1,5 +1,6 @@
 using FunderMaps.Core.Components;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Data;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
@@ -110,6 +111,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddFunderMapsDataServices();
             services.AddSingleton<DbProvider, NpgsqlDbProvider>();
+            // services.AddTransient<Npgsql.Logging.NpgsqlLogger, DataNpgsqlLogger>();
             services.Configure<DbProviderOptions>(options =>
             {
                 options.ConnectionStringName = dbConfigName;

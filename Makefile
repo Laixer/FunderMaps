@@ -10,7 +10,6 @@ docker:
 	docker build --build-arg subtool=FunderMaps.Webservice -t fundermaps-webservice:latest .
 	docker build --build-arg subtool=FunderMaps.BatchNode -t fundermaps-batch:latest .
 	docker build --build-arg subtool=FunderMaps.Portal -t fundermaps-portal:latest .
-	docker build --build-arg subtool=FunderMaps.Cli -t fundermaps-cli:latest .
 
 test:
 	dotnet test
