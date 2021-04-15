@@ -16,6 +16,12 @@ namespace FunderMaps.Core.Interfaces
         IAsyncEnumerable<AnalysisProduct> GetAnalysisAsync(AnalysisProductType productType, string input);
 
         /// <summary>
+        ///     Get an analysis product v2.
+        /// </summary>
+        /// <param name="input">Input query.</param>
+        IAsyncEnumerable<AnalysisProduct2> GetAnalysis2Async(string input);
+
+        /// <summary>
         ///     Get statistics per region.
         /// </summary>
         /// <param name="input">Input query.</param>

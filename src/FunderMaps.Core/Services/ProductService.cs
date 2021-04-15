@@ -156,6 +156,24 @@ namespace FunderMaps.Core.Services
         }
 
         /// <summary>
+        ///     Get an analysis product v2.
+        /// </summary>
+        /// <param name="input">Input query.</param>
+        public virtual async IAsyncEnumerable<AnalysisProduct2> GetAnalysis2Async(string input)
+        {
+            await foreach (var product in _geocoderParser.FromIdentifier(input, out string id) switch
+            {
+                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetById2Async(id)),
+                GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalId2Async(id)),
+                GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByAddressExternalId2Async(id)),
+                _ => throw new InvalidIdentifierException(),
+            })
+            {
+                yield return product;
+            }
+        }
+
+        /// <summary>
         ///     Get statistics per region.
         /// </summary>
         /// <param name="input">Input query.</param>
