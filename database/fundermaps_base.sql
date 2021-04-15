@@ -1202,41 +1202,6 @@ COMMENT ON FUNCTION application.create_user(email text, password_hash text) IS '
 
 
 --
--- Name: is_geometry_in_fence(uuid, public.geometry); Type: FUNCTION; Schema: application; Owner: fundermaps
---
-
-CREATE FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) RETURNS boolean
-    LANGUAGE plpgsql
-    AS $$DECLARE
-	v_fence geometry;
-BEGIN
-	IF NOT EXISTS (SELECT * FROM application.user WHERE id = user_id) THEN
-		RAISE EXCEPTION 'User does not exist';
-	END IF;
-
-	v_fence := (SELECT o.fence FROM application.organization AS o
-				JOIN application.organization_user AS ou ON ou.organization_id = o.id
-				LIMIT 1);
-	IF (v_fence ISNULL) THEN
-		RETURN TRUE;
-	END IF;
-
-	RETURN (st_intersects(v_fence, geom));
-END;
-
-$$;
-
-
-ALTER FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) OWNER TO fundermaps;
-
---
--- Name: FUNCTION is_geometry_in_fence(user_id uuid, geom public.geometry); Type: COMMENT; Schema: application; Owner: fundermaps
---
-
-COMMENT ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) IS 'Validates whether or not a geometry intersects with the geofence of an organisation. Note that the specified id belongs to a user, not to an organization.';
-
-
---
 -- Name: log_access(application.user_id); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
@@ -4631,16 +4596,6 @@ GRANT ALL ON FUNCTION application.create_user(email text) TO fundermaps_webapp;
 --
 
 GRANT ALL ON FUNCTION application.create_user(email text, password_hash text) TO fundermaps_webapp;
-
-
---
--- Name: FUNCTION is_geometry_in_fence(user_id uuid, geom public.geometry); Type: ACL; Schema: application; Owner: fundermaps
---
-
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webapp;
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webservice;
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_portal;
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_batch;
 
 
 --
