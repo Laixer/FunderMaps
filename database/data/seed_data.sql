@@ -17,6 +17,14 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
+-- Data for Name: building_cluster; Type: TABLE DATA; Schema: data; Owner: fundermaps
+--
+
+COPY data.building_cluster (building_id, cluster_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: building_elevation; Type: TABLE DATA; Schema: data; Owner: fundermaps
 --
 
@@ -45,6 +53,14 @@ COPY data.building_groundwater_level (building_id, level) FROM stdin;
 --
 
 COPY data.building_ownership (building_id, owner) FROM stdin;
+\.
+
+
+--
+-- Data for Name: building_pleistocene; Type: TABLE DATA; Schema: data; Owner: fundermaps
+--
+
+COPY data.building_pleistocene (building_id, depth) FROM stdin;
 \.
 
 
