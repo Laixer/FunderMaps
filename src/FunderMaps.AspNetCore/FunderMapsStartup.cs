@@ -47,11 +47,19 @@ namespace FunderMaps.AspNetCore
             mapper.CreateMap<AnalysisProduct, AnalysisFoundationDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisCompleteDto>();
             mapper.CreateMap<AnalysisProduct, AnalysisRiskPlusDto>();
+            mapper.CreateMap<AnalysisProduct2, AnalysisV2Dto>();
             mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
             mapper.CreateMap<Incident, IncidentDto>()
                 .IncludeMembers(src => src.ContactNavigation)
                 .ReverseMap();
-            mapper.CreateMap<Organization, OrganizationDto>().ReverseMap();
+            mapper.CreateMap<Organization, OrganizationDto>()
+                .ForMember(dest => dest.XMin, o => o.MapFrom(src => src.Area.XMin))
+                .ForMember(dest => dest.YMin, o => o.MapFrom(src => src.Area.YMin))
+                .ForMember(dest => dest.XMax, o => o.MapFrom(src => src.Area.XMax))
+                .ForMember(dest => dest.YMax, o => o.MapFrom(src => src.Area.YMax))
+                .ForMember(dest => dest.CenterX, o => o.MapFrom(src => src.Center.CenterX))
+                .ForMember(dest => dest.CenterY, o => o.MapFrom(src => src.Center.CenterY))
+                .ReverseMap();
             mapper.CreateMap<StatisticsProduct, StatisticsDto>();
             mapper.CreateMap<TokenContext, SignInSecurityTokenDto>()
                 .ForMember(dest => dest.Id, o => o.MapFrom(src => src.Token.Id))

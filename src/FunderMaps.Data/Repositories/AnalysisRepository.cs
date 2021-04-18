@@ -1,10 +1,8 @@
-﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
-using System;
 using System.Data.Common;
 using System.Threading.Tasks;
 
@@ -63,24 +61,12 @@ namespace FunderMaps.Data.Repositories
                         aa.bio_infection_reliability,
                         aa.bio_infection_risk
                 FROM    data.analysis_address AS aa
-                WHERE   aa.id = @id";
-
-            // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, aa.geom)";
-            }
-
-            sql += $"\r\n LIMIT 1";
+                WHERE   aa.id = @id
+                LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
-
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
 
             await using var reader = await context.ReaderAsync();
 
@@ -88,12 +74,46 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Gets an analysis product by its internal building id.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        public async Task<AnalysisProduct2> GetById2Async(string id)
+        {
+            var sql = @"
+                SELECT -- AnalysisComplete
+                        ac.building_id,
+                        ac.external_building_id,
+                        ac.address_id,
+                        ac.address_external_id,
+                        ac.neighborhood_id,
+                        ac.construction_year,
+                        ac.foundation_type,
+                        ac.foundation_type_reliability,
+                        ac.restoration_costs,
+                        ac.drystand_risk,
+                        ac.drystand_risk_reliability,
+                        ac.bio_infection_risk,
+                        ac.bio_infection_risk_reliability,
+                        ac.dewatering_depth_risk,
+                        ac.dewatering_depth_risk_reliability,
+                        ac.unclassified_risk,
+                        ac.recovery_type
+                FROM    data.analysis_complete ac
+                WHERE   ac.building_id = @id
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            await using var reader = await context.ReaderAsync();
+
+            return MapFromReader2(reader);
+        }
+
+        /// <summary>
         ///     Gets an analysis product by its external building id and source.
         /// </summary>
-        /// <remarks>
-        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
-        ///     is thrown. Check this condition before calling this function.
-        /// </remarks>
         /// <param name="id">External building id.</param>
         public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
         {
@@ -138,24 +158,12 @@ namespace FunderMaps.Data.Repositories
                         aa.bio_infection_reliability,
                         aa.bio_infection_risk
                 FROM    data.analysis_address AS aa
-                WHERE   aa.external_id = upper(@external_id)";
-
-            // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, aa.geom)";
-            }
-
-            sql += $"\r\n LIMIT 1";
+                WHERE   aa.external_id = upper(@external_id)
+                LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
-
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
 
             await using var reader = await context.ReaderAsync();
 
@@ -163,12 +171,46 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Gets an analysis product by its external building id and source.
+        /// </summary>
+        /// <param name="id">External building id.</param>
+        public async Task<AnalysisProduct2> GetByExternalId2Async(string id)
+        {
+            var sql = @"
+                SELECT -- AnalysisComplete
+                        ac.building_id,
+                        ac.external_building_id,
+                        ac.address_id,
+                        ac.address_external_id,
+                        ac.neighborhood_id,
+                        ac.construction_year,
+                        ac.foundation_type,
+                        ac.foundation_type_reliability,
+                        ac.restoration_costs,
+                        ac.drystand_risk,
+                        ac.drystand_risk_reliability,
+                        ac.bio_infection_risk,
+                        ac.bio_infection_risk_reliability,
+                        ac.dewatering_depth_risk,
+                        ac.dewatering_depth_risk_reliability,
+                        ac.unclassified_risk,
+                        ac.recovery_type
+                FROM    data.analysis_complete ac
+                WHERE   ac.external_building_id = upper(@external_id)
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("external_id", id);
+
+            await using var reader = await context.ReaderAsync();
+
+            return MapFromReader2(reader);
+        }
+
+        /// <summary>
         ///     Gets an analysis product by its external address id and source.
         /// </summary>
-        /// <remarks>
-        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
-        ///     is thrown. Check this condition before calling this function.
-        /// </remarks>
         /// <param name="id">External address id.</param>
         public async Task<AnalysisProduct> GetByAddressExternalIdAsync(string id)
         {
@@ -213,28 +255,54 @@ namespace FunderMaps.Data.Repositories
                         aa.bio_infection_reliability,
                         aa.bio_infection_risk
                 FROM    data.analysis_address AS aa
-                WHERE   aa.address_external_id = upper(@external_id)";
-
-            // FUTURE: Maybe move up.
-            if (AppContext.HasIdentity)
-            {
-                sql += $"\r\n AND application.is_geometry_in_fence(@user_id, aa.geom)";
-            }
-
-            sql += $"\r\n LIMIT 1";
+                WHERE   aa.address_external_id = upper(@external_id)
+                LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
 
-            if (AppContext.HasIdentity)
-            {
-                context.AddParameterWithValue("user_id", AppContext.UserId);
-            }
-
             await using var reader = await context.ReaderAsync();
 
             return MapFromReader(reader);
+        }
+
+        /// <summary>
+        ///     Gets an analysis product by its external address id and source.
+        /// </summary>
+        /// <param name="id">External address id.</param>
+        public async Task<AnalysisProduct2> GetByAddressExternalId2Async(string id)
+        {
+            var sql = @"
+                SELECT -- AnalysisComplete
+                        ac.building_id,
+                        ac.external_building_id,
+                        ac.address_id,
+                        ac.address_external_id,
+                        ac.neighborhood_id,
+                        ac.construction_year,
+                        ac.foundation_type,
+                        ac.foundation_type_reliability,
+                        ac.restoration_costs,
+                        ac.drystand_risk,
+                        ac.drystand_risk_reliability,
+                        ac.bio_infection_risk,
+                        ac.bio_infection_risk_reliability,
+                        ac.dewatering_depth_risk,
+                        ac.dewatering_depth_risk_reliability,
+                        ac.unclassified_risk,
+                        ac.recovery_type
+                FROM    data.analysis_complete ac
+                WHERE   ac.address_external_id = upper(@external_id)
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("external_id", id);
+
+            await using var reader = await context.ReaderAsync();
+
+            return MapFromReader2(reader);
         }
 
         /// <summary>
@@ -281,6 +349,31 @@ namespace FunderMaps.Data.Repositories
                 BioInfection = reader.GetSafeString(offset + 35),
                 BioInfectionReliability = reader.GetFieldValue<Reliability>(offset + 36),
                 BioInfectionRisk = reader.GetFieldValue<FoundationRisk>(offset + 37),
+            };
+
+        /// <summary>
+        ///     Maps a reader to an <see cref="AnalysisProduct2"/>.
+        /// </summary>
+        public static AnalysisProduct2 MapFromReader2(DbDataReader reader, int offset = 0)
+            => new()
+            {
+                BuildingId = reader.GetSafeString(offset++),
+                ExternalBuildingId = reader.GetSafeString(offset++),
+                AddressId = reader.GetSafeString(offset++),
+                ExternalAddressId = reader.GetSafeString(offset++),
+                NeighborhoodId = reader.GetSafeString(offset++),
+                ConstructionYear = reader.GetInt(offset++),
+                FoundationType = reader.GetFieldValue<FoundationType>(offset++),
+                FoundationTypeReliability = reader.GetFieldValue<Reliability>(offset++),
+                RestorationCosts = reader.GetSafeInt(offset++),
+                DrystandRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
+                DrystandReliability = reader.GetFieldValue<Reliability>(offset++),
+                BioInfectionRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
+                BioInfectionReliability = reader.GetFieldValue<Reliability>(offset++),
+                DewateringDepthRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
+                DewateringDepthReliability = reader.GetFieldValue<Reliability>(offset++),
+                UnclassifiedRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
+                RecoveryType = reader.GetFieldValue<RecoveryDocumentType?>(offset++),
             };
     }
 }

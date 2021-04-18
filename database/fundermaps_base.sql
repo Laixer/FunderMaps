@@ -1202,41 +1202,6 @@ COMMENT ON FUNCTION application.create_user(email text, password_hash text) IS '
 
 
 --
--- Name: is_geometry_in_fence(uuid, public.geometry); Type: FUNCTION; Schema: application; Owner: fundermaps
---
-
-CREATE FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) RETURNS boolean
-    LANGUAGE plpgsql
-    AS $$DECLARE
-	v_fence geometry;
-BEGIN
-	IF NOT EXISTS (SELECT * FROM application.user WHERE id = user_id) THEN
-		RAISE EXCEPTION 'User does not exist';
-	END IF;
-
-	v_fence := (SELECT o.fence FROM application.organization AS o
-				JOIN application.organization_user AS ou ON ou.organization_id = o.id
-				LIMIT 1);
-	IF (v_fence ISNULL) THEN
-		RETURN TRUE;
-	END IF;
-
-	RETURN (st_intersects(v_fence, geom));
-END;
-
-$$;
-
-
-ALTER FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) OWNER TO fundermaps;
-
---
--- Name: FUNCTION is_geometry_in_fence(user_id uuid, geom public.geometry); Type: COMMENT; Schema: application; Owner: fundermaps
---
-
-COMMENT ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) IS 'Validates whether or not a geometry intersects with the geofence of an organisation. Note that the specified id belongs to a user, not to an organization.';
-
-
---
 -- Name: log_access(application.user_id); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
@@ -1313,6 +1278,72 @@ ALTER FUNCTION application.organization_email_free(email text) OWNER TO funderma
 
 COMMENT ON FUNCTION application.organization_email_free(email text) IS 'Check if organization email is in use.';
 
+
+--
+-- Name: create_clusters(); Type: PROCEDURE; Schema: data; Owner: fundermaps
+--
+
+CREATE PROCEDURE data.create_clusters()
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	local_cluster geocoder.geocoder_id[];
+	neighbors geocoder.geocoder_id[];
+	cluster_id uuid;
+	counter integer := 0;
+BEGIN
+	DROP TABLE IF EXISTS building_all;
+	CREATE TEMP TABLE building_all (
+		building_id geocoder.geocoder_id NOT NULL,
+		CONSTRAINT building_all_pkey PRIMARY KEY (building_id)
+	);
+
+	INSERT INTO building_all
+	SELECT ba.id FROM geocoder.building_active AS ba
+	EXCEPT
+	SELECT c.building_id FROM data.building_cluster AS c;
+
+	LOOP
+		SELECT INTO cluster_id uuid_generate_v4();
+		SELECT INTO local_cluster ARRAY[building_id] FROM building_all LIMIT 1;
+		
+		EXIT WHEN local_cluster IS NULL;
+	
+		neighbors := local_cluster;
+	
+		LOOP
+			SELECT array_agg(b2.id) INTO neighbors
+			FROM geocoder.building_active b
+			JOIN geocoder.building_active b2 ON st_intersects(b.geom, b2.geom) AND b.built_year = b2.built_year AND b2.id <> all(local_cluster)
+			WHERE b.built_year IS NOT NULL
+			AND b.id = any(neighbors);
+
+			EXIT WHEN neighbors IS NULL;
+
+			local_cluster := local_cluster || neighbors;
+		END LOOP;
+
+		INSERT INTO data.building_cluster
+		SELECT unnest(local_cluster), cluster_id
+		ON CONFLICT DO NOTHING;
+
+		DELETE FROM building_all
+		WHERE building_id = any(local_cluster);
+	
+		IF counter % 1000 = 0 THEN
+			RAISE NOTICE 'Counter %', counter;
+			COMMIT;
+		END IF;
+
+		counter := counter+1;
+	END LOOP;
+
+	DROP TABLE building_all;
+END;
+$$;
+
+
+ALTER PROCEDURE data.create_clusters() OWNER TO fundermaps;
 
 --
 -- Name: get_foundation_category(report.foundation_type, report.foundation_type); Type: FUNCTION; Schema: data; Owner: fundermaps
@@ -2305,36 +2336,13 @@ CREATE VIEW data.analysis_address AS
 ALTER TABLE data.analysis_address OWNER TO fundermaps;
 
 --
--- Name: building_cluster; Type: VIEW; Schema: data; Owner: fundermaps
+-- Name: building_cluster; Type: TABLE; Schema: data; Owner: fundermaps
 --
 
-CREATE VIEW data.building_cluster AS
- WITH RECURSIVE graph AS (
-         SELECT b.id,
-            array_agg(b2.id) AS connects
-           FROM (geocoder.building_active b
-             JOIN geocoder.building_active b2 ON ((public.st_intersects(b.geom, b2.geom) AND ((b.built_year)::date = (b2.built_year)::date) AND ((b.id)::text <> (b2.id)::text) AND ((abs((public.st_area((b.geom)::public.geography, true) - public.st_area((b2.geom)::public.geography, true))) / public.st_area((b.geom)::public.geography, true)) < (0.1)::double precision))))
-          WHERE (b.built_year IS NOT NULL)
-          GROUP BY b.id
-        ), final AS (
-         SELECT s1.id,
-            s1.id AS root,
-            s1.connects,
-            ARRAY[s1.id] AS ex
-           FROM graph s1
-        UNION
-         SELECT s1.id,
-            s2.root,
-            s1.connects,
-            (ARRAY[s1.id] || ARRAY[s2.id])
-           FROM (graph s1
-             JOIN final s2 ON (((ARRAY[s1.id] <@ s2.connects) AND (NOT (ARRAY[s1.id] <@ s2.ex)))))
-        )
- SELECT f.root,
-    cluster.cluster
-   FROM final f,
-    LATERAL unnest(f.connects) cluster(cluster)
-  ORDER BY f.root;
+CREATE TABLE data.building_cluster (
+    building_id geocoder.geocoder_id NOT NULL,
+    cluster_id uuid NOT NULL
+);
 
 
 ALTER TABLE data.building_cluster OWNER TO fundermaps;
@@ -2350,6 +2358,18 @@ CREATE TABLE data.building_ownership (
 
 
 ALTER TABLE data.building_ownership OWNER TO fundermaps;
+
+--
+-- Name: building_pleistocene; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.building_pleistocene (
+    building_id geocoder.geocoder_id NOT NULL,
+    depth double precision
+);
+
+
+ALTER TABLE data.building_pleistocene OWNER TO fundermaps;
 
 --
 -- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
@@ -3380,6 +3400,14 @@ ALTER TABLE ONLY application."user"
 
 
 --
+-- Name: building_cluster building_cluster_pkey; Type: CONSTRAINT; Schema: data; Owner: fundermaps
+--
+
+ALTER TABLE ONLY data.building_cluster
+    ADD CONSTRAINT building_cluster_pkey PRIMARY KEY (building_id);
+
+
+--
 -- Name: building_elevation building_elevation_pkey; Type: CONSTRAINT; Schema: data; Owner: fundermaps
 --
 
@@ -3409,6 +3437,14 @@ ALTER TABLE ONLY data.building_groundwater_level
 
 ALTER TABLE ONLY data.building_ownership
     ADD CONSTRAINT building_ownership_pkey PRIMARY KEY (building_id);
+
+
+--
+-- Name: building_pleistocene building_pleistocene_pkey; Type: CONSTRAINT; Schema: data; Owner: fundermaps
+--
+
+ALTER TABLE ONLY data.building_pleistocene
+    ADD CONSTRAINT building_pleistocene_pkey PRIMARY KEY (building_id);
 
 
 --
@@ -3592,6 +3628,13 @@ CREATE INDEX analysis_foundation_risk_id_idx ON data.analysis_foundation_risk US
 --
 
 CREATE INDEX analysis_foundation_risk_neighborhood_id_idx ON data.analysis_foundation_risk USING btree (neighborhood_id);
+
+
+--
+-- Name: building_cluster_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE UNIQUE INDEX building_cluster_idx ON data.building_cluster USING btree (cluster_id, building_id);
 
 
 --
@@ -4052,6 +4095,14 @@ ALTER TABLE ONLY data.building_groundwater_level
 
 ALTER TABLE ONLY data.building_ownership
     ADD CONSTRAINT building_ownership_building_fkey FOREIGN KEY (building_id) REFERENCES geocoder.building(id);
+
+
+--
+-- Name: building_pleistocene building_pleistocene_building_fkey; Type: FK CONSTRAINT; Schema: data; Owner: fundermaps
+--
+
+ALTER TABLE ONLY data.building_pleistocene
+    ADD CONSTRAINT building_pleistocene_building_fkey FOREIGN KEY (building_id) REFERENCES geocoder.building(id);
 
 
 --
@@ -4634,16 +4685,6 @@ GRANT ALL ON FUNCTION application.create_user(email text, password_hash text) TO
 
 
 --
--- Name: FUNCTION is_geometry_in_fence(user_id uuid, geom public.geometry); Type: ACL; Schema: application; Owner: fundermaps
---
-
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webapp;
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_webservice;
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_portal;
-GRANT ALL ON FUNCTION application.is_geometry_in_fence(user_id uuid, geom public.geometry) TO fundermaps_batch;
-
-
---
 -- Name: FUNCTION log_access(id application.user_id); Type: ACL; Schema: application; Owner: fundermaps
 --
 
@@ -4913,15 +4954,6 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.recovery_sa
 GRANT SELECT ON TABLE data.analysis_address TO fundermaps_webapp;
 GRANT SELECT ON TABLE data.analysis_address TO fundermaps_webservice;
 GRANT SELECT ON TABLE data.analysis_address TO fundermaps_portal;
-
-
---
--- Name: TABLE building_cluster; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.building_cluster TO fundermaps_portal;
-GRANT SELECT ON TABLE data.building_cluster TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.building_cluster TO fundermaps_webservice;
 
 
 --

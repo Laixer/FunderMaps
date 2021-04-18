@@ -137,8 +137,6 @@ namespace FunderMaps.AspNetCore.Services
 
             // FUTURE: Single call?
             var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
-            Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
-            OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
 
             if (await CheckPasswordAsync(user.Id, password))
             {
@@ -146,6 +144,9 @@ namespace FunderMaps.AspNetCore.Services
                 await UserRepository.RegisterAccess(user.Id);
 
                 Logger.LogInformation($"User '{user}' password sign in was successful.");
+
+                Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
+                OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
 
                 ClaimsPrincipal principal = PrincipalProvider.CreateTenantUserPrincipal(user, organization,
                     organizationRole,
