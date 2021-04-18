@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
@@ -115,10 +114,6 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets an analysis product by its external building id and source.
         /// </summary>
-        /// <remarks>
-        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
-        ///     is thrown. Check this condition before calling this function.
-        /// </remarks>
         /// <param name="id">External building id.</param>
         public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
         {
@@ -178,10 +173,6 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets an analysis product by its external building id and source.
         /// </summary>
-        /// <remarks>
-        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
-        ///     is thrown. Check this condition before calling this function.
-        /// </remarks>
         /// <param name="id">External building id.</param>
         public async Task<AnalysisProduct2> GetByExternalId2Async(string id)
         {
@@ -220,10 +211,6 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets an analysis product by its external address id and source.
         /// </summary>
-        /// <remarks>
-        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
-        ///     is thrown. Check this condition before calling this function.
-        /// </remarks>
         /// <param name="id">External address id.</param>
         public async Task<AnalysisProduct> GetByAddressExternalIdAsync(string id)
         {
@@ -283,10 +270,6 @@ namespace FunderMaps.Data.Repositories
         /// <summary>
         ///     Gets an analysis product by its external address id and source.
         /// </summary>
-        /// <remarks>
-        ///     If the building is outside the geofence, an <see cref="EntityNotFoundException"/>
-        ///     is thrown. Check this condition before calling this function.
-        /// </remarks>
         /// <param name="id">External address id.</param>
         public async Task<AnalysisProduct2> GetByAddressExternalId2Async(string id)
         {
