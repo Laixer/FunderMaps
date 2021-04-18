@@ -76,6 +76,16 @@ namespace FunderMaps.Core.Entities
         public string HomeZipcode { get; set; }
 
         /// <summary>
+        ///     Geospatial account area.
+        /// </summary>
+        public SpatialBox Area { get; set; }
+
+        /// <summary>
+        ///     Geospatial account area center.
+        /// </summary>
+        public SpatialPoint Center { get; set; }
+
+        /// <summary>
         ///     Print object as name.
         /// </summary>
         /// <returns>String representing organization.</returns>

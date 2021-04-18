@@ -112,6 +112,18 @@ namespace FunderMaps.Data.Repositories
                 HomeCity = reader.GetSafeString(offset++),
                 HomePostbox = reader.GetSafeString(offset++),
                 HomeZipcode = reader.GetSafeString(offset++),
+                Area = new()
+                {
+                    XMin = reader.GetSafeDouble(offset++),
+                    YMin = reader.GetSafeDouble(offset++),
+                    XMax = reader.GetSafeDouble(offset++),
+                    YMax = reader.GetSafeDouble(offset++),
+                },
+                Center = new()
+                {
+                    CenterX = reader.GetSafeDouble(offset++),
+                    CenterY = reader.GetSafeDouble(offset++),
+                }
             };
 
         /// <summary>
@@ -137,7 +149,13 @@ namespace FunderMaps.Data.Repositories
                         home_address_number_postfix,
                         home_city,
                         home_postbox,
-                        home_zipcode
+                        home_zipcode,
+                        st_xmin(fence) AS x_min,
+                        st_ymin(fence) AS y_min,
+                        st_xmax(fence) AS x_max,
+                        st_ymax(fence) AS y_max,
+                        st_x(st_centroid(fence)) AS center_x,
+                        st_y(st_centroid(fence)) AS center_y
                 FROM    application.organization
                 WHERE   id = @id
                 LIMIT   1";
@@ -168,7 +186,13 @@ namespace FunderMaps.Data.Repositories
                         home_address_number_postfix,
                         home_city,
                         home_postbox,
-                        home_zipcode
+                        home_zipcode,
+                        st_xmin(fence) AS x_min,
+                        st_ymin(fence) AS y_min,
+                        st_xmax(fence) AS x_max,
+                        st_ymax(fence) AS y_max,
+                        st_x(st_centroid(fence)) AS center_x,
+                        st_y(st_centroid(fence)) AS center_y
                 FROM    application.organization";
 
             sql = ConstructNavigation(sql, navigation);
