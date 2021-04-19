@@ -12,20 +12,6 @@ namespace FunderMaps.Core.MapBundle
         private DataSource input;
         private DataSource output;
         private LayerSource inputLayer = new();
-        private VectorDatasetBuilderOptions options = new();
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public VectorDatasetBuilder()
-        {
-        }
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public VectorDatasetBuilder(VectorDatasetBuilderOptions options)
-            => this.options = options;
 
         /// <summary>
         ///     Set the input dataset.
@@ -68,29 +54,12 @@ namespace FunderMaps.Core.MapBundle
         {
             CommandInfo command = new(CommandName);
 
-            if (options.Overwrite)
-            {
-                command.ArgumentList.Add("-overwrite");
-            }
-            else if (options.Append)
-            {
-                command.ArgumentList.Add("-append");
-            }
-
             command.ArgumentList.Add("-f");
             command.ArgumentList.Add(formatName);
             command.ArgumentList.Add(output.Write(command));
             command.ArgumentList.Add(input.Read(command));
 
             inputLayer.Imbue(command);
-
-            if (!string.IsNullOrEmpty(options.AdditionalOptions))
-            {
-                foreach (var argument in options.AdditionalOptions.Split(" "))
-                {
-                    command.ArgumentList.Add(argument.Trim());
-                }
-            }
 
             return command;
         }

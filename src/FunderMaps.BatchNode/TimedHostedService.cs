@@ -14,7 +14,7 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class TimedHostedService : IHostedService, IAsyncDisposable
     {
-        private readonly int intervalInMinutes;
+        private readonly int intervalInHours;
 
         private readonly IServiceProvider _servicesProvider;
         private readonly ILogger<TimedHostedService> _logger;
@@ -29,9 +29,8 @@ namespace FunderMaps.BatchNode
             _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // The default below is set in minutes.
             // FUTURE: Maybe move this into a dedicated IOptions<> structure.
-            intervalInMinutes = configuration.GetValue<int>("Batch:Interval", 10);
+            intervalInHours = configuration.GetValue<int>("Batch:Interval", 1);
         }
 
         /// <summary>
@@ -39,9 +38,7 @@ namespace FunderMaps.BatchNode
         /// </summary>
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _timer = new(Worker, null,
-                TimeSpan.Zero,
-                TimeSpan.FromMinutes(intervalInMinutes));
+            _timer = new(Worker, null, TimeSpan.Zero, TimeSpan.FromHours(intervalInHours));
 
             return Task.CompletedTask;
         }
@@ -58,7 +55,7 @@ namespace FunderMaps.BatchNode
         {
             _logger.LogTrace("Timed worker is running.");
 
-            using var scope = _servicesProvider.CreateScope();
+            using IServiceScope scope = _servicesProvider.CreateScope();
             var bundleService = scope.ServiceProvider.GetRequiredService<IBundleService>();
 
             await bundleService.BuildAsync();
