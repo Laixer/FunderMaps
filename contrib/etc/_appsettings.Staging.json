@@ -10,6 +10,10 @@
             "Microsoft.AspNetCore.DataProtection": "Error"
         }
     },
+    "Mapbox": {
+        "Account": "laixer",
+        "AccessToken": ""
+    },
     "Smtp": {
         "SmtpPort": 465,
         "DefaultSenderName": "FunderMaps",
