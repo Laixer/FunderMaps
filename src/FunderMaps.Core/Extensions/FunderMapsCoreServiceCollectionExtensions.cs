@@ -71,7 +71,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         private static IServiceCollection AddMapBundle(this IServiceCollection services)
         {
-            services.AddBatchJob<BundleJob>();
+            services.AddBatchJob<ExportJob>();
             services.AddScoped<IBundleService, BundleHub>();
 
             return services;
@@ -136,6 +136,7 @@ namespace Microsoft.Extensions.DependencyInjection
             //       them as a singleton will keep the services alife for the entire lifetime
             //       of the application. Beware to add new services as singletons.
             services.TryAddSingleton<IEmailService, NullEmailService>();
+            services.TryAddTransient<IMapService, NullMapService>();
             services.TryAddTransient<IBlobStorageService, NullBlobStorageService>();
 
             // The application core (as well as many other components) depends upon the ability to cache

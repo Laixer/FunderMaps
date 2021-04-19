@@ -11,6 +11,10 @@
             "FunderMaps": "Information"
         }
     },
+    "Mapbox": {
+        "Account": "laixer",
+        "AccessToken": ""
+    },
     "Smtp": {
         "SmtpPort": 465,
         "DefaultSenderName": "FunderMaps",

@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Services
 {
     /// <summary>
@@ -58,4 +57,3 @@ namespace FunderMaps.Core.Services
         public Task HealthCheck() => Task.CompletedTask;
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated

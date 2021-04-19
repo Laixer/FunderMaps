@@ -24,6 +24,10 @@
   "Batch": {
     "Interval": 5
   },
+  "Mapbox": {
+    "Account": "laixer",
+    "AccessToken": ""
+  },
   "Smtp": {
     "SmtpServer": "smtp.transip.email",
     "SmtpPort": 465,
