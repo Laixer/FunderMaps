@@ -9,6 +9,13 @@ namespace FunderMaps.Core.Services
     internal class NullMapService : IMapService
     {
         /// <summary>
+        ///     Delete dataset from mapping service.
+        /// </summary>
+        /// <param name="datasetName">The dataset name.</param>
+        public Task<bool> DeleteDatasetAsync(string datasetName)
+            => Task.FromResult(true);
+
+        /// <summary>
         ///     Upload dataset to mapping service.
         /// </summary>
         /// <param name="datasetName">The dataset name.</param>

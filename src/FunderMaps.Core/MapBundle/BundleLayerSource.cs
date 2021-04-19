@@ -15,13 +15,15 @@ namespace FunderMaps.Core.MapBundle
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public BundleLayerSource(string layer, string workspace)
+        public BundleLayerSource(string layer, string workspace, int offset, int limit)
         {
             _workspace = workspace;
             layerOutputName = layer;
             query = $@"
                 SELECT  *
-                FROM    maplayer.{layer}";
+                FROM    maplayer.{layer}
+                OFFSET  {offset}
+                LIMIT   {limit}";
         }
 
         // Write the SQL to disk and point the command to the sql file.

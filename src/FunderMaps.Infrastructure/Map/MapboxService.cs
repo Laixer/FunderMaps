@@ -38,6 +38,19 @@ namespace FunderMaps.Infrastructure.Storage
         }
 
         /// <summary>
+        ///     Delete dataset from mapping service.
+        /// </summary>
+        /// <param name="datasetName">The dataset name.</param>
+        public async Task<bool> DeleteDatasetAsync(string datasetName)
+        {
+            using HttpClient client = CreateClient();
+
+            HttpResponseMessage result = await client.DeleteAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}");
+
+            return result.IsSuccessStatusCode;
+        }
+
+        /// <summary>
         ///     Upload dataset to mapping service.
         /// </summary>
         /// <param name="datasetName">The dataset name.</param>
@@ -50,7 +63,7 @@ namespace FunderMaps.Infrastructure.Storage
 
             using StreamContent fileContent = new(File.OpenRead(filePath));
             content.Add(fileContent, "file", Path.GetFileName(filePath));
-            HttpResponseMessage result = await client.PutAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}", content);
+            HttpResponseMessage result = await client.PostAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}", content);
 
             return result.IsSuccessStatusCode;
         }

@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using FunderMaps.Core.Types;
-using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.Threading.Command;
-using Microsoft.Extensions.Logging;
 using FunderMaps.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace FunderMaps.Core.MapBundle.Jobs
 {
@@ -43,27 +44,41 @@ namespace FunderMaps.Core.MapBundle.Jobs
         {
             foreach (var layer in exportLayers)
             {
-                FileDataSource fileDump = new()
+                await _mapService.DeleteDatasetAsync(layer);
+
+                for (int i = 0; i < 10; i++)
                 {
-                    Format = GeometryFormat.GeoJSONSeq,
-                    PathPrefix = CreateDirectory("out"),
-                    Extension = ".json",
-                    Name = layer,
-                };
+                    FileDataSource fileDump = new()
+                    {
+                        Format = GeometryFormat.GeoJSONSeq,
+                        PathPrefix = CreateDirectory("out"),
+                        Extension = ".json",
+                        Name = $"{layer}_part{i}",
+                    };
 
-                CommandInfo command = new VectorDatasetBuilder()
-                    .InputDataset(new PostreSQLDataSource(connectionString))
-                    .InputLayers(new BundleLayerSource(layer, Context.Workspace))
-                    .OutputDataset(fileDump)
-                    .Build(formatName: "GeoJSONSeq");
+                    CommandInfo command = new VectorDatasetBuilder()
+                        .InputDataset(new PostreSQLDataSource(connectionString))
+                        .InputLayers(new BundleLayerSource(layer, Context.Workspace, i * 1000000, 1000000))
+                        .OutputDataset(fileDump)
+                        .Build(formatName: "GeoJSONSeq");
 
-                if (await RunCommandAsync(command) == 0)
+                    if (await RunCommandAsync(command) == 0)
+                    {
+                        long length = new FileInfo(fileDump.ToString()).Length;
+
+                        if (length > 0)
+                        {
+                            bool success = await _mapService.UploadDatasetAsync(layer, fileDump.ToString());
+
+                            Logger.LogInformation($"Upload layer: {layer}, success: {success}");
+                        }
+
+                        File.Delete(fileDump.ToString());
+                    }
+                }
+
                 {
-                    bool success = await _mapService.UploadDatasetAsync(layer, fileDump.ToString());
-
-                    Logger.LogInformation($"Upload layer: {layer}, success: {success}");
-
-                    success = await _mapService.PublishAsync(layer);
+                    bool success = await _mapService.PublishAsync(layer);
 
                     Logger.LogInformation($"Pulish layer: {layer}, success: {success}");
                 }
