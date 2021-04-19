@@ -30,7 +30,7 @@ namespace FunderMaps.BatchNode
             _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // FUTURE: Maybe move this into a dedicated IOptions<> structure.
-            intervalInHours = configuration.GetValue<int>("Batch:Interval", 3);
+            intervalInHours = configuration.GetValue<int>("Batch:Interval", 6);
         }
 
         /// <summary>
