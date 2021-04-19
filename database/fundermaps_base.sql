@@ -1346,13 +1346,212 @@ $$;
 ALTER PROCEDURE data.create_clusters() OWNER TO fundermaps;
 
 --
+-- Name: get_established_bio_infection_risk(boolean, report.foundation_damage_cause, report.enforcement_term, report.foundation_quality, boolean); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_established_bio_infection_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'bio_infection'
+		AND (enforcement_term = 'term05'
+		OR enforcement_term = 'term5'
+		OR recovery_advised
+		OR overall_quality = 'bad')
+		THEN 'e'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'bio_infection'
+		AND (enforcement_term = 'term510'
+		OR enforcement_term = 'term10'
+		OR overall_quality = 'mediocre_bad')
+		THEN 'd'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'bio_infection'
+		AND (enforcement_term = 'term1020'
+		OR enforcement_term = 'term15'
+		OR enforcement_term = 'term20'
+		OR overall_quality = 'mediocre'
+		OR overall_quality = 'tolerable')
+		THEN 'c'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'bio_infection'
+		AND (enforcement_term = 'term25'
+		OR enforcement_term = 'term30'
+		OR enforcement_term = 'term40'
+		OR overall_quality = 'good'
+		OR overall_quality = 'mediocre_good')
+		THEN 'b'::data.foundation_risk_indication
+
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_established_bio_infection_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
+
+--
+-- Name: get_established_dewatering_depth_risk(boolean, report.foundation_damage_cause, report.enforcement_term, report.foundation_quality, boolean); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_established_dewatering_depth_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'drainage'
+		AND (enforcement_term = 'term05'
+		OR enforcement_term = 'term5'
+		OR recovery_advised
+		OR overall_quality = 'bad')
+		THEN 'e'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'drainage'
+		AND (enforcement_term = 'term510'
+		OR enforcement_term = 'term10'
+		OR overall_quality = 'mediocre_bad')
+		THEN 'd'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'drainage'
+		AND (enforcement_term = 'term1020'
+		OR enforcement_term = 'term15'
+		OR enforcement_term = 'term20'
+		OR overall_quality = 'mediocre'
+		OR overall_quality = 'tolerable')
+		THEN 'c'::data.foundation_risk_indication
+
+	WHEN damage_cause = 'drainage' 
+		AND (enforcement_term = 'term25'
+		OR enforcement_term = 'term30'
+		OR enforcement_term = 'term40'
+		OR overall_quality = 'good'
+		OR overall_quality = 'mediocre_good')
+		THEN 'b'::data.foundation_risk_indication
+
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_established_dewatering_depth_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
+
+--
+-- Name: get_established_drystand_risk(boolean, report.foundation_damage_cause, report.enforcement_term, report.foundation_quality, boolean); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_established_drystand_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	WHEN (damage_cause = 'drystand' OR damage_cause = 'fungus_infection' OR damage_cause = 'bio_fungus_infection')
+		AND (enforcement_term = 'term05'
+		OR enforcement_term = 'term5'
+		OR recovery_advised
+		OR overall_quality = 'bad')
+		THEN 'e'::data.foundation_risk_indication
+
+	WHEN (damage_cause = 'drystand' OR damage_cause = 'fungus_infection' OR damage_cause = 'bio_fungus_infection')
+		AND (enforcement_term = 'term510'
+		OR enforcement_term = 'term10'
+		OR overall_quality = 'mediocre_bad')
+		THEN 'd'::data.foundation_risk_indication
+
+	WHEN (damage_cause = 'drystand' OR damage_cause = 'fungus_infection' OR damage_cause = 'bio_fungus_infection')
+		AND (enforcement_term = 'term1020'
+		OR enforcement_term = 'term15'
+		OR enforcement_term = 'term20'
+		OR overall_quality = 'mediocre'
+		OR overall_quality = 'tolerable')
+		THEN 'c'::data.foundation_risk_indication
+
+	WHEN (damage_cause = 'drystand' OR damage_cause = 'fungus_infection' OR damage_cause = 'bio_fungus_infection')
+		AND (enforcement_term = 'term25'
+		OR enforcement_term = 'term30'
+		OR enforcement_term = 'term40'
+		OR overall_quality = 'good'
+		OR overall_quality = 'mediocre_good')
+		THEN 'b'::data.foundation_risk_indication
+
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_established_drystand_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
+
+--
+-- Name: get_established_unclassified_risk(boolean, report.foundation_damage_cause, report.enforcement_term, report.foundation_quality, boolean); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_established_unclassified_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	WHEN damage_cause <> 'drystand'
+		AND damage_cause <> 'bio_infection'
+		AND damage_cause <> 'drainage'
+		AND (enforcement_term = 'term05'
+		OR enforcement_term = 'term5'
+		OR recovery_advised
+		OR overall_quality = 'bad')
+		THEN 'e'::data.foundation_risk_indication
+
+	WHEN damage_cause <> 'drystand'
+		AND damage_cause <> 'bio_infection'
+		AND damage_cause <> 'drainage'
+		AND (enforcement_term = 'term510'
+		OR enforcement_term = 'term10'
+		OR overall_quality = 'mediocre_bad')
+		THEN 'd'::data.foundation_risk_indication
+
+	WHEN damage_cause <> 'drystand'
+		AND damage_cause <> 'bio_infection'
+		AND damage_cause <> 'drainage'
+		AND (enforcement_term = 'term1020'
+		OR enforcement_term = 'term15'
+		OR enforcement_term = 'term20'
+		OR overall_quality = 'mediocre'
+		OR overall_quality = 'tolerable')
+		THEN 'c'::data.foundation_risk_indication
+
+	WHEN damage_cause <> 'drystand'
+		AND damage_cause <> 'bio_infection'
+		AND damage_cause <> 'drainage'
+		AND (enforcement_term = 'term25'
+		OR enforcement_term = 'term30'
+		OR enforcement_term = 'term40'
+		OR overall_quality = 'good'
+		OR overall_quality = 'mediocre_good')
+		THEN 'b'::data.foundation_risk_indication
+
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_established_unclassified_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
+
+--
 -- Name: get_foundation_category(report.foundation_type, report.foundation_type); Type: FUNCTION; Schema: data; Owner: fundermaps
 --
 
 CREATE FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) RETURNS data.foundation_category
-    LANGUAGE sql
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
     AS $_$
-
 SELECT
 CASE
 	WHEN COALESCE($2, $1) = 'wood'::report.foundation_type THEN 'wood'::"data".foundation_category
@@ -1372,11 +1571,869 @@ CASE
 	WHEN COALESCE($2, $1) = 'no_pile_bearing_floor'::report.foundation_type THEN 'no_pile'::"data".foundation_category
 	ELSE 'other'::"data".foundation_category
 END;
-
 $_$;
 
 
 ALTER FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) OWNER TO fundermaps;
+
+--
+-- Name: get_indicative_bio_infection_risk(boolean, report.foundation_type, double precision); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_indicative_bio_infection_risk(has_recovery boolean, foundation_type report.foundation_type, pile_length double precision) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND pile_length <= 12
+		THEN 'd'::data.foundation_risk_indication
+		
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND pile_length > 12
+		AND pile_length <= 15
+		THEN 'c'::data.foundation_risk_indication
+		
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND pile_length > 15
+		THEN 'b'::data.foundation_risk_indication
+		
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_indicative_bio_infection_risk(has_recovery boolean, foundation_type report.foundation_type, pile_length double precision) OWNER TO fundermaps;
+
+--
+-- Name: get_indicative_dewatering_depth_risk(boolean, boolean, report.foundation_type, integer, double precision, text, integer, double precision, double precision); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_indicative_dewatering_depth_risk(has_recovery boolean, is_indicative boolean, foundation_type report.foundation_type, construction_year integer, height double precision, geographic_region text, addresses integer, velocity double precision, ground_water double precision) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	-- "A1"
+	WHEN is_indicative
+		AND construction_year >= 1940
+		AND construction_year < 1970
+		AND addresses >= 8
+		THEN 'a'::data.foundation_risk_indication
+	
+	-- "B2"
+	WHEN is_indicative
+		AND construction_year >= 1970
+		THEN 'a'::data.foundation_risk_indication
+
+	-- "F1"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water < 0.6
+		then 'c'::data.foundation_risk_indication
+	
+	-- "F2"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+	
+	-- "F3"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-2.0)
+		and ground_water < 0.6
+		then 'e'::data.foundation_risk_indication
+	
+	-- "F4"	
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-2.0)
+		and ground_water >= 0.6
+		then 'd'::data.foundation_risk_indication
+		
+	-- "F5"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-2.0)
+		and ground_water < 0.6
+		then 'd'::data.foundation_risk_indication
+	
+	-- "F6"	
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-2.0)
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+
+	-- "F7"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity is null
+		and ground_water >= 0.6
+		then 'c'::data.foundation_risk_indication
+	
+	-- "F8"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity is null
+		and ground_water < 0.6
+		then 'b'::data.foundation_risk_indication
+		
+	-- "F9"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity < (-1.0)
+		and ground_water >= 0.6
+		then 'e'::data.foundation_risk_indication
+
+	-- "F10"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity < (-1.0)
+		and ground_water < 0.6
+		then 'd'::data.foundation_risk_indication
+
+	-- "F11"
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity >= (-1.0)
+		and ground_water >= 0.6
+		then 'c'::data.foundation_risk_indication
+
+	-- "F12"		
+	WHEN is_indicative
+		AND construction_year >= 1800
+		and construction_year < 1970
+		AND height < 10.5
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity >= (-1.0)
+		and ground_water < 0.6
+		then 'b'::data.foundation_risk_indication
+
+	-- "J1"
+	WHEN is_indicative
+		AND construction_year < 1700
+		and velocity is null
+		and ground_water < 0.6
+		then 'c'::data.foundation_risk_indication
+
+	-- "J2"	
+	WHEN is_indicative
+		AND construction_year < 1700
+		and velocity is null
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+
+	-- "J3"
+	WHEN is_indicative
+		AND construction_year < 1700
+		and velocity < (-1.0)
+		and ground_water < 0.6
+		then 'e'::data.foundation_risk_indication
+
+	-- "J4"
+	WHEN is_indicative
+		AND construction_year < 1700
+		and velocity < (-1.0)
+		and ground_water >= 0.6
+		then 'd'::data.foundation_risk_indication
+
+	-- "J5"
+	WHEN is_indicative
+		AND construction_year < 1700
+		and velocity >= (-1.0)
+		and ground_water < 0.6
+		then 'd'::data.foundation_risk_indication
+
+	-- "J6"
+	WHEN is_indicative
+		AND construction_year < 1700
+		and velocity >= (-1.0)
+		and ground_water >= 0.6
+		then 'c'::data.foundation_risk_indication
+
+	-- "C1"
+	WHEN is_indicative
+		AND construction_year >= 1700
+		and construction_year < 1800
+		and height < 10.5
+		and velocity is null
+		and ground_water < 0.6
+		then 'c'::data.foundation_risk_indication
+
+	-- "C2"
+	WHEN is_indicative
+		AND construction_year >= 1700
+		and construction_year < 1800
+		and height < 10.5
+		and velocity is null
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+	
+	-- "C3"
+	WHEN is_indicative
+		AND construction_year >= 1700
+		and construction_year < 1800
+		and height < 10.5
+		and velocity < (-1.0)
+		and ground_water < 0.6
+		then 'e'::data.foundation_risk_indication
+
+	-- "C4"
+	WHEN is_indicative
+		AND construction_year >= 1700
+		and construction_year < 1800
+		and height < 10.5
+		and velocity >= (-1.0)
+		and ground_water < 0.6
+		then 'd'::data.foundation_risk_indication
+
+	-- "C5"
+	WHEN is_indicative
+		AND construction_year >= 1700
+		and construction_year < 1800
+		and height < 10.5
+		and velocity < (-1.0)
+		and ground_water >= 0.6
+		then 'd'::data.foundation_risk_indication
+
+	-- "C6"
+	WHEN is_indicative
+		AND construction_year >= 1700
+		and construction_year < 1800
+		and height < 10.5
+		and velocity >= (-1.0)
+		and ground_water >= 0.6
+		then 'c'::data.foundation_risk_indication
+
+	-- "D1"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity is null
+		and ground_water < 0.6
+		then 'c'::data.foundation_risk_indication
+
+	-- "D2"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity is null
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+
+	-- "D3"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity < (-1.0)
+		and ground_water < 0.6
+		then 'e'::data.foundation_risk_indication	
+
+	-- "D4"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity < (-1.0)
+		and ground_water >= 0.6
+		then 'd'::data.foundation_risk_indication
+	
+	-- "D5"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity >= (-1.0)
+		and ground_water <= 0.6
+		then 'd'::data.foundation_risk_indication
+	
+	-- "D6"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity >= (-1.0)
+		and ground_water > 0.6
+		then 'b'::data.foundation_risk_indication
+	
+	-- "M1"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit')
+		and velocity is null
+		and ground_water < 0.6
+		then 'c'::data.foundation_risk_indication
+	
+	-- "M2"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit') 
+		and velocity is null
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+	
+	-- "M3"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit')
+		and velocity < (-2.0)
+		and ground_water < 0.6
+		then 'e'::data.foundation_risk_indication
+	
+	-- "M4"	
+	WHEN NOT is_indicative
+		AND (foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit')
+		and velocity < (-2.0)
+		and ground_water >= 0.6
+		then 'd'::data.foundation_risk_indication
+		
+	-- "M5"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit')
+		and velocity >= (-2.0)
+		and ground_water < 0.6
+		then 'd'::data.foundation_risk_indication
+	
+	-- "M6"	
+	WHEN NOT is_indicative
+		AND (foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit')
+		and velocity >= (-2.0)
+		and ground_water >= 0.6
+		then 'b'::data.foundation_risk_indication
+		
+	-- "M7"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'concrete' OR foundation_type = 'weighted_pile')
+		THEN 'a'::data.foundation_risk_indication
+		
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_indicative_dewatering_depth_risk(has_recovery boolean, is_indicative boolean, foundation_type report.foundation_type, construction_year integer, height double precision, geographic_region text, addresses integer, velocity double precision, ground_water double precision) OWNER TO fundermaps;
+
+--
+-- Name: get_indicative_drystand_risk(boolean, boolean, report.foundation_type, integer, double precision, text, integer, double precision, double precision); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_indicative_drystand_risk(has_recovery boolean, is_indicative boolean, foundation_type report.foundation_type, construction_year integer, height double precision, geographic_region text, addresses integer, velocity double precision, ground_water double precision) RETURNS data.foundation_risk_indication
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	WHEN has_recovery
+		THEN 'a'::data.foundation_risk_indication
+
+	-- "A1"
+	WHEN is_indicative
+		AND construction_year >= 1940
+		AND construction_year < 1970
+		AND addresses >= 8
+		THEN 'a'::data.foundation_risk_indication
+	
+	-- "B2"
+	WHEN is_indicative
+		AND construction_year >= 1970
+		THEN 'a'::data.foundation_risk_indication
+
+	-- "E1"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		AND (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water >= 1.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "E2"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "E3"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-2.0)
+		and ground_water >= 1.5
+		then 'e'::data.foundation_risk_indication
+
+	-- "E4"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-2.0)
+		and ground_water >= 1.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "E5"
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-2.0)
+		and ground_water < 1.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "E6"		
+	WHEN is_indicative
+		AND (construction_year >= 1700
+		and construction_year < 1800 or construction_year is null)
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-2.0)
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "G1"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1975
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity is null
+		and ground_water >= 1.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "G2"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1975
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity is null
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "G3"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1975
+		and (height >= 10.5 or height is null) 
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity < (-2.0)
+		and ground_water >= 1.5
+		then 'e'::data.foundation_risk_indication
+
+	-- "G4"	
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1975
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity < (-2.0)
+		and ground_water < 1.5
+		then 'd'::data.foundation_risk_indication	
+
+	-- "G5"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1975
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity >= (-2.0)
+		and ground_water >= 1.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "G6"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1975
+		and (height >= 10.5 or height is null)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		and velocity >= (-2.0)
+		and ground_water < 1.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "I1"
+	WHEN is_indicative
+		and construction_year >= 1925
+		and construction_year < 1970
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water >= 2.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "I2"	
+	WHEN is_indicative
+		and construction_year >= 1925
+		and construction_year < 1970
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water < 2.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "I3"
+	WHEN is_indicative
+		and construction_year >= 1925
+		and construction_year < 1970
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-1.0)
+		and ground_water >= 2.5
+		then 'e'::data.foundation_risk_indication
+
+	-- "I4"
+	WHEN is_indicative
+		and construction_year >= 1925
+		and construction_year < 1970
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-1.0)
+		and ground_water < 2.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "I5"
+	WHEN is_indicative
+		and construction_year >= 1925
+		and construction_year < 1970
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-1.0)
+		and ground_water >= 2.5
+		then 'c'::data.foundation_risk_indication
+	
+	-- "I6"
+	WHEN is_indicative
+		and construction_year >= 1925
+		and construction_year < 1970
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-1.0)
+		and ground_water < 2.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "H1"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1925
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water >= 1.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "H2"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1925
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity is null
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+	
+	-- "H3"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1925
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-2.0)
+		and ground_water >= 1.5
+		then 'e'::data.foundation_risk_indication
+	
+	-- "H4"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1925
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity < (-2.0)
+		and ground_water < 1.5
+		then 'c'::data.foundation_risk_indication
+		
+	-- "H5"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1925
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-2.0)
+		and ground_water >= 1.5
+		then 'c'::data.foundation_risk_indication
+	
+	-- "H6"
+	WHEN is_indicative
+		and construction_year >= 1800
+		and construction_year < 1925
+		and (height >= 10.5 or height is null)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		and velocity >= (-2.0)
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "N1"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		and velocity is null
+		and ground_water >= 1.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "N2"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		and velocity is null
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "N3"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		and velocity < (-2.0)
+		and ground_water >= 1.5
+		then 'e'::data.foundation_risk_indication
+
+	-- "N4"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		and velocity >= (-2.0)
+		and ground_water >= 1.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "N5"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		and velocity < (-2.0)
+		and ground_water < 1.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "N6"		
+	WHEN NOT is_indicative
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		and velocity >= (-2.0)
+		and ground_water < 1.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "O1"
+	WHEN NOT is_indicative
+		AND foundation_type = 'wood_charger'
+		and velocity is null
+		and ground_water >= 2.5
+		then 'c'::data.foundation_risk_indication
+
+	-- "O2"
+	WHEN NOT is_indicative
+		AND foundation_type = 'wood_charger' 
+		and velocity is null
+		and ground_water < 2.5
+		then 'b'::data.foundation_risk_indication
+
+	-- "O3"
+	WHEN NOT is_indicative
+		AND foundation_type = 'wood_charger' 
+		and velocity < (-2.0)
+		and ground_water >= 2.5
+		then 'e'::data.foundation_risk_indication
+
+	-- "O4"
+	WHEN NOT is_indicative
+		AND foundation_type = 'wood_charger'
+		and velocity >= (-2.0)
+		and ground_water >= 2.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "O5"
+	WHEN NOT is_indicative
+		AND foundation_type = 'wood_charger'
+		and velocity < (-2.0)
+		and ground_water < 2.5
+		then 'd'::data.foundation_risk_indication
+
+	-- "O6"		
+	WHEN NOT is_indicative
+		AND foundation_type = 'wood_charger'
+		and velocity >= (-2.0)
+		and ground_water < 2.5
+		then 'b'::data.foundation_risk_indication
+		
+	-- "O7"
+	WHEN NOT is_indicative
+		AND (foundation_type = 'concrete' OR foundation_type = 'weighted_pile')
+		THEN 'a'::data.foundation_risk_indication
+		
+	ELSE NULL::data.foundation_risk_indication
+END;
+$$;
+
+
+ALTER FUNCTION data.get_indicative_drystand_risk(has_recovery boolean, is_indicative boolean, foundation_type report.foundation_type, construction_year integer, height double precision, geographic_region text, addresses integer, velocity double precision, ground_water double precision) OWNER TO fundermaps;
+
+--
+-- Name: get_indicative_foundation_type(integer, double precision, text, integer); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_indicative_foundation_type(construction_year integer, height double precision, geographic_region text, addresses integer) RETURNS report.foundation_type
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+	-- "A"
+	WHEN construction_year >= 1940
+		AND construction_year < 1970
+		AND addresses >= 8
+		THEN 'concrete'::report.foundation_type
+
+	-- "B"
+    WHEN construction_year >= 1970
+		THEN 'concrete'::report.foundation_type
+
+	-- "C"
+	WHEN construction_year >= 1700
+		AND construction_year < 1800
+		AND height < 10.5
+		THEN 'no_pile'::report.foundation_type
+		
+	-- "Deze is dubbel met E en D"
+	WHEN construction_year >= 1700
+		AND construction_year < 1800
+		AND height >= 10.5
+		THEN 'wood'::report.foundation_type
+
+	-- "D"
+	WHEN construction_year >= 1700
+		AND construction_year < 1800
+		AND (height >= 10.5 OR height IS NULL)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		THEN 'no_pile'::report.foundation_type
+
+	-- "E"
+	WHEN construction_year >= 1700
+		AND construction_year < 1800
+		AND (height >= 10.5 OR height IS NULL)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		THEN 'wood'::report.foundation_type
+
+	-- "F"
+	WHEN construction_year >= 1800
+		AND construction_year < 1970
+		AND height < 10.5
+		THEN 'no_pile'::report.foundation_type
+
+	-- "G"
+	WHEN construction_year >= 1800
+		AND construction_year < 1970
+		AND (height >= 10.5 OR height IS NULL)
+		AND (geographic_region = 'hz'::text OR geographic_region = 'ni-hz'::text OR geographic_region = 'ni-du'::text)
+		THEN 'wood'::report.foundation_type
+	
+	-- "H"
+	WHEN construction_year >= 1800
+		AND construction_year < 1925
+		AND (height >= 10.5 OR height IS NULL)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		THEN 'wood'::report.foundation_type
+
+	-- "I"
+	WHEN construction_year >= 1925
+		AND construction_year < 1970
+		AND (height >= 10.5 OR height IS NULL)
+		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
+		THEN 'wood_charger'::report.foundation_type
+
+	-- "J"
+	WHEN construction_year < 1700
+		THEN 'no_pile'::report.foundation_type
+
+	-- "K"
+	WHEN height >= 10.5
+		THEN 'wood'::report.foundation_type
+
+	-- "L"
+	WHEN height < 10.5
+		THEN 'no_pile'::report.foundation_type
+
+	ELSE 'other'::report.foundation_type
+END;
+$$;
+
+
+ALTER FUNCTION data.get_indicative_foundation_type(construction_year integer, height double precision, geographic_region text, addresses integer) OWNER TO fundermaps;
+
+--
+-- Name: get_restoration_cost(report.foundation_type, numeric); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.get_restoration_cost(foundation_type report.foundation_type, surface_area numeric) RETURNS integer
+    LANGUAGE sql IMMUTABLE PARALLEL SAFE
+    AS $$
+SELECT
+CASE
+    WHEN foundation_type = 'wood'
+    THEN round((surface_area * 950::double precision)::numeric, '-2'::integer)::integer
+    
+    WHEN foundation_type = 'no_pile'
+    THEN round((surface_area * 350::double precision)::numeric, '-2'::integer)::integer
+
+    ELSE NULL::integer
+END;
+$$;
+
+
+ALTER FUNCTION data.get_restoration_cost(foundation_type report.foundation_type, surface_area numeric) OWNER TO fundermaps;
 
 --
 -- Name: record_update(); Type: FUNCTION; Schema: maplayer; Owner: fundermaps
@@ -1750,7 +2807,7 @@ CREATE TABLE geocoder.building (
     external_id text NOT NULL,
     external_source geocoder.data_source NOT NULL,
     building_type geocoder.building_type,
-    neighborhood_id geocoder.geocoder_id NOT NULL
+    neighborhood_id geocoder.geocoder_id
 );
 
 
@@ -2372,6 +3429,255 @@ CREATE TABLE data.building_pleistocene (
 ALTER TABLE data.building_pleistocene OWNER TO fundermaps;
 
 --
+-- Name: address_building; Type: VIEW; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE VIEW geocoder.address_building AS
+ SELECT addr.id AS address_id,
+    ba.id AS building_id,
+    ba.geom
+   FROM (geocoder.address addr
+     JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)));
+
+
+ALTER TABLE geocoder.address_building OWNER TO fundermaps;
+
+--
+-- Name: analysis_complete; Type: MATERIALIZED VIEW; Schema: data; Owner: postgres
+--
+
+CREATE MATERIALIZED VIEW data.analysis_complete AS
+ SELECT b.id AS building_id,
+    b.external_id AS external_building_id,
+    a.id AS address_id,
+    a.external_id AS address_external_id,
+    b.neighborhood_id,
+    (COALESCE(established.built_year, cluster.built_year, (construction_year.construction_year)::double precision))::integer AS construction_year,
+        CASE
+            WHEN (established.foundation_type IS NOT NULL) THEN established.foundation_type
+            WHEN (cluster.foundation_type IS NOT NULL) THEN cluster.foundation_type
+            ELSE indicative_foundation_type.indicative_foundation_type
+        END AS foundation_type,
+        CASE
+            WHEN (established.foundation_type IS NOT NULL) THEN 'established'::data.reliability
+            ELSE 'indicative'::data.reliability
+        END AS foundation_type_reliability,
+        CASE
+            WHEN (established.foundation_type IS NOT NULL) THEN data.get_restoration_cost(established.foundation_type, surface_area.surface_area)
+            WHEN (cluster.foundation_type IS NOT NULL) THEN data.get_restoration_cost(cluster.foundation_type, surface_area.surface_area)
+            ELSE data.get_restoration_cost(indicative_foundation_type.indicative_foundation_type, surface_area.surface_area)
+        END AS restoration_costs,
+        CASE
+            WHEN (established_drystand_risk.established_drystand_risk IS NOT NULL) THEN established_drystand_risk.established_drystand_risk
+            WHEN (cluster_drystand_risk.cluster_drystand_risk IS NOT NULL) THEN cluster_drystand_risk.cluster_drystand_risk
+            ELSE drystand_risk.drystand_risk
+        END AS drystand_risk,
+        CASE
+            WHEN (established_drystand_risk.established_drystand_risk IS NOT NULL) THEN 'established'::data.reliability
+            ELSE 'indicative'::data.reliability
+        END AS drystand_risk_reliability,
+        CASE
+            WHEN (established_bio_infection_risk.established_bio_infection_risk IS NOT NULL) THEN established_bio_infection_risk.established_bio_infection_risk
+            WHEN (cluster_bio_infection_risk.cluster_bio_infection_risk IS NOT NULL) THEN cluster_bio_infection_risk.cluster_bio_infection_risk
+            ELSE bio_infection_risk.bio_infection_risk
+        END AS bio_infection_risk,
+        CASE
+            WHEN (established_bio_infection_risk.established_bio_infection_risk IS NOT NULL) THEN 'established'::data.reliability
+            ELSE 'indicative'::data.reliability
+        END AS bio_infection_risk_reliability,
+        CASE
+            WHEN (established_dewatering_depth_risk.established_dewatering_depth_risk IS NOT NULL) THEN established_dewatering_depth_risk.established_dewatering_depth_risk
+            WHEN (cluster_dewatering_depth_risk.cluster_dewatering_depth_risk IS NOT NULL) THEN cluster_dewatering_depth_risk.cluster_dewatering_depth_risk
+            ELSE dewatering_depth_risk.dewatering_depth_risk
+        END AS dewatering_depth_risk,
+        CASE
+            WHEN (established_dewatering_depth_risk.established_dewatering_depth_risk IS NOT NULL) THEN 'established'::data.reliability
+            ELSE 'indicative'::data.reliability
+        END AS dewatering_depth_risk_reliability,
+        CASE
+            WHEN (established_unclassified_risk.established_unclassified_risk IS NOT NULL) THEN established_unclassified_risk.established_unclassified_risk
+            WHEN (cluster_unclassified_risk.cluster_unclassified_risk IS NOT NULL) THEN cluster_unclassified_risk.cluster_unclassified_risk
+            ELSE NULL::data.foundation_risk_indication
+        END AS unclassified_risk,
+    round((bh.height)::numeric, 2) AS height,
+    round((s.velocity)::numeric, 2) AS velocity,
+    bo.owner,
+    established.id AS inquiry_id,
+    established.inquiry_type,
+    established.damage_cause,
+    date_part('years'::text, age((
+        CASE established.enforcement_term
+            WHEN 'term05'::report.enforcement_term THEN (established.document_date + '5 years'::interval)
+            WHEN 'term510'::report.enforcement_term THEN (established.document_date + '10 years'::interval)
+            WHEN 'term1020'::report.enforcement_term THEN (established.document_date + '20 years'::interval)
+            WHEN 'term5'::report.enforcement_term THEN (established.document_date + '5 years'::interval)
+            WHEN 'term10'::report.enforcement_term THEN (established.document_date + '10 years'::interval)
+            WHEN 'term15'::report.enforcement_term THEN (established.document_date + '15 years'::interval)
+            WHEN 'term20'::report.enforcement_term THEN (established.document_date + '20 years'::interval)
+            WHEN 'term25'::report.enforcement_term THEN (established.document_date + '25 years'::interval)
+            WHEN 'term30'::report.enforcement_term THEN (established.document_date + '30 years'::interval)
+            WHEN 'term40'::report.enforcement_term THEN (established.document_date + '40 years'::interval)
+            ELSE NULL::timestamp without time zone
+        END)::timestamp with time zone, CURRENT_TIMESTAMP)) AS enforcement_term,
+    established.overall_quality,
+    recovery.type AS recovery_type,
+    b.geom
+   FROM (((((((((geocoder.building_active b
+     LEFT JOIN data.building_elevation be ON (((be.building_id)::text = (b.id)::text)))
+     LEFT JOIN geocoder.address a ON (((a.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_ownership bo ON (((bo.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_pleistocene bp ON (((bp.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_cluster bc ON (((bc.building_id)::text = (b.id)::text))),
+    LATERAL ( SELECT recovery_sample.type
+           FROM report.recovery_sample
+          WHERE ((recovery_sample.address)::text = (a.id)::text)
+        UNION ALL
+         SELECT NULL::report.recovery_type AS recovery_type
+ LIMIT 1) recovery,
+    LATERAL ( SELECT (array_agg(established_rows.foundation_type) FILTER (WHERE (established_rows.foundation_type IS NOT NULL)))[1] AS foundation_type,
+            (array_agg(established_rows.enforcement_term) FILTER (WHERE (established_rows.enforcement_term IS NOT NULL)))[1] AS enforcement_term,
+            (array_agg(established_rows.damage_cause) FILTER (WHERE (established_rows.damage_cause IS NOT NULL)))[1] AS damage_cause,
+            (array_agg(established_rows.overall_quality) FILTER (WHERE (established_rows.overall_quality IS NOT NULL)))[1] AS overall_quality,
+            (array_agg(established_rows.recovery_advised) FILTER (WHERE (established_rows.recovery_advised IS NOT NULL)))[1] AS recovery_advised,
+            (array_agg(date_part('year'::text, established_rows.built_year)) FILTER (WHERE (established_rows.recovery_advised IS NOT NULL)))[1] AS built_year,
+            (array_agg(established_rows.type) FILTER (WHERE (established_rows.type IS NOT NULL)))[1] AS inquiry_type,
+            (array_agg(established_rows.document_date) FILTER (WHERE (established_rows.document_date IS NOT NULL)))[1] AS document_date,
+            (array_agg(established_rows.id) FILTER (WHERE (established_rows.document_date IS NOT NULL)))[1] AS id,
+            (array_agg(established_rows.recovery) FILTER (WHERE (established_rows.recovery IS NOT NULL)))[1] AS recovery
+           FROM (( SELECT 1 AS group_id,
+                    is2.foundation_type,
+                    is2.enforcement_term,
+                    is2.damage_cause,
+                    is2.overall_quality,
+                    is2.recovery_advised,
+                    is2.built_year,
+                    i.type,
+                    i.document_date,
+                    i.id,
+                    ( SELECT (EXISTS ( SELECT 1
+                                   FROM report.recovery_sample
+                                  WHERE ((recovery_sample.address)::text = (ab.address_id)::text)
+                                 LIMIT 1)) AS "exists") AS recovery
+                   FROM (((report.inquiry_sample is2
+                     JOIN report.inquiry i ON ((is2.inquiry = i.id)))
+                     JOIN geocoder.address_building ab ON (((ab.address_id)::text = (is2.address)::text)))
+                     JOIN geocoder.building_active ba ON (((ba.id)::text = (ab.building_id)::text)))
+                  WHERE (((is2.address)::text = (a.id)::text) AND (i.document_date >= (ba.built_year)::date))
+                  ORDER BY
+                        CASE
+                            WHEN (i.type = 'foundation_research'::report.inquiry_type) THEN 0
+                            WHEN (i.type = 'inspectionpit'::report.inquiry_type) THEN 1
+                            WHEN (i.type = 'second_opinion'::report.inquiry_type) THEN 2
+                            WHEN (i.type = 'note'::report.inquiry_type) THEN 3
+                            WHEN (i.type = 'additional_research'::report.inquiry_type) THEN 4
+                            WHEN (i.type = 'demolition_research'::report.inquiry_type) THEN 5
+                            WHEN (i.type = 'architectural_research'::report.inquiry_type) THEN 6
+                            WHEN (i.type = 'archieve_research'::report.inquiry_type) THEN 7
+                            WHEN (i.type = 'quickscan'::report.inquiry_type) THEN 8
+                            ELSE 100
+                        END, i.document_date DESC)
+                UNION ALL
+                 SELECT 1,
+                    NULL::report.foundation_type AS foundation_type,
+                    NULL::report.enforcement_term AS enforcement_term,
+                    NULL::report.foundation_damage_cause AS foundation_damage_cause,
+                    NULL::report.foundation_quality AS foundation_quality,
+                    false AS bool,
+                    NULL::date AS date,
+                    NULL::report.inquiry_type AS inquiry_type,
+                    NULL::date AS date,
+                    NULL::integer AS int4,
+                    false AS bool) established_rows
+          GROUP BY established_rows.group_id) established,
+    LATERAL ( SELECT (array_agg(cluster_rows.foundation_type) FILTER (WHERE (cluster_rows.foundation_type IS NOT NULL)))[1] AS foundation_type,
+            (array_agg(cluster_rows.enforcement_term) FILTER (WHERE (cluster_rows.enforcement_term IS NOT NULL)))[1] AS enforcement_term,
+            (array_agg(cluster_rows.damage_cause) FILTER (WHERE (cluster_rows.damage_cause IS NOT NULL)))[1] AS damage_cause,
+            (array_agg(cluster_rows.overall_quality) FILTER (WHERE (cluster_rows.overall_quality IS NOT NULL)))[1] AS overall_quality,
+            (array_agg(cluster_rows.recovery_advised) FILTER (WHERE (cluster_rows.recovery_advised IS NOT NULL)))[1] AS recovery_advised,
+            (array_agg(date_part('year'::text, cluster_rows.built_year)) FILTER (WHERE (cluster_rows.recovery_advised IS NOT NULL)))[1] AS built_year,
+            (array_agg(cluster_rows.recovery) FILTER (WHERE (cluster_rows.recovery IS NOT NULL)))[1] AS recovery
+           FROM (( SELECT 1 AS group_id,
+                    is2.foundation_type,
+                    is2.enforcement_term,
+                    is2.damage_cause,
+                    is2.overall_quality,
+                    is2.recovery_advised,
+                    is2.built_year,
+                    ( SELECT (EXISTS ( SELECT 1
+                                   FROM report.recovery_sample
+                                  WHERE ((recovery_sample.address)::text = (ab.address_id)::text)
+                                 LIMIT 1)) AS "exists") AS recovery
+                   FROM ((((report.inquiry_sample is2
+                     JOIN report.inquiry i ON ((is2.inquiry = i.id)))
+                     JOIN geocoder.address_building ab ON (((ab.address_id)::text = (is2.address)::text)))
+                     JOIN geocoder.building_active ba ON ((((ba.id)::text = (ab.building_id)::text) AND ((ba.id)::text <> (b.id)::text))))
+                     JOIN data.building_cluster c ON (((c.building_id)::text = (ab.building_id)::text)))
+                  WHERE ((c.cluster_id = bc.cluster_id) AND (i.document_date >= (ba.built_year)::date))
+                  ORDER BY
+                        CASE
+                            WHEN (i.type = 'foundation_research'::report.inquiry_type) THEN 0
+                            WHEN (i.type = 'inspectionpit'::report.inquiry_type) THEN 1
+                            WHEN (i.type = 'second_opinion'::report.inquiry_type) THEN 2
+                            WHEN (i.type = 'note'::report.inquiry_type) THEN 3
+                            WHEN (i.type = 'additional_research'::report.inquiry_type) THEN 4
+                            WHEN (i.type = 'demolition_research'::report.inquiry_type) THEN 5
+                            WHEN (i.type = 'architectural_research'::report.inquiry_type) THEN 6
+                            WHEN (i.type = 'archieve_research'::report.inquiry_type) THEN 7
+                            WHEN (i.type = 'quickscan'::report.inquiry_type) THEN 8
+                            ELSE 100
+                        END, i.document_date DESC)
+                UNION ALL
+                 SELECT 1,
+                    NULL::report.foundation_type AS foundation_type,
+                    NULL::report.enforcement_term AS enforcement_term,
+                    NULL::report.foundation_damage_cause AS foundation_damage_cause,
+                    NULL::report.foundation_quality AS foundation_quality,
+                    false AS bool,
+                    NULL::date AS date,
+                    false AS bool) cluster_rows
+          GROUP BY cluster_rows.group_id) cluster,
+    LATERAL CAST((date_part('year'::text, (b.built_year)::date))::integer AS integer) construction_year(construction_year),
+    LATERAL round((public.st_area((b.geom)::public.geography, true))::numeric, 2) surface_area(surface_area),
+    LATERAL round(((be.ground - bp.depth))::numeric, 2) pile_length(pile_length),
+    LATERAL ( SELECT (count(a_1.id))::integer AS count
+           FROM geocoder.address a_1
+          WHERE ((a_1.building_id)::text = (b.id)::text)) addresses(count),
+    LATERAL data.get_indicative_foundation_type(construction_year.construction_year, (bh.height)::double precision, gr.code, addresses.count) indicative_foundation_type(indicative_foundation_type),
+    LATERAL data.get_indicative_drystand_risk((recovery.type IS NOT NULL), ((established.foundation_type IS NULL) AND (cluster.foundation_type IS NULL)),
+        CASE
+            WHEN (established.foundation_type IS NOT NULL) THEN established.foundation_type
+            ELSE cluster.foundation_type
+        END, construction_year.construction_year, (bh.height)::double precision, gr.code, addresses.count, s.velocity, gwl.level) drystand_risk(drystand_risk),
+    LATERAL data.get_indicative_dewatering_depth_risk((recovery.type IS NOT NULL), ((established.foundation_type IS NULL) AND (cluster.foundation_type IS NULL)),
+        CASE
+            WHEN (established.foundation_type IS NOT NULL) THEN established.foundation_type
+            ELSE cluster.foundation_type
+        END, construction_year.construction_year, (bh.height)::double precision, gr.code, addresses.count, s.velocity, gwl.level) dewatering_depth_risk(dewatering_depth_risk),
+    LATERAL data.get_indicative_bio_infection_risk((recovery.type IS NOT NULL),
+        CASE
+            WHEN (established.foundation_type IS NOT NULL) THEN established.foundation_type
+            WHEN (cluster.foundation_type IS NOT NULL) THEN cluster.foundation_type
+            ELSE indicative_foundation_type.indicative_foundation_type
+        END, (pile_length.pile_length)::double precision) bio_infection_risk(bio_infection_risk),
+    LATERAL data.get_established_drystand_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_drystand_risk(cluster_drystand_risk),
+    LATERAL data.get_established_dewatering_depth_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_dewatering_depth_risk(cluster_dewatering_depth_risk),
+    LATERAL data.get_established_bio_infection_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_bio_infection_risk(cluster_bio_infection_risk),
+    LATERAL data.get_established_unclassified_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_unclassified_risk(cluster_unclassified_risk),
+    LATERAL data.get_established_drystand_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_drystand_risk(established_drystand_risk),
+    LATERAL data.get_established_dewatering_depth_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_dewatering_depth_risk(established_dewatering_depth_risk),
+    LATERAL data.get_established_bio_infection_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_bio_infection_risk(established_bio_infection_risk),
+    LATERAL data.get_established_unclassified_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_unclassified_risk(established_unclassified_risk)
+  WHERE ((addresses.count > 0) AND (b.building_type = 'house'::geocoder.building_type))
+  WITH NO DATA;
+
+
+ALTER TABLE data.analysis_complete OWNER TO postgres;
+
+--
 -- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
 --
 
@@ -2598,20 +3904,6 @@ CREATE TABLE data.subsidence_hex (
 ALTER TABLE data.subsidence_hex OWNER TO fundermaps;
 
 --
--- Name: address_building; Type: VIEW; Schema: geocoder; Owner: fundermaps
---
-
-CREATE VIEW geocoder.address_building AS
- SELECT addr.id AS address_id,
-    ba.id AS building_id,
-    ba.geom
-   FROM (geocoder.address addr
-     JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)));
-
-
-ALTER TABLE geocoder.address_building OWNER TO fundermaps;
-
---
 -- Name: country; Type: TABLE; Schema: geocoder; Owner: fundermaps
 --
 
@@ -2728,6 +4020,73 @@ ALTER TABLE geocoder.state OWNER TO fundermaps;
 
 COMMENT ON TABLE geocoder.state IS 'Contains all states in our own format.';
 
+
+--
+-- Name: analysis_building; Type: VIEW; Schema: maplayer; Owner: postgres
+--
+
+CREATE VIEW maplayer.analysis_building AS
+ SELECT DISTINCT ON (ac.building_id) ac.construction_year,
+    ac.restoration_costs,
+    ac.height,
+    ac.velocity,
+    ac.owner,
+    ac.geom
+   FROM data.analysis_complete ac;
+
+
+ALTER TABLE maplayer.analysis_building OWNER TO postgres;
+
+--
+-- Name: analysis_foundation; Type: VIEW; Schema: maplayer; Owner: postgres
+--
+
+CREATE VIEW maplayer.analysis_foundation AS
+ SELECT DISTINCT ON (ac.building_id) ac.foundation_type,
+    ac.foundation_type_reliability,
+    ac.height,
+    ac.recovery_type,
+    ac.geom
+   FROM data.analysis_complete ac;
+
+
+ALTER TABLE maplayer.analysis_foundation OWNER TO postgres;
+
+--
+-- Name: analysis_quality; Type: VIEW; Schema: maplayer; Owner: postgres
+--
+
+CREATE VIEW maplayer.analysis_quality AS
+ SELECT DISTINCT ON (ac.building_id) ac.drystand_risk,
+    ac.drystand_risk_reliability,
+    ac.bio_infection_risk,
+    ac.bio_infection_risk_reliability,
+    ac.dewatering_depth_risk,
+    ac.dewatering_depth_risk_reliability,
+    ac.unclassified_risk,
+    ac.height,
+    ac.geom
+   FROM data.analysis_complete ac;
+
+
+ALTER TABLE maplayer.analysis_quality OWNER TO postgres;
+
+--
+-- Name: analysis_report; Type: VIEW; Schema: maplayer; Owner: postgres
+--
+
+CREATE VIEW maplayer.analysis_report AS
+ SELECT DISTINCT ON (ac.building_id) ac.height,
+    ac.inquiry_id,
+    ac.inquiry_type,
+    ac.damage_cause,
+    ac.enforcement_term,
+    ac.overall_quality,
+    ac.geom
+   FROM data.analysis_complete ac;
+
+
+ALTER TABLE maplayer.analysis_report OWNER TO postgres;
 
 --
 -- Name: building_built_year; Type: VIEW; Schema: maplayer; Owner: fundermaps
@@ -3593,6 +4952,34 @@ CREATE INDEX organization_proposal_normalized_email_idx ON application.organizat
 --
 
 CREATE UNIQUE INDEX user_normalized_email_idx ON application."user" USING btree (normalized_email);
+
+
+--
+-- Name: analysis_complete_address_idx; Type: INDEX; Schema: data; Owner: postgres
+--
+
+CREATE UNIQUE INDEX analysis_complete_address_idx ON data.analysis_complete USING btree (address_id);
+
+
+--
+-- Name: analysis_complete_building_idx; Type: INDEX; Schema: data; Owner: postgres
+--
+
+CREATE INDEX analysis_complete_building_idx ON data.analysis_complete USING btree (building_id);
+
+
+--
+-- Name: analysis_complete_external_address_idx; Type: INDEX; Schema: data; Owner: postgres
+--
+
+CREATE UNIQUE INDEX analysis_complete_external_address_idx ON data.analysis_complete USING btree (address_external_id);
+
+
+--
+-- Name: analysis_complete_external_building_id_idx; Type: INDEX; Schema: data; Owner: postgres
+--
+
+CREATE INDEX analysis_complete_external_building_id_idx ON data.analysis_complete USING btree (external_building_id);
 
 
 --

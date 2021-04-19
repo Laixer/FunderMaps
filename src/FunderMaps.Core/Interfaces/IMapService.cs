@@ -8,6 +8,12 @@ namespace FunderMaps.Core.Interfaces
     public interface IMapService
     {
         /// <summary>
+        ///     Delete dataset from mapping service.
+        /// </summary>
+        /// <param name="datasetName">The dataset name.</param>
+        Task<bool> DeleteDatasetAsync(string datasetName);
+
+        /// <summary>
         ///     Upload dataset to mapping service.
         /// </summary>
         /// <param name="datasetName">The dataset name.</param>
