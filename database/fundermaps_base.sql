@@ -4022,7 +4022,7 @@ COMMENT ON TABLE geocoder.state IS 'Contains all states in our own format.';
 
 
 --
--- Name: analysis_building; Type: VIEW; Schema: maplayer; Owner: postgres
+-- Name: analysis_building; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
 CREATE VIEW maplayer.analysis_building AS
@@ -4035,10 +4035,10 @@ CREATE VIEW maplayer.analysis_building AS
    FROM data.analysis_complete ac;
 
 
-ALTER TABLE maplayer.analysis_building OWNER TO postgres;
+ALTER TABLE maplayer.analysis_building OWNER TO fundermaps;
 
 --
--- Name: analysis_foundation; Type: VIEW; Schema: maplayer; Owner: postgres
+-- Name: analysis_foundation; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
 CREATE VIEW maplayer.analysis_foundation AS
@@ -4050,10 +4050,10 @@ CREATE VIEW maplayer.analysis_foundation AS
    FROM data.analysis_complete ac;
 
 
-ALTER TABLE maplayer.analysis_foundation OWNER TO postgres;
+ALTER TABLE maplayer.analysis_foundation OWNER TO fundermaps;
 
 --
--- Name: analysis_quality; Type: VIEW; Schema: maplayer; Owner: postgres
+-- Name: analysis_quality; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
 CREATE VIEW maplayer.analysis_quality AS
@@ -4069,10 +4069,10 @@ CREATE VIEW maplayer.analysis_quality AS
    FROM data.analysis_complete ac;
 
 
-ALTER TABLE maplayer.analysis_quality OWNER TO postgres;
+ALTER TABLE maplayer.analysis_quality OWNER TO fundermaps;
 
 --
--- Name: analysis_report; Type: VIEW; Schema: maplayer; Owner: postgres
+-- Name: analysis_report; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
 CREATE VIEW maplayer.analysis_report AS
@@ -4086,7 +4086,7 @@ CREATE VIEW maplayer.analysis_report AS
    FROM data.analysis_complete ac;
 
 
-ALTER TABLE maplayer.analysis_report OWNER TO postgres;
+ALTER TABLE maplayer.analysis_report OWNER TO fundermaps;
 
 --
 -- Name: building_built_year; Type: VIEW; Schema: maplayer; Owner: fundermaps
@@ -6481,6 +6481,34 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.state TO fundermaps_webapp;
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.state TO fundermaps_webservice;
 GRANT SELECT,REFERENCES ON TABLE geocoder.state TO fundermaps_portal;
 GRANT SELECT,REFERENCES ON TABLE geocoder.state TO fundermaps_batch;
+
+
+--
+-- Name: TABLE analysis_building; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.analysis_building TO fundermaps_batch;
+
+
+--
+-- Name: TABLE analysis_foundation; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.analysis_foundation TO fundermaps_batch;
+
+
+--
+-- Name: TABLE analysis_quality; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.analysis_quality TO fundermaps_batch;
+
+
+--
+-- Name: TABLE analysis_report; Type: ACL; Schema: maplayer; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE maplayer.analysis_report TO fundermaps_batch;
 
 
 --
