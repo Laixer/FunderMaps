@@ -4089,89 +4089,6 @@ CREATE VIEW maplayer.analysis_report AS
 ALTER TABLE maplayer.analysis_report OWNER TO fundermaps;
 
 --
--- Name: building_built_year; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.building_built_year AS
- SELECT ba.id,
-    ba.geom,
-    (date_part('year'::text, COALESCE((( SELECT is2.built_year
-           FROM ((geocoder.address addr
-             JOIN report.inquiry_sample is2 ON (((is2.address)::text = (addr.id)::text)))
-             JOIN report.inquiry i ON ((i.id = is2.inquiry)))
-          WHERE (((ba.id)::text = (addr.building_id)::text) AND (i.document_date > (ba.built_year)::date))
-          ORDER BY COALESCE(is2.update_date, is2.create_date) DESC
-         LIMIT 1))::date, (ba.built_year)::date)))::integer AS built_year
-   FROM geocoder.building_active ba;
-
-
-ALTER TABLE maplayer.building_built_year OWNER TO fundermaps;
-
---
--- Name: building_height; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.building_height AS
- SELECT ba.id,
-    ba.geom,
-    bh.height AS building_height
-   FROM (geocoder.building_active ba
-     JOIN data.building_height bh ON (((ba.id)::text = (bh.building_id)::text)));
-
-
-ALTER TABLE maplayer.building_height OWNER TO fundermaps;
-
---
--- Name: building_hotspot; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.building_hotspot AS
- WITH building_hotspot_rank AS (
-         SELECT ris.id,
-            ab.geom,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY i.document_date DESC) AS rank
-           FROM (((report.inquiry_sample ris
-             JOIN geocoder.address_building ab ON (((ris.address)::text = (ab.address_id)::text)))
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-             JOIN data.subsidence s ON (((s.building_id)::text = (ris.address)::text)))
-          WHERE (((ris.overall_quality = ANY (ARRAY['bad'::report.foundation_quality, 'mediocre'::report.foundation_quality, 'mediocre_bad'::report.foundation_quality])) OR (date_part('years'::text, age((
-                CASE ris.enforcement_term
-                    WHEN 'term05'::report.enforcement_term THEN (i.document_date + '5 years'::interval)
-                    WHEN 'term510'::report.enforcement_term THEN (i.document_date + '10 years'::interval)
-                    WHEN 'term1020'::report.enforcement_term THEN (i.document_date + '20 years'::interval)
-                    WHEN 'term5'::report.enforcement_term THEN (i.document_date + '5 years'::interval)
-                    WHEN 'term10'::report.enforcement_term THEN (i.document_date + '10 years'::interval)
-                    WHEN 'term15'::report.enforcement_term THEN (i.document_date + '15 years'::interval)
-                    WHEN 'term20'::report.enforcement_term THEN (i.document_date + '20 years'::interval)
-                    WHEN 'term25'::report.enforcement_term THEN (i.document_date + '25 years'::interval)
-                    WHEN 'term30'::report.enforcement_term THEN (i.document_date + '30 years'::interval)
-                    WHEN 'term40'::report.enforcement_term THEN (i.document_date + '40 years'::interval)
-                    ELSE NULL::timestamp without time zone
-                END)::timestamp with time zone, CURRENT_TIMESTAMP)) < (5)::double precision)) AND (s.velocity < ('-2'::integer)::double precision))
-        )
- SELECT ik.id,
-    ik.geom
-   FROM building_hotspot_rank ik
-  WHERE (ik.rank = 1);
-
-
-ALTER TABLE maplayer.building_hotspot OWNER TO fundermaps;
-
---
--- Name: building_ownership; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.building_ownership AS
- SELECT bo.building_id AS id,
-    bo.owner,
-    ba.geom
-   FROM (data.building_ownership bo
-     JOIN geocoder.building_active ba ON (((bo.building_id)::text = (ba.id)::text)));
-
-
-ALTER TABLE maplayer.building_ownership OWNER TO fundermaps;
-
---
 -- Name: bundle; Type: TABLE; Schema: maplayer; Owner: fundermaps
 --
 
@@ -4187,43 +4104,6 @@ CREATE TABLE maplayer.bundle (
 
 
 ALTER TABLE maplayer.bundle OWNER TO fundermaps;
-
---
--- Name: foundation_indicative; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.foundation_indicative AS
- SELECT afi.id,
-    afi.geom,
-    afi.foundation_type
-   FROM data.analysis_foundation_indicative afi
-  WHERE (NOT ((afi.id)::text IN ( SELECT addr.building_id
-           FROM (((report.inquiry_sample ris
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
-          WHERE ((ris.foundation_type IS NOT NULL) AND (i.document_date > (ba.built_year)::date))
-        UNION
-         SELECT addr.building_id
-           FROM (report.recovery_sample rs
-             JOIN geocoder.address addr ON (((rs.address)::text = (addr.id)::text)))
-          WHERE (addr.building_id IS NOT NULL))));
-
-
-ALTER TABLE maplayer.foundation_indicative OWNER TO fundermaps;
-
---
--- Name: foundation_risk; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.foundation_risk AS
- SELECT afr.id,
-    afr.geom,
-    afr.foundation_risk
-   FROM data.analysis_foundation_risk afr;
-
-
-ALTER TABLE maplayer.foundation_risk OWNER TO fundermaps;
 
 --
 -- Name: incident; Type: VIEW; Schema: maplayer; Owner: fundermaps
@@ -4293,156 +4173,6 @@ CREATE VIEW maplayer.incident_aggregate_category AS
 ALTER TABLE maplayer.incident_aggregate_category OWNER TO fundermaps;
 
 --
--- Name: inquiry; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.inquiry AS
- WITH inquiry_rank AS (
-         SELECT ris.id,
-            i.id AS inquiry_id,
-            i.type,
-            ba.geom,
-            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
-           FROM (((report.inquiry_sample ris
-             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE (i.document_date > (ba.built_year)::date)
-        )
- SELECT ik.id,
-    ik.inquiry_id,
-    ik.type,
-    ik.geom
-   FROM inquiry_rank ik
-  WHERE (ik.rank = 1);
-
-
-ALTER TABLE maplayer.inquiry OWNER TO fundermaps;
-
---
--- Name: inquiry_sample_damage_cause; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.inquiry_sample_damage_cause AS
- WITH inquiry_sample_rank AS (
-         SELECT ris.id,
-            i.id AS inquiry_id,
-            ba.geom,
-            ris.damage_cause,
-            ris.foundation_type,
-            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
-           FROM (((report.inquiry_sample ris
-             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE (i.document_date > (ba.built_year)::date)
-        )
- SELECT ik.id,
-    ik.inquiry_id,
-    ik.geom,
-    ik.damage_cause
-   FROM inquiry_sample_rank ik
-  WHERE (ik.rank = 1);
-
-
-ALTER TABLE maplayer.inquiry_sample_damage_cause OWNER TO fundermaps;
-
---
--- Name: inquiry_sample_enforcement_term; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.inquiry_sample_enforcement_term AS
- WITH inquiry_sample_rank AS (
-         SELECT ris.id,
-            i.id AS inquiry_id,
-            ba.geom,
-            date_part('years'::text, age((
-                CASE ris.enforcement_term
-                    WHEN 'term05'::report.enforcement_term THEN (i.document_date + '5 years'::interval)
-                    WHEN 'term510'::report.enforcement_term THEN (i.document_date + '10 years'::interval)
-                    WHEN 'term1020'::report.enforcement_term THEN (i.document_date + '20 years'::interval)
-                    WHEN 'term5'::report.enforcement_term THEN (i.document_date + '5 years'::interval)
-                    WHEN 'term10'::report.enforcement_term THEN (i.document_date + '10 years'::interval)
-                    WHEN 'term15'::report.enforcement_term THEN (i.document_date + '15 years'::interval)
-                    WHEN 'term20'::report.enforcement_term THEN (i.document_date + '20 years'::interval)
-                    WHEN 'term25'::report.enforcement_term THEN (i.document_date + '25 years'::interval)
-                    WHEN 'term30'::report.enforcement_term THEN (i.document_date + '30 years'::interval)
-                    WHEN 'term40'::report.enforcement_term THEN (i.document_date + '40 years'::interval)
-                    ELSE NULL::timestamp without time zone
-                END)::timestamp with time zone, CURRENT_TIMESTAMP)) AS enforcement_term,
-            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
-           FROM (((report.inquiry_sample ris
-             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE ((ris.enforcement_term IS NOT NULL) AND (i.document_date > (ba.built_year)::date))
-        )
- SELECT ik.id,
-    ik.inquiry_id,
-    ik.geom,
-    ik.enforcement_term
-   FROM inquiry_sample_rank ik
-  WHERE (ik.rank = 1);
-
-
-ALTER TABLE maplayer.inquiry_sample_enforcement_term OWNER TO fundermaps;
-
---
--- Name: inquiry_sample_foundation_type; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.inquiry_sample_foundation_type AS
- WITH inquiry_sample_rank AS (
-         SELECT ris.id,
-            i.id AS inquiry_id,
-            ba.geom,
-            ris.foundation_type,
-            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
-           FROM (((report.inquiry_sample ris
-             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE ((ris.foundation_type IS NOT NULL) AND (NOT ((addr.id)::text IN ( SELECT recovery_sample.address
-                   FROM report.recovery_sample))) AND (i.document_date > (ba.built_year)::date))
-        )
- SELECT ik.id,
-    ik.inquiry_id,
-    ik.geom,
-    ik.foundation_type
-   FROM inquiry_sample_rank ik
-  WHERE (ik.rank = 1);
-
-
-ALTER TABLE maplayer.inquiry_sample_foundation_type OWNER TO fundermaps;
-
---
--- Name: inquiry_sample_quality; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.inquiry_sample_quality AS
- WITH inquiry_sample_rank AS (
-         SELECT ris.id,
-            i.id AS inquiry_id,
-            ba.geom,
-            ris.overall_quality,
-            row_number() OVER (PARTITION BY ba.id ORDER BY i.document_date DESC) AS rank
-           FROM (((report.inquiry_sample ris
-             JOIN geocoder.address addr ON (((ris.address)::text = (addr.id)::text)))
-             JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)))
-             JOIN report.inquiry i ON ((i.id = ris.inquiry)))
-          WHERE ((ris.overall_quality IS NOT NULL) AND (i.document_date > (ba.built_year)::date))
-        )
- SELECT ik.id,
-    ik.inquiry_id,
-    ik.geom,
-    ik.overall_quality
-   FROM inquiry_sample_rank ik
-  WHERE (ik.rank = 1);
-
-
-ALTER TABLE maplayer.inquiry_sample_quality OWNER TO fundermaps;
-
---
 -- Name: layer; Type: TABLE; Schema: maplayer; Owner: fundermaps
 --
 
@@ -4456,102 +4186,6 @@ CREATE TABLE maplayer.layer (
 
 
 ALTER TABLE maplayer.layer OWNER TO fundermaps;
-
---
--- Name: recovery; Type: TABLE; Schema: report; Owner: fundermaps
---
-
-CREATE TABLE report.recovery (
-    id integer NOT NULL,
-    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date timestamp with time zone,
-    delete_date timestamp with time zone,
-    note text,
-    attribution integer NOT NULL,
-    access_policy application.access_policy DEFAULT 'private'::application.access_policy NOT NULL,
-    type report.recovery_document_type DEFAULT 'unknown'::report.recovery_document_type NOT NULL,
-    document_date date NOT NULL,
-    document_file text NOT NULL,
-    audit_status report.audit_status DEFAULT 'todo'::report.audit_status NOT NULL,
-    document_name text NOT NULL
-);
-
-
-ALTER TABLE report.recovery OWNER TO fundermaps;
-
---
--- Name: TABLE recovery; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON TABLE report.recovery IS 'Contains recovery operations.';
-
-
---
--- Name: COLUMN recovery.create_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.create_date IS 'Timestamp of record creation, set by insert';
-
-
---
--- Name: COLUMN recovery.update_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.update_date IS 'Timestamp of last record update, automatically updated on record modification';
-
-
---
--- Name: COLUMN recovery.delete_date; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.delete_date IS 'Timestamp of soft delete';
-
-
---
--- Name: COLUMN recovery.document_name; Type: COMMENT; Schema: report; Owner: fundermaps
---
-
-COMMENT ON COLUMN report.recovery.document_name IS 'User provided document name';
-
-
---
--- Name: recovery_sample_type; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.recovery_sample_type AS
- WITH recovery_sample_rank AS (
-         SELECT rs.id,
-            r.id AS recovery_id,
-            ab.geom,
-            rs.type,
-            row_number() OVER (PARTITION BY ab.building_id ORDER BY r.document_date DESC) AS rank
-           FROM ((report.recovery_sample rs
-             JOIN geocoder.address_building ab ON (((rs.address)::text = (ab.address_id)::text)))
-             JOIN report.recovery r ON ((rs.recovery = r.id)))
-        )
- SELECT rk.id,
-    rk.recovery_id,
-    rk.geom,
-    rk.type
-   FROM recovery_sample_rank rk
-  WHERE (rk.rank = 1);
-
-
-ALTER TABLE maplayer.recovery_sample_type OWNER TO fundermaps;
-
---
--- Name: subsidence; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.subsidence AS
- SELECT s.building_id AS id,
-    s.velocity,
-    ba.geom
-   FROM (data.subsidence s
-     JOIN geocoder.building_active ba ON (((s.building_id)::text = (ba.id)::text)));
-
-
-ALTER TABLE maplayer.subsidence OWNER TO fundermaps;
 
 --
 -- Name: subsidence_hex; Type: VIEW; Schema: maplayer; Owner: fundermaps
@@ -4621,6 +4255,63 @@ ALTER TABLE report.inquiry_sample_id_seq OWNER TO fundermaps;
 --
 
 ALTER SEQUENCE report.inquiry_sample_id_seq OWNED BY report.inquiry_sample.id;
+
+
+--
+-- Name: recovery; Type: TABLE; Schema: report; Owner: fundermaps
+--
+
+CREATE TABLE report.recovery (
+    id integer NOT NULL,
+    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    update_date timestamp with time zone,
+    delete_date timestamp with time zone,
+    note text,
+    attribution integer NOT NULL,
+    access_policy application.access_policy DEFAULT 'private'::application.access_policy NOT NULL,
+    type report.recovery_document_type DEFAULT 'unknown'::report.recovery_document_type NOT NULL,
+    document_date date NOT NULL,
+    document_file text NOT NULL,
+    audit_status report.audit_status DEFAULT 'todo'::report.audit_status NOT NULL,
+    document_name text NOT NULL
+);
+
+
+ALTER TABLE report.recovery OWNER TO fundermaps;
+
+--
+-- Name: TABLE recovery; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON TABLE report.recovery IS 'Contains recovery operations.';
+
+
+--
+-- Name: COLUMN recovery.create_date; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.create_date IS 'Timestamp of record creation, set by insert';
+
+
+--
+-- Name: COLUMN recovery.update_date; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.update_date IS 'Timestamp of last record update, automatically updated on record modification';
+
+
+--
+-- Name: COLUMN recovery.delete_date; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.delete_date IS 'Timestamp of soft delete';
+
+
+--
+-- Name: COLUMN recovery.document_name; Type: COMMENT; Schema: report; Owner: fundermaps
+--
+
+COMMENT ON COLUMN report.recovery.document_name IS 'User provided document name';
 
 
 --
@@ -6512,53 +6203,11 @@ GRANT SELECT ON TABLE maplayer.analysis_report TO fundermaps_batch;
 
 
 --
--- Name: TABLE building_built_year; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.building_built_year TO fundermaps_batch;
-
-
---
--- Name: TABLE building_height; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.building_height TO fundermaps_batch;
-
-
---
--- Name: TABLE building_hotspot; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.building_hotspot TO fundermaps_batch;
-
-
---
--- Name: TABLE building_ownership; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.building_ownership TO fundermaps_batch;
-
-
---
 -- Name: TABLE bundle; Type: ACL; Schema: maplayer; Owner: fundermaps
 --
 
 GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_batch;
 GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_webapp;
-
-
---
--- Name: TABLE foundation_indicative; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.foundation_indicative TO fundermaps_batch;
-
-
---
--- Name: TABLE foundation_risk; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.foundation_risk TO fundermaps_batch;
 
 
 --
@@ -6583,67 +6232,11 @@ GRANT SELECT ON TABLE maplayer.incident_aggregate_category TO fundermaps_batch;
 
 
 --
--- Name: TABLE inquiry; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.inquiry TO fundermaps_batch;
-
-
---
--- Name: TABLE inquiry_sample_damage_cause; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.inquiry_sample_damage_cause TO fundermaps_batch;
-
-
---
--- Name: TABLE inquiry_sample_enforcement_term; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.inquiry_sample_enforcement_term TO fundermaps_batch;
-
-
---
--- Name: TABLE inquiry_sample_foundation_type; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.inquiry_sample_foundation_type TO fundermaps_batch;
-
-
---
--- Name: TABLE inquiry_sample_quality; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.inquiry_sample_quality TO fundermaps_batch;
-
-
---
 -- Name: TABLE layer; Type: ACL; Schema: maplayer; Owner: fundermaps
 --
 
 GRANT SELECT ON TABLE maplayer.layer TO fundermaps_batch;
 GRANT SELECT ON TABLE maplayer.layer TO fundermaps_webapp;
-
-
---
--- Name: TABLE recovery; Type: ACL; Schema: report; Owner: fundermaps
---
-
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.recovery TO fundermaps_webapp;
-
-
---
--- Name: TABLE recovery_sample_type; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.recovery_sample_type TO fundermaps_batch;
-
-
---
--- Name: TABLE subsidence; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.subsidence TO fundermaps_batch;
 
 
 --
@@ -6677,6 +6270,13 @@ GRANT SELECT,USAGE ON SEQUENCE report.inquiry_id_seq TO fundermaps_webservice;
 GRANT ALL ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webapp;
 GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_webservice;
 GRANT SELECT,USAGE ON SEQUENCE report.inquiry_sample_id_seq TO fundermaps_portal;
+
+
+--
+-- Name: TABLE recovery; Type: ACL; Schema: report; Owner: fundermaps
+--
+
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.recovery TO fundermaps_webapp;
 
 
 --
