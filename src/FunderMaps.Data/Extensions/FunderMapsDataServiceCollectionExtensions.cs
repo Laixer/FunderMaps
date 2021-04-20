@@ -72,12 +72,10 @@ namespace Microsoft.Extensions.DependencyInjection
             // NOTE: Keep the order in which they are directory listed
             services.AddContextRepository<IAddressRepository, AddressRepository>();
             services.AddContextRepository<IAnalysisRepository, AnalysisRepository>();
-            services.AddContextRepository<IBundleRepository, BundleRepository>();
             services.AddContextRepository<IContactRepository, ContactRepository>();
             services.AddContextRepository<IIncidentRepository, IncidentRepository>();
             services.AddContextRepository<IInquiryRepository, InquiryRepository>();
             services.AddContextRepository<IInquirySampleRepository, InquirySampleRepository>();
-            services.AddContextRepository<ILayerRepository, LayerRepository>();
             services.AddContextRepository<IOrganizationProposalRepository, OrganizationProposalRepository>();
             services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
             services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();
