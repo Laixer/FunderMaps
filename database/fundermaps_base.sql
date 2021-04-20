@@ -3443,7 +3443,7 @@ CREATE VIEW geocoder.address_building AS
 ALTER TABLE geocoder.address_building OWNER TO fundermaps;
 
 --
--- Name: analysis_complete; Type: MATERIALIZED VIEW; Schema: data; Owner: postgres
+-- Name: analysis_complete; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
 CREATE MATERIALIZED VIEW data.analysis_complete AS
@@ -3675,7 +3675,7 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
   WITH NO DATA;
 
 
-ALTER TABLE data.analysis_complete OWNER TO postgres;
+ALTER TABLE data.analysis_complete OWNER TO fundermaps;
 
 --
 -- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
@@ -4955,28 +4955,28 @@ CREATE UNIQUE INDEX user_normalized_email_idx ON application."user" USING btree 
 
 
 --
--- Name: analysis_complete_address_idx; Type: INDEX; Schema: data; Owner: postgres
+-- Name: analysis_complete_address_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
 CREATE UNIQUE INDEX analysis_complete_address_idx ON data.analysis_complete USING btree (address_id);
 
 
 --
--- Name: analysis_complete_building_idx; Type: INDEX; Schema: data; Owner: postgres
+-- Name: analysis_complete_building_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
 CREATE INDEX analysis_complete_building_idx ON data.analysis_complete USING btree (building_id);
 
 
 --
--- Name: analysis_complete_external_address_idx; Type: INDEX; Schema: data; Owner: postgres
+-- Name: analysis_complete_external_address_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
 CREATE UNIQUE INDEX analysis_complete_external_address_idx ON data.analysis_complete USING btree (address_external_id);
 
 
 --
--- Name: analysis_complete_external_building_id_idx; Type: INDEX; Schema: data; Owner: postgres
+-- Name: analysis_complete_external_building_id_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
 CREATE INDEX analysis_complete_external_building_id_idx ON data.analysis_complete USING btree (external_building_id);
