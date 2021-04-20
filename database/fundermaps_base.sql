@@ -2436,23 +2436,6 @@ $$;
 ALTER FUNCTION data.get_restoration_cost(foundation_type report.foundation_type, surface_area numeric) OWNER TO fundermaps;
 
 --
--- Name: record_update(); Type: FUNCTION; Schema: maplayer; Owner: fundermaps
---
-
-CREATE FUNCTION maplayer.record_update() RETURNS trigger
-    LANGUAGE plpgsql
-    AS $$
-BEGIN 
-NEW.update_date = CURRENT_TIMESTAMP;
-RETURN NEW;
-END;
-
-$$;
-
-
-ALTER FUNCTION maplayer.record_update() OWNER TO fundermaps;
-
---
 -- Name: fir_generate_id(integer); Type: FUNCTION; Schema: report; Owner: fundermaps
 --
 
@@ -4089,23 +4072,6 @@ CREATE VIEW maplayer.analysis_report AS
 ALTER TABLE maplayer.analysis_report OWNER TO fundermaps;
 
 --
--- Name: bundle; Type: TABLE; Schema: maplayer; Owner: fundermaps
---
-
-CREATE TABLE maplayer.bundle (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    organization_id uuid NOT NULL,
-    name text NOT NULL,
-    create_date timestamp with time zone DEFAULT now() NOT NULL,
-    update_date timestamp with time zone,
-    delete_date timestamp with time zone,
-    layer_configuration jsonb
-);
-
-
-ALTER TABLE maplayer.bundle OWNER TO fundermaps;
-
---
 -- Name: incident; Type: VIEW; Schema: maplayer; Owner: fundermaps
 --
 
@@ -4171,21 +4137,6 @@ CREATE VIEW maplayer.incident_aggregate_category AS
 
 
 ALTER TABLE maplayer.incident_aggregate_category OWNER TO fundermaps;
-
---
--- Name: layer; Type: TABLE; Schema: maplayer; Owner: fundermaps
---
-
-CREATE TABLE maplayer.layer (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    schema_name text NOT NULL,
-    table_name text NOT NULL,
-    name text NOT NULL,
-    markup jsonb
-);
-
-
-ALTER TABLE maplayer.layer OWNER TO fundermaps;
 
 --
 -- Name: subsidence_hex; Type: VIEW; Schema: maplayer; Owner: fundermaps
@@ -4559,22 +4510,6 @@ ALTER TABLE ONLY geocoder.neighborhood
 
 ALTER TABLE ONLY geocoder.state
     ADD CONSTRAINT state_pkey PRIMARY KEY (id);
-
-
---
--- Name: bundle bundle_pkey; Type: CONSTRAINT; Schema: maplayer; Owner: fundermaps
---
-
-ALTER TABLE ONLY maplayer.bundle
-    ADD CONSTRAINT bundle_pkey PRIMARY KEY (id);
-
-
---
--- Name: layer layer_pkey; Type: CONSTRAINT; Schema: maplayer; Owner: fundermaps
---
-
-ALTER TABLE ONLY maplayer.layer
-    ADD CONSTRAINT layer_pkey PRIMARY KEY (id);
 
 
 --
@@ -5038,13 +4973,6 @@ CREATE TRIGGER set_normalized_email BEFORE INSERT OR UPDATE ON application."user
 
 
 --
--- Name: bundle bundle_trigger_update; Type: TRIGGER; Schema: maplayer; Owner: fundermaps
---
-
-CREATE TRIGGER bundle_trigger_update BEFORE UPDATE ON maplayer.bundle FOR EACH ROW EXECUTE FUNCTION maplayer.record_update();
-
-
---
 -- Name: incident update_date_record; Type: TRIGGER; Schema: report; Owner: fundermaps
 --
 
@@ -5229,14 +5157,6 @@ ALTER TABLE ONLY geocoder.neighborhood
 
 ALTER TABLE ONLY geocoder.state
     ADD CONSTRAINT state_country_fk FOREIGN KEY (country_id) REFERENCES geocoder.country(id);
-
-
---
--- Name: bundle bundle_organization_fk; Type: FK CONSTRAINT; Schema: maplayer; Owner: fundermaps
---
-
-ALTER TABLE ONLY maplayer.bundle
-    ADD CONSTRAINT bundle_organization_fk FOREIGN KEY (organization_id) REFERENCES application.organization(id);
 
 
 --
@@ -6203,14 +6123,6 @@ GRANT SELECT ON TABLE maplayer.analysis_report TO fundermaps_batch;
 
 
 --
--- Name: TABLE bundle; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_batch;
-GRANT SELECT ON TABLE maplayer.bundle TO fundermaps_webapp;
-
-
---
 -- Name: TABLE incident; Type: ACL; Schema: maplayer; Owner: fundermaps
 --
 
@@ -6229,14 +6141,6 @@ GRANT SELECT ON TABLE maplayer.incident_aggregate TO fundermaps_batch;
 --
 
 GRANT SELECT ON TABLE maplayer.incident_aggregate_category TO fundermaps_batch;
-
-
---
--- Name: TABLE layer; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.layer TO fundermaps_batch;
-GRANT SELECT ON TABLE maplayer.layer TO fundermaps_webapp;
 
 
 --
