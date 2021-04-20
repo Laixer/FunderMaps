@@ -70,17 +70,20 @@ namespace FunderMaps.Core.MapBundle.Jobs
                         {
                             bool success = await _mapService.UploadDatasetAsync(layer, fileDump.ToString());
 
-                            Logger.LogInformation($"Upload layer: {layer}, success: {success}");
+                            Logger.LogDebug($"Upload layer: {layer}, success: {success}");
                         }
 
                         File.Delete(fileDump.ToString());
                     }
                 }
 
+                if (await _mapService.PublishAsync(layer))
                 {
-                    bool success = await _mapService.PublishAsync(layer);
-
-                    Logger.LogInformation($"Pulish layer: {layer}, success: {success}");
+                    Logger.LogInformation($"Layer {layer} published with success");
+                }
+                else
+                {
+                    Logger.LogError($"Layer {layer} was not published");
                 }
             }
         }
