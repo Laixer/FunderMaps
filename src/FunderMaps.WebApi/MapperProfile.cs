@@ -14,7 +14,6 @@ namespace FunderMaps.WebApi
         /// </summary>
         public MapperProfile()
         {
-            CreateMap<Bundle, BundleDto>();
             CreateMap<Organization, ContractorDto>();
             CreateMap<Inquiry, InquiryDto>().ReverseMap();
             // FUTURE: Try and map nested objects in a cleaner way
@@ -29,7 +28,6 @@ namespace FunderMaps.WebApi
                 .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
                 .ReverseMap();
             CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
-            CreateMap<Layer, LayerDto>();
             CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
             CreateMap<Project, ProjectDto>().ReverseMap();
             // FUTURE: Try and map nested objects in a cleaner way
