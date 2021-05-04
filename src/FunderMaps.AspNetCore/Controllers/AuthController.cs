@@ -3,6 +3,7 @@ using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -32,9 +33,13 @@ namespace FunderMaps.AspNetCore.Controllers
         /// <summary>
         ///     User sign in endpoint.
         /// </summary>
+        /// <response code="200">Returns the security token on success.</response>
+        /// <response code="401">When authentication failed.</response>
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<IActionResult> SignInAsync([FromBody] SignInDto input)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<SignInSecurityTokenDto>> SignInAsync([FromBody] SignInDto input)
         {
             // Act.
             TokenContext context = await _signInService.PasswordSignInAsync(input.Email, input.Password);
@@ -50,8 +55,12 @@ namespace FunderMaps.AspNetCore.Controllers
         /// <summary>
         ///     Refresh access token for user.
         /// </summary>
+        /// <response code="200">Returns the security token on success.</response>
+        /// <response code="401">When authentication failed.</response>
         [HttpGet("token-refresh")]
-        public async Task<IActionResult> RefreshSignInAsync()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<SignInSecurityTokenDto>> RefreshSignInAsync()
         {
             // Act.
             TokenContext context = await _signInService.SignInAsync(User);

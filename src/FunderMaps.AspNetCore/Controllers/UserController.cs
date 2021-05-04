@@ -5,6 +5,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -43,7 +44,9 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     Return session user.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<UserDto>> GetAsync()
         {
             // Act.
             User sessionUser = await _userRepository.GetByIdAsync(_appContext.UserId);
@@ -60,6 +63,8 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     Update session user user.
         /// </summary>
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> UpdateAsync([FromBody] UserDto input)
         {
             // Map.
@@ -78,6 +83,8 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     Set password for session user.
         /// </summary>
         [HttpPost("change-password")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
         {
             // Act.

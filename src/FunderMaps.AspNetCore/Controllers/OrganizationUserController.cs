@@ -5,6 +5,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,9 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPost]
-        public async Task<IActionResult> AddUserAsync([FromBody] OrganizationUserPasswordDto input)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<UserDto>> AddUserAsync([FromBody] OrganizationUserPasswordDto input)
         {
             // Map.
             var user = _mapper.Map<User>(input);
@@ -75,7 +78,9 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     Get all users in the session organization.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAllUserAsync([FromQuery] PaginationDto pagination)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<List<OrganizationUserDto>>> GetAllUserAsync([FromQuery] PaginationDto pagination)
         {
             // Act.
             // TODO: FIX: This is ugly.
@@ -98,6 +103,8 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPut("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto input)
         {
             // Map.
@@ -122,6 +129,8 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPost("{id:guid}/change-organization-role")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, [FromBody] ChangeOrganizationRoleDto input)
         {
             // Act.
@@ -143,6 +152,8 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPost("{id:guid}/change-password")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ChangePasswordDto input)
         {
             // Act.
@@ -165,6 +176,8 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpDelete("{id:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> DeleteUserAsync(Guid id)
         {
             // Act.

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
 namespace FunderMaps.AspNetCore.Controllers
 {
@@ -27,7 +27,7 @@ namespace FunderMaps.AspNetCore.Controllers
 
             return Problem(
                 title: "Application was unable to process the request.",
-                statusCode: (int)HttpStatusCode.InternalServerError);
+                statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 }
