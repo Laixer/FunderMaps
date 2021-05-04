@@ -7,7 +7,7 @@
     <UserSecretsId>0fffba0d-f307-443e-a70d-f0841e04f02f</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <DocumentationFile>$(SolutionDir)DocumentationFunderMapsPortal.xml</DocumentationFile>
   </PropertyGroup>
 

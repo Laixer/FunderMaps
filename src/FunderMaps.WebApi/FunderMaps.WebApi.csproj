@@ -7,7 +7,7 @@
     <UserSecretsId>aspnet-FunderMaps-1BA92925-643A-4F0A-817C-62E1B7DBC479</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <DocumentationFile>$(SolutionDir)DocumentationFunderMapsWebApi.xml</DocumentationFile>
   </PropertyGroup>
 
