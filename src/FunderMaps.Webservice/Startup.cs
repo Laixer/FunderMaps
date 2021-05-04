@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
@@ -58,7 +59,12 @@ namespace FunderMaps.Webservice
                 // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
                 options.SchemaFilter<EnumSchemaFilter>();
                 options.UseOneOfForPolymorphism();
-                options.IncludeXmlComments($"{AppContext.BaseDirectory}DocumentationFunderMapsWebservice.xml");
+
+                string DocumentationFile = $"{AppContext.BaseDirectory}DocumentationFunderMapsWebservice.xml";
+                if (File.Exists(DocumentationFile))
+                {
+                    options.IncludeXmlComments(DocumentationFile);
+                }
             });
 
             // Register components from reference assemblies.
