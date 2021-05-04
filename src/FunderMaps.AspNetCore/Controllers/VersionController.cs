@@ -21,7 +21,7 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     backend is responding.
         /// </remarks>
         [HttpGet("version"), ResponseCache(Duration = 60 * 60 * 24)]
-        public IActionResult Get()
+        public ActionResult<AppVersionDto> Get()
             => Ok(new AppVersionDto
             {
                 Name = Constants.ApplicationName,

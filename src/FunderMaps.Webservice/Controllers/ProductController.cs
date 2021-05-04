@@ -3,11 +3,11 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.InputModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
@@ -57,8 +57,10 @@ namespace FunderMaps.Webservice.Controllers
         ///     Request an analysis product.
         /// </summary>
         [HttpGet("analysis")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]
-        public async Task<IActionResult> GetProductAnalysisAsync([FromQuery] AnalysisInputModel input)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ResponseWrapper<AnalysisDto>>> GetProductAnalysisAsync([FromQuery] AnalysisInputModel input)
         {
             // Assign.
             IAsyncEnumerable<AnalysisProduct> productList = _productService.GetAnalysisAsync(input.Product.Value, input.Id);
@@ -75,8 +77,10 @@ namespace FunderMaps.Webservice.Controllers
         ///     Request statistics product.
         /// </summary>
         [HttpGet("statistics")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]
-        public async Task<IActionResult> GetProducitStatisticsAsync([FromQuery][Required] string id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetProducitStatisticsAsync([FromQuery][Required] string id)
         {
             // Assign.
             IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);

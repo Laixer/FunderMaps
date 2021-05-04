@@ -3,6 +3,7 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -39,7 +40,9 @@ namespace FunderMaps.AspNetCore.Controllers
         ///     Return session organization.
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAsync()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult<OrganizationDto>> GetAsync()
         {
             // Act.
             Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
@@ -57,6 +60,8 @@ namespace FunderMaps.AspNetCore.Controllers
         /// </summary>
         [Authorize(Policy = "SuperuserPolicy")]
         [HttpPut]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> UpdateAsync([FromBody] OrganizationDto input)
         {
             // Map.

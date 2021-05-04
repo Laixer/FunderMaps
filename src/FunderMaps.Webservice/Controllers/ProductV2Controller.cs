@@ -2,11 +2,11 @@ using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
@@ -43,8 +43,10 @@ namespace FunderMaps.Webservice.Controllers
         ///     Request an analysis product.
         /// </summary>
         [HttpGet("analysis")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]
-        public async Task<IActionResult> GetProductAnalysisAsync([FromQuery] string id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<AnalysisV2Dto>>> GetProductAnalysisAsync([FromQuery] string id)
         {
             // Assign.
             IAsyncEnumerable<AnalysisProduct2> productList = _productService.GetAnalysis2Async(id);
@@ -61,8 +63,10 @@ namespace FunderMaps.Webservice.Controllers
         ///     Request statistics product.
         /// </summary>
         [HttpGet("statistics")]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ResponseWrapper<AnalysisDto>))]
-        public async Task<IActionResult> GetProducitStatisticsAsync([FromQuery][Required] string id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetProducitStatisticsAsync([FromQuery][Required] string id)
         {
             // Assign.
             IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);

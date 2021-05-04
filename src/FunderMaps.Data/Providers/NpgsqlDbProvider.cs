@@ -1,5 +1,4 @@
 using FunderMaps.Core.Types;
-using FunderMaps.Core.Types.MapLayer;
 using FunderMaps.Core.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
