@@ -1,3 +1,4 @@
+using System;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.OpenApi.Models;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -39,6 +39,28 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         private void StartupConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new()
+                {
+                    Title = "FunderMaps Webservice",
+                    Version = "v1",
+                    Description = "FunderMaps Webservice REST API",
+                    Contact = new()
+                    {
+                        Name = "Laixer B.V.",
+                        Email = "info@laixer.com",
+                    },
+                }
+                );
+                options.DocumentFilter<BasePathFilter>();
+
+                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+                options.SchemaFilter<EnumSchemaFilter>();
+                options.UseOneOfForPolymorphism();
+                options.IncludeXmlComments($"{AppContext.BaseDirectory}DocumentationFunderMapsWebservice.xml");
+            });
+
             // Register components from reference assemblies.
             services.AddFunderMapsDataServices("FunderMapsConnection");
 
@@ -63,24 +85,6 @@ namespace FunderMaps.Webservice
         {
             StartupConfigureServices(services);
 
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1",
-                    new OpenApiInfo
-                    {
-                        Title = "FunderMaps Webservice",
-                        Version = "v1",
-                        Description = "FunderMaps REST API",
-                    }
-                );
-                options.DocumentFilter<BasePathFilter>();
-
-                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                options.SchemaFilter<EnumSchemaFilter>();
-                // FUTURE: This call is obsolete.
-                options.UseOneOfForPolymorphism();
-            });
-
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
@@ -89,33 +93,6 @@ namespace FunderMaps.Webservice
                     policy.AllowAnyMethod();
                     policy.AllowAnyOrigin();
                 });
-            });
-        }
-
-        /// <summary>
-        ///     This method gets called by the runtime if environment is set to staging.
-        /// </summary>
-        /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        public void ConfigureStagingServices(IServiceCollection services)
-        {
-            StartupConfigureServices(services);
-
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1",
-                    new OpenApiInfo
-                    {
-                        Title = "FunderMaps Webservice",
-                        Version = "v1",
-                        Description = "FunderMaps REST API",
-                    }
-                );
-                options.DocumentFilter<BasePathFilter>();
-
-                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                options.SchemaFilter<EnumSchemaFilter>();
-                // FUTURE: This call is obsolete.
-                options.UseOneOfForPolymorphism();
             });
         }
 
@@ -207,6 +184,8 @@ namespace FunderMaps.Webservice
             });
 
             app.UseExceptionHandler("/oops");
+
+            app.UseSwagger();
 
             app.UsePathBase(new("/api"));
             app.UseRouting();
