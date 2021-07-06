@@ -32,3 +32,10 @@ REFRESH MATERIALIZED VIEW "data".analysis_foundation_indicative WITH DATA;
 --
 
 REFRESH MATERIALIZED VIEW "data".analysis_foundation_risk WITH DATA;
+
+
+--
+-- Data for Name: analysis_complete; Type: TABLE DATA; Schema: data; Owner: fundermaps
+--
+
+REFRESH MATERIALIZED VIEW "data".analysis_complete WITH DATA;
