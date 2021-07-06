@@ -44,7 +44,7 @@ namespace FunderMaps.Core.Types.Products
         /// <summary>
         ///     Foundation recovery type.
         /// </summary>
-        public RecoveryDocumentType? RecoveryType { get; init; }
+        public RecoveryType? RecoveryType { get; init; }
 
         /// <summary>
         ///     Represents the estimated restoration costs for this building.
