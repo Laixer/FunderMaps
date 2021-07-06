@@ -50,6 +50,28 @@ namespace FunderMaps.Core.Services
         }
 
         /// <summary>
+        ///     Get an analysis product2 and log product hit.
+        /// </summary>
+        /// <param name="input">Input query.</param>
+        public override async IAsyncEnumerable<AnalysisProduct2> GetAnalysis2Async(string input)
+        {
+            int itemCount = 0;
+
+            try
+            {
+                await foreach (var product in base.GetAnalysis2Async(input))
+                {
+                    ++itemCount;
+                    yield return product;
+                }
+            }
+            finally
+            {
+                await _trackingRepository.ProductHitAsync("analysis2", itemCount);
+            }
+        }
+
+        /// <summary>
         ///     Get statistics per region and log product hit.
         /// </summary>
         /// <param name="input">Input query.</param>
