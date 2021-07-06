@@ -39,7 +39,7 @@ namespace FunderMaps.Core.Types.Products
         /// <summary>
         ///     Built year.
         /// </summary>
-        public int ConstructionYear { get; init; }
+        public int? ConstructionYear { get; init; }
 
         /// <summary>
         ///     Foundation recovery type.

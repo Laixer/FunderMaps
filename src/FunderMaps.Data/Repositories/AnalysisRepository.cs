@@ -362,7 +362,7 @@ namespace FunderMaps.Data.Repositories
                 AddressId = reader.GetSafeString(offset++),
                 ExternalAddressId = reader.GetSafeString(offset++),
                 NeighborhoodId = reader.GetSafeString(offset++),
-                ConstructionYear = reader.GetInt(offset++),
+                ConstructionYear = reader.GetSafeInt(offset++),
                 FoundationType = reader.GetFieldValue<FoundationType>(offset++),
                 FoundationTypeReliability = reader.GetFieldValue<Reliability>(offset++),
                 RestorationCosts = reader.GetSafeInt(offset++),
