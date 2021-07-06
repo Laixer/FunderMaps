@@ -19,6 +19,8 @@ namespace FunderMaps.Core.Components
             {
                 string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
                 string when input.StartsWith("NL.IMBAG.PAND", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
+                string when input.StartsWith("NL.IMBAG.LIGPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
+                string when input.StartsWith("NL.IMBAG.STANDPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
                 string when input.StartsWith("NL.IMBAG.NUMMERAANDUIDING", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagAddress,
                 string when input.Length == 10 && input.StartsWith("BU", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsNeighborhood,
                 string when input.Length == 8 && input.StartsWith("WK", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsDistrict,
