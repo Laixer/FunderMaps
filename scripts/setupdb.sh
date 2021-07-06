@@ -5,4 +5,4 @@
 
 set -e
 
-docker run --rm -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 -d postgis/postgis:12-master
+docker run --rm --name fm_local -e POSTGRES_HOST_AUTH_METHOD=trust -p 5432:5432 -d postgis/postgis:12-master
