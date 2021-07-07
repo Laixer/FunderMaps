@@ -40,6 +40,8 @@ namespace FunderMaps.Webservice
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
         private void StartupConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new()
