@@ -11,24 +11,44 @@ namespace FunderMaps.Core.Types
         FunderMaps = 0,
 
         /// <summary>
-        ///     Basis Registratie Gebouwen (BAG) building identifier.
+        ///     Basisregistratie Adressen en Gebouwen (BAG) building identifier.
         /// </summary>
         NlBagBuilding = 1,
 
         /// <summary>
-        ///     Basis Registratie Gebouwen (BAG) address identifier.
+        ///     Basisregistratie Adressen en Gebouwen (BAG) address identifier.
         /// </summary>
         NlBagAddress = 2,
 
         /// <summary>
-        ///     Basis Registratie Gebouwen (BAG) legacy building identifier.
+        ///     Basisregistratie Adressen en Gebouwen (BAG) posting identifier.
+        /// </summary>
+        NlBagPosting = 3,
+
+        /// <summary>
+        ///     Basisregistratie Adressen en Gebouwen (BAG) berth identifier.
+        /// </summary>
+        NlBagBerth = 4,
+
+        /// <summary>
+        ///     Basisregistratie Adressen en Gebouwen (BAG) legacy building identifier.
         /// </summary>
         NlBagLegacyBuilding = 8,
 
         /// <summary>
-        ///     Basis Registratie Gebouwen (BAG) legacy address identifier.
+        ///     Basisregistratie Adressen en Gebouwen (BAG) legacy address identifier.
         /// </summary>
         NlBagLegacyAddress = 9,
+
+        /// <summary>
+        ///     Basisregistratie Adressen en Gebouwen (BAG) legacy posting identifier.
+        /// </summary>
+        NlBagLegacyPosting = 10,
+
+        /// <summary>
+        ///     Basisregistratie Adressen en Gebouwen (BAG) legacy berth identifier.
+        /// </summary>
+        NlBagLegacyBerth = 11,
 
         /// <summary>
         ///     Centraal Bureau Statistiek (CBS) neighborhoor identifier.
