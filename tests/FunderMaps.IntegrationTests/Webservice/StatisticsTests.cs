@@ -32,6 +32,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(returnObject.ItemCount >= 1);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "statistics") > 0);
         }
 
         [Fact]
@@ -47,6 +49,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             // Assert.
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.True(returnObject.ItemCount >= 1);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "statistics") > 0);
         }
 
         [Theory]

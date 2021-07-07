@@ -35,6 +35,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.Count);
             Assert.Equal("NL.IMBAG.LIGPLAATS.0503020000111954", returnObject.First().ExternalBuildingId);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
 
         [Fact]
@@ -51,6 +53,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.Count);
             Assert.Equal("gfm-ac31bec346744745b29f8505dff8182e", returnObject.First().BuildingId);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
 
         [Fact]
@@ -67,6 +71,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.Count);
             Assert.Equal("gfm-ac31bec346744745b29f8505dff8182e", returnObject.First().BuildingId);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
 
         [Fact]
@@ -83,6 +89,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.Count);
             Assert.Equal("gfm-ac31bec346744745b29f8505dff8182e", returnObject.First().BuildingId);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
 
         [Fact]
@@ -99,6 +107,8 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.Equal(1, returnObject.Count);
             Assert.Equal("gfm-ac31bec346744745b29f8505dff8182e", returnObject.First().BuildingId);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
 
         [Theory]
