@@ -80,7 +80,7 @@ namespace FunderMaps.Webservice.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetProducitStatisticsAsync([FromQuery][Required] string id)
+        public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetProductStatisticsAsync([FromQuery][Required] string id)
         {
             // Assign.
             IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);
