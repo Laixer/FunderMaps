@@ -5,4 +5,10 @@
 
 set -e
 
+if [ ! -d "./scripts" ]
+then
+    echo "Run script from the project directory"
+    exit 1
+fi
+
 migra --with-privileges --exclude public --unsafe postgresql://user:password@host/fundermaps postgresql://postgres@localhost/fundermaps > diff.sql

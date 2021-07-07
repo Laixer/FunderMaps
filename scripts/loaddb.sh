@@ -8,6 +8,12 @@
 
 set -e
 
+if [ ! -d "./scripts" ]
+then
+    echo "Run script from the project directory"
+    exit 1
+fi
+
 createuser -h localhost -U postgres -L fundermaps
 createuser -h localhost -U postgres -I fundermaps_batch
 createuser -h localhost -U postgres -I fundermaps_portal

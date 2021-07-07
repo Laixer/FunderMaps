@@ -135,6 +135,8 @@ namespace FunderMaps.Core.Services
             {
                 GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByIdAsync(id)),
                 GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalIdAsync(id)),
+                GeocoderDatasource.NlBagBerth => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalIdAsync(id)),
+                GeocoderDatasource.NlBagPosting => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalIdAsync(id)),
                 GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByAddressExternalIdAsync(id)),
                 _ => throw new InvalidIdentifierException(),
             })
@@ -165,6 +167,8 @@ namespace FunderMaps.Core.Services
             {
                 GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetById2Async(id)),
                 GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalId2Async(id)),
+                GeocoderDatasource.NlBagBerth => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalId2Async(id)),
+                GeocoderDatasource.NlBagPosting => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByExternalId2Async(id)),
                 GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetByAddressExternalId2Async(id)),
                 _ => throw new InvalidIdentifierException(),
             })

@@ -373,7 +373,7 @@ namespace FunderMaps.Data.Repositories
                 DewateringDepthRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
                 DewateringDepthReliability = reader.GetFieldValue<Reliability>(offset++),
                 UnclassifiedRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
-                RecoveryType = reader.GetFieldValue<RecoveryDocumentType?>(offset++),
+                RecoveryType = reader.GetFieldValue<RecoveryType?>(offset++),
             };
     }
 }

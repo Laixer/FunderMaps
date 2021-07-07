@@ -1,6 +1,10 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
+using FunderMaps.Data.Extensions;
 using System;
+using System.Collections.Generic;
+using System.Data.Common;
 using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
@@ -56,5 +60,34 @@ namespace FunderMaps.Data.Repositories
 
             await context.NonQueryAsync();
         }
+
+        /// <summary>
+        ///     Retrieve all product telemetrics.
+        /// </summary>
+        public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
+        {
+            var sql = @"
+                SELECT  -- ProductTelemetry
+                        pt.product,
+                        pt.count
+                FROM    application.product_telemetry AS pt
+                WHERE   pt.organization_id = @tenant";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+            await foreach (var reader in context.EnumerableReaderAsync())
+            {
+                yield return MapFromReader(reader);
+            }
+        }
+
+        public static ProductTelemetry MapFromReader(DbDataReader reader, int offset = 0)
+            => new()
+            {
+                Product = reader.GetString(offset++),
+                Count = reader.GetInt(offset++),
+            };
     }
 }

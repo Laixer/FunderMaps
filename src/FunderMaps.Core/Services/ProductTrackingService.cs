@@ -12,6 +12,7 @@ namespace FunderMaps.Core.Services
     public class ProductTrackingService : ProductService
     {
         private const string statisticsProductName = "statistics";
+        private const string analysisProductName = "analysis2";
 
         private readonly ITelemetryRepository _trackingRepository;
 
@@ -67,7 +68,7 @@ namespace FunderMaps.Core.Services
             }
             finally
             {
-                await _trackingRepository.ProductHitAsync("analysis2", itemCount);
+                await _trackingRepository.ProductHitAsync(analysisProductName, itemCount);
             }
         }
 

@@ -19,8 +19,8 @@ namespace FunderMaps.Core.Components
             {
                 string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
                 string when input.StartsWith("NL.IMBAG.PAND", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
-                string when input.StartsWith("NL.IMBAG.LIGPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
-                string when input.StartsWith("NL.IMBAG.STANDPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
+                string when input.StartsWith("NL.IMBAG.LIGPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBerth,
+                string when input.StartsWith("NL.IMBAG.STANDPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagPosting,
                 string when input.StartsWith("NL.IMBAG.NUMMERAANDUIDING", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagAddress,
                 string when input.Length == 10 && input.StartsWith("BU", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsNeighborhood,
                 string when input.Length == 8 && input.StartsWith("WK", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsDistrict,
@@ -28,8 +28,12 @@ namespace FunderMaps.Core.Components
                 string when input.Length == 4 && input.StartsWith("PV", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsState,
                 string when input.Length == 16 && input.Substring(4, 2) == "10" => GeocoderDatasource.NlBagLegacyBuilding,
                 string when input.Length == 16 && input.Substring(4, 2) == "20" => GeocoderDatasource.NlBagLegacyAddress,
+                string when input.Length == 16 && input.Substring(4, 2) == "02" => GeocoderDatasource.NlBagLegacyBerth,
+                string when input.Length == 16 && input.Substring(4, 2) == "03" => GeocoderDatasource.NlBagLegacyPosting,
                 string when input.Length == 15 && input.Substring(3, 2) == "10" => GeocoderDatasource.NlBagLegacyBuilding,
                 string when input.Length == 15 && input.Substring(3, 2) == "20" => GeocoderDatasource.NlBagLegacyAddress,
+                string when input.Length == 15 && input.Substring(3, 2) == "02" => GeocoderDatasource.NlBagLegacyBerth,
+                string when input.Length == 15 && input.Substring(3, 2) == "03" => GeocoderDatasource.NlBagLegacyPosting,
                 _ => GeocoderDatasource.Unknown,
             };
 
@@ -71,6 +75,28 @@ namespace FunderMaps.Core.Components
                         output = $"NL.IMBAG.NUMMERAANDUIDING.0{output}";
                     }
                     return GeocoderDatasource.NlBagAddress;
+
+                case GeocoderDatasource.NlBagLegacyBerth:
+                    if (input.Length == 16)
+                    {
+                        output = $"NL.IMBAG.LIGPLAATS.{output}";
+                    }
+                    else if (input.Length == 15)
+                    {
+                        output = $"NL.IMBAG.LIGPLAATS.0{output}";
+                    }
+                    return GeocoderDatasource.NlBagBerth;
+
+                case GeocoderDatasource.NlBagLegacyPosting:
+                    if (input.Length == 16)
+                    {
+                        output = $"NL.IMBAG.STANDPLAATS.{output}";
+                    }
+                    else if (input.Length == 15)
+                    {
+                        output = $"NL.IMBAG.STANDPLAATS.0{output}";
+                    }
+                    return GeocoderDatasource.NlBagPosting;
             }
 
             return source;

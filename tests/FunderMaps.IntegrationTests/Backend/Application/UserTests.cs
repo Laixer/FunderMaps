@@ -56,6 +56,26 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         }
 
         [Fact]
+        public async Task UpdateUserPhoneNumberFromSessionReturnNoContent()
+        {
+            // Arrange
+            using var client = Factory.CreateAlterClient();
+            var updateObject = new UserDtoFaker()
+                .RuleFor(f => f.PhoneNumber, f => "+(31) 2234-89-12")
+                .Generate();
+
+            // Act
+            var response = await client.PutAsJsonAsync("api/user", updateObject);
+
+            // Act
+            var returnObject = await client.GetFromJsonAsync<UserDto>("api/user");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal("3122348912", returnObject.PhoneNumber);
+        }
+
+        [Fact]
         public async Task ChangePasswordFromSessionReturnNoContent()
         {
             // Arrange

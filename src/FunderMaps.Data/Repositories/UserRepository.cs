@@ -38,7 +38,7 @@ namespace FunderMaps.Data.Repositories
                     @email,
                     @avatar,
                     NULLIF(trim(@job_title), ''),
-                    @phone_number,
+                    REGEXP_REPLACE(@phone_number,'\D','','g'),
                     @role)
                 RETURNING id";
 
@@ -250,7 +250,7 @@ namespace FunderMaps.Data.Repositories
                         last_name = @last_name,
                         avatar = @avatar,
                         job_title = NULLIF(trim(@job_title), ''),
-                        phone_number = @phone_number,
+                        phone_number = REGEXP_REPLACE(@phone_number,'\D','','g'),
                         role = @role
                 WHERE   id = @id";
 
