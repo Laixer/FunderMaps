@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.DataAnnotations;
-using System;
 
 namespace FunderMaps.Core.Types.Products
 {

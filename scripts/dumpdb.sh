@@ -8,6 +8,12 @@
 
 set -e
 
+if [ ! -d "./scripts" ]
+then
+    echo "Run script from the project directory"
+    exit 1
+fi
+
 pg_dump -h localhost -U postgres -d fundermaps -s -N public -f database/fundermaps_base.sql
 pg_dump -h localhost -U postgres -d fundermaps -a -n application -f database/data/seed_application.sql
 pg_dump -h localhost -U postgres -d fundermaps -a -n geocoder -f database/data/seed_geocoder.sql
