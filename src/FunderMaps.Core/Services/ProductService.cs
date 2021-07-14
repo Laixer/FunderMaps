@@ -178,6 +178,26 @@ namespace FunderMaps.Core.Services
         }
 
         /// <summary>
+        ///     Get risk index on id.
+        /// </summary>
+        /// <param name="input">Input query.</param>
+        public virtual async IAsyncEnumerable<bool> GetRiskIndexAsync(string input)
+        {
+            await foreach (var product in _geocoderParser.FromIdentifier(input, out string id) switch
+            {
+                GeocoderDatasource.FunderMaps => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetRiskIndexByIdAsync(id)),
+                GeocoderDatasource.NlBagBuilding => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetRiskIndexByExternalIdAsync(id)),
+                GeocoderDatasource.NlBagBerth => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetRiskIndexByExternalIdAsync(id)),
+                GeocoderDatasource.NlBagPosting => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetRiskIndexByExternalIdAsync(id)),
+                GeocoderDatasource.NlBagAddress => AsyncEnumerableHelper.AsEnumerable(await _analysisRepository.GetRiskIndexByAddressExternalIdAsync(id)),
+                _ => throw new InvalidIdentifierException(),
+            })
+            {
+                yield return product;
+            }
+        }
+
+        /// <summary>
         ///     Get statistics per region.
         /// </summary>
         /// <param name="input">Input query.</param>

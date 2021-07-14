@@ -1,4 +1,4 @@
-using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.Types.Products;
 using System;
 using System.Collections.Generic;
 
@@ -28,5 +28,11 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="input">Input query.</param>
         IAsyncEnumerable<StatisticsProduct> GetStatisticsAsync(string input);
+
+        /// <summary>
+        ///     Get risk index on id.
+        /// </summary>
+        /// <param name="input">Input query.</param>
+        IAsyncEnumerable<bool> GetRiskIndexAsync(string input);
     }
 }
