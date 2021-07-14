@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types.Products;
+using FunderMaps.Core.Types.Products;
+using System;
 using System.Collections.Generic;
 
 namespace FunderMaps.Core.Interfaces
@@ -13,10 +14,11 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="productType">Product type.</param>
         /// <param name="input">Input query.</param>
+        [Obsolete("GetAnalysisAsync is deprecated, please use GetAnalysis2Async instead.")]
         IAsyncEnumerable<AnalysisProduct> GetAnalysisAsync(AnalysisProductType productType, string input);
 
         /// <summary>
-        ///     Get an analysis product v2.
+        ///     Get the analysis product.
         /// </summary>
         /// <param name="input">Input query.</param>
         IAsyncEnumerable<AnalysisProduct2> GetAnalysis2Async(string input);
