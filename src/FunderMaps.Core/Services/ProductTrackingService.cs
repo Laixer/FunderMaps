@@ -13,6 +13,7 @@ namespace FunderMaps.Core.Services
     {
         private const string statisticsProductName = "statistics";
         private const string analysisProductName = "analysis2";
+        private const string RiskIndexProductName = "riskindex";
 
         private readonly ITelemetryRepository _trackingRepository;
 
@@ -91,6 +92,28 @@ namespace FunderMaps.Core.Services
             finally
             {
                 await _trackingRepository.ProductHitAsync(statisticsProductName);
+            }
+        }
+
+        /// <summary>
+        ///     Get risk index on id and log product hit.
+        /// </summary>
+        /// <param name="input">Input query.</param>
+        public override async IAsyncEnumerable<bool> GetRiskIndexAsync(string input)
+        {
+            int itemCount = 0;
+
+            try
+            {
+                await foreach (var product in base.GetRiskIndexAsync(input))
+                {
+                    ++itemCount;
+                    yield return product;
+                }
+            }
+            finally
+            {
+                await _trackingRepository.ProductHitAsync(RiskIndexProductName);
             }
         }
     }
