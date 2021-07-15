@@ -111,6 +111,42 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
 
+        [Fact]
+        public async Task GetRiskIndexByIdReturnProduct()
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/v2/product/risk_index?id=gfm-ac31bec346744745b29f8505dff8182e");
+            var returnObject = await response.Content.ReadFromJsonAsync<IList<RiskIndexDto>>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(1, returnObject.Count);
+            Assert.False(returnObject.First().IncreasedRisk);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
+        }
+
+        [Fact]
+        public async Task GetRiskIndexByExternalIdReturnProduct()
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/v2/product/risk_index?id=NL.IMBAG.LIGPLAATS.0503020000111954");
+            var returnObject = await response.Content.ReadFromJsonAsync<IList<RiskIndexDto>>();
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(1, returnObject.Count);
+            Assert.False(returnObject.First().IncreasedRisk);
+
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
+        }
+
         [Theory]
         [InlineData("id=3kjhr834dhfjdeh")]
         [InlineData("bagid=4928374hfdkjsfh")]

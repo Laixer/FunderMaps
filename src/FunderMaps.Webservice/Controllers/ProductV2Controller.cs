@@ -69,7 +69,7 @@ namespace FunderMaps.Webservice.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<List<AnalysisV2Dto>>> GetRiskIndexAsync([FromQuery] string id)
+        public async Task<ActionResult<List<RiskIndexDto>>> GetRiskIndexAsync([FromQuery] string id)
         {
             // Assign.
             IAsyncEnumerable<bool> productList = _productService.GetRiskIndexAsync(id);
