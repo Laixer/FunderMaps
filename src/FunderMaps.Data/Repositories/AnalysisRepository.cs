@@ -306,6 +306,114 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Gets the risk index by its internal building id.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        public async Task<bool> GetRiskIndexByIdAsync(string id)
+        {
+            var sql = @"
+                SELECT -- AnalysisComplete
+                        'a'::data.foundation_risk_indication <> ANY (ARRAY[
+                        CASE
+                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.drystand_risk
+                        END,
+                        CASE
+                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.bio_infection_risk
+                        END,
+                        CASE
+                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.dewatering_depth_risk
+                        END,
+                        CASE
+                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.unclassified_risk
+                        END]) AS has_risk
+                FROM    data.analysis_complete ac
+                WHERE   ac.building_id = @id
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            return await context.ScalarAsync<bool>();
+        }
+
+        /// <summary>
+        ///     Gets the risk index by its external building id and source.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        public async Task<bool> GetRiskIndexByExternalIdAsync(string id)
+        {
+            var sql = @"
+                SELECT -- AnalysisComplete
+                        'a'::data.foundation_risk_indication <> ANY (ARRAY[
+                        CASE
+                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.drystand_risk
+                        END,
+                        CASE
+                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.bio_infection_risk
+                        END,
+                        CASE
+                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.dewatering_depth_risk
+                        END,
+                        CASE
+                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.unclassified_risk
+                        END]) AS has_risk
+                FROM    data.analysis_complete ac
+                WHERE   ac.external_building_id = upper(@external_id)
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("external_id", id);
+
+            return await context.ScalarAsync<bool>();
+        }
+
+        /// <summary>
+        ///     Gets the risk index by its external address id and source.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        public async Task<bool> GetRiskIndexByAddressExternalIdAsync(string id)
+        {
+            var sql = @"
+                SELECT -- AnalysisComplete
+                        'a'::data.foundation_risk_indication <> ANY (ARRAY[
+                        CASE
+                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.drystand_risk
+                        END,
+                        CASE
+                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.bio_infection_risk
+                        END,
+                        CASE
+                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.dewatering_depth_risk
+                        END,
+                        CASE
+                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.unclassified_risk
+                        END]) AS has_risk
+                FROM    data.analysis_complete ac
+                WHERE   ac.address_external_id = upper(@external_id)
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("external_id", id);
+
+            return await context.ScalarAsync<bool>();
+        }
+
+        /// <summary>
         ///     Maps a reader to an <see cref="AnalysisProduct"/>.
         /// </summary>
         public static AnalysisProduct MapFromReader(DbDataReader reader, int offset = 0)

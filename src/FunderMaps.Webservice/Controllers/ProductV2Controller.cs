@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
 {
+    // FUTURE: Split logic into analysis, risk index, statistics controller.
+    // FUTURE: Drop the 'product' uri prefix.
+    // FUTURE: Drop the 'v' uri version prefix.
     /// <summary>
     ///     Controller for all product endpoints.
     /// </summary>
@@ -40,13 +43,13 @@ namespace FunderMaps.Webservice.Controllers
 
         // GET: api/v2/product/analysis
         /// <summary>
-        ///     Request an analysis product.
+        ///     Request the analysis product.
         /// </summary>
         [HttpGet("analysis")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<List<AnalysisV2Dto>>> GetProductAnalysisAsync([FromQuery] string id)
+        public async Task<ActionResult<List<AnalysisV2Dto>>> GetAnalysisAsync([FromQuery] string id)
         {
             // Assign.
             IAsyncEnumerable<AnalysisProduct2> productList = _productService.GetAnalysis2Async(id);
@@ -58,15 +61,35 @@ namespace FunderMaps.Webservice.Controllers
             return Ok(result);
         }
 
+        // GET: api/v2/product/risk_index
+        /// <summary>
+        ///     Request the risk index per id.
+        /// </summary>
+        [HttpGet("risk_index")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<RiskIndexDto>>> GetRiskIndexAsync([FromQuery] string id)
+        {
+            // Assign.
+            IAsyncEnumerable<bool> productList = _productService.GetRiskIndexAsync(id);
+
+            // Map.
+            var result = await _mapper.MapAsync<IList<RiskIndexDto>, bool>(productList);
+
+            // Return.
+            return Ok(result);
+        }
+
         // GET: api/v2/product/statistics
         /// <summary>
-        ///     Request statistics product.
+        ///     Request the statistics product.
         /// </summary>
         [HttpGet("statistics")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetProductStatisticsAsync([FromQuery][Required] string id)
+        public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetStatisticsAsync([FromQuery][Required] string id)
         {
             // Assign.
             IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);

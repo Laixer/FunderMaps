@@ -43,5 +43,23 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// </summary>
         /// <param name="id">External address id.</param>
         Task<AnalysisProduct2> GetByAddressExternalId2Async(string id);
+
+        /// <summary>
+        ///     Gets the risk index by its internal building id.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        Task<bool> GetRiskIndexByIdAsync(string id);
+
+        /// <summary>
+        ///     Gets the risk index by its external building id and source.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        Task<bool> GetRiskIndexByExternalIdAsync(string id);
+
+        /// <summary>
+        ///     Gets the risk index by its external building id and source.
+        /// </summary>
+        /// <param name="id">Internal building id.</param>
+        Task<bool> GetRiskIndexByAddressExternalIdAsync(string id);
     }
 }
