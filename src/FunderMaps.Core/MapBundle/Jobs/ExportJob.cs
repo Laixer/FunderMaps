@@ -49,7 +49,7 @@ namespace FunderMaps.Core.MapBundle.Jobs
         /// <returns><c>True</c> if the export and upload succeeded, false otherwise.</returns>
         private async Task<bool> ExportDatasetAsync(string layer)
         {
-            const int features_per_part = 1500000;
+            const int features_per_part = 1000000;
 
             for (int i = 0; i < 10; i++)
             {
