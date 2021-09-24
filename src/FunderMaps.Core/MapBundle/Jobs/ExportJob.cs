@@ -5,6 +5,8 @@ using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Linq;
+using System;
 
 namespace FunderMaps.Core.MapBundle.Jobs
 {
@@ -100,11 +102,17 @@ namespace FunderMaps.Core.MapBundle.Jobs
         /// <summary>
         ///     Run the background command.
         /// </summary>
+        /// <remarks>
+        ///     Select the export layers in random order.
+        /// </remarks>
         /// <param name="context">Command task execution context.</param>
         public override async Task ExecuteCommandAsync(CommandTaskContext context)
         {
-            foreach (var layer in exportLayers)
+            var rng = new Random();
+
+            foreach (var layer in exportLayers.OrderBy(i => rng.Next()))
             {
+                // NOTE: We *must* delete the old dataset first.
                 await _mapService.DeleteDatasetAsync(layer);
 
                 if (await ExportDatasetAsync(layer))
