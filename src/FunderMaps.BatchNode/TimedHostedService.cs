@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.MapBundle;
+using Microsoft.Extensions.Options;
 
 namespace FunderMaps.BatchNode
 {
@@ -14,7 +15,7 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public class TimedHostedService : IHostedService, IAsyncDisposable
     {
-        private readonly int intervalInHours;
+        private readonly BatchOptions _options;
 
         private readonly IServiceProvider _servicesProvider;
         private readonly ILogger<TimedHostedService> _logger;
@@ -24,13 +25,14 @@ namespace FunderMaps.BatchNode
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public TimedHostedService(IServiceProvider serviceProvider, ILogger<TimedHostedService> logger, IConfiguration configuration)
+        public TimedHostedService(IServiceProvider serviceProvider,
+            ILogger<TimedHostedService> logger,
+            IConfiguration configuration,
+            IOptions<BatchOptions> options)
         {
             _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            // FUTURE: Maybe move this into a dedicated IOptions<> structure.
-            intervalInHours = configuration.GetValue<int>("Batch:Interval", 100);
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace FunderMaps.BatchNode
         /// </summary>
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _timer = new(Worker, null, TimeSpan.Zero, TimeSpan.FromHours(intervalInHours));
+            _timer = new(Worker, null, TimeSpan.Zero, TimeSpan.FromHours(_options.Interval));
 
             return Task.CompletedTask;
         }
