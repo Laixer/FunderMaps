@@ -23,6 +23,10 @@ namespace FunderMaps.Core.MapBundle
                         commandInfo.Environment.Add("PGHOST", keyValue[1]);
                         break;
 
+                    case "port":
+                        commandInfo.Environment.Add("PGPORT", keyValue[1]);
+                        break;
+
                     case "user id":
                         commandInfo.Environment.Add("PGUSER", keyValue[1]);
                         break;
