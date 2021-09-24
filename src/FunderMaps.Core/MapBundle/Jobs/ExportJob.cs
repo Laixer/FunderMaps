@@ -37,6 +37,67 @@ namespace FunderMaps.Core.MapBundle.Jobs
         }
 
         /// <summary>
+        ///     Export dataset from database to mapservice.
+        /// </summary>
+        /// <remarks>
+        ///     The export is performed in 10 parts to that each individual part is
+        ///     less likely to fail the upload, and does not claim to much disk space.
+        ///     A tileset source can be composed of up to 10 source files so this number
+        ///     should not be increased.
+        /// </remarks>
+        /// <param name="layer">Layer name.</param>
+        /// <returns><c>True</c> if the export and upload succeeded, false otherwise.</returns>
+        private async Task<bool> ExportDatasetAsync(string layer)
+        {
+            const int features_per_part = 1500000;
+
+            for (int i = 0; i < 10; i++)
+            {
+                FileDataSource fileDump = new()
+                {
+                    Format = GeometryFormat.GeoJSONSeq,
+                    PathPrefix = CreateDirectory("out"),
+                    Extension = ".json",
+                    Name = $"{layer}_part{i}",
+                };
+
+                CommandInfo command = new VectorDatasetBuilder()
+                    .InputDataset(new PostreSQLDataSource(connectionString))
+                    .InputLayers(new BundleLayerSource(layer, Context.Workspace, i * features_per_part, features_per_part))
+                    .OutputDataset(fileDump)
+                    .Build(formatName: "GeoJSONSeq");
+
+                Logger.LogDebug($"Export layer: {layer}, part: {i}");
+
+                if (await RunCommandAsync(command) == 0)
+                {
+                    long length = new FileInfo(fileDump.ToString()).Length;
+
+                    if (length > 0)
+                    {
+                        bool success = await _mapService.UploadDatasetAsync(layer, fileDump.ToString());
+
+                        Logger.LogDebug($"Upload layer: {layer}, part: {i}, success: {success}");
+                    }
+
+                    File.Delete(fileDump.ToString());
+
+                    if (length == 0)
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    Logger.LogError($"Export layer: {layer}, part: {i} failed");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         ///     Run the background command.
         /// </summary>
         /// <param name="context">Command task execution context.</param>
@@ -46,44 +107,16 @@ namespace FunderMaps.Core.MapBundle.Jobs
             {
                 await _mapService.DeleteDatasetAsync(layer);
 
-                for (int i = 0; i < 10; i++)
+                if (await ExportDatasetAsync(layer))
                 {
-                    FileDataSource fileDump = new()
+                    if (await _mapService.PublishAsync(layer))
                     {
-                        Format = GeometryFormat.GeoJSONSeq,
-                        PathPrefix = CreateDirectory("out"),
-                        Extension = ".json",
-                        Name = $"{layer}_part{i}",
-                    };
-
-                    CommandInfo command = new VectorDatasetBuilder()
-                        .InputDataset(new PostreSQLDataSource(connectionString))
-                        .InputLayers(new BundleLayerSource(layer, Context.Workspace, i * 1000000, 1000000))
-                        .OutputDataset(fileDump)
-                        .Build(formatName: "GeoJSONSeq");
-
-                    if (await RunCommandAsync(command) == 0)
-                    {
-                        long length = new FileInfo(fileDump.ToString()).Length;
-
-                        if (length > 0)
-                        {
-                            bool success = await _mapService.UploadDatasetAsync(layer, fileDump.ToString());
-
-                            Logger.LogDebug($"Upload layer: {layer}, success: {success}");
-                        }
-
-                        File.Delete(fileDump.ToString());
+                        Logger.LogInformation($"Layer {layer} published with success");
                     }
-                }
-
-                if (await _mapService.PublishAsync(layer))
-                {
-                    Logger.LogInformation($"Layer {layer} published with success");
-                }
-                else
-                {
-                    Logger.LogError($"Layer {layer} was not published");
+                    else
+                    {
+                        Logger.LogError($"Layer {layer} was not published");
+                    }
                 }
             }
         }
