@@ -1,14 +1,14 @@
 namespace FunderMaps.BatchNode
 {
     /// <summary>
-    ///     Batch node options.
+    ///     Model options.
     /// </summary>
-    public sealed record BatchOptions
+    public sealed record ModelOptions
     {
         /// <summary>
         ///     Configuration section key.
         /// </summary>
-        public const string Section = "Batch";
+        public const string Section = "Model";
 
         /// <summary>
         ///     Batch service interval in hours.

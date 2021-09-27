@@ -49,8 +49,12 @@ namespace FunderMaps.BatchNode
                     (Configuration, HostEnvironment) = services.BuildStartupProperties();
 
                     // Add the task scheduler.
-                    services.Configure<BatchOptions>(Configuration.GetSection(BatchOptions.Section));
-                    services.AddHostedService<TimedHostedService>();
+                    services.Configure<MapBundleOptions>(Configuration.GetSection(MapBundleOptions.Section));
+                    services.AddHostedService<TimedMapBundleService>();
+
+                    // Add the task scheduler.
+                    services.Configure<ModelOptions>(Configuration.GetSection(ModelOptions.Section));
+                    services.AddHostedService<TimedModelService>();
                 });
     }
 }

@@ -13,22 +13,22 @@ namespace FunderMaps.BatchNode
     /// <summary>
     ///     Schedule tasks with interval.
     /// </summary>
-    public class TimedHostedService : IHostedService, IAsyncDisposable
+    public class TimedMapBundleService : IHostedService, IAsyncDisposable
     {
-        private readonly BatchOptions _options;
+        private readonly MapBundleOptions _options;
 
         private readonly IServiceProvider _servicesProvider;
-        private readonly ILogger<TimedHostedService> _logger;
+        private readonly ILogger<TimedMapBundleService> _logger;
 
         private Timer _timer;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public TimedHostedService(IServiceProvider serviceProvider,
-            ILogger<TimedHostedService> logger,
+        public TimedMapBundleService(IServiceProvider serviceProvider,
+            ILogger<TimedMapBundleService> logger,
             IConfiguration configuration,
-            IOptions<BatchOptions> options)
+            IOptions<MapBundleOptions> options)
         {
             _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));

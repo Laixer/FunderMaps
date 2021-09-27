@@ -20,13 +20,10 @@ namespace FunderMaps.Core.Model
             => _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
 
         /// <summary>
-        ///     Send build candidates off to background worker.
+        ///     Dispatch refresh job to background worker.
         /// </summary>
-        // public async Task BuildAsync() => await _backgroundTaskDispatcher.EnqueueTaskAsync<ExportJob>();
-
         public async Task UpdateAllModelsAsync()
         {
-            // throw new NotImplementedException();
             await _backgroundTaskDispatcher.EnqueueTaskAsync<RefreshJob>();
         }
     }
