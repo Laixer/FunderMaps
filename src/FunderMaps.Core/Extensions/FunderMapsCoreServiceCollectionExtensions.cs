@@ -4,6 +4,8 @@ using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.MapBundle;
 using FunderMaps.Core.MapBundle.Jobs;
+using FunderMaps.Core.Model;
+using FunderMaps.Core.Model.Jobs;
 using FunderMaps.Core.Notification;
 using FunderMaps.Core.Notification.Jobs;
 using FunderMaps.Core.Services;
@@ -73,6 +75,17 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddBatchJob<ExportJob>();
             services.AddScoped<IBundleService, BundleHub>();
+
+            return services;
+        }
+
+        /// <summary>
+        ///     Adds model service.
+        /// </summary>
+        private static IServiceCollection AddModel(this IServiceCollection services)
+        {
+            services.AddBatchJob<RefreshJob>();
+            services.AddScoped<IModelService, ModelService>();
 
             return services;
         }
@@ -149,6 +162,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register the map bundle service.
             services.AddMapBundle();
+
+            // Register the model service.
+            services.AddModel();
 
             // The application core (as well as many other components) depends upon the ability to dispatch
             // tasks to the background.

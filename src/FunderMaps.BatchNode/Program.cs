@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
@@ -9,6 +10,16 @@ namespace FunderMaps.BatchNode
     /// </summary>
     public static class Program
     {
+        /// <summary>
+        ///     Configuration.
+        /// </summary>
+        public static IConfiguration Configuration { get; set; }
+
+        /// <summary>
+        ///     Host environment.
+        /// </summary>
+        public static IHostEnvironment HostEnvironment { get; set; }
+
         /// <summary>
         ///     Application entry point.
         /// </summary>
@@ -34,8 +45,16 @@ namespace FunderMaps.BatchNode
                     services.AddFunderMapsInfrastructureServices();
                     services.AddFunderMapsDataServices("FunderMapsConnection");
 
+                    // The startup essential properties can be used to setup components.
+                    (Configuration, HostEnvironment) = services.BuildStartupProperties();
+
                     // Add the task scheduler.
-                    services.AddHostedService<TimedHostedService>();
+                    services.Configure<MapBundleOptions>(Configuration.GetSection(MapBundleOptions.Section));
+                    services.AddHostedService<TimedMapBundleService>();
+
+                    // Add the task scheduler.
+                    services.Configure<ModelOptions>(Configuration.GetSection(ModelOptions.Section));
+                    services.AddHostedService<TimedModelService>();
                 });
     }
 }

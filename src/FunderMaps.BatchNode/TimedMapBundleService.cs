@@ -6,31 +6,33 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using FunderMaps.Core.MapBundle;
+using Microsoft.Extensions.Options;
 
 namespace FunderMaps.BatchNode
 {
     /// <summary>
     ///     Schedule tasks with interval.
     /// </summary>
-    public class TimedHostedService : IHostedService, IAsyncDisposable
+    public class TimedMapBundleService : IHostedService, IAsyncDisposable
     {
-        private readonly int intervalInHours;
+        private readonly MapBundleOptions _options;
 
         private readonly IServiceProvider _servicesProvider;
-        private readonly ILogger<TimedHostedService> _logger;
+        private readonly ILogger<TimedMapBundleService> _logger;
 
         private Timer _timer;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public TimedHostedService(IServiceProvider serviceProvider, ILogger<TimedHostedService> logger, IConfiguration configuration)
+        public TimedMapBundleService(IServiceProvider serviceProvider,
+            ILogger<TimedMapBundleService> logger,
+            IConfiguration configuration,
+            IOptions<MapBundleOptions> options)
         {
             _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            // FUTURE: Maybe move this into a dedicated IOptions<> structure.
-            intervalInHours = configuration.GetValue<int>("Batch:Interval", 100);
+            _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         /// <summary>
@@ -38,7 +40,7 @@ namespace FunderMaps.BatchNode
         /// </summary>
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _timer = new(Worker, null, TimeSpan.Zero, TimeSpan.FromHours(intervalInHours));
+            _timer = new(Worker, null, TimeSpan.Zero, TimeSpan.FromHours(_options.Interval));
 
             return Task.CompletedTask;
         }
