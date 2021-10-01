@@ -680,7 +680,10 @@ CREATE TYPE report.foundation_type AS ENUM (
     'no_pile_slit',
     'wood_amsterdam',
     'wood_rotterdam',
-    'no_pile_bearing_floor'
+    'no_pile_bearing_floor',
+    'wood_rotterdam_amsterdam',
+    'wood_rotterdam_arch',
+    'wood_amsterdam_arch'
 );
 
 
