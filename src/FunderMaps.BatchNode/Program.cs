@@ -53,8 +53,8 @@ namespace FunderMaps.BatchNode
                     services.AddHostedService<TimedMapBundleService>();
 
                     // Add the task scheduler.
-                    services.Configure<ModelOptions>(Configuration.GetSection(ModelOptions.Section));
-                    services.AddHostedService<TimedModelService>();
+                    // services.Configure<ModelOptions>(Configuration.GetSection(ModelOptions.Section));
+                    // services.AddHostedService<TimedModelService>();
                 });
     }
 }
