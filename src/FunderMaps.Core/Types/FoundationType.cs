@@ -79,5 +79,20 @@ namespace FunderMaps.Core.Types
         ///     Other.
         /// </summary>
         Other = 14,
+
+        /// <summary>
+        ///     Wood foundation accoring to Amsterdam or Rotterdam.
+        /// </summary>
+        WoodRotterdamAmsterdam = 15,
+
+        /// <summary>
+        ///     Wood foundation accoring to Rotterdam with an arch.
+        /// </summary>
+        WoodRotterdamArch = 16,
+
+        /// <summary>
+        ///     Wood foundation accoring to Amsterdam with an arch.
+        /// </summary>
+        WoodAmsterdamArch = 17,
     }
 }
