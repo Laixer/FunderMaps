@@ -1571,6 +1571,9 @@ CASE
 	WHEN COALESCE($2, $1) = 'no_pile_slit'::report.foundation_type THEN 'no_pile'::"data".foundation_category
 	WHEN COALESCE($2, $1) = 'wood_amsterdam'::report.foundation_type THEN 'wood'::"data".foundation_category
 	WHEN COALESCE($2, $1) = 'wood_rotterdam'::report.foundation_type THEN 'wood'::"data".foundation_category
+	WHEN COALESCE($2, $1) = 'wood_rotterdam_amsterdam'::report.foundation_type THEN 'wood'::"data".foundation_category
+	WHEN COALESCE($2, $1) = 'wood_amsterdam_arch'::report.foundation_type THEN 'wood'::"data".foundation_category
+	WHEN COALESCE($2, $1) = 'wood_rotterdam_arch'::report.foundation_type THEN 'wood'::"data".foundation_category
 	WHEN COALESCE($2, $1) = 'no_pile_bearing_floor'::report.foundation_type THEN 'no_pile'::"data".foundation_category
 	ELSE 'other'::"data".foundation_category
 END;
