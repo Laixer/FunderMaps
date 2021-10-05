@@ -35301,14 +35301,6 @@ gfm-2ec4949bdee94ec68031e95c2577e31e	-1.7999999690800002
 
 
 --
--- Data for Name: subsidence_hex; Type: TABLE DATA; Schema: data; Owner: fundermaps
---
-
-COPY data.subsidence_hex (velocity, geom) FROM stdin;
-\.
-
-
---
 -- PostgreSQL database dump complete
 --
 
