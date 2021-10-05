@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
+
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
@@ -405,4 +405,3 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods

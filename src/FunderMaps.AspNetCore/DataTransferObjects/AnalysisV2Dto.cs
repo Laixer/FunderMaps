@@ -15,7 +15,7 @@ namespace FunderMaps.AspNetCore.DataTransferObjects
         /// <summary>
         ///     Foundation recovery type.
         /// </summary>
-        public RecoveryDocumentType? RecoveryType { get; set; }
+        public RecoveryType? RecoveryType { get; set; }
 
         /// <summary>
         ///     Represents the estimated restoration costs for this building.

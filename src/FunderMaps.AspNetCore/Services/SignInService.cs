@@ -140,6 +140,13 @@ namespace FunderMaps.AspNetCore.Services
 
             if (await CheckPasswordAsync(user.Id, password))
             {
+                if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
+                {
+                    Logger.LogWarning($"User '{user}' locked out.");
+
+                    throw new AuthenticationException();
+                }
+
                 await UserRepository.ResetAccessFailed(user.Id);
                 await UserRepository.RegisterAccess(user.Id);
 

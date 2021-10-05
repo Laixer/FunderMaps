@@ -440,7 +440,7 @@ namespace FunderMaps.Data.Repositories
                 DocumentName = reader.GetSafeString(offset + 18),
                 DocumentDate = reader.GetSafeDateTime(offset + 19),
                 InquiryType = reader.GetFieldValue<InquiryType?>(offset + 20),
-                RecoveryType = reader.GetFieldValue<RecoveryDocumentType?>(offset + 21),
+                RecoveryType = reader.GetFieldValue<RecoveryType?>(offset + 21),
                 RecoveryStatus = reader.GetFieldValue<RecoveryStatus?>(offset + 22),
                 SurfaceArea = reader.GetSafeDouble(offset + 23),
                 LivingArea = reader.GetSafeDouble(offset + 24),

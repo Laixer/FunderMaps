@@ -205,6 +205,26 @@ namespace FunderMaps.Data.Repositories
         }
 
         /// <summary>
+        ///     Get access failed count.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Failed access count.</returns>
+        public async Task<int> GetAccessFailedCount(Guid id)
+        {
+            var sql = @"
+                SELECT  access_failed_count
+                FROM    application.user
+                WHERE   id = @id
+                LIMIT   1";
+
+            await using var context = await DbContextFactory.CreateAsync(sql);
+
+            context.AddParameterWithValue("id", id);
+
+            return await context.ScalarAsync<int>();
+        }
+
+        /// <summary>
         ///     Retrieve all <see cref="User"/>.
         /// </summary>
         /// <returns>List of <see cref="User"/>.</returns>

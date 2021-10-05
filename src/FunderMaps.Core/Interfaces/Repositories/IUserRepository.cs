@@ -24,6 +24,13 @@ namespace FunderMaps.Core.Interfaces.Repositories
         Task<string> GetPasswordHashAsync(Guid id);
 
         /// <summary>
+        ///     Get access failed count.
+        /// </summary>
+        /// <param name="id">Entity identifier.</param>
+        /// <returns>Failed access count.</returns>
+        Task<int> GetAccessFailedCount(Guid id);
+
+        /// <summary>
         ///     Update user password.
         /// </summary>
         /// <param name="id">Entity identifier.</param>

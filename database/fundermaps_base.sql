@@ -3876,19 +3876,6 @@ ALTER TABLE data.statistics_product_inquiries OWNER TO fundermaps;
 
 COMMENT ON VIEW data.statistics_product_inquiries IS 'Contains statistics on the amount of inquries for a given neighborhood. This can be filtered on neighborhood_id.';
 
-
---
--- Name: subsidence_hex; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.subsidence_hex (
-    velocity double precision NOT NULL,
-    geom public.geometry(Polygon,4326) NOT NULL
-);
-
-
-ALTER TABLE data.subsidence_hex OWNER TO fundermaps;
-
 --
 -- Name: country; Type: TABLE; Schema: geocoder; Owner: fundermaps
 --
@@ -4140,18 +4127,6 @@ CREATE VIEW maplayer.incident_aggregate_category AS
 
 
 ALTER TABLE maplayer.incident_aggregate_category OWNER TO fundermaps;
-
---
--- Name: subsidence_hex; Type: VIEW; Schema: maplayer; Owner: fundermaps
---
-
-CREATE VIEW maplayer.subsidence_hex AS
- SELECT sh.velocity,
-    sh.geom
-   FROM data.subsidence_hex sh;
-
-
-ALTER TABLE maplayer.subsidence_hex OWNER TO fundermaps;
 
 --
 -- Name: incident_id_seq; Type: SEQUENCE; Schema: report; Owner: fundermaps
@@ -4665,20 +4640,6 @@ CREATE INDEX building_elevation_available_idx ON data.building_elevation USING b
 --
 
 CREATE INDEX building_type_id_idx ON data.building_type USING btree (id);
-
-
---
--- Name: subsidence_hex_geom_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX subsidence_hex_geom_idx ON data.subsidence_hex USING gist (geom);
-
-
---
--- Name: subsidence_hex_velocity_idx; Type: INDEX; Schema: data; Owner: fundermaps
---
-
-CREATE INDEX subsidence_hex_velocity_idx ON data.subsidence_hex USING btree (velocity);
 
 
 --
@@ -6048,15 +6009,6 @@ GRANT SELECT ON TABLE data.statistics_product_inquiries TO fundermaps_webservice
 
 
 --
--- Name: TABLE subsidence_hex; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.subsidence_hex TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.subsidence_hex TO fundermaps_webservice;
-GRANT SELECT ON TABLE data.subsidence_hex TO fundermaps_portal;
-
-
---
 -- Name: TABLE country; Type: ACL; Schema: geocoder; Owner: fundermaps
 --
 
@@ -6153,13 +6105,6 @@ GRANT SELECT ON TABLE maplayer.incident_aggregate TO fundermaps_batch;
 --
 
 GRANT SELECT ON TABLE maplayer.incident_aggregate_category TO fundermaps_batch;
-
-
---
--- Name: TABLE subsidence_hex; Type: ACL; Schema: maplayer; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE maplayer.subsidence_hex TO fundermaps_batch;
 
 
 --
