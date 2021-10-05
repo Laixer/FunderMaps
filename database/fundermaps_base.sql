@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.6 (Debian 12.6-1.pgdg100+1)
--- Dumped by pg_dump version 13.3 (Ubuntu 13.3-0ubuntu0.21.04.1)
+-- Dumped from database version 12.8 (Debian 12.8-1.pgdg100+1)
+-- Dumped by pg_dump version 12.8 (Ubuntu 12.8-0ubuntu0.20.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1224,18 +1224,18 @@ ALTER FUNCTION application.log_access(id application.user_id) OWNER TO fundermap
 -- Name: normalize(text); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
-CREATE FUNCTION application."normalize"(text) RETURNS text
+CREATE FUNCTION application.normalize(text) RETURNS text
     LANGUAGE sql
     AS $_$SELECT trim(upper($1))$_$;
 
 
-ALTER FUNCTION application."normalize"(text) OWNER TO fundermaps;
+ALTER FUNCTION application.normalize(text) OWNER TO fundermaps;
 
 --
--- Name: FUNCTION "normalize"(text); Type: COMMENT; Schema: application; Owner: fundermaps
+-- Name: FUNCTION normalize(text); Type: COMMENT; Schema: application; Owner: fundermaps
 --
 
-COMMENT ON FUNCTION application."normalize"(text) IS 'Normalize the input so it can be compared.';
+COMMENT ON FUNCTION application.normalize(text) IS 'Normalize the input so it can be compared.';
 
 
 --
@@ -3876,6 +3876,7 @@ ALTER TABLE data.statistics_product_inquiries OWNER TO fundermaps;
 
 COMMENT ON VIEW data.statistics_product_inquiries IS 'Contains statistics on the amount of inquries for a given neighborhood. This can be filtered on neighborhood_id.';
 
+
 --
 -- Name: country; Type: TABLE; Schema: geocoder; Owner: fundermaps
 --
@@ -5655,13 +5656,13 @@ GRANT ALL ON FUNCTION application.log_access(id application.user_id) TO funderma
 
 
 --
--- Name: FUNCTION "normalize"(text); Type: ACL; Schema: application; Owner: fundermaps
+-- Name: FUNCTION normalize(text); Type: ACL; Schema: application; Owner: fundermaps
 --
 
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webapp;
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webservice;
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_portal;
-GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_batch;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_portal;
+GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_batch;
 
 
 --
