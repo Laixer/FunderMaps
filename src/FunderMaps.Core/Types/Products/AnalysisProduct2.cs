@@ -51,11 +51,6 @@ namespace FunderMaps.Core.Types.Products
         public int? RestorationCosts { get; init; }
 
         /// <summary>
-        ///     Description for restoration costs.
-        /// </summary>
-        public string DescriptionRestorationCosts { get; init; }
-
-        /// <summary>
         ///     Foundation type.
         /// </summary>
         public FoundationType? FoundationType { get; init; }
@@ -76,11 +71,6 @@ namespace FunderMaps.Core.Types.Products
         public FoundationRisk? DrystandRisk { get; init; }
 
         /// <summary>
-        ///     Description for drystand.
-        /// </summary>
-        public string DescriptionDrystand { get; init; }
-
-        /// <summary>
         ///     Dewatering depth reliability.
         /// </summary>
         public Reliability DewateringDepthReliability { get; init; }
@@ -91,11 +81,6 @@ namespace FunderMaps.Core.Types.Products
         public FoundationRisk? DewateringDepthRisk { get; init; }
 
         /// <summary>
-        ///     Description for dewatering depth.
-        /// </summary>
-        public string DescriptionDewateringDepth { get; init; }
-
-        /// <summary>
         ///     Biological infection reliability.
         /// </summary>
         public Reliability BioInfectionReliability { get; init; }
@@ -104,11 +89,6 @@ namespace FunderMaps.Core.Types.Products
         ///     Biological infection risk.
         /// </summary>
         public FoundationRisk? BioInfectionRisk { get; init; }
-
-        /// <summary>
-        ///     Description for biological infection.
-        /// </summary>
-        public string DescriptionBioInfection { get; init; }
 
         /// <summary>
         ///     Unclassified risk.

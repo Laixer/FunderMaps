@@ -6,7 +6,6 @@ using FunderMaps.Data.Extensions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
     // FUTURE: Change function names and view names.
@@ -592,4 +591,3 @@ namespace FunderMaps.Data.Repositories
         }
     }
 }
-#pragma warning disable CA1812 // Internal class is never instantiated

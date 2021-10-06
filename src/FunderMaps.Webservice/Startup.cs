@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Services;
 using FunderMaps.Webservice.Documentation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 [assembly: ApiController]
 namespace FunderMaps.Webservice
@@ -71,9 +68,6 @@ namespace FunderMaps.Webservice
 
             // Register components from reference assemblies.
             services.AddFunderMapsDataServices("FunderMapsConnection");
-
-            // Override default product service by tracking variant of product service.
-            services.Replace(ServiceDescriptor.Transient<IProductService, ProductTrackingService>());
         }
 
         /// <summary>

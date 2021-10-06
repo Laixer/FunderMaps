@@ -22,10 +22,10 @@ namespace FunderMaps.IntegrationTests.Webservice
             => Factory = factory;
 
         [Theory]
-        [InlineData(AnalysisProductType.Foundation, "foundation")]
-        [InlineData(AnalysisProductType.Complete, "complete")]
-        [InlineData(AnalysisProductType.RiskPlus, "riskplus")]
-        public async Task GetProductByIdReturnProduct(AnalysisProductType product, string productName)
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByIdReturnProduct(AnalysisProductType product)
         {
             // Arrange
             using var client = Factory.CreateClient();
@@ -39,14 +39,14 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
 
-            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, productName) > 0);
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis") > 0);
         }
 
         [Theory]
-        [InlineData(AnalysisProductType.Foundation, "foundation")]
-        [InlineData(AnalysisProductType.Complete, "complete")]
-        [InlineData(AnalysisProductType.RiskPlus, "riskplus")]
-        public async Task GetProductByExternalIdReturnProduct(AnalysisProductType product, string productName)
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalIdReturnProduct(AnalysisProductType product)
         {
             // Arrange
             using var client = Factory.CreateClient();
@@ -60,14 +60,14 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
 
-            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, productName) > 0);
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis") > 0);
         }
 
         [Theory]
-        [InlineData(AnalysisProductType.Foundation, "foundation")]
-        [InlineData(AnalysisProductType.Complete, "complete")]
-        [InlineData(AnalysisProductType.RiskPlus, "riskplus")]
-        public async Task GetProductByExternalIdBag1ReturnProduct(AnalysisProductType product, string productName)
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalIdBag1ReturnProduct(AnalysisProductType product)
         {
             // Arrange
             using var client = Factory.CreateClient();
@@ -81,14 +81,14 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JM", returnObject.Items.First().PostalCode);
 
-            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, productName) > 0);
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis") > 0);
         }
 
         [Theory]
-        [InlineData(AnalysisProductType.Foundation, "foundation")]
-        [InlineData(AnalysisProductType.Complete, "complete")]
-        [InlineData(AnalysisProductType.RiskPlus, "riskplus")]
-        public async Task GetProductByExternalAddressIdReturnProduct(AnalysisProductType product, string productName)
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalAddressIdReturnProduct(AnalysisProductType product)
         {
             // Arrange
             using var client = Factory.CreateClient();
@@ -102,14 +102,14 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
 
-            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, productName) > 0);
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis") > 0);
         }
 
         [Theory]
-        [InlineData(AnalysisProductType.Foundation, "foundation")]
-        [InlineData(AnalysisProductType.Complete, "complete")]
-        [InlineData(AnalysisProductType.RiskPlus, "riskplus")]
-        public async Task GetProductByExternalAddressIdBag1ReturnProduct(AnalysisProductType product, string productName)
+        [InlineData(AnalysisProductType.Foundation)]
+        [InlineData(AnalysisProductType.Complete)]
+        [InlineData(AnalysisProductType.RiskPlus)]
+        public async Task GetProductByExternalAddressIdBag1ReturnProduct(AnalysisProductType product)
         {
             // Arrange
             using var client = Factory.CreateClient();
@@ -123,7 +123,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             Assert.Equal(1, returnObject.ItemCount);
             Assert.Equal("2622JN", returnObject.Items.First().PostalCode);
 
-            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, productName) > 0);
+            Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis") > 0);
         }
 
         [Fact]

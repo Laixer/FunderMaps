@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using FunderMaps.Webservice.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice
@@ -20,7 +20,7 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Act
             var response = await client.GetAsync("api/quota/usage");
-            var returnObject = await response.Content.ReadFromJsonAsync<IList<ProductTelemetryDto>>();
+            var returnObject = await response.Content.ReadFromJsonAsync<IList<ProductTelemetry>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);

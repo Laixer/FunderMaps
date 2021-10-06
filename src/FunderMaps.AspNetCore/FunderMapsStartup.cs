@@ -60,8 +60,6 @@ namespace FunderMaps.AspNetCore
                 .ForMember(dest => dest.CenterX, o => o.MapFrom(src => src.Center.CenterX))
                 .ForMember(dest => dest.CenterY, o => o.MapFrom(src => src.Center.CenterY))
                 .ReverseMap();
-            mapper.CreateMap<bool, RiskIndexDto>()
-                .ForMember(dest => dest.IncreasedRisk, o => o.MapFrom(src => src));
             mapper.CreateMap<TokenContext, SignInSecurityTokenDto>()
                 .ForMember(dest => dest.Id, o => o.MapFrom(src => src.Token.Id))
                 .ForMember(dest => dest.Issuer, o => o.MapFrom(src => src.Token.Issuer))
