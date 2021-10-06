@@ -5,12 +5,10 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -81,23 +79,6 @@ namespace FunderMaps.Portal.Controllers
 
             // Return.
             return NoContent();
-        }
-
-        // GET: api/incident-portal/risk
-        /// <summary>
-        ///     Get the analysis product by buillding identifier.
-        /// </summary>
-        [HttpGet("risk")]
-        public async Task<IActionResult> GetRiskAnalysisAsync([Required] string id, [FromServices] IProductService productService)
-        {
-            // Assign.
-            IAsyncEnumerable<AnalysisProduct> productList = productService.GetAnalysisAsync(AnalysisProductType.RiskPlus, id);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<AnalysisRiskPlusDto>, AnalysisProduct>(productList);
-
-            // Return.
-            return Ok(result);
         }
     }
 }

@@ -262,21 +262,5 @@ namespace FunderMaps.IntegrationTests.Portal
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         }
-
-        [Theory]
-        [InlineData("gfm-9627e072a5ce4e31a051242d51e0ef3a")]
-        public async Task GetRiskAnalysisReturnAnalysis(string address)
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.GetAsync($"api/incident-portal/risk?id={address}");
-            var returnObject = await response.Content.ReadFromJsonAsync<IList<AnalysisRiskPlusDto>>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject[0].NeighborhoodId);
-        }
     }
 }
