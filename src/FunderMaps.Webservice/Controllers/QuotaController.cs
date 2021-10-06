@@ -1,12 +1,10 @@
 using AutoMapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Webservice.DataTransferObjects;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
 {
@@ -35,16 +33,7 @@ namespace FunderMaps.Webservice.Controllers
         [HttpGet("usage")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IList<ProductTelemetryDto>>> GetQuotaUsageAsync()
-        {
-            // Assign.
-            IAsyncEnumerable<ProductTelemetry> productUsageList = _telemetryRepository.ListAllUsageAsync();
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<ProductTelemetryDto>, ProductTelemetry>(productUsageList);
-
-            // Return.
-            return Ok(productUsageList);
-        }
+        public IAsyncEnumerable<ProductTelemetry> GetQuotaUsageAsync()
+            => _telemetryRepository.ListAllUsageAsync();
     }
 }
