@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories
 {
     /// <summary>
@@ -247,4 +246,3 @@ namespace FunderMaps.Data.Repositories
         }
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated

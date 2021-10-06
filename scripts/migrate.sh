@@ -11,4 +11,5 @@ then
     exit 1
 fi
 
+# <target db> <source db>
 migra --with-privileges --exclude public --unsafe postgresql://user:password@host/fundermaps postgresql://postgres@localhost/fundermaps > diff.sql

@@ -1493,16 +1493,19 @@ $$;
 ALTER FUNCTION data.get_established_drystand_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
 
 --
--- Name: get_established_unclassified_risk(boolean, report.foundation_damage_cause, report.enforcement_term, report.foundation_quality, boolean); Type: FUNCTION; Schema: data; Owner: fundermaps
+-- Name: get_established_unclassified_risk(boolean, boolean, report.foundation_damage_cause, report.enforcement_term, report.foundation_quality, boolean); Type: FUNCTION; Schema: data; Owner: fundermaps
 --
 
-CREATE FUNCTION data.get_established_unclassified_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) RETURNS data.foundation_risk_indication
+CREATE FUNCTION data.get_established_unclassified_risk(has_established_recovery boolean, has_cluster_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) RETURNS data.foundation_risk_indication
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
     AS $$
 SELECT
 CASE
-	WHEN has_recovery
+	WHEN has_established_recovery
 		THEN 'a'::data.foundation_risk_indication
+
+	WHEN has_cluster_recovery
+		THEN 'e'::data.foundation_risk_indication
 
 	WHEN damage_cause <> 'drystand'
 		AND damage_cause <> 'bio_infection'
@@ -1546,7 +1549,7 @@ END;
 $$;
 
 
-ALTER FUNCTION data.get_established_unclassified_risk(has_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
+ALTER FUNCTION data.get_established_unclassified_risk(has_established_recovery boolean, has_cluster_recovery boolean, damage_cause report.foundation_damage_cause, enforcement_term report.enforcement_term, overall_quality report.foundation_quality, recovery_advised boolean) OWNER TO fundermaps;
 
 --
 -- Name: get_foundation_category(report.foundation_type, report.foundation_type); Type: FUNCTION; Schema: data; Owner: fundermaps
@@ -1583,10 +1586,10 @@ $_$;
 ALTER FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) OWNER TO fundermaps;
 
 --
--- Name: get_indicative_bio_infection_risk(boolean, report.foundation_type, double precision); Type: FUNCTION; Schema: data; Owner: fundermaps
+-- Name: get_indicative_bio_infection_risk(boolean, report.foundation_type, double precision, double precision); Type: FUNCTION; Schema: data; Owner: fundermaps
 --
 
-CREATE FUNCTION data.get_indicative_bio_infection_risk(has_recovery boolean, foundation_type report.foundation_type, pile_length double precision) RETURNS data.foundation_risk_indication
+CREATE FUNCTION data.get_indicative_bio_infection_risk(has_recovery boolean, foundation_type report.foundation_type, pile_length double precision, velocity double precision) RETURNS data.foundation_risk_indication
     LANGUAGE sql IMMUTABLE PARALLEL SAFE
     AS $$
 SELECT
@@ -1594,16 +1597,32 @@ CASE
 	WHEN has_recovery
 		THEN 'a'::data.foundation_risk_indication
 
-	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
+		AND pile_length <= 12
+		AND velocity < -2.0
+		THEN 'e'::data.foundation_risk_indication
+		
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		AND pile_length <= 12
 		THEN 'd'::data.foundation_risk_indication
 		
-	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
+		AND pile_length > 12
+		AND pile_length <= 15
+		AND velocity < -2.0
+		THEN 'e'::data.foundation_risk_indication
+		
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		AND pile_length > 12
 		AND pile_length <= 15
 		THEN 'c'::data.foundation_risk_indication
 		
-	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
+		AND pile_length > 15
+		AND velocity < -2.0
+		THEN 'd'::data.foundation_risk_indication
+		
+	WHEN (foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		AND pile_length > 15
 		THEN 'b'::data.foundation_risk_indication
 		
@@ -1612,7 +1631,7 @@ END;
 $$;
 
 
-ALTER FUNCTION data.get_indicative_bio_infection_risk(has_recovery boolean, foundation_type report.foundation_type, pile_length double precision) OWNER TO fundermaps;
+ALTER FUNCTION data.get_indicative_bio_infection_risk(has_recovery boolean, foundation_type report.foundation_type, pile_length double precision, velocity double precision) OWNER TO fundermaps;
 
 --
 -- Name: get_indicative_dewatering_depth_risk(boolean, boolean, report.foundation_type, integer, double precision, text, integer, double precision, double precision); Type: FUNCTION; Schema: data; Owner: fundermaps
@@ -2234,42 +2253,42 @@ CASE
 
 	-- "N1"
 	WHEN NOT is_indicative
-		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		and velocity is null
 		and ground_water >= 1.5
 		then 'c'::data.foundation_risk_indication
 
 	-- "N2"
 	WHEN NOT is_indicative
-		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		and velocity is null
 		and ground_water < 1.5
 		then 'b'::data.foundation_risk_indication
 
 	-- "N3"
 	WHEN NOT is_indicative
-		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		and velocity < (-2.0)
 		and ground_water >= 1.5
 		then 'e'::data.foundation_risk_indication
 
 	-- "N4"
 	WHEN NOT is_indicative
-		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		and velocity >= (-2.0)
 		and ground_water >= 1.5
 		then 'd'::data.foundation_risk_indication
 
 	-- "N5"
 	WHEN NOT is_indicative
-		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		and velocity < (-2.0)
 		and ground_water < 1.5
 		then 'd'::data.foundation_risk_indication
 
 	-- "N6"		
 	WHEN NOT is_indicative
-		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam')
+		AND (foundation_type = 'wood' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch')
 		and velocity >= (-2.0)
 		and ground_water < 1.5
 		then 'b'::data.foundation_risk_indication
@@ -2388,13 +2407,13 @@ CASE
 	
 	-- "H"
 	WHEN construction_year >= 1800
-		AND construction_year < 1925
+		AND construction_year < 1920
 		AND (height >= 10.5 OR height IS NULL)
 		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
 		THEN 'wood'::report.foundation_type
 
 	-- "I"
-	WHEN construction_year >= 1925
+	WHEN construction_year >= 1920
 		AND construction_year < 1970
 		AND (height >= 10.5 OR height IS NULL)
 		AND ((geographic_region <> 'hz'::text AND geographic_region <> 'ni-hz'::text AND geographic_region <> 'ni-du'::text) OR geographic_region IS NULL)
@@ -2428,10 +2447,10 @@ CREATE FUNCTION data.get_restoration_cost(foundation_type report.foundation_type
     AS $$
 SELECT
 CASE
-    WHEN foundation_type = 'wood'
+    WHEN foundation_type = 'wood' OR foundation_type = 'wood_charger' or foundation_type = 'wood_amsterdam' or foundation_type = 'wood_rotterdam' or foundation_type = 'wood_rotterdam_amsterdam' or foundation_type = 'wood_amsterdam_arch' or foundation_type = 'wood_rotterdam_arch'
     THEN round((surface_area * 950::double precision)::numeric, '-2'::integer)::integer
     
-    WHEN foundation_type = 'no_pile'
+    WHEN foundation_type = 'no_pile' or foundation_type = 'no_pile_masonry' or foundation_type = 'no_pile_strips' or foundation_type = 'no_pile_concrete_floor' or foundation_type = 'no_pile_slit'
     THEN round((surface_area * 350::double precision)::numeric, '-2'::integer)::integer
 
     ELSE NULL::integer
@@ -3651,15 +3670,15 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
             WHEN (established.foundation_type IS NOT NULL) THEN established.foundation_type
             WHEN (cluster.foundation_type IS NOT NULL) THEN cluster.foundation_type
             ELSE indicative_foundation_type.indicative_foundation_type
-        END, (pile_length.pile_length)::double precision) bio_infection_risk(bio_infection_risk),
-    LATERAL data.get_established_drystand_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_drystand_risk(cluster_drystand_risk),
-    LATERAL data.get_established_dewatering_depth_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_dewatering_depth_risk(cluster_dewatering_depth_risk),
-    LATERAL data.get_established_bio_infection_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_bio_infection_risk(cluster_bio_infection_risk),
-    LATERAL data.get_established_unclassified_risk(cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_unclassified_risk(cluster_unclassified_risk),
+        END, (pile_length.pile_length)::double precision, s.velocity) bio_infection_risk(bio_infection_risk),
+    LATERAL data.get_established_drystand_risk(false, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_drystand_risk(cluster_drystand_risk),
+    LATERAL data.get_established_dewatering_depth_risk(false, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_dewatering_depth_risk(cluster_dewatering_depth_risk),
+    LATERAL data.get_established_bio_infection_risk(false, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_bio_infection_risk(cluster_bio_infection_risk),
+    LATERAL data.get_established_unclassified_risk(false, cluster.recovery, cluster.damage_cause, cluster.enforcement_term, cluster.overall_quality, cluster.recovery_advised) cluster_unclassified_risk(cluster_unclassified_risk),
     LATERAL data.get_established_drystand_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_drystand_risk(established_drystand_risk),
     LATERAL data.get_established_dewatering_depth_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_dewatering_depth_risk(established_dewatering_depth_risk),
     LATERAL data.get_established_bio_infection_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_bio_infection_risk(established_bio_infection_risk),
-    LATERAL data.get_established_unclassified_risk(established.recovery, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_unclassified_risk(established_unclassified_risk)
+    LATERAL data.get_established_unclassified_risk(established.recovery, false, established.damage_cause, established.enforcement_term, established.overall_quality, established.recovery_advised) established_unclassified_risk(established_unclassified_risk)
   WHERE ((addresses.count > 0) AND (b.building_type = 'house'::geocoder.building_type))
   WITH NO DATA;
 
