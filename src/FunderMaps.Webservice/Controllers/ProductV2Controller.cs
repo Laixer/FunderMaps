@@ -61,25 +61,16 @@ namespace FunderMaps.Webservice.Controllers
             return Ok(result);
         }
 
-        // GET: api/v2/product/risk_index
+        // GET: api/v2/product/at_risk
         /// <summary>
         ///     Request the risk index per id.
         /// </summary>
-        [HttpGet("risk_index")]
+        [HttpGet("at_risk")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<List<RiskIndexDto>>> GetRiskIndexAsync([FromQuery] string id)
-        {
-            // Assign.
-            IAsyncEnumerable<bool> productList = _productService.GetRiskIndexAsync(id);
-
-            // Map.
-            var result = await _mapper.MapAsync<IList<RiskIndexDto>, bool>(productList);
-
-            // Return.
-            return Ok(result);
-        }
+        public Task<bool> GetRiskIndexAsync([FromQuery] string id)
+            => _productService.GetRiskIndexAsync(id);
 
         // GET: api/v2/product/statistics
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Types.Products;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces
 {
@@ -33,6 +34,6 @@ namespace FunderMaps.Core.Interfaces
         ///     Get risk index on id.
         /// </summary>
         /// <param name="input">Input query.</param>
-        IAsyncEnumerable<bool> GetRiskIndexAsync(string input);
+        Task<bool> GetRiskIndexAsync(string input);
     }
 }

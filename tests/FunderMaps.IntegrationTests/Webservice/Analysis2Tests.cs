@@ -118,13 +118,12 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/v2/product/risk_index?id=gfm-ac31bec346744745b29f8505dff8182e");
-            var returnObject = await response.Content.ReadFromJsonAsync<IList<RiskIndexDto>>();
+            var response = await client.GetAsync($"api/v2/product/at_risk?id=gfm-ac31bec346744745b29f8505dff8182e");
+            var returnObject = await response.Content.ReadFromJsonAsync<bool>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1, returnObject.Count);
-            Assert.False(returnObject.First().IncreasedRisk);
+            Assert.False(returnObject);
 
             Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
@@ -136,13 +135,12 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act
-            var response = await client.GetAsync($"api/v2/product/risk_index?id=NL.IMBAG.LIGPLAATS.0503020000111954");
-            var returnObject = await response.Content.ReadFromJsonAsync<IList<RiskIndexDto>>();
+            var response = await client.GetAsync($"api/v2/product/at_risk?id=NL.IMBAG.LIGPLAATS.0503020000111954");
+            var returnObject = await response.Content.ReadFromJsonAsync<bool>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(1, returnObject.Count);
-            Assert.False(returnObject.First().IncreasedRisk);
+            Assert.False(returnObject);
 
             Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis2") > 0);
         }
