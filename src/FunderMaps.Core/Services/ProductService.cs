@@ -146,13 +146,7 @@ namespace FunderMaps.Core.Services
                     DescriptionDrystand = DescriptionDrystand(product.DrystandRisk, product.Drystand),
                     DescriptionDewateringDepth = DescriptionDewateringDepth(product.DewateringDepthRisk, product.DewateringDepth, product.Soil),
                     DescriptionBioInfection = DescriptionBioInfection(product.BioInfectionRisk),
-
-                    Statistics = productType switch
-                    {
-                        AnalysisProductType.RiskPlus => await GetStatisticsByIdAsync(product.NeighborhoodId),
-                        AnalysisProductType.Complete => await GetStatisticsByIdAsync(product.NeighborhoodId),
-                        _ => null,
-                    },
+                    Statistics = await GetStatisticsByIdAsync(product.NeighborhoodId),
                 };
             }
         }

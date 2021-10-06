@@ -20,6 +20,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct> GetByIdAsync(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'analysis',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisAddress
                         aa.id,
                         aa.external_id,
@@ -66,6 +79,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
@@ -132,6 +147,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'analysis',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisAddress
                         aa.id,
                         aa.external_id,
@@ -178,6 +206,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
@@ -244,6 +274,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct> GetByAddressExternalIdAsync(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'analysis',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisAddress
                         aa.id,
                         aa.external_id,
@@ -290,6 +333,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
