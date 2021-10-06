@@ -150,6 +150,23 @@ namespace FunderMaps.IntegrationTests.Webservice
         [InlineData("bagid=4928374hfdkjsfh")]
         [InlineData("query=thisismyquerystringyes")]
         [InlineData("fdshjbf438gi")]
+        public async Task GetRiskIndexByExternalIdInvalidAddressThrows(string address)
+        {
+            // Arrange
+            using var client = Factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync($"api/v2/product/at_risk?id={address}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Theory]
+        [InlineData("id=3kjhr834dhfjdeh")]
+        [InlineData("bagid=4928374hfdkjsfh")]
+        [InlineData("query=thisismyquerystringyes")]
+        [InlineData("fdshjbf438gi")]
         public async Task GetByIdInvalidAddressThrows(string address)
         {
             // Arrange

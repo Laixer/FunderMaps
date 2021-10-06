@@ -182,8 +182,7 @@ namespace FunderMaps.Core.Services
         /// </summary>
         /// <param name="input">Input query.</param>
         public virtual Task<bool> GetRiskIndexAsync(string input)
-        {
-            return _geocoderParser.FromIdentifier(input, out string id) switch
+            => _geocoderParser.FromIdentifier(input, out string id) switch
             {
                 GeocoderDatasource.FunderMaps => _analysisRepository.GetRiskIndexByIdAsync(id),
                 GeocoderDatasource.NlBagBuilding => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
@@ -192,7 +191,6 @@ namespace FunderMaps.Core.Services
                 GeocoderDatasource.NlBagAddress => _analysisRepository.GetRiskIndexByAddressExternalIdAsync(id),
                 _ => throw new InvalidIdentifierException(),
             };
-        }
 
         /// <summary>
         ///     Get statistics per region.
