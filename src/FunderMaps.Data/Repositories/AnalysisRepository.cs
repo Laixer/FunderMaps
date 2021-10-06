@@ -79,6 +79,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct2> GetById2Async(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'analysis2',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisComplete
                         ac.building_id,
                         ac.external_building_id,
@@ -104,6 +117,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
@@ -176,6 +191,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct2> GetByExternalId2Async(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'analysis2',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisComplete
                         ac.building_id,
                         ac.external_building_id,
@@ -201,6 +229,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
@@ -273,6 +303,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct2> GetByAddressExternalId2Async(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'analysis2',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisComplete
                         ac.building_id,
                         ac.external_building_id,
@@ -298,6 +341,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
 
@@ -311,6 +356,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> GetRiskIndexByIdAsync(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'riskindex',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisComplete
                         'a'::data.foundation_risk_indication <> ANY (ARRAY[
                         CASE
@@ -336,6 +394,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<bool>();
         }
@@ -347,6 +407,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> GetRiskIndexByExternalIdAsync(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'riskindex',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisComplete
                         'a'::data.foundation_risk_indication <> ANY (ARRAY[
                         CASE
@@ -372,6 +445,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<bool>();
         }
@@ -383,6 +458,19 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> GetRiskIndexByAddressExternalIdAsync(string id)
         {
             var sql = @"
+                INSERT INTO application.product_telemetry AS pu (
+                    user_id,
+                    organization_id,
+                    product,
+                    count)
+                VALUES (
+                    @user,
+                    @tenant,
+                    'riskindex',
+                    1)
+                ON CONFLICT (organization_id, product)
+                DO UPDATE SET
+                    count = pu.count + EXCLUDED.count;
                 SELECT -- AnalysisComplete
                         'a'::data.foundation_risk_indication <> ANY (ARRAY[
                         CASE
@@ -408,6 +496,8 @@ namespace FunderMaps.Data.Repositories
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
+            context.AddParameterWithValue("user", AppContext.UserId);
+            context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<bool>();
         }

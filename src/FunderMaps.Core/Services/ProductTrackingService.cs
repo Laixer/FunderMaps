@@ -12,8 +12,6 @@ namespace FunderMaps.Core.Services
     public class ProductTrackingService : ProductService
     {
         private const string statisticsProductName = "statistics";
-        private const string analysisProductName = "analysis2";
-        private const string RiskIndexProductName = "riskindex";
 
         private readonly ITelemetryRepository _trackingRepository;
 
@@ -52,28 +50,6 @@ namespace FunderMaps.Core.Services
         }
 
         /// <summary>
-        ///     Get an analysis product2 and log product hit.
-        /// </summary>
-        /// <param name="input">Input query.</param>
-        public override async IAsyncEnumerable<AnalysisProduct2> GetAnalysis2Async(string input)
-        {
-            int itemCount = 0;
-
-            try
-            {
-                await foreach (var product in base.GetAnalysis2Async(input))
-                {
-                    ++itemCount;
-                    yield return product;
-                }
-            }
-            finally
-            {
-                await _trackingRepository.ProductHitAsync(analysisProductName, itemCount);
-            }
-        }
-
-        /// <summary>
         ///     Get statistics per region and log product hit.
         /// </summary>
         /// <param name="input">Input query.</param>
@@ -92,28 +68,6 @@ namespace FunderMaps.Core.Services
             finally
             {
                 await _trackingRepository.ProductHitAsync(statisticsProductName);
-            }
-        }
-
-        /// <summary>
-        ///     Get risk index on id and log product hit.
-        /// </summary>
-        /// <param name="input">Input query.</param>
-        public override async IAsyncEnumerable<bool> GetRiskIndexAsync(string input)
-        {
-            int itemCount = 0;
-
-            try
-            {
-                await foreach (var product in base.GetRiskIndexAsync(input))
-                {
-                    ++itemCount;
-                    yield return product;
-                }
-            }
-            finally
-            {
-                await _trackingRepository.ProductHitAsync(RiskIndexProductName);
             }
         }
     }
