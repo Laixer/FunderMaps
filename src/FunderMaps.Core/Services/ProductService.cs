@@ -157,6 +157,7 @@ namespace FunderMaps.Core.Services
             }
         }
 
+        // TODO: Remove the foreach
         /// <summary>
         ///     Get an analysis product v2.
         /// </summary>
