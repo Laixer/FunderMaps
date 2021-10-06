@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -14,17 +13,13 @@ namespace FunderMaps.Webservice.Controllers
     [Route("quota")]
     public sealed class QuotaController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly ITelemetryRepository _telemetryRepository;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public QuotaController(IMapper mapper, ITelemetryRepository telemetryRepository)
-        {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _telemetryRepository = telemetryRepository ?? throw new ArgumentNullException(nameof(telemetryRepository));
-        }
+        public QuotaController(ITelemetryRepository telemetryRepository)
+            => _telemetryRepository = telemetryRepository ?? throw new ArgumentNullException(nameof(telemetryRepository));
 
         // GET: api/quota/usage
         /// <summary>
