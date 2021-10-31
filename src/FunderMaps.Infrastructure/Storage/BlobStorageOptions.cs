@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Infrastructure.Storage
+﻿namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
     ///     Options for the blob storage service.

@@ -1,6 +1,4 @@
 ﻿using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Net.Http.Json
 {

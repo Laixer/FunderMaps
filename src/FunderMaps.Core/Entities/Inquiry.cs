@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Control;
-using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities

@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace FunderMaps.Core.Interfaces.Repositories
+﻿namespace FunderMaps.Core.Interfaces.Repositories
 {
     /// <summary>
     ///     Operations for the test repository.

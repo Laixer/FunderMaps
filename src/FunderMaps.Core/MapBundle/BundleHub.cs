@@ -1,8 +1,6 @@
 using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Threading;
-using System;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.MapBundle
 {

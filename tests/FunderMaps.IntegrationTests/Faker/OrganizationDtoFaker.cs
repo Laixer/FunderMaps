@@ -2,7 +2,6 @@ using Bogus;
 using Bogus.Extensions;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
-using System;
 
 namespace FunderMaps.IntegrationTests.Faker
 {

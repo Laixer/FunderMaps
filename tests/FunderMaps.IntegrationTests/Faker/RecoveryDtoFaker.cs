@@ -1,9 +1,7 @@
 ﻿using Bogus;
-using Bogus.DataSets;
 using Bogus.Extensions;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
-using System;
 
 namespace FunderMaps.IntegrationTests.Faker
 {

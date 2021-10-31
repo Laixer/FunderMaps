@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.Types.Products;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {

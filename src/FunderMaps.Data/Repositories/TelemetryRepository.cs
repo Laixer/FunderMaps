@@ -2,10 +2,7 @@
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {

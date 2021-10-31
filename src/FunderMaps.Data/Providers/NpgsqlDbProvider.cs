@@ -1,12 +1,12 @@
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using Npgsql.Logging;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
-using Npgsql.Logging;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Providers
@@ -21,7 +21,7 @@ namespace FunderMaps.Data.Providers
         // class Loggert : INpgsqlLoggingProvider
         // {
         //     private NpgsqlLogger _logger;
-            
+
         //     public Loggert(NpgsqlLogger logger)
         //     {
         //         _logger = logger;

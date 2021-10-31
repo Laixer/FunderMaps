@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Threading
+﻿namespace FunderMaps.Core.Threading
 {
     /// <summary>
     ///     Wrapper for all our console options.

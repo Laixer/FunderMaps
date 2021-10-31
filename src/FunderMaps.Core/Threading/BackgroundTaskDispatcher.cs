@@ -1,6 +1,3 @@
-using System;
-using System.Threading.Tasks;
-
 namespace FunderMaps.Core.Threading
 {
     /// <summary>

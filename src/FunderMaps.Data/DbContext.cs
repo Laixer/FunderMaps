@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
 using FunderMaps.Core;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Data.Providers;
+using System.Data.Common;
+using System.Runtime.ExceptionServices;
 
 namespace FunderMaps.Data
 {

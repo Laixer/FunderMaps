@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
 using FunderMaps.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using System.Net;
 
 namespace FunderMaps.AspNetCore.Middleware
 {

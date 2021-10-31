@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
 #pragma warning disable CA1812 // Internal class is never instantiated

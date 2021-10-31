@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Types.Control
+﻿namespace FunderMaps.Core.Types.Control
 {
     /// <summary>
     ///     Attribution represents an entity partition for user and organizational relations.

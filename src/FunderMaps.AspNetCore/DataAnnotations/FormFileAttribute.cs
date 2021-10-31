@@ -1,7 +1,5 @@
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.AspNetCore.DataAnnotations
 {

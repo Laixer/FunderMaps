@@ -1,10 +1,6 @@
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Options;
-using System;
-using System.IO;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Infrastructure.Storage
 {

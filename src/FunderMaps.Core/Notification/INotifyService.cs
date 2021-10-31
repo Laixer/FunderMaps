@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace FunderMaps.Core.Notification
+﻿namespace FunderMaps.Core.Notification
 {
     /// <summary>
     ///     Notify service.

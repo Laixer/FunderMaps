@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using FunderMaps.Core.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {

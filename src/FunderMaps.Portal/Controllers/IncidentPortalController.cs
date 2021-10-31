@@ -6,11 +6,8 @@ using FunderMaps.Core.Helpers;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.Portal.Controllers

@@ -6,7 +6,6 @@ using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

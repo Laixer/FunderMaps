@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using FunderMaps.Core.Threading;
 
 namespace FunderMaps.Core.Notification

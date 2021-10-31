@@ -1,10 +1,7 @@
-﻿using FunderMaps.Core;
+using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 #pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Repositories

@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using FunderMaps.Core.Entities;
-using System.Collections.Generic;
 
 namespace FunderMaps.IntegrationTests.Faker
 {

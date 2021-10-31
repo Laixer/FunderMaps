@@ -3,10 +3,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {
@@ -44,7 +41,7 @@ namespace FunderMaps.Data.Repositories
                     Reviewer = reader.GetFieldValue<Guid?>(offset + 6),
                     Creator = reader.GetGuid(offset + 7),
                     Owner = reader.GetGuid(offset + 8),
-                    Contractor = reader.GetGuid(offset +9),
+                    Contractor = reader.GetGuid(offset + 9),
                 },
                 State = new()
                 {

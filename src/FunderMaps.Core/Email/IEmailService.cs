@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Core.Email
 {

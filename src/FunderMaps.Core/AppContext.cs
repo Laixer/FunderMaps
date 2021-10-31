@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Threading;
 using FunderMaps.Core.Identity;
+using System.Reflection;
 
 namespace FunderMaps.Core
 {
