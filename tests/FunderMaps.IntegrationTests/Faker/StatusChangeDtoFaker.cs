@@ -1,19 +1,18 @@
-﻿using Bogus;
+using Bogus;
 using FunderMaps.WebApi.DataTransferObjects;
 
-namespace FunderMaps.IntegrationTests.Faker
+namespace FunderMaps.IntegrationTests.Faker;
+
+/// <summary>
+///     Faker for <see cref="StatusChangeDto"/>.
+/// </summary>
+public class StatusChangeDtoFaker : Faker<StatusChangeDto>
 {
     /// <summary>
-    ///     Faker for <see cref="StatusChangeDto"/>.
+    ///     Create new instance.
     /// </summary>
-    public class StatusChangeDtoFaker : Faker<StatusChangeDto>
+    public StatusChangeDtoFaker()
     {
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public StatusChangeDtoFaker()
-        {
-            RuleFor(f => f.Message, f => f.Lorem.Text());
-        }
+        RuleFor(f => f.Message, f => f.Lorem.Text());
     }
 }

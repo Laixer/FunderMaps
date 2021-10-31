@@ -4,24 +4,23 @@ using FunderMaps.Core.Threading;
 using System;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.MapBundle
+namespace FunderMaps.Core.MapBundle;
+
+/// <summary>
+///     Process bundles.
+/// </summary>
+internal class BundleHub : AppServiceBase, IBundleService
 {
+    private readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
+
     /// <summary>
-    ///     Process bundles.
+    ///     Create new instance.
     /// </summary>
-    internal class BundleHub : AppServiceBase, IBundleService
-    {
-        private readonly BackgroundTaskDispatcher _backgroundTaskDispatcher;
+    public BundleHub(BackgroundTaskDispatcher backgroundTaskDispatcher)
+        => _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public BundleHub(BackgroundTaskDispatcher backgroundTaskDispatcher)
-            => _backgroundTaskDispatcher = backgroundTaskDispatcher ?? throw new ArgumentNullException(nameof(backgroundTaskDispatcher));
-
-        /// <summary>
-        ///     Send build candidates off to background worker.
-        /// </summary>
-        public async Task BuildAsync() => await _backgroundTaskDispatcher.EnqueueTaskAsync<ExportJob>();
-    }
+    /// <summary>
+    ///     Send build candidates off to background worker.
+    /// </summary>
+    public async Task BuildAsync() => await _backgroundTaskDispatcher.EnqueueTaskAsync<ExportJob>();
 }

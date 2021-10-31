@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Tdm
+namespace FunderMaps.Tdm;
 {
     public class FunctionSharedState
     {

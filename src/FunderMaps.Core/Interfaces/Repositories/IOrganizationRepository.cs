@@ -1,21 +1,20 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 using System;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Core.Interfaces.Repositories
+namespace FunderMaps.Core.Interfaces.Repositories;
+
+/// <summary>
+///     Organization repository.
+/// </summary>
+public interface IOrganizationRepository : IAsyncRepository<Organization, Guid>
 {
     /// <summary>
-    ///     Organization repository.
+    ///     Create new <see cref="Organization"/> from a proposal.
     /// </summary>
-    public interface IOrganizationRepository : IAsyncRepository<Organization, Guid>
-    {
-        /// <summary>
-        ///     Create new <see cref="Organization"/> from a proposal.
-        /// </summary>
-        /// <param name="id">Organization proposal identifier.</param>
-        /// <param name="email">Superuser email.</param>
-        /// <param name="passwordHash">Superuser password.</param>
-        /// <returns>Created <see cref="Organization"/> identifier.</returns>
-        Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash);
-    }
+    /// <param name="id">Organization proposal identifier.</param>
+    /// <param name="email">Superuser email.</param>
+    /// <param name="passwordHash">Superuser password.</param>
+    /// <returns>Created <see cref="Organization"/> identifier.</returns>
+    Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash);
 }

@@ -1,25 +1,24 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
-namespace FunderMaps.AspNetCore.Authentication
+namespace FunderMaps.AspNetCore.Authentication;
+
+/// <summary>
+///     Security token provider.
+/// </summary>
+public interface ISecurityTokenProvider
 {
     /// <summary>
-    ///     Security token provider.
+    ///     Generate token.
     /// </summary>
-    public interface ISecurityTokenProvider
-    {
-        /// <summary>
-        ///     Generate token.
-        /// </summary>
-        /// <param name="principal">Claims principal.</param>
-        /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
-        SecurityToken GetToken(ClaimsPrincipal principal);
+    /// <param name="principal">Claims principal.</param>
+    /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
+    SecurityToken GetToken(ClaimsPrincipal principal);
 
-        /// <summary>
-        ///     Generate token.
-        /// </summary>
-        /// <param name="principal">Claims principal.</param>
-        /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-        TokenContext GetTokenContext(ClaimsPrincipal principal);
-    }
+    /// <summary>
+    ///     Generate token.
+    /// </summary>
+    /// <param name="principal">Claims principal.</param>
+    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
+    TokenContext GetTokenContext(ClaimsPrincipal principal);
 }

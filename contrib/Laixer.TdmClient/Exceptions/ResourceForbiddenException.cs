@@ -1,36 +1,35 @@
-﻿using System;
+using System;
 
-namespace TdmClient.Exceptions
+namespace TdmClient.Exceptions;
+
+/// <summary>
+/// Resource forbidden exception.
+/// </summary>
+public class ResourceForbiddenException : Exception
 {
     /// <summary>
-    /// Resource forbidden exception.
+    /// Create new instance.
     /// </summary>
-    public class ResourceForbiddenException : Exception
+    public ResourceForbiddenException()
     {
-        /// <summary>
-        /// Create new instance.
-        /// </summary>
-        public ResourceForbiddenException()
-        {
-        }
+    }
 
-        /// <summary>
-        /// Create new instance.
-        /// </summary>
-        /// <param name="message">Exception message.</param>
-        public ResourceForbiddenException(string message)
-            : base(message)
-        {
-        }
+    /// <summary>
+    /// Create new instance.
+    /// </summary>
+    /// <param name="message">Exception message.</param>
+    public ResourceForbiddenException(string message)
+        : base(message)
+    {
+    }
 
-        /// <summary>
-        /// Create new instance.
-        /// </summary>
-        /// <param name="message">Exception message.</param>
-        /// <param name="innerException">Inner exception.</param>
-        public ResourceForbiddenException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+    /// <summary>
+    /// Create new instance.
+    /// </summary>
+    /// <param name="message">Exception message.</param>
+    /// <param name="innerException">Inner exception.</param>
+    public ResourceForbiddenException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }

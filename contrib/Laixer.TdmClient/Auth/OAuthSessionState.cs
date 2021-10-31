@@ -1,23 +1,22 @@
-﻿namespace TdmClient.Auth
+namespace TdmClient.Auth;
+
+/// <summary>
+/// Session state.
+/// </summary>
+public enum OAuthSessionState
 {
     /// <summary>
-    /// Session state.
+    /// No tokens present.
     /// </summary>
-    public enum OAuthSessionState
-    {
-        /// <summary>
-        /// No tokens present.
-        /// </summary>
-        NoToken,
+    NoToken,
 
-        /// <summary>
-        /// Token is expired.
-        /// </summary>
-        TokenExpired,
+    /// <summary>
+    /// Token is expired.
+    /// </summary>
+    TokenExpired,
 
-        /// <summary>
-        /// Token is valid.
-        /// </summary>
-        TokenValid,
-    }
+    /// <summary>
+    /// Token is valid.
+    /// </summary>
+    TokenValid,
 }

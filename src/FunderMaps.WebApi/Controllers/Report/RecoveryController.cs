@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
@@ -18,263 +18,263 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 
-namespace FunderMaps.WebApi.Controllers.Report
+namespace FunderMaps.WebApi.Controllers.Report;
+
+/// <summary>
+///     Endpoint controller for recovery operations.
+/// </summary>
+[Route("recovery")]
+public class RecoveryController : ControllerBase
 {
+    private readonly IMapper _mapper;
+    private readonly Core.AppContext _appContext;
+    private readonly IOrganizationRepository _organizationRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IRecoveryRepository _recoveryRepository;
+    private readonly IBlobStorageService _blobStorageService;
+    private readonly INotifyService _notifyService;
+
     /// <summary>
-    ///     Endpoint controller for recovery operations.
+    ///     Create new instance.
     /// </summary>
-    [Route("recovery")]
-    public class RecoveryController : ControllerBase
+    public RecoveryController(
+        IMapper mapper,
+        Core.AppContext appContext,
+        IOrganizationRepository organizationRepository,
+        IUserRepository userRepository,
+        IRecoveryRepository recoveryRepository,
+        IBlobStorageService blobStorageService,
+        INotifyService notificationService)
     {
-        private readonly IMapper _mapper;
-        private readonly Core.AppContext _appContext;
-        private readonly IOrganizationRepository _organizationRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IRecoveryRepository _recoveryRepository;
-        private readonly IBlobStorageService _blobStorageService;
-        private readonly INotifyService _notifyService;
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+        _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
+        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+        _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+    }
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public RecoveryController(
-            IMapper mapper,
-            Core.AppContext appContext,
-            IOrganizationRepository organizationRepository,
-            IUserRepository userRepository,
-            IRecoveryRepository recoveryRepository,
-            IBlobStorageService blobStorageService,
-            INotifyService notificationService)
+    // GET: api/recovery/stats
+    /// <summary>
+    ///     Return recovery statistics.
+    /// </summary>
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStatsAsync()
+    {
+        // Map.
+        DatasetStatsDto output = new()
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
-            _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
-            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-            _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+            Count = await _recoveryRepository.CountAsync(),
+        };
+
+        // Return.
+        return Ok(output);
+    }
+
+    // GET: api/recovery/{id}
+    /// <summary>
+    ///     Return recovery by id.
+    /// </summary>
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetAsync(int id)
+    {
+        // Act.
+        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+
+        // Map.
+        var output = _mapper.Map<RecoveryDto>(recovery);
+
+        // Return.
+        return Ok(output);
+    }
+
+    // GET: api/recovery
+    /// <summary>
+    ///     Return all recoveries.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
+    {
+        // Act.
+        IAsyncEnumerable<Recovery> organizationList = _recoveryRepository.ListAllAsync(pagination.Navigation);
+
+        // Map.
+        var output = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(organizationList);
+
+        // Return.
+        return Ok(output);
+    }
+
+    // POST: api/recovery
+    /// <summary>
+    ///     Create recovery.
+    /// </summary>
+    [HttpPost]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
+    {
+        // Map.
+        var recovery = _mapper.Map<Recovery>(input);
+        if (_appContext.UserId == input.Reviewer)
+        {
+            throw new AuthorizationException();
         }
 
-        // GET: api/recovery/stats
-        /// <summary>
-        ///     Return recovery statistics.
-        /// </summary>
-        [HttpGet("stats")]
-        public async Task<IActionResult> GetStatsAsync()
-        {
-            // Map.
-            DatasetStatsDto output = new()
-            {
-                Count = await _recoveryRepository.CountAsync(),
-            };
+        // Act.
+        recovery = await _recoveryRepository.AddGetAsync(recovery);
 
-            // Return.
-            return Ok(output);
+        // Map.
+        var output = _mapper.Map<RecoveryDto>(recovery);
+
+        // Return.
+        return Ok(output);
+    }
+
+    // POST: api/recovery/upload-document
+    /// <summary>
+    ///     Upload document to the backstore.
+    /// </summary>
+    [HttpPost("upload-document")]
+    [RequestSizeLimit(128 * 1024 * 1024)]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
+    {
+        // Act.
+        string storeFileName = FileHelper.GetUniqueName(input.FileName);
+        await _blobStorageService.StoreFileAsync(
+            containerName: Core.Constants.RecoveryStorageFolderName,
+            fileName: storeFileName,
+            contentType: input.ContentType,
+            stream: input.OpenReadStream());
+
+        DocumentDto output = new()
+        {
+            Name = storeFileName,
+        };
+
+        // Return.
+        return Ok(output);
+    }
+
+    // GET: api/recovery/{id}/download
+    /// <summary>
+    ///     Retrieve document access link.
+    /// </summary>
+    [HttpGet("{id:int}/download")]
+    public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
+    {
+        // Act.
+        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+        Uri link = await _blobStorageService.GetAccessLinkAsync(
+            containerName: Core.Constants.RecoveryStorageFolderName,
+            fileName: recovery.DocumentFile,
+            hoursValid: 1);
+
+        // Map.
+        BlobAccessLinkDto result = new()
+        {
+            AccessLink = link
+        };
+
+        // Return.
+        return Ok(result);
+    }
+
+    // PUT: api/recovery/{id}
+    /// <summary>
+    ///     Update recovery by id.
+    /// </summary>
+    [HttpPut("{id:int}")]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
+    {
+        // Map.
+        var recovery = _mapper.Map<Recovery>(input);
+        recovery.Id = id;
+
+        Recovery recovery_existing = await _recoveryRepository.GetByIdAsync(id);
+        if (recovery_existing.Attribution.Creator == input.Reviewer)
+        {
+            throw new AuthorizationException();
         }
 
-        // GET: api/recovery/{id}
-        /// <summary>
-        ///     Return recovery by id.
-        /// </summary>
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetAsync(int id)
+        // Act.
+        await _recoveryRepository.UpdateAsync(recovery);
+
+        // FUTURE: Does this make sense?
+        // Only when this item was rejected can we move into
+        // a pending state after update.
+        if (recovery.State.AuditStatus == AuditStatus.Rejected)
         {
-            // Act.
-            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-
-            // Map.
-            var output = _mapper.Map<RecoveryDto>(recovery);
-
-            // Return.
-            return Ok(output);
-        }
-
-        // GET: api/recovery
-        /// <summary>
-        ///     Return all recoveries.
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
-        {
-            // Act.
-            IAsyncEnumerable<Recovery> organizationList = _recoveryRepository.ListAllAsync(pagination.Navigation);
-
-            // Map.
-            var output = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(organizationList);
-
-            // Return.
-            return Ok(output);
-        }
-
-        // POST: api/recovery
-        /// <summary>
-        ///     Create recovery.
-        /// </summary>
-        [HttpPost]
-        [Authorize(Policy = "WriterAdministratorPolicy")]
-        public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
-        {
-            // Map.
-            var recovery = _mapper.Map<Recovery>(input);
-            if (_appContext.UserId == input.Reviewer)
-            {
-                throw new AuthorizationException();
-            }
-
-            // Act.
-            recovery = await _recoveryRepository.AddGetAsync(recovery);
-
-            // Map.
-            var output = _mapper.Map<RecoveryDto>(recovery);
-
-            // Return.
-            return Ok(output);
-        }
-
-        // POST: api/recovery/upload-document
-        /// <summary>
-        ///     Upload document to the backstore.
-        /// </summary>
-        [HttpPost("upload-document")]
-        [RequestSizeLimit(128 * 1024 * 1024)]
-        [Authorize(Policy = "WriterAdministratorPolicy")]
-        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
-        {
-            // Act.
-            string storeFileName = FileHelper.GetUniqueName(input.FileName);
-            await _blobStorageService.StoreFileAsync(
-                containerName: Core.Constants.RecoveryStorageFolderName,
-                fileName: storeFileName,
-                contentType: input.ContentType,
-                stream: input.OpenReadStream());
-
-            DocumentDto output = new()
-            {
-                Name = storeFileName,
-            };
-
-            // Return.
-            return Ok(output);
-        }
-
-        // GET: api/recovery/{id}/download
-        /// <summary>
-        ///     Retrieve document access link.
-        /// </summary>
-        [HttpGet("{id:int}/download")]
-        public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
-        {
-            // Act.
-            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-            Uri link = await _blobStorageService.GetAccessLinkAsync(
-                containerName: Core.Constants.RecoveryStorageFolderName,
-                fileName: recovery.DocumentFile,
-                hoursValid: 1);
-
-            // Map.
-            BlobAccessLinkDto result = new()
-            {
-                AccessLink = link
-            };
-
-            // Return.
-            return Ok(result);
-        }
-
-        // PUT: api/recovery/{id}
-        /// <summary>
-        ///     Update recovery by id.
-        /// </summary>
-        [HttpPut("{id:int}")]
-        [Authorize(Policy = "WriterAdministratorPolicy")]
-        public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
-        {
-            // Map.
-            var recovery = _mapper.Map<Recovery>(input);
-            recovery.Id = id;
-
-            Recovery recovery_existing = await _recoveryRepository.GetByIdAsync(id);
-            if (recovery_existing.Attribution.Creator == input.Reviewer)
-            {
-                throw new AuthorizationException();
-            }
-
-            // Act.
-            await _recoveryRepository.UpdateAsync(recovery);
-
-            // FUTURE: Does this make sense?
-            // Only when this item was rejected can we move into
-            // a pending state after update.
-            if (recovery.State.AuditStatus == AuditStatus.Rejected)
-            {
-                // Transition.
-                recovery.State.TransitionToPending();
-
-                // Act.
-                await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
-            }
-
-            // Return.
-            return NoContent();
-        }
-
-        // POST: api/recovery/{id}/reset
-        /// <summary>
-        ///     Reset recovery status to pending by id.
-        /// </summary>
-        [HttpPost("{id:int}/reset")]
-        [Authorize(Policy = "SuperuserAdministratorPolicy")]
-        public async Task<IActionResult> ResetAsync(int id)
-        {
-            // Act.
-            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-
             // Transition.
             recovery.State.TransitionToPending();
 
             // Act.
             await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
-
-            // Return.
-            return NoContent();
         }
 
-        // POST: api/recovery/{id}/status_review
-        /// <summary>
-        ///     Set recovery status to review by id.
-        /// </summary>
-        [HttpPost("{id:int}/status_review")]
-        [Authorize(Policy = "WriterAdministratorPolicy")]
-        public async Task<IActionResult> SetStatusReviewAsync(int id)
+        // Return.
+        return NoContent();
+    }
+
+    // POST: api/recovery/{id}/reset
+    /// <summary>
+    ///     Reset recovery status to pending by id.
+    /// </summary>
+    [HttpPost("{id:int}/reset")]
+    [Authorize(Policy = "SuperuserAdministratorPolicy")]
+    public async Task<IActionResult> ResetAsync(int id)
+    {
+        // Act.
+        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+
+        // Transition.
+        recovery.State.TransitionToPending();
+
+        // Act.
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+
+        // Return.
+        return NoContent();
+    }
+
+    // POST: api/recovery/{id}/status_review
+    /// <summary>
+    ///     Set recovery status to review by id.
+    /// </summary>
+    [HttpPost("{id:int}/status_review")]
+    [Authorize(Policy = "WriterAdministratorPolicy")]
+    public async Task<IActionResult> SetStatusReviewAsync(int id)
+    {
+        // Act.
+        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+
+        // Transition.
+        recovery.State.TransitionToReview();
+
+        // Act.
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+
+        string subject = $"FunderMaps - Herstelrapportage ter review";
+
+        object header = new
         {
-            // Act.
-            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-            User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
-            User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+            Title = subject,
+            Preheader = "Herstelrapportage ter review wordt aangeboden."
+        };
 
-            // Transition.
-            recovery.State.TransitionToReview();
+        string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage ter review wordt aangeboden.";
 
-            // Act.
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
-
-            string subject = $"FunderMaps - Herstelrapportage ter review";
-
-            object header = new
-            {
-                Title = subject,
-                Preheader = "Herstelrapportage ter review wordt aangeboden."
-            };
-
-            string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage ter review wordt aangeboden.";
-
-            await _notifyService.NotifyAsync(new()
-            {
-                Recipients = new List<string> { reviewer.Email },
-                Subject = subject,
-                Template = "RecoveryReview",
-                Items = new Dictionary<string, object>
+        await _notifyService.NotifyAsync(new()
+        {
+            Recipients = new List<string> { reviewer.Email },
+            Subject = subject,
+            Template = "RecoveryReview",
+            Items = new Dictionary<string, object>
                 {
                     { "header", header },
                     { "footer", footer },
@@ -283,48 +283,48 @@ namespace FunderMaps.WebApi.Controllers.Report
                     { "recovery", recovery },
                     { "redirect_link", $"{Request.Scheme}://{Request.Host}/recovery/{recovery.Id}" },
                 },
-            });
+        });
 
-            // Return.
-            return NoContent();
-        }
+        // Return.
+        return NoContent();
+    }
 
-        // POST: api/recovery/{id}/status_rejected
-        /// <summary>
-        ///     Set recovery status to rejected by id.
-        /// </summary>
-        [HttpPost("{id:int}/status_rejected")]
-        [Authorize(Policy = "VerifierAdministratorPolicy")]
-        public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
+    // POST: api/recovery/{id}/status_rejected
+    /// <summary>
+    ///     Set recovery status to rejected by id.
+    /// </summary>
+    [HttpPost("{id:int}/status_rejected")]
+    [Authorize(Policy = "VerifierAdministratorPolicy")]
+    public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
+    {
+        // Act.
+        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+        User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+
+        // Transition.
+        recovery.State.TransitionToRejected();
+
+        // Act.
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+
+        string subject = $"FunderMaps - Herstelrapportage afgekeurd";
+
+        object header = new
         {
-            // Act.
-            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-            User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
-            User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+            Title = subject,
+            Preheader = "Herstelrapportage is afgekeurd."
+        };
 
-            // Transition.
-            recovery.State.TransitionToRejected();
+        string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is afgekeurd.";
 
-            // Act.
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
-
-            string subject = $"FunderMaps - Herstelrapportage afgekeurd";
-
-            object header = new
-            {
-                Title = subject,
-                Preheader = "Herstelrapportage is afgekeurd."
-            };
-
-            string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is afgekeurd.";
-
-            await _notifyService.NotifyAsync(new()
-            {
-                Recipients = new List<string> { creator.Email },
-                Subject = subject,
-                Template = "RecoveryRejected",
-                Items = new Dictionary<string, object>
+        await _notifyService.NotifyAsync(new()
+        {
+            Recipients = new List<string> { creator.Email },
+            Subject = subject,
+            Template = "RecoveryRejected",
+            Items = new Dictionary<string, object>
                 {
                     { "header", header },
                     { "footer", footer },
@@ -334,48 +334,48 @@ namespace FunderMaps.WebApi.Controllers.Report
                     { "message", input.Message },
                     { "redirect_link", $"{Request.Scheme}://{Request.Host}/recovery/{recovery.Id}" },
                 },
-            });
+        });
 
-            // Return.
-            return NoContent();
-        }
+        // Return.
+        return NoContent();
+    }
 
-        // POST: api/recovery/{id}/status_approved
-        /// <summary>
-        ///     Set recovery status to done by id.
-        /// </summary>
-        [HttpPost("{id:int}/status_approved")]
-        [Authorize(Policy = "VerifierAdministratorPolicy")]
-        public async Task<IActionResult> SetStatusApprovedAsync(int id)
+    // POST: api/recovery/{id}/status_approved
+    /// <summary>
+    ///     Set recovery status to done by id.
+    /// </summary>
+    [HttpPost("{id:int}/status_approved")]
+    [Authorize(Policy = "VerifierAdministratorPolicy")]
+    public async Task<IActionResult> SetStatusApprovedAsync(int id)
+    {
+        // Act.
+        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+        User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+
+        // Transition.
+        recovery.State.TransitionToDone();
+
+        // Act.
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+
+        string subject = $"FunderMaps - Herstelrapportage goedgekeurd";
+
+        object header = new
         {
-            // Act.
-            Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-            Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-            User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
-            User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+            Title = subject,
+            Preheader = "Herstelrapportage is goedgekeurd."
+        };
 
-            // Transition.
-            recovery.State.TransitionToDone();
+        string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is goedgekeurd.";
 
-            // Act.
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
-
-            string subject = $"FunderMaps - Herstelrapportage goedgekeurd";
-
-            object header = new
-            {
-                Title = subject,
-                Preheader = "Herstelrapportage is goedgekeurd."
-            };
-
-            string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is goedgekeurd.";
-
-            await _notifyService.NotifyAsync(new()
-            {
-                Recipients = new List<string> { creator.Email },
-                Subject = "FunderMaps - Herstelrapportage goedgekeurd",
-                Template = "RecoveryApproved",
-                Items = new Dictionary<string, object>
+        await _notifyService.NotifyAsync(new()
+        {
+            Recipients = new List<string> { creator.Email },
+            Subject = "FunderMaps - Herstelrapportage goedgekeurd",
+            Template = "RecoveryApproved",
+            Items = new Dictionary<string, object>
                 {
                     { "header", header },
                     { "footer", footer },
@@ -383,25 +383,24 @@ namespace FunderMaps.WebApi.Controllers.Report
                     { "organization", organization.ToString() },
                     { "recovery", recovery },
                 },
-            });
+        });
 
-            // Return.
-            return NoContent();
-        }
+        // Return.
+        return NoContent();
+    }
 
-        // DELETE: api/recovery/{id}
-        /// <summary>
-        ///     Delete recovery by id.
-        /// </summary>
-        [HttpDelete("{id:int}")]
-        [Authorize(Policy = "SuperuserAdministratorPolicy")]
-        public async Task<IActionResult> DeleteAsync(int id)
-        {
-            // Act.
-            await _recoveryRepository.DeleteAsync(id);
+    // DELETE: api/recovery/{id}
+    /// <summary>
+    ///     Delete recovery by id.
+    /// </summary>
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = "SuperuserAdministratorPolicy")]
+    public async Task<IActionResult> DeleteAsync(int id)
+    {
+        // Act.
+        await _recoveryRepository.DeleteAsync(id);
 
-            // Return.
-            return NoContent();
-        }
+        // Return.
+        return NoContent();
     }
 }

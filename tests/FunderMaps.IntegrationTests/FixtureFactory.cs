@@ -3,62 +3,61 @@ using System.Threading.Tasks;
 using FunderMaps.Core.Types;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests
+namespace FunderMaps.IntegrationTests;
+
+public abstract class FixtureFactory<TStartup> : IAsyncLifetime
+    where TStartup : class
 {
-    public abstract class FixtureFactory<TStartup> : IAsyncLifetime
-        where TStartup : class
+    private AuthFunderMapsWebApplicationFactory<TStartup> adminAppClient;
+    private AuthFunderMapsWebApplicationFactory<TStartup> superuserAppClient;
+    private AuthFunderMapsWebApplicationFactory<TStartup> verifierAppClient;
+    private AuthFunderMapsWebApplicationFactory<TStartup> writerAppClient;
+    private AuthFunderMapsWebApplicationFactory<TStartup> readerAppClient;
+    private AuthFunderMapsWebApplicationFactory<TStartup> alterAppClient;
+
+    public async Task InitializeAsync()
     {
-        private AuthFunderMapsWebApplicationFactory<TStartup> adminAppClient;
-        private AuthFunderMapsWebApplicationFactory<TStartup> superuserAppClient;
-        private AuthFunderMapsWebApplicationFactory<TStartup> verifierAppClient;
-        private AuthFunderMapsWebApplicationFactory<TStartup> writerAppClient;
-        private AuthFunderMapsWebApplicationFactory<TStartup> readerAppClient;
-        private AuthFunderMapsWebApplicationFactory<TStartup> alterAppClient;
+        using HttpClient client = CreateUnauthorizedClient();
+        adminAppClient = new(client, "admin@fundermaps.com", "fundermaps");
+        superuserAppClient = new(client, "Javier40@yahoo.com", "fundermaps");
+        verifierAppClient = new(client, "Freda@contoso.com", "fundermaps");
+        writerAppClient = new(client, "patsy@contoso.com", "fundermaps");
+        readerAppClient = new(client, "lester@contoso.com", "fundermaps");
+        alterAppClient = new(client, "corene@contoso.com", "fundermaps");
 
-        public async Task InitializeAsync()
+        await adminAppClient.InitializeAsync();
+        await superuserAppClient.InitializeAsync();
+        await verifierAppClient.InitializeAsync();
+        await writerAppClient.InitializeAsync();
+        await readerAppClient.InitializeAsync();
+        await alterAppClient.InitializeAsync();
+    }
+
+    public HttpClient CreateAdminClient()
+        => adminAppClient.CreateClient();
+
+    public HttpClient CreateAlterClient()
+        => alterAppClient.CreateClient();
+
+    public HttpClient CreateClient(OrganizationRole role = OrganizationRole.Reader)
+        => role switch
         {
-            using HttpClient client = CreateUnauthorizedClient();
-            adminAppClient = new(client, "admin@fundermaps.com", "fundermaps");
-            superuserAppClient = new(client, "Javier40@yahoo.com", "fundermaps");
-            verifierAppClient = new(client, "Freda@contoso.com", "fundermaps");
-            writerAppClient = new(client, "patsy@contoso.com", "fundermaps");
-            readerAppClient = new(client, "lester@contoso.com", "fundermaps");
-            alterAppClient = new(client, "corene@contoso.com", "fundermaps");
+            OrganizationRole.Superuser => superuserAppClient.CreateClient(),
+            OrganizationRole.Verifier => verifierAppClient.CreateClient(),
+            OrganizationRole.Writer => writerAppClient.CreateClient(),
+            _ => readerAppClient.CreateClient(),
+        };
 
-            await adminAppClient.InitializeAsync();
-            await superuserAppClient.InitializeAsync();
-            await verifierAppClient.InitializeAsync();
-            await writerAppClient.InitializeAsync();
-            await readerAppClient.InitializeAsync();
-            await alterAppClient.InitializeAsync();
-        }
+    public HttpClient CreateUnauthorizedClient()
+        => new FunderMapsWebApplicationFactory<TStartup>()
+            .CreateClient();
 
-        public HttpClient CreateAdminClient()
-            => adminAppClient.CreateClient();
-
-        public HttpClient CreateAlterClient()
-            => alterAppClient.CreateClient();
-
-        public HttpClient CreateClient(OrganizationRole role = OrganizationRole.Reader)
-            => role switch
-            {
-                OrganizationRole.Superuser => superuserAppClient.CreateClient(),
-                OrganizationRole.Verifier => verifierAppClient.CreateClient(),
-                OrganizationRole.Writer => writerAppClient.CreateClient(),
-                _ => readerAppClient.CreateClient(),
-            };
-
-        public HttpClient CreateUnauthorizedClient()
-            => new FunderMapsWebApplicationFactory<TStartup>()
-                .CreateClient();
-
-        public async Task DisposeAsync()
-        {
-            await readerAppClient.DisposeAsync();
-            await writerAppClient.DisposeAsync();
-            await verifierAppClient.DisposeAsync();
-            await superuserAppClient.DisposeAsync();
-            await adminAppClient.DisposeAsync();
-        }
+    public async Task DisposeAsync()
+    {
+        await readerAppClient.DisposeAsync();
+        await writerAppClient.DisposeAsync();
+        await verifierAppClient.DisposeAsync();
+        await superuserAppClient.DisposeAsync();
+        await adminAppClient.DisposeAsync();
     }
 }

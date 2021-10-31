@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
@@ -7,97 +7,97 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Data.Repositories
+namespace FunderMaps.Data.Repositories;
+
+/// <summary>
+///     Organization proposal repository.
+/// </summary>
+internal class OrganizationProposalRepository : RepositoryBase<OrganizationProposal, Guid>, IOrganizationProposalRepository
 {
     /// <summary>
-    ///     Organization proposal repository.
+    ///     Create new <see cref="OrganizationProposal"/>.
     /// </summary>
-    internal class OrganizationProposalRepository : RepositoryBase<OrganizationProposal, Guid>, IOrganizationProposalRepository
+    /// <param name="entity">Entity object.</param>
+    /// <returns>Created <see cref="OrganizationProposal"/>.</returns>
+    public override async Task<Guid> AddAsync(OrganizationProposal entity)
     {
-        /// <summary>
-        ///     Create new <see cref="OrganizationProposal"/>.
-        /// </summary>
-        /// <param name="entity">Entity object.</param>
-        /// <returns>Created <see cref="OrganizationProposal"/>.</returns>
-        public override async Task<Guid> AddAsync(OrganizationProposal entity)
+        if (entity is null)
         {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+            throw new ArgumentNullException(nameof(entity));
+        }
 
-            // FUTURE: Call SP directly
-            var sql = @"
+        // FUTURE: Call SP directly
+        var sql = @"
                 SELECT application.create_organization_proposal(
                     @name,
                     @email)";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("name", entity.Name);
-            context.AddParameterWithValue("email", entity.Email);
+        context.AddParameterWithValue("name", entity.Name);
+        context.AddParameterWithValue("email", entity.Email);
 
-            await using var reader = await context.ReaderAsync();
+        await using var reader = await context.ReaderAsync();
 
-            return reader.GetGuid(0);
-        }
+        return reader.GetGuid(0);
+    }
 
-        /// <summary>
-        ///     Retrieve number of entities.
-        /// </summary>
-        /// <returns>Number of entities.</returns>
-        public override async Task<long> CountAsync()
-        {
-            var sql = @"
+    /// <summary>
+    ///     Retrieve number of entities.
+    /// </summary>
+    /// <returns>Number of entities.</returns>
+    public override async Task<long> CountAsync()
+    {
+        var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.organization_proposal";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            return await context.ScalarAsync<long>();
-        }
+        return await context.ScalarAsync<long>();
+    }
 
-        /// <summary>
-        ///     Delete <see cref="OrganizationProposal"/>.
-        /// </summary>
-        /// <param name="id">Entity id.</param>
-        public override async Task DeleteAsync(Guid id)
-        {
-            ResetCacheEntity(id);
+    /// <summary>
+    ///     Delete <see cref="OrganizationProposal"/>.
+    /// </summary>
+    /// <param name="id">Entity id.</param>
+    public override async Task DeleteAsync(Guid id)
+    {
+        ResetCacheEntity(id);
 
-            var sql = @"
+        var sql = @"
                 DELETE
                 FROM    application.organization_proposal
                 WHERE   id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            await context.NonQueryAsync();
+        await context.NonQueryAsync();
+    }
+
+    private static OrganizationProposal MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+        => new()
+        {
+            Id = reader.GetGuid(offset + 0),
+            Name = reader.GetSafeString(offset + 1),
+            Email = reader.GetSafeString(offset + 2),
+        };
+
+    /// <summary>
+    ///     Retrieve <see cref="OrganizationProposal"/> by id.
+    /// </summary>
+    /// <param name="id">Unique identifier.</param>
+    /// <returns><see cref="OrganizationProposal"/>.</returns>
+    public override async Task<OrganizationProposal> GetByIdAsync(Guid id)
+    {
+        if (TryGetEntity(id, out OrganizationProposal entity))
+        {
+            return entity;
         }
 
-        private static OrganizationProposal MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
-            => new()
-            {
-                Id = reader.GetGuid(offset + 0),
-                Name = reader.GetSafeString(offset + 1),
-                Email = reader.GetSafeString(offset + 2),
-            };
-
-        /// <summary>
-        ///     Retrieve <see cref="OrganizationProposal"/> by id.
-        /// </summary>
-        /// <param name="id">Unique identifier.</param>
-        /// <returns><see cref="OrganizationProposal"/>.</returns>
-        public override async Task<OrganizationProposal> GetByIdAsync(Guid id)
-        {
-            if (TryGetEntity(id, out OrganizationProposal entity))
-            {
-                return entity;
-            }
-
-            var sql = @"
+        var sql = @"
                 SELECT  -- OrganizationProposal
                         op.id,
                         op.name,
@@ -106,42 +106,41 @@ namespace FunderMaps.Data.Repositories
                 WHERE   op.id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            await using var reader = await context.ReaderAsync();
+        await using var reader = await context.ReaderAsync();
 
-            return CacheEntity(MapFromReader(reader));
-        }
+        return CacheEntity(MapFromReader(reader));
+    }
 
-        /// <summary>
-        ///     Retrieve all <see cref="OrganizationProposal"/>.
-        /// </summary>
-        /// <returns>List of <see cref="OrganizationProposal"/>.</returns>
-        public override async IAsyncEnumerable<OrganizationProposal> ListAllAsync(Navigation navigation)
-        {
-            var sql = @"
+    /// <summary>
+    ///     Retrieve all <see cref="OrganizationProposal"/>.
+    /// </summary>
+    /// <returns>List of <see cref="OrganizationProposal"/>.</returns>
+    public override async IAsyncEnumerable<OrganizationProposal> ListAllAsync(Navigation navigation)
+    {
+        var sql = @"
                 SELECT  id,
                         name,
                         email
                 FROM    application.organization_proposal";
 
-            sql = ConstructNavigation(sql, navigation);
+        sql = ConstructNavigation(sql, navigation);
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                yield return CacheEntity(MapFromReader(reader));
-            }
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
         }
-
-        /// <summary>
-        ///     Cannot update a proposal.
-        /// </summary>
-        /// <param name="entity">Entity object.</param>
-        public override Task UpdateAsync(OrganizationProposal entity)
-            => throw new InvalidOperationException();
     }
+
+    /// <summary>
+    ///     Cannot update a proposal.
+    /// </summary>
+    /// <param name="entity">Entity object.</param>
+    public override Task UpdateAsync(OrganizationProposal entity)
+        => throw new InvalidOperationException();
 }

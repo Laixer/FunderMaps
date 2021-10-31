@@ -2,19 +2,18 @@ using Bogus;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 
-namespace FunderMaps.IntegrationTests.Faker
+namespace FunderMaps.IntegrationTests.Faker;
+
+/// <summary>
+///     Faker for <see cref="ChangeOrganizationRoleDto"/>.
+/// </summary>
+public class ChangeOrganizationRoleDtoFaker : Faker<ChangeOrganizationRoleDto>
 {
     /// <summary>
-    ///     Faker for <see cref="ChangeOrganizationRoleDto"/>.
+    ///     Create new instance.
     /// </summary>
-    public class ChangeOrganizationRoleDtoFaker : Faker<ChangeOrganizationRoleDto>
+    public ChangeOrganizationRoleDtoFaker()
     {
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public ChangeOrganizationRoleDtoFaker()
-        {
-            RuleFor(f => f.Role, f => f.PickRandom<OrganizationRole>());
-        }
+        RuleFor(f => f.Role, f => f.PickRandom<OrganizationRole>());
     }
 }

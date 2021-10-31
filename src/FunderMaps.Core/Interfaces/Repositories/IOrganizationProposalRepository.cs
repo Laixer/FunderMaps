@@ -1,12 +1,11 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 using System;
 
-namespace FunderMaps.Core.Interfaces.Repositories
+namespace FunderMaps.Core.Interfaces.Repositories;
+
+/// <summary>
+///     Organization proposal repository.
+/// </summary>
+public interface IOrganizationProposalRepository : IAsyncRepository<OrganizationProposal, Guid>
 {
-    /// <summary>
-    ///     Organization proposal repository.
-    /// </summary>
-    public interface IOrganizationProposalRepository : IAsyncRepository<OrganizationProposal, Guid>
-    {
-    }
 }

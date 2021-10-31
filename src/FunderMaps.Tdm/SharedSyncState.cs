@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Tdm
+﻿namespace FunderMaps.Tdm;
 {
     /// <summary>
     /// Shared sync state.

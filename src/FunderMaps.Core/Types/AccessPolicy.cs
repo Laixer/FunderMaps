@@ -1,18 +1,17 @@
-﻿namespace FunderMaps.Core.Types
+namespace FunderMaps.Core.Types;
+
+/// <summary>
+///     Record policy.
+/// </summary>
+public enum AccessPolicy
 {
     /// <summary>
-    ///     Record policy.
+    ///     Public.
     /// </summary>
-    public enum AccessPolicy
-    {
-        /// <summary>
-        ///     Public.
-        /// </summary>
-        Public = 0,
+    Public = 0,
 
-        /// <summary>
-        ///     Private.
-        /// </summary>
-        Private = 1,
-    }
+    /// <summary>
+    ///     Private.
+    /// </summary>
+    Private = 1,
 }

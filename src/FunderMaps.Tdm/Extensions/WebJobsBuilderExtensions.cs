@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.IO;
 
-namespace Microsoft.Extensions.Hosting
+namespace Microsoft.Extensions.Hosting;
 {
     /// <summary>
     /// Web jobs builder extensions.

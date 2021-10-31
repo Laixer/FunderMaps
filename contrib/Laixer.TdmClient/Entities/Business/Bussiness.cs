@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TdmClient.Entities.Business
-{
+namespace TdmClient.Entities.Business;
+
     public class Business
     {
         public BusinessObjectBeeld Objectbeeld { get; set; }
@@ -1752,4 +1752,3 @@ namespace TdmClient.Entities.Business
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string SiteAdres { get; set; }
     }
-}

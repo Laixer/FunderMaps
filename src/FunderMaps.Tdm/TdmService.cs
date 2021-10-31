@@ -2,7 +2,7 @@
 using System;
 using TdmClient;
 
-namespace FunderMaps.Tdm
+namespace FunderMaps.Tdm;
 {
     /// <summary>
     /// Wrapper around TdmClient.

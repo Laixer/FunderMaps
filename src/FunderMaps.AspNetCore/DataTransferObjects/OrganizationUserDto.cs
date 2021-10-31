@@ -1,17 +1,16 @@
 using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects;
+
+/// <summary>
+///     Organization user DTO.
+/// </summary>
+public record OrganizationUserDto : UserDto
 {
     /// <summary>
-    ///     Organization user DTO.
+    ///     User role in organization.
     /// </summary>
-    public record OrganizationUserDto : UserDto
-    {
-        /// <summary>
-        ///     User role in organization.
-        /// </summary>
-        [Required]
-        public OrganizationRole OrganizationRole { get; set; } // FUTURE: init
-    }
+    [Required]
+    public OrganizationRole OrganizationRole { get; set; } // FUTURE: init
 }

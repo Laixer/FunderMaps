@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
@@ -7,44 +7,43 @@ using System;
 using System.Threading.Tasks;
 
 #pragma warning disable CA1062 // Validate arguments of public methods
-namespace FunderMaps.WebApi.Controllers.Geocoder
+namespace FunderMaps.WebApi.Controllers.Geocoder;
+
+/// <summary>
+///     Endpoint controller for address operations.
+/// </summary>
+[Route("address")]
+public class AddressController : ControllerBase
 {
+    private readonly IMapper _mapper;
+
     /// <summary>
-    ///     Endpoint controller for address operations.
+    ///     Create new instance.
     /// </summary>
-    [Route("address")]
-    public class AddressController : ControllerBase
+    public AddressController(IMapper mapper, IGeocoderTranslation geocoderTranslation)
     {
-        private readonly IMapper _mapper;
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    }
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public AddressController(IMapper mapper, IGeocoderTranslation geocoderTranslation)
-        {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+    // GET: api/address
+    /// <summary>
+    ///     Get address by identifier.
+    /// </summary>
+    /// <remarks>
+    ///     Cache response for 8 hours. Addresses will not change often.
+    ///     Contractors are tenant independent.
+    /// </remarks>
+    [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 8)]
+    public async Task<IActionResult> GetAsync(string id, [FromServices] IGeocoderTranslation geocoderTranslation)
+    {
+        // Assign.
+        Address address = await geocoderTranslation.GetAddressIdAsync(id);
 
-        // GET: api/address
-        /// <summary>
-        ///     Get address by identifier.
-        /// </summary>
-        /// <remarks>
-        ///     Cache response for 8 hours. Addresses will not change often.
-        ///     Contractors are tenant independent.
-        /// </remarks>
-        [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 8)]
-        public async Task<IActionResult> GetAsync(string id, [FromServices] IGeocoderTranslation geocoderTranslation)
-        {
-            // Assign.
-            Address address = await geocoderTranslation.GetAddressIdAsync(id);
+        // Map.
+        var output = _mapper.Map<AddressDto>(address);
 
-            // Map.
-            var output = _mapper.Map<AddressDto>(address);
-
-            // Return.
-            return Ok(output);
-        }
+        // Return.
+        return Ok(output);
     }
 }
 #pragma warning restore CA1062 // Validate arguments of public methods

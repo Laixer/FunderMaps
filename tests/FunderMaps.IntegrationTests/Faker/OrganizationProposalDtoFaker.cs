@@ -1,21 +1,20 @@
-﻿using Bogus;
+using Bogus;
 using FunderMaps.WebApi.DataTransferObjects;
 
-namespace FunderMaps.IntegrationTests.Faker
+namespace FunderMaps.IntegrationTests.Faker;
+
+/// <summary>
+///     Faker for <see cref="OrganizationProposalDto"/>.
+/// </summary>
+public class OrganizationProposalDtoFaker : Faker<OrganizationProposalDto>
 {
     /// <summary>
-    ///     Faker for <see cref="OrganizationProposalDto"/>.
+    ///     Create new instance.
     /// </summary>
-    public class OrganizationProposalDtoFaker : Faker<OrganizationProposalDto>
+    public OrganizationProposalDtoFaker()
     {
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public OrganizationProposalDtoFaker()
-        {
-            RuleFor(f => f.Id, f => f.Random.Uuid());
-            RuleFor(f => f.Name, f => f.Company.CompanyName());
-            RuleFor(f => f.Email, f => f.Internet.Email());
-        }
+        RuleFor(f => f.Id, f => f.Random.Uuid());
+        RuleFor(f => f.Name, f => f.Company.CompanyName());
+        RuleFor(f => f.Email, f => f.Internet.Email());
     }
 }

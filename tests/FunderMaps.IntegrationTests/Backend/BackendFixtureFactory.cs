@@ -1,6 +1,5 @@
-namespace FunderMaps.IntegrationTests.Backend
+namespace FunderMaps.IntegrationTests.Backend;
+
+public class BackendFixtureFactory : FixtureFactory<FunderMaps.WebApi.Startup>
 {
-    public class BackendFixtureFactory : FixtureFactory<FunderMaps.WebApi.Startup>
-    {
-    }
 }

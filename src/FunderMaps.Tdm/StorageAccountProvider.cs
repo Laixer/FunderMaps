@@ -6,7 +6,7 @@ using Microsoft.WindowsAzure.Storage.File;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace FunderMaps.Tdm
+namespace FunderMaps.Tdm;
 {
     /// <summary>
     /// Abstraction to provide storage accounts from the connection names. 

@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TdmClient
+namespace TdmClient;\
+
+public interface ITdmSyncService
 {
-    public interface ITdmSyncService
-    {
-    }
 }

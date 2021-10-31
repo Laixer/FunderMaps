@@ -1,18 +1,17 @@
-namespace FunderMaps.BatchNode
+namespace FunderMaps.BatchNode;
+
+/// <summary>
+///     Map bundle options.
+/// </summary>
+public sealed record MapBundleOptions
 {
     /// <summary>
-    ///     Map bundle options.
+    ///     Configuration section key.
     /// </summary>
-    public sealed record MapBundleOptions
-    {
-        /// <summary>
-        ///     Configuration section key.
-        /// </summary>
-        public const string Section = "MapBundle";
+    public const string Section = "MapBundle";
 
-        /// <summary>
-        ///     Batch service interval in hours.
-        /// </summary>
-        public int Interval { get; set; }
-    }
+    /// <summary>
+    ///     Batch service interval in hours.
+    /// </summary>
+    public int Interval { get; set; }
 }

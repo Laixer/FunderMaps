@@ -1,6 +1,6 @@
 ﻿using TdmClient;
 
-namespace FunderMaps.Tdm
+namespace FunderMaps.Tdm;
 {
     /// <summary>
     /// Service options.

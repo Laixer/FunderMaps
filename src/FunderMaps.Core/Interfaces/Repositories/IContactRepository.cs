@@ -1,11 +1,10 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 
-namespace FunderMaps.Core.Interfaces.Repositories
+namespace FunderMaps.Core.Interfaces.Repositories;
+
+/// <summary>
+/// Operations for the contact repository.
+/// </summary>
+public interface IContactRepository : IAsyncRepository<Contact, string>
 {
-    /// <summary>
-    /// Operations for the contact repository.
-    /// </summary>
-    public interface IContactRepository : IAsyncRepository<Contact, string>
-    {
-    }
 }

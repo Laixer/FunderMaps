@@ -1,6 +1,5 @@
-namespace FunderMaps.IntegrationTests.Portal
+namespace FunderMaps.IntegrationTests.Portal;
+
+public class PortalWebApplicationFactory : FunderMapsWebApplicationFactory<FunderMaps.Portal.Startup>
 {
-    public class PortalWebApplicationFactory : FunderMapsWebApplicationFactory<FunderMaps.Portal.Startup>
-    {
-    }
 }

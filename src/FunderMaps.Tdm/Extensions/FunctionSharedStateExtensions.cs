@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Tdm.Extensions
+namespace FunderMaps.Tdm.Extensions;
 {
     internal static class FunctionSharedStateExtensions
     {

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 [assembly: WebJobsStartup(typeof(FunderMaps.Tdm.Startup))]
 
-namespace FunderMaps.Tdm
+namespace FunderMaps.Tdm;
 {
     /// <summary>
     /// Configure webjob dependency injection.

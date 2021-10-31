@@ -1,6 +1,5 @@
-namespace FunderMaps.IntegrationTests.Webservice
+namespace FunderMaps.IntegrationTests.Webservice;
+
+public class WebserviceFixtureFactory : FixtureFactory<FunderMaps.Webservice.Startup>
 {
-    public class WebserviceFixtureFactory : FixtureFactory<FunderMaps.Webservice.Startup>
-    {
-    }
 }

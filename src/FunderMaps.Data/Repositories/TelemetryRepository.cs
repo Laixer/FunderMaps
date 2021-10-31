@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
@@ -7,36 +7,36 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
 
-namespace FunderMaps.Data.Repositories
+namespace FunderMaps.Data.Repositories;
+
+/// <summary>
+///     Log product hit.
+/// </summary>
+internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 {
     /// <summary>
-    ///     Log product hit.
+    ///     Log a product hit.
     /// </summary>
-    internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
+    /// <remarks>
+    ///     <para>
+    ///         The <paramref name="hitCount"/> has a lower bound of 1.
+    ///     </para>
+    ///     <para>
+    ///         This method is and should be fault-tolerant. If one of the
+    ///         necessary parameters is not passed, then behavior could
+    ///         be different.
+    ///     </para>
+    /// </remarks>
+    /// <param name="productName">Product name.</param>
+    /// <param name="hitCount">Number of hits to log.</param>
+    public async Task ProductHitAsync(string productName, int hitCount = 1)
     {
-        /// <summary>
-        ///     Log a product hit.
-        /// </summary>
-        /// <remarks>
-        ///     <para>
-        ///         The <paramref name="hitCount"/> has a lower bound of 1.
-        ///     </para>
-        ///     <para>
-        ///         This method is and should be fault-tolerant. If one of the
-        ///         necessary parameters is not passed, then behavior could
-        ///         be different.
-        ///     </para>
-        /// </remarks>
-        /// <param name="productName">Product name.</param>
-        /// <param name="hitCount">Number of hits to log.</param>
-        public async Task ProductHitAsync(string productName, int hitCount = 1)
+        if (string.IsNullOrEmpty(productName) || !AppContext.HasIdentity)
         {
-            if (string.IsNullOrEmpty(productName) || !AppContext.HasIdentity)
-            {
-                return;
-            }
+            return;
+        }
 
-            var sql = @"
+        var sql = @"
                 INSERT INTO application.product_telemetry AS pu (
                     user_id,
                     organization_id,
@@ -51,43 +51,42 @@ namespace FunderMaps.Data.Repositories
                 DO UPDATE SET
                     count = pu.count + EXCLUDED.count";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("user", AppContext.UserId);
-            context.AddParameterWithValue("tenant", AppContext.TenantId);
-            context.AddParameterWithValue("product", productName);
-            context.AddParameterWithValue("count", hitCount == 0 ? 1 : hitCount);
+        context.AddParameterWithValue("user", AppContext.UserId);
+        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("product", productName);
+        context.AddParameterWithValue("count", hitCount == 0 ? 1 : hitCount);
 
-            await context.NonQueryAsync();
-        }
+        await context.NonQueryAsync();
+    }
 
-        /// <summary>
-        ///     Retrieve all product telemetrics.
-        /// </summary>
-        public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
-        {
-            var sql = @"
+    /// <summary>
+    ///     Retrieve all product telemetrics.
+    /// </summary>
+    public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
+    {
+        var sql = @"
                 SELECT  -- ProductTelemetry
                         pt.product,
                         pt.count
                 FROM    application.product_telemetry AS pt
                 WHERE   pt.organization_id = @tenant";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", AppContext.TenantId);
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                yield return MapFromReader(reader);
-            }
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return MapFromReader(reader);
         }
-
-        public static ProductTelemetry MapFromReader(DbDataReader reader, int offset = 0)
-            => new()
-            {
-                Product = reader.GetString(offset++),
-                Count = reader.GetInt(offset++),
-            };
     }
+
+    public static ProductTelemetry MapFromReader(DbDataReader reader, int offset = 0)
+        => new()
+        {
+            Product = reader.GetString(offset++),
+            Count = reader.GetInt(offset++),
+        };
 }

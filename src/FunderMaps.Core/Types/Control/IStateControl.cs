@@ -1,13 +1,12 @@
-﻿namespace FunderMaps.Core.Types.Control
+namespace FunderMaps.Core.Types.Control;
+
+/// <summary>
+///     State control.
+/// </summary>
+public interface IStateControl
 {
     /// <summary>
     ///     State control.
     /// </summary>
-    public interface IStateControl
-    {
-        /// <summary>
-        ///     State control.
-        /// </summary>
-        public StateControl State { get; set; }
-    }
+    public StateControl State { get; set; }
 }

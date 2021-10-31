@@ -1,22 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects;
+
+/// <summary>
+///     User signin DTO.
+/// </summary>
+public sealed record SignInDto
 {
     /// <summary>
-    ///     User signin DTO.
+    ///     User email address.
     /// </summary>
-    public sealed record SignInDto
-    {
-        /// <summary>
-        ///     User email address.
-        /// </summary>
-        [Required, EmailAddress]
-        public string Email { get; init; }
+    [Required, EmailAddress]
+    public string Email { get; init; }
 
-        /// <summary>
-        ///     User password.
-        /// </summary>
-        [Required]
-        public string Password { get; init; }
-    }
+    /// <summary>
+    ///     User password.
+    /// </summary>
+    [Required]
+    public string Password { get; init; }
 }

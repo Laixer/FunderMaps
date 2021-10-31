@@ -1,19 +1,18 @@
-﻿namespace FunderMaps.Core.Entities
+namespace FunderMaps.Core.Entities;
+
+/// <summary>
+///     Initialize the object to defauls.
+/// </summary>
+public interface IInitializable<TEntity>
+    where TEntity : class
 {
     /// <summary>
-    ///     Initialize the object to defauls.
+    ///     Let the object initliaze defaults after the instance was created.
     /// </summary>
-    public interface IInitializable<TEntity>
-        where TEntity : class
-    {
-        /// <summary>
-        ///     Let the object initliaze defaults after the instance was created.
-        /// </summary>
-        void InitializeDefaults();
+    void InitializeDefaults();
 
-        /// <summary>
-        ///     Let the object initliaze defaults from another entity of the same type.
-        /// </summary>
-        void InitializeDefaults(TEntity other);
-    }
+    /// <summary>
+    ///     Let the object initliaze defaults from another entity of the same type.
+    /// </summary>
+    void InitializeDefaults(TEntity other);
 }

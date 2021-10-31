@@ -1,15 +1,15 @@
-﻿using Bogus;
+using Bogus;
 using FunderMaps.Core.Entities;
 using System.Collections.Generic;
 
-namespace FunderMaps.IntegrationTests.Faker
+namespace FunderMaps.IntegrationTests.Faker;
+
+/// <summary>
+///     Faker for <see cref="User"/>.
+/// </summary>
+public class UserFaker : Faker<User>
 {
-    /// <summary>
-    ///     Faker for <see cref="User"/>.
-    /// </summary>
-    public class UserFaker : Faker<User>
-    {
-        public static readonly IEnumerable<string> jobs = new List<string>
+    public static readonly IEnumerable<string> jobs = new List<string>
         {
             "accountant",
             "actor",
@@ -103,5 +103,4 @@ namespace FunderMaps.IntegrationTests.Faker
             "web designer",
             "writer",
         };
-    }
 }
