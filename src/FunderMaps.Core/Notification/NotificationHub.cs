@@ -2,7 +2,6 @@ using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.Threading;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Notification
 {
     /// <summary>
@@ -28,4 +27,3 @@ namespace FunderMaps.Core.Notification
             => await _backgroundTaskDispatcher.EnqueueTaskAsync(TaskName, envelope);
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated
