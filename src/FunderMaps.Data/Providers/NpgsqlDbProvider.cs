@@ -8,7 +8,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using Npgsql.Logging;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Data.Providers
 {
     /// <summary>
@@ -129,4 +128,3 @@ namespace FunderMaps.Data.Providers
         }
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated
