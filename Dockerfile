@@ -1,7 +1,7 @@
 # FunderMaps Ecosystem
 
 # Build application solution
-FROM mcr.microsoft.com/dotnet/sdk:5 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /source
 
 # The subtool must be defined. The build container will only build the
@@ -29,7 +29,7 @@ RUN dotnet publish -c release -o /app \
     && cp /source/contrib/etc/_appsettings.Staging.json /app/appsettings.Staging.json
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:5
+FROM mcr.microsoft.com/dotnet/aspnet:5.0
 ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 WORKDIR /app
 COPY --from=build /app .
