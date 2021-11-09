@@ -67,11 +67,12 @@ namespace FunderMaps.Data.Repositories
         public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
         {
             var sql = @"
-                SELECT  -- ProductTelemetry
+                SELECT  -- ProductTracker
                         pt.product,
-                        pt.count
-                FROM    application.product_telemetry AS pt
-                WHERE   pt.organization_id = @tenant";
+                        count(pt.organization_id)
+                FROM    application.product_tracker AS pt
+                WHERE   pt.organization_id = @tenant
+                GROUP BY pt.organization_id, pt.product";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
