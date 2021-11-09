@@ -15,12 +15,12 @@ namespace FunderMaps.Data.Providers
     /// </summary>
     internal class NpgsqlDbProvider : DbProvider
     {
-        private string _connectionString;
+        private readonly string _connectionString;
 
         // class Loggert : INpgsqlLoggingProvider
         // {
         //     private NpgsqlLogger _logger;
-            
+
         //     public Loggert(NpgsqlLogger logger)
         //     {
         //         _logger = logger;

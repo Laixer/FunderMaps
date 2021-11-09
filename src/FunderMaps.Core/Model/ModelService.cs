@@ -23,8 +23,6 @@ namespace FunderMaps.Core.Model
         ///     Dispatch refresh job to background worker.
         /// </summary>
         public async Task UpdateAllModelsAsync()
-        {
-            await _backgroundTaskDispatcher.EnqueueTaskAsync<RefreshJob>();
-        }
+            => await _backgroundTaskDispatcher.EnqueueTaskAsync<RefreshJob>();
     }
 }
