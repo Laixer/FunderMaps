@@ -384,45 +384,42 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> GetRiskIndexByIdAsync(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'riskindex',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+		                INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+		                SELECT
+				            @tenant,
+			                'riskindex',
+			                ac.building_id
+		                FROM data.analysis_complete ac
+		                WHERE ac.building_id = @id
+		                LIMIT 1
+		                returning pt.building_id
+                )
                 SELECT -- AnalysisComplete
-                        'a'::data.foundation_risk_indication <> ANY (ARRAY[
-                        CASE
-                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.drystand_risk
-                        END,
-                        CASE
-                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.bio_infection_risk
-                        END,
-                        CASE
-                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.dewatering_depth_risk
-                        END,
-                        CASE
-                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.unclassified_risk
-                        END]) AS has_risk
-                FROM    data.analysis_complete ac
-                WHERE   ac.building_id = @id
+				        'a'::data.foundation_risk_indication <> ANY (ARRAY[
+				        CASE
+						        WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.drystand_risk
+				        END,
+				        CASE
+						        WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.bio_infection_risk
+				        END,
+				        CASE
+						        WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.dewatering_depth_risk
+				        END,
+				        CASE
+						        WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.unclassified_risk
+				        END]) AS has_risk
+                FROM    data.analysis_complete ac,  tracker
+                WHERE   ac.building_id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<bool>();
@@ -435,45 +432,42 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> GetRiskIndexByExternalIdAsync(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'riskindex',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+		                INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+		                SELECT
+				            @tenant,
+			                'riskindex',
+			                ac.building_id
+		                FROM data.analysis_complete ac
+		                WHERE ac.external_building_id = upper(@external_id)
+		                LIMIT 1
+		                returning pt.building_id
+                )
                 SELECT -- AnalysisComplete
-                        'a'::data.foundation_risk_indication <> ANY (ARRAY[
-                        CASE
-                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.drystand_risk
-                        END,
-                        CASE
-                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.bio_infection_risk
-                        END,
-                        CASE
-                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.dewatering_depth_risk
-                        END,
-                        CASE
-                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.unclassified_risk
-                        END]) AS has_risk
-                FROM    data.analysis_complete ac
-                WHERE   ac.external_building_id = upper(@external_id)
+				        'a'::data.foundation_risk_indication <> ANY (ARRAY[
+				        CASE
+						        WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.drystand_risk
+				        END,
+				        CASE
+						        WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.bio_infection_risk
+				        END,
+				        CASE
+						        WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.dewatering_depth_risk
+				        END,
+				        CASE
+						        WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.unclassified_risk
+				        END]) AS has_risk
+                FROM    data.analysis_complete ac,  tracker
+                WHERE   ac.building_id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<bool>();
@@ -486,45 +480,42 @@ namespace FunderMaps.Data.Repositories
         public async Task<bool> GetRiskIndexByAddressExternalIdAsync(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'riskindex',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+		                INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+		                SELECT
+				            @tenant,
+			                'riskindex',
+			                ac.building_id
+		                FROM data.analysis_complete ac
+		                WHERE ac.address_external_id = upper(@external_id)
+		                LIMIT 1
+		                returning pt.building_id
+                )
                 SELECT -- AnalysisComplete
-                        'a'::data.foundation_risk_indication <> ANY (ARRAY[
-                        CASE
-                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.drystand_risk
-                        END,
-                        CASE
-                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.bio_infection_risk
-                        END,
-                        CASE
-                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.dewatering_depth_risk
-                        END,
-                        CASE
-                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.unclassified_risk
-                        END]) AS has_risk
-                FROM    data.analysis_complete ac
-                WHERE   ac.address_external_id = upper(@external_id)
+				        'a'::data.foundation_risk_indication <> ANY (ARRAY[
+				        CASE
+						        WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.drystand_risk
+				        END,
+				        CASE
+						        WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.bio_infection_risk
+				        END,
+				        CASE
+						        WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.dewatering_depth_risk
+				        END,
+				        CASE
+						        WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+						        ELSE ac.unclassified_risk
+				        END]) AS has_risk
+                FROM    data.analysis_complete ac,  tracker
+                WHERE   ac.building_id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             return await context.ScalarAsync<bool>();
