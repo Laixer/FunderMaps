@@ -20,66 +20,63 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct> GetByIdAsync(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'analysis',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+		            INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+		            SELECT
+			            @tenant,
+			            'analysis',
+			            aa.id
+		            FROM    data.analysis_address AS aa
+		            WHERE   aa.id = @id
+		            LIMIT 1
+		            returning pt.building_id
+                )
                 SELECT -- AnalysisAddress
-                        aa.id,
-                        aa.external_id,
-                        aa.external_source,
-                        aa.construction_year,
-                        aa.construction_year_source,
-                        aa.address_id,
-                        aa.address_external_id,
-                        aa.postal_code,
-                        aa.neighborhood_id,
-                        aa.groundwater_level,
-                        aa.soil,
-                        aa.building_height,
-                        aa.ground_level,
-                        aa.cpt,
-                        aa.monitoring_well,
-                        aa.recovery_advised,
-                        aa.damage_cause,
-                        aa.substructure,
-                        aa.document_name,
-                        aa.document_date,
-                        aa.inquiry_type,
-                        aa.recovery_type,
-                        aa.recovery_status,
-                        aa.surface_area,
-                        aa.living_area,
-                        aa.foundation_bearing_layer,
-                        aa.restoration_costs,
-                        aa.foundation_type,
-                        aa.foundation_type_reliability,
-                        aa.drystand,
-                        aa.drystand_reliability,
-                        aa.drystand_risk,
-                        aa.dewatering_depth,
-                        aa.dewatering_depth_reliability,
-                        aa.dewatering_depth_risk,
-                        aa.bio_infection,
-                        aa.bio_infection_reliability,
-                        aa.bio_infection_risk
-                FROM    data.analysis_address AS aa
-                WHERE   aa.id = @id
+				        aa.id,
+				        aa.external_id,
+				        aa.external_source,
+				        aa.construction_year,
+				        aa.construction_year_source,
+				        aa.address_id,
+				        aa.address_external_id,
+				        aa.postal_code,
+				        aa.neighborhood_id,
+				        aa.groundwater_level,
+				        aa.soil,
+				        aa.building_height,
+				        aa.ground_level,
+				        aa.cpt,
+				        aa.monitoring_well,
+				        aa.recovery_advised,
+				        aa.damage_cause,
+				        aa.substructure,
+				        aa.document_name,
+				        aa.document_date,
+				        aa.inquiry_type,
+				        aa.recovery_type,
+				        aa.recovery_status,
+				        aa.surface_area,
+				        aa.living_area,
+				        aa.foundation_bearing_layer,
+				        aa.restoration_costs,
+				        aa.foundation_type,
+				        aa.foundation_type_reliability,
+				        aa.drystand,
+				        aa.drystand_reliability,
+				        aa.drystand_risk,
+				        aa.dewatering_depth,
+				        aa.dewatering_depth_reliability,
+				        aa.dewatering_depth_risk,
+				        aa.bio_infection,
+				        aa.bio_infection_reliability,
+				        aa.bio_infection_risk
+                FROM    data.analysis_address AS aa, tracker
+                WHERE   aa.id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
@@ -94,19 +91,17 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct2> GetById2Async(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'analysis2',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+                    INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+                    SELECT
+                        @tenant,
+	                    'analysis2',
+	                    ac.building_id
+                    FROM data.analysis_complete ac
+                    WHERE ac.building_id = @id
+                    LIMIT 1
+                    returning pt.building_id
+                )
                 SELECT -- AnalysisComplete
                         ac.building_id,
                         ac.external_building_id,
@@ -125,14 +120,13 @@ namespace FunderMaps.Data.Repositories
                         ac.dewatering_depth_risk_reliability,
                         ac.unclassified_risk,
                         ac.recovery_type
-                FROM    data.analysis_complete ac
-                WHERE   ac.building_id = @id
+                FROM    data.analysis_complete ac, tracker
+                WHERE   ac.building_id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
@@ -147,66 +141,63 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'analysis',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+		            INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+		            SELECT
+			            @tenant,
+			            'analysis',
+			            aa.id
+		            FROM    data.analysis_address AS aa
+		            WHERE   aa.external_id = upper(@external_id)
+		            LIMIT 1
+		            returning pt.building_id
+                )
                 SELECT -- AnalysisAddress
-                        aa.id,
-                        aa.external_id,
-                        aa.external_source,
-                        aa.construction_year,
-                        aa.construction_year_source,
-                        aa.address_id,
-                        aa.address_external_id,
-                        aa.postal_code,
-                        aa.neighborhood_id,
-                        aa.groundwater_level,
-                        aa.soil,
-                        aa.building_height,
-                        aa.ground_level,
-                        aa.cpt,
-                        aa.monitoring_well,
-                        aa.recovery_advised,
-                        aa.damage_cause,
-                        aa.substructure,
-                        aa.document_name,
-                        aa.document_date,
-                        aa.inquiry_type,
-                        aa.recovery_type,
-                        aa.recovery_status,
-                        aa.surface_area,
-                        aa.living_area,
-                        aa.foundation_bearing_layer,
-                        aa.restoration_costs,
-                        aa.foundation_type,
-                        aa.foundation_type_reliability,
-                        aa.drystand,
-                        aa.drystand_reliability,
-                        aa.drystand_risk,
-                        aa.dewatering_depth,
-                        aa.dewatering_depth_reliability,
-                        aa.dewatering_depth_risk,
-                        aa.bio_infection,
-                        aa.bio_infection_reliability,
-                        aa.bio_infection_risk
-                FROM    data.analysis_address AS aa
-                WHERE   aa.external_id = upper(@external_id)
+				        aa.id,
+				        aa.external_id,
+				        aa.external_source,
+				        aa.construction_year,
+				        aa.construction_year_source,
+				        aa.address_id,
+				        aa.address_external_id,
+				        aa.postal_code,
+				        aa.neighborhood_id,
+				        aa.groundwater_level,
+				        aa.soil,
+				        aa.building_height,
+				        aa.ground_level,
+				        aa.cpt,
+				        aa.monitoring_well,
+				        aa.recovery_advised,
+				        aa.damage_cause,
+				        aa.substructure,
+				        aa.document_name,
+				        aa.document_date,
+				        aa.inquiry_type,
+				        aa.recovery_type,
+				        aa.recovery_status,
+				        aa.surface_area,
+				        aa.living_area,
+				        aa.foundation_bearing_layer,
+				        aa.restoration_costs,
+				        aa.foundation_type,
+				        aa.foundation_type_reliability,
+				        aa.drystand,
+				        aa.drystand_reliability,
+				        aa.drystand_risk,
+				        aa.dewatering_depth,
+				        aa.dewatering_depth_reliability,
+				        aa.dewatering_depth_risk,
+				        aa.bio_infection,
+				        aa.bio_infection_reliability,
+				        aa.bio_infection_risk
+                FROM    data.analysis_address AS aa, tracker
+                WHERE   aa.id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
@@ -221,19 +212,17 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct2> GetByExternalId2Async(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'analysis2',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+                    INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+                    SELECT
+                        @tenant,
+	                    'analysis2',
+	                    ac.building_id
+                    FROM data.analysis_complete ac
+                    WHERE ac.external_building_id = upper(@external_id)
+                    LIMIT 1
+                    returning pt.building_id
+                )
                 SELECT -- AnalysisComplete
                         ac.building_id,
                         ac.external_building_id,
@@ -252,8 +241,8 @@ namespace FunderMaps.Data.Repositories
                         ac.dewatering_depth_risk_reliability,
                         ac.unclassified_risk,
                         ac.recovery_type
-                FROM    data.analysis_complete ac
-                WHERE   ac.external_building_id = upper(@external_id)
+                FROM    data.analysis_complete ac, tracker
+                WHERE   ac.building_id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
@@ -274,66 +263,63 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct> GetByAddressExternalIdAsync(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'analysis',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+		            INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+		            SELECT
+			            @tenant,
+			            'analysis',
+			            aa.id
+		            FROM    data.analysis_address AS aa
+		            WHERE   aa.address_external_id = upper(@external_id)
+		            LIMIT 1
+		            returning pt.building_id
+                )
                 SELECT -- AnalysisAddress
-                        aa.id,
-                        aa.external_id,
-                        aa.external_source,
-                        aa.construction_year,
-                        aa.construction_year_source,
-                        aa.address_id,
-                        aa.address_external_id,
-                        aa.postal_code,
-                        aa.neighborhood_id,
-                        aa.groundwater_level,
-                        aa.soil,
-                        aa.building_height,
-                        aa.ground_level,
-                        aa.cpt,
-                        aa.monitoring_well,
-                        aa.recovery_advised,
-                        aa.damage_cause,
-                        aa.substructure,
-                        aa.document_name,
-                        aa.document_date,
-                        aa.inquiry_type,
-                        aa.recovery_type,
-                        aa.recovery_status,
-                        aa.surface_area,
-                        aa.living_area,
-                        aa.foundation_bearing_layer,
-                        aa.restoration_costs,
-                        aa.foundation_type,
-                        aa.foundation_type_reliability,
-                        aa.drystand,
-                        aa.drystand_reliability,
-                        aa.drystand_risk,
-                        aa.dewatering_depth,
-                        aa.dewatering_depth_reliability,
-                        aa.dewatering_depth_risk,
-                        aa.bio_infection,
-                        aa.bio_infection_reliability,
-                        aa.bio_infection_risk
-                FROM    data.analysis_address AS aa
-                WHERE   aa.address_external_id = upper(@external_id)
+				        aa.id,
+				        aa.external_id,
+				        aa.external_source,
+				        aa.construction_year,
+				        aa.construction_year_source,
+				        aa.address_id,
+				        aa.address_external_id,
+				        aa.postal_code,
+				        aa.neighborhood_id,
+				        aa.groundwater_level,
+				        aa.soil,
+				        aa.building_height,
+				        aa.ground_level,
+				        aa.cpt,
+				        aa.monitoring_well,
+				        aa.recovery_advised,
+				        aa.damage_cause,
+				        aa.substructure,
+				        aa.document_name,
+				        aa.document_date,
+				        aa.inquiry_type,
+				        aa.recovery_type,
+				        aa.recovery_status,
+				        aa.surface_area,
+				        aa.living_area,
+				        aa.foundation_bearing_layer,
+				        aa.restoration_costs,
+				        aa.foundation_type,
+				        aa.foundation_type_reliability,
+				        aa.drystand,
+				        aa.drystand_reliability,
+				        aa.drystand_risk,
+				        aa.dewatering_depth,
+				        aa.dewatering_depth_reliability,
+				        aa.dewatering_depth_risk,
+				        aa.bio_infection,
+				        aa.bio_infection_reliability,
+				        aa.bio_infection_risk
+                FROM    data.analysis_address AS aa, tracker
+                WHERE   aa.id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
@@ -348,19 +334,17 @@ namespace FunderMaps.Data.Repositories
         public async Task<AnalysisProduct2> GetByAddressExternalId2Async(string id)
         {
             var sql = @"
-                INSERT INTO application.product_telemetry AS pu (
-                    user_id,
-                    organization_id,
-                    product,
-                    count)
-                VALUES (
-                    @user,
-                    @tenant,
-                    'analysis2',
-                    1)
-                ON CONFLICT (organization_id, product)
-                DO UPDATE SET
-                    count = pu.count + EXCLUDED.count;
+                WITH tracker AS (
+                    INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+                    SELECT
+                        @tenant,
+	                    'analysis2',
+	                    ac.building_id
+                    FROM data.analysis_complete ac
+                    WHERE   ac.address_external_id = upper(@external_id)
+                    LIMIT 1
+                    returning pt.building_id
+                )
                 SELECT -- AnalysisComplete
                         ac.building_id,
                         ac.external_building_id,
@@ -379,14 +363,13 @@ namespace FunderMaps.Data.Repositories
                         ac.dewatering_depth_risk_reliability,
                         ac.unclassified_risk,
                         ac.recovery_type
-                FROM    data.analysis_complete ac
-                WHERE   ac.address_external_id = upper(@external_id)
+                FROM    data.analysis_complete ac, tracker
+                WHERE   ac.building_id = tracker.building_id
                 LIMIT   1";
 
             await using var context = await DbContextFactory.CreateAsync(sql);
 
             context.AddParameterWithValue("external_id", id);
-            context.AddParameterWithValue("user", AppContext.UserId);
             context.AddParameterWithValue("tenant", AppContext.TenantId);
 
             await using var reader = await context.ReaderAsync();
