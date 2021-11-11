@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces;
 using System.Security.Cryptography;
 
 namespace FunderMaps.Core.Components
@@ -8,7 +8,7 @@ namespace FunderMaps.Core.Components
     /// </summary>
     public class RandomGenerator : IRandom, IDisposable
     {
-        private readonly RandomNumberGenerator _rng = new RNGCryptoServiceProvider();
+        private readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
         private bool disposedValue;
 
         /// <summary>

@@ -7,7 +7,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.AspNetCore.Authentication
 {
     /// <summary>
@@ -135,4 +134,3 @@ namespace FunderMaps.AspNetCore.Authentication
         }
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated

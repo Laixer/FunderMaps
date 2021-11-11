@@ -12,7 +12,8 @@ on:
       - develop
 
 env:
-  DOTNET_VERSION: '5.0'
+  DOTNET_VERSION: '6.0'
+  DOTNET_VERSION_INCLUDE_PRERELEASE: true
   BUILD_CONFIG: Release
 
 jobs:
@@ -45,7 +46,8 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: ${{ env.DOTNET_VERSION }} 
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        include-prerelease: ${{ env.DOTNET_VERSION_INCLUDE_PRERELEASE }}
 
     - name: Install dependencies
       run: dotnet restore

@@ -47,86 +47,86 @@ namespace FunderMaps.Core.IncidentReport
         {
             public static string ToBoolean(bool value) => value ? "Ja" : "Nee";
 
-            public static string ToFoundationType(Core.Types.FoundationType? value)
+            public static string ToFoundationType(FoundationType? value)
                 => value switch
                 {
-                    Core.Types.FoundationType.Wood => "Hout",
-                    Core.Types.FoundationType.WoodAmsterdam => "Hout",
-                    Core.Types.FoundationType.WoodRotterdam => "Hout",
-                    Core.Types.FoundationType.WoodCharger => "Hout",
-                    Core.Types.FoundationType.WoodRotterdamAmsterdam => "Hout",
-                    Core.Types.FoundationType.WoodRotterdamArch => "Hout",
-                    Core.Types.FoundationType.WoodAmsterdamArch => "Hout",
-                    Core.Types.FoundationType.Concrete => "Beton",
-                    Core.Types.FoundationType.NoPile => "Niet onderheid",
-                    Core.Types.FoundationType.NoPileMasonry => "Niet onderheid",
-                    Core.Types.FoundationType.NoPileStrips => "Niet onderheid",
-                    Core.Types.FoundationType.NoPileBearingFloor => "Niet onderheid",
-                    Core.Types.FoundationType.NoPileConcreteFloor => "Niet onderheid",
-                    Core.Types.FoundationType.NoPileSlit => "Niet onderheid",
-                    Core.Types.FoundationType.WeightedPile => "Beton met verzwaardepunt",
-                    Core.Types.FoundationType.Combined => "Gecombineerd",
-                    Core.Types.FoundationType.SteelPile => "Stalen buispaal",
-                    Core.Types.FoundationType.Other => "Overig",
+                    FoundationType.Wood => "Hout",
+                    FoundationType.WoodAmsterdam => "Hout",
+                    FoundationType.WoodRotterdam => "Hout",
+                    FoundationType.WoodCharger => "Hout",
+                    FoundationType.WoodRotterdamAmsterdam => "Hout",
+                    FoundationType.WoodRotterdamArch => "Hout",
+                    FoundationType.WoodAmsterdamArch => "Hout",
+                    FoundationType.Concrete => "Beton",
+                    FoundationType.NoPile => "Niet onderheid",
+                    FoundationType.NoPileMasonry => "Niet onderheid",
+                    FoundationType.NoPileStrips => "Niet onderheid",
+                    FoundationType.NoPileBearingFloor => "Niet onderheid",
+                    FoundationType.NoPileConcreteFloor => "Niet onderheid",
+                    FoundationType.NoPileSlit => "Niet onderheid",
+                    FoundationType.WeightedPile => "Beton met verzwaardepunt",
+                    FoundationType.Combined => "Gecombineerd",
+                    FoundationType.SteelPile => "Stalen buispaal",
+                    FoundationType.Other => "Overig",
                     _ => "Onbekend",
                 };
 
-            public static string ToFoundationDamageCause(Core.Types.FoundationDamageCause? value)
+            public static string ToFoundationDamageCause(FoundationDamageCause? value)
                 => value switch
                 {
-                    Core.Types.FoundationDamageCause.Drainage => "Ontwateringsdiepte onvoldoende",
-                    Core.Types.FoundationDamageCause.Drystand => "Droogstand",
-                    Core.Types.FoundationDamageCause.ConstructionFlaw => "Verkeerd gefundeerd",
-                    Core.Types.FoundationDamageCause.Overcharge => "Overbelasting",
-                    Core.Types.FoundationDamageCause.OverchargeNegativeCling => "Overbelasting/Negatievekleef",
-                    Core.Types.FoundationDamageCause.NegativeCling => "Negatievekleef",
-                    Core.Types.FoundationDamageCause.BioInfection => "Bacteriele aantasting",
-                    Core.Types.FoundationDamageCause.FungusInfection => "Schimmelaantasting",
-                    Core.Types.FoundationDamageCause.BioFungusInfection => "Schimmel/bacterieen",
-                    Core.Types.FoundationDamageCause.FoundationFlaw => "Verkeerd gefundeerd",
-                    Core.Types.FoundationDamageCause.ConstructionHeave => "Woning omhooggedrukt",
-                    Core.Types.FoundationDamageCause.Subsidence => "Bodemdaling",
-                    Core.Types.FoundationDamageCause.Vegetation => "Wortels/planten",
-                    Core.Types.FoundationDamageCause.Gas => "Gaswinning/mijnbouw",
-                    Core.Types.FoundationDamageCause.Vibrations => "Verkeer",
-                    Core.Types.FoundationDamageCause.PartialFoundationRecovery => "Naastgelegen funderingsherstel",
+                    FoundationDamageCause.Drainage => "Ontwateringsdiepte onvoldoende",
+                    FoundationDamageCause.Drystand => "Droogstand",
+                    FoundationDamageCause.ConstructionFlaw => "Verkeerd gefundeerd",
+                    FoundationDamageCause.Overcharge => "Overbelasting",
+                    FoundationDamageCause.OverchargeNegativeCling => "Overbelasting/Negatievekleef",
+                    FoundationDamageCause.NegativeCling => "Negatievekleef",
+                    FoundationDamageCause.BioInfection => "Bacteriele aantasting",
+                    FoundationDamageCause.FungusInfection => "Schimmelaantasting",
+                    FoundationDamageCause.BioFungusInfection => "Schimmel/bacterieen",
+                    FoundationDamageCause.FoundationFlaw => "Verkeerd gefundeerd",
+                    FoundationDamageCause.ConstructionHeave => "Woning omhooggedrukt",
+                    FoundationDamageCause.Subsidence => "Bodemdaling",
+                    FoundationDamageCause.Vegetation => "Wortels/planten",
+                    FoundationDamageCause.Gas => "Gaswinning/mijnbouw",
+                    FoundationDamageCause.Vibrations => "Verkeer",
+                    FoundationDamageCause.PartialFoundationRecovery => "Naastgelegen funderingsherstel",
                     _ => "Onbekend",
                 };
 
-            public static string ToFoundationDamageCharacteristics(Core.Types.FoundationDamageCharacteristics? value)
+            public static string ToFoundationDamageCharacteristics(FoundationDamageCharacteristics? value)
                 => value switch
                 {
-                    Core.Types.FoundationDamageCharacteristics.JammingDoorWindow => "Klemmende ramen/deuren",
-                    Core.Types.FoundationDamageCharacteristics.Crack => "Scheuren",
-                    Core.Types.FoundationDamageCharacteristics.Skewed => "Scheefstand",
-                    Core.Types.FoundationDamageCharacteristics.CrawlspaceFlooding => "Water in kruipruimte",
-                    Core.Types.FoundationDamageCharacteristics.ThresholdAboveSubsurface => "Maaiveld lager dan dorpel",
-                    Core.Types.FoundationDamageCharacteristics.ThresholdBelowSubsurface => "Drempel lager dan maaiveld",
-                    Core.Types.FoundationDamageCharacteristics.CrookedFloorWall => "Scheve vloer",
+                    FoundationDamageCharacteristics.JammingDoorWindow => "Klemmende ramen/deuren",
+                    FoundationDamageCharacteristics.Crack => "Scheuren",
+                    FoundationDamageCharacteristics.Skewed => "Scheefstand",
+                    FoundationDamageCharacteristics.CrawlspaceFlooding => "Water in kruipruimte",
+                    FoundationDamageCharacteristics.ThresholdAboveSubsurface => "Maaiveld lager dan dorpel",
+                    FoundationDamageCharacteristics.ThresholdBelowSubsurface => "Drempel lager dan maaiveld",
+                    FoundationDamageCharacteristics.CrookedFloorWall => "Scheve vloer",
                     _ => "Onbekend",
                 };
 
-            public static IEnumerable<string> ArrayToFoundationDamageCharacteristics(IEnumerable<Core.Types.FoundationDamageCharacteristics> values)
+            public static IEnumerable<string> ArrayToFoundationDamageCharacteristics(IEnumerable<FoundationDamageCharacteristics> values)
                 => values?.Select(value => ToFoundationDamageCharacteristics(value));
 
-            public static string ToEnvironmentDamageCharacteristics(Core.Types.EnvironmentDamageCharacteristics? value)
+            public static string ToEnvironmentDamageCharacteristics(EnvironmentDamageCharacteristics? value)
                 => value switch
                 {
-                    Core.Types.EnvironmentDamageCharacteristics.Subsidence => "Bodemdaling",
-                    Core.Types.EnvironmentDamageCharacteristics.SaggingSewerConnection => "Verzakkend riool",
-                    Core.Types.EnvironmentDamageCharacteristics.SaggingCablesPipes => "Verzakkende kabels/leidingen",
-                    Core.Types.EnvironmentDamageCharacteristics.Flooding => "Wateroverlast",
-                    Core.Types.EnvironmentDamageCharacteristics.FoundationDamageNearby => "Funderingschade in wijk",
-                    Core.Types.EnvironmentDamageCharacteristics.Elevation => "Recent opgehoogd",
-                    Core.Types.EnvironmentDamageCharacteristics.IncreasingTraffic => "Verkeerstoename",
-                    Core.Types.EnvironmentDamageCharacteristics.ConstructionNearby => "Werkzaamheden in wijk",
-                    Core.Types.EnvironmentDamageCharacteristics.VegetationNearby => "Bomen nabij",
-                    Core.Types.EnvironmentDamageCharacteristics.SewageLeakage => "Lekkend riool",
-                    Core.Types.EnvironmentDamageCharacteristics.LowGroundWater => "Wateronderlast",
+                    EnvironmentDamageCharacteristics.Subsidence => "Bodemdaling",
+                    EnvironmentDamageCharacteristics.SaggingSewerConnection => "Verzakkend riool",
+                    EnvironmentDamageCharacteristics.SaggingCablesPipes => "Verzakkende kabels/leidingen",
+                    EnvironmentDamageCharacteristics.Flooding => "Wateroverlast",
+                    EnvironmentDamageCharacteristics.FoundationDamageNearby => "Funderingschade in wijk",
+                    EnvironmentDamageCharacteristics.Elevation => "Recent opgehoogd",
+                    EnvironmentDamageCharacteristics.IncreasingTraffic => "Verkeerstoename",
+                    EnvironmentDamageCharacteristics.ConstructionNearby => "Werkzaamheden in wijk",
+                    EnvironmentDamageCharacteristics.VegetationNearby => "Bomen nabij",
+                    EnvironmentDamageCharacteristics.SewageLeakage => "Lekkend riool",
+                    EnvironmentDamageCharacteristics.LowGroundWater => "Wateronderlast",
                     _ => "Onbekend",
                 };
 
-            public static IEnumerable<string> ArrayToEnvironmentDamageCharacteristics(IEnumerable<Core.Types.EnvironmentDamageCharacteristics> values)
+            public static IEnumerable<string> ArrayToEnvironmentDamageCharacteristics(IEnumerable<EnvironmentDamageCharacteristics> values)
                 => values?.Select(value => ToEnvironmentDamageCharacteristics(value));
         }
 

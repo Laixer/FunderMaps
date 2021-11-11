@@ -1,10 +1,9 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Geocoder
 {
     /// <summary>
@@ -19,9 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         ///     Create new instance.
         /// </summary>
         public AddressController(IMapper mapper, IGeocoderTranslation geocoderTranslation)
-        {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+            => _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
         // GET: api/address
         /// <summary>
@@ -45,4 +42,3 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         }
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods

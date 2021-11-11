@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.AspNetCore.Controllers
 {
     /// <summary>
@@ -74,4 +73,3 @@ namespace FunderMaps.AspNetCore.Controllers
         }
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods

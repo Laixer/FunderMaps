@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Xunit;
 
@@ -42,6 +42,6 @@ namespace FunderMaps.IntegrationTests
         /// <summary>
         ///     Called when an object is no longer needed.
         /// </summary>
-        public virtual Task DisposeAsync() => Task.CompletedTask;
+        public new virtual Task DisposeAsync() => Task.CompletedTask;
     }
 }

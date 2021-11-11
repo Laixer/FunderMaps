@@ -60,7 +60,7 @@ namespace FunderMaps.Core.Services
         /// <summary>
         ///     Generate drystand description text.
         /// </summary>
-        private string DescriptionDrystand(FoundationRisk? risk, double? drystand)
+        private static string DescriptionDrystand(FoundationRisk? risk, double? drystand)
             => risk switch
             {
                 var risk_low when (
@@ -83,7 +83,7 @@ namespace FunderMaps.Core.Services
         /// <summary>
         ///     Generate dewatering depth description text.
         /// </summary>
-        private string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth, string soil)
+        private static string DescriptionDewateringDepth(FoundationRisk? risk, double? dewateringDepth, string soil)
             => risk switch
             {
                 var risk_low when (
@@ -106,7 +106,7 @@ namespace FunderMaps.Core.Services
         /// <summary>
         ///     Generate bioinfection description text.
         /// </summary>
-        private string DescriptionBioInfection(FoundationRisk? risk)
+        private static string DescriptionBioInfection(FoundationRisk? risk)
             => risk switch
             {
                 var risk_low when

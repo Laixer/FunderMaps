@@ -8,7 +8,6 @@ using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Storage
 {
     /// <summary>
@@ -219,4 +218,3 @@ namespace FunderMaps.Infrastructure.Storage
             => await CreateClient.ListBucketsAsync();
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated

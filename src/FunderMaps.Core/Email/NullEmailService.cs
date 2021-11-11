@@ -1,4 +1,5 @@
 #pragma warning disable CA1812 // Internal class is never instantiated
+
 namespace FunderMaps.Core.Email
 {
     /// <summary>
@@ -19,4 +20,3 @@ namespace FunderMaps.Core.Email
         public Task HealthCheck() => Task.CompletedTask;
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated
