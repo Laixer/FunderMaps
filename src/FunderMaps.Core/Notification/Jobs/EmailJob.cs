@@ -5,7 +5,6 @@ using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Threading;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Notification.Jobs
 {
     /// <summary>
@@ -87,4 +86,3 @@ namespace FunderMaps.Core.Notification.Jobs
                 && envelope.Recipients.All(address => address.Contains('@', System.StringComparison.InvariantCulture));
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated
