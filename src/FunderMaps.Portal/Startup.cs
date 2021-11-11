@@ -29,7 +29,7 @@ namespace FunderMaps.Portal
         ///     Order is undetermined when configuring services.
         /// </remarks>
         /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-        private void StartupConfigureServices(IServiceCollection services)
+        private static void StartupConfigureServices(IServiceCollection services)
         {
             // Register components from reference assemblies.
             services.AddFunderMapsInfrastructureServices();

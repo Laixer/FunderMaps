@@ -85,7 +85,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task RecoverySampleResetLifeCycle()
         {
             var recovery = await ReportStub.CreateRecoveryAsync(Factory);
-            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
+            await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
 
             {
                 // Arrange
@@ -118,7 +118,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task RecoverySampleStatusLifeCycle(string uri)
         {
             var recovery = await ReportStub.CreateRecoveryAsync(Factory);
-            var sample = await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
+            await ReportStub.CreateRecoverySampleAsync(Factory, recovery);
 
             {
                 // Arrange

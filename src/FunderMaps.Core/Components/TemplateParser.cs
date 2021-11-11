@@ -9,19 +9,11 @@ namespace FunderMaps.Core.Components
     /// </summary>
     public class TemplateParser : ITemplateParser
     {
-        private readonly AppContext _appContext;
-
         private const string templatePath = "Template/{0}/{1}.html";
 
         private Template template;
-        private ScriptObject scriptObject = new();
-        private TemplateContext templateContext = new();
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public TemplateParser(AppContext appContext)
-            => _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+        private readonly ScriptObject scriptObject = new();
+        private readonly TemplateContext templateContext = new();
 
         /// <summary>
         ///     Add object with name to the template context.

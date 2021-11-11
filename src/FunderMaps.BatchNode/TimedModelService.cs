@@ -20,11 +20,10 @@ namespace FunderMaps.BatchNode
         /// </summary>
         public TimedModelService(IServiceProvider serviceProvider,
             ILogger<TimedModelService> logger,
-            IConfiguration configuration,
             IOptions<ModelOptions> options)
         {
             _servicesProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
-            _logger = logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 

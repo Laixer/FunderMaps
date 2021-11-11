@@ -7,9 +7,9 @@ namespace FunderMaps.IntegrationTests
     /// </summary>
     public class FileUploadContent : MultipartFormDataContent
     {
-        private Bogus.Faker faker = new();
+        private readonly Bogus.Faker faker = new();
 
-        private HttpContent byteContent;
+        private readonly HttpContent byteContent;
 
         /// <summary>
         ///     Create new instance.

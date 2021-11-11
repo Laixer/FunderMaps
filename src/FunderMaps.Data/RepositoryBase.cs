@@ -4,186 +4,184 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace FunderMaps.Data
+namespace FunderMaps.Data;
+
+/// <summary>
+///     Generic repository base.
+/// </summary>
+/// <typeparam name="TEntity">Derivative of base entity.</typeparam>
+/// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
+internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
+    where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
+    where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
 {
+    #region Cache
+
     /// <summary>
-    ///     Generic repository base.
+    ///     Keypair used as cache bucket item.
     /// </summary>
-    /// <typeparam name="TEntity">Derivative of base entity.</typeparam>
-    /// <typeparam name="TEntityPrimaryKey">Primary key of entity.</typeparam>
-    internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBase, IAsyncRepository<TEntity, TEntityPrimaryKey>
-        where TEntity : IdentifiableEntity<TEntity, TEntityPrimaryKey>
-        where TEntityPrimaryKey : IEquatable<TEntityPrimaryKey>, IComparable<TEntityPrimaryKey>
+    protected record CacheKeyPair
     {
-        #region Cache
-
         /// <summary>
-        ///     Keypair used as cache bucket item.
+        ///     Entity hash key.
         /// </summary>
-        protected record CacheKeyPair
-        {
-            /// <summary>
-            ///     Entity hash key.
-            /// </summary>
-            public int EntityKey { get; init; }
-
-            /// <summary>
-            ///     Object hash key.
-            /// </summary>
-            public int Key { get; init; }
-
-            /// <summary>
-            ///     Keypair identifier.
-            /// </summary>
-            /// <remarks>
-            ///     This is very likely to overflow, however the identity shoud
-            ///     still be unique per keypair.
-            /// </remarks>
-            public int KeyPairIdentity => EntityKey + Key;
-        }
+        public int EntityKey { get; init; }
 
         /// <summary>
-        ///     Build entity hash key.
+        ///     Object hash key.
         /// </summary>
-        protected static CacheKeyPair EntityHashKey(object key)
-            => new()
-            {
-                EntityKey = typeof(TEntity).GetHashCode(),
-                Key = key.GetHashCode(),
-            };
+        public int Key { get; init; }
 
         /// <summary>
-        ///     Set cache item.
+        ///     Keypair identifier.
         /// </summary>
         /// <remarks>
-        ///     Derived repositories can override this call to change cache behavior.
+        ///     This is very likely to overflow, however the identity shoud
+        ///     still be unique per keypair.
         /// </remarks>
-        protected virtual void SetCacheItem(CacheKeyPair key, TEntity value, MemoryCacheEntryOptions options)
-            => Cache.Set(key.KeyPairIdentity, value, options);
+        public int KeyPairIdentity => EntityKey + Key;
+    }
 
-        /// <summary>
-        ///     Unset cache item.
-        /// </summary>
-        /// <remarks>
-        ///     Derived repositories can override this call to change cache behavior.
-        /// </remarks>
-        protected virtual void UnsetCacheItem(CacheKeyPair key)
-            => Cache.Remove(key.KeyPairIdentity);
-
-        /// <summary>
-        ///     Get cache item.
-        /// </summary>
-        /// <remarks>
-        ///     Derived repositories can override this call to change cache behavior.
-        /// </remarks>
-        protected virtual bool GetCacheItem(CacheKeyPair key, out TEntity value)
-            => Cache.TryGetValue(key.KeyPairIdentity, out value);
-
-        /// <summary>
-        ///     Try get entity from cache.
-        /// </summary>
-        protected bool TryGetEntity(TEntityPrimaryKey key, out TEntity value)
-            => GetCacheItem(EntityHashKey(key), out value);
-
-        /// <summary>
-        ///     Cache entity.
-        /// </summary>
-        protected TEntity CacheEntity(TEntityPrimaryKey key, TEntity value)
+    /// <summary>
+    ///     Build entity hash key.
+    /// </summary>
+    protected static CacheKeyPair EntityHashKey(object key)
+        => new()
         {
-            var options = new MemoryCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-                .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+            EntityKey = typeof(TEntity).GetHashCode(),
+            Key = key.GetHashCode(),
+        };
 
-            SetCacheItem(EntityHashKey(key), value, options);
-            return value;
-        }
+    /// <summary>
+    ///     Set cache item.
+    /// </summary>
+    /// <remarks>
+    ///     Derived repositories can override this call to change cache behavior.
+    /// </remarks>
+    protected virtual void SetCacheItem(CacheKeyPair key, TEntity value, MemoryCacheEntryOptions options)
+        => Cache.Set(key.KeyPairIdentity, value, options);
 
-        /// <summary>
-        ///     Cache entity.
-        /// </summary>
-        protected TEntity CacheEntity(TEntity value)
-            => CacheEntity(value.Identifier, value);
+    /// <summary>
+    ///     Unset cache item.
+    /// </summary>
+    /// <remarks>
+    ///     Derived repositories can override this call to change cache behavior.
+    /// </remarks>
+    protected virtual void UnsetCacheItem(CacheKeyPair key)
+        => Cache.Remove(key.KeyPairIdentity);
 
-        /// <summary>
-        ///     Remove entity from cache.
-        /// </summary>
-        protected void ResetCacheEntity(TEntityPrimaryKey key)
-            => UnsetCacheItem(EntityHashKey(key));
+    /// <summary>
+    ///     Get cache item.
+    /// </summary>
+    /// <remarks>
+    ///     Derived repositories can override this call to change cache behavior.
+    /// </remarks>
+    protected virtual bool GetCacheItem(CacheKeyPair key, out TEntity value)
+        => Cache.TryGetValue(key.KeyPairIdentity, out value);
 
-        /// <summary>
-        ///     Remove entity from cache.
-        /// </summary>
-        protected void ResetCacheEntity(TEntity value)
-            => ResetCacheEntity(value.Identifier);
+    /// <summary>
+    ///     Try get entity from cache.
+    /// </summary>
+    protected bool TryGetEntity(TEntityPrimaryKey key, out TEntity value)
+        => GetCacheItem(EntityHashKey(key), out value);
 
-        #endregion Cache
+    /// <summary>
+    ///     Cache entity.
+    /// </summary>
+    protected TEntity CacheEntity(TEntityPrimaryKey key, TEntity value)
+    {
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
 
-        // FUTURE: Maybe too npgsql specific.
-        // FUTURE: Extension ?
-        /// <summary>
-        ///     Convert navigation to query.
-        /// </summary>
-        /// <param name="cmdText">SQL query.</param>
-        /// <param name="navigation">Navigation instance of type <see cref="Navigation"/>.</param>
-        /// <param name="alias">Datasource alias.</param>
-        /// <returns>The altered SQL query.</returns>
-        protected static string ConstructNavigation(string cmdText, Navigation navigation, string alias = null)
+        SetCacheItem(EntityHashKey(key), value, options);
+        return value;
+    }
+
+    /// <summary>
+    ///     Cache entity.
+    /// </summary>
+    protected TEntity CacheEntity(TEntity value)
+        => CacheEntity(value.Identifier, value);
+
+    /// <summary>
+    ///     Remove entity from cache.
+    /// </summary>
+    protected void ResetCacheEntity(TEntityPrimaryKey key)
+        => UnsetCacheItem(EntityHashKey(key));
+
+    /// <summary>
+    ///     Remove entity from cache.
+    /// </summary>
+    protected void ResetCacheEntity(TEntity value)
+        => ResetCacheEntity(value.Identifier);
+
+    #endregion Cache
+
+    // FUTURE: Maybe too npgsql specific.
+    // FUTURE: Extension ?
+    /// <summary>
+    ///     Convert navigation to query.
+    /// </summary>
+    /// <param name="cmdText">SQL query.</param>
+    /// <param name="navigation">Navigation instance of type <see cref="Navigation"/>.</param>
+    /// <returns>The altered SQL query.</returns>
+    protected static string ConstructNavigation(string cmdText, Navigation navigation)
+    {
+        if (navigation is null)
         {
-            if (navigation is null)
-            {
-                return cmdText;
-            }
-
-            if (navigation.Offset > 0)
-            {
-                cmdText += $"\r\n OFFSET {navigation.Offset}";
-            }
-
-            if (navigation.Limit > 0)
-            {
-                cmdText += $"\r\n LIMIT {navigation.Limit}";
-            }
-
             return cmdText;
         }
 
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
-        /// </summary>
-        public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+        if (navigation.Offset > 0)
         {
-            TEntityPrimaryKey primaryKey = await AddAsync(entity);
-            return await GetByIdAsync(primaryKey);
+            cmdText += $"\r\n OFFSET {navigation.Offset}";
         }
 
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
-        /// </summary>
-        public abstract Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
+        if (navigation.Limit > 0)
+        {
+            cmdText += $"\r\n LIMIT {navigation.Limit}";
+        }
 
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
-        /// </summary>
-        public abstract IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation);
-
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
-        /// </summary>
-        public abstract Task<TEntityPrimaryKey> AddAsync(TEntity entity);
-
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
-        /// </summary>
-        public abstract Task UpdateAsync(TEntity entity);
-
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
-        /// </summary>
-        public abstract Task DeleteAsync(TEntityPrimaryKey id);
-
-        /// <summary>
-        ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
-        /// </summary>
-        public abstract Task<long> CountAsync();
+        return cmdText;
     }
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
+    /// </summary>
+    public virtual async Task<TEntity> AddGetAsync(TEntity entity)
+    {
+        TEntityPrimaryKey primaryKey = await AddAsync(entity);
+        return await GetByIdAsync(primaryKey);
+    }
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
+    /// </summary>
+    public abstract Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>
+    /// </summary>
+    public abstract IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation);
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
+    /// </summary>
+    public abstract Task<TEntityPrimaryKey> AddAsync(TEntity entity);
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
+    /// </summary>
+    public abstract Task UpdateAsync(TEntity entity);
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
+    /// </summary>
+    public abstract Task DeleteAsync(TEntityPrimaryKey id);
+
+    /// <summary>
+    ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
+    /// </summary>
+    public abstract Task<long> CountAsync();
 }

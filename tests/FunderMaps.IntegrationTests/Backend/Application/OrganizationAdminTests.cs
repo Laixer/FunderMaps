@@ -19,7 +19,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationLifeCycle()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
             {
@@ -81,7 +81,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationLifeCycleForbidden()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
             {

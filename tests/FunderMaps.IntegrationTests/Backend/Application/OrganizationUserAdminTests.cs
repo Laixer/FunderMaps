@@ -20,7 +20,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationUserLifeCycle()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
             var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
             await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
@@ -57,7 +57,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationUserLifeCycleChangeRole()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
             var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
             await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
@@ -81,7 +81,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationUserLifeCycleChangePassword()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
             var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
             await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);
@@ -108,7 +108,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationUserLifeCycleForbidden()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
             var organizationUser = await ApplicationStub.CreateOrganizationUserAsync(Factory, organization);
             await TestStub.LoginAsync(Factory, organizationUser.Email, organizationUser.Password);

@@ -23,7 +23,7 @@ namespace FunderMaps.Infrastructure.Storage
         /// <summary>
         ///     Create a HTTP client.
         /// </summary>
-        protected HttpClient CreateClient()
+        protected static HttpClient CreateClient()
         {
             HttpClient client = new();
 

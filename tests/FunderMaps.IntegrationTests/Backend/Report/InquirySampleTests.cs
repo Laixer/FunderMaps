@@ -84,7 +84,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task InquirySampleResetLifeCycle()
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
-            var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
+            await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
 
             {
                 // Arrange
@@ -117,7 +117,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task InquirySampleStatusLifeCycle(string uri)
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
-            var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
+            await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
 
             {
                 // Arrange

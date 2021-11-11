@@ -6,9 +6,9 @@ namespace FunderMaps.IntegrationTests
     public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
         where TStartup : class
     {
-        private HttpClient _httpClient;
-        private string _username;
-        private string _password;
+        private readonly HttpClient _httpClient;
+        private readonly string _username;
+        private readonly string _password;
 
         public SignInSecurityTokenDto AuthToken { get; private set; }
 

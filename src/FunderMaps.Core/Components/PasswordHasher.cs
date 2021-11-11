@@ -52,7 +52,6 @@ namespace FunderMaps.Core.Components
             return areSame;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5379:Do Not Use Weak Key Derivation Function Algorithm", Justification = "<Pending>")]
         private byte[] GeneratePasswordHash(string password)
         {
             byte[] salt = new byte[saltSize];

@@ -17,7 +17,7 @@ public class AddressController : ControllerBase
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public AddressController(IMapper mapper, IGeocoderTranslation geocoderTranslation)
+    public AddressController(IMapper mapper)
         => _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
     // GET: api/address
