@@ -6,7 +6,6 @@ using FunderMaps.Webservice.InputModels;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.Webservice.Controllers
 {
     /// <summary>
@@ -90,4 +89,3 @@ namespace FunderMaps.Webservice.Controllers
         }
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods

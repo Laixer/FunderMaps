@@ -114,7 +114,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
         public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
         {
-            if (services is not IServiceCollection)
+            if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
             }

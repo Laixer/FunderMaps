@@ -2670,19 +2670,25 @@ COMMENT ON TABLE application.organization_user IS 'Linking table between organiz
 
 
 --
--- Name: product_telemetry; Type: TABLE; Schema: application; Owner: fundermaps
+-- Name: product_tracker; Type: TABLE; Schema: application; Owner: fundermaps
 --
 
-CREATE TABLE application.product_telemetry (
-    user_id application.user_id,
+CREATE TABLE application.product_tracker (
     organization_id application.organization_id NOT NULL,
     product text NOT NULL,
-    count bigint DEFAULT 0 NOT NULL,
-    meta jsonb
+    building_id geocoder.geocoder_id NOT NULL,
+    create_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
-ALTER TABLE application.product_telemetry OWNER TO fundermaps;
+ALTER TABLE application.product_tracker OWNER TO fundermaps;
+
+--
+-- Name: COLUMN product_tracker.create_date; Type: COMMENT; Schema: application; Owner: fundermaps
+--
+
+COMMENT ON COLUMN application.product_tracker.create_date IS 'Timestamp of record creation, set by insert';
+
 
 --
 -- Name: user; Type: TABLE; Schema: application; Owner: fundermaps
@@ -4386,14 +4392,6 @@ ALTER TABLE ONLY application.organization_user
 
 
 --
--- Name: product_telemetry product_telemetry_pkey; Type: CONSTRAINT; Schema: application; Owner: fundermaps
---
-
-ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_pkey PRIMARY KEY (organization_id, product);
-
-
---
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: application; Owner: fundermaps
 --
 
@@ -4572,6 +4570,13 @@ CREATE UNIQUE INDEX organization_normalized_email_idx ON application.organizatio
 --
 
 CREATE INDEX organization_proposal_normalized_email_idx ON application.organization_proposal USING btree (normalized_email);
+
+
+--
+-- Name: product_tracker_count_idx; Type: INDEX; Schema: application; Owner: fundermaps
+--
+
+CREATE INDEX product_tracker_count_idx ON application.product_tracker USING btree (organization_id, product);
 
 
 --
@@ -5043,19 +5048,19 @@ ALTER TABLE ONLY application.organization_user
 
 
 --
--- Name: product_telemetry product_telemetry_organization_id_fkey; Type: FK CONSTRAINT; Schema: application; Owner: fundermaps
+-- Name: product_tracker product_tracker_building_id_fkey; Type: FK CONSTRAINT; Schema: application; Owner: fundermaps
 --
 
-ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ONLY application.product_tracker
+    ADD CONSTRAINT product_tracker_building_id_fkey FOREIGN KEY (building_id) REFERENCES geocoder.building(id) ON UPDATE CASCADE;
 
 
 --
--- Name: product_telemetry product_telemetry_user_id_fkey; Type: FK CONSTRAINT; Schema: application; Owner: fundermaps
+-- Name: product_tracker product_tracker_organization_id_fkey; Type: FK CONSTRAINT; Schema: application; Owner: fundermaps
 --
 
-ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_user_id_fkey FOREIGN KEY (user_id) REFERENCES application."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
+ALTER TABLE ONLY application.product_tracker
+    ADD CONSTRAINT product_tracker_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -5788,13 +5793,13 @@ GRANT SELECT ON TABLE application.organization_user TO fundermaps_portal;
 
 
 --
--- Name: TABLE product_telemetry; Type: ACL; Schema: application; Owner: fundermaps
+-- Name: TABLE product_tracker; Type: ACL; Schema: application; Owner: fundermaps
 --
 
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.product_telemetry TO fundermaps_webapp;
-GRANT SELECT,INSERT,UPDATE ON TABLE application.product_telemetry TO fundermaps_webservice;
-GRANT SELECT ON TABLE application.product_telemetry TO fundermaps_batch;
-GRANT SELECT ON TABLE application.product_telemetry TO fundermaps_portal;
+GRANT SELECT,INSERT,UPDATE ON TABLE application.product_tracker TO fundermaps_webservice;
+GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.product_tracker TO fundermaps_webapp;
+GRANT SELECT ON TABLE application.product_tracker TO fundermaps_batch;
+GRANT SELECT ON TABLE application.product_tracker TO fundermaps_portal;
 
 
 --

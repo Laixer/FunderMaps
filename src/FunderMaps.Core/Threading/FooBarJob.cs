@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Core.Threading
 {
     /// <summary>
@@ -46,4 +45,3 @@ namespace FunderMaps.Core.Threading
             => name is not null && name.ToUpperInvariant() == TaskName;
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated

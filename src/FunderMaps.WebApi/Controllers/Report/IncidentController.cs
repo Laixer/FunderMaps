@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.DataAnnotations;
@@ -10,7 +10,6 @@ using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.WebApi.Controllers.Report
 {
     /// <summary>
@@ -215,4 +214,3 @@ namespace FunderMaps.WebApi.Controllers.Report
         }
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods

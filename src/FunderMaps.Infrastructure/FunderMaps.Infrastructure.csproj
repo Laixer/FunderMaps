@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Linq.Async" Version="5.0.0" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.3.8" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.4.2" />
     <PackageReference Include="MailKit" Version="2.15.0" />
   </ItemGroup>
 

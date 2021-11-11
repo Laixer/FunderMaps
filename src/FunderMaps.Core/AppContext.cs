@@ -55,6 +55,6 @@ namespace FunderMaps.Core
         /// <summary>
         ///     Absolute path to the application directory.
         /// </summary>
-        public string applicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string ApplicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
     }
 }

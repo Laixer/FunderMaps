@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using MimeKit.Text;
 
-#pragma warning disable CA1812 // Internal class is never instantiated
 namespace FunderMaps.Infrastructure.Email
 {
     // FUTURE: Catch ex.
@@ -116,4 +115,3 @@ namespace FunderMaps.Infrastructure.Email
         }
     }
 }
-#pragma warning restore CA1812 // Internal class is never instantiated
