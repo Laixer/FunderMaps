@@ -1,13 +1,12 @@
-namespace FunderMaps.Core.Identity
+namespace FunderMaps.Core.Identity;
+
+/// <summary>
+///     Tenant identity.
+/// </summary>
+public interface ITenant
 {
     /// <summary>
-    ///     Tenant identity.
+    ///     Unique tenant identifier.
     /// </summary>
-    public interface ITenant
-    {
-        /// <summary>
-        ///     Unique tenant identifier.
-        /// </summary>
-        Guid Id { get; set; }
-    }
+    Guid Id { get; set; }
 }

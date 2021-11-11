@@ -1,13 +1,12 @@
-namespace FunderMaps.Core.Model
+namespace FunderMaps.Core.Model;
+
+/// <summary>
+///     Model service.
+/// </summary>
+public interface IModelService
 {
     /// <summary>
-    ///     Model service.
+    ///     Update models.
     /// </summary>
-    public interface IModelService
-    {
-        /// <summary>
-        ///     Update models.
-        /// </summary>
-        Task UpdateAllModelsAsync();
-    }
+    Task UpdateAllModelsAsync();
 }

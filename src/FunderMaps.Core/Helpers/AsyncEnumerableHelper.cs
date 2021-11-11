@@ -1,19 +1,18 @@
-namespace FunderMaps.Core.Helpers
+namespace FunderMaps.Core.Helpers;
+
+/// <summary>
+///     Helpers for async enumerable operations.
+/// </summary>
+public static class AsyncEnumerableHelper
 {
     /// <summary>
-    ///     Helpers for async enumerable operations.
+    ///     Return single item as <see cref="IAsyncEnumerable{T}"/>.
     /// </summary>
-    public static class AsyncEnumerableHelper
+    /// <param name="item">Single item to yield return.</param>
+    /// <returns>A <see cref="IAsyncEnumerable{T}"/>.</returns>
+    public static async IAsyncEnumerable<T> AsEnumerable<T>(T item)
     {
-        /// <summary>
-        ///     Return single item as <see cref="IAsyncEnumerable{T}"/>.
-        /// </summary>
-        /// <param name="item">Single item to yield return.</param>
-        /// <returns>A <see cref="IAsyncEnumerable{T}"/>.</returns>
-        public static async IAsyncEnumerable<T> AsEnumerable<T>(T item)
-        {
-            yield return await new ValueTask<T>(item);
-            yield break;
-        }
+        yield return await new ValueTask<T>(item);
+        yield break;
     }
 }
