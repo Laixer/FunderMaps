@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
@@ -13,8 +13,8 @@ namespace FunderMaps.WebApi
         ///     Application entry point.
         /// </summary>
         /// <param name="args">Commandline arguments.</param>
-        public static Task Main(string[] args)
-            => CreateHostBuilder(args).Build().RunAsync();
+        public static async Task Main(string[] args)
+            => await CreateHostBuilder(args).Build().RunAsync();
 
         /// <summary>
         ///     Build a host and run the application.
