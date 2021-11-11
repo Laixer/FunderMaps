@@ -20,9 +20,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder
         ///     Create new instance.
         /// </summary>
         public AddressController(IMapper mapper, IGeocoderTranslation geocoderTranslation)
-        {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+            => _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
         // GET: api/address
         /// <summary>

@@ -9,8 +9,8 @@ namespace FunderMaps.Core.Components
     /// </summary>
     internal class DbContextFactory
     {
-        private AppContext _appContext;
-        private DbProvider _dbProvider;
+        private readonly AppContext _appContext;
+        private readonly DbProvider _dbProvider;
 
         /// <summary>
         ///     Create new instance.

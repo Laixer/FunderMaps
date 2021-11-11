@@ -2670,21 +2670,6 @@ COMMENT ON TABLE application.organization_user IS 'Linking table between organiz
 
 
 --
--- Name: product_telemetry; Type: TABLE; Schema: application; Owner: fundermaps
---
-
-CREATE TABLE application.product_telemetry (
-    user_id application.user_id,
-    organization_id application.organization_id NOT NULL,
-    product text NOT NULL,
-    count bigint DEFAULT 0 NOT NULL,
-    meta jsonb
-);
-
-
-ALTER TABLE application.product_telemetry OWNER TO fundermaps;
-
---
 -- Name: product_tracker; Type: TABLE; Schema: application; Owner: fundermaps
 --
 
@@ -4407,14 +4392,6 @@ ALTER TABLE ONLY application.organization_user
 
 
 --
--- Name: product_telemetry product_telemetry_pkey; Type: CONSTRAINT; Schema: application; Owner: fundermaps
---
-
-ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_pkey PRIMARY KEY (organization_id, product);
-
-
---
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: application; Owner: fundermaps
 --
 
@@ -5068,22 +5045,6 @@ ALTER TABLE ONLY application.organization_user
 
 ALTER TABLE ONLY application.organization_user
     ADD CONSTRAINT organization_user_user_id_fkey FOREIGN KEY (user_id) REFERENCES application."user"(id) ON DELETE CASCADE;
-
-
---
--- Name: product_telemetry product_telemetry_organization_id_fkey; Type: FK CONSTRAINT; Schema: application; Owner: fundermaps
---
-
-ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_organization_id_fkey FOREIGN KEY (organization_id) REFERENCES application.organization(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: product_telemetry product_telemetry_user_id_fkey; Type: FK CONSTRAINT; Schema: application; Owner: fundermaps
---
-
-ALTER TABLE ONLY application.product_telemetry
-    ADD CONSTRAINT product_telemetry_user_id_fkey FOREIGN KEY (user_id) REFERENCES application."user"(id) ON UPDATE CASCADE ON DELETE SET NULL;
 
 
 --
@@ -5829,16 +5790,6 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.organi
 GRANT SELECT ON TABLE application.organization_user TO fundermaps_webservice;
 GRANT SELECT ON TABLE application.organization_user TO fundermaps_batch;
 GRANT SELECT ON TABLE application.organization_user TO fundermaps_portal;
-
-
---
--- Name: TABLE product_telemetry; Type: ACL; Schema: application; Owner: fundermaps
---
-
-GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE application.product_telemetry TO fundermaps_webapp;
-GRANT SELECT,INSERT,UPDATE ON TABLE application.product_telemetry TO fundermaps_webservice;
-GRANT SELECT ON TABLE application.product_telemetry TO fundermaps_batch;
-GRANT SELECT ON TABLE application.product_telemetry TO fundermaps_portal;
 
 
 --
