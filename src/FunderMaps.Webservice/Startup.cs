@@ -50,8 +50,8 @@ public class Startup
             );
             options.DocumentFilter<BasePathFilter>();
 
-                // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-                options.SchemaFilter<EnumSchemaFilter>();
+            // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
+            options.SchemaFilter<EnumSchemaFilter>();
             options.UseOneOfForPolymorphism();
 
             string DocumentationFile = $"{AppContext.BaseDirectory}DocumentationFunderMapsWebservice.xml";
