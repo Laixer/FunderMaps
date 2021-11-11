@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FunderMaps.Core.Interfaces;
@@ -70,9 +69,9 @@ namespace FunderMaps.Core.Components
         /// <param name="templateName">Template name on disk.</param>
         public ITemplateParser FromTemplateFile(string order, string templateName)
         {
-            string body = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, string.Format(templatePath, order, templateName)));
-            string header = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, "Template/Email/Header.html"));
-            string footer = File.ReadAllText(Path.Combine(_appContext.applicationDirectory, "Template/Email/Footer.html"));
+            string body = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, string.Format(templatePath, order, templateName)));
+            string header = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, "Template/Email/Header.html"));
+            string footer = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, "Template/Email/Footer.html"));
 
             template = Template.ParseLiquid(header + body + footer);
             return this;

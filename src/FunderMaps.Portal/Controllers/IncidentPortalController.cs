@@ -12,7 +12,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1062 // Validate arguments of public methods
 namespace FunderMaps.Portal.Controllers
 {
     // FUTURE: Split the logic into two separate controllers.
@@ -82,4 +81,3 @@ namespace FunderMaps.Portal.Controllers
         }
     }
 }
-#pragma warning restore CA1062 // Validate arguments of public methods
