@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0" />
-    <PackageReference Include="Scriban" Version="4.0.2" />
+    <PackageReference Include="Scriban" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
