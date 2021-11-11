@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {

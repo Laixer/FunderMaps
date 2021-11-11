@@ -8,9 +8,6 @@ using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FunderMaps.WebApi.Controllers.Report
 {
@@ -184,7 +181,7 @@ namespace FunderMaps.WebApi.Controllers.Report
 
             await _recoverySampleRepository.DeleteAsync(id);
 
-            if (await _recoverySampleRepository.CountAsync(recoverySample.Recovery) == 0) 
+            if (await _recoverySampleRepository.CountAsync(recoverySample.Recovery) == 0)
             {
                 recovery.State.TransitionToTodo();
                 await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);

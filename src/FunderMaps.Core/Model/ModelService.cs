@@ -1,8 +1,6 @@
 using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.Model.Jobs;
 using FunderMaps.Core.Threading;
-using System;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Model
 {

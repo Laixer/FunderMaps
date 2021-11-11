@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FunderMaps.Core.Email
+﻿namespace FunderMaps.Core.Email
 {
     /// <summary>
     ///     Email message.

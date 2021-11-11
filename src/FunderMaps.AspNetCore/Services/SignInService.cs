@@ -7,9 +7,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace FunderMaps.AspNetCore.Services
 {

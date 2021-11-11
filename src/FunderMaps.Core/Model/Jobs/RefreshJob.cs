@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
-using FunderMaps.Core.Threading.Command;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Threading.Command;
 using Microsoft.Extensions.Configuration;
 
 namespace FunderMaps.Core.Model.Jobs

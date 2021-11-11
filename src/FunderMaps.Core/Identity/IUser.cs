@@ -1,4 +1,3 @@
-using System;
 using FunderMaps.Core.Types;
 
 namespace FunderMaps.Core.Identity

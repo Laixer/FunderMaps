@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities
+﻿namespace FunderMaps.Core.Entities
 {
     // FUTURE: This needs to be rewritten.
     /// <summary>

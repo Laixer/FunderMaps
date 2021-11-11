@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace FunderMaps.Core.Model
 {
     /// <summary>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Entities
+﻿namespace FunderMaps.Core.Entities
 {
     // FUTURE: Remove in the long term. This is meta data.
     /// <summary>

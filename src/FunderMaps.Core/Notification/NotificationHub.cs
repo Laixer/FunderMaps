@@ -1,6 +1,5 @@
 using FunderMaps.Core.Abstractions;
 using FunderMaps.Core.Threading;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Notification
 {

@@ -1,9 +1,6 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 
 namespace FunderMaps.Webservice.Controllers
 {

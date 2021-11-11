@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-
 namespace FunderMaps.Core.Helpers
 {
     /// <summary>

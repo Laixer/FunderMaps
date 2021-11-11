@@ -3,8 +3,6 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {

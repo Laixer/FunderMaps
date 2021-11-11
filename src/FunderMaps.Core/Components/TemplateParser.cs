@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using FunderMaps.Core.Interfaces;
 using Scriban;
 using Scriban.Runtime;
@@ -25,7 +20,7 @@ namespace FunderMaps.Core.Components
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public TemplateParser(AppContext appContext) 
+        public TemplateParser(AppContext appContext)
             => _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
 
         /// <summary>

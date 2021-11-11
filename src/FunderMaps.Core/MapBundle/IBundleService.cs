@@ -1,5 +1,3 @@
-using System.Threading.Tasks;
-
 namespace FunderMaps.Core.MapBundle
 {
     /// <summary>

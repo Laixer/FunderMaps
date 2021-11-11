@@ -4,7 +4,6 @@ using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 using System.Data.Common;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Data.Repositories
 {

@@ -1,10 +1,7 @@
 ﻿using FunderMaps.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 [assembly: ApiController]
 namespace FunderMaps.WebApi

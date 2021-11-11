@@ -1,12 +1,12 @@
-using FunderMaps.Core.Types;
 using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using Npgsql.Logging;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
-using Npgsql.Logging;
 
 namespace FunderMaps.Data.Providers
 {

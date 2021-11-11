@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FunderMaps.Core.Types.Distributions
+﻿namespace FunderMaps.Core.Types.Distributions
 {
     /// <summary>
     ///     Represents a distribution of construction years.

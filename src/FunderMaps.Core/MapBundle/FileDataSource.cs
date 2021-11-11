@@ -1,5 +1,3 @@
-using System.IO;
-
 namespace FunderMaps.Core.MapBundle
 {
     internal class FileDataSource : DataSource

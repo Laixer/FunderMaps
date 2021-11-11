@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Exceptions

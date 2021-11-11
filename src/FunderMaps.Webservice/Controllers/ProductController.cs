@@ -3,12 +3,8 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Webservice.InputModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Webservice.Controllers
 {

@@ -1,8 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Storage;
-using System;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Services
 {

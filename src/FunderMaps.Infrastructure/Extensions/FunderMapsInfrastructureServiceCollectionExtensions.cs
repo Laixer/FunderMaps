@@ -4,7 +4,6 @@ using FunderMaps.Infrastructure.Email;
 using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

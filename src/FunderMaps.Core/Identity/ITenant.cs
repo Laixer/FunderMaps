@@ -1,5 +1,3 @@
-using System;
-
 namespace FunderMaps.Core.Identity
 {
     /// <summary>

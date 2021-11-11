@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {

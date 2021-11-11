@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FunderMaps.Core.Helpers
+﻿namespace FunderMaps.Core.Helpers
 {
     // FUTURE: Maybe remove this?
     /// <summary>

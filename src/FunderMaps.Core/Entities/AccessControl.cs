@@ -1,6 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using System;
-
+using FunderMaps.Core.Types;
 namespace FunderMaps.Core.Entities
 {
     // FUTURE: Remove in the long term.

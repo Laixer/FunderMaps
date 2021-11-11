@@ -1,8 +1,5 @@
 using FunderMaps.Core.Identity;
 using FunderMaps.Core.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 
 namespace FunderMaps.AspNetCore.Authentication

@@ -1,9 +1,6 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.IntegrationTests.Faker;
-using System;
 using System.Net;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
