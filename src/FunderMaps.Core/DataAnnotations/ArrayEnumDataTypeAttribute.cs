@@ -14,7 +14,7 @@ namespace FunderMaps.Core.DataAnnotations
         /// </summary>
         public Type EnumType { get; }
 
-        private EnumDataTypeAttribute validator;
+        private readonly EnumDataTypeAttribute validator;
 
         /// <summary>
         ///     Create new instance.

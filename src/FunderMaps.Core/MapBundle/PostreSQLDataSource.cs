@@ -4,7 +4,7 @@ namespace FunderMaps.Core.MapBundle
 {
     internal class PostreSQLDataSource : DataSource
     {
-        private string _connectionString;
+        private readonly string _connectionString;
 
         /// <summary>
         ///     Create new instance.

@@ -36,7 +36,7 @@ namespace FunderMaps.Data.Providers
         ///     Create new instance.
         /// </summary>
         public NpgsqlDbProvider(/*NpgsqlLogger npgsqlLogger,*/ IConfiguration configuration, IOptions<DbProviderOptions> options)
-            : base(configuration, options)
+            : base(options)
         {
             // NpgsqlLogManager.Provider = new Loggert(npgsqlLogger);
             NpgsqlLogManager.IsParameterLoggingEnabled = true;

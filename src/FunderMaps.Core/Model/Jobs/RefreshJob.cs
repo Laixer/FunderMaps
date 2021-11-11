@@ -18,12 +18,12 @@ namespace FunderMaps.Core.Model.Jobs
             "data.analysis_complete",
         };
 
-        private string connectionString;
+        private readonly string connectionString;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public RefreshJob(IConfiguration configuration, IMapService mapService)
+        public RefreshJob(IConfiguration configuration)
         {
             connectionString = configuration.GetConnectionString("FunderMapsConnection");
         }

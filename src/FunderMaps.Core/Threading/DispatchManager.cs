@@ -19,11 +19,11 @@ namespace FunderMaps.Core.Threading
         private readonly ILogger<DispatchManager> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private static List<TaskBucket> workerQueueDelay = new();
-        private static ConcurrentQueue<TaskBucket> workerQueue = new();
+        private static readonly List<TaskBucket> workerQueueDelay = new();
+        private static readonly ConcurrentQueue<TaskBucket> workerQueue = new();
 
-        private SemaphoreSlim workerPoolHandle;
-        private Timer timer;
+        private readonly SemaphoreSlim workerPoolHandle;
+        private readonly Timer timer;
         private bool disposedValue;
 
         /// <summary>
@@ -34,12 +34,12 @@ namespace FunderMaps.Core.Threading
         /// <summary>
         ///     Number of jobs in delay queue.
         /// </summary>
-        public int WorkerQueueDelaySize => workerQueueDelay.Count;
+        public static int WorkerQueueDelaySize => workerQueueDelay.Count;
 
         /// <summary>
         ///     Number of jobs in queue.
         /// </summary>
-        public int WorkerQueueSize => workerQueue.Count;
+        public static int WorkerQueueSize => workerQueue.Count;
 
         /// <summary>
         ///     Create new instance.

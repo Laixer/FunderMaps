@@ -21,7 +21,7 @@ namespace FunderMaps.Core.MapBundle.Jobs
             "analysis_report",
         };
 
-        private string connectionString;
+        private readonly string connectionString;
 
         private readonly IMapService _mapService;
 

@@ -68,7 +68,6 @@ namespace FunderMaps.Core.Components
             return outputBytes;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5379:Do Not Use Weak Key Derivation Function Algorithm", Justification = "<Pending>")]
         private static bool VerifyHashedPassword(byte[] inputBytes, string password)
         {
             byte[] salt = new byte[saltSize];
