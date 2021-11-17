@@ -8,123 +8,106 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
-namespace FunderMaps.Data.Providers
+namespace FunderMaps.Data.Providers;
+
+/// <summary>
+///     Npgsql database provider.
+/// </summary>
+internal class NpgsqlDbProvider : DbProvider
 {
+    private readonly string _connectionString;
+
     /// <summary>
-    ///     Npgsql database provider.
+    ///     Create new instance.
     /// </summary>
-    internal class NpgsqlDbProvider : DbProvider
+    public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
+        : base(options)
     {
-        private readonly string _connectionString;
+        NpgsqlLogManager.IsParameterLoggingEnabled = true;
 
-        // class Loggert : INpgsqlLoggingProvider
-        // {
-        //     private NpgsqlLogger _logger;
+        NpgsqlConnectionStringBuilder connectionStringBuilder = new(configuration.GetConnectionString(_options.ConnectionStringName));
 
-        //     public Loggert(NpgsqlLogger logger)
-        //     {
-        //         _logger = logger;
-        //     }
+        connectionStringBuilder.Timeout = _options.ConnectionTimeout > 0 ? _options.ConnectionTimeout : connectionStringBuilder.Timeout;
+        connectionStringBuilder.MinPoolSize = _options.MinPoolSize > 0 ? _options.MinPoolSize : connectionStringBuilder.MinPoolSize;
+        connectionStringBuilder.MaxPoolSize = _options.MaxPoolSize > 0 ? _options.MaxPoolSize : connectionStringBuilder.MaxPoolSize;
+        connectionStringBuilder.CommandTimeout = _options.CommandTimeout > 0 ? _options.CommandTimeout : connectionStringBuilder.CommandTimeout;
 
-        //     public NpgsqlLogger CreateLogger(string name)
-        //     {
-        //         return _logger;
-        //     }
-        // }
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public NpgsqlDbProvider(/*NpgsqlLogger npgsqlLogger,*/ IConfiguration configuration, IOptions<DbProviderOptions> options)
-            : base(options)
+        if (!string.IsNullOrEmpty(_options.ApplicationName))
         {
-            // NpgsqlLogManager.Provider = new Loggert(npgsqlLogger);
-            NpgsqlLogManager.IsParameterLoggingEnabled = true;
+            connectionStringBuilder.ApplicationName = _options.ApplicationName;
+        }
 
-            NpgsqlConnectionStringBuilder connectionStringBuilder = new(configuration.GetConnectionString(_options.ConnectionStringName));
+        _connectionString = connectionStringBuilder.ConnectionString;
+    }
 
-            connectionStringBuilder.Timeout = _options.ConnectionTimeout > 0 ? _options.ConnectionTimeout : connectionStringBuilder.Timeout;
-            connectionStringBuilder.MinPoolSize = _options.MinPoolSize > 0 ? _options.MinPoolSize : connectionStringBuilder.MinPoolSize;
-            connectionStringBuilder.MaxPoolSize = _options.MaxPoolSize > 0 ? _options.MaxPoolSize : connectionStringBuilder.MaxPoolSize;
-            connectionStringBuilder.CommandTimeout = _options.CommandTimeout > 0 ? _options.CommandTimeout : connectionStringBuilder.CommandTimeout;
+    // FUTURE: Move somewhere. Too npgsql specific
+    /// <summary>
+    ///     Static initializer.
+    /// </summary>
+    static NpgsqlDbProvider()
+    {
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<ApplicationRole>("application.role");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<AuditStatus>("report.audit_status");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<BuildingType>("geocoder.building_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<BuiltYearSource>("report.built_year_source");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<ConstructionPile>("report.construction_pile");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<CrackType>("report.crack_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<EnforcementTerm>("report.enforcement_term");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<EnvironmentDamageCharacteristics>("report.environment_damage_characteristics");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalDataSource>("geocoder.data_source");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<Facade>("report.facade");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationDamageCause>("report.foundation_damage_cause");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationDamageCharacteristics>("report.foundation_damage_characteristics");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationQuality>("report.foundation_quality");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRisk>("data.foundation_risk_indication");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("report.foundation_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<IncidentQuestionType>("report.incident_question_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<InquiryType>("report.inquiry_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<PileType>("report.pile_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<Quality>("report.quality");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryDocumentType>("report.recovery_document_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryStatus>("report.recovery_status");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryType>("report.recovery_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<RotationType>("report.rotation_type");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<Substructure>("report.substructure");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodEncroachement>("report.wood_encroachement");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodQuality>("report.wood_quality");
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodType>("report.wood_type");
+    }
 
-            if (!string.IsNullOrEmpty(_options.ApplicationName))
+    /// <summary>
+    ///     <see cref="DbProvider.ConnectionScope"/>
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override DbConnection ConnectionScope()
+        => new NpgsqlConnection(_connectionString);
+
+    /// <summary>
+    ///     <see cref="DbProvider.CreateCommand(string, DbConnection)"/>
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override DbCommand CreateCommand(string cmdText, DbConnection connection)
+        => new NpgsqlCommand(cmdText, connection as NpgsqlConnection);
+
+    /// <summary>
+    ///     <see cref="DbProvider.HandleException(ExceptionDispatchInfo)"/>
+    /// </summary>
+    internal override void HandleException(ExceptionDispatchInfo edi)
+    {
+        if (edi.SourceException is PostgresException exception)
+        {
+            switch (exception.SqlState)
             {
-                connectionStringBuilder.ApplicationName = _options.ApplicationName;
+                case Npgsql.PostgresErrorCodes.ForeignKeyViolation:
+                    throw new ReferenceNotFoundException(exception.Message, exception);
+
+                case Npgsql.PostgresErrorCodes.AdminShutdown:
+                    throw new ServiceUnavailableException(exception.Message, exception);
             }
-
-            _connectionString = connectionStringBuilder.ConnectionString;
         }
 
-        // FUTURE: Move somewhere. Too npgsql specific
-        /// <summary>
-        ///     Static initializer.
-        /// </summary>
-        static NpgsqlDbProvider()
-        {
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<AccessPolicy>("application.access_policy");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ApplicationRole>("application.role");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<AuditStatus>("report.audit_status");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<BuildingType>("geocoder.building_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<BuiltYearSource>("report.built_year_source");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ConstructionPile>("report.construction_pile");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<CrackType>("report.crack_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<EnforcementTerm>("report.enforcement_term");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<EnvironmentDamageCharacteristics>("report.environment_damage_characteristics");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<ExternalDataSource>("geocoder.data_source");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<Facade>("report.facade");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationDamageCause>("report.foundation_damage_cause");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationDamageCharacteristics>("report.foundation_damage_characteristics");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationQuality>("report.foundation_quality");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationRisk>("data.foundation_risk_indication");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<FoundationType>("report.foundation_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<IncidentQuestionType>("report.incident_question_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<InquiryType>("report.inquiry_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<OrganizationRole>("application.organization_role");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<PileType>("report.pile_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<Quality>("report.quality");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryDocumentType>("report.recovery_document_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryStatus>("report.recovery_status");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<RecoveryType>("report.recovery_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<RotationType>("report.rotation_type");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<Substructure>("report.substructure");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodEncroachement>("report.wood_encroachement");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodQuality>("report.wood_quality");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<WoodType>("report.wood_type");
-        }
-
-        /// <summary>
-        ///     <see cref="DbProvider.ConnectionScope"/>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override DbConnection ConnectionScope()
-            => new NpgsqlConnection(_connectionString);
-
-        /// <summary>
-        ///     <see cref="DbProvider.CreateCommand(string, DbConnection)"/>
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override DbCommand CreateCommand(string cmdText, DbConnection connection)
-            => new NpgsqlCommand(cmdText, connection as NpgsqlConnection);
-
-        /// <summary>
-        ///     <see cref="DbProvider.HandleException(ExceptionDispatchInfo)"/>
-        /// </summary>
-        internal override void HandleException(ExceptionDispatchInfo edi)
-        {
-            if (edi.SourceException is PostgresException exception)
-            {
-                switch (exception.SqlState)
-                {
-                    case Npgsql.PostgresErrorCodes.ForeignKeyViolation:
-                        throw new ReferenceNotFoundException(exception.Message, exception);
-
-                    case Npgsql.PostgresErrorCodes.AdminShutdown:
-                        throw new ServiceUnavailableException(exception.Message, exception);
-                }
-            }
-
-            base.HandleException(edi);
-        }
+        base.HandleException(edi);
     }
 }

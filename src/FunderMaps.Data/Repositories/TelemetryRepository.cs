@@ -4,19 +4,19 @@ using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 using System.Data.Common;
 
-namespace FunderMaps.Data.Repositories
+namespace FunderMaps.Data.Repositories;
+
+/// <summary>
+///     Log product hit.
+/// </summary>
+internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 {
     /// <summary>
-    ///     Log product hit.
+    ///     Retrieve all product telemetrics.
     /// </summary>
-    internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
+    public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
     {
-        /// <summary>
-        ///     Retrieve all product telemetrics.
-        /// </summary>
-        public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
-        {
-            var sql = @"
+        var sql = @"
                 SELECT  -- ProductTracker
                         pt.product,
                         count(pt.organization_id)
@@ -24,21 +24,20 @@ namespace FunderMaps.Data.Repositories
                 WHERE   pt.organization_id = @tenant
                 GROUP BY pt.organization_id, pt.product";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", AppContext.TenantId);
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                yield return MapFromReader(reader);
-            }
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return MapFromReader(reader);
         }
-
-        public static ProductTelemetry MapFromReader(DbDataReader reader, int offset = 0)
-            => new()
-            {
-                Product = reader.GetString(offset++),
-                Count = reader.GetInt(offset++),
-            };
     }
+
+    public static ProductTelemetry MapFromReader(DbDataReader reader, int offset = 0)
+        => new()
+        {
+            Product = reader.GetString(offset++),
+            Count = reader.GetInt(offset++),
+        };
 }

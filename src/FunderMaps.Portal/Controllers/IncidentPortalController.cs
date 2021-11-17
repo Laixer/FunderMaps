@@ -9,72 +9,71 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Portal.Controllers
+namespace FunderMaps.Portal.Controllers;
+
+// FUTURE: Split the logic into two separate controllers.
+/// <summary>
+///     Endpoint controller for incident operations.
+/// </summary>
+[AllowAnonymous]
+[Route("incident-portal")]
+public class IncidentPortalController : ControllerBase
 {
-    // FUTURE: Split the logic into two separate controllers.
+    private readonly IMapper _mapper;
+    private readonly IBlobStorageService _blobStorageService;
+
     /// <summary>
-    ///     Endpoint controller for incident operations.
+    ///     Create new instance.
     /// </summary>
-    [AllowAnonymous]
-    [Route("incident-portal")]
-    public class IncidentPortalController : ControllerBase
+    public IncidentPortalController(IMapper mapper, IBlobStorageService blobStorageService)
     {
-        private readonly IMapper _mapper;
-        private readonly IBlobStorageService _blobStorageService;
+        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+    }
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public IncidentPortalController(IMapper mapper, IBlobStorageService blobStorageService)
+    // FUTURE: Return the result in an encrypted envelope.
+    // POST: api/incident-portal/upload-document
+    /// <summary>
+    ///     Upload document to the backstore.
+    /// </summary>
+    /// <remarks>
+    ///     Max file upload size is configured at 128 MB.
+    /// </remarks>
+    [HttpPost("upload-document")]
+    [RequestSizeLimit(128 * 1024 * 1024)]
+    public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
+    {
+        // Act.
+        var storeFileName = FileHelper.GetUniqueName(input.FileName);
+        await _blobStorageService.StoreFileAsync(
+            containerName: Core.Constants.IncidentStorageFolderName,
+            fileName: storeFileName,
+            contentType: input.ContentType,
+            stream: input.OpenReadStream());
+
+        DocumentDto output = new()
         {
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        }
+            Name = storeFileName,
+        };
 
-        // FUTURE: Return the result in an encrypted envelope.
-        // POST: api/incident-portal/upload-document
-        /// <summary>
-        ///     Upload document to the backstore.
-        /// </summary>
-        /// <remarks>
-        ///     Max file upload size is configured at 128 MB.
-        /// </remarks>
-        [HttpPost("upload-document")]
-        [RequestSizeLimit(128 * 1024 * 1024)]
-        public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
-        {
-            // Act.
-            var storeFileName = FileHelper.GetUniqueName(input.FileName);
-            await _blobStorageService.StoreFileAsync(
-                containerName: Core.Constants.IncidentStorageFolderName,
-                fileName: storeFileName,
-                contentType: input.ContentType,
-                stream: input.OpenReadStream());
+        // Return.
+        return Ok(output);
+    }
 
-            DocumentDto output = new()
-            {
-                Name = storeFileName,
-            };
+    // POST: api/incident-portal/submit
+    /// <summary>
+    ///     Register new incident.
+    /// </summary>
+    [HttpPost("submit")]
+    public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input, [FromServices] IIncidentService incidentService)
+    {
+        // Map.
+        var incident = _mapper.Map<Incident>(input);
 
-            // Return.
-            return Ok(output);
-        }
+        // Act.
+        await incidentService.AddAsync(incident);
 
-        // POST: api/incident-portal/submit
-        /// <summary>
-        ///     Register new incident.
-        /// </summary>
-        [HttpPost("submit")]
-        public async Task<IActionResult> CreateIncidentAsync([FromBody] IncidentDto input, [FromServices] IIncidentService incidentService)
-        {
-            // Map.
-            var incident = _mapper.Map<Incident>(input);
-
-            // Act.
-            await incidentService.AddAsync(incident);
-
-            // Return.
-            return NoContent();
-        }
+        // Return.
+        return NoContent();
     }
 }

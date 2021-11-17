@@ -4,22 +4,22 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
 using System.Data.Common;
 
-namespace FunderMaps.Data.Repositories
+namespace FunderMaps.Data.Repositories;
+
+/// <summary>
+///     Contact repository.
+/// </summary>
+internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepository
 {
+    // FUTURE: Email should also be normalized.
     /// <summary>
-    ///     Contact repository.
+    ///     Create new <see cref="Contact"/>.
     /// </summary>
-    internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepository
+    /// <param name="entity">Entity object.</param>
+    /// <returns>Created <see cref="Contact"/>.</returns>
+    public override async Task<string> AddAsync(Contact entity)
     {
-        // FUTURE: Email should also be normalized.
-        /// <summary>
-        ///     Create new <see cref="Contact"/>.
-        /// </summary>
-        /// <param name="entity">Entity object.</param>
-        /// <returns>Created <see cref="Contact"/>.</returns>
-        public override async Task<string> AddAsync(Contact entity)
-        {
-            var sql = @"
+        var sql = @"
                 INSERT INTO application.contact(
                     email,
                     name,
@@ -30,83 +30,83 @@ namespace FunderMaps.Data.Repositories
                     NULLIF(trim(@phone_number), ''))
                 ON CONFLICT DO NOTHING";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            MapToWriter(context, entity);
+        MapToWriter(context, entity);
 
-            await context.NonQueryAsync(affectedGuard: false);
+        await context.NonQueryAsync(affectedGuard: false);
 
-            return entity.Email;
-        }
+        return entity.Email;
+    }
 
-        /// <summary>
-        ///     Retrieve number of entities.
-        /// </summary>
-        /// <returns>Number of entities.</returns>
-        public override async Task<long> CountAsync()
-        {
-            var sql = @"
+    /// <summary>
+    ///     Retrieve number of entities.
+    /// </summary>
+    /// <returns>Number of entities.</returns>
+    public override async Task<long> CountAsync()
+    {
+        var sql = @"
                 SELECT  COUNT(*)
                 FROM    application.contact";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            return await context.ScalarAsync<long>();
-        }
+        return await context.ScalarAsync<long>();
+    }
 
-        /// <summary>
-        ///     Delete <see cref="Contact"/>.
-        /// </summary>
-        /// <param name="email">Entity email.</param>
-        public override async Task DeleteAsync(string email)
-        {
-            ResetCacheEntity(email);
+    /// <summary>
+    ///     Delete <see cref="Contact"/>.
+    /// </summary>
+    /// <param name="email">Entity email.</param>
+    public override async Task DeleteAsync(string email)
+    {
+        ResetCacheEntity(email);
 
-            var sql = @"
+        var sql = @"
                 DELETE
                 FROM    application.contact
                 WHERE   email = @email";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("email", email);
+        context.AddParameterWithValue("email", email);
 
-            await context.NonQueryAsync();
+        await context.NonQueryAsync();
+    }
+
+    public static void MapToWriter(DbContext context, Contact entity)
+    {
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
         }
 
-        public static void MapToWriter(DbContext context, Contact entity)
-        {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+        context.AddParameterWithValue("email", entity.Email);
+        context.AddParameterWithValue("name", entity.Name);
+        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+    }
 
-            context.AddParameterWithValue("email", entity.Email);
-            context.AddParameterWithValue("name", entity.Name);
-            context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+    public static Contact MapFromReader(DbDataReader reader, int offset = 0)
+        => new()
+        {
+            Email = reader.GetSafeString(offset + 0),
+            Name = reader.GetSafeString(offset + 1),
+            PhoneNumber = reader.GetSafeString(offset + 2),
+        };
+
+    /// <summary>
+    ///     Retrieve <see cref="Contact"/> by id.
+    /// </summary>
+    /// <param name="email">Unique identifier.</param>
+    /// <returns><see cref="Contact"/>.</returns>
+    public override async Task<Contact> GetByIdAsync(string email)
+    {
+        if (TryGetEntity(email, out Contact entity))
+        {
+            return entity;
         }
 
-        public static Contact MapFromReader(DbDataReader reader, int offset = 0)
-            => new()
-            {
-                Email = reader.GetSafeString(offset + 0),
-                Name = reader.GetSafeString(offset + 1),
-                PhoneNumber = reader.GetSafeString(offset + 2),
-            };
-
-        /// <summary>
-        ///     Retrieve <see cref="Contact"/> by id.
-        /// </summary>
-        /// <param name="email">Unique identifier.</param>
-        /// <returns><see cref="Contact"/>.</returns>
-        public override async Task<Contact> GetByIdAsync(string email)
-        {
-            if (TryGetEntity(email, out Contact entity))
-            {
-                return entity;
-            }
-
-            var sql = @"
+        var sql = @"
                 SELECT  -- Contact
                         c.email,
                         c.name,
@@ -115,62 +115,61 @@ namespace FunderMaps.Data.Repositories
                 WHERE   c.email = @email
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("email", email);
+        context.AddParameterWithValue("email", email);
 
-            await using var reader = await context.ReaderAsync();
+        await using var reader = await context.ReaderAsync();
 
-            return CacheEntity(MapFromReader(reader));
-        }
+        return CacheEntity(MapFromReader(reader));
+    }
 
-        /// <summary>
-        ///     Retrieve all <see cref="Contact"/>.
-        /// </summary>
-        /// <returns>List of <see cref="Contact"/>.</returns>
-        public override async IAsyncEnumerable<Contact> ListAllAsync(Navigation navigation)
-        {
-            var sql = @"
+    /// <summary>
+    ///     Retrieve all <see cref="Contact"/>.
+    /// </summary>
+    /// <returns>List of <see cref="Contact"/>.</returns>
+    public override async IAsyncEnumerable<Contact> ListAllAsync(Navigation navigation)
+    {
+        var sql = @"
                 SELECT  -- Contact
                         c.email,
                         c.name,
                         c.phone_number
                 FROM    application.contact AS c";
 
-            sql = ConstructNavigation(sql, navigation);
+        sql = ConstructNavigation(sql, navigation);
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                yield return CacheEntity(MapFromReader(reader));
-            }
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
+        }
+    }
+
+    /// <summary>
+    ///     Update <see cref="Contact"/>.
+    /// </summary>
+    /// <param name="entity">Entity object.</param>
+    public override async Task UpdateAsync(Contact entity)
+    {
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
         }
 
-        /// <summary>
-        ///     Update <see cref="Contact"/>.
-        /// </summary>
-        /// <param name="entity">Entity object.</param>
-        public override async Task UpdateAsync(Contact entity)
-        {
-            if (entity is null)
-            {
-                throw new ArgumentNullException(nameof(entity));
-            }
+        ResetCacheEntity(entity);
 
-            ResetCacheEntity(entity);
-
-            var sql = @"
+        var sql = @"
                     UPDATE  application.contact
                     SET     name = NULLIF(trim(@name), '')),
                             phone_number = NULLIF(trim(@phone_number), ''))
                     WHERE   email = @email";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            MapToWriter(context, entity);
+        MapToWriter(context, entity);
 
-            await context.NonQueryAsync();
-        }
+        await context.NonQueryAsync();
     }
 }
