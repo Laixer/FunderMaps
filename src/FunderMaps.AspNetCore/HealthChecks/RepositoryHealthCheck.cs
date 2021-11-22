@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 

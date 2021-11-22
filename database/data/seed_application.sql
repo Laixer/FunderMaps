@@ -87,10 +87,10 @@ ab403d16-e428-4a75-9eec-3dd08b294988	05203318-6c55-43c1-a6a6-bb8c83f930c3	reader
 
 
 --
--- Data for Name: product_telemetry; Type: TABLE DATA; Schema: application; Owner: fundermaps
+-- Data for Name: product_tracker; Type: TABLE DATA; Schema: application; Owner: fundermaps
 --
 
-COPY application.product_telemetry (user_id, organization_id, product, count, meta) FROM stdin;
+COPY application.product_tracker (organization_id, product, building_id, create_date) FROM stdin;
 \.
 
 

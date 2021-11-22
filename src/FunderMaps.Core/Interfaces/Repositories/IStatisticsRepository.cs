@@ -1,6 +1,4 @@
 ﻿using FunderMaps.Core.Types.Distributions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {

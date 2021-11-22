@@ -1,5 +1,3 @@
-using System;
-
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {
     /// <summary>

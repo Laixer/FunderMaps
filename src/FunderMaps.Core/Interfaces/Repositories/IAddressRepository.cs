@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using System.Threading.Tasks;
 
 namespace FunderMaps.Core.Interfaces.Repositories
 {

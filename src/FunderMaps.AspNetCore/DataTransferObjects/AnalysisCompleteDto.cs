@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Types;
-using System;
+using FunderMaps.Core.Types;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {

@@ -1,38 +1,36 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace FunderMaps.Core.Threading.Command
+namespace FunderMaps.Core.Threading.Command;
+
+/// <summary>
+///     Command descriptor.
+/// </summary>
+public class CommandInfo
 {
     /// <summary>
-    ///     Command descriptor.
+    ///     Command filename.
     /// </summary>
-    public class CommandInfo
+    public string FileName { get; set; }
+
+    /// <summary>
+    ///     Command arguments.
+    /// </summary>
+    public ICollection<string> ArgumentList { get; } = new Collection<string>();
+
+    /// <summary>
+    ///     Command environment values.
+    /// </summary>
+    public IDictionary<string, string> Environment { get; } = new Dictionary<string, string>();
+
+    /// <summary>
+    ///     Create new instance.
+    /// </summary>
+    public CommandInfo()
     {
-        /// <summary>
-        ///     Command filename.
-        /// </summary>
-        public string FileName { get; set; }
-
-        /// <summary>
-        ///     Command arguments.
-        /// </summary>
-        public ICollection<string> ArgumentList { get; } = new Collection<string>();
-
-        /// <summary>
-        ///     Command environment values.
-        /// </summary>
-        public IDictionary<string, string> Environment { get; } = new Dictionary<string, string>();
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public CommandInfo()
-        {
-        }
-
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public CommandInfo(string fileName) => FileName = fileName;
     }
+
+    /// <summary>
+    ///     Create new instance.
+    /// </summary>
+    public CommandInfo(string fileName) => FileName = fileName;
 }

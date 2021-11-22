@@ -1,9 +1,6 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types.Products;
-using System.Linq;
 using System.Net;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Webservice

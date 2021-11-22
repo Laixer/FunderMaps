@@ -1,9 +1,6 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.IntegrationTests.Faker;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application
@@ -22,7 +19,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationLifeCycle()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
             {
@@ -84,7 +81,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
         public async Task OrganizationLifeCycleForbidden()
         {
             var organizationProposal = await ApplicationStub.CreateProposalAsync(Factory);
-            var organizationSetup = await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
+            await ApplicationStub.CreateOrganizationAsync(Factory, organizationProposal);
             var organization = await ApplicationStub.GetOrganizationAsync(Factory, organizationProposal);
 
             {

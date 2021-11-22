@@ -2,11 +2,7 @@
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Report
@@ -88,7 +84,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task InquirySampleResetLifeCycle()
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
-            var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
+            await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
 
             {
                 // Arrange
@@ -121,7 +117,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         public async Task InquirySampleStatusLifeCycle(string uri)
         {
             var inquiry = await ReportStub.CreateInquiryAsync(Factory);
-            var sample = await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
+            await ReportStub.CreateInquirySampleAsync(Factory, inquiry);
 
             {
                 // Arrange

@@ -1,18 +1,15 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace FunderMaps.IntegrationTests
+namespace FunderMaps.IntegrationTests;
+
+public abstract class EnumerableHelper<T> : IEnumerable<object[]>
 {
-    public abstract class EnumerableHelper<T> : IEnumerable<object[]>
-    {
-        protected abstract IEnumerable<T> GetEnumerableEntity();
+    protected abstract IEnumerable<T> GetEnumerableEntity();
 
-        protected virtual IEnumerable<object[]> GetData()
-            => GetEnumerableEntity().Select(s => new object[] { s });
+    protected virtual IEnumerable<object[]> GetData()
+        => GetEnumerableEntity().Select(s => new object[] { s });
 
-        public IEnumerator<object[]> GetEnumerator() => GetData().GetEnumerator();
+    public IEnumerator<object[]> GetEnumerator() => GetData().GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

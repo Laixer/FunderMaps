@@ -1,6 +1,5 @@
 ﻿using FunderMaps.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using System;
 
 namespace FunderMaps.AspNetCore.Authorization
 {

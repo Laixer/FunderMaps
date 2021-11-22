@@ -1,23 +1,22 @@
-namespace FunderMaps.Core.Threading
+namespace FunderMaps.Core.Threading;
+
+/// <summary>
+///     Dispatch manager task status.
+/// </summary>
+public record DispatchManagerStatus
 {
     /// <summary>
-    ///     Dispatch manager task status.
+    ///     Number of jobs succeeded.
     /// </summary>
-    public record DispatchManagerStatus
-    {
-        /// <summary>
-        ///     Number of jobs succeeded.
-        /// </summary>
-        public int JobsSucceeded { get; set; }
+    public int JobsSucceeded { get; set; }
 
-        /// <summary>
-        ///     Number of jobs failed.
-        /// </summary>
-        public int JobsFailed { get; set; }
+    /// <summary>
+    ///     Number of jobs failed.
+    /// </summary>
+    public int JobsFailed { get; set; }
 
-        /// <summary>
-        ///     Number of jobs cancelled.
-        /// </summary>
-        public int CancelledFailed { get; set; }
-    }
+    /// <summary>
+    ///     Number of jobs cancelled.
+    /// </summary>
+    public int CancelledFailed { get; set; }
 }

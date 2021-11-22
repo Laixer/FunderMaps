@@ -1,12 +1,8 @@
-using System.Threading.Tasks;
-using FunderMaps.Core.Types;
-using FunderMaps.Core.Threading.Command;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Threading.Command;
+using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.IO;
-using System.Linq;
-using System;
 
 namespace FunderMaps.Core.MapBundle.Jobs
 {
@@ -25,7 +21,7 @@ namespace FunderMaps.Core.MapBundle.Jobs
             "analysis_report",
         };
 
-        private string connectionString;
+        private readonly string connectionString;
 
         private readonly IMapService _mapService;
 

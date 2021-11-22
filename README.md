@@ -6,7 +6,7 @@ Foundation issues occur and are actively investigated by local government. Gaini
 
 ## Requirements
 
-* .NET 5 Runtime and SDK
+* .NET 6 LTS Runtime and SDK
 * Docker
 
 ## Running the application on localhost

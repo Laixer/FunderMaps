@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Types;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects
 {

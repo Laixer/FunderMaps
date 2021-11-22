@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using FunderMaps.Core.Types.Distributions;
+﻿using FunderMaps.Core.Types.Distributions;
 
 namespace FunderMaps.Core.Types.Products
 {

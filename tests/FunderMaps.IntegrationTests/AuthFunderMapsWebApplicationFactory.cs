@@ -1,51 +1,47 @@
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using System.Net.Http.Headers;
 
-namespace FunderMaps.IntegrationTests
+namespace FunderMaps.IntegrationTests;
+
+public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
+    where TStartup : class
 {
-    public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
-        where TStartup : class
+    private readonly HttpClient _httpClient;
+    private readonly string _username;
+    private readonly string _password;
+
+    public SignInSecurityTokenDto AuthToken { get; private set; }
+
+    /// <summary>
+    ///     Create new instance.
+    /// </summary>
+    public AuthFunderMapsWebApplicationFactory(HttpClient httpClient, string username, string password)
     {
-        private HttpClient _httpClient;
-        private string _username;
-        private string _password;
+        _httpClient = httpClient;
+        _username = username;
+        _password = password;
+    }
 
-        public SignInSecurityTokenDto AuthToken { get; private set; }
+    /// <summary>
+    ///     Called immediately after the class has been created, before it is used.
+    /// </summary>
+    public override async Task InitializeAsync()
+        => AuthToken = await SignInAsync();
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public AuthFunderMapsWebApplicationFactory(HttpClient httpClient, string username, string password)
+    /// <summary>
+    ///     Create a user session for the given user.
+    /// </summary>
+    protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
+        => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInDto>("api/auth/signin", new()
         {
-            _httpClient = httpClient;
-            _username = username;
-            _password = password;
-        }
+            Email = _username,
+            Password = _password,
+        });
 
-        /// <summary>
-        ///     Called immediately after the class has been created, before it is used.
-        /// </summary>
-        public override async Task InitializeAsync()
-            => AuthToken = await SignInAsync();
+    protected override void ConfigureClient(HttpClient client)
+    {
+        base.ConfigureClient(client);
 
-        /// <summary>
-        ///     Create a user session for the given user.
-        /// </summary>
-        protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
-            => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInDto>("api/auth/signin", new()
-            {
-                Email = _username,
-                Password = _password,
-            });
-
-        protected override void ConfigureClient(HttpClient client)
-        {
-            base.ConfigureClient(client);
-
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthToken.Token);
-        }
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", AuthToken.Token);
     }
 }

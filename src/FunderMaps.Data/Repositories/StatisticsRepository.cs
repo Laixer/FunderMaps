@@ -3,58 +3,56 @@ using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-namespace FunderMaps.Data.Repositories
+namespace FunderMaps.Data.Repositories;
+
+// FUTURE: Change function names and view names.
+
+/// <summary>
+///     Repository for statistics.
+/// </summary>
+internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepository
 {
-    // FUTURE: Change function names and view names.
-
     /// <summary>
-    ///     Repository for statistics.
+    ///     Get foundation type distribution by id.
     /// </summary>
-    internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepository
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id)
     {
-        /// <summary>
-        ///     Get foundation type distribution by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id)
-        {
-            var sql = @"
+        var sql = @"
                 SELECT  -- FoundationTypeDistribution
                         spft.foundation_type,
                         round(spft.percentage::numeric, 2)
                 FROM    data.statistics_product_foundation_type AS spft
                 WHERE   spft.neighborhood_id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<FoundationTypePair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<FoundationTypePair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    FoundationType = reader.GetFieldValue<FoundationType>(0),
-                    Percentage = reader.GetDecimal(1)
-                });
-            }
-
-            return new()
-            {
-                FoundationTypes = pairs
-            };
+                FoundationType = reader.GetFieldValue<FoundationType>(0),
+                Percentage = reader.GetDecimal(1)
+            });
         }
 
-        /// <summary>
-        ///     Get foundation type distribution by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string id)
+        return new()
         {
-            var sql = @"
+            FoundationTypes = pairs
+        };
+    }
+
+    /// <summary>
+    ///     Get foundation type distribution by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- FoundationTypeDistribution
                         spft.foundation_type,
                         round(spft.percentage::numeric, 2)
@@ -62,66 +60,66 @@ namespace FunderMaps.Data.Repositories
                 JOIN    geocoder.neighborhood n ON n.id = spft.neighborhood_id 
                 WHERE   n.external_id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<FoundationTypePair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<FoundationTypePair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    FoundationType = reader.GetFieldValue<FoundationType>(0),
-                    Percentage = reader.GetDecimal(1)
-                });
-            }
-
-            return new()
-            {
-                FoundationTypes = pairs
-            };
+                FoundationType = reader.GetFieldValue<FoundationType>(0),
+                Percentage = reader.GetDecimal(1)
+            });
         }
 
-        /// <summary>
-        ///     Get construction year distribution by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id)
+        return new()
         {
-            var sql = @"
+            FoundationTypes = pairs
+        };
+    }
+
+    /// <summary>
+    ///     Get construction year distribution by id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- ConstructionYearDistribution
                         spcy.year_from,
                         spcy.count
                 FROM    data.statistics_product_construction_years AS spcy
                 WHERE   spcy.neighborhood_id  = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<ConstructionYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<ConstructionYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Decade = Years.FromDecade(reader.GetInt(0)),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return new()
-            {
-                Decades = pairs
-            };
+                Decade = Years.FromDecade(reader.GetInt(0)),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get construction year distribution by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string id)
+        return new()
         {
-            var sql = @"
+            Decades = pairs
+        };
+    }
+
+    /// <summary>
+    ///     Get construction year distribution by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- ConstructionYearDistribution
                         spcy.year_from,
                         spcy.count
@@ -129,53 +127,53 @@ namespace FunderMaps.Data.Repositories
                 JOIN    geocoder.neighborhood n ON n.id = spcy.neighborhood_id 
                 WHERE   n.external_id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<ConstructionYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<ConstructionYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Decade = Years.FromDecade(reader.GetInt(0)),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return new()
-            {
-                Decades = pairs
-            };
+                Decade = Years.FromDecade(reader.GetInt(0)),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get data collection percentage by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<decimal> GetDataCollectedPercentageByIdAsync(string id)
+        return new()
         {
-            var sql = @"
+            Decades = pairs
+        };
+    }
+
+    /// <summary>
+    ///     Get data collection percentage by id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<decimal> GetDataCollectedPercentageByIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- DataCollected
                         round(spdc.percentage::numeric, 2)
                 FROM    data.statistics_product_data_collected AS spdc
                 WHERE   spdc.neighborhood_id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            return await context.ScalarAsync<decimal>(resultGuard: false);
-        }
+        return await context.ScalarAsync<decimal>(resultGuard: false);
+    }
 
-        /// <summary>
-        ///     Get data collection percentage by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<decimal> GetDataCollectedPercentageByExternalIdAsync(string id)
-        {
-            var sql = @"
+    /// <summary>
+    ///     Get data collection percentage by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<decimal> GetDataCollectedPercentageByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- DataCollected
                         round(spdc.percentage::numeric, 2)
                 FROM    data.statistics_product_data_collected AS spdc
@@ -183,61 +181,61 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            return await context.ScalarAsync<decimal>(resultGuard: false);
-        }
+        return await context.ScalarAsync<decimal>(resultGuard: false);
+    }
 
-        /// <summary>
-        ///     Get foundation risk distribution by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id)
-        {
-            var sql = @"
+    /// <summary>
+    ///     Get foundation risk distribution by id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- FoundationRiskDistribution
                         spfr.foundation_risk,
                         round(spfr.percentage::numeric, 2)
                 FROM    data.statistics_product_foundation_risk AS spfr
                 WHERE   spfr.neighborhood_id  = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            Dictionary<FoundationRisk, decimal> map = new()
-            {
-                { FoundationRisk.A, 0 },
-                { FoundationRisk.B, 0 },
-                { FoundationRisk.C, 0 },
-                { FoundationRisk.D, 0 },
-                { FoundationRisk.E, 0 }
-            };
+        Dictionary<FoundationRisk, decimal> map = new()
+        {
+            { FoundationRisk.A, 0 },
+            { FoundationRisk.B, 0 },
+            { FoundationRisk.C, 0 },
+            { FoundationRisk.D, 0 },
+            { FoundationRisk.E, 0 }
+        };
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                map[reader.GetFieldValue<FoundationRisk>(0)] = reader.GetDecimal(1);
-            }
-
-            return new()
-            {
-                PercentageA = map[FoundationRisk.A],
-                PercentageB = map[FoundationRisk.B],
-                PercentageC = map[FoundationRisk.C],
-                PercentageD = map[FoundationRisk.D],
-                PercentageE = map[FoundationRisk.E]
-            };
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            map[reader.GetFieldValue<FoundationRisk>(0)] = reader.GetDecimal(1);
         }
 
-        /// <summary>
-        ///     Get foundation risk distribution by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string id)
+        return new()
         {
-            var sql = @"
+            PercentageA = map[FoundationRisk.A],
+            PercentageB = map[FoundationRisk.B],
+            PercentageC = map[FoundationRisk.C],
+            PercentageD = map[FoundationRisk.D],
+            PercentageE = map[FoundationRisk.E]
+        };
+    }
+
+    /// <summary>
+    ///     Get foundation risk distribution by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- FoundationRiskDistribution
                         spfr.foundation_risk,
                         round(spfr.percentage::numeric, 2)
@@ -245,61 +243,61 @@ namespace FunderMaps.Data.Repositories
                 JOIN    geocoder.neighborhood n ON n.id = spfr.neighborhood_id 
                 WHERE   n.external_id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            Dictionary<FoundationRisk, decimal> map = new()
-            {
-                { FoundationRisk.A, 0 },
-                { FoundationRisk.B, 0 },
-                { FoundationRisk.C, 0 },
-                { FoundationRisk.D, 0 },
-                { FoundationRisk.E, 0 }
-            };
+        Dictionary<FoundationRisk, decimal> map = new()
+        {
+            { FoundationRisk.A, 0 },
+            { FoundationRisk.B, 0 },
+            { FoundationRisk.C, 0 },
+            { FoundationRisk.D, 0 },
+            { FoundationRisk.E, 0 }
+        };
 
-            await foreach (var reader in context.EnumerableReaderAsync())
-            {
-                map[reader.GetFieldValue<FoundationRisk>(0)] = reader.GetDecimal(1);
-            }
-
-            return new()
-            {
-                PercentageA = map[FoundationRisk.A],
-                PercentageB = map[FoundationRisk.B],
-                PercentageC = map[FoundationRisk.C],
-                PercentageD = map[FoundationRisk.D],
-                PercentageE = map[FoundationRisk.E]
-            };
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            map[reader.GetFieldValue<FoundationRisk>(0)] = reader.GetDecimal(1);
         }
 
-        /// <summary>
-        ///     Get total building restored count by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<long> GetTotalBuildingRestoredCountByIdAsync(string id)
+        return new()
         {
-            var sql = @"
+            PercentageA = map[FoundationRisk.A],
+            PercentageB = map[FoundationRisk.B],
+            PercentageC = map[FoundationRisk.C],
+            PercentageD = map[FoundationRisk.D],
+            PercentageE = map[FoundationRisk.E]
+        };
+    }
+
+    /// <summary>
+    ///     Get total building restored count by id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<long> GetTotalBuildingRestoredCountByIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- BuildingRestoredCount
                         spbr.count
                 FROM    data.statistics_product_buildings_restored AS spbr
                 WHERE   spbr.neighborhood_id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            return await context.ScalarAsync<long>(resultGuard: false);
-        }
+        return await context.ScalarAsync<long>(resultGuard: false);
+    }
 
-        /// <summary>
-        ///     Get total building restored count by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<long> GetTotalBuildingRestoredCountByExternalIdAsync(string id)
-        {
-            var sql = @"
+    /// <summary>
+    ///     Get total building restored count by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<long> GetTotalBuildingRestoredCountByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- BuildingRestoredCount
                         spbr.count
                 FROM    data.statistics_product_buildings_restored AS spbr
@@ -307,50 +305,50 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            return await context.ScalarAsync<long>(resultGuard: false);
-        }
+        return await context.ScalarAsync<long>(resultGuard: false);
+    }
 
-        /// <summary>
-        ///     Get total incident count by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id)
-        {
-            var sql = @"
+    /// <summary>
+    ///     Get total incident count by id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- IncidentCount
                         spi.year,
                         spi.count
                 FROM    data.statistics_product_incidents AS spi
                 WHERE   spi.neighborhood_id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<IncidentYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<IncidentYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total incident count by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByExternalIdAsync(string id)
-        {
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total incident count by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- IncidentCount
                         spi.year,
                         spi.count
@@ -358,31 +356,31 @@ namespace FunderMaps.Data.Repositories
                 JOIN    geocoder.neighborhood n ON n.id = spi.neighborhood_id
                 WHERE   n.external_id = @id";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<IncidentYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<IncidentYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total incident count by id.
-        /// </summary>
-        /// <param name="id">Municipality identifier.</param>
-        public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id)
-        {
-            // FUTURE: Maybe move query to db?
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total incident count by id.
+    /// </summary>
+    /// <param name="id">Municipality identifier.</param>
+    public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id)
+    {
+        // FUTURE: Maybe move query to db?
+        var sql = @"
 				SELECT  -- Incident
                         year.year, 
                         count(i.id) AS count
@@ -396,31 +394,31 @@ namespace FunderMaps.Data.Repositories
                 WHERE	n.id = @id
                 GROUP BY m.id, year.year";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<IncidentYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<IncidentYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total incident count by external id.
-        /// </summary>
-        /// <param name="id">Municipality identifier.</param>
-        public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByExternalIdAsync(string id)
-        {
-            // FUTURE: Maybe move query to db?
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total incident count by external id.
+    /// </summary>
+    /// <param name="id">Municipality identifier.</param>
+    public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByExternalIdAsync(string id)
+    {
+        // FUTURE: Maybe move query to db?
+        var sql = @"
 				SELECT  -- Incident
                         year.year, 
                         count(i.id) AS count
@@ -434,30 +432,30 @@ namespace FunderMaps.Data.Repositories
                 WHERE	n.external_id = @id
                 GROUP BY m.id, year.year";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<IncidentYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<IncidentYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total report count by id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id)
-        {
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total report count by id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- ReportCount
                         spi2.year,
                         spi2.count
@@ -465,30 +463,30 @@ namespace FunderMaps.Data.Repositories
                 WHERE   spi2.neighborhood_id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<InquiryYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<InquiryYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total report count by external id.
-        /// </summary>
-        /// <param name="id">Neighborhood identifier.</param>
-        public async Task<List<InquiryYearPair>> GetTotalReportCountByExternalIdAsync(string id)
-        {
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total report count by external id.
+    /// </summary>
+    /// <param name="id">Neighborhood identifier.</param>
+    public async Task<List<InquiryYearPair>> GetTotalReportCountByExternalIdAsync(string id)
+    {
+        var sql = @"
                 SELECT  -- ReportCount
                         spi2.year,
                         spi2.count
@@ -497,31 +495,31 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id
                 LIMIT   1";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<InquiryYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<InquiryYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total report count by id.
-        /// </summary>
-        /// <param name="id">Municipality identifier.</param>
-        public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id)
-        {
-            // FUTURE: Maybe move query to db?
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total report count by id.
+    /// </summary>
+    /// <param name="id">Municipality identifier.</param>
+    public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id)
+    {
+        // FUTURE: Maybe move query to db?
+        var sql = @"
 				SELECT  -- ReportCount
                         year.year,
                         count(i.id) AS count
@@ -535,31 +533,31 @@ namespace FunderMaps.Data.Repositories
                 WHERE	n.id = @id
                 GROUP BY m.id, year.year";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<InquiryYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<InquiryYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
 
-        /// <summary>
-        ///     Get total report count by external id.
-        /// </summary>
-        /// <param name="id">Municipality identifier.</param>
-        public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByExternalIdAsync(string id)
-        {
-            // FUTURE: Maybe move query to db?
-            var sql = @"
+        return pairs;
+    }
+
+    /// <summary>
+    ///     Get total report count by external id.
+    /// </summary>
+    /// <param name="id">Municipality identifier.</param>
+    public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByExternalIdAsync(string id)
+    {
+        // FUTURE: Maybe move query to db?
+        var sql = @"
 				SELECT  -- ReportCount
                         year.year,
                         count(i.id) AS count
@@ -573,21 +571,20 @@ namespace FunderMaps.Data.Repositories
                 WHERE   n.external_id = @id
                 GROUP BY m.id, year.year";
 
-            await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
-            context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("id", id);
 
-            List<InquiryYearPair> pairs = new();
-            await foreach (var reader in context.EnumerableReaderAsync())
+        List<InquiryYearPair> pairs = new();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            pairs.Add(new()
             {
-                pairs.Add(new()
-                {
-                    Year = reader.GetInt(0),
-                    TotalCount = reader.GetInt(1)
-                });
-            }
-
-            return pairs;
+                Year = reader.GetInt(0),
+                TotalCount = reader.GetInt(1)
+            });
         }
+
+        return pairs;
     }
 }

@@ -1,94 +1,89 @@
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Options;
-using System;
-using System.IO;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
-namespace FunderMaps.Infrastructure.Storage
+namespace FunderMaps.Infrastructure.Storage;
+
+/// <summary>
+///     Mapbox implementation of <see cref="IMapService"/>.
+/// </summary>
+internal class MapboxService : IMapService
 {
+    private const string mapboxBaseUrl = "https://api.mapbox.com";
+    private const int timeoutInMinutes = 30;
+
+    private readonly MapboxOptions _options;
+
     /// <summary>
-    ///     Mapbox implementation of <see cref="IMapService"/>.
+    ///     Create new instance.
     /// </summary>
-    internal class MapboxService : IMapService
+    public MapboxService(IOptions<MapboxOptions> options)
+        => _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+
+    /// <summary>
+    ///     Create a HTTP client.
+    /// </summary>
+    protected static HttpClient CreateClient()
     {
-        private const string mapboxBaseUrl = "https://api.mapbox.com";
-        private const int timeoutInMinutes = 30;
+        HttpClient client = new();
 
-        private readonly MapboxOptions _options;
+        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        client.Timeout = TimeSpan.FromMinutes(timeoutInMinutes);
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public MapboxService(IOptions<MapboxOptions> options)
-            => _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        return client;
+    }
 
-        /// <summary>
-        ///     Create a HTTP client.
-        /// </summary>
-        protected HttpClient CreateClient()
-        {
-            HttpClient client = new();
+    /// <summary>
+    ///     Delete dataset from mapping service.
+    /// </summary>
+    /// <param name="datasetName">The dataset name.</param>
+    public async Task<bool> DeleteDatasetAsync(string datasetName)
+    {
+        using HttpClient client = CreateClient();
 
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            client.Timeout = TimeSpan.FromMinutes(timeoutInMinutes);
+        HttpResponseMessage result = await client.DeleteAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}");
 
-            return client;
-        }
+        return result.IsSuccessStatusCode;
+    }
 
-        /// <summary>
-        ///     Delete dataset from mapping service.
-        /// </summary>
-        /// <param name="datasetName">The dataset name.</param>
-        public async Task<bool> DeleteDatasetAsync(string datasetName)
-        {
-            using HttpClient client = CreateClient();
+    /// <summary>
+    ///     Upload dataset to mapping service.
+    /// </summary>
+    /// <param name="datasetName">The dataset name.</param>
+    /// <param name="filePath">Path to dataset on disk.</param>
+    public async Task<bool> UploadDatasetAsync(string datasetName, string filePath)
+    {
+        using HttpClient client = CreateClient();
 
-            HttpResponseMessage result = await client.DeleteAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}");
+        using MultipartFormDataContent content = new($"Upload----{DateTime.Now}");
 
-            return result.IsSuccessStatusCode;
-        }
+        using StreamContent fileContent = new(File.OpenRead(filePath));
+        content.Add(fileContent, "file", Path.GetFileName(filePath));
+        HttpResponseMessage result = await client.PostAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}", content);
 
-        /// <summary>
-        ///     Upload dataset to mapping service.
-        /// </summary>
-        /// <param name="datasetName">The dataset name.</param>
-        /// <param name="filePath">Path to dataset on disk.</param>
-        public async Task<bool> UploadDatasetAsync(string datasetName, string filePath)
-        {
-            using HttpClient client = CreateClient();
+        return result.IsSuccessStatusCode;
+    }
 
-            using MultipartFormDataContent content = new($"Upload----{DateTime.Now}");
+    /// <summary>
+    ///     Publish dataset as map.
+    /// </summary>
+    /// <param name="datasetName">The dataset name.</param>
+    public async Task<bool> PublishAsync(string datasetName)
+    {
+        using HttpClient client = CreateClient();
 
-            using StreamContent fileContent = new(File.OpenRead(filePath));
-            content.Add(fileContent, "file", Path.GetFileName(filePath));
-            HttpResponseMessage result = await client.PostAsync($"{mapboxBaseUrl}/tilesets/v1/sources/{_options.Account}/{datasetName}?access_token={_options.AccessToken}", content);
+        HttpResponseMessage result = await client.PostAsync($"{mapboxBaseUrl}/tilesets/v1/{_options.Account}.{datasetName}/publish?access_token={_options.AccessToken}", null);
 
-            return result.IsSuccessStatusCode;
-        }
+        return result.IsSuccessStatusCode;
+    }
 
-        /// <summary>
-        ///     Publish dataset as map.
-        /// </summary>
-        /// <param name="datasetName">The dataset name.</param>
-        public async Task<bool> PublishAsync(string datasetName)
-        {
-            using HttpClient client = CreateClient();
+    /// <summary>
+    ///     Test the Mapbox service backend.
+    /// </summary>
+    public async Task HealthCheck()
+    {
+        using HttpClient client = CreateClient();
 
-            HttpResponseMessage result = await client.PostAsync($"{mapboxBaseUrl}/tilesets/v1/{_options.Account}.{datasetName}/publish?access_token={_options.AccessToken}", null);
-
-            return result.IsSuccessStatusCode;
-        }
-
-        /// <summary>
-        ///     Test the Mapbox service backend.
-        /// </summary>
-        public async Task HealthCheck()
-        {
-            using HttpClient client = CreateClient();
-
-            await client.GetAsync($"{mapboxBaseUrl}/tilesets/v1/{_options.Account}?access_token={_options.AccessToken}");
-        }
+        await client.GetAsync($"{mapboxBaseUrl}/tilesets/v1/{_options.Account}?access_token={_options.AccessToken}");
     }
 }
