@@ -14,5 +14,10 @@
         ///     When a report is present.
         /// </summary>
         Established = 1,
+
+        /// <summary>
+        ///     When building from the same cluster was used.
+        /// </summary>
+        Cluster = 2,
     }
 }
