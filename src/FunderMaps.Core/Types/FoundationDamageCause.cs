@@ -84,5 +84,10 @@ namespace FunderMaps.Core.Types
         ///     Foundation was partially recovered.
         /// </summary>
         PartialFoundationRecovery = 16,
+
+        /// <summary>
+        ///     Damage due japanese knotweed.
+        /// </summary>
+        JapanseKnotweed = 17,
     }
 }
