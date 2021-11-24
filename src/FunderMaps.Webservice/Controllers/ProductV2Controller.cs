@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.Controllers;
 
-// FUTURE: Split logic into analysis, risk index, statistics controller.
 // FUTURE: Drop the 'product' uri prefix.
 // FUTURE: Drop the 'v' uri version prefix.
 /// <summary>
