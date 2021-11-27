@@ -171,19 +171,18 @@ public class ProductService : IProductService
     }
 
     /// <summary>
+    ///     Get an analysis product v3.
+    /// </summary>
+    /// <param name="input">Input query.</param>
+    public virtual Task<AnalysisProduct3> GetAnalysis3Async(string input)
+        => _analysisRepository.Get3Async(input);
+
+    /// <summary>
     ///     Get risk index on id.
     /// </summary>
     /// <param name="input">Input query.</param>
     public virtual Task<bool> GetRiskIndexAsync(string input)
-        => _geocoderParser.FromIdentifier(input, out string id) switch
-        {
-            GeocoderDatasource.FunderMaps => _analysisRepository.GetRiskIndexByIdAsync(id),
-            GeocoderDatasource.NlBagBuilding => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
-            GeocoderDatasource.NlBagBerth => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
-            GeocoderDatasource.NlBagPosting => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
-            GeocoderDatasource.NlBagAddress => _analysisRepository.GetRiskIndexByAddressExternalIdAsync(id),
-            _ => throw new InvalidIdentifierException(),
-        };
+        => _analysisRepository.GetRiskIndexAsync(input);
 
     /// <summary>
     ///     Get statistics per region.
