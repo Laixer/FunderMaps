@@ -109,6 +109,9 @@ internal class NpgsqlDbProvider : DbProvider
                 case PostgresErrorCodes.NoDataFound:
                     throw new ReferenceNotFoundException(exception.Message, exception);
 
+                case "UX101":
+                    throw new InvalidIdentifierException(exception.Message, exception);
+
             }
         }
 

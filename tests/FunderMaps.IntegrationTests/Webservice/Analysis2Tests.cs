@@ -155,7 +155,7 @@ public class Analysis2Tests : IClassFixture<WebserviceFixtureFactory>
         var response = await client.GetAsync($"api/v2/product/at_risk?id={address}");
 
         // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Theory]
@@ -172,6 +172,6 @@ public class Analysis2Tests : IClassFixture<WebserviceFixtureFactory>
         var response = await client.GetAsync($"api/v2/product/analysis?id={address}");
 
         // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }
