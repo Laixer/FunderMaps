@@ -49,6 +49,6 @@ public class ProductV3Controller : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IAsyncEnumerable<StatisticsProduct> GetStatisticsAsync([FromQuery][Required] string id)
-        => _productService.GetStatisticsAsync(id);
+    public Task<StatisticsProduct> GetStatisticsAsync([FromQuery][Required] string id)
+        => _productService.GetStatistics3Async(id);
 }

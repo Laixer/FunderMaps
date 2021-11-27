@@ -38,4 +38,10 @@ public interface IProductService
     /// </summary>
     /// <param name="input">Input query.</param>
     Task<bool> GetRiskIndexAsync(string input);
+
+    /// <summary>
+    ///     Get statistics per region.
+    /// </summary>
+    /// <param name="input">Input query.</param>
+    Task<StatisticsProduct> GetStatistics3Async(string input);
 }
