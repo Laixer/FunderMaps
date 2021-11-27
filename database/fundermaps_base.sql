@@ -1470,7 +1470,7 @@ BEGIN
 		when id_up ~ '^GM\d{4}$' then select 'nl_cbs_municipality', id_up into ret;
 		when id_up ~ '^PV\d{2}$' then select 'nl_cbs_state', id_up into ret;
 		-- Unknown ID
-		ELSE RAISE EXCEPTION no_data_found USING HINT = 'Unknown identifier while parsing geocoder input';
+		ELSE RAISE EXCEPTION 'Unknown identifier: %', input USING ERRCODE = 'UX101';
 	end case;
 RETURN ret;
 END;
