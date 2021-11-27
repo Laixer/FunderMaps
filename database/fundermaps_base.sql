@@ -646,7 +646,8 @@ CREATE TYPE report.foundation_damage_cause AS ENUM (
     'vegetation',
     'gas',
     'vibrations',
-    'partial_foundation_recovery'
+    'partial_foundation_recovery',
+    'japanse_knotweed'
 );
 
 
