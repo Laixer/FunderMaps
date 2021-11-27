@@ -374,6 +374,51 @@ COMMENT ON DOMAIN geocoder.geocoder_id IS 'Domain for our internal geocoder iden
 
 
 --
+-- Name: id_type; Type: TYPE; Schema: geocoder; Owner: postgres
+--
+
+CREATE TYPE geocoder.id_type AS ENUM (
+    'fundermaps',
+    'nl_bag_building',
+    'nl_bag_berth',
+    'nl_bag_posting',
+    'nl_bag_address',
+    'nl_cbs_neighborhood',
+    'nl_cbs_district',
+    'nl_cbs_municipality',
+    'nl_cbs_state'
+);
+
+
+ALTER TYPE geocoder.id_type OWNER TO postgres;
+
+--
+-- Name: TYPE id_type; Type: COMMENT; Schema: geocoder; Owner: postgres
+--
+
+COMMENT ON TYPE geocoder.id_type IS 'Geocoder identifier type.';
+
+
+--
+-- Name: id_parser_tuple; Type: TYPE; Schema: geocoder; Owner: postgres
+--
+
+CREATE TYPE geocoder.id_parser_tuple AS (
+	type geocoder.id_type,
+	id text
+);
+
+
+ALTER TYPE geocoder.id_parser_tuple OWNER TO postgres;
+
+--
+-- Name: TYPE id_parser_tuple; Type: COMMENT; Schema: geocoder; Owner: postgres
+--
+
+COMMENT ON TYPE geocoder.id_parser_tuple IS 'Geocoder identifier parser resultset.';
+
+
+--
 -- Name: year; Type: DOMAIN; Schema: geocoder; Owner: fundermaps
 --
 
@@ -2459,6 +2504,63 @@ $$;
 
 
 ALTER FUNCTION data.get_restoration_cost(foundation_type report.foundation_type, surface_area numeric) OWNER TO fundermaps;
+
+--
+-- Name: id_parser(text); Type: FUNCTION; Schema: geocoder; Owner: fundermaps
+--
+
+CREATE FUNCTION geocoder.id_parser(input text) RETURNS geocoder.id_parser_tuple
+    LANGUAGE plpgsql PARALLEL SAFE
+    AS $_$
+DECLARE 
+  ret geocoder.id_parser_tuple;
+  id_low text := trim(lower(input));
+  id_up text := trim(upper(input));
+BEGIN
+	CASE
+		-- FunderMaps internal ID
+		when id_low  LIKE 'gfm-%' then select 'fundermaps', id_low  into ret;
+		-- NL BAG ID
+		when id_up LIKE 'NL.IMBAG.PAND.%' then select 'nl_bag_building', id_up into ret;
+		when id_up LIKE 'NL.IMBAG.LIGPLAATS.%' then select 'nl_bag_berth', id_up into ret;
+		when id_up LIKE 'NL.IMBAG.STANDPLAATS.%' then select 'nl_bag_posting', id_up into ret;
+		when id_up LIKE 'NL.IMBAG.NUMMERAANDUIDING.%' then select 'nl_bag_address', id_up into ret;
+		-- NL BAG legacy ID
+		when id_low ~ '^\d{4}10\d{10}$' then select 'nl_bag_building', 'NL.IMBAG.PAND.' || id_low into ret;
+		when id_low ~ '^\d{4}02\d{10}$' then select 'nl_bag_berth', 'NL.IMBAG.LIGPLAATS.' || id_low into ret;
+		when id_low ~ '^\d{4}03\d{10}$' then select 'nl_bag_posting', 'NL.IMBAG.STANDPLAATS.' || id_low into ret;
+		when id_low ~ '^\d{4}20\d{10}$' then select 'nl_bag_address', 'NL.IMBAG.NUMMERAANDUIDING.' || id_low into ret;
+		-- NL BAG legacy invalid ID
+		when id_low ~ '^\d{3}10\d{10}$' then select 'nl_bag_building', 'NL.IMBAG.PAND.0' || id_low into ret;
+		when id_low ~ '^\d{3}02\d{10}$' then select 'nl_bag_berth', 'NL.IMBAG.LIGPLAATS.0' || id_low into ret;
+		when id_low ~ '^\d{3}03\d{10}$' then select 'nl_bag_posting', 'NL.IMBAG.STANDPLAATS.0' || id_low into ret;
+		when id_low ~ '^\d{3}20\d{10}$' then select 'nl_bag_address', 'NL.IMBAG.NUMMERAANDUIDING.0' || id_low into ret;
+		-- NL BAG legacy invalid ID
+		when id_low ~ '^\d{2}10\d{10}$' then select 'nl_bag_building', 'NL.IMBAG.PAND.00' || id_low into ret;
+		when id_low ~ '^\d{2}02\d{10}$' then select 'nl_bag_berth', 'NL.IMBAG.LIGPLAATS.00' || id_low into ret;
+		when id_low ~ '^\d{2}03\d{10}$' then select 'nl_bag_posting', 'NL.IMBAG.STANDPLAATS.00' || id_low into ret;
+		when id_low ~ '^\d{2}20\d{10}$' then select 'nl_bag_address', 'NL.IMBAG.NUMMERAANDUIDING.00' || id_low into ret;
+		-- NL CBS ID
+		when id_up ~ '^BU\d{8}$' then select 'nl_cbs_neighborhood', id_up into ret;
+		when id_up ~ '^WK\d{6}$' then select 'nl_cbs_district', id_up into ret;
+		when id_up ~ '^GM\d{4}$' then select 'nl_cbs_municipality', id_up into ret;
+		when id_up ~ '^PV\d{2}$' then select 'nl_cbs_state', id_up into ret;
+		-- Unknown ID
+		ELSE RAISE EXCEPTION 'unknown identifier: %', input;
+	end case;
+RETURN ret;
+END;
+$_$;
+
+
+ALTER FUNCTION geocoder.id_parser(input text) OWNER TO fundermaps;
+
+--
+-- Name: FUNCTION id_parser(input text); Type: COMMENT; Schema: geocoder; Owner: fundermaps
+--
+
+COMMENT ON FUNCTION geocoder.id_parser(input text) IS 'Attempts to parse the input as a geocoder identifier.';
+
 
 --
 -- Name: fir_generate_id(integer); Type: FUNCTION; Schema: report; Owner: fundermaps
@@ -5714,6 +5816,14 @@ GRANT ALL ON FUNCTION application.organization_email_free(email text) TO funderm
 GRANT ALL ON FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) TO fundermaps_webapp;
 GRANT ALL ON FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) TO fundermaps_webservice;
 GRANT ALL ON FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) TO fundermaps_portal;
+
+
+--
+-- Name: FUNCTION id_parser(input text); Type: ACL; Schema: geocoder; Owner: fundermaps
+--
+
+GRANT ALL ON FUNCTION geocoder.id_parser(input text) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION geocoder.id_parser(input text) TO fundermaps_webservice;
 
 
 --
