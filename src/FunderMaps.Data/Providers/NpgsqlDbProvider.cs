@@ -100,11 +100,15 @@ internal class NpgsqlDbProvider : DbProvider
         {
             switch (exception.SqlState)
             {
-                case Npgsql.PostgresErrorCodes.ForeignKeyViolation:
+                case PostgresErrorCodes.ForeignKeyViolation:
                     throw new ReferenceNotFoundException(exception.Message, exception);
 
-                case Npgsql.PostgresErrorCodes.AdminShutdown:
+                case PostgresErrorCodes.AdminShutdown:
                     throw new ServiceUnavailableException(exception.Message, exception);
+
+                case PostgresErrorCodes.NoDataFound:
+                    throw new ReferenceNotFoundException(exception.Message, exception);
+
             }
         }
 
