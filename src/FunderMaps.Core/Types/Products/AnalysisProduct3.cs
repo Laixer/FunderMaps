@@ -86,9 +86,24 @@ public sealed record AnalysisProduct3
     public double? SurfaceArea { get; init; }
 
     /// <summary>
-    ///     Property owner.
+    ///     Damage cause.
     /// </summary>
-    public string Owner { get; init; }
+    public FoundationDamageCause? DamageCause { get; init; }
+
+    /// <summary>
+    ///     Enforcement term.
+    /// </summary>
+    public EnforcementTerm? EnforcementTerm { get; init; }
+
+    /// <summary>
+    ///     Enforcement term.
+    /// </summary>
+    public Quality? OverallQuality { get; init; }
+
+    /// <summary>
+    ///     Report type.
+    /// </summary>
+    public InquiryType? InquiryType { get; init; }
 
     /// <summary>
     ///     Foundation type.
