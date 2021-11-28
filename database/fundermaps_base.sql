@@ -2565,24 +2565,24 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
     gr.code AS soil,
     surface_area.surface_area,
     bo.owner,
-    established.id AS inquiry_id,
-    established.inquiry_type,
-    established.damage_cause,
+    COALESCE(established.id, cluster.id) AS inquiry_id,
+    COALESCE(established.inquiry_type, cluster.inquiry_type) AS inquiry_type,
+    COALESCE(established.damage_cause, cluster.damage_cause) AS damage_cause,
     date_part('years'::text, age((
-        CASE established.enforcement_term
-            WHEN 'term05'::report.enforcement_term THEN (established.document_date + '5 years'::interval)
-            WHEN 'term510'::report.enforcement_term THEN (established.document_date + '10 years'::interval)
-            WHEN 'term1020'::report.enforcement_term THEN (established.document_date + '20 years'::interval)
-            WHEN 'term5'::report.enforcement_term THEN (established.document_date + '5 years'::interval)
-            WHEN 'term10'::report.enforcement_term THEN (established.document_date + '10 years'::interval)
-            WHEN 'term15'::report.enforcement_term THEN (established.document_date + '15 years'::interval)
-            WHEN 'term20'::report.enforcement_term THEN (established.document_date + '20 years'::interval)
-            WHEN 'term25'::report.enforcement_term THEN (established.document_date + '25 years'::interval)
-            WHEN 'term30'::report.enforcement_term THEN (established.document_date + '30 years'::interval)
-            WHEN 'term40'::report.enforcement_term THEN (established.document_date + '40 years'::interval)
+        CASE COALESCE(established.enforcement_term, cluster.enforcement_term)
+            WHEN 'term05'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '5 years'::interval)
+            WHEN 'term510'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '10 years'::interval)
+            WHEN 'term1020'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '20 years'::interval)
+            WHEN 'term5'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '5 years'::interval)
+            WHEN 'term10'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '10 years'::interval)
+            WHEN 'term15'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '15 years'::interval)
+            WHEN 'term20'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '20 years'::interval)
+            WHEN 'term25'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '25 years'::interval)
+            WHEN 'term30'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '30 years'::interval)
+            WHEN 'term40'::report.enforcement_term THEN (COALESCE(established.document_date, cluster.document_date) + '40 years'::interval)
             ELSE NULL::timestamp without time zone
         END)::timestamp with time zone, CURRENT_TIMESTAMP)) AS enforcement_term,
-    established.overall_quality,
+    COALESCE(established.overall_quality, cluster.overall_quality) AS overall_quality,
     recovery.type AS recovery_type,
     b.geom
    FROM (((((((((geocoder.building_active b
@@ -2674,6 +2674,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
             (array_agg(cluster_rows.groundwater_level_temp) FILTER (WHERE (cluster_rows.groundwater_level_temp IS NOT NULL)))[1] AS groundwater_level,
             (array_agg(cluster_rows.wood_level) FILTER (WHERE (cluster_rows.wood_level IS NOT NULL)))[1] AS wood_level,
             (array_agg(cluster_rows.foundation_depth) FILTER (WHERE (cluster_rows.foundation_depth IS NOT NULL)))[1] AS foundation_depth,
+            (array_agg(cluster_rows.type) FILTER (WHERE (cluster_rows.type IS NOT NULL)))[1] AS inquiry_type,
+            (array_agg(cluster_rows.document_date) FILTER (WHERE (cluster_rows.document_date IS NOT NULL)))[1] AS document_date,
+            (array_agg(cluster_rows.id) FILTER (WHERE (cluster_rows.document_date IS NOT NULL)))[1] AS id,
             (array_agg(cluster_rows.recovery) FILTER (WHERE (cluster_rows.recovery IS NOT NULL)))[1] AS recovery
            FROM (( SELECT 1 AS group_id,
                     is2.foundation_type,
@@ -2685,6 +2688,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                     is2.groundwater_level_temp,
                     is2.wood_level,
                     is2.foundation_depth,
+                    i.type,
+                    i.document_date,
+                    i.id,
                     ( SELECT (EXISTS ( SELECT 1
                                    FROM report.recovery_sample
                                   WHERE ((recovery_sample.address)::text = (ab.address_id)::text)
@@ -2719,6 +2725,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                     (NULL::numeric)::report.height AS height,
                     (NULL::numeric)::report.height AS height,
                     (NULL::numeric)::report.height AS height,
+                    NULL::report.inquiry_type AS inquiry_type,
+                    NULL::date AS date,
+                    NULL::integer AS int4,
                     false AS bool) cluster_rows
           GROUP BY cluster_rows.group_id) cluster,
     LATERAL ( SELECT COALESCE((established.built_year)::integer, (date_part('year'::text, (b.built_year)::date))::integer) AS "coalesce") construction_year(construction_year),
@@ -2815,7 +2824,7 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                 CASE
                     WHEN cluster.recovery THEN 'e'::data.foundation_risk_indication
                     WHEN ((cluster.enforcement_term = 'term05'::report.enforcement_term) OR (cluster.enforcement_term = 'term5'::report.enforcement_term) OR (cluster.enforcement_term = 'term510'::report.enforcement_term) OR (cluster.enforcement_term = 'term10'::report.enforcement_term) OR (cluster.enforcement_term = 'term15'::report.enforcement_term) OR (cluster.enforcement_term = 'term1020'::report.enforcement_term) OR (cluster.enforcement_term = 'term20'::report.enforcement_term) OR cluster.recovery_advised OR (cluster.overall_quality = 'bad'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre_bad'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre'::report.foundation_quality) OR (cluster.damage_cause IS NOT NULL)) THEN 'd'::data.foundation_risk_indication
-                    WHEN ((cluster.enforcement_term = 'term25'::report.enforcement_term) OR (cluster.enforcement_term = 'term30'::report.enforcement_term) OR (cluster.enforcement_term = 'term40'::report.enforcement_term) OR (cluster.overall_quality = 'good'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre_good'::report.foundation_quality) OR (cluster.overall_quality = 'tolerable'::report.foundation_quality)) THEN 'c'::data.foundation_risk_indication
+                    WHEN ((cluster.enforcement_term = 'term25'::report.enforcement_term) OR (cluster.enforcement_term = 'term30'::report.enforcement_term) OR (cluster.enforcement_term = 'term40'::report.enforcement_term) OR (cluster.overall_quality = 'good'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre_good'::report.foundation_quality) OR (cluster.overall_quality = 'tolerable'::report.foundation_quality)) THEN 'b'::data.foundation_risk_indication
                     ELSE NULL::data.foundation_risk_indication
                 END AS "case") cluster_unclassified_risk(cluster_unclassified_risk),
     LATERAL ( SELECT
