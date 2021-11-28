@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Types.Products;
 /// <summary>
 ///     Represents a model for the complete endpoint.
 /// </summary>
-public sealed record AnalysisProduct2
+public sealed record AnalysisProduct3
 {
     /// <summary>
     ///     Building identifier.
@@ -41,6 +41,11 @@ public sealed record AnalysisProduct2
     public int? ConstructionYear { get; init; }
 
     /// <summary>
+    ///     Construction year reliability.
+    /// </summary>
+    public Reliability ConstructionYearReliability { get; init; }
+
+    /// <summary>
     ///     Foundation recovery type.
     /// </summary>
     public RecoveryType? RecoveryType { get; init; }
@@ -49,6 +54,56 @@ public sealed record AnalysisProduct2
     ///     Represents the estimated restoration costs for this building.
     /// </summary>
     public int? RestorationCosts { get; init; }
+
+    /// <summary>
+    ///     Represents the height of this building.
+    /// </summary>
+    public double? Height { get; init; }
+
+    /// <summary>
+    ///     Building subsidence velocity.
+    /// </summary>
+    public double? Velocity { get; init; }
+
+    /// <summary>
+    ///     Represents the ground water level.
+    /// </summary>
+    public double? GroundWaterLevel { get; init; }
+
+    /// <summary>
+    ///     Ground level in meters.
+    /// </summary>
+    public double? GroundLevel { get; init; }
+
+    /// <summary>
+    ///     Soil code.
+    /// </summary>
+    public string Soil { get; init; }
+
+    /// <summary>
+    ///     Building surface area in square meters.
+    /// </summary>
+    public double? SurfaceArea { get; init; }
+
+    /// <summary>
+    ///     Damage cause.
+    /// </summary>
+    public FoundationDamageCause? DamageCause { get; init; }
+
+    /// <summary>
+    ///     Enforcement term.
+    /// </summary>
+    public EnforcementTerm? EnforcementTerm { get; init; }
+
+    /// <summary>
+    ///     Enforcement term.
+    /// </summary>
+    public Quality? OverallQuality { get; init; }
+
+    /// <summary>
+    ///     Report type.
+    /// </summary>
+    public InquiryType? InquiryType { get; init; }
 
     /// <summary>
     ///     Foundation type.
@@ -61,6 +116,11 @@ public sealed record AnalysisProduct2
     public Reliability FoundationTypeReliability { get; init; }
 
     /// <summary>
+    ///     Represents the period of drought (droogstand) for this building.
+    /// </summary>
+    public double? Drystand { get; init; }
+
+    /// <summary>
     ///     Foundation type reliability.
     /// </summary>
     public Reliability DrystandReliability { get; init; }
@@ -69,6 +129,11 @@ public sealed record AnalysisProduct2
     ///     Represents the foundation risk for this building.
     /// </summary>
     public FoundationRisk? DrystandRisk { get; init; }
+
+    /// <summary>
+    ///     Dewatering depth.
+    /// </summary>
+    public double? DewateringDepth { get; init; }
 
     /// <summary>
     ///     Dewatering depth reliability.

@@ -11,7 +11,7 @@ namespace FunderMaps.Webservice.Controllers;
 /// <summary>
 ///     Controller for all product endpoints.
 /// </summary>
-[Obsolete("See ProductV2Controller")]
+[Obsolete("See ProductV3Controller")]
 [Route("product")]
 public sealed class ProductController : ControllerBase
 {

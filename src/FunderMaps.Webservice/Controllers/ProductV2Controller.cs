@@ -7,12 +7,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.Controllers;
 
-// FUTURE: Split logic into analysis, risk index, statistics controller.
-// FUTURE: Drop the 'product' uri prefix.
-// FUTURE: Drop the 'v' uri version prefix.
 /// <summary>
 ///     Controller for all product endpoints.
 /// </summary>
+[Obsolete("See ProductV3Controller")]
 [Route("v2/product")]
 public sealed class ProductV2Controller : ControllerBase
 {
@@ -76,15 +74,6 @@ public sealed class ProductV2Controller : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetStatisticsAsync([FromQuery][Required] string id)
-    {
-        // Assign.
-        IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);
-
-        // Map.
-        ResponseWrapper result = await AsResponseWrapperAsync<StatisticsDto, StatisticsProduct>(productList);
-
-        // Return.
-        return Ok(result);
-    }
+    public IAsyncEnumerable<StatisticsProduct> GetStatisticsAsync([FromQuery][Required] string id)
+        => _productService.GetStatisticsAsync(id);
 }

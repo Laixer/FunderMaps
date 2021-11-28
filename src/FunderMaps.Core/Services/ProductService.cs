@@ -57,6 +57,7 @@ public class ProductService : IProductService
             MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByExternalIdAsync(id),
         };
 
+    // FUTURE: Not part of newer APIs
     /// <summary>
     ///     Generate drystand description text.
     /// </summary>
@@ -80,6 +81,7 @@ public class ProductService : IProductService
             _ => "Onbekend",
         };
 
+    // FUTURE: Not part of newer APIs
     /// <summary>
     ///     Generate dewatering depth description text.
     /// </summary>
@@ -103,6 +105,7 @@ public class ProductService : IProductService
             _ => "Onbekend",
         };
 
+    // FUTURE: Not part of newer APIs
     /// <summary>
     ///     Generate bioinfection description text.
     /// </summary>
@@ -122,6 +125,7 @@ public class ProductService : IProductService
             _ => "Onbekend",
         };
 
+    // FUTURE: Is replaced by GetAnalysis3Async
     /// <summary>
     ///     Get an analysis product.
     /// </summary>
@@ -149,7 +153,7 @@ public class ProductService : IProductService
         }
     }
 
-    // TODO: Remove the foreach
+    // FUTURE: Is replaced by GetAnalysis3Async
     /// <summary>
     ///     Get an analysis product v2.
     /// </summary>
@@ -171,20 +175,20 @@ public class ProductService : IProductService
     }
 
     /// <summary>
+    ///     Get an analysis product v3.
+    /// </summary>
+    /// <param name="input">Input query.</param>
+    public virtual Task<AnalysisProduct3> GetAnalysis3Async(string input)
+        => _analysisRepository.Get3Async(input);
+
+    /// <summary>
     ///     Get risk index on id.
     /// </summary>
     /// <param name="input">Input query.</param>
     public virtual Task<bool> GetRiskIndexAsync(string input)
-        => _geocoderParser.FromIdentifier(input, out string id) switch
-        {
-            GeocoderDatasource.FunderMaps => _analysisRepository.GetRiskIndexByIdAsync(id),
-            GeocoderDatasource.NlBagBuilding => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
-            GeocoderDatasource.NlBagBerth => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
-            GeocoderDatasource.NlBagPosting => _analysisRepository.GetRiskIndexByExternalIdAsync(id),
-            GeocoderDatasource.NlBagAddress => _analysisRepository.GetRiskIndexByAddressExternalIdAsync(id),
-            _ => throw new InvalidIdentifierException(),
-        };
+        => _analysisRepository.GetRiskIndexAsync(input);
 
+    // FUTURE: Has beed replaced by GetStatistics3Async
     /// <summary>
     ///     Get statistics per region.
     /// </summary>
@@ -201,4 +205,11 @@ public class ProductService : IProductService
             yield return product;
         }
     }
+
+    /// <summary>
+    ///     Get statistics per region.
+    /// </summary>
+    /// <param name="input">Input query.</param>
+    public virtual Task<StatisticsProduct> GetStatistics3Async(string input)
+        => GetStatisticsByIdAsync(input);
 }
