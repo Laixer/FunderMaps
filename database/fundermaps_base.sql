@@ -2508,7 +2508,22 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
             WHEN ((foundation_type.foundation_type = 'no_pile'::report.foundation_type) OR (foundation_type.foundation_type = 'no_pile_masonry'::report.foundation_type) OR (foundation_type.foundation_type = 'no_pile_strips'::report.foundation_type) OR (foundation_type.foundation_type = 'no_pile_concrete_floor'::report.foundation_type) OR (foundation_type.foundation_type = 'no_pile_slit'::report.foundation_type)) THEN (round((((surface_area.surface_area)::double precision * (350)::double precision))::numeric, '-2'::integer))::integer
             ELSE NULL::integer
         END AS restoration_costs,
-    NULL::double precision AS drystand,
+        CASE
+            WHEN ((established.wood_level IS NOT NULL) AND (established.groundwater_level IS NOT NULL)) THEN (((established.wood_level)::numeric - (established.groundwater_level)::numeric))::double precision
+            WHEN ((cluster.wood_level IS NOT NULL) AND (cluster.groundwater_level IS NOT NULL)) THEN (((cluster.wood_level)::numeric - (cluster.groundwater_level)::numeric))::double precision
+            ELSE
+            CASE
+                WHEN (foundation_type.foundation_type = 'wood_charger'::report.foundation_type) THEN (gwl.level - (2.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_amsterdam'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_rotterdam'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_rotterdam_amsterdam'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_amsterdam_arch'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_rotterdam_arch'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_rotterdam_arch'::report.foundation_type) THEN (gwl.level - (1.5)::double precision)
+                ELSE NULL::double precision
+            END
+        END AS drystand,
     COALESCE(established_drystand_risk.established_drystand_risk, cluster_drystand_risk.cluster_drystand_risk, drystand_risk.drystand_risk) AS drystand_risk,
         CASE
             WHEN (established_drystand_risk.established_drystand_risk IS NOT NULL) THEN 'established'::data.reliability
@@ -2521,7 +2536,21 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
             WHEN (cluster_bio_infection_risk.cluster_bio_infection_risk IS NOT NULL) THEN 'cluster'::data.reliability
             ELSE 'indicative'::data.reliability
         END AS bio_infection_risk_reliability,
-    NULL::double precision AS dewatering_depth,
+        CASE
+            WHEN ((established.foundation_depth IS NOT NULL) AND (established.groundwater_level IS NOT NULL)) THEN ((((established.foundation_depth)::numeric - (established.groundwater_level)::numeric) - 0.6))::double precision
+            WHEN ((cluster.wood_level IS NOT NULL) AND (cluster.groundwater_level IS NOT NULL)) THEN ((((cluster.foundation_depth)::numeric - (cluster.groundwater_level)::numeric) - 0.6))::double precision
+            ELSE
+            CASE
+                WHEN (foundation_type.foundation_type = 'no_pile'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                WHEN (foundation_type.foundation_type = 'no_pile_masonry'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                WHEN (foundation_type.foundation_type = 'no_pile_strips'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                WHEN (foundation_type.foundation_type = 'no_pile_concrete_floor'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                WHEN (foundation_type.foundation_type = 'wood_rotterdam_amsterdam'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                WHEN (foundation_type.foundation_type = 'no_pile_slit'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                WHEN (foundation_type.foundation_type = 'no_pile_bearing_floor'::report.foundation_type) THEN (gwl.level - (0.6)::double precision)
+                ELSE NULL::double precision
+            END
+        END AS dewatering_depth,
     COALESCE(established_dewatering_depth_risk.established_dewatering_depth_risk, cluster_dewatering_depth_risk.cluster_dewatering_depth_risk, dewatering_depth_risk.dewatering_depth_risk) AS dewatering_depth_risk,
         CASE
             WHEN (established_dewatering_depth_risk.established_dewatering_depth_risk IS NOT NULL) THEN 'established'::data.reliability
@@ -2578,6 +2607,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
             (array_agg(established_rows.overall_quality) FILTER (WHERE (established_rows.overall_quality IS NOT NULL)))[1] AS overall_quality,
             (array_agg(established_rows.recovery_advised) FILTER (WHERE (established_rows.recovery_advised IS NOT NULL)))[1] AS recovery_advised,
             (array_agg(date_part('year'::text, established_rows.built_year)) FILTER (WHERE (established_rows.recovery_advised IS NOT NULL)))[1] AS built_year,
+            (array_agg(established_rows.groundwater_level_temp) FILTER (WHERE (established_rows.groundwater_level_temp IS NOT NULL)))[1] AS groundwater_level,
+            (array_agg(established_rows.wood_level) FILTER (WHERE (established_rows.wood_level IS NOT NULL)))[1] AS wood_level,
+            (array_agg(established_rows.foundation_depth) FILTER (WHERE (established_rows.foundation_depth IS NOT NULL)))[1] AS foundation_depth,
             (array_agg(established_rows.type) FILTER (WHERE (established_rows.type IS NOT NULL)))[1] AS inquiry_type,
             (array_agg(established_rows.document_date) FILTER (WHERE (established_rows.document_date IS NOT NULL)))[1] AS document_date,
             (array_agg(established_rows.id) FILTER (WHERE (established_rows.document_date IS NOT NULL)))[1] AS id,
@@ -2589,6 +2621,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                     is2.overall_quality,
                     is2.recovery_advised,
                     is2.built_year,
+                    is2.groundwater_level_temp,
+                    is2.wood_level,
+                    is2.foundation_depth,
                     i.type,
                     i.document_date,
                     i.id,
@@ -2622,6 +2657,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                     NULL::report.foundation_quality AS foundation_quality,
                     false AS bool,
                     NULL::date AS date,
+                    (NULL::numeric)::report.height AS height,
+                    (NULL::numeric)::report.height AS height,
+                    (NULL::numeric)::report.height AS height,
                     NULL::report.inquiry_type AS inquiry_type,
                     NULL::date AS date,
                     NULL::integer AS int4,
@@ -2633,6 +2671,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
             (array_agg(cluster_rows.overall_quality) FILTER (WHERE (cluster_rows.overall_quality IS NOT NULL)))[1] AS overall_quality,
             (array_agg(cluster_rows.recovery_advised) FILTER (WHERE (cluster_rows.recovery_advised IS NOT NULL)))[1] AS recovery_advised,
             (array_agg(date_part('year'::text, cluster_rows.built_year)) FILTER (WHERE (cluster_rows.recovery_advised IS NOT NULL)))[1] AS built_year,
+            (array_agg(cluster_rows.groundwater_level_temp) FILTER (WHERE (cluster_rows.groundwater_level_temp IS NOT NULL)))[1] AS groundwater_level,
+            (array_agg(cluster_rows.wood_level) FILTER (WHERE (cluster_rows.wood_level IS NOT NULL)))[1] AS wood_level,
+            (array_agg(cluster_rows.foundation_depth) FILTER (WHERE (cluster_rows.foundation_depth IS NOT NULL)))[1] AS foundation_depth,
             (array_agg(cluster_rows.recovery) FILTER (WHERE (cluster_rows.recovery IS NOT NULL)))[1] AS recovery
            FROM (( SELECT 1 AS group_id,
                     is2.foundation_type,
@@ -2641,6 +2682,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                     is2.overall_quality,
                     is2.recovery_advised,
                     is2.built_year,
+                    is2.groundwater_level_temp,
+                    is2.wood_level,
+                    is2.foundation_depth,
                     ( SELECT (EXISTS ( SELECT 1
                                    FROM report.recovery_sample
                                   WHERE ((recovery_sample.address)::text = (ab.address_id)::text)
@@ -2672,6 +2716,9 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                     NULL::report.foundation_quality AS foundation_quality,
                     false AS bool,
                     NULL::date AS date,
+                    (NULL::numeric)::report.height AS height,
+                    (NULL::numeric)::report.height AS height,
+                    (NULL::numeric)::report.height AS height,
                     false AS bool) cluster_rows
           GROUP BY cluster_rows.group_id) cluster,
     LATERAL ( SELECT COALESCE((established.built_year)::integer, (date_part('year'::text, (b.built_year)::date))::integer) AS "coalesce") construction_year(construction_year),
@@ -2767,10 +2814,8 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
     LATERAL ( SELECT
                 CASE
                     WHEN cluster.recovery THEN 'e'::data.foundation_risk_indication
-                    WHEN ((cluster.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((cluster.enforcement_term = 'term05'::report.enforcement_term) OR (cluster.enforcement_term = 'term5'::report.enforcement_term) OR cluster.recovery_advised OR (cluster.overall_quality = 'bad'::report.foundation_quality))) THEN 'e'::data.foundation_risk_indication
-                    WHEN ((cluster.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((cluster.enforcement_term = 'term510'::report.enforcement_term) OR (cluster.enforcement_term = 'term10'::report.enforcement_term) OR (cluster.overall_quality = 'mediocre_bad'::report.foundation_quality))) THEN 'd'::data.foundation_risk_indication
-                    WHEN ((cluster.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((cluster.enforcement_term = 'term1020'::report.enforcement_term) OR (cluster.enforcement_term = 'term15'::report.enforcement_term) OR (cluster.enforcement_term = 'term20'::report.enforcement_term) OR (cluster.overall_quality = 'mediocre'::report.foundation_quality) OR (cluster.overall_quality = 'tolerable'::report.foundation_quality))) THEN 'c'::data.foundation_risk_indication
-                    WHEN ((cluster.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (cluster.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((cluster.enforcement_term = 'term25'::report.enforcement_term) OR (cluster.enforcement_term = 'term30'::report.enforcement_term) OR (cluster.enforcement_term = 'term40'::report.enforcement_term) OR (cluster.overall_quality = 'good'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre_good'::report.foundation_quality))) THEN 'b'::data.foundation_risk_indication
+                    WHEN ((cluster.enforcement_term = 'term05'::report.enforcement_term) OR (cluster.enforcement_term = 'term5'::report.enforcement_term) OR (cluster.enforcement_term = 'term510'::report.enforcement_term) OR (cluster.enforcement_term = 'term10'::report.enforcement_term) OR (cluster.enforcement_term = 'term15'::report.enforcement_term) OR (cluster.enforcement_term = 'term1020'::report.enforcement_term) OR (cluster.enforcement_term = 'term20'::report.enforcement_term) OR cluster.recovery_advised OR (cluster.overall_quality = 'bad'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre_bad'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre'::report.foundation_quality) OR (cluster.damage_cause IS NOT NULL)) THEN 'd'::data.foundation_risk_indication
+                    WHEN ((cluster.enforcement_term = 'term25'::report.enforcement_term) OR (cluster.enforcement_term = 'term30'::report.enforcement_term) OR (cluster.enforcement_term = 'term40'::report.enforcement_term) OR (cluster.overall_quality = 'good'::report.foundation_quality) OR (cluster.overall_quality = 'mediocre_good'::report.foundation_quality) OR (cluster.overall_quality = 'tolerable'::report.foundation_quality)) THEN 'c'::data.foundation_risk_indication
                     ELSE NULL::data.foundation_risk_indication
                 END AS "case") cluster_unclassified_risk(cluster_unclassified_risk),
     LATERAL ( SELECT
@@ -2803,10 +2848,8 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
     LATERAL ( SELECT
                 CASE
                     WHEN established.recovery THEN 'a'::data.foundation_risk_indication
-                    WHEN ((established.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (established.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (established.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((established.enforcement_term = 'term05'::report.enforcement_term) OR (established.enforcement_term = 'term5'::report.enforcement_term) OR established.recovery_advised OR (established.overall_quality = 'bad'::report.foundation_quality))) THEN 'e'::data.foundation_risk_indication
-                    WHEN ((established.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (established.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (established.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((established.enforcement_term = 'term510'::report.enforcement_term) OR (established.enforcement_term = 'term10'::report.enforcement_term) OR (established.overall_quality = 'mediocre_bad'::report.foundation_quality))) THEN 'd'::data.foundation_risk_indication
-                    WHEN ((established.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (established.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (established.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((established.enforcement_term = 'term1020'::report.enforcement_term) OR (established.enforcement_term = 'term15'::report.enforcement_term) OR (established.enforcement_term = 'term20'::report.enforcement_term) OR (established.overall_quality = 'mediocre'::report.foundation_quality) OR (established.overall_quality = 'tolerable'::report.foundation_quality))) THEN 'c'::data.foundation_risk_indication
-                    WHEN ((established.damage_cause <> 'drystand'::report.foundation_damage_cause) AND (established.damage_cause <> 'bio_infection'::report.foundation_damage_cause) AND (established.damage_cause <> 'drainage'::report.foundation_damage_cause) AND ((established.enforcement_term = 'term25'::report.enforcement_term) OR (established.enforcement_term = 'term30'::report.enforcement_term) OR (established.enforcement_term = 'term40'::report.enforcement_term) OR (established.overall_quality = 'good'::report.foundation_quality) OR (established.overall_quality = 'mediocre_good'::report.foundation_quality))) THEN 'b'::data.foundation_risk_indication
+                    WHEN ((established.enforcement_term = 'term05'::report.enforcement_term) OR (established.enforcement_term = 'term5'::report.enforcement_term) OR (established.enforcement_term = 'term510'::report.enforcement_term) OR (established.enforcement_term = 'term10'::report.enforcement_term) OR (established.enforcement_term = 'term15'::report.enforcement_term) OR (established.enforcement_term = 'term1020'::report.enforcement_term) OR (established.enforcement_term = 'term20'::report.enforcement_term) OR established.recovery_advised OR (established.overall_quality = 'bad'::report.foundation_quality) OR (established.overall_quality = 'mediocre_bad'::report.foundation_quality) OR (established.overall_quality = 'mediocre'::report.foundation_quality) OR (established.damage_cause IS NOT NULL)) THEN 'e'::data.foundation_risk_indication
+                    WHEN ((established.enforcement_term = 'term25'::report.enforcement_term) OR (established.enforcement_term = 'term30'::report.enforcement_term) OR (established.enforcement_term = 'term40'::report.enforcement_term) OR (established.overall_quality = 'good'::report.foundation_quality) OR (established.overall_quality = 'mediocre_good'::report.foundation_quality) OR (established.overall_quality = 'tolerable'::report.foundation_quality)) THEN 'b'::data.foundation_risk_indication
                     ELSE NULL::data.foundation_risk_indication
                 END AS "case") established_unclassified_risk(established_unclassified_risk)
   WHERE ((addresses.count > 0) AND (b.building_type = 'house'::geocoder.building_type))
