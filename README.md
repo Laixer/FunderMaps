@@ -9,14 +9,21 @@ Foundation issues occur and are actively investigated by local government. Gaini
 * .NET 6 LTS Runtime and SDK
 * Docker
 
+See https://docs.microsoft.com/en-us/dotnet/core/install/ for installation instructions of .NET.
+
 ## Running the application on localhost
 
 After cloning or downloading the application you will be able to run the application on localhost. You will need to run the setup and load scripts to configure the local database.
 
-1. Run from solution directory. This will setup the PostgreSQL instance and seed the database.
+1. Run from solution directory. This will setup the PostgreSQL instance in a docker container.
 
-```
+```sh
 ./scripts/setupdb.sh
+```
+
+2. Wait **5 seconds** before running the database seeder script.
+
+```sh
 ./scripts/loaddb.sh
 ```
 
@@ -24,13 +31,15 @@ After cloning or downloading the application you will be able to run the applica
 
 4. Enter the project directory in `src/{project}`.
 
-5. Run the application with `ASPNETCORE_ENVIRONMENT={ENV} dotnet run`. The application should keep running in the foreground. The foreground logging shows the connection details.
+5. _(Optional)_ Test the application by running `dotnet test`. The tests cover almost all of the application logic. Address any issues before continue the development.
+
+6. Run the application with `ASPNETCORE_ENVIRONMENT={ENV} dotnet run`. The application should keep running in the foreground. The foreground logging shows the connection details.
 
 When using VS Code the 'debug' section should list all the applications. Just run the application (or hit F5).
 
 ## Configuration
 
-See the `contrib/etc/_appsettings.{ENV}.json` directory for configuration files for each environment. You can copy these configuration files to the project source directory.
+See the `contrib/etc/_appsettings.{ENV}.json` directory for configuration files for each environment. You can copy these configuration files to the project source directory (`src/{project}`).
 
 ## Using the application
 
