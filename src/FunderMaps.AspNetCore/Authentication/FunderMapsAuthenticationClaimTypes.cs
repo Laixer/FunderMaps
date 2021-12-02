@@ -1,18 +1,17 @@
-﻿namespace FunderMaps.AspNetCore.Authentication
+﻿namespace FunderMaps.AspNetCore.Authentication;
+
+/// <summary>
+///     FunderMaps claim types.
+/// </summary>
+public static class FunderMapsAuthenticationClaimTypes
 {
     /// <summary>
-    ///     FunderMaps claim types.
+    ///     FunderMaps tenant claim type.
     /// </summary>
-    public static class FunderMapsAuthenticationClaimTypes
-    {
-        /// <summary>
-        ///     FunderMaps tenant claim type.
-        /// </summary>
-        public const string Tenant = "cfo";
+    public const string Tenant = "cfo";
 
-        /// <summary>
-        ///     FunderMaps tenant role claim type.
-        /// </summary>
-        public const string TenantRole = "cfor";
-    }
+    /// <summary>
+    ///     FunderMaps tenant role claim type.
+    /// </summary>
+    public const string TenantRole = "cfor";
 }

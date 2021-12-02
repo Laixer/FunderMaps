@@ -2,52 +2,51 @@ using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace FunderMaps.AspNetCore.Middleware
+namespace FunderMaps.AspNetCore.Middleware;
+
+/// <summary>
+///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.
+/// </summary>
+public class AspAppContextMiddleware
 {
+    private readonly RequestDelegate _next;
+
     /// <summary>
-    ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.
+    ///     Create new instance.
     /// </summary>
-    public class AspAppContextMiddleware
+    public AspAppContextMiddleware(RequestDelegate next) => _next = next;
+
+    /// <summary>
+    ///     Invoke this middleware.
+    /// </summary>
+    /// <param name="httpContext">The <see cref="HttpContext"/>.</param>
+    /// <param name="appContext">The <see cref="AppContext"/>.</param>
+    public async Task InvokeAsync(HttpContext httpContext, Core.AppContext appContext)
     {
-        private readonly RequestDelegate _next;
+        appContext.CancellationToken = httpContext.RequestAborted;
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public AspAppContextMiddleware(RequestDelegate next) => _next = next;
-
-        /// <summary>
-        ///     Invoke this middleware.
-        /// </summary>
-        /// <param name="httpContext">The <see cref="HttpContext"/>.</param>
-        /// <param name="appContext">The <see cref="AppContext"/>.</param>
-        public async Task InvokeAsync(HttpContext httpContext, Core.AppContext appContext)
+        appContext.Items = new(httpContext.Items)
         {
-            appContext.CancellationToken = httpContext.RequestAborted;
+            { "domain", httpContext.Request.Host.ToString() },
+        };
 
-            appContext.Items = new(httpContext.Items)
-            {
-                { "domain", httpContext.Request.Host.ToString() },
-            };
-
-            if (httpContext.Request.Headers.ContainsKey("User-Agent"))
-            {
-                appContext.Items.Add("remote-agent", httpContext.Request.Headers["User-Agent"].ToString());
-            }
-
-            if (httpContext.Connection.RemoteIpAddress is not null)
-            {
-                appContext.Items.Add("remote-address", httpContext.Connection.RemoteIpAddress.ToString());
-            }
-
-            if (PrincipalProvider.IsSignedIn(httpContext.User))
-            {
-                var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
-                appContext.User = user;
-                appContext.Tenant = tenant;
-            }
-
-            await _next(httpContext);
+        if (httpContext.Request.Headers.ContainsKey("User-Agent"))
+        {
+            appContext.Items.Add("remote-agent", httpContext.Request.Headers["User-Agent"].ToString());
         }
+
+        if (httpContext.Connection.RemoteIpAddress is not null)
+        {
+            appContext.Items.Add("remote-address", httpContext.Connection.RemoteIpAddress.ToString());
+        }
+
+        if (PrincipalProvider.IsSignedIn(httpContext.User))
+        {
+            var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
+            appContext.User = user;
+            appContext.Tenant = tenant;
+        }
+
+        await _next(httpContext);
     }
 }
