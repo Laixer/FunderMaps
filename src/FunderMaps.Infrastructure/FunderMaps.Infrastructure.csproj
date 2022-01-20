@@ -12,9 +12,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
-    <PackageReference Include="AWSSDK.S3" Version="3.7.4.9" />
-    <PackageReference Include="MailKit" Version="2.15.0" />
+    <PackageReference Include="System.Linq.Async" Version="5.1.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.7.14" />
+    <PackageReference Include="MailKit" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>

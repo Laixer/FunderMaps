@@ -141,28 +141,43 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     {
         var sql = @"
             WITH identifier AS (
-	            SELECT
+                SELECT
                         type,
                         id
                 FROM    geocoder.id_parser(@id)
+                LIMIT	1
             ),
             tracker AS (
                 INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
                 SELECT
                         @tenant,
-	                    'analysis3',
-	                    ac.building_id
-                FROM    data.analysis_complete ac, identifier
-                WHERE
-                    CASE
-                        WHEN identifier.type = 'fundermaps' THEN ac.building_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_address' THEN ac.address_external_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_building' THEN ac.external_building_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_berth' THEN ac.external_building_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_posting' THEN ac.external_building_id = identifier.id
-                    END
-                LIMIT 1
-                RETURNING pt.building_id
+                        'analysis3',
+                        CASE
+                            WHEN identifier.type = 'fundermaps' THEN (
+                                SELECT-- AnalysisComplete
+                                        ac.building_id
+                                FROM    data.analysis_complete ac
+                                WHERE   ac.building_id = identifier.id
+                                LIMIT   1
+                            )
+                            WHEN identifier.type = 'nl_bag_building' OR identifier.type = 'nl_bag_berth' OR identifier.type = 'nl_bag_posting' THEN (
+                                SELECT-- AnalysisComplete
+                                        ac.building_id
+                                FROM    data.analysis_complete ac
+                                WHERE   ac.external_building_id = identifier.id
+                                LIMIT   1
+                            )
+                            WHEN identifier.type = 'nl_bag_address' THEN  (
+                                SELECT-- AnalysisComplete
+                                        ac.building_id
+                                FROM    data.analysis_complete ac
+                                WHERE   ac.address_external_id = identifier.id
+                                LIMIT   1
+                            )
+                        END
+                FROM    identifier
+                LIMIT   1
+                RETURNING building_id
             )
             SELECT-- AnalysisComplete
                     ac.building_id,

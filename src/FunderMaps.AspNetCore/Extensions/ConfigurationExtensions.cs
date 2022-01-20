@@ -3,67 +3,66 @@ using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
 using System.Text;
 
-namespace FunderMaps.Extensions
+namespace FunderMaps.Extensions;
+
+/// <summary>
+///     Extensions to the configuration interface.
+/// </summary>
+public static class ConfigurationExtensions
 {
     /// <summary>
-    ///     Extensions to the configuration interface.
+    ///     Get signature key from configuration and convert into security key.
     /// </summary>
-    public static class ConfigurationExtensions
+    /// <param name="configuration">The configuration.</param>
+    public static SymmetricSecurityKey GetJwtSigningKey(this IConfiguration configuration)
     {
-        /// <summary>
-        ///     Get signature key from configuration and convert into security key.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public static SymmetricSecurityKey GetJwtSigningKey(this IConfiguration configuration)
+        if (configuration is null)
         {
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
-
-            return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SignatureKey"]));
+            throw new ArgumentNullException(nameof(configuration));
         }
 
-        /// <summary>
-        ///     Get the issuer from the configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public static string GetJwtIssuer(this IConfiguration configuration)
-        {
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SignatureKey"]));
+    }
 
-            return configuration["Jwt:Issuer"];
+    /// <summary>
+    ///     Get the issuer from the configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public static string GetJwtIssuer(this IConfiguration configuration)
+    {
+        if (configuration is null)
+        {
+            throw new ArgumentNullException(nameof(configuration));
         }
 
-        /// <summary>
-        ///     Get the audience from the configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public static string GetJwtAudience(this IConfiguration configuration)
-        {
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+        return configuration["Jwt:Issuer"];
+    }
 
-            return configuration["Jwt:Audience"];
+    /// <summary>
+    ///     Get the audience from the configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public static string GetJwtAudience(this IConfiguration configuration)
+    {
+        if (configuration is null)
+        {
+            throw new ArgumentNullException(nameof(configuration));
         }
 
-        /// <summary>
-        ///     Get the token expiration time in minutes from the configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public static TimeSpan GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
-        {
-            if (configuration is null)
-            {
-                throw new ArgumentNullException(nameof(configuration));
-            }
+        return configuration["Jwt:Audience"];
+    }
 
-            return TimeSpan.FromMinutes(double.Parse(configuration["Jwt:TokenValidity"], NumberFormatInfo.InvariantInfo));
+    /// <summary>
+    ///     Get the token expiration time in minutes from the configuration.
+    /// </summary>
+    /// <param name="configuration">The configuration.</param>
+    public static TimeSpan GetJwtTokenExpirationInMinutes(this IConfiguration configuration)
+    {
+        if (configuration is null)
+        {
+            throw new ArgumentNullException(nameof(configuration));
         }
+
+        return TimeSpan.FromMinutes(double.Parse(configuration["Jwt:TokenValidity"], NumberFormatInfo.InvariantInfo));
     }
 }
