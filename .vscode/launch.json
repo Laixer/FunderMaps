@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.BatchNode/bin/Debug/net5.0/FunderMaps.BatchNode",
+            "program": "${workspaceFolder}/src/FunderMaps.BatchNode/bin/Debug/net6.0/FunderMaps.BatchNode",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.BatchNode",
             "stopAtEntry": false,
@@ -25,7 +25,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/net5.0/FunderMaps.WebApi",
+            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/net6.0/FunderMaps.WebApi",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.WebApi",
             "stopAtEntry": false,
@@ -43,7 +43,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/net5.0/FunderMaps.Webservice",
+            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/net6.0/FunderMaps.Webservice",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Webservice",
             "stopAtEntry": false,
@@ -61,7 +61,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/net5.0/FunderMaps.Portal",
+            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/net6.0/FunderMaps.Portal",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Portal",
             "stopAtEntry": false,
