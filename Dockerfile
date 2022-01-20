@@ -31,6 +31,7 @@ RUN dotnet publish -c release -o /app \
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0
 ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
+ENV Logging__Console__FormatterName=Simple
 WORKDIR /app
 COPY --from=build /app .
 RUN if grep -Fxq  "FunderMaps.BatchNode" SUBTOOL ; then \
