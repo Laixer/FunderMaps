@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
@@ -20,55 +20,55 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     {
         var sql = @"
                 WITH tracker AS (
-		            INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
-		            SELECT
-			            @tenant,
-			            'analysis',
-			            aa.id
-		            FROM    data.analysis_address AS aa
-		            WHERE   aa.id = @id
-		            LIMIT 1
-		            returning pt.building_id
+                    INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+                    SELECT
+                        @tenant,
+                        'analysis',
+                        aa.id
+                    FROM    data.analysis_address AS aa
+                    WHERE   aa.id = @id
+                    LIMIT 1
+                    returning pt.building_id
                 )
                 SELECT -- AnalysisAddress
-				        aa.id,
-				        aa.external_id,
-				        aa.external_source,
-				        aa.construction_year,
-				        aa.construction_year_source,
-				        aa.address_id,
-				        aa.address_external_id,
-				        aa.postal_code,
-				        aa.neighborhood_id,
-				        aa.groundwater_level,
-				        aa.soil,
-				        aa.building_height,
-				        aa.ground_level,
-				        aa.cpt,
-				        aa.monitoring_well,
-				        aa.recovery_advised,
-				        aa.damage_cause,
-				        aa.substructure,
-				        aa.document_name,
-				        aa.document_date,
-				        aa.inquiry_type,
-				        aa.recovery_type,
-				        aa.recovery_status,
-				        aa.surface_area,
-				        aa.living_area,
-				        aa.foundation_bearing_layer,
-				        aa.restoration_costs,
-				        aa.foundation_type,
-				        aa.foundation_type_reliability,
-				        aa.drystand,
-				        aa.drystand_reliability,
-				        aa.drystand_risk,
-				        aa.dewatering_depth,
-				        aa.dewatering_depth_reliability,
-				        aa.dewatering_depth_risk,
-				        aa.bio_infection,
-				        aa.bio_infection_reliability,
-				        aa.bio_infection_risk
+                        aa.id,
+                        aa.external_id,
+                        aa.external_source,
+                        aa.construction_year,
+                        aa.construction_year_source,
+                        aa.address_id,
+                        aa.address_external_id,
+                        aa.postal_code,
+                        aa.neighborhood_id,
+                        aa.groundwater_level,
+                        aa.soil,
+                        aa.building_height,
+                        aa.ground_level,
+                        aa.cpt,
+                        aa.monitoring_well,
+                        aa.recovery_advised,
+                        aa.damage_cause,
+                        aa.substructure,
+                        aa.document_name,
+                        aa.document_date,
+                        aa.inquiry_type,
+                        aa.recovery_type,
+                        aa.recovery_status,
+                        aa.surface_area,
+                        aa.living_area,
+                        aa.foundation_bearing_layer,
+                        aa.restoration_costs,
+                        aa.foundation_type,
+                        aa.foundation_type_reliability,
+                        aa.drystand,
+                        aa.drystand_reliability,
+                        aa.drystand_risk,
+                        aa.dewatering_depth,
+                        aa.dewatering_depth_reliability,
+                        aa.dewatering_depth_risk,
+                        aa.bio_infection,
+                        aa.bio_infection_reliability,
+                        aa.bio_infection_risk
                 FROM    data.analysis_address AS aa, tracker
                 WHERE   aa.id = tracker.building_id
                 LIMIT   1";
@@ -94,8 +94,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                     INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
                     SELECT
                         @tenant,
-	                    'analysis2',
-	                    ac.building_id
+                        'analysis2',
+                        ac.building_id
                     FROM data.analysis_complete ac
                     WHERE ac.building_id = @id
                     LIMIT 1
@@ -232,55 +232,55 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     {
         var sql = @"
                 WITH tracker AS (
-		            INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
-		            SELECT
-			            @tenant,
-			            'analysis',
-			            aa.id
-		            FROM    data.analysis_address AS aa
-		            WHERE   aa.external_id = upper(@external_id)
-		            LIMIT 1
-		            returning pt.building_id
+                    INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+                    SELECT
+                        @tenant,
+                        'analysis',
+                        aa.id
+                    FROM    data.analysis_address AS aa
+                    WHERE   aa.external_id = upper(@external_id)
+                    LIMIT 1
+                    returning pt.building_id
                 )
                 SELECT -- AnalysisAddress
-				        aa.id,
-				        aa.external_id,
-				        aa.external_source,
-				        aa.construction_year,
-				        aa.construction_year_source,
-				        aa.address_id,
-				        aa.address_external_id,
-				        aa.postal_code,
-				        aa.neighborhood_id,
-				        aa.groundwater_level,
-				        aa.soil,
-				        aa.building_height,
-				        aa.ground_level,
-				        aa.cpt,
-				        aa.monitoring_well,
-				        aa.recovery_advised,
-				        aa.damage_cause,
-				        aa.substructure,
-				        aa.document_name,
-				        aa.document_date,
-				        aa.inquiry_type,
-				        aa.recovery_type,
-				        aa.recovery_status,
-				        aa.surface_area,
-				        aa.living_area,
-				        aa.foundation_bearing_layer,
-				        aa.restoration_costs,
-				        aa.foundation_type,
-				        aa.foundation_type_reliability,
-				        aa.drystand,
-				        aa.drystand_reliability,
-				        aa.drystand_risk,
-				        aa.dewatering_depth,
-				        aa.dewatering_depth_reliability,
-				        aa.dewatering_depth_risk,
-				        aa.bio_infection,
-				        aa.bio_infection_reliability,
-				        aa.bio_infection_risk
+                        aa.id,
+                        aa.external_id,
+                        aa.external_source,
+                        aa.construction_year,
+                        aa.construction_year_source,
+                        aa.address_id,
+                        aa.address_external_id,
+                        aa.postal_code,
+                        aa.neighborhood_id,
+                        aa.groundwater_level,
+                        aa.soil,
+                        aa.building_height,
+                        aa.ground_level,
+                        aa.cpt,
+                        aa.monitoring_well,
+                        aa.recovery_advised,
+                        aa.damage_cause,
+                        aa.substructure,
+                        aa.document_name,
+                        aa.document_date,
+                        aa.inquiry_type,
+                        aa.recovery_type,
+                        aa.recovery_status,
+                        aa.surface_area,
+                        aa.living_area,
+                        aa.foundation_bearing_layer,
+                        aa.restoration_costs,
+                        aa.foundation_type,
+                        aa.foundation_type_reliability,
+                        aa.drystand,
+                        aa.drystand_reliability,
+                        aa.drystand_risk,
+                        aa.dewatering_depth,
+                        aa.dewatering_depth_reliability,
+                        aa.dewatering_depth_risk,
+                        aa.bio_infection,
+                        aa.bio_infection_reliability,
+                        aa.bio_infection_risk
                 FROM    data.analysis_address AS aa, tracker
                 WHERE   aa.id = tracker.building_id
                 LIMIT   1";
@@ -306,8 +306,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                     INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
                     SELECT
                         @tenant,
-	                    'analysis2',
-	                    ac.building_id
+                        'analysis2',
+                        ac.building_id
                     FROM data.analysis_complete ac
                     WHERE ac.external_building_id = upper(@external_id)
                     LIMIT 1
@@ -354,55 +354,55 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     {
         var sql = @"
                 WITH tracker AS (
-		            INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
-		            SELECT
-			            @tenant,
-			            'analysis',
-			            aa.id
-		            FROM    data.analysis_address AS aa
-		            WHERE   aa.address_external_id = upper(@external_id)
-		            LIMIT 1
-		            returning pt.building_id
+                    INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
+                    SELECT
+                        @tenant,
+                        'analysis',
+                        aa.id
+                    FROM    data.analysis_address AS aa
+                    WHERE   aa.address_external_id = upper(@external_id)
+                    LIMIT 1
+                    returning pt.building_id
                 )
                 SELECT -- AnalysisAddress
-				        aa.id,
-				        aa.external_id,
-				        aa.external_source,
-				        aa.construction_year,
-				        aa.construction_year_source,
-				        aa.address_id,
-				        aa.address_external_id,
-				        aa.postal_code,
-				        aa.neighborhood_id,
-				        aa.groundwater_level,
-				        aa.soil,
-				        aa.building_height,
-				        aa.ground_level,
-				        aa.cpt,
-				        aa.monitoring_well,
-				        aa.recovery_advised,
-				        aa.damage_cause,
-				        aa.substructure,
-				        aa.document_name,
-				        aa.document_date,
-				        aa.inquiry_type,
-				        aa.recovery_type,
-				        aa.recovery_status,
-				        aa.surface_area,
-				        aa.living_area,
-				        aa.foundation_bearing_layer,
-				        aa.restoration_costs,
-				        aa.foundation_type,
-				        aa.foundation_type_reliability,
-				        aa.drystand,
-				        aa.drystand_reliability,
-				        aa.drystand_risk,
-				        aa.dewatering_depth,
-				        aa.dewatering_depth_reliability,
-				        aa.dewatering_depth_risk,
-				        aa.bio_infection,
-				        aa.bio_infection_reliability,
-				        aa.bio_infection_risk
+                        aa.id,
+                        aa.external_id,
+                        aa.external_source,
+                        aa.construction_year,
+                        aa.construction_year_source,
+                        aa.address_id,
+                        aa.address_external_id,
+                        aa.postal_code,
+                        aa.neighborhood_id,
+                        aa.groundwater_level,
+                        aa.soil,
+                        aa.building_height,
+                        aa.ground_level,
+                        aa.cpt,
+                        aa.monitoring_well,
+                        aa.recovery_advised,
+                        aa.damage_cause,
+                        aa.substructure,
+                        aa.document_name,
+                        aa.document_date,
+                        aa.inquiry_type,
+                        aa.recovery_type,
+                        aa.recovery_status,
+                        aa.surface_area,
+                        aa.living_area,
+                        aa.foundation_bearing_layer,
+                        aa.restoration_costs,
+                        aa.foundation_type,
+                        aa.foundation_type_reliability,
+                        aa.drystand,
+                        aa.drystand_reliability,
+                        aa.drystand_risk,
+                        aa.dewatering_depth,
+                        aa.dewatering_depth_reliability,
+                        aa.dewatering_depth_risk,
+                        aa.bio_infection,
+                        aa.bio_infection_reliability,
+                        aa.bio_infection_risk
                 FROM    data.analysis_address AS aa, tracker
                 WHERE   aa.id = tracker.building_id
                 LIMIT   1";
@@ -428,8 +428,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                     INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
                     SELECT
                         @tenant,
-	                    'analysis2',
-	                    ac.building_id
+                        'analysis2',
+                        ac.building_id
                     FROM data.analysis_complete ac
                     WHERE   ac.address_external_id = upper(@external_id)
                     LIMIT 1
@@ -475,7 +475,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     {
         var sql = @"
             WITH identifier AS (
-	            SELECT
+                SELECT
                         type,
                         id
                 FROM    geocoder.id_parser(@id)
@@ -484,8 +484,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                 INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
                 SELECT
                         @tenant,
-	                    'riskindex',
-	                    ac.building_id
+                        'riskindex',
+                        ac.building_id
                 FROM    data.analysis_complete ac, identifier
                 WHERE
                     CASE
@@ -499,23 +499,23 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                 RETURNING pt.building_id
             )
             SELECT -- AnalysisComplete
-				    'a'::data.foundation_risk_indication <> ANY (ARRAY[
-				    CASE
-						    WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
-						    ELSE ac.drystand_risk
-				    END,
-				    CASE
-						    WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
-						    ELSE ac.bio_infection_risk
-				    END,
-				    CASE
-						    WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
-						    ELSE ac.dewatering_depth_risk
-				    END,
-				    CASE
-						    WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
-						    ELSE ac.unclassified_risk
-				    END]) AS has_risk
+                    'a'::data.foundation_risk_indication <> ANY (ARRAY[
+                    CASE
+                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.drystand_risk
+                    END,
+                    CASE
+                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.bio_infection_risk
+                    END,
+                    CASE
+                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.dewatering_depth_risk
+                    END,
+                    CASE
+                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
+                            ELSE ac.unclassified_risk
+                    END]) AS has_risk
             FROM    data.analysis_complete ac, tracker
             WHERE   ac.building_id = tracker.building_id
             LIMIT   1";
