@@ -1,4 +1,4 @@
-using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
@@ -349,6 +349,10 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     /// <summary>
     ///     Gets an analysis product by its external address id and source.
     /// </summary>
+    /// <remarks>
+    ///     This method is hit often but rarely with the same input. Therefore there
+    ///     is almost no advantage of caching the result.
+    /// </remarks>
     /// <param name="id">External address id.</param>
     public async Task<AnalysisProduct> GetByAddressExternalIdAsync(string id)
     {
@@ -467,6 +471,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         return MapFromReader2(reader);
     }
 
+    // TODO: Needs optimization.
     /// <summary>
     ///     Gets the risk index by its internal building id.
     /// </summary>
@@ -479,6 +484,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                         type,
                         id
                 FROM    geocoder.id_parser(@id)
+                LIMIT	1
             ),
             tracker AS (
                 INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
