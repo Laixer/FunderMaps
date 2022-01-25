@@ -10,6 +10,12 @@ namespace FunderMaps.Core.Interfaces.Repositories
         /// <summary>
         ///     Retrieve all product telemetrics.
         /// </summary>
+        IAsyncEnumerable<ProductTelemetry2> ListAllAsync();
+
+        // TODO: Rename
+        /// <summary>
+        ///     Retrieve all product telemetrics.
+        /// </summary>
         IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync();
     }
 }
