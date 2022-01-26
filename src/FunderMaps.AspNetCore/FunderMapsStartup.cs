@@ -113,17 +113,6 @@ public class FunderMapsStartup : IHostingStartup
             {
                 // Add the authentication layer.
                 services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
-                // services.AddAuthentication(options =>
-                // {
-                //     options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                //     options.DefaultSignInScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-                //     options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-                // })
-                // .AddCookie(options =>
-                // {
-                //     options.LoginPath = "/account/login";
-                //     options.LogoutPath = "/account/logout";
-                // })
                 .AddJwtBearer(options =>
                 {
                     options.SaveToken = false;

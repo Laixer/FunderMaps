@@ -1,5 +1,6 @@
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 
 namespace FunderMaps.Admin;
@@ -27,48 +28,46 @@ public class Startup
     ///     Order is undetermined when configuring services.
     /// </remarks>
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-    private static void StartupConfigureServices(IServiceCollection services)
+    private void StartupConfigureServices(IServiceCollection services)
     {
         // Register components from reference assemblies.
         services.AddFunderMapsCoreServices();
         services.AddFunderMapsInfrastructureServices();
         services.AddFunderMapsDataServices("FunderMapsConnection");
 
+        // Add the authentication layer.
+        services.AddAuthentication(options =>
         {
-            // Add the authentication layer.
-            services.AddAuthentication(options =>
+            options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultSignInScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+        })
+        .AddCookie(options =>
+        {
+            options.LoginPath = "/account/login";
+            options.LogoutPath = "/account/logout";
+        })
+        .AddJwtBearer(options =>
+        {
+            options.SaveToken = false;
+            options.TokenValidationParameters = new AspNetCore.Authentication.JwtTokenValidationParameters
             {
-                options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(options =>
-            {
-                options.LoginPath = "/account/login";
-                options.LogoutPath = "/account/logout";
-            });
-            // .AddJwtBearer(options =>
-            // {
-            //     options.SaveToken = false;
-            //     options.TokenValidationParameters = new AspNetCore.Authentication.JwtTokenValidationParameters
-            //     {
-            //         ValidIssuer = Configuration.GetJwtIssuer(),
-            //         ValidAudience = Configuration.GetJwtAudience(),
-            //         IssuerSigningKey = Configuration.GetJwtSigningKey(),
-            //         Valid = Configuration.GetJwtTokenExpirationInMinutes(),
-            //     };
-            // });
+                ValidIssuer = Configuration.GetJwtIssuer(),
+                ValidAudience = Configuration.GetJwtAudience(),
+                IssuerSigningKey = Configuration.GetJwtSigningKey(),
+                Valid = Configuration.GetJwtTokenExpirationInMinutes(),
+            };
+        });
 
-            // Add the authorization layer.
-            services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
+        // Add the authorization layer.
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
 
-                options.AddFunderMapsPolicy();
-            });
-        }
+            options.AddFunderMapsPolicy();
+        });
 
         // Adds the core authentication service to the container.
         services.AddScoped<AspNetCore.Services.SignInService>();
