@@ -16,6 +16,7 @@ jobs:
           - FunderMaps.Webservice
           - FunderMaps.BatchNode
           - FunderMaps.Portal
+          - FunderMaps.Admin
 
     steps:
     - name: Checkout repository
