@@ -28,15 +28,26 @@ else
                 <tr>
                     <td>@tracker.Name</td>
                     <td>@tracker.Product</td>
-                    <td>@tracker.Count</td>
+                    <td>@tracker.Count.ToString("#,##0")</td>
                 </tr>
             }
         </tbody>
     </table>
 }
 
+<button class="btn btn-primary mb-2" @onclick="RefreshData">Reload</button>
+
 @code {
     private List<Core.Entities.ProductTelemetry2> trackers = new();
+
+    private async Task RefreshData()
+    {
+        trackers.Clear();
+        await foreach (var metric in TelemetryRepository.ListAllAsync())
+        {
+            trackers.Add(metric);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
