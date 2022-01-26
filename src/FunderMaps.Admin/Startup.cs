@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -29,8 +30,56 @@ public class Startup
     private static void StartupConfigureServices(IServiceCollection services)
     {
         // Register components from reference assemblies.
+        services.AddFunderMapsCoreServices();
         services.AddFunderMapsInfrastructureServices();
         services.AddFunderMapsDataServices("FunderMapsConnection");
+
+        {
+            // Add the authentication layer.
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/account/login";
+                options.LogoutPath = "/account/logout";
+            });
+            // .AddJwtBearer(options =>
+            // {
+            //     options.SaveToken = false;
+            //     options.TokenValidationParameters = new AspNetCore.Authentication.JwtTokenValidationParameters
+            //     {
+            //         ValidIssuer = Configuration.GetJwtIssuer(),
+            //         ValidAudience = Configuration.GetJwtAudience(),
+            //         IssuerSigningKey = Configuration.GetJwtSigningKey(),
+            //         Valid = Configuration.GetJwtTokenExpirationInMinutes(),
+            //     };
+            // });
+
+            // Add the authorization layer.
+            services.AddAuthorization(options =>
+            {
+                options.FallbackPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+
+                options.AddFunderMapsPolicy();
+            });
+        }
+
+        // Adds the core authentication service to the container.
+        services.AddScoped<AspNetCore.Services.SignInService>();
+        services.AddTransient<AspNetCore.Authentication.ISecurityTokenProvider, AspNetCore.Authentication.JwtBearerTokenProvider>();
+
+        // NOTE: Register the HttpContextAccessor service to the container.
+        //       The HttpContextAccessor exposes a singleton holding the
+        //       HttpContext within a scoped resolver, or null outside the scope.
+        //       Some components require the HttpContext and its features when the
+        //       related service is being resolved within the scope.
+        services.AddHttpContextAccessor();
 
         services.AddRazorPages();
         services.AddServerSideBlazor();
