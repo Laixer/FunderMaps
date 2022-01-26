@@ -1,0 +1,48 @@
+@page "/tracker"
+@attribute [Authorize(Policy = "AdministratorPolicy")]
+
+<PageTitle>Webservice metrics</PageTitle>
+
+@using FunderMaps.Core.Interfaces.Repositories
+@inject ITelemetryRepository TelemetryRepository
+
+<h1>Webservice metrics</h1>
+
+@if (trackers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Product</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tracker in trackers)
+            {
+                <tr>
+                    <td>@tracker.Name</td>
+                    <td>@tracker.Product</td>
+                    <td>@tracker.Count</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Core.Entities.ProductTelemetry2> trackers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var metric in TelemetryRepository.ListAllAsync())
+        {
+            trackers.Add(metric);
+        }
+    }
+}

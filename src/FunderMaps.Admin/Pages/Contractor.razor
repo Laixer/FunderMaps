@@ -1,0 +1,48 @@
+@page "/contractor"
+
+@using Core
+
+<PageTitle>Contractor</PageTitle>
+
+<h1>Contractor</h1>
+
+@inject FunderMaps.Core.Interfaces.Repositories.IOrganizationRepository OrganizationRepository;
+
+@if (contractors == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contractor in contractors)
+            {
+                <tr>
+                    <td>@contractor.Id</td>
+                    <td>@contractor.Name</td>
+                    <td>@contractor.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Core.Entities.Organization> contractors = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var item in OrganizationRepository.ListAllAsync(Navigation.All))
+        {
+            contractors.Add(item);
+        }
+    }
+}

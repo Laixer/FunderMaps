@@ -1,0 +1,51 @@
+@page "/security"
+
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@using FunderMaps.AspNetCore.Services
+@inject SignInService SignInService
+
+<PageTitle>Security</PageTitle>
+
+<h1>Security</h1>
+
+<p>Generate a JWT token.</p>
+
+<div class="form-inline">
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Token ID:</label>
+        <label for="staticEmail2" class="sr-only">@token?.Id</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Issuer:</label>
+        <label for="staticEmail2" class="sr-only">@token?.Issuer</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">ValidFrom:</label>
+        <label for="staticEmail2" class="sr-only">@token?.ValidFrom</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">ValidTo:</label>
+        <label for="staticEmail2" class="sr-only">@token?.ValidTo</label>
+    </div>
+    <div class="form-group mb-2">
+        <textarea disabled @bind="jwtToken" rows="10" class="form-control"></textarea>
+    </div>
+    <div class="form-group mb-2">
+        <button type="submit" class="btn btn-primary mb-2" @onclick="GenerateToken">Generate token</button>
+    </div>
+</div>
+
+@code {
+    private string jwtToken;
+    private Microsoft.IdentityModel.Tokens.SecurityToken token;
+
+    private async Task GenerateToken()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        var securityToken = await SignInService.SignInAsync(authState.User);
+        token = securityToken.Token;
+        jwtToken = securityToken.TokenString;
+    }
+}
