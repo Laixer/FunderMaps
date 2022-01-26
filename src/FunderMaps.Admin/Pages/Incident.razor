@@ -40,7 +40,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await foreach (var item in IncidentRepository.ListAllAsync(FunderMaps.Core.Navigation.All))
+        await foreach (var item in IncidentRepository.ListAllAsync(new Core.Navigation
+        {
+            Limit = 5,
+            Offset = 0
+        }))
         {
             incidents.Add(item);
         }
