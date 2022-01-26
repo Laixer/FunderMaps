@@ -1,6 +1,4 @@
-@page "/contractor"
-
-@using Core
+@page "/contractor/{Offset:int?}"
 
 <PageTitle>Contractor</PageTitle>
 
@@ -33,14 +31,39 @@ else
             }
         </tbody>
     </table>
+
+    <nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+        @for (var i = 1; i <= pageCount; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/contractor/@i">@i</a>
+                    @* <NavLink href="/contractor/i">@i</NavLink> *@
+                </li>
+            }
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
 }
 
 @code {
     private List<Core.Entities.Organization> contractors = new();
 
+    [Parameter]
+    public int Offset { get; set; } = 0;
+
+    private long pageCount = 0;
+
     protected override async Task OnInitializedAsync()
     {
-        await foreach (var item in OrganizationRepository.ListAllAsync(Navigation.All))
+        pageCount = await OrganizationRepository.CountAsync() / 2;
+
+        await foreach (var item in OrganizationRepository.ListAllAsync(new Core.Navigation
+        {
+            Limit = 2,
+            Offset = Offset * 2,
+        }))
         {
             contractors.Add(item);
         }
