@@ -26,7 +26,7 @@ else
         @foreach (var tracker in trackers)
             {
                 <tr>
-                    <td>@tracker.Name</td>
+                    <td><NavLink class="nav-link" href="@tracker.DetailLink">@tracker.Name</NavLink></td>
                     <td>@tracker.Product</td>
                     <td>@tracker.Count.ToString("#,##0")</td>
                 </tr>
@@ -38,14 +38,46 @@ else
 <button class="btn btn-primary mb-2" @onclick="RefreshData">Reload</button>
 
 @code {
-    private List<Core.Entities.ProductTelemetry2> trackers = new();
+
+    public class Woei
+    {
+        /// <summary>
+        /// Organization ID.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Organization name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Product name.
+        /// </summary>
+        public string Product { get; set; }
+
+        /// <summary>
+        /// Product hit count.
+        /// </summary>
+        public int Count { get; set; }
+
+        public string DetailLink { get => $"/tracker/{Id}"; }
+    }
+
+    private List<Woei> trackers = new();
 
     private async Task RefreshData()
     {
         trackers.Clear();
         await foreach (var metric in TelemetryRepository.ListAllAsync())
         {
-            trackers.Add(metric);
+            trackers.Add(new Woei
+            {
+                Id = metric.Id,
+                Count = metric.Count,
+                Name = metric.Name,
+                Product = metric.Product,
+            });
         }
     }
 
@@ -53,7 +85,13 @@ else
     {
         await foreach (var metric in TelemetryRepository.ListAllAsync())
         {
-            trackers.Add(metric);
+            trackers.Add(new Woei
+            {
+                Id = metric.Id,
+                Count = metric.Count,
+                Name = metric.Name,
+                Product = metric.Product,
+            });
         }
     }
 }

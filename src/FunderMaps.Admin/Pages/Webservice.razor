@@ -1,4 +1,4 @@
-@page "/webservice"
+@page "/webservice/{Id?}"
 
 @using FunderMaps.Core.Interfaces
 @inject IProductService ProductService
@@ -14,7 +14,7 @@
 
 <div class="form-row align-items-center">
     <div class="col-auto">
-        <input type="text" class="form-control mb-2" @bind="building_id" placeholder="BAG">
+        <input type="text" class="form-control mb-2" @bind="Id" placeholder="BAG">
     </div>
     <div class="col-auto">
         <button type="submit" class="btn btn-primary mb-2" @onclick="GetProduct">Request</button>
@@ -56,9 +56,26 @@
 }
 
 @code {
-    private string building_id;
+    [Parameter]
+    public string Id { get; set; }
 
     private FunderMaps.Core.Types.Products.AnalysisProduct3 product;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpContext = HttpContextAccessor.HttpContext;
+
+        var (user, tenant) =
+        FunderMaps.AspNetCore.Authentication.PrincipalProvider.GetUserAndTenant<FunderMaps.Core.Entities.User,
+        FunderMaps.Core.Entities.Organization>(httpContext.User);
+        AppContext.User = user;
+        AppContext.Tenant = tenant;
+
+        if (!string.IsNullOrEmpty(Id))
+        {
+            product = await ProductService.GetAnalysis3Async(Id);
+        }
+    }
 
     private async Task GetProduct()
     {
@@ -70,6 +87,6 @@
         AppContext.User = user;
         AppContext.Tenant = tenant;
 
-        product = await ProductService.GetAnalysis3Async(building_id);
+        product = await ProductService.GetAnalysis3Async(Id);
     }
 }
