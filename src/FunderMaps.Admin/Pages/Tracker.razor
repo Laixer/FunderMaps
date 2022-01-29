@@ -26,7 +26,7 @@ else
         @foreach (var tracker in trackers)
             {
                 <tr>
-                    <td><NavLink class="nav-link" href="@tracker.DetailLink">@tracker.Name</NavLink></td>
+                    <td><NavLink href="@tracker.DetailLink">@tracker.Name</NavLink></td>
                     <td>@tracker.Product</td>
                     <td>@tracker.Count.ToString("#,##0")</td>
                 </tr>
