@@ -1,0 +1,97 @@
+@page "/tracker"
+@attribute [Authorize(Policy = "AdministratorPolicy")]
+
+<PageTitle>Webservice metrics</PageTitle>
+
+@using FunderMaps.Core.Interfaces.Repositories
+@inject ITelemetryRepository TelemetryRepository
+
+<h1>Webservice metrics</h1>
+
+@if (trackers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Product</th>
+            <th>Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tracker in trackers)
+            {
+                <tr>
+                    <td><NavLink href="@tracker.DetailLink">@tracker.Name</NavLink></td>
+                    <td>@tracker.Product</td>
+                    <td>@tracker.Count.ToString("#,##0")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<button class="btn btn-primary mb-2" @onclick="RefreshData">Reload</button>
+
+@code {
+
+    public class Woei
+    {
+        /// <summary>
+        /// Organization ID.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Organization name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Product name.
+        /// </summary>
+        public string Product { get; set; }
+
+        /// <summary>
+        /// Product hit count.
+        /// </summary>
+        public int Count { get; set; }
+
+        public string DetailLink { get => $"/tracker/{Id}"; }
+    }
+
+    private List<Woei> trackers = new();
+
+    private async Task RefreshData()
+    {
+        trackers.Clear();
+        await foreach (var metric in TelemetryRepository.ListAllAsync())
+        {
+            trackers.Add(new Woei
+            {
+                Id = metric.Id,
+                Count = metric.Count,
+                Name = metric.Name,
+                Product = metric.Product,
+            });
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var metric in TelemetryRepository.ListAllAsync())
+        {
+            trackers.Add(new Woei
+            {
+                Id = metric.Id,
+                Count = metric.Count,
+                Name = metric.Name,
+                Product = metric.Product,
+            });
+        }
+    }
+}

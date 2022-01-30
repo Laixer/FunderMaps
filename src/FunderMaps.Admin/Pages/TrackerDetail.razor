@@ -1,0 +1,71 @@
+@page "/tracker/{tenant:guid}"
+@attribute [Authorize(Policy = "AdministratorPolicy")]
+
+<PageTitle>Webservice metrics</PageTitle>
+
+@using FunderMaps.Core.Interfaces.Repositories
+@inject ITelemetryRepository TelemetryRepository
+
+<h1>Webservice recent</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Product</th>
+            <th>Building ID</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var row in rows)
+        {
+            <tr>
+                <td>@row.CreateDate</td>
+                <td>@row.Product</td>
+                <td>
+                    <NavLink href="@row.BuildingLink">@row.BuildingId</NavLink>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter]
+    public Guid Tenant { get; set; }
+
+    public class Woei
+    {
+        /// <summary>
+        /// Product name.
+        /// </summary>
+        public string Product { get; set; }
+
+        /// <summary>
+        /// Building ID.
+        /// </summary>
+        public string BuildingId { get; set; }
+
+        /// <summary>
+        /// Registration date.
+        /// </summary>
+        public DateTime CreateDate { get; set; }
+
+        public string BuildingLink { get => $"/webservice/{BuildingId}"; }
+    }
+
+    private List<Woei> rows = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var row in TelemetryRepository.ListRecentByTenantAsync(Tenant))
+        {
+            rows.Add(new Woei
+            {
+                Product = row.Product,
+                BuildingId = row.BuildingId,
+                CreateDate = row.CreateDate,
+            });
+        }
+    }
+}

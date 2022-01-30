@@ -1,0 +1,78 @@
+@page "/identity"
+
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Identity</PageTitle>
+
+<h2>Policies</h2>
+
+<AuthorizeView Policy="AdministratorPolicy">
+    <Authorized>
+        <p>You are an administrator.</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are <b>NOT</b> an administrator.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Policy="SuperuserPolicy">
+    <Authorized>
+        <p>You are a superuser.</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are <b>NOT</b> a superuser.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Policy="VerifierPolicy">
+    <Authorized>
+        <p>You are a content verifier.</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are <b>NOT</b> a content verifier.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Policy="WriterPolicy">
+    <Authorized>
+        <p>You are a content writer.</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are <b>NOT</b> a content writer.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<AuthorizeView Policy="ReaderPolicy">
+    <Authorized>
+        <p>You are a content reader.</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are <b>NOT</b> a content reader.</p>
+    </NotAuthorized>
+</AuthorizeView>
+
+<h2>Claims</h2>
+
+@if (_claims.Count() > 0)
+{
+    <ul>
+    @foreach (var claim in _claims)
+        {
+            <li>@claim.Type: @claim.Value</li>
+        }
+    </ul>
+}
+
+@code {
+    private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        _claims = user.Claims;
+    }
+}

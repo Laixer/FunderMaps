@@ -9,10 +9,11 @@ using System.Security.Claims;
 
 namespace FunderMaps.AspNetCore.Authentication;
 
+// TODO: This should be internal.
 /// <summary>
 ///     Jwt bearer token provider.
 /// </summary>
-internal class JwtBearerTokenProvider : ISecurityTokenProvider
+public class JwtBearerTokenProvider : ISecurityTokenProvider
 {
     /// <summary>
     ///     The <see cref="JwtBearerOptions"/> used.

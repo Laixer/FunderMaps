@@ -165,5 +165,45 @@ namespace FunderMaps.AspNetCore.Services
 
             throw new AuthenticationException();
         }
+
+        // TODO: Fow now
+        public virtual async Task<ClaimsPrincipal> PasswordSignIn2Async(string email, string password)
+        {
+            if (await UserRepository.GetByEmailAsync(email) is not IUser user)
+            {
+                throw new AuthenticationException();
+            }
+
+            // FUTURE: Single call?
+            var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
+
+            if (await CheckPasswordAsync(user.Id, password))
+            {
+                if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
+                {
+                    Logger.LogWarning($"User '{user}' locked out.");
+
+                    throw new AuthenticationException();
+                }
+
+                await UserRepository.ResetAccessFailed(user.Id);
+                await UserRepository.RegisterAccess(user.Id);
+
+                Logger.LogInformation($"User '{user}' password sign in was successful.");
+
+                Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
+                OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
+
+                return PrincipalProvider.CreateTenantUserPrincipal(user, organization,
+                    organizationRole,
+                    JwtBearerDefaults.AuthenticationScheme);
+            }
+
+            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+
+            await UserRepository.BumpAccessFailed(user.Id);
+
+            throw new AuthenticationException();
+        }
     }
 }

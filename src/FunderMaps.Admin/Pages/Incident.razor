@@ -1,0 +1,52 @@
+@page "/incident"
+
+@using Core
+
+<PageTitle>Incidenten</PageTitle>
+
+<h1>Incidenten</h1>
+
+@inject FunderMaps.Core.Interfaces.Repositories.IIncidentRepository IncidentRepository;
+
+@if (incidents == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+    <thead>
+        <tr>
+            <th>CreateDate</th>
+            <th>Email</th>
+            <th>Note</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contractor in incidents)
+            {
+                <tr>
+                    <td>@contractor.CreateDate</td>
+                    <td>@contractor.Email</td>
+                    <td>@contractor.Note</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<FunderMaps.Core.Entities.Incident> incidents = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await foreach (var item in IncidentRepository.ListAllAsync(new Core.Navigation
+        {
+            Limit = 5,
+            Offset = 0
+        }))
+        {
+            incidents.Add(item);
+        }
+    }
+}
