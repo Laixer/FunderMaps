@@ -9,6 +9,10 @@
 
 <h1>Organization</h1>
 
+@if (isSaved) {
+    <div class="alert alert-success" role="alert">Changes saved</div>
+}
+
 <EditForm Model="@orgModel" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -31,7 +35,8 @@
     </div>
     <div class="form-row">
         <label for="home_address_number_postfix">Home address number postfix</label>
-        <InputText class="form-control" id="home_address_number_postfix" @bind-Value="orgModel.HomeAddressNumberPostfix" />
+        <InputText class="form-control" id="home_address_number_postfix"
+            @bind-Value="orgModel.HomeAddressNumberPostfix" />
     </div>
     <div class="form-row">
         <label for="home_city">Home city</label>
@@ -100,6 +105,8 @@
 
     private Woei orgModel = new();
 
+    private bool isSaved = false;
+
     private async Task HandleValidSubmit()
     {
         var organization = await OrganizationRepository.GetByIdAsync(Id);
@@ -113,6 +120,8 @@
         organization.HomeZipcode = orgModel.HomeZipcode;
 
         await OrganizationRepository.UpdateAsync(organization);
+
+        isSaved = true;
     }
 
     protected override async Task OnInitializedAsync()

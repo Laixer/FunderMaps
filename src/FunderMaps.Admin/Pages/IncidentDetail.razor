@@ -45,21 +45,11 @@
     </div>
     <div class="form-group mb-2">
         <label for="staticEmail2" class="sr-only">FoundationDamageCharacteristics:</label>
-        <label for="staticEmail2" class="sr-only">
-            @foreach (var t in incident.FoundationDamageCharacteristics)
-            {
-                <span>@t ,</span>
-            }
-        </label>
+        <label for="staticEmail2" class="sr-only">@string.Join(", ", incident.FoundationDamageCharacteristics)</label>
     </div>
     <div class="form-group mb-2">
         <label for="staticEmail2" class="sr-only">EnvironmentDamageCharacteristics:</label>
-        <label for="staticEmail2" class="sr-only">
-            @foreach (var t in incident.EnvironmentDamageCharacteristics)
-            {
-                <span>@t ,</span>
-            }
-        </label>
+        <label for="staticEmail2" class="sr-only">@string.Join(", ", incident.EnvironmentDamageCharacteristics)</label>
     </div>
     <div class="form-group mb-2">
         <label for="staticEmail2" class="sr-only">Email:</label>
