@@ -36,7 +36,6 @@ else
 }
 
 @code {
-
     public class Woei
     {
         /// <summary>
@@ -54,7 +53,7 @@ else
         /// </summary>
         public string Email { get; set; }
 
-        public string DetailLink { get => $"/tracker/{Id}"; }
+        public string DetailLink { get => $"/organization/{Id}"; }
     }
 
     private List<Woei> trackers = new();

@@ -1,0 +1,130 @@
+@page "/organization/{id:guid}"
+@attribute [Authorize(Policy = "AdministratorPolicy")]
+
+<PageTitle>Organization</PageTitle>
+
+@using FunderMaps.Core.Interfaces.Repositories
+@using System.ComponentModel.DataAnnotations
+@inject IOrganizationRepository OrganizationRepository
+
+<h1>Organization</h1>
+
+<EditForm Model="@orgModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-row">
+        <label for="name">Name</label>
+        <InputText class="form-control" id="name" @bind-Value="orgModel.Name" />
+    </div>
+    <div class="form-row">
+        <label for="email">Email</label>
+        <InputText class="form-control" id="email" @bind-Value="orgModel.Email" />
+    </div>
+    <div class="form-row">
+        <label for="home_street">Home street</label>
+        <InputText class="form-control" id="home_street" @bind-Value="orgModel.HomeStreet" />
+    </div>
+    <div class="form-row">
+        <label for="home_address_number">Home address number</label>
+        <InputNumber class="form-control" id="home_address_number" @bind-Value="orgModel.HomeAddressNumber" />
+    </div>
+    <div class="form-row">
+        <label for="home_address_number_postfix">Home address number postfix</label>
+        <InputText class="form-control" id="home_address_number_postfix" @bind-Value="orgModel.HomeAddressNumberPostfix" />
+    </div>
+    <div class="form-row">
+        <label for="home_city">Home city</label>
+        <InputText class="form-control" id="home_city" @bind-Value="orgModel.HomeCity" />
+    </div>
+    <div class="form-row">
+        <label for="home_postbox">Home postbox</label>
+        <InputText class="form-control" id="home_postbox" @bind-Value="orgModel.HomePostbox" />
+    </div>
+    <div class="form-row">
+        <label for="home_zipcode">Home zipcode</label>
+        <InputText class="form-control" id="home_zipcode" @bind-Value="orgModel.HomeZipcode" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+</EditForm>
+
+@code {
+    public class Woei
+    {
+        /// <summary>
+        /// Gets or sets the name for the organization.
+        /// </summary>
+        [Required]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the email address for the organization.
+        /// </summary>
+        [Required, EmailAddress]
+        public string Email { get; set; }
+
+        /// <summary>
+        /// Street.
+        /// </summary>
+        public string HomeStreet { get; set; }
+
+        /// <summary>
+        /// Street number.
+        /// </summary>
+        public int? HomeAddressNumber { get; set; }
+
+        /// <summary>
+        /// Address number postfix.
+        /// </summary>
+        public string HomeAddressNumberPostfix { get; set; }
+
+        /// <summary>
+        /// City.
+        /// </summary>
+        public string HomeCity { get; set; }
+
+        /// <summary>
+        /// Postbox number.
+        /// </summary>
+        public string HomePostbox { get; set; }
+
+        /// <summary>
+        /// Zipcode or postcode.
+        /// </summary>
+        public string HomeZipcode { get; set; }
+    }
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Woei orgModel = new();
+
+    private async Task HandleValidSubmit()
+    {
+        var organization = await OrganizationRepository.GetByIdAsync(Id);
+        organization.Name = orgModel.Name;
+        organization.Email = orgModel.Email;
+        organization.HomeStreet = orgModel.HomeStreet;
+        organization.HomeAddressNumber = orgModel.HomeAddressNumber;
+        organization.HomeAddressNumberPostfix = orgModel.HomeAddressNumberPostfix;
+        organization.HomeCity = orgModel.HomeCity;
+        organization.HomePostbox = orgModel.HomePostbox;
+        organization.HomeZipcode = orgModel.HomeZipcode;
+
+        await OrganizationRepository.UpdateAsync(organization);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var organization = await OrganizationRepository.GetByIdAsync(Id);
+        orgModel.Name = organization.Name;
+        orgModel.Email = organization.Email;
+        orgModel.HomeStreet = organization.HomeStreet;
+        orgModel.HomeAddressNumber = organization.HomeAddressNumber;
+        orgModel.HomeAddressNumberPostfix = organization.HomeAddressNumberPostfix;
+        orgModel.HomeCity = organization.HomeCity;
+        orgModel.HomePostbox = organization.HomePostbox;
+        orgModel.HomeZipcode = organization.HomeZipcode;
+    }
+}
