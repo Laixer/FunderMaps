@@ -1,0 +1,96 @@
+@page "/incident/{id}"
+
+<PageTitle>@incident.Id</PageTitle>
+
+@inject FunderMaps.Core.Interfaces.Repositories.IIncidentRepository IncidentRepository;
+
+<h1>@incident.Id</h1>
+
+<div class="form-inline">
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">ID:</label>
+        <label for="staticEmail2" class="sr-only">@incident.Id</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">FoundationType:</label>
+        <label for="staticEmail2" class="sr-only">@incident.FoundationType</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">ChainedBuilding:</label>
+        <label for="staticEmail2" class="sr-only">@incident.ChainedBuilding</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Owner:</label>
+        <label for="staticEmail2" class="sr-only">@incident.Owner</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">FoundationRecovery:</label>
+        <label for="staticEmail2" class="sr-only">@incident.FoundationRecovery</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">NeighborRecovery:</label>
+        <label for="staticEmail2" class="sr-only">@incident.NeighborRecovery</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">FoundationDamageCause:</label>
+        <label for="staticEmail2" class="sr-only">@incident.FoundationDamageCause</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Note:</label>
+        <label for="staticEmail2" class="sr-only">@incident.Note</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">InternalNote:</label>
+        <label for="staticEmail2" class="sr-only">@incident.InternalNote</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">FoundationDamageCharacteristics:</label>
+        <label for="staticEmail2" class="sr-only">
+            @foreach (var t in incident.FoundationDamageCharacteristics)
+            {
+                <span>@t ,</span>
+            }
+        </label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">EnvironmentDamageCharacteristics:</label>
+        <label for="staticEmail2" class="sr-only">
+            @foreach (var t in incident.EnvironmentDamageCharacteristics)
+            {
+                <span>@t ,</span>
+            }
+        </label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Email:</label>
+        <label for="staticEmail2" class="sr-only">@incident.Email</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Address:</label>
+        <label for="staticEmail2" class="sr-only">@incident.Address</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">AuditStatus:</label>
+        <label for="staticEmail2" class="sr-only">@incident.AuditStatus</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">QuestionType:</label>
+        <label for="staticEmail2" class="sr-only">@incident.QuestionType</label>
+    </div>
+    <div class="form-group mb-2">
+        <label for="staticEmail2" class="sr-only">Meta:</label>
+        <label for="staticEmail2" class="sr-only">@incident.Meta</label>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private Core.Entities.Incident incident;
+
+    protected override async Task OnInitializedAsync()
+    {
+        incident = await IncidentRepository.GetByIdAsync(Id);
+    }
+}
