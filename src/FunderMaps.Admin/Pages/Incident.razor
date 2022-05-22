@@ -17,18 +17,18 @@ else
     <table class="table">
     <thead>
         <tr>
+            <th>ID</th>
             <th>CreateDate</th>
             <th>Email</th>
-            <th>Note</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var contractor in incidents)
             {
                 <tr>
+                    <td><NavLink href="@contractor.DetailLink">@contractor.Id</NavLink></td>
                     <td>@contractor.CreateDate</td>
                     <td>@contractor.Email</td>
-                    <td>@contractor.Note</td>
                 </tr>
             }
         </tbody>
@@ -36,17 +36,29 @@ else
 }
 
 @code {
-    private List<FunderMaps.Core.Entities.Incident> incidents = new();
+    public class Woei
+    {
+        public string Id { get; set; }
+
+        public string Email { get; set; }
+
+        public DateTime CreateDate { get; set; }
+
+        public string DetailLink { get => $"/incident/{Id}"; }
+    }
+
+    private List<Woei> incidents = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await foreach (var item in IncidentRepository.ListAllAsync(new Core.Navigation
+        await foreach (var item in IncidentRepository.ListAllRecentAsync())
         {
-            Limit = 5,
-            Offset = 0
-        }))
-        {
-            incidents.Add(item);
+            incidents.Add(new Woei
+            {
+                Id = item.Id,
+                CreateDate = item.CreateDate,
+                Email = item.Email,
+            });
         }
     }
 }

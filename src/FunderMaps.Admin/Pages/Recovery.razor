@@ -1,0 +1,111 @@
+@page "/recovery"
+
+<PageTitle>Recovery</PageTitle>
+
+@using Core.Types
+@using FunderMaps.Core.Interfaces.Repositories
+@using System.ComponentModel.DataAnnotations
+@inject IRecoveryRepository RecoveryRepository
+
+@inject IHttpContextAccessor HttpContextAccessor
+@inject Core.AppContext AppContext
+
+<h1>Recovery</h1>
+
+<NavLink href="/recovery/new">
+    <button class="btn btn-primary">New</button>
+</NavLink>
+
+@if (trackers == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Product</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tracker in trackers)
+            {
+                <tr>
+                    <td><NavLink href="@tracker.DetailLink">@tracker.Id</NavLink></td>
+                    <td>@tracker.Type</td>
+                    <td>@tracker.DocumentName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    public class Woei
+    {
+        /// <summary>
+        ///     Unique identifier.
+        /// </summary>
+        public int Id { get; set; }
+
+        /// <summary>
+        ///     Note.
+        /// </summary>
+        public string Note { get; set; }
+
+        /// <summary>
+        ///     Foundation recovery type.
+        /// </summary>
+        [Required]
+        public RecoveryDocumentType Type { get; set; }
+
+        /// <summary>
+        ///     Document file name.
+        /// </summary>
+        [Required]
+        public string DocumentFile { get; set; }
+
+        /// <summary>
+        ///     Document date.
+        /// </summary>
+        [Required]
+        public DateTime DocumentDate { get; set; }
+
+        /// <summary>
+        ///     Client document identifier.
+        /// </summary>
+        [Required]
+        public string DocumentName { get; set; }
+
+        public string DetailLink { get => $"/recovery/{Id}"; }
+    }
+
+    private List<Woei> trackers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpContext = HttpContextAccessor.HttpContext;
+
+        var (user, tenant) =
+        FunderMaps.AspNetCore.Authentication.PrincipalProvider.GetUserAndTenant<FunderMaps.Core.Entities.User,
+        FunderMaps.Core.Entities.Organization>(httpContext.User);
+        AppContext.User = user;
+        AppContext.Tenant = tenant;
+
+        await foreach (var recovery in RecoveryRepository.ListAllAsync(FunderMaps.Core.Navigation.All))
+        {
+            trackers.Add(new Woei
+            {
+                Id = recovery.Id,
+                Note = recovery.Note,
+                Type = recovery.Type,
+                DocumentFile = recovery.DocumentFile,
+                DocumentDate = recovery.DocumentDate,
+                DocumentName = recovery.DocumentName,
+            });
+        }
+    }
+}

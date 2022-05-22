@@ -239,6 +239,42 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
     }
 
+    // TODO; Remove
+    public async IAsyncEnumerable<Incident> ListAllRecentAsync()
+    {
+        var sql = @"
+            SELECT  id,
+                    foundation_type,
+                    chained_building,
+                    owner,
+                    foundation_recovery,
+                    neightbor_recovery,
+                    foundation_damage_cause,
+                    document_file,
+                    note,
+                    internal_note,
+                    contact,
+                    create_date,
+                    update_date,
+                    delete_date,
+                    foundation_damage_characteristics,
+                    environment_damage_characteristics,
+                    address,
+                    audit_status,
+                    question_type,
+                    meta
+            FROM    report.incident
+            ORDER BY create_date desc
+            LIMIT   10";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
+        }
+    }
+
     /// <summary>
     ///     Update <see cref="Incident"/>.
     /// </summary>

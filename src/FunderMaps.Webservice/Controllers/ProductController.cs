@@ -1,8 +1,5 @@
-using AutoMapper;
-using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
-using FunderMaps.Webservice.InputModels;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,80 +8,67 @@ namespace FunderMaps.Webservice.Controllers;
 /// <summary>
 ///     Controller for all product endpoints.
 /// </summary>
-[Obsolete("See ProductV3Controller")]
-[Route("product")]
-public sealed class ProductController : ControllerBase
+[Route("v3/product")]
+public class ProductController : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IProductService _productService;
+    private readonly IAnalysisRepository _analysisRepository;
+    private readonly IStatisticsRepository _statisticsRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public ProductController(IMapper mapper, IProductService productService)
+    public ProductController(
+        IAnalysisRepository analysisRepository,
+        IStatisticsRepository statisticsRepository)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _productService = productService ?? throw new ArgumentNullException(nameof(productService));
+        _analysisRepository = analysisRepository;
+        _statisticsRepository = statisticsRepository;
     }
 
-    /// <summary>
-    ///     Encapulate transfer object into item wrapper.
-    /// </summary>
-    private async Task<ResponseWrapper<TDto>> AsResponseWrapperAsync<TDto, TSource>(IAsyncEnumerable<TSource> itemList)
+    private async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
         => new()
         {
-            Items = await _mapper.MapAsync<IList<TDto>, TSource>(itemList)
+            FoundationTypeDistribution = await _statisticsRepository.GetFoundationTypeDistributionByIdAsync(id),
+            ConstructionYearDistribution = await _statisticsRepository.GetConstructionYearDistributionByIdAsync(id),
+            DataCollectedPercentage = await _statisticsRepository.GetDataCollectedPercentageByIdAsync(id),
+            FoundationRiskDistribution = await _statisticsRepository.GetFoundationRiskDistributionByIdAsync(id),
+            TotalBuildingRestoredCount = await _statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(id),
+            TotalIncidentCount = await _statisticsRepository.GetTotalIncidentCountByIdAsync(id),
+            MunicipalityIncidentCount = await _statisticsRepository.GetMunicipalityIncidentCountByIdAsync(id),
+            TotalReportCount = await _statisticsRepository.GetTotalReportCountByIdAsync(id),
+            MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByIdAsync(id),
         };
 
+    // GET: api/v3/product/analysis
     /// <summary>
-    ///     Builds the output object associated with the product.
-    /// </summary>
-    internal async Task<ResponseWrapper> AnalysisProductFactoryAsync(AnalysisProductType productType, IAsyncEnumerable<AnalysisProduct> itemList)
-        => productType switch
-        {
-            AnalysisProductType.Foundation => await AsResponseWrapperAsync<AnalysisFoundationDto, AnalysisProduct>(itemList),
-            AnalysisProductType.Complete => await AsResponseWrapperAsync<AnalysisCompleteDto, AnalysisProduct>(itemList),
-            AnalysisProductType.RiskPlus => await AsResponseWrapperAsync<AnalysisRiskPlusDto, AnalysisProduct>(itemList),
-            _ => throw new InvalidOperationException(nameof(productType)),
-        };
-
-    // GET: api/product/analysis
-    /// <summary>
-    ///     Request an analysis product.
+    ///     Request the analysis product.
     /// </summary>
     [HttpGet("analysis")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ResponseWrapper<AnalysisDto>>> GetProductAnalysisAsync([FromQuery] AnalysisInputModel input)
-    {
-        // Assign.
-        IAsyncEnumerable<AnalysisProduct> productList = _productService.GetAnalysisAsync(input.Product.Value, input.Id);
+    public Task<AnalysisProduct3> GetAnalysisAsync([FromQuery] string id)
+        => _analysisRepository.Get3Async(id);
 
-        // Map.
-        ResponseWrapper result = await AnalysisProductFactoryAsync(input.Product.Value, productList);
-
-        // Return.
-        return Ok(result);
-    }
-
-    // GET: api/product/statistics
+    // GET: api/v3/product/at_risk
     /// <summary>
-    ///     Request statistics product.
+    ///     Request the risk index per id.
+    /// </summary>
+    [HttpGet("at_risk")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<bool> GetRiskIndexAsync([FromQuery] string id)
+        => _analysisRepository.GetRiskIndexAsync(id);
+
+    // GET: api/v3/product/statistics
+    /// <summary>
+    ///     Request the statistics product.
     /// </summary>
     [HttpGet("statistics")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ResponseWrapper<StatisticsDto>>> GetProductStatisticsAsync([FromQuery][Required] string id)
-    {
-        // Assign.
-        IAsyncEnumerable<StatisticsProduct> productList = _productService.GetStatisticsAsync(id);
-
-        // Map.
-        ResponseWrapper result = await AsResponseWrapperAsync<StatisticsDto, StatisticsProduct>(productList);
-
-        // Return.
-        return Ok(result);
-    }
+    public Task<StatisticsProduct> GetStatisticsAsync([FromQuery][Required] string id)
+        => GetStatisticsByIdAsync(id);
 }
