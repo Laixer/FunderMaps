@@ -1,7 +1,7 @@
 @page "/webservice/{Id?}"
 
-@using FunderMaps.Core.Interfaces
-@inject IProductService ProductService
+@using FunderMaps.Core.Interfaces.Repositories
+@inject IAnalysisRepository AnalysisRepository
 
 @inject IHttpContextAccessor HttpContextAccessor
 @inject Core.AppContext AppContext
@@ -73,7 +73,7 @@
 
         if (!string.IsNullOrEmpty(Id))
         {
-            product = await ProductService.GetAnalysis3Async(Id);
+            product = await AnalysisRepository.Get3Async(Id);
         }
     }
 
@@ -87,6 +87,6 @@
         AppContext.User = user;
         AppContext.Tenant = tenant;
 
-        product = await ProductService.GetAnalysis3Async(Id);
+        product = await AnalysisRepository.Get3Async(Id);
     }
 }

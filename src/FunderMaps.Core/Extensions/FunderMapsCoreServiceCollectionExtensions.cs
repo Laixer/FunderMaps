@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
@@ -140,7 +140,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddAppContext();
 
         // Register core services in DI container.
-        services.AddScoped<IProductService, ProductService>();
         services.AddScoped<INotifyService, NotificationHub>();
 
         // Register core services in DI container.

@@ -1,29 +1,28 @@
-﻿using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Core.Services;
+namespace FunderMaps.Webservice.Controllers;
 
 /// <summary>
-///     Service to the analysis products.
+///     Controller for all product endpoints.
 /// </summary>
-public class ProductService : IProductService
+[Route("v3/product")]
+public class ProductController : ControllerBase
 {
     private readonly IAnalysisRepository _analysisRepository;
     private readonly IStatisticsRepository _statisticsRepository;
-    private readonly IGeocoderParser _geocoderParser;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public ProductService(
+    public ProductController(
         IAnalysisRepository analysisRepository,
-        IStatisticsRepository statisticsRepository,
-        IGeocoderParser geocoderParser)
+        IStatisticsRepository statisticsRepository)
     {
         _analysisRepository = analysisRepository;
         _statisticsRepository = statisticsRepository;
-        _geocoderParser = geocoderParser;
     }
 
     private async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
@@ -40,24 +39,36 @@ public class ProductService : IProductService
             MunicipalityReportCount = await _statisticsRepository.GetMunicipalityReportCountByIdAsync(id),
         };
 
+    // GET: api/v3/product/analysis
     /// <summary>
-    ///     Get an analysis product v3.
+    ///     Request the analysis product.
     /// </summary>
-    /// <param name="input">Input query.</param>
-    public virtual Task<AnalysisProduct3> GetAnalysis3Async(string input)
-        => _analysisRepository.Get3Async(input);
+    [HttpGet("analysis")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<AnalysisProduct3> GetAnalysisAsync([FromQuery] string id)
+        => _analysisRepository.Get3Async(id);
 
+    // GET: api/v3/product/at_risk
     /// <summary>
-    ///     Get risk index on id.
+    ///     Request the risk index per id.
     /// </summary>
-    /// <param name="input">Input query.</param>
-    public virtual Task<bool> GetRiskIndexAsync(string input)
-        => _analysisRepository.GetRiskIndexAsync(input);
+    [HttpGet("at_risk")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<bool> GetRiskIndexAsync([FromQuery] string id)
+        => _analysisRepository.GetRiskIndexAsync(id);
 
+    // GET: api/v3/product/statistics
     /// <summary>
-    ///     Get statistics per region.
+    ///     Request the statistics product.
     /// </summary>
-    /// <param name="input">Input query.</param>
-    public virtual Task<StatisticsProduct> GetStatistics3Async(string input)
-        => GetStatisticsByIdAsync(input);
+    [HttpGet("statistics")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public Task<StatisticsProduct> GetStatisticsAsync([FromQuery][Required] string id)
+        => GetStatisticsByIdAsync(id);
 }
