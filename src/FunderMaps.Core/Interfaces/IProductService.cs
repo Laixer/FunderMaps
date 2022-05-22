@@ -8,30 +8,10 @@ namespace FunderMaps.Core.Interfaces;
 public interface IProductService
 {
     /// <summary>
-    ///     Get an analysis product.
-    /// </summary>
-    /// <param name="productType">Product type.</param>
-    /// <param name="input">Input query.</param>
-    [Obsolete("GetAnalysisAsync is deprecated, please use GetAnalysis2Async instead.")]
-    IAsyncEnumerable<AnalysisProduct> GetAnalysisAsync(AnalysisProductType productType, string input);
-
-    /// <summary>
-    ///     Get the analysis product.
-    /// </summary>
-    /// <param name="input">Input query.</param>
-    IAsyncEnumerable<AnalysisProduct2> GetAnalysis2Async(string input);
-
-    /// <summary>
     ///     Get the analysis product.
     /// </summary>
     /// <param name="input">Input query.</param>
     Task<AnalysisProduct3> GetAnalysis3Async(string input);
-
-    /// <summary>
-    ///     Get statistics per region.
-    /// </summary>
-    /// <param name="input">Input query.</param>
-    IAsyncEnumerable<StatisticsProduct> GetStatisticsAsync(string input);
 
     /// <summary>
     ///     Get risk index on id.
