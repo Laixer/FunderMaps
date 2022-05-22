@@ -24,7 +24,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/statistics?id=gfm-6aae47cb5aa4416abdf19d98ba8218ac");
+            var response = await client.GetAsync($"api/v3/product/statistics?id=gfm-6aae47cb5aa4416abdf19d98ba8218ac");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsDto>>();
 
             // Assert.
@@ -39,7 +39,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/statistics?id=BU05031403");
+            var response = await client.GetAsync($"api/v3/product/statistics?id=BU05031403");
             var returnObject = await response.Content.ReadFromJsonAsync<ResponseWrapper<StatisticsDto>>();
 
             // Assert.
@@ -58,7 +58,7 @@ namespace FunderMaps.IntegrationTests.Webservice
             using var client = Factory.CreateClient();
 
             // Act.
-            var response = await client.GetAsync($"api/product/statistics?id={address}");
+            var response = await client.GetAsync($"api/v3/product/statistics?id={address}");
 
             // Assert.
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
