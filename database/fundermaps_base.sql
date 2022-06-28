@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 12.8 (Debian 12.8-1.pgdg100+1)
--- Dumped by pg_dump version 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1)
+-- Dumped by pg_dump version 14.3 (Ubuntu 14.3-0ubuntu0.22.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1271,18 +1271,18 @@ ALTER FUNCTION application.log_access(id application.user_id) OWNER TO fundermap
 -- Name: normalize(text); Type: FUNCTION; Schema: application; Owner: fundermaps
 --
 
-CREATE FUNCTION application.normalize(text) RETURNS text
+CREATE FUNCTION application."normalize"(text) RETURNS text
     LANGUAGE sql
     AS $_$SELECT trim(upper($1))$_$;
 
 
-ALTER FUNCTION application.normalize(text) OWNER TO fundermaps;
+ALTER FUNCTION application."normalize"(text) OWNER TO fundermaps;
 
 --
--- Name: FUNCTION normalize(text); Type: COMMENT; Schema: application; Owner: fundermaps
+-- Name: FUNCTION "normalize"(text); Type: COMMENT; Schema: application; Owner: fundermaps
 --
 
-COMMENT ON FUNCTION application.normalize(text) IS 'Normalize the input so it can be compared.';
+COMMENT ON FUNCTION application."normalize"(text) IS 'Normalize the input so it can be compared.';
 
 
 --
@@ -1750,6 +1750,18 @@ COMMENT ON TABLE application."user" IS 'Contains all FunderMaps users.';
 
 
 --
+-- Name: building_cluster; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.building_cluster (
+    building_id geocoder.geocoder_id NOT NULL,
+    cluster_id uuid NOT NULL
+);
+
+
+ALTER TABLE data.building_cluster OWNER TO fundermaps;
+
+--
 -- Name: building_elevation; Type: TABLE; Schema: data; Owner: fundermaps
 --
 
@@ -1790,6 +1802,18 @@ COMMENT ON TABLE data.building_geographic_region IS 'Contains an st_intersects b
 
 
 --
+-- Name: building_groundwater_level; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.building_groundwater_level (
+    building_id geocoder.geocoder_id NOT NULL,
+    level double precision NOT NULL
+);
+
+
+ALTER TABLE data.building_groundwater_level OWNER TO fundermaps;
+
+--
 -- Name: building_height; Type: VIEW; Schema: data; Owner: fundermaps
 --
 
@@ -1807,6 +1831,49 @@ ALTER TABLE data.building_height OWNER TO fundermaps;
 --
 
 COMMENT ON VIEW data.building_height IS 'Absolute building height';
+
+
+--
+-- Name: building_ownership; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.building_ownership (
+    building_id geocoder.geocoder_id NOT NULL,
+    owner text NOT NULL
+);
+
+
+ALTER TABLE data.building_ownership OWNER TO fundermaps;
+
+--
+-- Name: building_pleistocene; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.building_pleistocene (
+    building_id geocoder.geocoder_id NOT NULL,
+    depth double precision
+);
+
+
+ALTER TABLE data.building_pleistocene OWNER TO fundermaps;
+
+--
+-- Name: subsidence; Type: TABLE; Schema: data; Owner: fundermaps
+--
+
+CREATE TABLE data.subsidence (
+    building_id geocoder.geocoder_id NOT NULL,
+    velocity double precision NOT NULL
+);
+
+
+ALTER TABLE data.subsidence OWNER TO fundermaps;
+
+--
+-- Name: TABLE subsidence; Type: COMMENT; Schema: data; Owner: fundermaps
+--
+
+COMMENT ON TABLE data.subsidence IS 'Contains subsidence data for buildings. This has been acquired from multiple external data sources.';
 
 
 --
@@ -1861,44 +1928,6 @@ COMMENT ON TABLE geocoder.building IS 'Contains all buildings in our own format.
 
 
 --
--- Name: building_type; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE MATERIALIZED VIEW data.building_type AS
- SELECT building.id,
-    'shed'::geocoder.building_type AS building_type
-   FROM ( SELECT ba.id
-           FROM geocoder.building ba
-          WHERE (public.st_area((ba.geom)::public.geography, true) < (20)::double precision)
-        EXCEPT
-         SELECT a.building_id
-           FROM geocoder.address a
-          WHERE (a.building_id IS NOT NULL)) building
-  WITH NO DATA;
-
-
-ALTER TABLE data.building_type OWNER TO fundermaps;
-
---
--- Name: subsidence; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.subsidence (
-    building_id geocoder.geocoder_id NOT NULL,
-    velocity double precision NOT NULL
-);
-
-
-ALTER TABLE data.subsidence OWNER TO fundermaps;
-
---
--- Name: TABLE subsidence; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON TABLE data.subsidence IS 'Contains subsidence data for buildings. This has been acquired from multiple external data sources.';
-
-
---
 -- Name: building_active; Type: VIEW; Schema: geocoder; Owner: fundermaps
 --
 
@@ -1924,212 +1953,18 @@ COMMENT ON VIEW geocoder.building_active IS 'Contains all entries from geocoder.
 
 
 --
--- Name: analysis_foundation_indicative; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
+-- Name: address_building; Type: VIEW; Schema: geocoder; Owner: fundermaps
 --
 
-CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'concrete'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'no_pile'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code <> 'hz'::text))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'no_pile'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code = 'hz'::text))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'wood'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code = 'hz'::text))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'wood_charger'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'wood'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'no_pile'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (10.5)::double precision))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'no_pile'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    bh.height,
-    b.geom,
-    'wood'::report.foundation_type AS foundation_type
-   FROM ((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height > (10.5)::double precision))
-  WITH NO DATA;
+CREATE VIEW geocoder.address_building AS
+ SELECT addr.id AS address_id,
+    ba.id AS building_id,
+    ba.geom
+   FROM (geocoder.address addr
+     JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)));
 
 
-ALTER TABLE data.analysis_foundation_indicative OWNER TO fundermaps;
-
---
--- Name: building_groundwater_level; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.building_groundwater_level (
-    building_id geocoder.geocoder_id NOT NULL,
-    level double precision NOT NULL
-);
-
-
-ALTER TABLE data.building_groundwater_level OWNER TO fundermaps;
-
---
--- Name: analysis_foundation_risk; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE MATERIALIZED VIEW data.analysis_foundation_risk AS
- SELECT b.id,
-    b.neighborhood_id,
-    gr.code,
-    gwl.level AS groundwater_level,
-    b.geom,
-    'a'::data.foundation_risk_indication AS foundation_risk
-   FROM (((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    gr.code,
-    gwl.level AS groundwater_level,
-    b.geom,
-    'b'::data.foundation_risk_indication AS foundation_risk
-   FROM (((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height > (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    gr.code,
-    gwl.level AS groundwater_level,
-    b.geom,
-    'c'::data.foundation_risk_indication AS foundation_risk
-   FROM (((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    gr.code,
-    gwl.level AS groundwater_level,
-    b.geom,
-    'd'::data.foundation_risk_indication AS foundation_risk
-   FROM (((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))))
-UNION ALL
- SELECT b.id,
-    b.neighborhood_id,
-    gr.code,
-    gwl.level AS groundwater_level,
-    b.geom,
-    'e'::data.foundation_risk_indication AS foundation_risk
-   FROM (((((geocoder.building_active b
-     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
-     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
-     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
-  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1.0)::double precision))))
-  WITH NO DATA;
-
-
-ALTER TABLE data.analysis_foundation_risk OWNER TO fundermaps;
+ALTER TABLE geocoder.address_building OWNER TO fundermaps;
 
 --
 -- Name: inquiry; Type: TABLE; Schema: report; Owner: fundermaps
@@ -2349,140 +2184,6 @@ COMMENT ON COLUMN report.recovery_sample.delete_date IS 'Timestamp of soft delet
 
 
 --
--- Name: analysis_address; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.analysis_address AS
- SELECT b.id,
-    b.external_id,
-    b.external_source,
-    COALESCE((inqs.built_year)::date, (b.built_year)::date) AS construction_year,
-        CASE
-            WHEN (inqs.built_year IS NOT NULL) THEN 'fundermaps'::report.built_year_source
-            ELSE 'bag'::report.built_year_source
-        END AS construction_year_source,
-    b.geom,
-    a.id AS address_id,
-    a.external_id AS address_external_id,
-    a.postal_code,
-    afr.neighborhood_id,
-    afr.groundwater_level,
-    afr.code AS soil,
-    be.roof AS building_height,
-    be.ground AS ground_level,
-    inqs.cpt,
-    inqs.monitoring_well,
-    inqs.recovery_advised,
-    inqs.damage_cause,
-    inqs.substructure,
-    i.document_name,
-    i.document_date,
-    i.type AS inquiry_type,
-    rs.type AS recovery_type,
-    rs.status AS recovery_status,
-    round((public.st_area((b.geom)::public.geography, true))::numeric, 2) AS surface_area,
-    round((public.st_area((b.geom)::public.geography, true))::numeric, 2) AS living_area,
-    NULL::real AS foundation_bearing_layer,
-        CASE
-            WHEN (data.get_foundation_category(afi.foundation_type, inqs.foundation_type) = 'wood'::data.foundation_category) THEN (round(((public.st_area((b.geom)::public.geography, true) * (950)::double precision))::numeric, '-2'::integer))::double precision
-            WHEN (data.get_foundation_category(afi.foundation_type, inqs.foundation_type) = 'no_pile'::data.foundation_category) THEN (round(((public.st_area((b.geom)::public.geography, true) * (350)::double precision))::numeric, '-2'::integer))::double precision
-            ELSE NULL::double precision
-        END AS restoration_costs,
-        CASE
-            WHEN ((inqs.id IS NOT NULL) AND (inqs.foundation_type IS NOT NULL)) THEN inqs.foundation_type
-            ELSE afi.foundation_type
-        END AS foundation_type,
-        CASE
-            WHEN (inqs.id IS NOT NULL) THEN 'established'::data.reliability
-            ELSE 'indicative'::data.reliability
-        END AS foundation_type_reliability,
-        CASE
-            WHEN (data.get_foundation_category(afi.foundation_type, inqs.foundation_type) = 'wood'::data.foundation_category) THEN
-            CASE
-                WHEN ((inqs.id IS NOT NULL) AND (inqs.wood_level IS NOT NULL)) THEN ((inqs.wood_level)::double precision - afr.groundwater_level)
-                ELSE (afr.groundwater_level - (1.5)::double precision)
-            END
-            WHEN (data.get_foundation_category(afi.foundation_type, inqs.foundation_type) = 'other'::data.foundation_category) THEN NULL::double precision
-            ELSE NULL::double precision
-        END AS drystand,
-    'indicative'::data.reliability AS drystand_reliability,
-    afr.foundation_risk AS drystand_risk,
-        CASE
-            WHEN (data.get_foundation_category(afi.foundation_type, inqs.foundation_type) = 'no_pile'::data.foundation_category) THEN
-            CASE
-                WHEN ((inqs.id IS NOT NULL) AND (inqs.foundation_depth IS NOT NULL)) THEN ((inqs.foundation_depth)::double precision - afr.groundwater_level)
-                ELSE (afr.groundwater_level - (0.6)::double precision)
-            END
-            ELSE NULL::double precision
-        END AS dewatering_depth,
-    'indicative'::data.reliability AS dewatering_depth_reliability,
-    afr.foundation_risk AS dewatering_depth_risk,
-    NULL::text AS bio_infection,
-    'indicative'::data.reliability AS bio_infection_reliability,
-    afr.foundation_risk AS bio_infection_risk
-   FROM (((((((geocoder.address a
-     JOIN geocoder.building_active b ON (((a.building_id)::text = (b.id)::text)))
-     JOIN data.analysis_foundation_indicative afi ON (((afi.id)::text = (b.id)::text)))
-     JOIN data.analysis_foundation_risk afr ON (((afr.id)::text = (b.id)::text)))
-     LEFT JOIN data.building_elevation be ON (((be.building_id)::text = (b.id)::text)))
-     LEFT JOIN report.inquiry_sample inqs ON (((inqs.address)::text = (a.id)::text)))
-     LEFT JOIN report.inquiry i ON ((i.id = inqs.inquiry)))
-     LEFT JOIN report.recovery_sample rs ON (((rs.address)::text = (a.id)::text)));
-
-
-ALTER TABLE data.analysis_address OWNER TO fundermaps;
-
---
--- Name: building_cluster; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.building_cluster (
-    building_id geocoder.geocoder_id NOT NULL,
-    cluster_id uuid NOT NULL
-);
-
-
-ALTER TABLE data.building_cluster OWNER TO fundermaps;
-
---
--- Name: building_ownership; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.building_ownership (
-    building_id geocoder.geocoder_id NOT NULL,
-    owner text NOT NULL
-);
-
-
-ALTER TABLE data.building_ownership OWNER TO fundermaps;
-
---
--- Name: building_pleistocene; Type: TABLE; Schema: data; Owner: fundermaps
---
-
-CREATE TABLE data.building_pleistocene (
-    building_id geocoder.geocoder_id NOT NULL,
-    depth double precision
-);
-
-
-ALTER TABLE data.building_pleistocene OWNER TO fundermaps;
-
---
--- Name: address_building; Type: VIEW; Schema: geocoder; Owner: fundermaps
---
-
-CREATE VIEW geocoder.address_building AS
- SELECT addr.id AS address_id,
-    ba.id AS building_id,
-    ba.geom
-   FROM (geocoder.address addr
-     JOIN geocoder.building_active ba ON (((addr.building_id)::text = (ba.id)::text)));
-
-
-ALTER TABLE geocoder.address_building OWNER TO fundermaps;
-
---
 -- Name: analysis_complete; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
@@ -2635,7 +2336,7 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                      JOIN report.inquiry i ON ((is2.inquiry = i.id)))
                      JOIN geocoder.address_building ab ON (((ab.address_id)::text = (is2.address)::text)))
                      JOIN geocoder.building_active ba ON (((ba.id)::text = (ab.building_id)::text)))
-                  WHERE (((is2.address)::text = (a.id)::text) AND (i.document_date >= (ba.built_year)::date))
+                  WHERE (((is2.address)::text = (a.id)::text) AND (i.document_date >= ((ba.built_year)::date - '5 years'::interval)))
                   ORDER BY
                         CASE
                             WHEN (i.type = 'foundation_research'::report.inquiry_type) THEN 0
@@ -2700,7 +2401,7 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
                      JOIN geocoder.address_building ab ON (((ab.address_id)::text = (is2.address)::text)))
                      JOIN geocoder.building_active ba ON ((((ba.id)::text = (ab.building_id)::text) AND ((ba.id)::text <> (b.id)::text))))
                      JOIN data.building_cluster c ON (((c.building_id)::text = (ab.building_id)::text)))
-                  WHERE ((c.cluster_id = bc.cluster_id) AND (i.document_date >= (ba.built_year)::date))
+                  WHERE ((c.cluster_id = bc.cluster_id) AND (i.document_date >= ((ba.built_year)::date - '5 years'::interval)))
                   ORDER BY
                         CASE
                             WHEN (i.type = 'foundation_research'::report.inquiry_type) THEN 0
@@ -2738,17 +2439,19 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
           WHERE ((a_1.building_id)::text = (b.id)::text)) addresses(count),
     LATERAL ( SELECT
                 CASE
-                    WHEN ((construction_year.construction_year >= 1940) AND (construction_year.construction_year < 1970) AND (addresses.count >= 8)) THEN 'concrete'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1970) AND (gr.code <> 'hz'::text)) THEN 'concrete'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1970) AND (gr.code = 'hz'::text)) THEN 'no_pile'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND (bh.height < (10.5)::double precision)) THEN 'no_pile'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND (bh.height >= (10.5)::double precision)) THEN 'wood'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND ((bh.height >= (10.5)::double precision) OR (bh.height IS NULL)) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'no_pile'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND ((bh.height >= (10.5)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'wood'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1970) AND (bh.height < (10.5)::double precision)) THEN 'no_pile'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1970) AND ((bh.height >= (10.5)::double precision) OR (bh.height IS NULL)) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'wood'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1920) AND ((bh.height >= (10.5)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'wood'::report.foundation_type
-                    WHEN ((construction_year.construction_year >= 1920) AND (construction_year.construction_year < 1970) AND ((bh.height >= (10.5)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'wood_charger'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1940) AND (construction_year.construction_year < 1965) AND (addresses.count >= 8)) THEN 'concrete'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1965) AND ((bh.height < (14)::double precision) OR (bh.height IS NULL)) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'no_pile'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1965) AND ((bh.height < (14)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'concrete'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1965) AND (bh.height >= (14)::double precision)) THEN 'concrete'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND ((bh.height < (14)::double precision) OR (bh.height IS NULL)) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'no_pile'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND (bh.height >= (14)::double precision) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'wood'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND (bh.height < (8.5)::double precision) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'no_pile'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1700) AND (construction_year.construction_year < 1800) AND ((bh.height >= (8.5)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'wood'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1965) AND ((bh.height < (14)::double precision) OR (bh.height IS NULL)) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'no_pile'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1965) AND (bh.height >= (14)::double precision) AND ((gr.code = 'hz'::text) OR (gr.code = 'ni-hz'::text) OR (gr.code = 'ni-du'::text))) THEN 'wood'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1965) AND (bh.height < (8.5)::double precision) AND (gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND ((gr.code <> 'ni-du'::text) OR (gr.code IS NULL))) THEN 'no_pile'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1800) AND (construction_year.construction_year < 1920) AND ((bh.height >= (8.5)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'wood'::report.foundation_type
+                    WHEN ((construction_year.construction_year >= 1920) AND (construction_year.construction_year < 1965) AND ((bh.height >= (8.5)::double precision) OR (bh.height IS NULL)) AND (((gr.code <> 'hz'::text) AND (gr.code <> 'ni-hz'::text) AND (gr.code <> 'ni-du'::text)) OR (gr.code IS NULL))) THEN 'wood_charger'::report.foundation_type
                     WHEN (construction_year.construction_year < 1700) THEN 'no_pile'::report.foundation_type
                     WHEN (bh.height >= (10.5)::double precision) THEN 'wood'::report.foundation_type
                     WHEN (bh.height < (10.5)::double precision) THEN 'no_pile'::report.foundation_type
@@ -2868,10 +2571,225 @@ CREATE MATERIALIZED VIEW data.analysis_complete AS
 ALTER TABLE data.analysis_complete OWNER TO fundermaps;
 
 --
--- Name: statistics_product_buildings_restored; Type: VIEW; Schema: data; Owner: fundermaps
+-- Name: building_type; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
-CREATE VIEW data.statistics_product_buildings_restored AS
+CREATE MATERIALIZED VIEW data.building_type AS
+ SELECT building.id,
+    'shed'::geocoder.building_type AS building_type
+   FROM ( SELECT ba.id
+           FROM geocoder.building ba
+          WHERE (public.st_area((ba.geom)::public.geography, true) < (20)::double precision)
+        EXCEPT
+         SELECT a.building_id
+           FROM geocoder.address a
+          WHERE (a.building_id IS NOT NULL)) building
+  WITH NO DATA;
+
+
+ALTER TABLE data.building_type OWNER TO fundermaps;
+
+--
+-- Name: analysis_foundation_indicative; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
+--
+
+CREATE MATERIALIZED VIEW data.analysis_foundation_indicative AS
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'concrete'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'no_pile'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code <> 'hz'::text))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'no_pile'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (10.5)::double precision) AND (gr.code = 'hz'::text))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'wood'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code = 'hz'::text))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'wood_charger'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'wood'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (10.5)::double precision) AND (gr.code <> 'hz'::text))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'no_pile'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (10.5)::double precision))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'no_pile'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    bh.height,
+    b.geom,
+    'wood'::report.foundation_type AS foundation_type
+   FROM ((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height > (10.5)::double precision))
+  WITH NO DATA;
+
+
+ALTER TABLE data.analysis_foundation_indicative OWNER TO fundermaps;
+
+--
+-- Name: analysis_foundation_risk; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
+--
+
+CREATE MATERIALIZED VIEW data.analysis_foundation_risk AS
+ SELECT b.id,
+    b.neighborhood_id,
+    gr.code,
+    gwl.level AS groundwater_level,
+    b.geom,
+    'a'::data.foundation_risk_indication AS foundation_risk
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE ((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) >= (1970)::double precision))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    gr.code,
+    gwl.level AS groundwater_level,
+    b.geom,
+    'b'::data.foundation_risk_indication AS foundation_risk
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height > (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    gr.code,
+    gwl.level AS groundwater_level,
+    b.geom,
+    'c'::data.foundation_risk_indication AS foundation_risk
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    gr.code,
+    gwl.level AS groundwater_level,
+    b.geom,
+    'd'::data.foundation_risk_indication AS foundation_risk
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity IS NULL)) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height > (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity > (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1925)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (2.5)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity < (- (1)::double precision))))
+UNION ALL
+ SELECT b.id,
+    b.neighborhood_id,
+    gr.code,
+    gwl.level AS groundwater_level,
+    b.geom,
+    'e'::data.foundation_risk_indication AS foundation_risk
+   FROM (((((geocoder.building_active b
+     LEFT JOIN data.building_type bt ON ((((bt.id)::text = (b.id)::text) AND (bt.building_type = 'shed'::geocoder.building_type))))
+     LEFT JOIN data.building_height bh ON (((bh.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_geographic_region gr ON (((gr.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.building_groundwater_level gwl ON (((gwl.building_id)::text = (b.id)::text)))
+     LEFT JOIN data.subsidence s ON (((s.building_id)::text = (b.id)::text)))
+  WHERE (((bt.id IS NULL) AND (date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level < (0.6)::double precision)) OR ((date_part('year'::text, (b.built_year)::date) < (1700)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level > (0.6)::double precision) AND (s.velocity > (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height >= (9.5)::double precision) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height < (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1970)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code = 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1800)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1925)::double precision) AND (bh.height >= (9.5)::double precision) AND (gr.code <> 'hz'::text) AND (gwl.level > (1.5)::double precision) AND (s.velocity < (- (2.0)::double precision))) OR ((date_part('year'::text, (b.built_year)::date) > (1700)::double precision) AND (date_part('year'::text, (b.built_year)::date) < (1800)::double precision) AND (bh.height < (9.5)::double precision) AND (gwl.level < (0.6)::double precision) AND (s.velocity < (- (1.0)::double precision))))
+  WITH NO DATA;
+
+
+ALTER TABLE data.analysis_foundation_risk OWNER TO fundermaps;
+
+--
+-- Name: statistics_product_buildings_restored; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
+--
+
+CREATE MATERIALIZED VIEW data.statistics_product_buildings_restored AS
  SELECT DISTINCT ON (x.neighborhood_id) x.neighborhood_id,
     x.count
    FROM ( SELECT ba.neighborhood_id,
@@ -2883,87 +2801,71 @@ CREATE VIEW data.statistics_product_buildings_restored AS
         UNION
          SELECT ba.neighborhood_id,
             0 AS count
-           FROM geocoder.building_active ba) x;
+           FROM geocoder.building_active ba) x
+  WITH NO DATA;
 
 
 ALTER TABLE data.statistics_product_buildings_restored OWNER TO fundermaps;
 
 --
--- Name: VIEW statistics_product_buildings_restored; Type: COMMENT; Schema: data; Owner: fundermaps
+-- Name: statistics_product_construction_years; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
-COMMENT ON VIEW data.statistics_product_buildings_restored IS 'Contains statistics about how many building have been restored. This can be filtered on neighborhood_id.';
-
-
---
--- Name: statistics_product_construction_years; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.statistics_product_construction_years AS
+CREATE MATERIALIZED VIEW data.statistics_product_construction_years AS
  SELECT ba.neighborhood_id,
     (date_part('year'::text, decade.decade))::integer AS year_from,
     count(decade.decade) AS count
    FROM geocoder.building_active ba,
     LATERAL date_trunc('decade'::text, (ba.built_year)::timestamp with time zone) decade(decade)
   WHERE (ba.built_year IS NOT NULL)
-  GROUP BY ba.neighborhood_id, decade.decade;
+  GROUP BY ba.neighborhood_id, decade.decade
+  WITH NO DATA;
 
 
 ALTER TABLE data.statistics_product_construction_years OWNER TO fundermaps;
 
 --
--- Name: VIEW statistics_product_construction_years; Type: COMMENT; Schema: data; Owner: fundermaps
+-- Name: statistics_product_data_collected; Type: MATERIALIZED VIEW; Schema: data; Owner: postgres
 --
 
-COMMENT ON VIEW data.statistics_product_construction_years IS 'Contains statistics on the distribution of construction years per decade per neighborhood. This can be filtered on neighborhood_id.';
-
-
---
--- Name: statistics_product_data_collected; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.statistics_product_data_collected AS
+CREATE MATERIALIZED VIEW data.statistics_product_data_collected AS
  SELECT ba.neighborhood_id,
     (count(a.id) FILTER (WHERE (i.id IS NOT NULL)) / count(a.id)) AS percentage
    FROM ((geocoder.address a
      LEFT JOIN report.inquiry_sample i ON (((i.address)::text = (a.id)::text)))
      JOIN geocoder.building_active ba ON (((a.building_id)::text = (ba.id)::text)))
-  GROUP BY ba.neighborhood_id;
+  GROUP BY ba.neighborhood_id
+  WITH NO DATA;
 
 
-ALTER TABLE data.statistics_product_data_collected OWNER TO fundermaps;
-
---
--- Name: VIEW statistics_product_data_collected; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON VIEW data.statistics_product_data_collected IS 'Contains statistics on how much data has been collected for a given neighborhood. This can be filtered on neighborhood_id.';
-
+ALTER TABLE data.statistics_product_data_collected OWNER TO postgres;
 
 --
--- Name: statistics_product_foundation_risk; Type: VIEW; Schema: data; Owner: fundermaps
+-- Name: statistics_product_foundation_risk; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
-CREATE VIEW data.statistics_product_foundation_risk AS
+CREATE MATERIALIZED VIEW data.statistics_product_foundation_risk AS
  SELECT afr.neighborhood_id,
     afr.foundation_risk,
     (((count(afr.foundation_risk))::numeric / sum(count(afr.foundation_risk)) OVER (PARTITION BY afr.neighborhood_id)) * (100)::numeric) AS percentage
    FROM data.analysis_foundation_risk afr
-  GROUP BY afr.neighborhood_id, afr.foundation_risk;
+  GROUP BY afr.neighborhood_id, afr.foundation_risk
+  WITH NO DATA;
 
 
 ALTER TABLE data.statistics_product_foundation_risk OWNER TO fundermaps;
 
 --
--- Name: statistics_product_foundation_type; Type: VIEW; Schema: data; Owner: fundermaps
+-- Name: statistics_product_foundation_type; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
-CREATE VIEW data.statistics_product_foundation_type AS
+CREATE MATERIALIZED VIEW data.statistics_product_foundation_type AS
  SELECT afi.neighborhood_id,
     afi.foundation_type,
     (((count(afi.foundation_type))::numeric / sum(count(afi.foundation_type)) OVER (PARTITION BY afi.neighborhood_id)) * (100)::numeric) AS percentage
    FROM data.analysis_foundation_indicative afi
-  GROUP BY afi.neighborhood_id, afi.foundation_type;
+  GROUP BY afi.neighborhood_id, afi.foundation_type
+  WITH NO DATA;
 
 
 ALTER TABLE data.statistics_product_foundation_type OWNER TO fundermaps;
@@ -3034,10 +2936,10 @@ COMMENT ON COLUMN report.incident.delete_date IS 'Timestamp of soft delete';
 
 
 --
--- Name: statistics_product_incidents; Type: VIEW; Schema: data; Owner: fundermaps
+-- Name: statistics_product_incidents; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
-CREATE VIEW data.statistics_product_incidents AS
+CREATE MATERIALIZED VIEW data.statistics_product_incidents AS
  SELECT ba.neighborhood_id,
     year.year,
     count(i.id) AS count
@@ -3045,23 +2947,17 @@ CREATE VIEW data.statistics_product_incidents AS
      JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
      JOIN geocoder.building_active ba ON (((a.building_id)::text = (ba.id)::text))),
     LATERAL CAST((date_part('year'::text, i.create_date))::integer AS integer) year(year)
-  GROUP BY ba.neighborhood_id, year.year;
+  GROUP BY ba.neighborhood_id, year.year
+  WITH NO DATA;
 
 
 ALTER TABLE data.statistics_product_incidents OWNER TO fundermaps;
 
 --
--- Name: VIEW statistics_product_incidents; Type: COMMENT; Schema: data; Owner: fundermaps
+-- Name: statistics_product_inquiries; Type: MATERIALIZED VIEW; Schema: data; Owner: fundermaps
 --
 
-COMMENT ON VIEW data.statistics_product_incidents IS 'Contains statistics on the amount of incidents for a given district. This can be filtered on neighborhood_id.';
-
-
---
--- Name: statistics_product_inquiries; Type: VIEW; Schema: data; Owner: fundermaps
---
-
-CREATE VIEW data.statistics_product_inquiries AS
+CREATE MATERIALIZED VIEW data.statistics_product_inquiries AS
  SELECT ba.neighborhood_id,
     year.year,
     count(i.id) AS count
@@ -3069,17 +2965,11 @@ CREATE VIEW data.statistics_product_inquiries AS
      JOIN geocoder.address a ON (((i.address)::text = (a.id)::text)))
      JOIN geocoder.building_active ba ON (((a.building_id)::text = (ba.id)::text))),
     LATERAL CAST((date_part('year'::text, i.create_date))::integer AS integer) year(year)
-  GROUP BY ba.neighborhood_id, year.year;
+  GROUP BY ba.neighborhood_id, year.year
+  WITH NO DATA;
 
 
 ALTER TABLE data.statistics_product_inquiries OWNER TO fundermaps;
-
---
--- Name: VIEW statistics_product_inquiries; Type: COMMENT; Schema: data; Owner: fundermaps
---
-
-COMMENT ON VIEW data.statistics_product_inquiries IS 'Contains statistics on the amount of inquries for a given neighborhood. This can be filtered on neighborhood_id.';
-
 
 --
 -- Name: country; Type: TABLE; Schema: geocoder; Owner: fundermaps
@@ -4859,13 +4749,13 @@ GRANT ALL ON FUNCTION application.log_access(id application.user_id) TO funderma
 
 
 --
--- Name: FUNCTION normalize(text); Type: ACL; Schema: application; Owner: fundermaps
+-- Name: FUNCTION "normalize"(text); Type: ACL; Schema: application; Owner: fundermaps
 --
 
-GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webapp;
-GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_webservice;
-GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_portal;
-GRANT ALL ON FUNCTION application.normalize(text) TO fundermaps_batch;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webapp;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_webservice;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_portal;
+GRANT ALL ON FUNCTION application."normalize"(text) TO fundermaps_batch;
 
 
 --
@@ -5015,12 +4905,39 @@ GRANT SELECT ON TABLE data.building_geographic_region TO fundermaps_portal;
 
 
 --
+-- Name: TABLE building_groundwater_level; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_portal;
+
+
+--
 -- Name: TABLE building_height; Type: ACL; Schema: data; Owner: fundermaps
 --
 
 GRANT SELECT ON TABLE data.building_height TO fundermaps_webapp;
 GRANT SELECT ON TABLE data.building_height TO fundermaps_webservice;
 GRANT SELECT ON TABLE data.building_height TO fundermaps_portal;
+
+
+--
+-- Name: TABLE building_ownership; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_ownership TO fundermaps_portal;
+GRANT SELECT ON TABLE data.building_ownership TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_ownership TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE subsidence; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.subsidence TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.subsidence TO fundermaps_webservice;
+GRANT SELECT ON TABLE data.subsidence TO fundermaps_portal;
 
 
 --
@@ -5044,24 +4961,6 @@ GRANT SELECT,REFERENCES ON TABLE geocoder.building TO fundermaps_batch;
 
 
 --
--- Name: TABLE building_type; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.building_type TO fundermaps_portal;
-GRANT SELECT ON TABLE data.building_type TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.building_type TO fundermaps_webservice;
-
-
---
--- Name: TABLE subsidence; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.subsidence TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.subsidence TO fundermaps_webservice;
-GRANT SELECT ON TABLE data.subsidence TO fundermaps_portal;
-
-
---
 -- Name: TABLE building_active; Type: ACL; Schema: geocoder; Owner: fundermaps
 --
 
@@ -5069,33 +4968,6 @@ GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_active TO fundermaps_
 GRANT SELECT,REFERENCES,TRIGGER ON TABLE geocoder.building_active TO fundermaps_webservice;
 GRANT SELECT,REFERENCES ON TABLE geocoder.building_active TO fundermaps_portal;
 GRANT SELECT,REFERENCES ON TABLE geocoder.building_active TO fundermaps_batch;
-
-
---
--- Name: TABLE analysis_foundation_indicative; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_portal;
-GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_webservice;
-
-
---
--- Name: TABLE building_groundwater_level; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_webservice;
-GRANT SELECT ON TABLE data.building_groundwater_level TO fundermaps_portal;
-
-
---
--- Name: TABLE analysis_foundation_risk; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_portal;
-GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webservice;
 
 
 --
@@ -5122,24 +4994,6 @@ GRANT SELECT,INSERT,REFERENCES,DELETE,TRIGGER,UPDATE ON TABLE report.recovery_sa
 
 
 --
--- Name: TABLE analysis_address; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.analysis_address TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.analysis_address TO fundermaps_webservice;
-GRANT SELECT ON TABLE data.analysis_address TO fundermaps_portal;
-
-
---
--- Name: TABLE building_ownership; Type: ACL; Schema: data; Owner: fundermaps
---
-
-GRANT SELECT ON TABLE data.building_ownership TO fundermaps_portal;
-GRANT SELECT ON TABLE data.building_ownership TO fundermaps_webapp;
-GRANT SELECT ON TABLE data.building_ownership TO fundermaps_webservice;
-
-
---
 -- Name: TABLE analysis_complete; Type: ACL; Schema: data; Owner: fundermaps
 --
 
@@ -5149,30 +5003,57 @@ GRANT SELECT ON TABLE data.analysis_complete TO fundermaps_webservice;
 
 
 --
+-- Name: TABLE building_type; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.building_type TO fundermaps_portal;
+GRANT SELECT ON TABLE data.building_type TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.building_type TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE analysis_foundation_indicative; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_portal;
+GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.analysis_foundation_indicative TO fundermaps_webservice;
+
+
+--
+-- Name: TABLE analysis_foundation_risk; Type: ACL; Schema: data; Owner: fundermaps
+--
+
+GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_portal;
+GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webapp;
+GRANT SELECT ON TABLE data.analysis_foundation_risk TO fundermaps_webservice;
+
+
+--
 -- Name: TABLE statistics_product_buildings_restored; Type: ACL; Schema: data; Owner: fundermaps
 --
 
+GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_portal;
 GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_webapp;
 GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_webservice;
-GRANT SELECT ON TABLE data.statistics_product_buildings_restored TO fundermaps_portal;
 
 
 --
 -- Name: TABLE statistics_product_construction_years; Type: ACL; Schema: data; Owner: fundermaps
 --
 
-GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_webapp;
 GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_webservice;
 GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_portal;
+GRANT SELECT ON TABLE data.statistics_product_construction_years TO fundermaps_webapp;
 
 
 --
--- Name: TABLE statistics_product_data_collected; Type: ACL; Schema: data; Owner: fundermaps
+-- Name: TABLE statistics_product_data_collected; Type: ACL; Schema: data; Owner: postgres
 --
 
+GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_portal;
 GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_webapp;
 GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_webservice;
-GRANT SELECT ON TABLE data.statistics_product_data_collected TO fundermaps_portal;
 
 
 --
