@@ -9,90 +9,35 @@ namespace FunderMaps.Core.MapBundle.Jobs
     /// <summary>
     ///     Bundle job entry.
     /// </summary>
-    internal class ExportJob : CommandTask
+    public class ExportJob : CommandTask
     {
         private const string TaskName = "BUNDLE_BUILDING";
 
-        private static readonly string[] exportLayers = new string[]
+        private static readonly string[] exportLayers = new[]
         {
             "analysis_building",
             "analysis_foundation",
             "analysis_quality",
             "analysis_report",
+            "incident",
+            "incident_aggregate",
+            "incident_aggregate_category",
         };
 
         private readonly string connectionString;
 
         private readonly IMapService _mapService;
+        private readonly IBlobStorageService _blobStorageService;
 
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public ExportJob(IConfiguration configuration, IMapService mapService)
+        public ExportJob(IConfiguration configuration, IMapService mapService, IBlobStorageService blobStorageService, ILogger<ExportJob> logger)
         {
+            Logger = logger;
             connectionString = configuration.GetConnectionString("FunderMapsConnection");
             _mapService = mapService;
-        }
-
-        /// <summary>
-        ///     Export dataset from database to mapservice.
-        /// </summary>
-        /// <remarks>
-        ///     The export is performed in 10 parts to that each individual part is
-        ///     less likely to fail the upload, and does not claim to much disk space.
-        ///     A tileset source can be composed of up to 10 source files so this number
-        ///     should not be increased.
-        /// </remarks>
-        /// <param name="layer">Layer name.</param>
-        /// <returns><c>True</c> if the export and upload succeeded, false otherwise.</returns>
-        private async Task<bool> ExportDatasetAsync(string layer)
-        {
-            const int features_per_part = 1000000;
-
-            for (int i = 0; i < 10; i++)
-            {
-                FileDataSource fileDump = new()
-                {
-                    Format = GeometryFormat.GeoJSONSeq,
-                    PathPrefix = CreateDirectory("out"),
-                    Extension = ".json",
-                    Name = $"{layer}_part{i}",
-                };
-
-                CommandInfo command = new VectorDatasetBuilder()
-                    .InputDataset(new PostreSQLDataSource(connectionString))
-                    .InputLayers(new BundleLayerSource(layer, Context.Workspace, i * features_per_part, features_per_part))
-                    .OutputDataset(fileDump)
-                    .Build(formatName: "GeoJSONSeq");
-
-                Logger.LogDebug($"Export layer: {layer}, part: {i}");
-
-                if (await RunCommandAsync(command) == 0)
-                {
-                    long length = new FileInfo(fileDump.ToString()).Length;
-
-                    if (length > 0)
-                    {
-                        bool success = await _mapService.UploadDatasetAsync(layer, fileDump.ToString());
-
-                        Logger.LogDebug($"Upload layer: {layer}, part: {i}, success: {success}");
-                    }
-
-                    File.Delete(fileDump.ToString());
-
-                    if (length == 0)
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    Logger.LogError($"Export layer: {layer}, part: {i} failed");
-                    return false;
-                }
-            }
-
-            return true;
+            _blobStorageService = blobStorageService;
         }
 
         /// <summary>
@@ -104,23 +49,106 @@ namespace FunderMaps.Core.MapBundle.Jobs
         /// <param name="context">Command task execution context.</param>
         public override async Task ExecuteCommandAsync(CommandTaskContext context)
         {
+            Context = context;
             var rng = new Random();
 
+            // Remove any previous artefacts.
+            if (Directory.Exists(context.Workspace))
+            {
+                Directory.Delete(context.Workspace, true);
+            }
+
+            // var layer = exportLayers.OrderBy(i => rng.Next()).First();
             foreach (var layer in exportLayers.OrderBy(i => rng.Next()))
             {
+                Logger.LogInformation($"Building layer {layer}");
+
+                async Task<FileDataSource> buildGpkg()
+                {
+                    FileDataSource fileOutput = new()
+                    {
+                        Format = GeometryFormat.GeoPackage,
+                        PathPrefix = CreateDirectory("out"),
+                        Extension = ".gpkg",
+                        Name = layer,
+                    };
+
+                    CommandInfo command = new VectorDatasetBuilder()
+                        .InputDataset(new PostreSQLDataSource(connectionString))
+                        .InputLayers(new BundleLayerSource(layer, Context.Workspace))
+                        .OutputDataset(fileOutput)
+                        .Build(formatName: "GPKG");
+
+                    if (await RunCommandAsync(command) == 0)
+                    {
+                        Logger.LogDebug("GPKG dataset complete");
+
+                        using var fileOutputStream = File.OpenRead(fileOutput.ToString());
+
+                        await _blobStorageService.StoreFileAsync(
+                            containerName: "geo-bundle",
+                            fileName: fileOutput.FileName,
+                            contentType: "application/x-sqlite3",
+                            stream: fileOutputStream);
+
+                        Logger.LogDebug("GPKG upload complete");
+
+                        return fileOutput;
+                    }
+
+                    throw new Exception();
+                }
+
+                var bundleFileGpkg = await buildGpkg();
+
+                async Task<FileDataSource> buildGeoJSON(FileDataSource fileInput)
+                {
+                    FileDataSource fileOutput = new()
+                    {
+                        Format = GeometryFormat.GeoJSONSeq,
+                        PathPrefix = CreateDirectory("out"),
+                        Extension = ".json",
+                        Name = layer,
+                    };
+
+                    CommandInfo command = new VectorDatasetBuilder()
+                        .InputDataset(fileInput)
+                        .OutputDataset(fileOutput)
+                        .Build(formatName: "GeoJSONSeq");
+
+                    if (await RunCommandAsync(command) == 0)
+                    {
+                        Logger.LogDebug("GeoJSON dataset complete");
+
+                        using var fileOutputStream = File.OpenRead(fileOutput.ToString());
+
+                        await _blobStorageService.StoreFileAsync(
+                            containerName: "geo-bundle",
+                            fileName: fileOutput.FileName,
+                            contentType: "application/json",
+                            stream: fileOutputStream);
+
+                        Logger.LogDebug("GeoJSON upload complete");
+
+                        return fileOutput;
+                    }
+
+                    throw new Exception();
+                }
+
+                var bundleFileGeoJSON = await buildGeoJSON(bundleFileGpkg);
+
                 // NOTE: We *must* delete the old dataset first.
                 await _mapService.DeleteDatasetAsync(layer);
 
-                if (await ExportDatasetAsync(layer))
+                if (await _mapService.UploadDatasetAsync(layer, bundleFileGeoJSON.ToString()))
                 {
-                    if (await _mapService.PublishAsync(layer))
-                    {
-                        Logger.LogInformation($"Layer {layer} published with success");
-                    }
-                    else
-                    {
-                        Logger.LogError($"Layer {layer} was not published");
-                    }
+                    Logger.LogDebug("Layer upload complete");
+                }
+
+                if (await _mapService.PublishAsync(layer))
+                {
+                    Logger.LogInformation($"Layer published");
                 }
             }
         }
