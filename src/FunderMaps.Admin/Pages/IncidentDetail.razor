@@ -6,6 +6,8 @@
 
 <h1>@incident.Id</h1>
 
+<button class="btn btn-primary" @onclick="DeleteIncident">Delete</button>
+
 <div class="form-inline">
     <div class="form-group mb-2">
         <label for="staticEmail2" class="sr-only">ID:</label>
@@ -78,6 +80,11 @@
     public string Id { get; set; }
 
     private Core.Entities.Incident incident;
+
+    private async Task DeleteIncident()
+    {
+        await IncidentRepository.DeleteAsync(Id);
+    }
 
     protected override async Task OnInitializedAsync()
     {
