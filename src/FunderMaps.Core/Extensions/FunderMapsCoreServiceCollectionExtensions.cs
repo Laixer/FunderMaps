@@ -1,4 +1,4 @@
-using FunderMaps.Core.Components;
+﻿using FunderMaps.Core.Components;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
@@ -73,6 +73,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
     private static IServiceCollection AddMapBundle(this IServiceCollection services)
     {
         services.AddBatchJob<ExportJob>();
+        services.AddBatchJob<ExportGpkg>();
         services.AddScoped<IBundleService, BundleHub>();
 
         return services;

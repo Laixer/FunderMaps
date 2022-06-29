@@ -21,7 +21,7 @@ public abstract class CommandTask : BackgroundTask
     /// <summary>
     ///     Command context.
     /// </summary>
-    protected CommandTaskContext Context { get; private set; }
+    protected CommandTaskContext Context { get;  set; }
 
     /// <summary>
     ///     Hosting environment.

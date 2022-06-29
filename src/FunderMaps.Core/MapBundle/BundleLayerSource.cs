@@ -14,15 +14,25 @@ internal class BundleLayerSource : LayerSource
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public BundleLayerSource(string layer, string workspace, int offset, int limit)
+    public BundleLayerSource(string layer, string workspace, int? offset = null, int? limit = null)
     {
         _workspace = workspace;
         layerOutputName = layer;
-        query = $@"
+
+        if (offset is not null && limit is not null)
+        {
+            query = $@"
                 SELECT  *
                 FROM    maplayer.{layer}
                 OFFSET  {offset}
                 LIMIT   {limit}";
+        }
+        else
+        {
+            query = $@"
+                SELECT  *
+                FROM    maplayer.{layer}";
+        }
     }
 
     // Write the SQL to disk and point the command to the sql file.
