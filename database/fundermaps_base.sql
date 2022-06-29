@@ -1430,6 +1430,56 @@ $_$;
 ALTER FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) OWNER TO fundermaps;
 
 --
+-- Name: id_resolve(text); Type: FUNCTION; Schema: data; Owner: fundermaps
+--
+
+CREATE FUNCTION data.id_resolve(id text) RETURNS geocoder.geocoder_id
+    LANGUAGE plpgsql
+    AS $$
+declare 
+	identifier geocoder.id_parser_tuple;
+	building_id geocoder.geocoder_id;
+begin
+   select *
+   into identifier
+   from geocoder.id_parser(id);
+  
+      case identifier.type
+        WHEN 'fundermaps' THEN 
+            SELECT-- AnalysisComplete
+                    ac.building_id
+            into    building_id
+            FROM    data.analysis_complete ac
+            WHERE   ac.building_id = identifier.id
+            LIMIT   1;
+        WHEN 'nl_bag_building', 'nl_bag_berth', 'nl_bag_posting' THEN 
+            SELECT-- AnalysisComplete
+                    ac.building_id
+            into    building_id
+            FROM    data.analysis_complete ac
+            WHERE   ac.external_building_id = identifier.id
+            LIMIT   1;
+        WHEN 'nl_bag_address' THEN  
+            SELECT-- AnalysisComplete
+                    ac.building_id
+            into    building_id
+            FROM    data.analysis_complete ac
+            WHERE   ac.address_external_id = identifier.id
+            LIMIT   1;
+    end case;
+  
+    if not found then
+    	raise no_data_found;
+	end if;
+
+	return building_id;
+end;
+$$;
+
+
+ALTER FUNCTION data.id_resolve(id text) OWNER TO fundermaps;
+
+--
 -- Name: id_parser(text); Type: FUNCTION; Schema: geocoder; Owner: fundermaps
 --
 
