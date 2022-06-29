@@ -3599,6 +3599,55 @@ CREATE INDEX building_type_id_idx ON data.building_type USING btree (id);
 
 
 --
+-- Name: statistics_product_buildings_restored_neighborhood_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE UNIQUE INDEX statistics_product_buildings_restored_neighborhood_idx ON data.statistics_product_buildings_restored USING btree (neighborhood_id);
+
+
+--
+-- Name: statistics_product_construction_years_neighborhood_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX statistics_product_construction_years_neighborhood_idx ON data.statistics_product_construction_years USING btree (neighborhood_id);
+
+
+--
+-- Name: statistics_product_data_collected_neighborhood_idx; Type: INDEX; Schema: data; Owner: postgres
+--
+
+CREATE UNIQUE INDEX statistics_product_data_collected_neighborhood_idx ON data.statistics_product_data_collected USING btree (neighborhood_id);
+
+
+--
+-- Name: statistics_product_foundation_risk_neighborhood_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX statistics_product_foundation_risk_neighborhood_idx ON data.statistics_product_foundation_risk USING btree (neighborhood_id);
+
+
+--
+-- Name: statistics_product_foundation_type_neighborhood_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX statistics_product_foundation_type_neighborhood_idx ON data.statistics_product_foundation_type USING btree (neighborhood_id);
+
+
+--
+-- Name: statistics_product_incidents_neighborhood_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX statistics_product_incidents_neighborhood_idx ON data.statistics_product_incidents USING btree (neighborhood_id);
+
+
+--
+-- Name: statistics_product_inquiries_neighborhood_idx; Type: INDEX; Schema: data; Owner: fundermaps
+--
+
+CREATE INDEX statistics_product_inquiries_neighborhood_idx ON data.statistics_product_inquiries USING btree (neighborhood_id);
+
+
+--
 -- Name: subsidence_velocity_idx; Type: INDEX; Schema: data; Owner: fundermaps
 --
 
