@@ -22,7 +22,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             WITH tracker AS (
                 INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
                 SELECT  @tenant, 'analysis3', building_id
-                FROM    data.id_resolve(@id) AS building_id
+                FROM    geocoder.id_lookup(@id) AS building_id
                 LIMIT   1
                 RETURNING building_id
             )
@@ -79,30 +79,12 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     public async Task<bool> GetRiskIndexAsync(string id)
     {
         var sql = @"
-            WITH identifier AS (
-                SELECT
-                        type,
-                        id
-                FROM    geocoder.id_parser(@id)
-                LIMIT	1
-            ),
-            tracker AS (
+            WITH tracker AS (
                 INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
-                SELECT
-                        @tenant,
-                        'riskindex',
-                        ac.building_id
-                FROM    data.analysis_complete ac, identifier
-                WHERE
-                    CASE
-                        WHEN identifier.type = 'fundermaps' THEN ac.building_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_address' THEN ac.address_external_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_building' THEN ac.external_building_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_berth' THEN ac.external_building_id = identifier.id
-                        WHEN identifier.type = 'nl_bag_posting' THEN ac.external_building_id = identifier.id
-                    END
-                LIMIT 1
-                RETURNING pt.building_id
+                SELECT  @tenant, 'riskindex', building_id
+                FROM    geocoder.id_lookup(@id) AS building_id
+                LIMIT   1
+                RETURNING building_id
             )
             SELECT -- AnalysisComplete
                     'a'::data.foundation_risk_indication <> ANY (ARRAY[
