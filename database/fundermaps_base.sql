@@ -2948,17 +2948,6 @@ COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.
 
 
 --
--- Name: identifier; Type: TABLE; Schema: geocoder; Owner: postgres
---
-
-CREATE TABLE geocoder.identifier (
-    "?column?" integer
-);
-
-
-ALTER TABLE geocoder.identifier OWNER TO postgres;
-
---
 -- Name: municipality; Type: TABLE; Schema: geocoder; Owner: fundermaps
 --
 
