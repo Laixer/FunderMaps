@@ -115,7 +115,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
             // Arrange
             using var client = factory.CreateClient(OrganizationRole.Writer);
             var newObject = new RecoverySampleDtoFaker()
-                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .RuleFor(f => f.Address, f => "gfm-f53334d806ab4ab386e8df29111add21")
                 .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
 
@@ -135,7 +135,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
         {
             using var client = factory.CreateClient(OrganizationRole.Writer);
             var newObject = new InquirySampleDtoFaker()
-                .RuleFor(f => f.Address, f => "gfm-351cc5645ab7457b92d3629e8c163f0b")
+                .RuleFor(f => f.Address, f => "gfm-2687feed6a624636b70700cd374fbd17")
                 .Generate();
 
             // Act
