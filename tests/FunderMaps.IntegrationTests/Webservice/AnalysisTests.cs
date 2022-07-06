@@ -29,7 +29,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("NL.IMBAG.LIGPLAATS.0503020000111954", returnObject.ExternalBuildingId);
+        Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
 
         Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis3") > 0);
     }
