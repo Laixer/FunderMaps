@@ -7,14 +7,14 @@ namespace FunderMaps.IntegrationTests.Webservice;
 /// <summary>
 ///     Integration test for the analysis controller.
 /// </summary>
-public class Analysis3Tests : IClassFixture<WebserviceFixtureFactory>
+public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 {
     private WebserviceFixtureFactory Factory { get; }
 
     /// <summary>
     ///     Create new instance and setup the test data.
     /// </summary>
-    public Analysis3Tests(WebserviceFixtureFactory factory)
+    public AnalysisTests(WebserviceFixtureFactory factory)
         => Factory = factory;
 
     [Fact]
@@ -154,6 +154,21 @@ public class Analysis3Tests : IClassFixture<WebserviceFixtureFactory>
     }
 
     [Theory]
+    [InlineData("gfm-bc31bec346744745b29f8505dff8182f")]
+    [InlineData("gfm-00096758461b4c8c8a8c145790126beb")]
+    public async Task GetRiskIndexByExternalIdAddressNotFoundThrows(string address)
+    {
+        // Arrange
+        using var client = Factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync($"api/v3/product/at_risk?id={address}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Theory]
     [InlineData("id=3kjhr834dhfjdeh")]
     [InlineData("bagid=4928374hfdkjsfh")]
     [InlineData("query=thisismyquerystringyes")]
@@ -168,5 +183,20 @@ public class Analysis3Tests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("gfm-dfcdbbabf1de41c38597c049b0cce5d4")]
+    [InlineData("gfm-1437da5c31e944dd8d362264041d067a")]
+    public async Task GetByIdAddressNotFoundThrows(string address)
+    {
+        // Arrange
+        using var client = Factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync($"api/v3/product/analysis?id={address}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

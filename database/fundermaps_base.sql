@@ -1430,54 +1430,51 @@ $_$;
 ALTER FUNCTION data.get_foundation_category(type_indicative report.foundation_type, type_report report.foundation_type) OWNER TO fundermaps;
 
 --
--- Name: id_resolve(text); Type: FUNCTION; Schema: data; Owner: fundermaps
+-- Name: id_lookup(text); Type: FUNCTION; Schema: geocoder; Owner: fundermaps
 --
 
-CREATE FUNCTION data.id_resolve(id text) RETURNS geocoder.geocoder_id
-    LANGUAGE plpgsql
+CREATE FUNCTION geocoder.id_lookup(input text) RETURNS geocoder.geocoder_id
+    LANGUAGE plpgsql PARALLEL SAFE
     AS $$
-declare 
+DECLARE
 	identifier geocoder.id_parser_tuple;
 	building_id geocoder.geocoder_id;
-begin
-   select *
-   into identifier
-   from geocoder.id_parser(id);
+BEGIN
+	SELECT parse_result.type, parse_result.id
+	INTO identifier
+	FROM geocoder.id_parser(input) AS parse_result;
   
-      case identifier.type
-        WHEN 'fundermaps' THEN 
-            SELECT-- AnalysisComplete
-                    ac.building_id
-            into    building_id
-            FROM    data.analysis_complete ac
-            WHERE   ac.building_id = identifier.id
-            LIMIT   1;
-        WHEN 'nl_bag_building', 'nl_bag_berth', 'nl_bag_posting' THEN 
-            SELECT-- AnalysisComplete
-                    ac.building_id
-            into    building_id
-            FROM    data.analysis_complete ac
-            WHERE   ac.external_building_id = identifier.id
-            LIMIT   1;
-        WHEN 'nl_bag_address' THEN  
-            SELECT-- AnalysisComplete
-                    ac.building_id
-            into    building_id
-            FROM    data.analysis_complete ac
-            WHERE   ac.address_external_id = identifier.id
-            LIMIT   1;
-    end case;
-  
-    if not found then
-    	raise no_data_found;
-	end if;
+	CASE identifier.type
+		WHEN 'fundermaps' THEN 
+			SELECT	ac.building_id
+			INTO    building_id
+			FROM    data.analysis_complete ac
+			WHERE   ac.building_id = identifier.id
+			LIMIT   1;
+		WHEN 'nl_bag_building', 'nl_bag_berth', 'nl_bag_posting' THEN 
+			SELECT	ac.building_id
+			INTO    building_id
+			FROM    data.analysis_complete ac
+			WHERE   ac.external_building_id = identifier.id
+			LIMIT   1;
+		WHEN 'nl_bag_address' THEN  
+			SELECT	ac.building_id
+			INTO    building_id
+			FROM    data.analysis_complete ac
+			WHERE   ac.address_external_id = identifier.id
+			LIMIT   1;
+	END CASE;
 
-	return building_id;
-end;
+	IF NOT FOUND THEN
+    	RAISE no_data_found;
+	END IF;
+
+	RETURN building_id;
+END;
 $$;
 
 
-ALTER FUNCTION data.id_resolve(id text) OWNER TO fundermaps;
+ALTER FUNCTION geocoder.id_lookup(input text) OWNER TO fundermaps;
 
 --
 -- Name: id_parser(text); Type: FUNCTION; Schema: geocoder; Owner: fundermaps
@@ -2949,6 +2946,17 @@ ALTER TABLE geocoder.district OWNER TO fundermaps;
 
 COMMENT ON TABLE geocoder.district IS 'Contains all districts in our own format.';
 
+
+--
+-- Name: identifier; Type: TABLE; Schema: geocoder; Owner: postgres
+--
+
+CREATE TABLE geocoder.identifier (
+    "?column?" integer
+);
+
+
+ALTER TABLE geocoder.identifier OWNER TO postgres;
 
 --
 -- Name: municipality; Type: TABLE; Schema: geocoder; Owner: fundermaps
