@@ -90,6 +90,7 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
                 FoundationDamageCause.Gas => "Gaswinning/mijnbouw",
                 FoundationDamageCause.Vibrations => "Verkeer",
                 FoundationDamageCause.PartialFoundationRecovery => "Naastgelegen funderingsherstel",
+                FoundationDamageCause.JapanseKnotweed => "Japanse duizendknoop",
                 _ => "Onbekend",
             };
 
