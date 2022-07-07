@@ -59,7 +59,7 @@ public sealed class Incident : RecordControl<Incident, string>
     ///     Foundation damage cause.
     /// </summary>
     [EnumDataType(typeof(FoundationDamageCause))]
-    public FoundationDamageCause FoundationDamageCause { get; set; }
+    public FoundationDamageCause? FoundationDamageCause { get; set; }
 
     /// <summary>
     ///     Document name.
