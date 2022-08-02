@@ -71,6 +71,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         return MapFromReader3(reader);
     }
 
+    // TOOD: Move to db.
     // TODO: Needs optimization.
     /// <summary>
     ///     Gets the risk index by its internal building id.
@@ -139,8 +140,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             Soil = reader.GetSafeString(14),
             SurfaceArea = reader.GetSafeDouble(15),
             DamageCause = reader.GetFieldValue<FoundationDamageCause?>(16),
-            // EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(17),
-            // OverallQuality = reader.GetFieldValue<Quality?>(18),
             InquiryType = reader.GetFieldValue<InquiryType?>(19),
             Drystand = reader.GetSafeDouble(20),
             DrystandRisk = reader.GetFieldValue<FoundationRisk?>(21),
