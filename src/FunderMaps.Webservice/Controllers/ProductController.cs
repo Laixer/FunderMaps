@@ -47,8 +47,16 @@ public class ProductController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<AnalysisProduct3> GetAnalysisAsync([FromQuery] string id)
-        => _analysisRepository.Get3Async(id);
+    public async Task<IActionResult> GetAnalysisAsync([FromQuery] string id)
+    {
+        var product = await _analysisRepository.Get3Async(id);
+        if (product is not null)
+        {
+            return Ok(product);
+        }
+
+        return NotFound();
+    }
 
     // GET: api/v3/product/at_risk
     /// <summary>

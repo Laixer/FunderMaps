@@ -19,47 +19,38 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     public async Task<AnalysisProduct3> Get3Async(string id)
     {
         var sql = @"
-            WITH tracker AS (
-                INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
-                SELECT  @tenant, 'analysis3', building_id
-                FROM    geocoder.id_lookup(@id) AS building_id
-                LIMIT   1
-                RETURNING building_id
-            )
-            SELECT-- AnalysisComplete
-                    ac.building_id,
-                    ac.external_building_id,
-                    ac.address_id,
-                    ac.address_external_id,
-                    ac.neighborhood_id,
-                    ac.construction_year,
-                    ac.construction_year_reliability,
-                    ac.foundation_type,
-                    ac.foundation_type_reliability,
-                    ac.restoration_costs,
-                    ac.height,
-                    ac.velocity,
-                    ac.ground_water_level,
-                    ac.ground_level,
-                    ac.soil,
-                    ac.surface_area,
-                    ac.damage_cause,
-                    ac.enforcement_term,
-                    ac.overall_quality,
-                    ac.inquiry_type,
-                    ac.drystand,
-                    ac.drystand_risk,
-                    ac.drystand_risk_reliability,
-                    ac.bio_infection_risk,
-                    ac.bio_infection_risk_reliability,
-                    ac.dewatering_depth,
-                    ac.dewatering_depth_risk,
-                    ac.dewatering_depth_risk_reliability,
-                    ac.unclassified_risk,
-                    ac.recovery_type
-            FROM    data.analysis_complete ac, tracker
-            WHERE   ac.building_id = tracker.building_id
-            LIMIT   1";
+            SELECT
+                ra.building_id,
+                ra.external_building_id,
+                null as address_id,
+                null as address_external_id,
+                ra.neighborhood_id,
+                ra.construction_year,
+                ra.construction_year_reliability,
+                ra.foundation_type,
+                ra.foundation_type_reliability,
+                ra.restoration_costs,
+                ra.height,
+                ra.velocity,
+                ra.ground_water_level,
+                ra.ground_level,
+                ra.soil,
+                ra.surface_area,
+                ra.damage_cause,
+                ra.enforcement_term,
+                ra.overall_quality,
+                ra.inquiry_type,
+                ra.drystand,
+                ra.drystand_risk,
+                ra.drystand_risk_reliability,
+                ra.bio_infection_risk,
+                ra.bio_infection_risk_reliability,
+                ra.dewatering_depth,
+                ra.dewatering_depth_risk,
+                ra.dewatering_depth_risk_reliability,
+                ra.unclassified_risk,
+                ra.recovery_type
+            FROM application.request_analysis(@tenant, @id) ra";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -71,6 +62,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         return MapFromReader3(reader);
     }
 
+    // TOOD: Move to db.
     // TODO: Needs optimization.
     /// <summary>
     ///     Gets the risk index by its internal building id.
@@ -139,8 +131,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             Soil = reader.GetSafeString(14),
             SurfaceArea = reader.GetSafeDouble(15),
             DamageCause = reader.GetFieldValue<FoundationDamageCause?>(16),
-            // EnforcementTerm = reader.GetFieldValue<EnforcementTerm?>(17),
-            // OverallQuality = reader.GetFieldValue<Quality?>(18),
             InquiryType = reader.GetFieldValue<InquiryType?>(19),
             Drystand = reader.GetSafeDouble(20),
             DrystandRisk = reader.GetFieldValue<FoundationRisk?>(21),

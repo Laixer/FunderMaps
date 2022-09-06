@@ -1,13 +1,12 @@
-namespace FunderMaps.Core.Interfaces
+namespace FunderMaps.Core.Interfaces;
+
+/// <summary>
+///     AppContext factory.
+/// </summary>
+public interface IAppContextFactory
 {
     /// <summary>
-    ///     AppContext factory.
+    ///     Create the <see cref="AppContext"/>.
     /// </summary>
-    public interface IAppContextFactory
-    {
-        /// <summary>
-        ///     Create the <see cref="AppContext"/>.
-        /// </summary>
-        AppContext Create();
-    }
+    AppContext Create();
 }
