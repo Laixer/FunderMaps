@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
 using FunderMaps.Data.Abstractions;
@@ -22,8 +22,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             SELECT
                 ra.building_id,
                 ra.external_building_id,
-                null as address_id,
-                null as address_external_id,
+                a.id as address_id,
+                a.external_id as address_external_id,
                 ra.neighborhood_id,
                 ra.construction_year,
                 ra.construction_year_reliability,
@@ -50,7 +50,10 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                 ra.dewatering_depth_risk_reliability,
                 ra.unclassified_risk,
                 ra.recovery_type
-            FROM application.request_analysis(@tenant, @id) ra";
+            FROM application.request_analysis(@tenant, @id) ra
+            JOIN geocoder.address_building ab ON ab.building_id = ra.building_id
+            JOIN geocoder.address a ON a.id = ab.address_id
+            LIMIT 1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
