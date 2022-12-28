@@ -119,9 +119,4 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             UnclassifiedRisk = reader.GetFieldValue<FoundationRisk?>(28),
             RecoveryType = reader.GetFieldValue<RecoveryType?>(29),
         };
-
-    public IAsyncEnumerable<ProductSync> ListAllAsync(Navigation navigation)
-    {
-        throw new NotImplementedException();
-    }
 }

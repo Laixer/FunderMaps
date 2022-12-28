@@ -38,27 +38,27 @@ namespace FunderMaps.Core.MapBundle.Jobs
 
             // await _mapService.UploadStatusAsync("cl7t0id5d18gd27pcvc21bthk");
 
-            await foreach (var x in _analysisRepository.ListAllAsync(Navigation.All))
-            {
-                Logger.LogInformation($"Patch feature: {x.BuildingId}");
+            // await foreach (var x in _analysisRepository.ListAllAsync(Navigation.All))
+            // {
+            //     Logger.LogInformation($"Patch feature: {x.BuildingId}");
 
-                for (int i = 0; i < 5; i++)
-                {
-                    try
-                    {
-                        await _mapService.UploadDatasetFeatureAsync("cl7rez7l11lly21o0sl9x8bzd", x.BuildingId, x.GeoJson.ToString());
-                        break;
-                    }
-                    catch (System.Exception)
-                    {
-                        if (i == 3)
-                        {
-                            Logger.LogCritical("Failed after 3 attempts");
-                            Environment.Exit(1);
-                        }
-                    }
-                }
-            }
+            //     for (int i = 0; i < 5; i++)
+            //     {
+            //         try
+            //         {
+            //             await _mapService.UploadDatasetFeatureAsync("cl7rez7l11lly21o0sl9x8bzd", x.BuildingId, x.GeoJson.ToString());
+            //             break;
+            //         }
+            //         catch (System.Exception)
+            //         {
+            //             if (i == 3)
+            //             {
+            //                 Logger.LogCritical("Failed after 3 attempts");
+            //                 Environment.Exit(1);
+            //             }
+            //         }
+            //     }
+            // }
         }
 
         /// <summary>
