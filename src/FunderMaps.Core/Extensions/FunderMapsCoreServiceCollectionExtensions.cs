@@ -74,6 +74,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
     {
         services.AddBatchJob<ExportJob>();
         services.AddBatchJob<ExportGpkg>();
+        services.AddBatchJob<Mapservice>();
         services.AddScoped<IBundleService, BundleHub>();
 
         return services;

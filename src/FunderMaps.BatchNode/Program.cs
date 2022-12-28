@@ -75,6 +75,23 @@ public static class Program
         });
         rootCommand.Add(refreshCommand);
 
+        Command mapserviceCommand = new("mapservice");
+        mapserviceCommand.SetHandler(async () =>
+        {
+            Console.WriteLine($"Running mapservice job");
+
+            var scope = serviceProvider.CreateAsyncScope();
+
+            var exportJob = scope.ServiceProvider.GetRequiredService<Core.MapBundle.Jobs.Mapservice>();
+            await exportJob.ExecuteCommandAsync(new Core.Threading.Command.CommandTaskContext(Guid.NewGuid())
+            {
+                Workspace = System.Environment.CurrentDirectory + "/workspace",
+                KeepWorkspace = true,
+                Failed = false,
+            });
+        });
+        rootCommand.Add(mapserviceCommand);
+
         rootCommand.Description = "FunderMaps batch job runner";
 
         await rootCommand.InvokeAsync(args);

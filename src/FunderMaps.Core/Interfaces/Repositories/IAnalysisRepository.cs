@@ -18,4 +18,6 @@ public interface IAnalysisRepository
     /// </summary>
     /// <param name="id">Internal building id.</param>
     Task<bool> GetRiskIndexAsync(string id);
+
+    IAsyncEnumerable<Types.ProductSync> ListAllAsync(Core.Navigation navigation);
 }

@@ -16,7 +16,19 @@ namespace FunderMaps.Core.Interfaces
         /// </summary>
         /// <param name="datasetName">The dataset name.</param>
         /// <param name="filePath">Path to dataset on disk.</param>
-        Task<bool> UploadDatasetAsync(string datasetName, string filePath);
+        Task UploadDatasetAsync(string datasetName, string filePath);
+
+        /// <summary>
+        ///     Upload dataset feature to mapping service.
+        /// </summary>
+        /// <param name="datasetName">The dataset name.</param>
+        /// <param name="featureId">Feature identifier.</param>
+        /// <param name="geoJsonObject">GeoJSON object.</param>
+        Task UploadDatasetFeatureAsync(string datasetName, string featureId, object geoJsonObject);
+
+        Task<bool> UploadDatasetToTilesetAsync(string datasetName, string tileset);
+
+        Task<bool> UploadStatusAsync(string uploadId);
 
         /// <summary>
         ///     Publish dataset as map.
