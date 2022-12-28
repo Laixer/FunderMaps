@@ -95,37 +95,6 @@ public class Startup
 
     /// <summary>
     ///     This method gets called by the runtime. Use this method to configure the HTTP
-    ///     request pipeline if environment is set to staging.
-    /// </summary>
-    /// <remarks>
-    ///     The order in which the pipeline handles request is of importance.
-    /// </remarks>
-    public static void ConfigureStaging(IApplicationBuilder app)
-    {
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-        });
-
-        app.UseExceptionHandler("/oops");
-
-        app.UsePathBase(new("/api"));
-        app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseAspAppContext();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
-        });
-    }
-
-    /// <summary>
-    ///     This method gets called by the runtime. Use this method to configure the HTTP
     ///     request pipeline if no environment is set.
     /// </summary>
     /// <remarks>
