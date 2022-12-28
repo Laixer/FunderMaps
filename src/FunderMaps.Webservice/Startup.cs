@@ -1,5 +1,4 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Webservice.Documentation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -33,33 +32,6 @@ public class Startup
     private static void StartupConfigureServices(IServiceCollection services)
     {
         services.AddAutoMapper(typeof(Startup));
-
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new()
-            {
-                Title = "FunderMaps Webservice",
-                Version = "v1",
-                Description = "FunderMaps Webservice REST API",
-                Contact = new()
-                {
-                    Name = "Laixer B.V.",
-                    Email = "info@laixer.com",
-                },
-            }
-            );
-            options.DocumentFilter<BasePathFilter>();
-
-            // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-            options.SchemaFilter<EnumSchemaFilter>();
-            options.UseOneOfForPolymorphism();
-
-            string DocumentationFile = $"{AppContext.BaseDirectory}DocumentationFunderMapsWebservice.xml";
-            if (File.Exists(DocumentationFile))
-            {
-                options.IncludeXmlComments(DocumentationFile);
-            }
-        });
 
         // Register components from reference assemblies.
         services.AddFunderMapsDataServices("FunderMapsConnection");
@@ -107,13 +79,6 @@ public class Startup
 
         app.UseExceptionHandler("/oops");
 
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-            options.RoutePrefix = string.Empty;
-        });
-
         app.UsePathBase(new("/api"));
         app.UseRouting();
 
@@ -143,13 +108,6 @@ public class Startup
         });
 
         app.UseExceptionHandler("/oops");
-
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-            options.RoutePrefix = string.Empty;
-        });
 
         app.UsePathBase(new("/api"));
         app.UseRouting();
@@ -181,8 +139,6 @@ public class Startup
         });
 
         app.UseExceptionHandler("/oops");
-
-        app.UseSwagger();
 
         app.UsePathBase(new("/api"));
         app.UseRouting();
