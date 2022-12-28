@@ -38,10 +38,6 @@ public static class FunderMapsInfrastructureServiceCollectionExtensions
         // Remove all existing file storage services and inject local file stoage service.
         services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
         services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Transient);
-
-        // Remove all existing file storage services and inject local file stoage service.
-        services.Configure<MapboxOptions>(Configuration.GetSection("Mapbox"));
-        services.AddOrReplace<IMapService, MapboxService>(ServiceLifetime.Transient);
     }
 
     /// <summary>

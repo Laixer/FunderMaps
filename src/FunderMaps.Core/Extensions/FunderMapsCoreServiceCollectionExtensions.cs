@@ -134,7 +134,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       them as a singleton will keep the services alife for the entire lifetime
         //       of the application. Beware to add new services as singletons.
         services.TryAddSingleton<IEmailService, NullEmailService>();
-        services.TryAddTransient<IMapService, NullMapService>();
         services.TryAddTransient<IBlobStorageService, NullBlobStorageService>();
 
         // The application core (as well as many other components) depends upon the ability to cache
