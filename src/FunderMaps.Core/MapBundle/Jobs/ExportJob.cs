@@ -141,10 +141,7 @@ public class ExportJob : CommandTask
             // NOTE: We *must* delete the old dataset first.
             await _mapService.DeleteDatasetAsync(layer);
 
-            if (await _mapService.UploadDatasetAsync(layer, bundleFileGeoJSON.ToString()))
-            {
-                Logger.LogDebug("Layer upload complete");
-            }
+            await _mapService.UploadDatasetAsync(layer, bundleFileGeoJSON.ToString());
 
             if (await _mapService.PublishAsync(layer))
             {

@@ -1,3 +1,4 @@
+using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
@@ -118,4 +119,9 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             UnclassifiedRisk = reader.GetFieldValue<FoundationRisk?>(28),
             RecoveryType = reader.GetFieldValue<RecoveryType?>(29),
         };
+
+    public IAsyncEnumerable<ProductSync> ListAllAsync(Navigation navigation)
+    {
+        throw new NotImplementedException();
+    }
 }
