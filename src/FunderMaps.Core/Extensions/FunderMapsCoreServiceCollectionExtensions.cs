@@ -2,8 +2,6 @@
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.MapBundle;
-using FunderMaps.Core.MapBundle.Jobs;
 using FunderMaps.Core.Model;
 using FunderMaps.Core.Model.Jobs;
 using FunderMaps.Core.Notification;
@@ -63,19 +61,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddBatchJob<EmailJob>();
         services.AddScoped<IIncidentService, IncidentService>();
         services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds map bundle service.
-    /// </summary>
-    private static IServiceCollection AddMapBundle(this IServiceCollection services)
-    {
-        services.AddBatchJob<ExportJob>();
-        services.AddBatchJob<ExportGpkg>();
-        services.AddBatchJob<Mapservice>();
-        services.AddScoped<IBundleService, BundleHub>();
 
         return services;
     }
@@ -159,9 +144,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
         // Register the incident core service.
         services.AddIncident();
-
-        // Register the map bundle service.
-        services.AddMapBundle();
 
         // Register the model service.
         services.AddModel();
