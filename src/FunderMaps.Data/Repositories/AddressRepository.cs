@@ -58,22 +58,22 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     public override async Task<string> AddAsync(Address entity)
     {
         var sql = @"
-                    INSERT INTO geocoder.address(
-                        building_number,
-                        postal_code,
-                        street,
-                        is_active,
-                        external_id,
-                        external_source)
-                    VALUES (
-                        @building_number,
-                        @postal_code,
-                        @street,
-                        @is_active,
-                        upper(@external_id),
-                        @external_source)
-                    ON CONFLICT DO NOTHING
-                    RETURNING id";
+            INSERT INTO geocoder.address(
+                building_number,
+                postal_code,
+                street,
+                is_active,
+                external_id,
+                external_source)
+            VALUES (
+                @building_number,
+                @postal_code,
+                @street,
+                @is_active,
+                upper(@external_id),
+                @external_source)
+            ON CONFLICT DO NOTHING
+            RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -91,8 +91,8 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     public override async Task<long> CountAsync()
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    geocoder.address";
+            SELECT  COUNT(*)
+            FROM    geocoder.address";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -109,20 +109,20 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     public async Task<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
     {
         var sql = @"
-                SELECT  -- Address
-                        a.id,
-                        a.building_number,
-                        a.postal_code,
-                        a.street,
-                        a.is_active,
-                        a.external_id,
-                        a.external_source,
-                        a.city,
-                        a.building_id
-                FROM    geocoder.address AS a
-                WHERE   a.external_id = upper(@external_id)
-                AND     a.external_source = @external_source
-                LIMIT   1";
+            SELECT  -- Address
+                    a.id,
+                    a.building_number,
+                    a.postal_code,
+                    a.street,
+                    a.is_active,
+                    a.external_id,
+                    a.external_source,
+                    a.city,
+                    a.building_id
+            FROM    geocoder.address AS a
+            WHERE   a.external_id = upper(@external_id)
+            AND     a.external_source = @external_source
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -147,19 +147,19 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         }
 
         var sql = @"
-                SELECT  -- Address
-                        a.id,
-                        a.building_number,
-                        a.postal_code,
-                        a.street,
-                        a.is_active,
-                        a.external_id,
-                        a.external_source,
-                        a.city,
-                        a.building_id
-                FROM    geocoder.address AS a
-                WHERE   a.id = @id
-                LIMIT   1";
+            SELECT  -- Address
+                    a.id,
+                    a.building_number,
+                    a.postal_code,
+                    a.street,
+                    a.is_active,
+                    a.external_id,
+                    a.external_source,
+                    a.city,
+                    a.building_id
+            FROM    geocoder.address AS a
+            WHERE   a.id = @id
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -177,28 +177,28 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     public override async IAsyncEnumerable<Address> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  -- Address
-                        a.id,
-                        a.building_number,
-                        a.postal_code,
-                        a.street,
-                        a.is_active,
-                        a.external_id,
-                        a.external_source,
-                        a.city,
-                        a.building_id,
+            SELECT  -- Address
+                    a.id,
+                    a.building_number,
+                    a.postal_code,
+                    a.street,
+                    a.is_active,
+                    a.external_id,
+                    a.external_source,
+                    a.city,
+                    a.building_id,
 
-                        -- Building
-                        b.id,
-                        b.building_type,
-                        b.built_year,
-                        b.is_active,
-                        b.external_id, 
-                        b.external_source, 
-                        b.geom,
-                        b.neighborhood_id
-                FROM    geocoder.address AS a
-                JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
+                    -- Building
+                    b.id,
+                    b.building_type,
+                    b.built_year,
+                    b.is_active,
+                    b.external_id, 
+                    b.external_source, 
+                    b.geom,
+                    b.neighborhood_id
+            FROM    geocoder.address AS a
+            JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -224,14 +224,14 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         ResetCacheEntity(entity);
 
         var sql = @"
-                    UPDATE  geocoder.address
-                    SET     building_number = @building_number,
-                            postal_code = @postal_code,
-                            street = @street,
-                            is_active = @is_active,
-                            external_id = upper(@external_id),
-                            external_source = @external_source
-                    WHERE   id = @id";
+            UPDATE  geocoder.address
+            SET     building_number = @building_number,
+                    postal_code = @postal_code,
+                    street = @street,
+                    is_active = @is_active,
+                    external_id = upper(@external_id),
+                    external_source = @external_source
+            WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
