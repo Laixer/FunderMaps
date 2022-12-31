@@ -1,0 +1,29 @@
+﻿@page "/{sid:guid?}"
+
+<PageTitle>Index</PageTitle>
+
+@if (mapset is not null)
+{
+<div id="map" @ref="mapElement">
+    <div id="state-legend" class="legend">
+        <img src="https://app.fundermaps.com/img/logo.93735295.svg" class="Logo" alt="FunderMaps logo" />
+        @foreach (var layer in Layers)
+        {
+            <h5 @onclick="() => ToggleVisibility(layer.Id)" style="cursor: pointer; padding-top: 10px">
+                <span class="px-2"><img src="@(@layer.isVisible ? "https://img.icons8.com/material-rounded/512/visible.png" : "https://img.icons8.com/material-rounded/512/invisible.png")" width="14" height="14"></span>
+                @layer.Name
+            </h5>
+            <div id="@layer.Id" class="legend-item" style="@(@layer.isVisible ? "display: block;" : "display: none;")">
+                @foreach (var field in layer.Fields)
+                {
+                    <div><span style="background-color: #@field.Color"></span>@field.Name</div>
+                }
+            </div>
+        }
+    </div>
+</div>
+}
+else
+{
+    <strong>No map found</strong>
+}

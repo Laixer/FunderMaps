@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Portal", "src\Fu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.BatchNode", "src\FunderMaps.BatchNode\FunderMaps.BatchNode.csproj", "{532227C4-BAD4-46AB-B45D-65F15317AFFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Admin", "src\FunderMaps.Admin\FunderMaps.Admin.csproj", "{8E6C13C2-9501-46FF-A663-9F03AC790614}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Maps", "src\FunderMaps.Maps\FunderMaps.Maps.csproj", "{CD5E0F90-6094-4148-8944-3C0F15E1265F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
