@@ -1,16 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects;
+
+/// <summary>
+///     Document DTO.
+/// </summary>
+public record DocumentDto
 {
     /// <summary>
-    ///     Document DTO.
+    ///     Document output name.
     /// </summary>
-    public record DocumentDto
-    {
-        /// <summary>
-        ///     Document output name.
-        /// </summary>
-        [Required]
-        public string Name { get; init; }
-    }
+    [Required]
+    public string? Name { get; init; }
 }

@@ -1,16 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects
+namespace FunderMaps.AspNetCore.DataTransferObjects;
+
+/// <summary>
+///     Organization user and password DTO.
+/// </summary>
+public record OrganizationUserPasswordDto : OrganizationUserDto
 {
     /// <summary>
-    ///     Organization user and password DTO.
+    ///     User password.
     /// </summary>
-    public record OrganizationUserPasswordDto : OrganizationUserDto
-    {
-        /// <summary>
-        ///     User password.
-        /// </summary>
-        [Required]
-        public string Password { get; init; }
-    }
+    [Required]
+    public string? Password { get; init; }
 }
