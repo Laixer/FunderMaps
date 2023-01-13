@@ -18,10 +18,10 @@ public record EmailMessage
     /// <summary>
     ///     Message subject.
     /// </summary>
-    public string Subject { get; set; }
+    public string? Subject { get; set; }
 
     /// <summary>
     ///     Message content.
     /// </summary>
-    public string Content { get; set; }
+    public string? Content { get; set; }
 }
