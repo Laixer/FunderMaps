@@ -20,43 +20,43 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
     public override async Task<string> AddAsync(Incident entity)
     {
         var sql = @"
-                INSERT INTO report.incident(
-                    id,
-                    foundation_type,
-                    chained_building,
-                    owner,
-                    foundation_recovery,
-                    neightbor_recovery,
-                    foundation_damage_cause,
-                    document_file,
-                    note,
-                    internal_note,
-                    contact,
-                    foundation_damage_characteristics,
-                    environment_damage_characteristics,
-                    address,
-                    audit_status,
-                    question_type,
-                    meta)
-                VALUES (
-                    report.fir_generate_id(@client_id),
-                    @foundation_type,
-                    @chained_building,
-                    @owner,
-                    @foundation_recovery,
-                    @neightbor_recovery,
-                    @foundation_damage_cause,
-                    NULLIF(@document_file, '{}'::text[]),
-                    NULLIF(trim(@note), ''),
-                    NULLIF(trim(@internal_note), ''),
-                    NULLIF(trim(@email), ''),
-                    NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
-                    NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
-                    @address,
-                    @audit_status,
-                    @question_type,
-                    @meta)
-                RETURNING id";
+            INSERT INTO report.incident(
+                id,
+                foundation_type,
+                chained_building,
+                owner,
+                foundation_recovery,
+                neightbor_recovery,
+                foundation_damage_cause,
+                document_file,
+                note,
+                internal_note,
+                contact,
+                foundation_damage_characteristics,
+                environment_damage_characteristics,
+                address,
+                audit_status,
+                question_type,
+                meta)
+            VALUES (
+                report.fir_generate_id(@client_id),
+                @foundation_type,
+                @chained_building,
+                @owner,
+                @foundation_recovery,
+                @neightbor_recovery,
+                @foundation_damage_cause,
+                NULLIF(@document_file, '{}'::text[]),
+                NULLIF(trim(@note), ''),
+                NULLIF(trim(@internal_note), ''),
+                NULLIF(trim(@email), ''),
+                NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
+                NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
+                @address,
+                @audit_status,
+                @question_type,
+                @meta)
+            RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -76,8 +76,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
     public override async Task<long> CountAsync()
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.incident";
+            SELECT  COUNT(*)
+            FROM    report.incident";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -93,9 +93,9 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         ResetCacheEntity(id);
 
         var sql = @"
-                DELETE
-                FROM    report.incident
-                WHERE   id = @id";
+            DELETE
+            FROM    report.incident
+            WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -167,29 +167,29 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         }
 
         var sql = @"
-                SELECT  id,
-                        foundation_type,
-                        chained_building,
-                        owner,
-                        foundation_recovery,
-                        neightbor_recovery,
-                        foundation_damage_cause,
-                        document_file,
-                        note,
-                        internal_note,
-                        contact,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        foundation_damage_characteristics,
-                        environment_damage_characteristics,
-                        address,
-                        audit_status,
-                        question_type,
-                        meta
-                FROM    report.incident
-                WHERE   id = @id
-                LIMIT   1";
+            SELECT  id,
+                    foundation_type,
+                    chained_building,
+                    owner,
+                    foundation_recovery,
+                    neightbor_recovery,
+                    foundation_damage_cause,
+                    document_file,
+                    note,
+                    internal_note,
+                    contact,
+                    create_date,
+                    update_date,
+                    delete_date,
+                    foundation_damage_characteristics,
+                    environment_damage_characteristics,
+                    address,
+                    audit_status,
+                    question_type,
+                    meta
+            FROM    report.incident
+            WHERE   id = @id
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -207,27 +207,27 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
     public override async IAsyncEnumerable<Incident> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  id,
-                        foundation_type,
-                        chained_building,
-                        owner,
-                        foundation_recovery,
-                        neightbor_recovery,
-                        foundation_damage_cause,
-                        document_file,
-                        note,
-                        internal_note,
-                        contact,
-                        create_date,
-                        update_date,
-                        delete_date,
-                        foundation_damage_characteristics,
-                        environment_damage_characteristics,
-                        address,
-                        audit_status,
-                        question_type,
-                        meta
-                FROM    report.incident";
+            SELECT  id,
+                    foundation_type,
+                    chained_building,
+                    owner,
+                    foundation_recovery,
+                    neightbor_recovery,
+                    foundation_damage_cause,
+                    document_file,
+                    note,
+                    internal_note,
+                    contact,
+                    create_date,
+                    update_date,
+                    delete_date,
+                    foundation_damage_characteristics,
+                    environment_damage_characteristics,
+                    address,
+                    audit_status,
+                    question_type,
+                    meta
+            FROM    report.incident";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -284,22 +284,22 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         ResetCacheEntity(entity);
 
         var sql = @"
-                    UPDATE  report.incident
-                    SET     foundation_type = @foundation_type,
-                            chained_building = @chained_building,
-                            owner = @owner,
-                            foundation_recovery = @foundation_recovery,
-                            neightbor_recovery = @neightbor_recovery,
-                            foundation_damage_cause = @foundation_damage_cause,
-                            document_file = NULLIF(@document_file, '{}'::text[]),
-                            note = NULLIF(trim(@note), ''),
-                            internal_note = NULLIF(trim(@internal_note), ''),
-                            foundation_damage_characteristics = NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
-                            environment_damage_characteristics = NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
-                            audit_status = @audit_status,
-                            question_type = @question_type,
-                            meta = @meta
-                    WHERE   id = @id";
+            UPDATE  report.incident
+            SET     foundation_type = @foundation_type,
+                    chained_building = @chained_building,
+                    owner = @owner,
+                    foundation_recovery = @foundation_recovery,
+                    neightbor_recovery = @neightbor_recovery,
+                    foundation_damage_cause = @foundation_damage_cause,
+                    document_file = NULLIF(@document_file, '{}'::text[]),
+                    note = NULLIF(trim(@note), ''),
+                    internal_note = NULLIF(trim(@internal_note), ''),
+                    foundation_damage_characteristics = NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
+                    environment_damage_characteristics = NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
+                    audit_status = @audit_status,
+                    question_type = @question_type,
+                    meta = @meta
+            WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
