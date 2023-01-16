@@ -56,11 +56,15 @@ public class TemplateParser : ITemplateParser
     /// <param name="templateName">Template name on disk.</param>
     public ITemplateParser FromTemplateFile(string order, string templateName)
     {
-        string body = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, string.Format(templatePath, order, templateName)));
-        string header = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, "Template/Email/Header.html"));
-        string footer = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, "Template/Email/Footer.html"));
+        if (AppContext.ApplicationDirectory is not null)
+        {
+            string body = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, string.Format(templatePath, order, templateName)));
+            string header = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, "Template/Email/Header.html"));
+            string footer = File.ReadAllText(Path.Combine(AppContext.ApplicationDirectory, "Template/Email/Footer.html"));
 
-        template = Template.ParseLiquid(header + body + footer);
+            template = Template.ParseLiquid(header + body + footer);
+        }
+
         return this;
     }
 
