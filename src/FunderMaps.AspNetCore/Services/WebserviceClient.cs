@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Types.Products;
 
 namespace FunderMaps.AspNetCore.Services;
 
@@ -9,8 +10,8 @@ namespace FunderMaps.AspNetCore.Services;
 /// </summary>
 public record Authentication
 {
-    public string Email { get; set; } = default!;
-    public string Password { get; set; } = default!;
+    public string Email { get; init; } = default!;
+    public string Password { get; init; } = default!;
 }
 
 /// <summary>
@@ -24,7 +25,7 @@ public class WebserviceClient
 
     public bool IsAuthenticated => client.DefaultRequestHeaders.Authorization is not null;
 
-    public Authentication Authentication { get; set; }
+    public Authentication Authentication { get; init; }
 
     /// <summary>
     ///     Construct a new webservice client.
@@ -60,23 +61,31 @@ public class WebserviceClient
         client.DefaultRequestHeaders.Authorization = new("Bearer", authToken.Token);
     }
 
-    public async Task<FunderMaps.Core.Types.Products.AnalysisProduct3?> GetAnalysisAsync(string id)
+    /// <summary>
+    ///     Get analysis product from webservice.
+    /// </summary>
+    /// <param name="id">Object identifier.</param>
+    public async Task<AnalysisProduct?> GetAnalysisAsync(string id)
     {
         if (!IsAuthenticated)
         {
             await LoginAsync();
         }
 
-        return await client.GetFromJsonAsync<FunderMaps.Core.Types.Products.AnalysisProduct3>($"api/v3/product/analysis?id={id}");
+        return await client.GetFromJsonAsync<AnalysisProduct>($"api/v3/product/analysis/{id}");
     }
 
-    public async Task<FunderMaps.Core.Types.Products.StatisticsProduct?> GetStatisticsAsync(string id)
+    /// <summary>
+    ///     Get statistics product from webservice.
+    /// </summary>
+    /// <param name="id">Object identifier.</param>
+    public async Task<StatisticsProduct?> GetStatisticsAsync(string id)
     {
         if (!IsAuthenticated)
         {
             await LoginAsync();
         }
 
-        return await client.GetFromJsonAsync<FunderMaps.Core.Types.Products.StatisticsProduct>($"api/v3/product/statistics?id={id}");
+        return await client.GetFromJsonAsync<StatisticsProduct>($"api/v3/product/statistics/{id}");
     }
 }
