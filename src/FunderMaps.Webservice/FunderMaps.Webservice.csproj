@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
     <ProjectReference Include="..\FunderMaps.Core\FunderMaps.Core.csproj" />
     <ProjectReference Include="..\FunderMaps.Data\FunderMaps.Data.csproj" />

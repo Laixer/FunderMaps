@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
+    <ProjectReference Include="..\FunderMaps.AspNetCore\FunderMaps.AspNetCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

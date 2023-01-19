@@ -23,8 +23,6 @@ public sealed class QuotaController : ControllerBase
     ///     Request product quota usage.
     /// </summary>
     [HttpGet("usage")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IAsyncEnumerable<ProductTelemetry> GetQuotaUsageAsync()
         => _telemetryRepository.ListAllUsageAsync();
 }
