@@ -24,14 +24,14 @@ public class FormFileAttribute : ValidationAttribute
     ///     Create new instance.
     /// </summary>
     public FormFileAttribute(string mimeTypes)
-        => AllowedFileMimes = mimeTypes?.Split(',').Select(s => s.Trim()).ToArray();
+        => AllowedFileMimes = mimeTypes.Split(',').Select(s => s.Trim()).ToArray();
 
     /// <summary>
     ///     Returns true if the file is allowed and not empty.
     /// </summary>
     /// <param name="value">The value to test for validity.</param>
     /// <returns><c>true</c> means the <paramref name="value" /> is valid</returns>
-    public override bool IsValid(object value)
+    public override bool IsValid(object? value)
         => value is null || (value is IFormFile file && AllowedFileMimes.Contains(file.ContentType.ToLowerInvariant()) && file.Length > 0);
 
     /// <summary>

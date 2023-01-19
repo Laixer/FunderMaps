@@ -61,19 +61,8 @@ public class FunderMapsStartup : IHostingStartup
             .ForMember(dest => dest.Token, o => o.MapFrom(src => src.TokenString))
             .ForMember(dest => dest.ValidFrom, o => o.MapFrom(src => src.Token.ValidFrom))
             .ForMember(dest => dest.ValidTo, o => o.MapFrom(src => src.Token.ValidTo));
-        mapper.CreateMap<StatisticsProduct, StatisticsDto>();
         mapper.CreateMap<User, UserDto>().ReverseMap();
         mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
-
-        // FUTURE: Rewrite.
-        mapper.CreateMap<Years, YearsResponseModel>();
-        mapper.CreateMap<ConstructionYearDistribution, ConstructionYearDistributionResponseModel>();
-        mapper.CreateMap<ConstructionYearPair, ConstructionYearPairResponseModel>();
-        mapper.CreateMap<FoundationRiskDistribution, FoundationRiskDistributionResponseModel>();
-        mapper.CreateMap<FoundationTypeDistribution, FoundationTypeDistributionResponseModel>();
-        mapper.CreateMap<FoundationTypePair, FoundationTypePairResponseModel>();
-        mapper.CreateMap<IncidentYearPair, IncidentYearPairResponseModel>();
-        mapper.CreateMap<InquiryYearPair, InquiryYearPairResponseModel>();
     }
 
     /// <summary>
