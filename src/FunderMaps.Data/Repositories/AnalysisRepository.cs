@@ -17,7 +17,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
-    public async Task<AnalysisProduct3> Get3Async(string id)
+    public async Task<AnalysisProduct> GetAsync(string id)
     {
         var sql = @"
             SELECT
@@ -85,9 +85,9 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     }
 
     /// <summary>
-    ///     Maps a reader to an <see cref="AnalysisProduct3"/>.
+    ///     Maps a reader to an <see cref="AnalysisProduct"/>.
     /// </summary>
-    public static AnalysisProduct3 MapFromReader3(DbDataReader reader)
+    public static AnalysisProduct MapFromReader(DbDataReader reader)
         => new()
         {
             BuildingId = reader.GetSafeString(0),

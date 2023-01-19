@@ -11,7 +11,7 @@ public interface IAnalysisRepository
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
-    Task<AnalysisProduct3> Get3Async(string id);
+    Task<AnalysisProduct> GetAsync(string id);
 
     /// <summary>
     ///     Gets the risk index by its internal building id.

@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Types.Products;
 /// <summary>
 ///     Represents a model for the complete endpoint.
 /// </summary>
-public sealed record AnalysisProduct3
+public sealed record AnalysisProduct
 {
     /// <summary>
     ///     Building identifier.
