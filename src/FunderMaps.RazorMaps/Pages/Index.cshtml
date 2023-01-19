@@ -1,0 +1,410 @@
+﻿@page "{mapId:guid?}"
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div id="map">
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+        <span class="close">&times;</span>
+            <p id="modal-consent-text">
+            </p>
+        </div>
+    </div>
+
+    <div id="state-legend" class="legend">
+        <img src="https://app.fundermaps.com/img/logo.93735295.svg" class="Logo" alt="FunderMaps logo" />
+
+        <div>
+            <select onchange="onMapsetChange()" class="custom-select" id="maplayer">
+                @foreach (var set in Model.mapSetList)
+                {
+                    <option value="@set.Id">@set.Name</option>
+                }
+            </select>
+        </div>
+
+        @foreach (var set in Model.mapSetList)
+        {
+            <div id="map-legend-@set.Id" style="display: none;">
+                @foreach (var layer in set.LayerNavigation)
+                {
+                    <h3 style="cursor: pointer; padding-top: 10px" onclick="onLayerToggle('@layer.Id')">
+                        <span class="px-2"><img src="@(@layer.isVisible ? "https://img.icons8.com/material-rounded/512/visible.png" : "https://img.icons8.com/material-rounded/512/invisible.png")" width="14" height="14"></span>
+                        @layer.Name
+                    </h3>
+                    <div id="legend-@layer.Id" class="legend-item" style="display: none;">
+                        @foreach (var field in layer.Fields)
+                        {
+                            <div><span style="background-color: #@field.Color"></span>@field.Name</div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts  
+{  
+    <script type="text/javascript" language="javascript">
+        const mapSetList = JSON.parse('@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.mapSetList))');
+
+        var modal = document.getElementById("myModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        var mapLayerId = document.getElementById("maplayer").value;
+        var currentMap = mapSetList.find(x => x.Id === mapLayerId)
+
+        class Map {
+            constructor(mapset) {
+                this.mapset = mapset;
+
+                document.getElementById(`map-legend-${this.mapset.Id}`).style.display = "block";
+
+                const hasAcceptedConsent = localStorage.getItem(`consent-accept-${this.mapset.Id}`);
+                if (this.mapset.Consent && !hasAcceptedConsent) {
+                    var consentText = document.getElementById("modal-consent-text");
+                    consentText.innerHTML = this.mapset.Consent;
+                    var modal = document.getElementById("myModal");
+                    modal.style.display = "block";
+                }
+
+                mapboxgl.accessToken = 'pk.eyJ1IjoibGFpeGVyIiwiYSI6ImNsN3ZyenhsczA2M2ozdW51bHJycmN6MnEifQ.OJ3E-t5Y7N_VZYHRhO_7Aw';
+
+                var center = [5.2913, 52.1326];
+
+                const lastCenterPosition = sessionStorage.getItem('lastCenterPosition');
+                if (lastCenterPosition !== null) {
+                    center = [JSON.parse(lastCenterPosition).lng, JSON.parse(lastCenterPosition).lat];
+                }
+
+                this.map = new mapboxgl.Map({
+                    container: 'map',
+                    style: this.mapset.Style,
+                    center: center,
+                    zoom: sessionStorage.getItem('lastZoomLevel') || 10,
+                    pitch: sessionStorage.getItem('lastPitchDegree') || 0,
+                    antialias: true,
+                    attributionControl: false,
+                });
+                this.map.addControl(
+                    new MapboxGeocoder({
+                        accessToken: mapboxgl.accessToken,
+                        mapboxgl: mapboxgl,
+                    }), "top-left"
+                );
+                this.map.addControl(
+                    new mapboxgl.GeolocateControl({
+                        positionOptions: {
+                            enableHighAccuracy: true,
+                        },
+                        trackUserLocation: true,
+                        showUserHeading: true,
+                    }), "bottom-right"
+                );
+                this.map.addControl(new mapboxgl.NavigationControl(), "bottom-right");
+                this.map.on('moveend', () => {
+                    sessionStorage.setItem('lastCenterPosition', JSON.stringify(this.map.getCenter()));
+                });
+                this.map.on('zoomend', () => {
+                    sessionStorage.setItem('lastZoomLevel', this.map.getZoom());
+                });
+                this.map.on('pitchend', () => {
+                    sessionStorage.setItem('lastPitchDegree', this.map.getPitch());
+                });
+                this.map.on('style.load', () => {
+                    const uu = sessionStorage.getItem('activeLayers');
+
+                    const updatedFilter = [
+                        'all',
+                        this.map.getFilter('foundation-type-established'),
+                        [
+                            "any",
+                            [
+                                "match",
+                                ["get","district_id"],
+                                [
+                                    "gfm-d28a0a422a3d44b1884a53dffa7a1b18"
+                                ],
+                                true,
+                                false
+                            ],
+                            [
+                                "match",
+                                ["get","municipality_id"],
+                                [
+                                    "gfm-24c290a57a784ca3a57b8b613ee48fd4"
+                                ],
+                                true,
+                                false
+                            ],
+                            [
+                                "match",
+                                ["get","neighborhood_id"],
+                                [
+                                    "gfm-b0e4fa7e30974811810ac7e60022db1e",
+                                    "gfm-7bc9bb6497984a13a2cc95ea1a284825"
+                                ],
+                                true,
+                                false
+                            ]
+                        ]
+                    ];
+
+                    @* this.map.setFilter('foundation-type-established', updatedFilter); *@
+
+                    for (const layer of this.mapset.LayerNavigation) {
+                        if (uu !== null) {
+                            if (JSON.parse(uu).includes(layer.Id)) {
+                                this.setLayerVisibility(layer, true);
+                            } else {
+                                this.setLayerVisibility(layer, false);
+                            }
+                        } else {
+                            this.setLayerVisibility(layer, false);
+                        }
+
+                        if (!layer.hasEventsSet)
+                        {
+                            this.map.on("mouseenter", layer.Id, () => {
+                                this.map.getCanvas().style.cursor = "pointer";
+                            });
+                            this.map.on("mouseleave", layer.Id, () => {
+                                this.map.getCanvas().style.cursor = "";
+                            });
+
+                            this.map.on("click", layer.Id, (e) => {
+                                var html = '';
+
+                                for (const [key, value] of Object.entries(e.features[0].properties)) {
+                                    if (this.canShowProperty(e.features[0].layer.id, key)) {
+                                        html += this.translateProperty(key, value) + '<br/>';
+                                    }
+                                }
+
+                                new mapboxgl.Popup()
+                                    .setLngLat(turf.centroid(e.features[0]).geometry.coordinates)
+                                    .setHTML(html)
+                                    .addTo(this.map);
+                            });
+
+                            layer.hasEventsSet = true;
+                        }
+                    }
+                    
+                    const hasActiveLayers = this.mapset.LayerNavigation.filter(x => x.isVisible).length > 0;
+                    if (!hasActiveLayers) {
+                        if (this.mapset.LayerNavigation.length > 0) {
+                            var layerFirst = this.mapset.LayerNavigation[0];
+
+                            this.setLayerVisibility(layerFirst, true);
+                        }
+                    }
+                });
+            }
+
+            changeMapset(mapset) {
+                var modal = document.getElementById("myModal");
+                modal.style.display = "none";
+
+                document.getElementById(`map-legend-${this.mapset.Id}`).style.display = "none";
+                
+                this.mapset = mapset;
+
+                document.getElementById(`map-legend-${this.mapset.Id}`).style.display = "block";
+
+                const hasAcceptedConsent = localStorage.getItem(`consent-accept-${this.mapset.Id}`);
+                if (this.mapset.Consent && !hasAcceptedConsent) {
+                    var consentText = document.getElementById("modal-consent-text");
+                    consentText.innerHTML = this.mapset.Consent;
+                    var modal = document.getElementById("myModal");
+                    modal.style.display = "block";
+                }
+
+                this.map.setStyle(this.mapset.Style);
+            }
+
+            setLayerVisibility(layer, enable) {
+                if (enable) {
+                    this.map.setLayoutProperty(layer.Id, 'visibility', 'visible');
+                    layer.isVisible = true;
+                    document.getElementById(`legend-${layer.Id}`).style.display = "block";
+
+                    sessionStorage.setItem('activeLayers', JSON.stringify(this.mapset.LayerNavigation.filter(x => x.isVisible).map(x => x.Id)));
+                } else {
+                    this.map.setLayoutProperty(layer.Id, 'visibility', 'none');
+                    layer.isVisible = false;
+                    document.getElementById(`legend-${layer.Id}`).style.display = "none";
+
+                    sessionStorage.setItem('activeLayers', JSON.stringify(this.mapset.LayerNavigation.filter(x => x.isVisible).map(x => x.Id)));
+                }
+            }
+
+            layerFromId(layerId) {
+                return this.mapset.LayerNavigation.find(x => x.Id === layerId);
+            }
+
+            canShowProperty(layerId, key) {
+                switch (key) {
+                    case "neighborhood_id": return false;
+                    case "district_id": return false;
+                    case "municipality_id": return false;
+                }
+
+                switch (layerId) {
+                    case "foundation-type-established":
+                        switch (key) {
+                            case "address_count":
+                                return true;
+                            case "foundation_type":
+                                return true;
+                            case "foundation_type_reliability":
+                                return true;
+                    
+                            default:
+                                return false;
+                        }
+
+                    case "foundation-recovery":
+                        switch (key) {
+                            case "recovery_type":
+                                return true;
+                    
+                            default:
+                                return false;
+                        }
+
+                    case "drystand-risk":
+                        switch (key) {
+                            case "drystand":
+                                return true;
+                            case "drystand_risk":
+                                return true;
+                            case "drystand_risk_reliability":
+                                return true;
+                    
+                            default:
+                                return false;
+                        }
+
+                    case "dewatering-depth-risk":
+                        switch (key) {
+                            case "dewatering_depth":
+                                return true;
+                            case "dewatering_depth_risk":
+                                return true;
+                            case "dewatering_depth_risk_reliability":
+                                return true;
+                    
+                            default:
+                                return false;
+                        }
+
+                    case "bio-infection-risk":
+                        switch (key) {
+                            case "bio_infection_risk":
+                                return true;
+                            case "bio_infection_risk_reliability":
+                                return true;
+                    
+                            default:
+                                return false;
+                        }
+
+                    default:
+                        return true;
+                }
+            }
+
+            translateProperty(key, value) {
+                const result = ({
+                    "building_id": ['FunderMaps ID', value],
+                    "address_count": ['Adressen', value],
+                    "construction_year": ['Bouwjaar', value],
+                    "construction_year_reliability": ['Bouwjaar betrouwbaarheid', value],
+                    "overall_quality": ['Funderingskwaliteit', value],
+                    "damage_cause": ['Schadeoorzaak', value],
+                    "height": ['Gebouwhoogte', `${value} meter`],
+                    "ground_level": ['Maaiveld', `${value} meter`],
+                    "ground_water_level": ['Grondwaterpeil', `${value} meter`],
+                    "category": ['Categorie', value],
+                    "incidents": ['Incidenten', value],
+                    "restoration_costs": ['Herstelkosten', value],
+                    "inquiry_type": ['Rapportage', value],
+                    "owner": ['Eigenaar', value],
+                    "drystand": ['Droogstand', `${parseFloat(value).toFixed(2)} meter`],
+                    "drystand_risk": ['Risico droogstand', value],
+                    "drystand_risk_reliability": ['Risico droogstand betrouwbaarheid', value],
+                    "dewatering_depth": ['Ontwateringsdiepte', `${parseFloat(value).toFixed(2)}`],
+                    "dewatering_depth_risk": ['Risico ontwateringsdiepte', value],
+                    "dewatering_depth_risk_reliability": ['Risico ontwateringsdiepte betrouwbaarheid', value],
+                    "bio_infection_risk": ['Risico bacteriele aantasting', value],
+                    "bio_infection_risk_reliability": ['Bacteriele aantasting betrouwbaarheid', value],
+                    "foundation_risk": ['Funderingsrisico', value],
+                    "foundation_type": ['Funderingstype', value],
+                    "foundation_type_reliability": ['Betrouwbaarheid', value],
+                    "enforcement_term": ['Handhavingstermijn', `${value} jaar`],
+                    "velocity": ['Zakkingssnelheid', `${parseFloat(value).toFixed(2)}mm/jaar`],
+                })[key] ?? [key, value]
+
+                return `<b>${result[0]}</b>: ${result[1]}`;
+            }
+        }
+
+        function getCurrentMapset() {
+            const sessionMapSet = sessionStorage.getItem('currentMapset');
+
+            if (sessionMapSet === null) {
+                return currentMap;
+            } else {
+                var mapSet = mapSetList.find(x => x.Id === sessionMapSet);
+
+                if (mapSet === undefined) {
+                    return currentMap;
+                } else {
+                    return mapSet;
+                }
+            }
+        }
+
+        let mapset = getCurrentMapset();
+
+        sessionStorage.setItem('currentMapset', mapset.Id);
+
+        let map = new Map(mapset);
+
+        document.getElementById("maplayer").value = mapset.Id;
+
+        function onMapsetChange() {
+            var mapLayerId = document.getElementById("maplayer").value;
+            var mapLayer = mapSetList.find(x => x.Id === mapLayerId);
+
+            map.changeMapset(mapLayer);
+
+            sessionStorage.setItem('currentMapset', mapLayer.Id);
+        }
+
+        function onLayerToggle(layerId) {
+            var layer = map.layerFromId(layerId);
+
+            if (layer.isVisible) {
+                map.setLayerVisibility(layer, false);
+            } else {
+                map.setLayerVisibility(layer, true);
+            }
+        }
+    </script>  
+}  

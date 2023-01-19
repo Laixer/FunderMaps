@@ -1,0 +1,86 @@
+@page
+@model DiagnoseModel
+@{
+    ViewData["Title"] = "Diagnose";
+}
+
+<h1>Request</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>EnvironmentName</td>
+            <td>@Model.CurrentEnvironment.EnvironmentName</td>
+        </tr>
+        <tr>
+            <td>IsAuthenticated</td>
+            <td>@User.Identity.IsAuthenticated</td>
+        </tr>
+        <tr>
+            <td>Request Scheme</td>
+            <td>@HttpContext.Request.Scheme</td>
+        </tr>
+        <tr>
+            <td>Request ContentType</td>
+            <td>@HttpContext.Request.ContentType</td>
+        </tr>
+        <tr>
+            <td>Request Host</td>
+            <td>@HttpContext.Request.Host</td>
+        </tr>
+        <tr>
+            <td>RemoteIpAddress</td>
+            <td>@HttpContext.Connection.RemoteIpAddress</td>
+        </tr>
+        <tr>
+            <td>LocalIpAddress</td>
+            <td>@HttpContext.Connection.LocalIpAddress</td>
+        </tr>
+    </tbody>
+</table>
+
+<h1>Headers</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var header in HttpContext.Request.Headers)
+        {
+            <tr>
+                <td>@header.Key</td>
+                <td>@header.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h1>Account</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in User.Claims)
+        {
+            <tr>
+                <td>@claim.Type</td>
+                <td>@claim.Value</td>
+            </tr>
+        }
+    </tbody>
+</table>
