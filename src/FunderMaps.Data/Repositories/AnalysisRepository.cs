@@ -51,7 +51,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                 ra.dewatering_depth_risk_reliability,
                 ra.unclassified_risk,
                 ra.recovery_type
-            FROM application.request_analysis(@tenant, @id) ra
+            FROM application.request_analysis(@organization_id, @id) ra
             JOIN geocoder.address_building ab ON ab.building_id = ra.building_id
             JOIN geocoder.address a ON a.id = ab.address_id
             LIMIT 1";
@@ -59,27 +59,25 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
 
         await using var reader = await context.ReaderAsync();
 
-        return MapFromReader3(reader);
+        return MapFromReader(reader);
     }
 
-    // TOOD: Move to db.
-    // TODO: Needs optimization.
     /// <summary>
     ///     Gets the risk index by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
     public async Task<bool> GetRiskIndexAsync(string id)
     {
-        var sql = @"SELECT application.request_risk_index(@tenant, @id)";
+        var sql = @"SELECT application.request_risk_index(@organization_id, @id)";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
 
         return await context.ScalarAsync<bool>();
     }

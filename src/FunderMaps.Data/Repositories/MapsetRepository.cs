@@ -24,7 +24,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.style,
                     m.layers,
                     m.options,
-                    m.public
+                    m.public,
+                    m.consent
             FROM    maplayer.mapset AS m
             WHERE   m.id = @id
             AND     m.public = true
@@ -52,7 +53,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.style,
                     m.layers,
                     m.options,
-                    m.public
+                    m.public,
+                    m.consent
             FROM    maplayer.map_organization mo
             JOIN    maplayer.mapset AS m on m.id = mo.map_id
             WHERE   mo.organization_id = @id
@@ -80,5 +82,6 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             Layers = reader.GetSafeFieldValue<string[]>(3),
             Options = reader.GetFieldValue<object>(4),
             Public = reader.GetBoolean(5),
+            Consent = reader.GetSafeString(6),
         };
 }

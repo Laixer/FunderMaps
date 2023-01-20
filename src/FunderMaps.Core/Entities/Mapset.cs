@@ -2,6 +2,20 @@ using FunderMaps.Core.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
+public class Layer
+{
+    public string? Id { get; set; }
+    public string? Name { get; set; }
+    public bool isVisible { get; set; } = true;
+    public List<Field> Fields { get; set; } = new();
+}
+
+public class Field
+{
+    public string? Color { get; set; }
+    public string? Name { get; set; }
+}
+
 /// <summary>
 ///     Mapset entity.
 /// </summary>
@@ -45,4 +59,14 @@ public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
     ///     If the map is public or not.
     /// </summary>
     public bool Public { get; set; }
+
+    /// <summary>
+    ///     Consent text.
+    /// </summary>
+    public string? Consent { get; set; }
+
+    /// <summary>
+    ///     List of layers in this mapset.
+    /// </summary>
+    public List<Layer> LayerNavigation { get; set; } = new();
 }
