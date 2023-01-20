@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using System.Text.Json;
 using FunderMaps.Core.Email;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -26,8 +27,6 @@ internal class MailgunService : IEmailService
         client.BaseAddress = new(DefaultBaseUrl);
     }
 
-    //     message.To.AddRange(emailMessage.ToAddresses.Select(m => new MailboxAddress(m.Name, m.Address)));
-
     /// <summary>
     ///     Send email message.
     /// </summary>
@@ -35,24 +34,40 @@ internal class MailgunService : IEmailService
     /// <param name="token">Cancellation token.</param>
     public async Task SendAsync(EmailMessage emailMessage, CancellationToken token)
     {
-        var yy = string.Join("; ", emailMessage.ToAddresses.Select(m => $"{m.Name} <{m.Address}>"));
+        var fromAddress = $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>";
+        var toAddress = string.Join("; ", emailMessage.ToAddresses.Select(m => $"{m.Name} <{m.Address}>"));
 
-        var formContent = new FormUrlEncodedContent(new[]
+        var formContent = new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string, string>("from", $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>"),
-            new KeyValuePair<string, string>("to", "Yorick de Wid <ydewid@gmail.com>"),
-            new KeyValuePair<string, string>("subject", emailMessage.Subject),
-            // new KeyValuePair<string, string>("text", emailMessage.Content),
-            new KeyValuePair<string, string>("template", "test-temp"),
-            new KeyValuePair<string, string>("h:X-Mailgun-Variables", "{\"name\": \"Adolf\"}"),
-        });
+            new KeyValuePair<string, string>("from", fromAddress),
+            new KeyValuePair<string, string>("to", toAddress),
+            new KeyValuePair<string, string>("subject", emailMessage.Subject ?? throw new ArgumentNullException()),
+        };
+
+        if (emailMessage.Template is not null)
+        {
+            formContent.Add(new KeyValuePair<string, string>("template", emailMessage.Template));
+        }
+        else if (emailMessage.Content is not null)
+        {
+            formContent.Add(new KeyValuePair<string, string>("text", emailMessage.Content));
+        }
+        else
+        {
+            throw new ArgumentNullException();
+        }
+
+        if (emailMessage.Varaibles.Any())
+        {
+            formContent.Add(new KeyValuePair<string, string>("h:X-Mailgun-Variables", JsonSerializer.Serialize(emailMessage.Varaibles)));
+        }
 
         var authenticationString = $"api:{_options.ApiKey}";
         var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"{_options.Domain}/messages");
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
-        requestMessage.Content = formContent;
+        requestMessage.Content = new FormUrlEncodedContent(formContent);
 
         _logger.LogDebug($"Sending message to {string.Join(", ", emailMessage.ToAddresses)}");
 
