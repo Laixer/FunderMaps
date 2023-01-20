@@ -10,7 +10,14 @@ namespace FunderMaps.AspNetCore.Services;
 /// </summary>
 public record Authentication
 {
+    /// <summary>
+    ///     Email address.
+    /// </summary>
     public string Email { get; init; } = default!;
+
+    /// <summary>
+    ///     Password.
+    /// </summary>
     public string Password { get; init; } = default!;
 }
 

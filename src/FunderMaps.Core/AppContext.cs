@@ -1,5 +1,7 @@
-using FunderMaps.Core.Identity;
+using FunderMaps.Core.Entities;
+using System.Net;
 using System.Reflection;
+using System.Security.Principal;
 
 namespace FunderMaps.Core;
 
@@ -19,41 +21,58 @@ public record AppContext
     public CancellationToken CancellationToken { get; set; }
 
     /// <summary>
-    ///     Gets or sets a key/value collection that can be used to share data within this scope.
-    /// </summary>
-    public Dictionary<object, object> Items { get; set; }
-
-    /// <summary>
     ///     User identity.
     /// </summary>
-    public IUser User { get; set; }
+    public User User { get; set; } = default!;
 
     /// <summary>
-    ///     Tenant identity.
+    ///     All organizations of which the current user is a member of.
     /// </summary>
-    public ITenant Tenant { get; set; }
+    public List<Organization> Organizations { get; set; } = new();
 
-    // FUTURE: Maybe move up
+    /// <summary>
+    ///     Active organization.
+    /// </summary>
+    public Organization ActiveOrganization { get; set; } = default!;
+
     /// <summary>
     ///     User identifier.
     /// </summary>
-    public Guid UserId => User.Id;
+    public Guid UserId => User.Identifier;
 
-    // FUTURE: Maybe move up
+    // FUTURE: REMOVE
     /// <summary>
     ///     Tenant identifier.
     /// </summary>
-    public Guid TenantId => Tenant.Id;
+    public Guid TenantId => ActiveOrganization.Identifier;
 
-    // FUTURE: Maybe move up
     /// <summary>
-    ///     Indicates that identity has been set or not.
+    ///     Active organization identifier.
     /// </summary>
-    /// <remarks>If <see cref="User"/> exists, then <see cref="Tenant"/> exists.</remarks>
-    public bool HasIdentity => User is not null;
+    public Guid OrganizationId => ActiveOrganization.Identifier;
+
+    /// <summary>
+    ///     Gets or sets the IP address of the remote target. Can be null.
+    /// </summary>
+    public IPAddress? RemoteIpAddress { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the Host header. May include the port.
+    /// </summary>
+    public string Host { get; set; } = default!;
+
+    /// <summary>
+    ///     Gets or sets the user agent. Can be null.
+    /// </summary>
+    public string? UserAgent { get; set; }
+
+    /// <summary>
+    ///     Identity object.
+    /// </summary>
+    public IIdentity? Identity { get; set; }
 
     /// <summary>
     ///     Absolute path to the application directory.
     /// </summary>
-    public static string ApplicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+    public static string? ApplicationDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 }
