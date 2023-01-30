@@ -1,9 +1,5 @@
-using FunderMaps.AspNetCore.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
 
-// [assembly: ApiController]
 namespace FunderMaps.Portal;
 
 /// <summary>
@@ -31,9 +27,6 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     private static void StartupConfigureServices(IServiceCollection services)
     {
-        // Register components from reference assemblies.
-        // services.AddFunderMapsInfrastructureServices();
-        // services.AddFunderMapsDataServices("FunderMapsConnection");
         services.AddControllers();
     }
 
@@ -50,20 +43,20 @@ public class Startup
     ///     This method gets called by the runtime if environment is set to development.
     /// </summary>
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-    public void ConfigureDevelopmentServices(IServiceCollection services)
-    {
-        StartupConfigureServices(services);
+    // public void ConfigureDevelopmentServices(IServiceCollection services)
+    // {
+    //     StartupConfigureServices(services);
 
-        services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(policy =>
-            {
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.AllowAnyOrigin();
-            });
-        });
-    }
+    //     services.AddCors(options =>
+    //     {
+    //         options.AddDefaultPolicy(policy =>
+    //         {
+    //             policy.AllowAnyHeader();
+    //             policy.AllowAnyMethod();
+    //             policy.AllowAnyOrigin();
+    //         });
+    //     });
+    // }
 
     /// <summary>
     ///     This method gets called by the runtime. Use this method to configure the HTTP
@@ -72,29 +65,29 @@ public class Startup
     /// <remarks>
     ///     The order in which the pipeline handles request is of importance.
     /// </remarks>
-    public static void ConfigureDevelopment(IApplicationBuilder app)
-    {
-        app.UseCors();
+    // public static void ConfigureDevelopment(IApplicationBuilder app)
+    // {
+    //     // app.UseCors();
 
-        app.UseExceptionHandler("/oops");
+    //     app.UseExceptionHandler("/oops");
 
-        // app.UsePathBase(new("/api"));
-        app.UseRouting();
+    //     // app.UsePathBase(new("/api"));
+    //     app.UseRouting();
 
-        // app.UseAuthentication();
-        // app.UseAuthorization();
+    //     // app.UseAuthentication();
+    //     // app.UseAuthorization();
 
-        // app.UseAspAppContext();
+    //     // app.UseAspAppContext();
 
-        app.UseEndpoints(endpoints =>
-        {
-            // endpoints.MapControllers();
+    //     app.UseEndpoints(endpoints =>
+    //     {
+    //         // endpoints.MapControllers();
 
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Index}/{action=Index}/{id?}");
-        });
-    }
+    //         endpoints.MapControllerRoute(
+    //             name: "default",
+    //             pattern: "{controller=Index}/{action=Index}/{id?}");
+    //     });
+    // }
 
     /// <summary>
     ///     This method gets called by the runtime. Use this method to configure the HTTP
@@ -105,10 +98,10 @@ public class Startup
     /// </remarks>
     public static void Configure(IApplicationBuilder app)
     {
-        app.UseForwardedHeaders(new()
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-        });
+        // app.UseForwardedHeaders(new()
+        // {
+        //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        // });
 
         app.UseExceptionHandler("/oops");
 
