@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 
-[assembly: ApiController]
+// [assembly: ApiController]
 namespace FunderMaps.Portal;
 
 /// <summary>
@@ -32,8 +32,9 @@ public class Startup
     private static void StartupConfigureServices(IServiceCollection services)
     {
         // Register components from reference assemblies.
-        services.AddFunderMapsInfrastructureServices();
-        services.AddFunderMapsDataServices("FunderMapsConnection");
+        // services.AddFunderMapsInfrastructureServices();
+        // services.AddFunderMapsDataServices("FunderMapsConnection");
+        services.AddControllers();
     }
 
     /// <summary>
@@ -77,17 +78,21 @@ public class Startup
 
         app.UseExceptionHandler("/oops");
 
-        app.UsePathBase(new("/api"));
+        // app.UsePathBase(new("/api"));
         app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        // app.UseAuthentication();
+        // app.UseAuthorization();
 
-        app.UseAspAppContext();
+        // app.UseAspAppContext();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
+            // endpoints.MapControllers();
+
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Index}/{action=Index}/{id?}");
         });
     }
 
@@ -107,18 +112,21 @@ public class Startup
 
         app.UseExceptionHandler("/oops");
 
-        app.UsePathBase(new("/api"));
+        // app.UsePathBase(new("/api"));
         app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        // app.UseAuthentication();
+        // app.UseAuthorization();
 
-        app.UseAspAppContext();
+        // app.UseAspAppContext();
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapControllers();
-            endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Index}/{action=Index}/{id?}");
+            // endpoints.MapControllers();
+            // endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
         });
     }
 }
