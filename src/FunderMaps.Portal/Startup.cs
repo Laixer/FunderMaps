@@ -108,8 +108,8 @@ public class Startup
         // app.UsePathBase(new("/api"));
         app.UseRouting();
 
-        // app.UseAuthentication();
-        // app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         // app.UseAspAppContext();
 
