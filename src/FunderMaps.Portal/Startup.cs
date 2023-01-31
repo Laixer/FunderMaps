@@ -10,13 +10,13 @@ public class Startup
     /// <summary>
     ///     Configuration.
     /// </summary>
-    public IConfiguration Configuration { get; }
+    // public IConfiguration Configuration { get; }
 
     /// <summary>
     ///     Create a new instance.
     /// </summary>
     /// <param name="configuration">See <see cref="IConfiguration"/>.</param>
-    public Startup(IConfiguration configuration) => Configuration = configuration;
+    // public Startup(IConfiguration configuration) => Configuration = configuration;
 
     /// <summary>
     ///     Use this method to add services to the container regardless of the environment.
@@ -25,10 +25,10 @@ public class Startup
     ///     Order is undetermined when configuring services.
     /// </remarks>
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-    private static void StartupConfigureServices(IServiceCollection services)
-    {
-        services.AddControllers();
-    }
+    // private static void StartupConfigureServices(IServiceCollection services)
+    // {
+    //     services.AddControllers();
+    // }
 
     /// <summary>
     ///     This method gets called by the runtime if no environment is set.
@@ -36,7 +36,7 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureServices(IServiceCollection services)
     {
-        StartupConfigureServices(services);
+        services.AddControllers();
     }
 
     /// <summary>
@@ -103,13 +103,13 @@ public class Startup
         //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
         // });
 
-        app.UseExceptionHandler("/oops");
+        // app.UseExceptionHandler("/oops");
 
         // app.UsePathBase(new("/api"));
         app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        // app.UseAuthentication();
+        // app.UseAuthorization();
 
         // app.UseAspAppContext();
 

@@ -6,6 +6,6 @@ public class IndexController : Controller
 {
     public ActionResult Index()
     {
-        return Redirect("https://incident.fundermaps.com/");
+        return RedirectPermanent("https://incident.fundermaps.com/");
     }
 }
