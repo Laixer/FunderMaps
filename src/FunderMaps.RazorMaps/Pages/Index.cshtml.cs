@@ -24,7 +24,7 @@ public class IndexModel : PageModel
                 new Field{ Color = "c75d43", Name = "Houten paal" },
                 new Field{ Color = "deb271", Name = "Houten paal met oplanger" },
                 new Field{ Color = "6a6c70", Name = "Betonnen paal" },
-                new Field{ Color = "ff3333", Name = "Op staal" },
+                new Field{ Color = "ff3333", Name = "Niet onderheid" },
                 new Field{ Color = "bdbebf", Name = "Stalen paal" },
                 new Field{ Color = "7192de", Name = "Verzwaarde betonpuntpaal" },
                 new Field{ Color = "b271de", Name = "Combinatie" },
@@ -139,7 +139,7 @@ public class IndexModel : PageModel
                 new Field{ Color = "d8907d", Name = "Houten paal" },
                 new Field{ Color = "edd5b1", Name = "Houten paal met oplanger" },
                 new Field{ Color = "6a6c70", Name = "Betonnen paal" },
-                new Field{ Color = "ff8080", Name = "Op staal" },
+                new Field{ Color = "ff8080", Name = "Niet onderheid" },
             }
         },
         new Layer
@@ -199,7 +199,7 @@ public class IndexModel : PageModel
                 new Field{ Color = "4969B8", Name = "Sloop onderzoek" },
                 new Field{ Color = "489BB9", Name = "Second opinion" },
                 new Field{ Color = "47BAA5", Name = "Archief onderzoek" },
-                new Field{ Color = "4EBC77", Name = "Architectureel onderzoek" },
+                new Field{ Color = "4EBC77", Name = "Bouwkundig onderzoek" },
                 new Field{ Color = "5CBE55", Name = "Funderingsadvies" },
                 new Field{ Color = "BDC262", Name = "Funderingsonderzoek" },
                 new Field{ Color = "C4A169", Name = "Extra onderzoek" },

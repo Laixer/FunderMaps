@@ -18,5 +18,5 @@ public sealed record IncidentOptions
     /// <summary>
     ///     The notification recipients.
     /// </summary>
-    public List<string> Recipients { get; set; }
+    public List<string> Recipients { get; set; } = new();
 }

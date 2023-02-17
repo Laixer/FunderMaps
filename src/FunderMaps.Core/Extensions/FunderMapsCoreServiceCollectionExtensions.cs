@@ -2,10 +2,7 @@
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Model;
-using FunderMaps.Core.Model.Jobs;
 using FunderMaps.Core.Services;
-using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -28,47 +25,12 @@ public static class FunderMapsCoreServiceCollectionExtensions
     public static IHostEnvironment HostEnvironment { get; set; }
 
     /// <summary>
-    ///     Adds batch job to the task component.
-    /// </summary>
-    public static IServiceCollection AddBatchJob<TBatchJob>(this IServiceCollection services)
-    {
-        services.AddTransient(typeof(TBatchJob));
-        services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(TBatchJob)));
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds the core threading service to the container.
-    /// </summary>
-    private static IServiceCollection AddCoreThreading(this IServiceCollection services)
-    {
-        services.AddScoped<BackgroundTaskScopedDispatcher>();
-        services.AddSingleton<DispatchManager>();
-        services.AddTransient<BackgroundTaskDispatcher>();
-        services.Configure<BackgroundWorkOptions>(Configuration.GetSection(BackgroundWorkOptions.Section));
-
-        return services;
-    }
-
-    /// <summary>
     ///     Adds incident reporting service.
     /// </summary>
     private static IServiceCollection AddIncident(this IServiceCollection services)
     {
         services.AddScoped<IIncidentService, IncidentService>();
         services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds model service.
-    /// </summary>
-    private static IServiceCollection AddModel(this IServiceCollection services)
-    {
-        services.AddBatchJob<RefreshJob>();
-        services.AddScoped<IModelService, ModelService>();
 
         return services;
     }
@@ -136,13 +98,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
         // Register the incident core service.
         services.AddIncident();
-
-        // Register the model service.
-        services.AddModel();
-
-        // The application core (as well as many other components) depends upon the ability to dispatch
-        // tasks to the background.
-        services.AddCoreThreading();
 
         return services;
     }
