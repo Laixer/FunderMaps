@@ -6,7 +6,6 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +26,7 @@ public class InquiryController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IInquiryRepository _inquiryRepository;
     private readonly IBlobStorageService _blobStorageService;
-    private readonly INotifyService _notifyService;
+    // private readonly INotifyService _notifyService;
 
     /// <summary>
     ///     Create new instance.
@@ -38,8 +37,7 @@ public class InquiryController : ControllerBase
         IOrganizationRepository organizationRepository,
         IUserRepository userRepository,
         IInquiryRepository inquiryRepository,
-        IBlobStorageService blobStorageService,
-        INotifyService notificationService)
+        IBlobStorageService blobStorageService)
     {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
@@ -47,7 +45,7 @@ public class InquiryController : ControllerBase
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+        // _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
     }
 
     // GET: api/inquiry/stats
@@ -254,31 +252,31 @@ public class InquiryController : ControllerBase
         // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        string subject = $"FunderMaps - Rapportage ter review";
+        // string subject = $"FunderMaps - Rapportage ter review";
 
-        object header = new
-        {
-            Title = subject,
-            Preheader = "Rapportage ter review wordt aangeboden."
-        };
+        // object header = new
+        // {
+        //     Title = subject,
+        //     Preheader = "Rapportage ter review wordt aangeboden."
+        // };
 
-        string footer = "Dit bericht wordt verstuurd wanneer een rapportage ter review wordt aangeboden.";
+        // string footer = "Dit bericht wordt verstuurd wanneer een rapportage ter review wordt aangeboden.";
 
-        await _notifyService.NotifyAsync(new()
-        {
-            Recipients = new List<string> { reviewer.Email },
-            Subject = subject,
-            Template = "InquiryReview",
-            Items = new Dictionary<string, object>
-                {
-                    { "header", header },
-                    { "footer", footer },
-                    { "creator", creator.ToString() },
-                    { "organization", organization.ToString() },
-                    { "inquiry", inquiry },
-                    { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
-                },
-        });
+        // await _notifyService.NotifyAsync(new()
+        // {
+        //     Recipients = new List<string> { reviewer.Email },
+        //     Subject = subject,
+        //     Template = "InquiryReview",
+        //     Items = new Dictionary<string, object>
+        //         {
+        //             { "header", header },
+        //             { "footer", footer },
+        //             { "creator", creator.ToString() },
+        //             { "organization", organization.ToString() },
+        //             { "inquiry", inquiry },
+        //             { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
+        //         },
+        // });
 
         // Return.
         return NoContent();
@@ -304,32 +302,32 @@ public class InquiryController : ControllerBase
         // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        string subject = $"FunderMaps - Rapportage afgekeurd";
+        // string subject = $"FunderMaps - Rapportage afgekeurd";
 
-        object header = new
-        {
-            Title = subject,
-            Preheader = "Rapportage is afgekeurd."
-        };
+        // object header = new
+        // {
+        //     Title = subject,
+        //     Preheader = "Rapportage is afgekeurd."
+        // };
 
-        string footer = "Dit bericht wordt verstuurd wanneer een rapportage is afgekeurd.";
+        // string footer = "Dit bericht wordt verstuurd wanneer een rapportage is afgekeurd.";
 
-        await _notifyService.NotifyAsync(new()
-        {
-            Recipients = new List<string> { creator.Email },
-            Subject = subject,
-            Template = "InquiryRejected",
-            Items = new Dictionary<string, object>
-                {
-                    { "header", header },
-                    { "footer", footer },
-                    { "reviewer", reviewer.ToString() },
-                    { "organization", organization.ToString() },
-                    { "inquiry", inquiry },
-                    { "message", input.Message },
-                    { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
-                },
-        });
+        // await _notifyService.NotifyAsync(new()
+        // {
+        //     Recipients = new List<string> { creator.Email },
+        //     Subject = subject,
+        //     Template = "InquiryRejected",
+        //     Items = new Dictionary<string, object>
+        //         {
+        //             { "header", header },
+        //             { "footer", footer },
+        //             { "reviewer", reviewer.ToString() },
+        //             { "organization", organization.ToString() },
+        //             { "inquiry", inquiry },
+        //             { "message", input.Message },
+        //             { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
+        //         },
+        // });
 
         // Return.
         return NoContent();
@@ -355,30 +353,30 @@ public class InquiryController : ControllerBase
         // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        string subject = $"FunderMaps - Rapportage goedgekeurd";
+        // string subject = $"FunderMaps - Rapportage goedgekeurd";
 
-        object header = new
-        {
-            Title = subject,
-            Preheader = "Rapportage is goedgekeurd."
-        };
+        // object header = new
+        // {
+        //     Title = subject,
+        //     Preheader = "Rapportage is goedgekeurd."
+        // };
 
-        string footer = "Dit bericht wordt verstuurd wanneer een rapportage is goedgekeurd.";
+        // string footer = "Dit bericht wordt verstuurd wanneer een rapportage is goedgekeurd.";
 
-        await _notifyService.NotifyAsync(new()
-        {
-            Recipients = new List<string> { creator.Email },
-            Subject = "FunderMaps - Rapportage goedgekeurd",
-            Template = "InquiryApproved",
-            Items = new Dictionary<string, object>
-                {
-                    { "header", header },
-                    { "footer", footer },
-                    { "reviewer", reviewer.ToString() },
-                    { "organization", organization.ToString() },
-                    { "inquiry", inquiry },
-                },
-        });
+        // await _notifyService.NotifyAsync(new()
+        // {
+        //     Recipients = new List<string> { creator.Email },
+        //     Subject = "FunderMaps - Rapportage goedgekeurd",
+        //     Template = "InquiryApproved",
+        //     Items = new Dictionary<string, object>
+        //         {
+        //             { "header", header },
+        //             { "footer", footer },
+        //             { "reviewer", reviewer.ToString() },
+        //             { "organization", organization.ToString() },
+        //             { "inquiry", inquiry },
+        //         },
+        // });
 
         // Return.
         return NoContent();

@@ -74,7 +74,7 @@ internal class MailgunService : IEmailService
         var response = await client.SendAsync(requestMessage);
         response.EnsureSuccessStatusCode();
 
-        _logger.LogInformation($"Message sent with success");
+        _logger.LogDebug($"Message sent with success");
     }
 
     /// <summary>

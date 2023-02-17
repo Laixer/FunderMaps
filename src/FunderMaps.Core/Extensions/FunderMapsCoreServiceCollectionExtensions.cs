@@ -4,8 +4,6 @@ using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Model;
 using FunderMaps.Core.Model.Jobs;
-using FunderMaps.Core.Notification;
-using FunderMaps.Core.Notification.Jobs;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Configuration;
@@ -58,7 +56,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
     /// </summary>
     private static IServiceCollection AddIncident(this IServiceCollection services)
     {
-        services.AddBatchJob<EmailJob>();
         services.AddScoped<IIncidentService, IncidentService>();
         services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
 
@@ -115,7 +112,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       resolve and disposed right after.
         services.AddTransient<IRandom, RandomGenerator>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
-        services.AddTransient<ITemplateParser, TemplateParser>();
         services.AddTransient<IGeocoderParser, GeocoderParser>();
         services.AddTransient<IGeocoderTranslation, GeocoderTranslation>();
 
@@ -125,9 +121,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       merely a placeholder. The front framework should bootstrap the application
         //       context if possible.
         services.AddAppContext();
-
-        // Register core services in DI container.
-        services.AddScoped<INotifyService, NotificationHub>();
 
         // Register core services in DI container.
         // NOTE: These services take time to initialize are used more often. Registering

@@ -6,7 +6,6 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Notification;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +26,7 @@ public class RecoveryController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IRecoveryRepository _recoveryRepository;
     private readonly IBlobStorageService _blobStorageService;
-    private readonly INotifyService _notifyService;
+    // private readonly INotifyService _notifyService;
 
     /// <summary>
     ///     Create new instance.
@@ -38,8 +37,7 @@ public class RecoveryController : ControllerBase
         IOrganizationRepository organizationRepository,
         IUserRepository userRepository,
         IRecoveryRepository recoveryRepository,
-        IBlobStorageService blobStorageService,
-        INotifyService notificationService)
+        IBlobStorageService blobStorageService)
     {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
@@ -47,7 +45,7 @@ public class RecoveryController : ControllerBase
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+        // _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
     }
 
     // GET: api/recovery/stats
@@ -254,31 +252,31 @@ public class RecoveryController : ControllerBase
         // Act.
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
-        string subject = $"FunderMaps - Herstelrapportage ter review";
+        // string subject = $"FunderMaps - Herstelrapportage ter review";
 
-        object header = new
-        {
-            Title = subject,
-            Preheader = "Herstelrapportage ter review wordt aangeboden."
-        };
+        // object header = new
+        // {
+        //     Title = subject,
+        //     Preheader = "Herstelrapportage ter review wordt aangeboden."
+        // };
 
-        string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage ter review wordt aangeboden.";
+        // string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage ter review wordt aangeboden.";
 
-        await _notifyService.NotifyAsync(new()
-        {
-            Recipients = new List<string> { reviewer.Email },
-            Subject = subject,
-            Template = "RecoveryReview",
-            Items = new Dictionary<string, object>
-                {
-                    { "header", header },
-                    { "footer", footer },
-                    { "creator", creator.ToString() },
-                    { "organization", organization.ToString() },
-                    { "recovery", recovery },
-                    { "redirect_link", $"{Request.Scheme}://{Request.Host}/recovery/{recovery.Id}" },
-                },
-        });
+        // await _notifyService.NotifyAsync(new()
+        // {
+        //     Recipients = new List<string> { reviewer.Email },
+        //     Subject = subject,
+        //     Template = "RecoveryReview",
+        //     Items = new Dictionary<string, object>
+        //         {
+        //             { "header", header },
+        //             { "footer", footer },
+        //             { "creator", creator.ToString() },
+        //             { "organization", organization.ToString() },
+        //             { "recovery", recovery },
+        //             { "redirect_link", $"{Request.Scheme}://{Request.Host}/recovery/{recovery.Id}" },
+        //         },
+        // });
 
         // Return.
         return NoContent();
@@ -304,32 +302,32 @@ public class RecoveryController : ControllerBase
         // Act.
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
-        string subject = $"FunderMaps - Herstelrapportage afgekeurd";
+        // string subject = $"FunderMaps - Herstelrapportage afgekeurd";
 
-        object header = new
-        {
-            Title = subject,
-            Preheader = "Herstelrapportage is afgekeurd."
-        };
+        // object header = new
+        // {
+        //     Title = subject,
+        //     Preheader = "Herstelrapportage is afgekeurd."
+        // };
 
-        string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is afgekeurd.";
+        // string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is afgekeurd.";
 
-        await _notifyService.NotifyAsync(new()
-        {
-            Recipients = new List<string> { creator.Email },
-            Subject = subject,
-            Template = "RecoveryRejected",
-            Items = new Dictionary<string, object>
-                {
-                    { "header", header },
-                    { "footer", footer },
-                    { "reviewer", reviewer.ToString() },
-                    { "organization", organization.ToString() },
-                    { "recovery", recovery },
-                    { "message", input.Message },
-                    { "redirect_link", $"{Request.Scheme}://{Request.Host}/recovery/{recovery.Id}" },
-                },
-        });
+        // await _notifyService.NotifyAsync(new()
+        // {
+        //     Recipients = new List<string> { creator.Email },
+        //     Subject = subject,
+        //     Template = "RecoveryRejected",
+        //     Items = new Dictionary<string, object>
+        //         {
+        //             { "header", header },
+        //             { "footer", footer },
+        //             { "reviewer", reviewer.ToString() },
+        //             { "organization", organization.ToString() },
+        //             { "recovery", recovery },
+        //             { "message", input.Message },
+        //             { "redirect_link", $"{Request.Scheme}://{Request.Host}/recovery/{recovery.Id}" },
+        //         },
+        // });
 
         // Return.
         return NoContent();
@@ -355,30 +353,30 @@ public class RecoveryController : ControllerBase
         // Act.
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
-        string subject = $"FunderMaps - Herstelrapportage goedgekeurd";
+        // string subject = $"FunderMaps - Herstelrapportage goedgekeurd";
 
-        object header = new
-        {
-            Title = subject,
-            Preheader = "Herstelrapportage is goedgekeurd."
-        };
+        // object header = new
+        // {
+        //     Title = subject,
+        //     Preheader = "Herstelrapportage is goedgekeurd."
+        // };
 
-        string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is goedgekeurd.";
+        // string footer = "Dit bericht wordt verstuurd wanneer een herstelrapportage is goedgekeurd.";
 
-        await _notifyService.NotifyAsync(new()
-        {
-            Recipients = new List<string> { creator.Email },
-            Subject = "FunderMaps - Herstelrapportage goedgekeurd",
-            Template = "RecoveryApproved",
-            Items = new Dictionary<string, object>
-                {
-                    { "header", header },
-                    { "footer", footer },
-                    { "reviewer", reviewer.ToString() },
-                    { "organization", organization.ToString() },
-                    { "recovery", recovery },
-                },
-        });
+        // await _notifyService.NotifyAsync(new()
+        // {
+        //     Recipients = new List<string> { creator.Email },
+        //     Subject = "FunderMaps - Herstelrapportage goedgekeurd",
+        //     Template = "RecoveryApproved",
+        //     Items = new Dictionary<string, object>
+        //         {
+        //             { "header", header },
+        //             { "footer", footer },
+        //             { "reviewer", reviewer.ToString() },
+        //             { "organization", organization.ToString() },
+        //             { "recovery", recovery },
+        //         },
+        // });
 
         // Return.
         return NoContent();
