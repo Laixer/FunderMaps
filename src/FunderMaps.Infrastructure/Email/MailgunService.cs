@@ -19,7 +19,7 @@ internal class MailgunService : IEmailService
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public MailgunService(IOptions<MailgunOptions> options, ILogger<SmtpService> logger)
+    public MailgunService(IOptions<MailgunOptions> options, ILogger<MailgunService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
