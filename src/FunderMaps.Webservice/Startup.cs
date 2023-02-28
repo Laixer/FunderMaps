@@ -9,6 +9,7 @@ namespace FunderMaps.Webservice;
 /// <summary>
 ///     Application configuration.
 /// </summary>
+[Obsolete]
 public class Startup
 {
     /// <summary>
