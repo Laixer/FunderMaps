@@ -1,0 +1,111 @@
+/* $active: adjust-color($VENDOR_PRIMARY_COLOR, $red: 120, $green: 91, $blue: 0);
+$hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); */
+
+.Button:focus {
+    outline: none;
+}
+
+.Button {
+    border-width: 0px;
+    position: relative;
+    padding: 15px 27px 16px;
+    font-size: 18px;
+    line-height: 19px;
+    letter-spacing: -0.3px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+
+    /* Regular */
+    background: #2657FF;
+    color: white;
+}
+
+.Button--submit {
+    background: #00c95d;
+}
+
+.Button:hover {
+    background: #1f44c5;
+}
+
+.Button:active {
+    background: #9eb2ff;
+}
+
+.Button[disabled] {
+    opacity: 0.25;
+    filter: grayscale(80%);
+    cursor: not-allowed;
+}
+
+
+.Button--line {
+    background: white;
+    color: #2657FF;
+    padding: 13px 25px 14px;
+    border: 2px solid  #2657FF;
+}
+
+.Button--line:hover {
+    background:  #2657FF;
+    color: white;
+    border: none;
+    padding: 15px 27px 16px;
+}
+
+.Button--line:active {
+    background: #9eb2ff;
+    color: white;
+    border: none;
+    padding: 15px 27px 16px;
+}
+
+.Button--line[disabled] {
+    filter: grayscale(80%);
+    color: white;
+    border: none;
+    padding: 15px 27px 16px;
+}
+
+.Button--ghost {
+    background: transparent;
+    color: #2657FF;
+    filter: grayscale(80%);
+    opacity: 0.8;
+}
+
+.Button--ghost:hover {
+    background: transparent;
+    filter: none;
+    opacity: 1;
+    color: #2657FF;
+}
+
+.Button--ghost:active {
+    background: transparent;
+    filter: none;
+    opacity: 1;
+    color: #2657ff;
+}
+
+
+.Button--wide {
+    text-align: center;
+    width: 100%;
+}
+
+.Button .SvgIcon {
+    font-size: 14px;
+}
+
+.Button .SvgIcon:last-child {
+    margin-left: 15px;
+}
+
+.Button .SvgIcon:first-child {
+    margin-right: 15px;
+}

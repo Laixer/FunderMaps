@@ -1,0 +1,63 @@
+.Finish__Wrapper {
+    padding: 20px 20px;
+
+    max-width: 550px;
+    margin: 0 auto;
+}
+
+@media only screen and (min-width: 900px) {
+    .Finish__Wrapper {
+        padding: 50px 80px;
+    }
+}
+
+a {
+    text-decoration: none;
+}
+
+.Title,
+.BodyText {
+    margin-bottom: 26px;
+}
+
+/* .Title+.BodyText {
+    color: #202122;
+} */
+
+.Footer {
+    color: #202122;
+    font-size: 18px;
+}
+
+.Footer .SvgIcon {
+    font-size: 24px;
+    color: #00c95d;
+    margin-right: 6px;
+}
+/*  */
+
+.Footer .Copyright {
+    display: none;
+}
+
+.BodyText {
+    color: #606976;
+    font-size: 18px;
+    line-height: 26px;
+    margin: 0;
+    padding: 0;
+
+    max-width: 550px;
+}
+
+.BodyText--center {
+    text-align: center;
+}
+
+.BodyText--bold {
+    font-weight: bold;
+}
+
+.BodyText--italic {
+    font-style: italic;
+}

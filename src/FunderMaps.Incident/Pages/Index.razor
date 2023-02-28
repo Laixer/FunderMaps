@@ -1,0 +1,75 @@
+﻿@page "/"
+@using FunderMaps.Incident.Data
+@inject NavigationManager NavigationManager
+
+<div class="Home__Wrapper">
+    <div class="Home--left">
+        <Title Message="Wat doen we?" />
+
+        <p class="BodyText BodyText--bold" style="margin-bottom: 26px;">
+            <span>Stichting Kennis Centrum Aanpak Funderingsproblematiek (KCAF) is een stichting met als doelstelling
+                het verzamelen, ontwikkelen en ontsluiten van kennis rond de aanpak en preventie van
+                funderingsproblemen.</span>
+        </p>
+        <p class="BodyText" style="margin-bottom: 26px;">
+            <span>KCAF fungeert als nationaal funderingsloket voor alle vragen rond deze problematiek. Van
+                funderingsonderzoek tot funderingsherstel, van aanpak tot financiering en van preventie tot innovatie.
+                KCAF is een stichting zonder winstoogmerk.</span>
+        </p>
+        <p class="BodyText" style="margin-bottom: 26px;">
+            <span>
+                Bij dit loket kunt u een melding maken van een funderingsprobleem aan uw woning. Wij zullen u
+                vrijblijvend van advies voorzien. Dit loket is een initiatief van KCAF (Kennis Centrum Aanpak
+                Funderingsproblematiek)@VendorText().
+            </span>
+        </p>
+    </div>
+
+    <div class="Home--right">
+        <img src="@VendorImage()" width="640" height="585" alt="Logo" />
+    </div>
+</div>
+
+@code
+{
+    [CascadingParameter]
+    State State { get; set; } = default!;
+
+    string VendorImage()
+    {
+        if (!string.IsNullOrEmpty(State.Vendor))
+        {
+            string rootpath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
+
+            var image_svg = System.IO.Path.Combine(rootpath, $"img/home_{State.Vendor}.svg");
+            if (System.IO.File.Exists(image_svg))
+            {
+                return $"/img/home_{State.Vendor}.svg";
+            }
+
+            var image_png = System.IO.Path.Combine(rootpath, $"img/home_{State.Vendor}.png");
+            if (System.IO.File.Exists(image_png))
+            {
+                return $"/img/home_{State.Vendor}.png";
+            }
+
+            var image_jpg = System.IO.Path.Combine(rootpath, $"img/home_{State.Vendor}.jpg");
+            if (System.IO.File.Exists(image_jpg))
+            {
+                return $"/img/home_{State.Vendor}.jpg";
+            }
+        }
+
+        return "/img/home.jpg";
+    }
+
+    string VendorText()
+    {
+        if (!string.IsNullOrEmpty(State.Vendor))
+        {
+            return $" en {State.Vendor}";
+        }
+
+        return "";
+    }
+}

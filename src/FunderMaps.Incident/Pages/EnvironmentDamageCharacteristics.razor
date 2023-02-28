@@ -1,0 +1,354 @@
+@page "/survey/environment-damage-characteristics"
+@using Microsoft.Extensions.Logging
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+@using FunderMaps.Core.Types;
+
+<div class="EnvironmentDamageCharacteristics">
+    <Title Message="Herkent u minstens één van de volgende punten in de omgeving van de woning?" Subtitle="Meerdere opties mogelijk" Center="true" />
+
+    <form class="Form">
+        <div class="CheckboxInput">
+            <div class="CheckboxInput__Wrapper">
+                @* @foreach (var option in inputOptions) *@
+                @* { *@
+
+                    @* <div class="CheckboxInput__Field">
+                        <input id="input_@option.Id" type="checkbox" name="woning" value="@option.Id">
+                        <label for="input_@option.Id" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>@option.Label</span>
+                        </label>
+                    </div> *@
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="Subsidence" name="woning" @bind="Subsidence" @bind:after="CheckChanged" />
+
+                        <label for="Subsidence" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Er is sprake van bodemdaling tuin/erf</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="FoundationDamageNearby" name="woning" @bind="FoundationDamageNearby" @bind:after="CheckChanged" />
+
+                        <label for="FoundationDamageNearby" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Andere panden in de buurt met funderingsproblemen</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="SaggingSewerConnection" name="woning" @bind="SaggingSewerConnection" @bind:after="CheckChanged" />
+
+                        <label for="SaggingSewerConnection" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Verzakkende rioolaansluitingen</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="IncreasingTraffic" name="woning" @bind="IncreasingTraffic" @bind:after="CheckChanged" />
+
+                        <label for="IncreasingTraffic" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Toenemende verkeersdrukte in de straat</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="SaggingCablesPipes" name="woning" @bind="SaggingCablesPipes" @bind:after="CheckChanged" />
+
+                        <label for="SaggingCablesPipes" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Verzakkende kabels en leidingen</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="Elevation" name="woning" @bind="Elevation" @bind:after="CheckChanged" />
+
+                        <label for="Elevation" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>De straat is onlangs opgehoogd</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="Flooding" name="woning" @bind="Flooding" @bind:after="CheckChanged" />
+
+                        <label for="Flooding" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Wateroverlast (water op straat)</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="ConstructionNearby" name="woning" @bind="ConstructionNearby" @bind:after="CheckChanged" />
+
+                        <label for="ConstructionNearby" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Er zijn bouwactiviteiten in de omgeving gaande (geweest)</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="LowGroundWater" name="woning" @bind="LowGroundWater" @bind:after="CheckChanged" />
+
+                        <label for="LowGroundWater" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Water onderlast (droge bodem)</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="VegetationNearby" name="woning" @bind="VegetationNearby" @bind:after="CheckChanged" />
+
+                        <label for="VegetationNearby" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Er staan grote bomen dicht bij (minder dan 10m) mijn woning</span>
+                        </label>
+                    </div>
+
+                    <div class="CheckboxInput__Field">
+                        <input type="checkbox" id="SewageLeakage" name="woning" @bind="SewageLeakage" @bind:after="CheckChanged" />
+
+                        <label for="SewageLeakage" class="CheckboxInput__Label">
+                            <span class="CheckboxInput__Checkbox">
+                                <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                            </span>
+                            <span>Lekke riolering</span>
+                        </label>
+                    </div>
+
+                @* } *@
+            </div>
+        </div>
+        <button type="submit" style="display: none;"></button>
+    </form>
+
+</div>
+
+@code
+{
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+
+    bool Subsidence = false;
+    bool FoundationDamageNearby = false;
+    bool SaggingSewerConnection = false;
+    bool IncreasingTraffic = false;
+    bool SaggingCablesPipes = false;
+    bool Elevation = false;
+    bool Flooding = false;
+    bool ConstructionNearby = false;
+    bool LowGroundWater = false;
+    bool VegetationNearby = false;
+    bool SewageLeakage = false;
+
+    private void CheckChanged()
+    {
+        List<FunderMaps.Core.Types.EnvironmentDamageCharacteristics> FouDaCaList = new List<FunderMaps.Core.Types.EnvironmentDamageCharacteristics>();
+
+        if (Subsidence)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.Subsidence);
+        }
+
+        if (FoundationDamageNearby)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.FoundationDamageNearby);
+        }
+
+        if (SaggingSewerConnection)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.SaggingSewerConnection);
+        }
+
+        if (IncreasingTraffic)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.IncreasingTraffic);
+        }
+
+        if (SaggingCablesPipes)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.SaggingCablesPipes);
+        }
+
+        if (Elevation)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.Elevation);
+        }
+
+        if (Flooding)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.Flooding);
+        }
+
+        if (ConstructionNearby)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.ConstructionNearby);
+        }
+
+        if (LowGroundWater)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.LowGroundWater);
+        }
+
+        if (VegetationNearby)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.VegetationNearby);
+        }
+
+        if (SewageLeakage)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.EnvironmentDamageCharacteristics.SewageLeakage);
+        }
+
+        State.Model.EnvironmentDamageCharacteristics = FouDaCaList.ToArray();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (State.Model.EnvironmentDamageCharacteristics is not null)
+        {
+            foreach (var k in State.Model.EnvironmentDamageCharacteristics)
+            {
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.Subsidence)
+                {
+                    Subsidence = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.FoundationDamageNearby)
+                {
+                    FoundationDamageNearby = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.SaggingSewerConnection)
+                {
+                    SaggingSewerConnection = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.IncreasingTraffic)
+                {
+                    IncreasingTraffic = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.SaggingCablesPipes)
+                {
+                    SaggingCablesPipes = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.Elevation)
+                {
+                    Elevation = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.Flooding)
+                {
+                    Flooding = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.ConstructionNearby)
+                {
+                    ConstructionNearby = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.LowGroundWater)
+                {
+                    LowGroundWater = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.VegetationNearby)
+                {
+                    VegetationNearby = true;
+                }
+
+                if (k == FunderMaps.Core.Types.EnvironmentDamageCharacteristics.SewageLeakage)
+                {
+                    SewageLeakage = true;
+                }
+            }
+        }
+    }
+
+    @* public class InputOption
+    {
+        public int Id { get; set; }
+
+        public string Label { get; set; }
+    }
+
+    private List<InputOption> inputOptions = new()
+    {
+        new InputOption{
+            Id = 0,
+            Label = "Er is sprake van bodemdaling tuin/erf",
+        },
+        new InputOption{
+            Id = 4,
+            Label = "Andere panden in de buurt met funderingsproblemen",
+        },
+        new InputOption{
+            Id = 1,
+            Label = "Verzakkende rioolaansluitingen",
+        },
+        new InputOption{
+            Id = 6,
+            Label = "Toenemende verkeersdrukte in de straat",
+        },
+        new InputOption{
+            Id = 2,
+            Label = "Verzakkende kabels en leidingen",
+        },
+        new InputOption{
+            Id = 5,
+            Label = "De straat is onlangs opgehoogd",
+        },
+        new InputOption{
+            Id = 3,
+            Label = "Wateroverlast (water op straat)",
+        },
+
+        new InputOption{
+            Id = 7,
+            Label = "Er zijn bouwactiviteiten in de omgeving gaande (geweest)",
+        },
+        new InputOption{
+            Id = 10,
+            Label = "Water onderlast (droge bodem)",
+        },
+        new InputOption{
+            Id = 8,
+            Label = "Er staan grote bomen dicht bij (< 10 m) mijn woning",
+        },
+        new InputOption{
+            Id = 9,
+            Label = "Lekke riolering",
+        }
+    }; *@
+}

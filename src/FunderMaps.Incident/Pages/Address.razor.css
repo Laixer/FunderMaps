@@ -1,0 +1,135 @@
+.Address {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column-reverse;
+    height: 100%;
+}
+
+@media only screen and (min-width: 900px) {
+    .Address {
+        flex-direction: row-reverse;
+    }
+}
+
+.Address .Address__Wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    justify-content: flex-start;
+    padding: 20px 20px;
+    width: 100%;
+}
+
+@media only screen and (min-width: 900px) {
+    .Address .Address__Wrapper {
+        padding: 50px 50px;
+        width: 40%;
+        min-width: 500px;
+    }
+}
+
+.Address .Address__Wrapper .Title,
+.BodyText {
+    margin-bottom: 26px;
+}
+
+.Address .Address__Wrapper .Button {
+    margin-top: 24px;
+}
+
+.Address .MapBox__Wrapper {
+    position: relative;
+    display: flex;
+    flex: 1;
+}
+
+@media only screen and (min-width: 900px) {
+    .Address .MapBox__Wrapper {
+        height: auto;
+        width: 40%;
+    }
+}
+
+/*  */
+
+.GeoCoder {
+    position: relative;
+}
+
+.GeoCoder .FormField__Field {
+    padding-right: 45px;
+}
+
+.GeoCoder .FormField__Icon {
+    opacity: 1;
+    font-size: 20px;
+}
+
+
+.Title h1 {
+    color: #202122;
+    font-size: 24px;
+    line-height: 1.25;
+    padding: 0;
+    margin: 0;
+    font-weight: 700;
+}
+
+.GeoCoder.FormField--invalid,
+.GeoCoder.FormField--valid .FormField__Icon {
+    font-size: 12px;
+}
+
+.GeoCoder__Suggestions {
+    width: 100%;
+    padding-top: 5px;
+    border: 2px solid #d4daf0;
+    border-top: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    overflow: hidden;
+    background: white;
+}
+
+@media only screen and (max-width: 900px) {
+    .GeoCoder__Suggestions {
+        position: absolute;
+        top: 80px;
+        z-index: 9999;
+    }
+}
+
+.GeoCoder__Suggestions .Suggestion {
+    display: block;
+    position: relative;
+    padding: 13px 15px 14px 50px;
+}
+
+.GeoCoder__Suggestions .Suggestion span {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 19px;
+    color: #202122;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.GeoCoder__Suggestions .Suggestion .SvgIcon {
+    color: #d4daf0;
+    position: absolute;
+    top: 13px;
+    left: 20px;
+    font-size: 19px;
+}
+
+.GeoCoder__Suggestions .Suggestion:hover {
+    cursor: pointer;
+    background: #2657FF;
+}
+
+.GeoCoder__Suggestions .Suggestion:hover .SvgIcon,
+.GeoCoder__Suggestions .Suggestion:hover span {
+    color: white;
+}

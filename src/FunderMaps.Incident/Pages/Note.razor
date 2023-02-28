@@ -1,0 +1,21 @@
+@page "/survey/note"
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+@inject ILogger<Note> Logger
+
+<div class="Note__Wrapper">
+    <Title Message="Aanvullende informatie of beschrijving" Subtitle="Heeft u aanvullende informatie over uw schade? Meld deze in het onderstaande tekstveld." Center="true" />
+
+    <div class="FormField">
+        <div class="FormField__Wrapper">
+            <InputTextArea id="toelichting" autocomplete="off" rows="25" class="FormField__Field" @bind-Value="State.Model.Note" />
+        </div>
+    </div>
+
+</div>
+
+@code {
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+}

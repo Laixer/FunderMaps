@@ -1,0 +1,78 @@
+﻿@inherits LayoutComponentBase
+
+<div id="app">
+    <div class="Page">
+
+        <header class="Header">
+            <div class="Header__Group">
+                <img class="Header__Logo" src="@VendorLogo()" alt="Logo">
+            </div>
+        </header>
+        
+        <div class="Page__Wrapper">
+            @if (state.ShowProgressSteps)
+            {
+                <aside class="ProgressSteps">
+                    <div class="ProgressSteps__Indicator" style="top: 178px"></div>
+                    
+                    <ul>
+                        <li class="@state.getProgressStepClass(1)"><span>1</span></li>
+                        <li class="@state.getProgressStepClass(2)"><span>2</span></li>
+                        <li class="@state.getProgressStepClass(3)"><span>3</span></li>
+                        <li class="@state.getProgressStepClass(4)"><span>4</span></li>
+                        <li class="@state.getProgressStepClass(5)"><span>5</span></li>
+                        <li class="@state.getProgressStepClass(6)"><span>6</span></li>
+                        <li class="@state.getProgressStepClass(7)"><span>7</span></li>
+                        <li class="@state.getProgressStepClass(8)"><span>8</span></li>
+                        <li class="@state.getProgressStepClass(9)"><span>9</span></li>
+                    </ul>
+                </aside>
+            }
+
+            <CascadingValue Value="this">
+                <CascadingValue Value="@state">
+                    <div class="Page__Main @(@state.ShowProgressSteps ? "Page__Main--sidebar" : "") ">
+                        <div class="Page__Content">
+                            @Body
+                        </div>
+                    </div>
+                </CascadingValue>
+            </CascadingValue>
+
+        </div>
+    </div>
+
+    <footer class="Footer">
+        @if (state.ShowNavPrev)
+        {
+            <NavLink href="@state.NavLinkPrevPage()">
+                <button class="Button Button--ghost">
+                    <div class="SvgIcon svg-container">
+                        <SvgIconArrowPrevious />
+                    </div>
+                    <span>Vorige</span>
+                </button>
+            </NavLink>
+        }
+        @if (state.ShowNavNext && !state.DisableNavNext)
+        {
+            <NavLink @onclick="@(() => state.OnNextClick.InvokeAsync())" href="@state.NavLinkNextPage()">
+                <button class="Button" disabled="@state.DisableNavNext">
+                    <span>@state.NavTextNextPage()</span>
+                    <div class="SvgIcon svg-container">
+                        <SvgIconArrowNext />
+                    </div>
+                </button>
+            </NavLink>
+        }
+        else if (state.ShowNavNext)
+        {
+            <button class="Button" disabled="true">
+                <span>@state.NavTextNextPage()</span>
+                <div class="SvgIcon svg-container">
+                    <SvgIconArrowNext />
+                </div>
+            </button>
+        }
+    </footer>
+</div>

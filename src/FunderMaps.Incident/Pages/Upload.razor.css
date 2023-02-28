@@ -1,0 +1,59 @@
+.Upload__Wrapper {
+    height: 100%;
+    padding: 20px 20px;
+
+    max-width: 100%;
+}
+
+.Upload__Wrapper .Title {
+    margin-bottom: 4px;
+}
+
+.Upload__Wrapper .BodyText {
+    max-width: 100%;
+    margin-bottom: 26px;
+    font-size: 16px;
+}
+
+@media only screen and (min-width: 900px) {
+    .Upload__Wrapper {
+        padding: 50px 80px;
+    }
+}
+
+.Title {
+    margin-bottom: 26px;
+}
+
+/*  */
+
+.UploadArea {
+    width: 100%;
+    border-radius: 5px;
+    background-color: hsla(0,0%,100%,.7);
+    border: 1px solid #d4daf0;
+    user-select: none;
+    cursor: pointer;
+}
+
+.UploadArea:hover {
+    background-color: #f0f3fd;
+}
+
+.dropzone .dz-message {
+    text-align: center;
+    padding: 20px 20px;
+    /* margin: 2em 0; */
+}
+
+.dropzone.dz-clickable .dz-message, .dropzone.dz-clickable .dz-message * {
+    cursor: pointer;
+}
+
+.UploadArea p {
+    text-align: center;
+    font-size: 14px;
+    color: #354052;
+    font-weight: 300;
+    line-height: 17px;
+}

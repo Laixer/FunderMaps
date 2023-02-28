@@ -1,0 +1,71 @@
+@page "/survey/upload"
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+@using FunderMaps.Core.Helpers
+@using FunderMaps.Core.Interfaces
+@inject ILogger<Upload> Logger
+@inject IBlobStorageService BlobStorageService
+
+<div class="Upload__Wrapper">
+    <Title Message="Heeft u informatie beschikbaar?" Subtitle="U kunt deze stap ook overslaan" Center="true" />
+
+    <form id="upload-area" class="UploadArea dropzone dz-clickable">
+        <label for="file-upload">
+            <div class="dz-message align-self-center">
+                <img alt="upload" src="/img/upload.svg">
+                <p class="mb-0 mt-3">
+                    <InputFile Id="file-upload" style="display:none" OnChange="@LoadFiles" multiple />
+                    @* <strong>Sleep hier bestanden om te uploaden.</strong>
+                    <br>
+                    <span> of klik om een bestand te kiezen</span> *@
+
+                    <strong>Upload onderzoeksrapporten, archiefstukken, tekeningen of foto's</strong>
+                    <div>
+                        <span>Klik om een bestand te kiezen</span>
+                    </div>
+                </p>
+            </div>
+        </label>
+    </form>
+
+</div>
+
+@code {
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles(25))
+        {
+            try
+            {
+                var storeFileName = FileHelper.GetUniqueName(file.Name);
+                await BlobStorageService.StoreFileAsync(
+                    containerName: Core.Constants.IncidentStorageFolderName,
+                    fileName: storeFileName,
+                    contentType: file.ContentType,
+                    stream: file.OpenReadStream(128 * 1024 * 1024));
+
+                if (State.Model.DocumentFile is null)
+                {
+                    State.Model.DocumentFile = new string[]
+                    {
+                        storeFileName
+                    };
+                }
+                else
+                {
+                    var list = State.Model.DocumentFile.ToList();
+                    list.Add(storeFileName);
+                    State.Model.DocumentFile = list.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("File: {Filename} Error: {Error}", file.Name, ex.Message);
+            }
+        }
+    }
+}

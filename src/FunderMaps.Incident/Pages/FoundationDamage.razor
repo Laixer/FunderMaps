@@ -1,0 +1,104 @@
+@page "/survey/foundation-damage-cause"
+@using Microsoft.Extensions.Logging
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+@using FunderMaps.Core.Types;
+
+<div class="FoundationDamageCause">
+    <Title Message="Wat veroorzaakt de schade aan de woning?" Center="true" />
+
+    <form class="Form" autocomplete="off">
+        <div class="RadioTextInput">
+            <div class="RadioTextInput__Wrapper">
+
+                <InputRadioGroup Name="type" @bind-Value="State.Model.FoundationDamageCause">
+                    @foreach (var option in inputOptions)
+                    {
+                        <div class="RadioTextInput__Field">
+                            <InputRadio Id="@option.Id" Value="@option.Id" />
+                            @* <input id="input_@option.Id" type="radio" name="type" value="@option.Id"> *@
+                            <label for="@option.Id" class="RadioTextInput__Label">
+                                <span>@option.Label</span>
+                            </label>
+                        </div>
+                    }
+                </InputRadioGroup>
+
+            </div>
+        </div>
+        <button type="submit" style="display: none;"></button>
+    </form>
+
+</div>
+
+@code {
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+
+    public class InputOption
+    {
+        public FoundationDamageCause Id { get; set; }
+
+        public string Label { get; set; } = default!;
+    }
+
+    private List<InputOption> inputOptions = new()
+    {
+        new InputOption
+        {
+            Id = FoundationDamageCause.ConstructionFlaw,
+            Label = "Verkeerd gefundeerd bij de bouw",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.Vegetation,
+            Label = "Beschadiging van de fundering door (planten)wortels",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.BioFungusInfection,
+            Label = "Aantasting van houten palen door schimmels/bacterieën",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.Gas,
+            Label = "Gaswinning of mijnbouw",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.ConstructionHeave,
+            Label = "De funderingspalen drukken de woning omhoog",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.Vibrations,
+            Label = "Verkeer nabij de woning",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.NegativeCling,
+            Label = "De funderingspalen worden naar beneden getrokken",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.PartialFoundationRecovery,
+            Label = "Funderingsherstel bij de buren",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.Subsidence,
+            Label = "Bodemdaling",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.FoundationFlaw,
+            Label = "Fundering niet meer berekend op het huidige gewicht",
+        },
+        new InputOption
+        {
+            Id = FoundationDamageCause.JapanseKnotweed,
+            Label = "Japanse duizendknoop",
+        },
+    };
+}

@@ -1,0 +1,41 @@
+@page "/survey/address"
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+
+<div class="Address">
+    <div class="MapBox__Wrapper">
+        <div @ref="mapElement" style='width:100%;height:100%'></div>
+    </div>
+    <div class="Address__Wrapper">
+        <div class="Title">
+            <h1>Melding maken voor adres:</h1>
+        </div>
+
+        <div class="FormField GeoCoder" :class="fieldClasses">
+            <label for="address" class="FormField__Label">Zoek een adres</label>
+
+            <div class="FormField__Wrapper">
+                <input id="address" placeholder="Stationsplein, 1012 AB Amsterdam" autocomplete="off" class="FormField__Field" @bind="inputKaasAutoCompleteDing" @oninput="OnType" />
+
+                @* <SvgIcon :icon="fieldIcon" class="FormField__Icon" /> *@
+
+                @if (autoComplete.Any())
+                {
+                    <div class="GeoCoder__Suggestions">
+                        @foreach (var r in autoComplete)
+                        {
+                            <div class="Suggestion" title="@r.weergavenaam" @onclick=@(_ => SelectCustomer(r.id))>
+                                <div class="SvgIcon svg-container Suggestion__Icon">
+                                    <!--?xml version="1.0" encoding="UTF-8"?-->
+                                    <svg width="12px" height="19px" viewBox="0 0 12 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="1" transform="translate(-300.000000, -413.000000)" fill="currentColor"> <g id="Placeholder" transform="translate(280.000000, 310.000000)"> <path d="M26,103 C25.1718723,103 24.3945348,103.15466 23.6679685,103.463981 C22.9414027,103.773302 22.3046904,104.194745 21.7578126,104.728325 C21.2109348,105.261906 20.7812516,105.892142 20.46875,106.61905 C20.1562484,107.345952 20,108.119249 20,108.93895 C20,110.346365 20.3124969,111.819487 20.9375003,113.358363 C21.5625031,114.897238 22.2499964,116.304633 23,117.580586 C23.7500036,118.856539 24.4374969,119.912084 25.0624997,120.747253 C25.6875047,121.582422 26,122 26,122 C26,122 26.3124953,121.582422 26.9375013,120.747253 C27.5625021,119.912084 28.2499949,118.856539 29,117.580586 C29.7500051,116.304633 30.4374979,114.897238 31.0624987,113.358363 C31.6875047,111.819487 32,110.346365 32,108.93895 C32,108.119249 31.8437498,107.345952 31.5312494,106.61905 C31.2187489,105.892142 30.7890672,105.261906 30.2421889,104.728325 C29.6953106,104.194745 29.0585957,103.773302 28.3320289,103.463981 C27.6054672,103.15466 26.8281277,103 26,103 Z M26,112.210012 C25.1093702,112.210012 24.3476592,111.89683 23.7148436,111.27045 C23.0820279,110.644076 22.7656252,109.890112 22.7656252,109.008549 C22.7656252,108.111515 23.0820279,107.349818 23.7148436,106.723444 C24.3476592,106.097064 25.1093702,105.783882 26,105.783882 C26.8906298,105.783882 27.6523387,106.097064 28.2851574,106.723444 C28.9179711,107.349818 29.2343728,108.111515 29.2343728,109.008549 C29.2343728,109.890112 28.9179711,110.644076 28.2851574,111.27045 C27.6523387,111.89683 26.8906298,112.210012 26,112.210012 Z" id="Fill-1"></path> </g> </g> </g> </svg>
+                                </div>
+                                <span>@((MarkupString)r.weergavenaam)</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>
