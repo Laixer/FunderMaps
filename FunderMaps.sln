@@ -25,10 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.AspNetCore", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FunderMaps.Portal", "src\FunderMaps.Portal\FunderMaps.Portal.csproj", "{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}"
-EndProject
-EndProject
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,10 +59,6 @@ Global
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,7 +71,6 @@ Global
 		{E176260E-0D9C-4374-AC49-F312C7EC23FD} = {3CCE5914-CD6D-4DFD-9FF5-E872044553DD}
 		{278702CF-559B-4ED5-8C57-FD0E23DC4014} = {54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}
 		{8A28CFFE-2028-40AC-9CCD-81796FD360AE} = {3CCE5914-CD6D-4DFD-9FF5-E872044553DD}
-		{CF0E7A1A-20A8-4A15-8B57-D7218B9F33D1} = {54F0529D-8DC7-4DCC-8A93-BF0B2E5F8BE2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDA50611-E011-4C1E-8823-7A6943652DCE}
