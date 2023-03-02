@@ -18,10 +18,10 @@ namespace System.Net.Http.Json
         /// <param name="options">Optional <see cref="JsonSerializerOptions"/>.</param>
         /// <param name="cancellationToken">Optional cancellation token.</param>
         /// <returns></returns>
-        public static async Task<TReturnValue> PostAsJsonGetFromJsonAsync<TReturnValue, TSubmitValue>(this HttpClient client,
+        public static async Task<TReturnValue?> PostAsJsonGetFromJsonAsync<TReturnValue, TSubmitValue>(this HttpClient client,
             string requestUri,
             TSubmitValue value,
-            JsonSerializerOptions options = null,
+            JsonSerializerOptions? options = null,
             CancellationToken cancellationToken = default)
         {
             var response = await client.PostAsJsonAsync(requestUri, value, options, cancellationToken);

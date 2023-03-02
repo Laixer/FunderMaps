@@ -22,6 +22,7 @@ public class State
         Model.Owner = true;
         Model.NeighborRecovery = false;
         Model.ContactNavigation = new();
+        Model.ClientId = 10;
     }
 
     public string getProgressStepClass(int step)

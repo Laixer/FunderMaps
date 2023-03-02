@@ -65,7 +65,30 @@ public partial class MainLayout : LayoutComponentBase
                 {
                     if (nodes[0] != "incident")
                     {
-                        state.Vendor = nodes[0];
+                        state.Vendor = nodes[0].ToLower();
+
+                        switch (state.Vendor)
+                        {
+                            case "lansingerland":
+                                state.Model.ClientId = 23;
+                                break;
+
+                            case "regiodeal":
+                                state.Model.ClientId = 23;
+                                break;
+
+                            case "veenweidefryslan":
+                                state.Model.ClientId = 22;
+                                break;
+
+                            case "schiedam":
+                                state.Model.ClientId = 21;
+                                break;
+
+                            case "fundermaps":
+                                state.Model.ClientId = 20;
+                                break;
+                        }
                     }
                 }
             }

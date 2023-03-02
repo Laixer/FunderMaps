@@ -18,7 +18,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
     private readonly IContactRepository _contactRepository;
     private readonly IIncidentRepository _incidentRepository;
     private readonly IGeocoderTranslation _geocoderTranslation;
-    // private readonly INotifyService _notifyService;
     private readonly IEmailService _emailService;
     private readonly ILogger<IncidentService> _logger;
 
@@ -30,7 +29,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
         IContactRepository contactRepository,
         IIncidentRepository incidentRepository,
         IGeocoderTranslation geocoderTranslation,
-        // INotifyService notificationService,
         IEmailService emailService,
         ILogger<IncidentService> logger)
     {
@@ -38,7 +36,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
         _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(contactRepository));
         _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
         _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
-        // _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -163,7 +160,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
         Address address = await _geocoderTranslation.GetAddressIdAsync(incident.Address);
 
         incident.Address = address.Id;
-        incident.ClientId = _options.ClientId;
         incident.Meta = meta;
         incident.AuditStatus = AuditStatus.Todo;
 
@@ -234,22 +230,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
             }
             });
         }
-
-        // List<string> recipients = new(_options.Recipients);
-        // recipients.Add(incident.Email);
-
-        // await _notifyService.NotifyAsync(new()
-        // {
-        //     Recipients = recipients,
-        //     Subject = subject,
-        //     Template = "Incident",
-        //     Items = new Dictionary<string, object>
-        //         {
-        //             { "incident", incident },
-        //             { "address", address },
-        //             { "contact", incident.ContactNavigation },
-        //         },
-        // });
 
         _logger.LogInformation($"Incident {incident.Id} was registered");
 
