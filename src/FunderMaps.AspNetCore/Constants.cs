@@ -10,7 +10,7 @@ internal static class Constants
     /// <summary>
     ///     Application name.
     /// </summary>
-    internal static string ApplicationName => Assembly.GetEntryAssembly().GetName().Name;
+    internal static string? ApplicationName => Assembly.GetEntryAssembly()?.GetName().Name;
 
     /// <summary>
     ///     Application revision.

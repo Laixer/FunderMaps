@@ -15,21 +15,21 @@ public sealed record MailgunOptions
     /// <summary>
     ///     Mailgun API key.
     /// </summary>
-    public string ApiKey { get; set; }
+    public string? ApiKey { get; set; }
 
     /// <summary>
     ///     Sender domain.
     /// </summary>
-    public string Domain { get; set; }
+    public string? Domain { get; set; }
 
     /// <summary>
     ///     Default sender name if none is provided.
     /// </summary>
-    public string DefaultSenderName { get; set; }
+    public string? DefaultSenderName { get; set; }
 
     /// <summary>
     ///     Default sender address if none is provided.
     /// </summary>
     [Required, EmailAddress]
-    public string DefaultSenderAddress { get; set; }
+    public string? DefaultSenderAddress { get; set; }
 }
