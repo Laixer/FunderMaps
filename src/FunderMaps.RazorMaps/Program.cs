@@ -29,7 +29,7 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    var forwardedOptions = new ForwardedHeadersOptions()
+    ForwardedHeadersOptions forwardedOptions = new()
     {
         ForwardedHeaders = ForwardedHeaders.All,
     };
@@ -43,7 +43,7 @@ if (!app.Environment.IsDevelopment())
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCookiePolicy(new CookiePolicyOptions()
+    app.UseCookiePolicy(new()
     {
         Secure = CookieSecurePolicy.Always,
     });
