@@ -1,0 +1,185 @@
+@import url('font.css');
+@import url('button.css');
+@import url('formfield.css');
+@import url('radio-image-input.css');
+@import url('radio-text-input.css');
+@import url('checkbox-input.css');
+
+body {
+    position: relative;
+    z-index: 1;
+}
+
+@media only screen and (min-width: 900px) {
+    body::before {
+        content: "";
+        background: url("/img/background.jpg");
+        background-size: cover;
+        opacity: 0.6;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        filter: blur(5px);
+    }
+}
+
+a:-webkit-any-link {
+    text-decoration: none;
+}
+
+/**
+   * Minimal CSS reset
+   */
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+*,
+:after,
+:before {
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+/* SVG */
+
+.svg-container {
+    display: inline-flex;
+}
+
+.svg-class {
+    vertical-align: middle;
+}
+
+/* Move into separate component */
+
+.list-enter-active {
+    transition: all 1s;
+}
+
+.list-leave-active {
+    transition: all 1s;
+}
+
+.list-enter,
+.list-leave-to {
+    transform: translateY(30px);
+    opacity: 0;
+}
+
+.ProgressSteps {
+    position: relative;
+    width: 80px;
+    height: 100%;
+    padding: 50px 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ProgressSteps ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.ProgressSteps__Current,
+.ProgressSteps__Finished,
+.ProgressSteps__Future {
+    transition: color 0.3s;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    margin-bottom: 40px;
+    text-align: center;
+    border-radius: 50%;
+    user-select: none;
+}
+
+.ProgressSteps__Current:after,
+.ProgressSteps__Finished:after,
+.ProgressSteps__Future:after {
+    content: "";
+    position: absolute;
+    bottom: -30px;
+    left: 11.5px;
+    height: 20px;
+    width: 1px;
+    background: #d4daf0;
+}
+
+.ProgressSteps__Current:last-child,
+.ProgressSteps__Finished:last-child,
+.ProgressSteps__Future:last-child {
+    margin-bottom: 0;
+}
+
+.ProgressSteps__Current:last-child:after,
+.ProgressSteps__Finished:last-child:after,
+.ProgressSteps__Future:last-child:after {
+    display: none;
+}
+
+.ProgressSteps__Current,
+.ProgressSteps__Future,
+.ProgressSteps__Finished {
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ProgressSteps__Current {
+    background: #00c95d;
+    color: white;
+}
+
+.ProgressSteps__Finished {
+    background: var(--fm-primary-color, #2657ff);
+    color: white;
+}
+
+.ProgressSteps__Finished span {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.ProgressSteps__Finished span svg {
+    width: 1em;
+    height: 1em;
+}
+
+.ProgressSteps__Future {
+    color: rgba(119, 128, 141, 0.5);
+    border: 2px solid #d4daf0;
+}
+
+.ProgressSteps__Indicator {
+    transition: top 0.3s ease;
+    position: absolute;
+    left: 0;
+    height: 24px;
+    width: 2px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background: #00c95d;
+}

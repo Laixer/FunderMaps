@@ -1,0 +1,96 @@
+/* $unselected: adjust-color($VENDOR_PRIMARY_COLOR, $red: 81, $green: 41, $blue: -114, $alpha: -0.7); */
+/* $unselectedText: adjust-color($VENDOR_PRIMARY_COLOR, $red: 81, $green: 41, $blue: -114); */
+/* $unselectedSvg: adjust-color($VENDOR_PRIMARY_COLOR, $red: 176, $green: 131, $blue: -15); */
+
+.RadioImageInput__Wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.RadioImageInput__Field {
+    margin-right: 20px;
+}
+
+.RadioImageInput__Field:last-child {
+    margin-right: 0;
+}
+
+.RadioImageInput__Label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    width: 160px;
+    height: 160px;
+
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-size: 18px;
+    line-height: 19px;
+    letter-spacing: -0.3px;
+
+    color: #77808d;
+    border: 2px solid rgba(119, 128, 141, .3);
+    border-radius: 4px;
+    background: white;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition: all 0.3s ease-in-out;
+}
+
+@media only screen and (min-width: 900px) {
+    .RadioImageInput__Label {
+        width: 180px;
+        height: 180px;
+    }
+}
+
+.RadioImageInput__Label:hover {
+    border-color: var(--fm-primary-color, #2657ff);
+}
+
+.RadioImageInput__Label .SvgIcon:not(.SvgIcon--selected) {
+    font-size: 86px;
+    padding-top: 20px;
+    padding-bottom: 13px;
+    color: #d6daf0;
+}
+
+@media only screen and (min-width: 900px) {
+    .RadioImageInput__Label .SvgIcon:not(.SvgIcon--selected) {
+        font-size: 106px;
+    }
+}
+
+.RadioImageInput__Label .SvgIcon.SvgIcon--selected {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    font-size: 40px;
+    color: var(--fm-primary-color, #2657ff);
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.RadioImageInput__Field input {
+    display: none;
+}
+
+input[type="radio"]:checked+.RadioImageInput__Label {
+    color: var(--fm-primary-color, #2657ff);
+    border-color: var(--fm-primary-color, #2657ff);
+}
+
+input[type="radio"]:checked+.RadioImageInput__Label .SvgIcon--selected {
+    opacity: 1;
+}
+
+input[type="radio"]:checked+.RadioImageInput__Label .SvgIcon:not(.SvgIcon--selected) {
+    color: var(--fm-primary-color, #2657ff);
+}

@@ -8,13 +8,13 @@
                 <img class="Header__Logo" src="@VendorLogo()" alt="Logo">
             </div>
         </header>
-        
+
         <div class="Page__Wrapper">
             @if (state.ShowProgressSteps)
             {
                 <aside class="ProgressSteps">
                     <div class="ProgressSteps__Indicator" style="top: 178px"></div>
-                    
+
                     <ul>
                         <li class="@state.getProgressStepClass(1)"><span>1</span></li>
                         <li class="@state.getProgressStepClass(2)"><span>2</span></li>

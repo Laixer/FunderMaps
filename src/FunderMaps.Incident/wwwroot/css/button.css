@@ -1,6 +1,3 @@
-/* $active: adjust-color($VENDOR_PRIMARY_COLOR, $red: 120, $green: 91, $blue: 0);
-$hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); */
-
 .Button:focus {
     outline: none;
 }
@@ -20,7 +17,7 @@ $hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); 
     align-items: center;
 
     /* Regular */
-    background: #2657FF;
+    background: var(--fm-primary-color, #2657ff);
     color: white;
 }
 
@@ -29,11 +26,13 @@ $hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); 
 }
 
 .Button:hover {
-    background: #1f44c5;
+    background: var(--fm-primary-color, #2657ff);
+    filter: brightness(75%);
 }
 
 .Button:active {
-    background: #9eb2ff;
+    background: var(--fm-primary-color, #2657ff);
+    filter: brightness(200%);
 }
 
 .Button[disabled] {
@@ -45,13 +44,14 @@ $hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); 
 
 .Button--line {
     background: white;
-    color: #2657FF;
+    color: var(--fm-primary-color, #2657ff);
     padding: 13px 25px 14px;
-    border: 2px solid  #2657FF;
+    border: 2px solid var(--fm-primary-color, #2657ff);
 }
 
 .Button--line:hover {
-    background:  #2657FF;
+    background: var(--fm-primary-color, #2657ff);
+    filter: brightness(200%);
     color: white;
     border: none;
     padding: 15px 27px 16px;
@@ -73,7 +73,7 @@ $hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); 
 
 .Button--ghost {
     background: transparent;
-    color: #2657FF;
+    color: var(--fm-primary-color, #2657ff);
     filter: grayscale(80%);
     opacity: 0.8;
 }
@@ -82,16 +82,15 @@ $hover: adjust-color($VENDOR_PRIMARY_COLOR, $red: -7, $green: -19, $blue: -58); 
     background: transparent;
     filter: none;
     opacity: 1;
-    color: #2657FF;
+    color: var(--fm-primary-color, #2657ff);
 }
 
 .Button--ghost:active {
     background: transparent;
     filter: none;
     opacity: 1;
-    color: #2657ff;
+    color: var(--fm-primary-color, #2657ff);
 }
-
 
 .Button--wide {
     text-align: center;

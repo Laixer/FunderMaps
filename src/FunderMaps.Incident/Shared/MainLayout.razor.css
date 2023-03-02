@@ -3,7 +3,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
-    color: #2657FF;
+    color: var(--fm-primary-color, #2657ff);
     background: white;
     border-radius: 4px;
 
@@ -152,7 +152,6 @@
     margin: auto;
     max-height: 80px;
     max-height: 64px;
-    /* content: url("/img/logo.png"); */
 }
 
 @media only screen and (min-width: 900px) {
