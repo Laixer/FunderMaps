@@ -13,6 +13,7 @@ public class IndexModel : PageModel
 
     public List<Mapset> mapSetList = new();
 
+    // TODO: Move to db.
     public List<Layer> Layers { get; set; } = new List<Layer>
     {
         new Layer
@@ -250,7 +251,7 @@ public class IndexModel : PageModel
         {
             if (User.Identity is null || !User.Identity.IsAuthenticated)
             {
-                await HttpContext.ChallengeAsync(OpenIdConnectDefaults.AuthenticationScheme);
+                await HttpContext.ChallengeAsync();
             }
         }
 
