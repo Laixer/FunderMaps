@@ -14,9 +14,10 @@ builder.Services.AddAuthentication(config =>
 })
 .AddCookie(options =>
 {
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
     options.SlidingExpiration = true;
     options.Cookie.Name = "LaixerAppAuth";
+    options.Cookie.MaxAge = TimeSpan.FromHours(10);
 })
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
