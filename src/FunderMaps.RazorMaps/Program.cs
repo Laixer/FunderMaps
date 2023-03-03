@@ -12,7 +12,12 @@ builder.Services.AddAuthentication(config =>
     config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+    options.SlidingExpiration = true;
+    options.Cookie.Name = "LaixerAppAuth";
+})
 .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
