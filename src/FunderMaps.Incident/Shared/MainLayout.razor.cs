@@ -69,6 +69,10 @@ public partial class MainLayout : LayoutComponentBase
 
                         switch (state.Vendor)
                         {
+                            case "lingewaard":
+                                state.Model.ClientId = 25;
+                                break;
+
                             case "lansingerland":
                                 state.Model.ClientId = 24;
                                 break;
