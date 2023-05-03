@@ -7,46 +7,20 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}"
             ],
-            "problemMatcher": "$msCompile",
-            "promptOnClose": true,
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "problemMatcher": "$msCompile"
         },
         {
-            "label": "test",
+            "label": "watch",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "test"
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/src/FunderMaps.WsClient/FunderMaps.WsClient.csproj"
             ],
-            "problemMatcher": "$msCompile",
-            "promptOnClose": true
-        },
-        {
-            "label": "clean",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "clean"
-            ],
-            "problemMatcher": "$msCompile",
-            "promptOnClose": true
-        },
-        {
-            "label": "package outdated",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "list",
-                "package",
-                "--outdated"
-            ],
-            "problemMatcher": "$msCompile",
-            "promptOnClose": true
-        },
+            "problemMatcher": "$msCompile"
+        }
     ]
 }

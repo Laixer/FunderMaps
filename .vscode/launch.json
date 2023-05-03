@@ -1,83 +1,119 @@
 {
-    // Use IntelliSense to find out which attributes exist for C# debugging
-    // Use hover for the description of the existing attributes
-    // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "FunderMaps.BatchNode",
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "FunderMaps.WsClient",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.BatchNode/bin/Debug/net6.0/FunderMaps.BatchNode",
+            "program": "${workspaceFolder}/src/FunderMaps.WsClient/bin/Debug/net7.0/FunderMaps.WsClient.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/FunderMaps.BatchNode",
+            "cwd": "${workspaceFolder}/src/FunderMaps.WsClient",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
             "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "env": {
-                "DOTNET_ENVIRONMENT": "Development"
-            }
-        },
-        {
-            "name": "FunderMaps.Backend",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/net6.0/FunderMaps.WebApi",
-            "args": [],
-            "cwd": "${workspaceFolder}/src/FunderMaps.WebApi",
-            "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "launchBrowser": {
-                "enabled": false
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
         },
         {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
             "name": "FunderMaps.Webservice",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/net6.0/FunderMaps.Webservice",
+            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/net7.0/FunderMaps.Webservice.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Webservice",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
             "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "launchBrowser": {
-                "enabled": false
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
         },
         {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "FunderMaps.RazorMaps",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/FunderMaps.RazorMaps/bin/Debug/net7.0/FunderMaps.RazorMaps.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FunderMaps.RazorMaps",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "FunderMaps.Incident",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/FunderMaps.Incident/bin/Debug/net7.0/FunderMaps.Incident.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FunderMaps.Incident",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+            "name": "FunderMaps.InfraTest",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/src/FunderMaps.InfraTest/bin/Debug/net7.0/FunderMaps.InfraTest.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FunderMaps.InfraTest",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            // Use IntelliSense to find out which attributes exist for C# debugging
+            // Use hover for the description of the existing attributes
+            // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
             "name": "FunderMaps.Portal",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/net6.0/FunderMaps.Portal",
+            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/net7.0/FunderMaps.Portal.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Portal",
+            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
+            "console": "integratedTerminal",
             "stopAtEntry": false,
-            "internalConsoleOptions": "openOnSessionStart",
-            "launchBrowser": {
-                "enabled": false
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
             }
-        },
-        {
-            "name": ".NET Core Attach",
-            "type": "coreclr",
-            "request": "attach",
-            "processId": "${command:pickProcess}"
-        },
+        }
     ]
 }
