@@ -14,7 +14,7 @@ builder.Services.AddAuthentication(config =>
 })
 .AddCookie(options =>
 {
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
     options.SlidingExpiration = true;
     options.Cookie.Name = "LaixerAppAuth";
     options.Cookie.MaxAge = TimeSpan.FromHours(10);
@@ -28,6 +28,7 @@ builder.Services.AddFunderMapsInfrastructureServices();
 builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
 
 // Add services to the container.
+builder.Services.AddControllers();
 builder.Services.AddRazorPages();
 builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
 
@@ -69,6 +70,7 @@ app.UseAuthorization();
 
 app.UseAspAppContext();
 
+app.MapControllers();
 app.MapRazorPages();
 app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
 

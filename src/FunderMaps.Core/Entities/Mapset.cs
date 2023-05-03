@@ -66,6 +66,11 @@ public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
     public string? Consent { get; set; }
 
     /// <summary>
+    ///     Map layers sets.
+    /// </summary>
+    public object LayerSet { get; set; }
+
+    /// <summary>
     ///     List of layers in this mapset.
     /// </summary>
     public List<Layer> LayerNavigation { get; set; } = new();
