@@ -14,6 +14,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
 
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -28,6 +34,8 @@ if (!app.Environment.IsDevelopment())
     forwardedOptions.AllowedHosts.Clear();
 
     app.UseForwardedHeaders(forwardedOptions);
+
+    app.UseHsts();
 }
 
 if (app.Environment.IsDevelopment())
