@@ -32,7 +32,6 @@ public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
     /// <summary>
     ///     Unique identifier.
     /// </summary>
-    [Incident]
     public Guid Id { get; set; }
 
     /// <summary>
