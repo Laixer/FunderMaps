@@ -100,6 +100,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.options,
                     m.public,
                     m.consent,
+                    NULL as fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)
                         FROM (
@@ -141,6 +142,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.options,
                     m.public,
                     m.consent,
+                    o.fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)
                         FROM (
@@ -155,6 +157,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     ) AS layerset
             FROM    maplayer.map_organization mo
             JOIN    maplayer.mapset AS m on m.id = mo.map_id
+            JOIN    application.organization o on o.id = mo.organization_id 
             WHERE   mo.organization_id = @id
             AND     m.public = false";
 
@@ -181,6 +184,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             Options = reader.GetFieldValue<object>(4),
             Public = reader.GetBoolean(5),
             Consent = reader.GetSafeString(6),
-            LayerSet = System.Text.Json.JsonSerializer.Deserialize<object>(reader.GetString(7)),
+            FenceMunicipality = reader.GetSafeString(7),
+            LayerSet = System.Text.Json.JsonSerializer.Deserialize<object>(reader.GetString(8)),
         };
 }

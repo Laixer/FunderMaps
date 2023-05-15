@@ -65,6 +65,11 @@ public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
     public string? Consent { get; set; }
 
     /// <summary>
+    ///     Unique identifier.
+    /// </summary>
+    public string? FenceMunicipality { get; set; }
+
+    /// <summary>
     ///     Map layers sets.
     /// </summary>
     public object LayerSet { get; set; }
