@@ -50,43 +50,61 @@ export class Map {
         this.map.on('style.load', () => {
             const uu = sessionStorage.getItem(`active-layers-${this.mapset.id}`);
 
-            const updatedFilter = [
-                'all',
-                this.map.getFilter('foundation-type-established'),
-                [
-                    "any",
-                    [
-                        "match",
-                        ["get", "district_id"],
-                        [
-                            "gfm-d28a0a422a3d44b1884a53dffa7a1b18"
-                        ],
-                        true,
-                        false
-                    ],
-                    [
+            console.log(this.mapset.layerSet);
+
+            if (this.mapset.fenceMunicipality !== null) {
+                for (const layer of this.mapset.layerSet) {
+                    const updatedFilter = [
+                        'all',
+                        this.map.getFilter(layer.id),
+                        // [
+                        //     "any",
+                        // [
+                        //     "match",
+                        //     ["get", "district_id"],
+                        //     [
+                        //         "gfm-d28a0a422a3d44b1884a53dffa7a1b18"
+                        //     ],
+                        //     true,
+                        //     false
+                        // ],
+                        // [
+                        //     "match",
+                        //     ["get", "municipality_id"],
+                        //     [
+                        //         "gfm-24c290a57a784ca3a57b8b613ee48fd4"
+                        //     ],
+                        //     true,
+                        //     false
+                        // ],
+                        // [
+                        //     "match",
+                        //     ["get", "neighborhood_id"],
+                        //     [
+                        //         "gfm-b0e4fa7e30974811810ac7e60022db1e",
+                        //         "gfm-7bc9bb6497984a13a2cc95ea1a284825"
+                        //     ],
+                        //     true,
+                        //     false
+                        // ]
+                        // ]
+                    ];
+
+                    updatedFilter.push([
                         "match",
                         ["get", "municipality_id"],
                         [
-                            "gfm-24c290a57a784ca3a57b8b613ee48fd4"
+                            this.mapset.fenceMunicipality
                         ],
                         true,
                         false
-                    ],
-                    [
-                        "match",
-                        ["get", "neighborhood_id"],
-                        [
-                            "gfm-b0e4fa7e30974811810ac7e60022db1e",
-                            "gfm-7bc9bb6497984a13a2cc95ea1a284825"
-                        ],
-                        true,
-                        false
-                    ]
-                ]
-            ];
+                    ]);
 
-            //this.map.setFilter('foundation-type-established', updatedFilter);
+                    console.log(updatedFilter);
+
+                    this.map.setFilter(layer.id, updatedFilter);
+                }
+            }
 
             for (const layer of this.mapset.layerSet) {
                 if (uu !== null) {
