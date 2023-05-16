@@ -19,4 +19,9 @@ public enum Reliability
     ///     When building from the same cluster was used.
     /// </summary>
     Cluster = 2,
+
+    /// <summary>
+    ///     When building from the same supercluster was used.
+    /// </summary>
+    Supercluster = 3,
 }
