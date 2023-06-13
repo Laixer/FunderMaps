@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using Microsoft.AspNetCore.Http;
 
@@ -64,6 +65,15 @@ public class AspAppContextMiddleware
                 appContext.Organizations.Add(new()
                 {
                     Id = Guid.Parse(orgClaim.Value),
+                });
+            }
+
+            var (_, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
+            if (tenant is not null)
+            {
+                appContext.Organizations.Add(new()
+                {
+                    Id = tenant.Id,
                 });
             }
 
