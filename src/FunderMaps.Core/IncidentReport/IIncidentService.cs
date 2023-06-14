@@ -12,5 +12,5 @@ public interface IIncidentService
     /// </summary>
     /// <param name="incident">Incident to process.</param>
     /// <param name="meta">Optional metadata.</param>
-    Task<Incident> AddAsync(Incident incident, object meta = null);
+    Task<Incident> AddAsync(Incident incident, object? meta = null);
 }

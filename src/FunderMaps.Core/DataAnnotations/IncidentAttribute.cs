@@ -13,7 +13,7 @@ public class IncidentAttribute : ValidationAttribute
     /// </summary>
     /// <param name="value">The value to test for validity.</param>
     /// <returns><c>true</c> means the <paramref name="value" /> is valid.</returns>
-    public override bool IsValid(object value)
+    public override bool IsValid(object? value)
         => value is null || (value is string str && str.StartsWith("FIR", StringComparison.InvariantCulture));
 
     /// <summary>

@@ -3,7 +3,6 @@ using FunderMaps.Core.Types;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using Npgsql.Logging;
 using System.Data.Common;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
@@ -23,8 +22,6 @@ internal class NpgsqlDbProvider : DbProvider
     public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
         : base(options)
     {
-        NpgsqlLogManager.IsParameterLoggingEnabled = true;
-
         NpgsqlConnectionStringBuilder connectionStringBuilder = new(configuration.GetConnectionString(_options.ConnectionStringName));
 
         connectionStringBuilder.Timeout = _options.ConnectionTimeout > 0 ? _options.ConnectionTimeout : connectionStringBuilder.Timeout;

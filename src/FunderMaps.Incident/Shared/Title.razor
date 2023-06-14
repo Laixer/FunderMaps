@@ -1,0 +1,19 @@
+<div class="Title @(Center ? "Title--center" : string.Empty)">
+    <h1>@Message</h1>
+    @if (!String.IsNullOrEmpty(Subtitle))
+    {
+        <p>@Subtitle</p>
+    }
+</div>
+
+@code
+{
+    [Parameter]
+    public string? Message { get; set; }
+
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    [Parameter]
+    public bool Center { get; set; } = false;
+}

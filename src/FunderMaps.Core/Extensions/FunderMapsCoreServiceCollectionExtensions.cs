@@ -2,14 +2,7 @@
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.MapBundle;
-using FunderMaps.Core.MapBundle.Jobs;
-using FunderMaps.Core.Model;
-using FunderMaps.Core.Model.Jobs;
-using FunderMaps.Core.Notification;
-using FunderMaps.Core.Notification.Jobs;
 using FunderMaps.Core.Services;
-using FunderMaps.Core.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -32,60 +25,12 @@ public static class FunderMapsCoreServiceCollectionExtensions
     public static IHostEnvironment HostEnvironment { get; set; }
 
     /// <summary>
-    ///     Adds batch job to the task component.
-    /// </summary>
-    public static IServiceCollection AddBatchJob<TBatchJob>(this IServiceCollection services)
-    {
-        services.AddTransient(typeof(TBatchJob));
-        services.TryAddEnumerable(ServiceDescriptor.Transient(typeof(BackgroundTask), typeof(TBatchJob)));
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds the core threading service to the container.
-    /// </summary>
-    private static IServiceCollection AddCoreThreading(this IServiceCollection services)
-    {
-        services.AddScoped<BackgroundTaskScopedDispatcher>();
-        services.AddSingleton<DispatchManager>();
-        services.AddTransient<BackgroundTaskDispatcher>();
-        services.Configure<BackgroundWorkOptions>(Configuration.GetSection(BackgroundWorkOptions.Section));
-
-        return services;
-    }
-
-    /// <summary>
     ///     Adds incident reporting service.
     /// </summary>
     private static IServiceCollection AddIncident(this IServiceCollection services)
     {
-        services.AddBatchJob<EmailJob>();
         services.AddScoped<IIncidentService, IncidentService>();
         services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds map bundle service.
-    /// </summary>
-    private static IServiceCollection AddMapBundle(this IServiceCollection services)
-    {
-        services.AddBatchJob<ExportJob>();
-        services.AddBatchJob<ExportGpkg>();
-        services.AddScoped<IBundleService, BundleHub>();
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds model service.
-    /// </summary>
-    private static IServiceCollection AddModel(this IServiceCollection services)
-    {
-        services.AddBatchJob<RefreshJob>();
-        services.AddScoped<IModelService, ModelService>();
 
         return services;
     }
@@ -129,7 +74,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       resolve and disposed right after.
         services.AddTransient<IRandom, RandomGenerator>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
-        services.AddTransient<ITemplateParser, TemplateParser>();
         services.AddTransient<IGeocoderParser, GeocoderParser>();
         services.AddTransient<IGeocoderTranslation, GeocoderTranslation>();
 
@@ -141,14 +85,10 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddAppContext();
 
         // Register core services in DI container.
-        services.AddScoped<INotifyService, NotificationHub>();
-
-        // Register core services in DI container.
         // NOTE: These services take time to initialize are used more often. Registering
         //       them as a singleton will keep the services alife for the entire lifetime
         //       of the application. Beware to add new services as singletons.
         services.TryAddSingleton<IEmailService, NullEmailService>();
-        services.TryAddTransient<IMapService, NullMapService>();
         services.TryAddTransient<IBlobStorageService, NullBlobStorageService>();
 
         // The application core (as well as many other components) depends upon the ability to cache
@@ -158,16 +98,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
         // Register the incident core service.
         services.AddIncident();
-
-        // Register the map bundle service.
-        services.AddMapBundle();
-
-        // Register the model service.
-        services.AddModel();
-
-        // The application core (as well as many other components) depends upon the ability to dispatch
-        // tasks to the background.
-        services.AddCoreThreading();
 
         return services;
     }

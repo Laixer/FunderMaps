@@ -1,0 +1,126 @@
+﻿@page "{mapId:guid?}"
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div id="map">
+
+    <div id="consent-modal" class="modal">
+        <div class="modal-content">
+            <p class="modal-content-body"></p>
+            <button class="modal-close">Akkoord</button>
+        </div>
+    </div>
+
+    <div id="state-legend" class="legend">
+        <img src="https://app.fundermaps.com/img/logo.93735295.svg" class="Logo" alt="FunderMaps logo" />
+
+        <div id="mapset-select">
+            <select onchange="onMapsetChange()" class="custom-select" id="maplayer"></select>
+        </div>
+
+        <div id="map-legend"></div>
+    </div>
+
+</div>
+
+@section Scripts
+    {
+    <script type="module" type="text/javascript" language="javascript">
+        import { Map } from '/js/map.js';
+        import { Modal } from '/js/modal.js';
+        import { MapsetManager } from '/js/mapsetManager.js';
+        //import * from '/js/legend.js';
+
+        var modal = new Modal({ element: 'consent-modal' });
+
+        var mgr = new MapsetManager();
+        await mgr.loadData('@Model.MapId');
+
+        // Legend
+
+        var selectTag = document.getElementById("maplayer");
+        var divTag = document.getElementById("map-legend");
+
+        if (mgr.mapSetArray.length == 1) {
+            var mapsetSelectElement = document.getElementById("mapset-select");
+            mapsetSelectElement.style.display = 'none';
+        }
+
+        mgr.mapSetArray.map((v, i) => {
+            let opt = document.createElement("option");
+            opt.value = v.id;
+            opt.innerHTML = v.name;
+            selectTag.append(opt);
+
+            let div = document.createElement("div");
+            div.id = `map-legend-${v.id}`;
+            div.style = 'display: none;';
+
+            v.layerSet.map((l, j) => {
+                var html = `<h3 style="cursor: pointer; padding-top: 10px" onclick="onLayerToggle('${l.id}')">${l.name}</h3>`;
+                html += `<div id="map-legend-${v.id}-${l.id}" class="legend-item" style="display: none;">`;
+                for (var x of l.fields) {
+                    html += `<div><span style="background-color: #${x.color}"></span>${x.name}</div>`;
+                }
+                html += `</div>`;
+                div.innerHTML += html;
+            })
+
+            divTag.append(div);
+        })
+
+        // Map building
+
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        const urlMapsetId = urlSearchParams.get('mapset');
+        if (urlMapsetId !== null) {
+            mgr.setMapsetById(urlMapsetId);
+        }
+
+        const mapset = mgr.getCurrentMapset();
+
+        document.getElementById("maplayer").value = mapset.id;
+        document.getElementById(`map-legend-${mapset.id}`).style.display = "block";
+
+        let map = new Map(mapset);
+
+        if (mapset.consent) {
+            modal.show(mapset.id, mapset.consent);
+        }
+
+        // Legend events
+
+        window.onMapsetChange = () => {
+            const currentMapset = mgr.getCurrentMapset();
+            document.getElementById(`map-legend-${currentMapset.id}`).style.display = "none";
+
+            var newMapsetId = document.getElementById("maplayer").value;
+            mgr.setMapsetById(newMapsetId)
+            const newMapset = mgr.getCurrentMapset();
+
+            console.log(`Changing from '${currentMapset.id}' mapset to '${newMapset.id}'`);
+            document.getElementById(`map-legend-${newMapset.id}`).style.display = "block";
+
+            map.setMapset(newMapset);
+
+            if (map.mapset.consent) {
+                modal.show(newMapset.id, newMapset.consent);
+            }
+        }
+
+        window.onLayerToggle = (layerId) => {
+            const currentMapset = mgr.getCurrentMapset();
+            var layer = map.layerFromId(layerId);
+
+            if (layer.isVisible) {
+                //document.getElementById(`map-legend-${currentMapset.id}-${layer.id}`).style.display = "none";
+                map.setLayerVisibility(layer, false);
+            } else {
+                //document.getElementById(`map-legend-${currentMapset.id}-${layer.id}`).style.display = "block";
+                map.setLayerVisibility(layer, true);
+            }
+        }
+    </script>
+}

@@ -59,7 +59,10 @@ public class OrganizationUserController : ControllerBase
         // Act.
         // FUTURE: Do in 1 call.
         user = await _userRepository.AddGetAsync(user);
-        await _signInService.SetPasswordAsync(user.Id, input.Password);
+        if (input.Password is not null)
+        {
+            await _signInService.SetPasswordAsync(user.Id, input.Password);
+        }
         await _organizationUserRepository.AddAsync(_appContext.TenantId, user.Id, input.OrganizationRole);
 
         // Map.
@@ -160,7 +163,10 @@ public class OrganizationUserController : ControllerBase
         }
 
         // Act.
-        await _signInService.SetPasswordAsync(id, input.NewPassword);
+        if (input.NewPassword is not null)
+        {
+            await _signInService.SetPasswordAsync(id, input.NewPassword);
+        }
 
         // Return.
         return NoContent();

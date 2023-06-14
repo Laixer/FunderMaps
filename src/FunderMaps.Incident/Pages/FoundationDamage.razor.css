@@ -1,0 +1,9 @@
+.FoundationDamageCause {
+    padding: 20px 20px;
+}
+
+@media only screen and (min-width: 900px) {
+    .FoundationDamageCause {
+        padding: 25px 80px;
+    }
+}

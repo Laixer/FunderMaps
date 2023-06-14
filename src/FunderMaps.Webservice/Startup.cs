@@ -1,5 +1,4 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Webservice.Documentation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +9,7 @@ namespace FunderMaps.Webservice;
 /// <summary>
 ///     Application configuration.
 /// </summary>
+[Obsolete]
 public class Startup
 {
     /// <summary>
@@ -33,33 +33,6 @@ public class Startup
     private static void StartupConfigureServices(IServiceCollection services)
     {
         services.AddAutoMapper(typeof(Startup));
-
-        services.AddSwaggerGen(options =>
-        {
-            options.SwaggerDoc("v1", new()
-            {
-                Title = "FunderMaps Webservice",
-                Version = "v1",
-                Description = "FunderMaps Webservice REST API",
-                Contact = new()
-                {
-                    Name = "Laixer B.V.",
-                    Email = "info@laixer.com",
-                },
-            }
-            );
-            options.DocumentFilter<BasePathFilter>();
-
-            // FUTURE: The full enum description support for swagger with System.Text.Json is a WIP. This is a custom tempfix.
-            options.SchemaFilter<EnumSchemaFilter>();
-            options.UseOneOfForPolymorphism();
-
-            string DocumentationFile = $"{AppContext.BaseDirectory}DocumentationFunderMapsWebservice.xml";
-            if (File.Exists(DocumentationFile))
-            {
-                options.IncludeXmlComments(DocumentationFile);
-            }
-        });
 
         // Register components from reference assemblies.
         services.AddFunderMapsDataServices("FunderMapsConnection");
@@ -107,13 +80,6 @@ public class Startup
 
         app.UseExceptionHandler("/oops");
 
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-            options.RoutePrefix = string.Empty;
-        });
-
         app.UsePathBase(new("/api"));
         app.UseRouting();
 
@@ -125,44 +91,6 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-        });
-    }
-
-    /// <summary>
-    ///     This method gets called by the runtime. Use this method to configure the HTTP
-    ///     request pipeline if environment is set to staging.
-    /// </summary>
-    /// <remarks>
-    ///     The order in which the pipeline handles request is of importance.
-    /// </remarks>
-    public static void ConfigureStaging(IApplicationBuilder app)
-    {
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-        });
-
-        app.UseExceptionHandler("/oops");
-
-        app.UseSwagger();
-        app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "FunderMaps Webservice");
-            options.RoutePrefix = string.Empty;
-        });
-
-        app.UsePathBase(new("/api"));
-        app.UseRouting();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        app.UseAspAppContext();
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
         });
     }
 
@@ -181,8 +109,6 @@ public class Startup
         });
 
         app.UseExceptionHandler("/oops");
-
-        app.UseSwagger();
 
         app.UsePathBase(new("/api"));
         app.UseRouting();

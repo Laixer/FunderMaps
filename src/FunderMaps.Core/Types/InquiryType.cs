@@ -74,4 +74,9 @@ public enum InquiryType
     ///     Soil investigation.
     /// </summary>
     SoilInvestigation = 13,
+
+    /// <summary>
+    ///     Facade scan.
+    /// </summary>
+    FacadeScan = 14,
 }

@@ -84,13 +84,16 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
     {
-        // Act.
-        if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
+        if (input.OldPassword is not null && input.NewPassword is not null)
         {
-            throw new InvalidCredentialException();
-        }
+            // Act.
+            if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
+            {
+                throw new InvalidCredentialException();
+            }
 
-        await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
+            await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
+        }
 
         // Return.
         return NoContent();

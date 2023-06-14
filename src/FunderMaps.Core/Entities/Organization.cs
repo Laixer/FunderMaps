@@ -103,7 +103,7 @@ public sealed class Organization : IdentifiableEntity<Organization, Guid>, ITena
     /// </summary>
     public override void InitializeDefaults(Organization other)
     {
-        if (other == null)
+        if (other is null)
         {
             throw new ArgumentNullException(nameof(other));
         }

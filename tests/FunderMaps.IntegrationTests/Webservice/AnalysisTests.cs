@@ -25,7 +25,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/v3/product/analysis?id=gfm-4f5e73d478ff452b86023a06e5b8d834");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct3>();
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -42,7 +42,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/v3/product/analysis?id=NL.IMBAG.PAND.0599100000661262");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct3>();
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -59,7 +59,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/v3/product/analysis?id=0599100000630926");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct3>();
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -76,7 +76,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/v3/product/analysis?id=NL.IMBAG.NUMMERAANDUIDING.0599200000308423");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct3>();
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -93,7 +93,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/v3/product/analysis?id=0599200000337325");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct3>();
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

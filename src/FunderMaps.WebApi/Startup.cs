@@ -1,4 +1,4 @@
-﻿using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -82,6 +82,13 @@ public class Startup
     {
         app.UseCors();
 
+        app.UseCookiePolicy(new()
+        {
+            Secure = CookieSecurePolicy.Always,
+        });
+
+        app.UseStaticFiles();
+
         app.UseExceptionHandler("/oops");
 
         app.UsePathBase(new("/api"));
@@ -107,10 +114,18 @@ public class Startup
     /// </remarks>
     public static void Configure(IApplicationBuilder app)
     {
-        app.UseForwardedHeaders(new()
+        ForwardedHeadersOptions forwardedOptions = new()
         {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-        });
+            ForwardedHeaders = ForwardedHeaders.All,
+        };
+
+        forwardedOptions.KnownNetworks.Clear();
+        forwardedOptions.KnownProxies.Clear();
+        forwardedOptions.AllowedHosts.Clear();
+
+        app.UseForwardedHeaders(forwardedOptions);
+
+        app.UseStaticFiles();
 
         app.UseExceptionHandler("/oops");
 

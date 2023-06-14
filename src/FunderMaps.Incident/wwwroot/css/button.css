@@ -1,0 +1,110 @@
+.Button:focus {
+    outline: none;
+}
+
+.Button {
+    border-width: 0px;
+    position: relative;
+    padding: 15px 27px 16px;
+    font-size: 18px;
+    line-height: 19px;
+    letter-spacing: -0.3px;
+    border-radius: 4px;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+
+    /* Regular */
+    background: var(--fm-primary-color, #2657ff);
+    color: white;
+}
+
+.Button--submit {
+    background: #00c95d;
+}
+
+.Button:hover {
+    background: var(--fm-primary-color, #2657ff);
+    filter: brightness(75%);
+}
+
+.Button:active {
+    background: var(--fm-primary-color, #2657ff);
+    filter: brightness(200%);
+}
+
+.Button[disabled] {
+    opacity: 0.25;
+    filter: grayscale(80%);
+    cursor: not-allowed;
+}
+
+
+.Button--line {
+    background: white;
+    color: var(--fm-primary-color, #2657ff);
+    padding: 13px 25px 14px;
+    border: 2px solid var(--fm-primary-color, #2657ff);
+}
+
+.Button--line:hover {
+    background: var(--fm-primary-color, #2657ff);
+    filter: brightness(200%);
+    color: white;
+    border: none;
+    padding: 15px 27px 16px;
+}
+
+.Button--line:active {
+    background: #9eb2ff;
+    color: white;
+    border: none;
+    padding: 15px 27px 16px;
+}
+
+.Button--line[disabled] {
+    filter: grayscale(80%);
+    color: white;
+    border: none;
+    padding: 15px 27px 16px;
+}
+
+.Button--ghost {
+    background: transparent;
+    color: var(--fm-primary-color, #2657ff);
+    filter: grayscale(80%);
+    opacity: 0.8;
+}
+
+.Button--ghost:hover {
+    background: transparent;
+    filter: none;
+    opacity: 1;
+    color: var(--fm-primary-color, #2657ff);
+}
+
+.Button--ghost:active {
+    background: transparent;
+    filter: none;
+    opacity: 1;
+    color: var(--fm-primary-color, #2657ff);
+}
+
+.Button--wide {
+    text-align: center;
+    width: 100%;
+}
+
+.Button .SvgIcon {
+    font-size: 14px;
+}
+
+.Button .SvgIcon:last-child {
+    margin-left: 15px;
+}
+
+.Button .SvgIcon:first-child {
+    margin-right: 15px;
+}

@@ -1,31 +1,67 @@
-namespace FunderMaps.Webservice;
+using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.HealthChecks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 
-/// <summary>
-///     Application entry.
-/// </summary>
-public static class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication().AddJwtBearer(
+    options => builder.Configuration.GetSection("JwtBearer").Bind(options));
+
+// Add the authorization layer.
+builder.Services.AddAuthorization(options =>
 {
-    /// <summary>
-    ///     Application entry point.
-    /// </summary>
-    /// <param name="args">Commandline arguments.</param>
-    public static Task Main(string[] args)
-        => CreateHostBuilder(args).Build().RunAsync();
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
 
-    /// <summary>
-    ///     Build a host and run the application.
-    /// </summary>
-    /// <remarks>
-    ///     The signature of this method should not be changed.
-    ///     External tooling expects this function be present.
-    /// </remarks>
-    /// <param name="args">Commandline arguments.</param>
-    /// <returns>See <see cref="IHostBuilder"/>.</returns>
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>()
-                    .UseSetting(WebHostDefaults.HostingStartupAssembliesKey, "FunderMaps.AspNetCore");
-            });
+// Register components from reference assemblies.
+builder.Services.AddFunderMapsCoreServices();
+builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
+
+// Add services to the container.
+builder.Services.AddControllers();
+builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
+{
+    ForwardedHeadersOptions forwardedOptions = new()
+    {
+        ForwardedHeaders = ForwardedHeaders.All,
+    };
+
+    forwardedOptions.KnownNetworks.Clear();
+    forwardedOptions.KnownProxies.Clear();
+    forwardedOptions.AllowedHosts.Clear();
+
+    app.UseForwardedHeaders(forwardedOptions);
 }
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCookiePolicy(new()
+    {
+        Secure = CookieSecurePolicy.Always,
+    });
+}
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/oops");
+}
+
+app.UsePathBase(new("/api"));
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseAspAppContext();
+
+app.MapControllers();
+app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+
+app.Run();

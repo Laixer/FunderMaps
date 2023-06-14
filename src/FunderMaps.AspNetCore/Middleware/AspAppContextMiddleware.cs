@@ -24,27 +24,78 @@ public class AspAppContextMiddleware
     public async Task InvokeAsync(HttpContext httpContext, Core.AppContext appContext)
     {
         appContext.CancellationToken = httpContext.RequestAborted;
+        appContext.Host = httpContext.Request.Host.Value;
+        appContext.UserAgent = httpContext.Request.Headers.UserAgent;
+        appContext.RemoteIpAddress = httpContext.Connection.RemoteIpAddress;
+        appContext.Identity = httpContext.User.Identity;
 
-        appContext.Items = new(httpContext.Items)
+        if (httpContext.User.Identity is not null && httpContext.User.Identity.IsAuthenticated)
         {
-            { "domain", httpContext.Request.Host.ToString() },
-        };
+            var idClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (idClaim is null)
+            {
+                throw new InvalidOperationException();
+            }
 
-        if (httpContext.Request.Headers.ContainsKey("User-Agent"))
-        {
-            appContext.Items.Add("remote-agent", httpContext.Request.Headers["User-Agent"].ToString());
-        }
+            appContext.User = new User()
+            {
+                Id = Guid.Parse(idClaim.Value),
+            };
 
-        if (httpContext.Connection.RemoteIpAddress is not null)
-        {
-            appContext.Items.Add("remote-address", httpContext.Connection.RemoteIpAddress.ToString());
-        }
+            var emailClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.Email);
+            if (emailClaim is not null)
+            {
+                appContext.User.Email = emailClaim.Value;
+            }
 
-        if (PrincipalProvider.IsSignedIn(httpContext.User))
-        {
-            var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
-            appContext.User = user;
-            appContext.Tenant = tenant;
+            var givenClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName);
+            if (givenClaim is not null)
+            {
+                appContext.User.GivenName = givenClaim.Value;
+            }
+
+            var surnameClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.Surname);
+            if (surnameClaim is not null)
+            {
+                appContext.User.LastName = surnameClaim.Value;
+            }
+
+            foreach (var orgClaim in httpContext.User.FindAll("organization_id"))
+            {
+                appContext.Organizations.Add(new()
+                {
+                    Id = Guid.Parse(orgClaim.Value),
+                });
+            }
+
+            var (_, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
+            if (tenant is not null)
+            {
+                appContext.Organizations.Add(new()
+                {
+                    Id = tenant.Id,
+                });
+            }
+
+            Organization? preferredOrganization = null;
+            foreach (var preferredOrganizationId in httpContext.Request.Headers["PreferredOrganizationId"])
+            {
+                if (preferredOrganizationId is not null)
+                {
+                    preferredOrganization = appContext.Organizations.Find(x => x.Id == Guid.Parse(preferredOrganizationId));
+                }
+
+                if (preferredOrganization is not null)
+                {
+                    appContext.ActiveOrganization = preferredOrganization;
+                    break;
+                }
+            }
+
+            if (preferredOrganization is null && appContext.Organizations.Any())
+            {
+                appContext.ActiveOrganization = appContext.Organizations.First();
+            }
         }
 
         await _next(httpContext);

@@ -1,3 +1,4 @@
+using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
@@ -16,7 +17,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     ///     Gets an analysis product by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
-    public async Task<AnalysisProduct3> Get3Async(string id)
+    public async Task<AnalysisProduct> GetAsync(string id)
     {
         var sql = @"
             SELECT
@@ -50,7 +51,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                 ra.dewatering_depth_risk_reliability,
                 ra.unclassified_risk,
                 ra.recovery_type
-            FROM application.request_analysis(@tenant, @id) ra
+            FROM application.request_analysis(@organization_id, @id) ra
             JOIN geocoder.address_building ab ON ab.building_id = ra.building_id
             JOIN geocoder.address a ON a.id = ab.address_id
             LIMIT 1";
@@ -58,63 +59,33 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
 
         await using var reader = await context.ReaderAsync();
 
-        return MapFromReader3(reader);
+        return MapFromReader(reader);
     }
 
-    // TOOD: Move to db.
-    // TODO: Needs optimization.
     /// <summary>
     ///     Gets the risk index by its internal building id.
     /// </summary>
     /// <param name="id">Internal building id.</param>
     public async Task<bool> GetRiskIndexAsync(string id)
     {
-        var sql = @"
-            WITH tracker AS (
-                INSERT INTO application.product_tracker AS pt (organization_id, product, building_id)
-                SELECT  @tenant, 'riskindex', building_id
-                FROM    geocoder.id_lookup(@id) AS building_id
-                LIMIT   1
-                RETURNING building_id
-            )
-            SELECT -- AnalysisComplete
-                    'a'::data.foundation_risk_indication <> ANY (ARRAY[
-                    CASE
-                            WHEN ac.drystand_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.drystand_risk
-                    END,
-                    CASE
-                            WHEN ac.bio_infection_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.bio_infection_risk
-                    END,
-                    CASE
-                            WHEN ac.dewatering_depth_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.dewatering_depth_risk
-                    END,
-                    CASE
-                            WHEN ac.unclassified_risk IS NULL THEN 'a'::data.foundation_risk_indication
-                            ELSE ac.unclassified_risk
-                    END]) AS has_risk
-            FROM    data.analysis_complete ac, tracker
-            WHERE   ac.building_id = tracker.building_id
-            LIMIT   1";
+        var sql = @"SELECT application.request_risk_index(@organization_id, @id)";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
 
         return await context.ScalarAsync<bool>();
     }
 
     /// <summary>
-    ///     Maps a reader to an <see cref="AnalysisProduct3"/>.
+    ///     Maps a reader to an <see cref="AnalysisProduct"/>.
     /// </summary>
-    public static AnalysisProduct3 MapFromReader3(DbDataReader reader)
+    public static AnalysisProduct MapFromReader(DbDataReader reader)
         => new()
         {
             BuildingId = reader.GetSafeString(0),

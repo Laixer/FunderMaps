@@ -74,6 +74,7 @@ public static class FunderMapsDataServiceCollectionExtensions
         services.AddContextRepository<IIncidentRepository, IncidentRepository>();
         services.AddContextRepository<IInquiryRepository, InquiryRepository>();
         services.AddContextRepository<IInquirySampleRepository, InquirySampleRepository>();
+        services.AddContextRepository<IMapsetRepository, MapsetRepository>();
         services.AddContextRepository<IOrganizationProposalRepository, OrganizationProposalRepository>();
         services.AddContextRepository<IOrganizationRepository, OrganizationRepository>();
         services.AddContextRepository<IOrganizationUserRepository, OrganizationUserRepository>();

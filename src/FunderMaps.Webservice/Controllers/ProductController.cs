@@ -1,7 +1,7 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Webservice.Controllers;
 
@@ -43,13 +43,11 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
-    [HttpGet("analysis")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAnalysisAsync([FromQuery] string id)
+    [Authorize(Roles = "webservice-analysis")]
+    [HttpGet("analysis/{id}")]
+    public async Task<IActionResult> GetAnalysisAsync(string id)
     {
-        var product = await _analysisRepository.Get3Async(id);
+        var product = await _analysisRepository.GetAsync(id);
         if (product is not null)
         {
             return Ok(product);
@@ -62,21 +60,17 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
-    [HttpGet("at_risk")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<bool> GetRiskIndexAsync([FromQuery] string id)
+    [Authorize(Roles = "webservice-atrisk")]
+    [HttpGet("at_risk/{id}")]
+    public Task<bool> GetRiskIndexAsync(string id)
         => _analysisRepository.GetRiskIndexAsync(id);
 
     // GET: api/v3/product/statistics
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
-    [HttpGet("statistics")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public Task<StatisticsProduct> GetStatisticsAsync([FromQuery][Required] string id)
+    [Authorize(Roles = "webservice-statistics")]
+    [HttpGet("statistics/{id}")]
+    public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => GetStatisticsByIdAsync(id);
 }

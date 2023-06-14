@@ -1,0 +1,247 @@
+@page "/survey/foundation-damage-characteristics"
+@using Microsoft.Extensions.Logging
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+@using FunderMaps.Core.Types
+@inject ILogger<FoundationDamageCharacteristics> Logger
+
+<div class="FoundationDamageCharacteristics">
+    <Title Message="Herkent u minstens één van de volgende punten aan de woning?" Subtitle="Meerdere opties mogelijk" Center="true" />
+
+    <div class="CheckboxInput">
+        <div class="CheckboxInput__Wrapper">
+            @* @foreach (var option in inputOptions)
+            {
+                <div class="CheckboxInput__Field">
+                    <input id="input_@option.Id" type="checkbox" name="woning" value="@option.Id">
+                    <label for="input_@option.Id" class="CheckboxInput__Label">
+                        <span class="CheckboxInput__Checkbox">
+                            <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                        </span>
+                        <span>@option.Label</span>
+                    </label>
+                </div>
+            } *@
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="JammingDoorWindow" name="woning" @bind="JammingDoorWindow" @bind:after="CheckChanged" />
+
+                <label for="JammingDoorWindow" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>Klemmende ramen en/of deuren</span>
+                </label>
+            </div>
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="ThresholdAboveSubsurface" name="woning" @bind="ThresholdAboveSubsurface" @bind:after="CheckChanged" />
+
+                <label for="ThresholdAboveSubsurface" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>De woning ligt hoger dan trottoir/weg</span>
+                </label>
+            </div>
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="Crack" name="woning" @bind="Crack" @bind:after="CheckChanged" />
+
+                <label for="Crack" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>Scheur(en) in de muur en/of gevel(s)</span>
+                </label>
+            </div>
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="ThresholdBelowSubsurface" name="woning" @bind="ThresholdBelowSubsurface" @bind:after="CheckChanged" />
+
+                <label for="ThresholdBelowSubsurface" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>De woning ligt lager dan trottoir/weg</span>
+                </label>
+            </div>
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="Skewed" name="woning" @bind="Skewed" @bind:after="CheckChanged" />
+
+                <label for="Skewed" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>De woning staat wat scheef</span>
+                </label>
+            </div>
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="CrookedFloorWall" name="woning" @bind="CrookedFloorWall" @bind:after="CheckChanged" />
+
+                <label for="CrookedFloorWall" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>Scheve vloeren/muren in de woning</span>
+                </label>
+            </div>
+
+            <div class="CheckboxInput__Field">
+                <input type="checkbox" id="CrawlspaceFlooding" name="woning" @bind="CrawlspaceFlooding" @bind:after="CheckChanged" />
+
+                <label for="CrawlspaceFlooding" class="CheckboxInput__Label">
+                    <span class="CheckboxInput__Checkbox">
+                        <div class="SvgIcon svg-container"><!--?xml version="1.0" encoding="UTF-8"?--> <svg width="13px" height="10px" viewBox="0 0 13 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <title>Fill 1</title> <g id="homepage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"> <g id="6" transform="translate(-301.000000, -448.000000)" fill="currentColor"> <g id="Check-options" transform="translate(279.000000, 355.000000)"> <g id="Check-active" transform="translate(16.000000, 85.000000)"> <g id="Group-3-Copy" transform="translate(0.000000, 1.000000)"> <polygon id="Fill-1" points="10.2487804 14.4526318 7.26829253 11.5052647 6 12.7684214 10.2487804 17 19 8.28421283 17.7317056 7"></polygon> </g> </g> </g> </g> </g> </svg></div>
+                    </span>
+                    <span>Hoog water in de kruipruimte</span>
+                </label>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@code
+{
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+
+    bool JammingDoorWindow = false;
+    bool ThresholdAboveSubsurface = false;
+    bool Crack = false;
+    bool ThresholdBelowSubsurface = false;
+    bool Skewed = false;
+    bool CrookedFloorWall = false;
+    bool CrawlspaceFlooding = false;
+
+    private void CheckChanged()
+    {
+        List<FunderMaps.Core.Types.FoundationDamageCharacteristics> FouDaCaList = new List<FunderMaps.Core.Types.FoundationDamageCharacteristics>();
+
+        if (JammingDoorWindow)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.JammingDoorWindow);
+        }
+       
+        if (ThresholdAboveSubsurface)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.ThresholdAboveSubsurface);
+        }
+
+        if (Crack)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.Crack);
+        }
+
+        if (ThresholdBelowSubsurface)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.ThresholdBelowSubsurface);
+        }
+
+        if (Skewed)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.Skewed);
+        }
+
+        if (CrookedFloorWall)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.CrookedFloorWall);
+        }
+
+        if (CrawlspaceFlooding)
+        {
+            FouDaCaList.Add(FunderMaps.Core.Types.FoundationDamageCharacteristics.CrawlspaceFlooding);
+        }
+
+        State.Model.FoundationDamageCharacteristics = FouDaCaList.ToArray();
+    }
+
+    protected override void OnInitialized()
+    {
+        if (State.Model.FoundationDamageCharacteristics is not null)
+        {
+            foreach (var k in State.Model.FoundationDamageCharacteristics)
+            {
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.JammingDoorWindow)
+                {
+                    JammingDoorWindow = true;
+                }
+
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.ThresholdAboveSubsurface)
+                {
+                    ThresholdAboveSubsurface = true;
+                }
+
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.Crack)
+                {
+                    Crack = true;
+                }
+
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.ThresholdBelowSubsurface)
+                {
+                    ThresholdBelowSubsurface = true;
+                }
+
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.Skewed)
+                {
+                    Skewed = true;
+                }
+
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.CrookedFloorWall)
+                {
+                    CrookedFloorWall = true;
+                }
+
+                if (k == FunderMaps.Core.Types.FoundationDamageCharacteristics.CrawlspaceFlooding)
+                {
+                    CrawlspaceFlooding = true;
+                }
+            }
+        }
+    }
+
+    @*
+    public class InputOption
+    {
+        public FunderMaps.Core.Types.FoundationDamageCharacteristics Id { get; set; }
+
+        public string Label { get; set; }
+    }
+
+    private List<InputOption> inputOptions = new()
+    {
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.JammingDoorWindow,
+            Label = "Klemmende ramen en/of deuren",
+        },
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.ThresholdAboveSubsurface,
+            Label = "De woning ligt hoger dan trottoir/weg",
+        },
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.Crack,
+            Label = "Scheur(en) in de muur en/of gevel(s)",
+        },
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.ThresholdBelowSubsurface,
+            Label = "De woning ligt lager dan trottoir/weg",
+        },
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.Skewed,
+            Label = "De woning staat wat scheef",
+        },
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.CrookedFloorWall,
+            Label = "Scheve vloeren/muren in de woning",
+        },
+        new InputOption{
+            Id = FunderMaps.Core.Types.FoundationDamageCharacteristics.CrawlspaceFlooding,
+            Label = "Hoog water in de kruipruimte",
+        }
+    };
+    *@
+}

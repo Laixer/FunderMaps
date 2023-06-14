@@ -1,0 +1,126 @@
+@page "/survey/address-characteristics"
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+
+<div class="AddressCharacteristics">
+
+    <form class="Form">
+        <div class="AddressCharacteristics--one">
+            <Title Message="Is het een vrijstaand pand of onderdeel van een (bouw)blok?" Center="true" />
+
+            <div class="RadioImageInput">
+                <div class="RadioImageInput__Wrapper">
+
+                    <InputRadioGroup Name="vrijstaand" @bind-Value="State.Model.ChainedBuilding">
+                        <div class="RadioImageInput__Field">
+                            <InputRadio Id="vrijstaand 0" Name="vrijstaand" Value="false" />
+                            <label for="vrijstaand 0" class="RadioImageInput__Label">
+                                <div class="SvgIcon svg-container">
+                                    <SvgIconVrijstaandVrijstaand />
+                                </div>
+                                <div class="SvgIcon svg-container SvgIcon--selected">
+                                    <SvgIconSelected />
+                                    </div>
+                                <span>Vrijstaand</span>
+                            </label>
+                        </div>
+                        <div class="RadioImageInput__Field">
+                            <InputRadio Id="vrijstaand 1" Name="vrijstaand" Value="true" />
+                            <label for="vrijstaand 1" class="RadioImageInput__Label">
+                                <div class="SvgIcon svg-container">
+                                    <SvgIconVrijstaandBouwblok />
+                                </div>
+                                <div class="SvgIcon svg-container SvgIcon--selected">
+                                    <SvgIconSelected />
+                                </div>
+                                <span>(Bouw)blok</span>
+                            </label>
+                        </div>
+                     </InputRadioGroup>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="AddressCharacteristics--two">
+            <Title Message="Bent u eigenaar of huurder van de woning?" Center="true" />
+
+            <div class="RadioImageInput">
+                <div class="RadioImageInput__Wrapper">
+
+                    <InputRadioGroup Name="eigendom" @bind-Value="State.Model.Owner">
+                        <div class="RadioImageInput__Field">
+                            <InputRadio Id="eigendom 0" Name="eigendom" Value="true" />
+                            <label for="eigendom 0" class="RadioImageInput__Label">
+                                <div class="SvgIcon svg-container">
+                                    <SvgIconEigendomEigenaar />
+                                </div>
+                                <div class="SvgIcon svg-container SvgIcon--selected">
+                                    <SvgIconSelected />
+                                </div>
+                                <span>Eigenaar</span>
+                            </label>
+                        </div>
+                        <div class="RadioImageInput__Field">
+                            <InputRadio Id="eigendom 1" Name="eigendom" Value="false" />
+                            <label for="eigendom 1" class="RadioImageInput__Label">
+                                <div class="SvgIcon svg-container">
+                                    <SvgIconEigendomHuurder />
+                                </div>
+                                <div class="SvgIcon svg-container SvgIcon--selected">
+                                    <SvgIconSelected />
+                                </div>
+                                <span>Huurder</span>
+                            </label>
+                        </div>
+                    </InputRadioGroup>
+
+                </div>
+            </div>
+        </div>
+        
+        <div class="AddressCharacteristics--three">
+            <Title Message="Is bij een van uw directe buren funderingsherstel uitgevoerd?" Center="true" />
+
+            <div class="RadioImageInput">
+                <div class="RadioImageInput__Wrapper">
+
+                    <InputRadioGroup Name="buren" @bind-Value="State.Model.NeighborRecovery">
+                        <div class="RadioImageInput__Field">
+                            <InputRadio Id="buren 0" Name="buren" Value="true" />
+                            <label for="buren 0" class="RadioImageInput__Label">
+                                <div class="SvgIcon svg-container">
+                                    <SvgIconBurenJa />
+                                </div>
+                                <div class="SvgIcon svg-container SvgIcon--selected">
+                                    <SvgIconSelected />
+                                </div>
+                                <span>Ja</span>
+                            </label>
+                        </div>
+                        <div class="RadioImageInput__Field">
+                            <InputRadio Id="buren 1" Name="buren" Value="false" />
+                            <label for="buren 1" class="RadioImageInput__Label">
+                                <div class="SvgIcon svg-container">
+                                    <BurenNee />
+                                </div>
+                                <div class="SvgIcon svg-container SvgIcon--selected">
+                                    <SvgIconSelected />
+                                </div>
+                                <span>Nee</span>
+                            </label>
+                        </div>
+                    </InputRadioGroup>
+
+                </div>
+            </div>
+        </div>
+        <button type="submit" style="display: none;"></button>
+    </form>
+
+</div>
+
+@code {
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+}

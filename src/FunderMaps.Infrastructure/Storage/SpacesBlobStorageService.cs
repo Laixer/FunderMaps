@@ -83,7 +83,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
     /// <param name="stream">See <see cref="Stream"/>.</param>
     /// <param name="storageObject">Storage object settings.</param>
     /// <returns>See <see cref="ValueTask"/>.</returns>
-    public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject)
+    public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject? storageObject)
     {
         try
         {
@@ -122,7 +122,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
     /// <param name="directoryPath">Source directory.</param>
     /// <param name="storageObject">Storage object settings.</param>
     /// <returns>See <see cref="ValueTask"/>.</returns>
-    public async Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject)
+    public async Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject? storageObject)
     {
         try
         {

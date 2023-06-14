@@ -30,7 +30,7 @@ public class ArrayEnumDataTypeAttribute : ValidationAttribute
     /// </summary>
     /// <param name="value">The value to test for validity.</param>
     /// <returns><c>true</c> means the <paramref name="value" /> is valid.</returns>
-    public override bool IsValid(object value)
+    public override bool IsValid(object? value)
     {
         if (value is null)
         {

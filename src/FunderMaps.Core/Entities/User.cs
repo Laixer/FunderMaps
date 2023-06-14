@@ -27,6 +27,7 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
     /// </summary>
     public string GivenName { get; set; }
 
+    // TODO: Surname
     /// <summary>
     ///     User lastname.
     /// </summary>
@@ -38,11 +39,13 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
     [Required, EmailAddress]
     public string Email { get; set; }
 
+    // TODO: Remove
     /// <summary>
     ///     Avatar.
     /// </summary>
     public string Avatar { get; set; }
 
+    // TODO: Remove
     /// <summary>
     ///     Job title.
     /// </summary>
@@ -54,6 +57,7 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
     [Phone]
     public string PhoneNumber { get; set; }
 
+    // TODO: Move up
     /// <summary>
     ///     User role.
     /// </summary>
@@ -99,8 +103,7 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
     /// <param name="other">Entity to compare.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
     public override bool Equals(User other)
-        => other != null &&
-            Id == other.Id &&
+        => Id == other.Id &&
             Email == other.Email &&
             Role == other.Role;
 }

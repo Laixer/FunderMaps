@@ -1,0 +1,24 @@
+.FoundationType {
+    padding: 20px 20px;
+}
+
+@media only screen and (min-width: 900px) {
+    .FoundationType {
+        padding: 50px 80px;
+    }
+}
+
+.Title {
+    margin-bottom: 21px;
+}
+
+.RadioImageInput__Wrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.RadioImageInput__Field {
+    margin: 10px 10px 10px 10px;
+}

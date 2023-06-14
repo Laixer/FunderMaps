@@ -1,0 +1,22 @@
+.Profile__Wrapper {
+    padding: 20px 20px;
+
+    max-width: 550px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+@media only screen and (min-width: 900px) {
+    .Profile__Wrapper {
+        padding: 20px 80px;
+    }
+
+    .Profile .Form__Row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .Profile .Form__Row .FormField {
+        width: calc(50% - 10px);
+    }
+}

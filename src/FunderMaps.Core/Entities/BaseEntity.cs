@@ -87,7 +87,7 @@ public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEn
     /// <param name="obj">An object to compare with this object.</param>
     /// <returns><c>True</c> if the current object is equal to the other parameter; otherwise, false.</returns>
     public override bool Equals(object obj)
-        => obj != null && Equals(obj as TEntity);
+        => obj is not null && Equals(obj as TEntity);
 
     /// <summary>
     ///     Compare left smaller than right.
@@ -96,7 +96,7 @@ public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEn
     /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
     public static bool operator <(BaseEntity<TEntity> left, TEntity right)
-        => left != null && left.CompareTo(right) < 0;
+        => left is not null && left.CompareTo(right) < 0;
 
     /// <summary>
     ///     Compare left smaller or equal than right.
@@ -105,7 +105,7 @@ public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEn
     /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
     public static bool operator <=(BaseEntity<TEntity> left, TEntity right)
-        => left != null && left.CompareTo(right) <= 0;
+        => left is not null && left.CompareTo(right) <= 0;
 
     /// <summary>
     ///     Compare left greater than right.
@@ -114,7 +114,7 @@ public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEn
     /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
     public static bool operator >(BaseEntity<TEntity> left, TEntity right)
-        => left != null && left.CompareTo(right) > 0;
+        => left is not null && left.CompareTo(right) > 0;
 
     /// <summary>
     ///     Compare left greater or equal than right.
@@ -123,7 +123,7 @@ public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEn
     /// <param name="right">Instance of type <typeparamref name="TEntity"/>.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
     public static bool operator >=(BaseEntity<TEntity> left, TEntity right)
-        => left != null && left.CompareTo(right) >= 0;
+        => left is not null && left.CompareTo(right) >= 0;
 
     /// <summary>
     ///     Compare left equal to right.

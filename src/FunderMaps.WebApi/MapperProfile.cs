@@ -29,7 +29,6 @@ public class MapperProfile : Profile
             .ReverseMap();
         CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
         CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
-        CreateMap<Project, ProjectDto>().ReverseMap();
         // FUTURE: Try and map nested objects in a cleaner way
         CreateMap<Recovery, RecoveryDto>()
             .ForMember(dest => dest.AuditStatus, o => o.MapFrom(src => src.State.AuditStatus))

@@ -1,0 +1,76 @@
+@page "/survey/foundation-type"
+@using Microsoft.Extensions.Logging
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Components.Forms
+@using FunderMaps.Incident.Data
+@using FunderMaps.Core.Types;
+
+<div class="FoundationType">
+    <Title Message="Op welke type fundering is de woning gebouwd?" Center="true" />
+
+    <div class="RadioImageInput">
+        <div class="RadioImageInput__Wrapper">
+
+            <InputRadioGroup Name="type" @bind-Value="State.Model.FoundationType">
+                
+                <div class="RadioImageInput__Field">
+                    <InputRadio Id="@FunderMaps.Core.Types.FoundationType.Wood" Name="type" Value="@FunderMaps.Core.Types.FoundationType.Wood" />
+                    <label for="@FunderMaps.Core.Types.FoundationType.Wood" class="RadioImageInput__Label">
+                        <div class="SvgIcon svg-container">
+                            <SvgIconTypeHout />
+                        </div>
+                        <div class="SvgIcon svg-container SvgIcon--selected">
+                            <SvgIconSelected />
+                        </div>
+                        <span>Houten palen</span>
+                    </label>
+                </div>
+
+                <div class="RadioImageInput__Field">
+                    <InputRadio Id="@FunderMaps.Core.Types.FoundationType.SteelPile" Name="type" Value="@FunderMaps.Core.Types.FoundationType.SteelPile" />
+                    <label for="@FunderMaps.Core.Types.FoundationType.SteelPile" class="RadioImageInput__Label">
+                        <div class="SvgIcon svg-container">
+                            <SvgIconTypeStaal />
+                        </div>
+                        <div class="SvgIcon svg-container SvgIcon--selected">
+                            <SvgIconSelected />
+                        </div>
+                        <span>Ondiep op staal</span>
+                    </label>
+                </div>
+
+                <div class="RadioImageInput__Field">
+                    <InputRadio Id="@FunderMaps.Core.Types.FoundationType.Concrete" Name="type" Value="@FunderMaps.Core.Types.FoundationType.Concrete" />
+                    <label for="@FunderMaps.Core.Types.FoundationType.Concrete" class="RadioImageInput__Label">
+                        <div class="SvgIcon svg-container">
+                            <SvgIconTypeBeton />
+                        </div>
+                        <div class="SvgIcon svg-container SvgIcon--selected">
+                            <SvgIconSelected />
+                        </div><span>Betonnen palen</span>
+                    </label>
+                </div>
+
+                <div class="RadioImageInput__Field">
+                    <InputRadio Id="@FunderMaps.Core.Types.FoundationType.Other" Name="type" Value="@FunderMaps.Core.Types.FoundationType.Other" />
+                    <label for="@FunderMaps.Core.Types.FoundationType.Other" class="RadioImageInput__Label">
+                        <div class="SvgIcon svg-container">
+                            <SvgIconTypeOnbekend />
+                        </div>
+                        <div class="SvgIcon svg-container SvgIcon--selected">
+                            <SvgIconSelected />
+                        </div>
+                        <span>Weet ik niet</span>
+                    </label>
+                </div>
+
+            </InputRadioGroup>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    protected State State { get; set; } = default!;
+}

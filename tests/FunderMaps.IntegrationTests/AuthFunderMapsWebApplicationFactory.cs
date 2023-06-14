@@ -31,7 +31,7 @@ public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplic
     /// <summary>
     ///     Create a user session for the given user.
     /// </summary>
-    protected async virtual Task<SignInSecurityTokenDto> SignInAsync()
+    protected async virtual Task<SignInSecurityTokenDto?> SignInAsync()
         => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInDto>("api/auth/signin", new()
         {
             Email = _username,

@@ -14,9 +14,8 @@ jobs:
         subtool:
           - FunderMaps.WebApi
           - FunderMaps.Webservice
-          - FunderMaps.BatchNode
-          - FunderMaps.Portal
-          - FunderMaps.Admin
+          - FunderMaps.RazorMaps
+          - FunderMaps.Incident
 
     steps:
     - name: Checkout repository
