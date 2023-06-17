@@ -73,8 +73,9 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.ThresholdFrontLevel, f => f.Random.Decimal(-50, 50).OrNull(f, .5f));
             RuleFor(f => f.ThresholdBackLevel, f => f.Random.Decimal(-50, 50).OrNull(f, .5f));
             RuleFor(f => f.SkewedParallel, f => f.Random.Decimal(-50, 50).OrNull(f, .5f));
+            RuleFor(f => f.SkewedParallelFacade, f => f.PickRandom<RotationType>().OrNull(f, .5f));
             RuleFor(f => f.SkewedPerpendicular, f => f.Random.Decimal(-50, 50).OrNull(f, .5f));
-            RuleFor(f => f.SkewedFacade, f => f.PickRandom<RotationType>().OrNull(f, .5f));
+            RuleFor(f => f.SkewedPerpendicularFacade, f => f.PickRandom<RotationType>().OrNull(f, .5f));
             RuleFor(f => f.SettlementSpeed, f => f.Random.Decimal(-50, 50).OrNull(f, .5f));
             RuleFor(f => f.SkewedWindowFrame, f => f.Random.Bool().OrNull(f, .5f));
         }

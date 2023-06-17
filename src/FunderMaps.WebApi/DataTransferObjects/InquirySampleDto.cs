@@ -321,14 +321,19 @@ public sealed class InquirySampleDto
     public decimal? SkewedParallel { get; set; }
 
     /// <summary>
+    ///     Skewed parallel facade.
+    /// </summary>
+    public RotationType? SkewedParallelFacade { get; set; }
+
+    /// <summary>
     ///     Skewed perpendicular.
     /// </summary>
     public decimal? SkewedPerpendicular { get; set; }
 
     /// <summary>
-    ///     Skewed facade.
+    ///     Skewed perpendicular facade.
     /// </summary>
-    public RotationType? SkewedFacade { get; set; }
+    public RotationType? SkewedPerpendicularFacade { get; set; }
 
     /// <summary>
     ///     Settlement speed.

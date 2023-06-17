@@ -78,8 +78,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     threshold_front_level,
                     threshold_back_level,
                     skewed_parallel,
+                    skewed_parallel_facade,
                     skewed_perpendicular,
-                    skewed_facade,
+                    skewed_perpendicular_facade,
                     settlement_speed,
                     skewed_window_frame)
                 VALUES (
@@ -140,8 +141,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                     @threshold_front_level,
                     @threshold_back_level,
                     @skewed_parallel,
+                    @skewed_parallel_facade,
                     @skewed_perpendicular,
-                    @skewed_facade,
+                    @skewed_perpendicular_facade,
                     @settlement_speed,
                     @skewed_window_frame)
                 RETURNING id";
@@ -284,8 +286,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         context.AddParameterWithValue("threshold_front_level", entity.ThresholdFrontLevel);
         context.AddParameterWithValue("threshold_back_level", entity.ThresholdBackLevel);
         context.AddParameterWithValue("skewed_parallel", entity.SkewedParallel);
+        context.AddParameterWithValue("skewed_parallel_facade", entity.SkewedParallelFacade);
         context.AddParameterWithValue("skewed_perpendicular", entity.SkewedPerpendicular);
-        context.AddParameterWithValue("skewed_facade", entity.SkewedFacade);
+        context.AddParameterWithValue("skewed_perpendicular_facade", entity.SkewedPerpendicularFacade);
         context.AddParameterWithValue("settlement_speed", entity.SettlementSpeed);
         context.AddParameterWithValue("skewed_window_frame", entity.SkewedWindowFrame);
     }
@@ -354,10 +357,11 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             ThresholdFrontLevel = reader.GetSafeDecimal(offset + 58),
             ThresholdBackLevel = reader.GetSafeDecimal(offset + 59),
             SkewedParallel = reader.GetSafeDecimal(offset + 60),
-            SkewedPerpendicular = reader.GetSafeDecimal(offset + 61),
-            SkewedFacade = reader.GetFieldValue<RotationType?>(offset + 62),
-            SettlementSpeed = reader.GetSafeDouble(offset + 63),
-            SkewedWindowFrame = reader.GetSafeBoolean(offset + 64),
+            SkewedParallelFacade = reader.GetFieldValue<RotationType?>(offset + 61),
+            SkewedPerpendicular = reader.GetSafeDecimal(offset + 62),
+            SkewedPerpendicularFacade = reader.GetFieldValue<RotationType?>(offset + 63),
+            SettlementSpeed = reader.GetSafeDouble(offset + 64),
+            SkewedWindowFrame = reader.GetSafeBoolean(offset + 65),
         };
 
     /// <summary>
@@ -445,8 +449,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                         s.threshold_front_level,
                         s.threshold_back_level,
                         s.skewed_parallel,
+                        s.skewed_parallel_facade,
                         s.skewed_perpendicular,
-                        s.skewed_facade,
+                        s.skewed_perpendicular_facade,
                         s.settlement_speed,
                         s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
@@ -545,8 +550,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                         s.threshold_front_level,
                         s.threshold_back_level,
                         s.skewed_parallel,
+                        s.skewed_parallel_facade,
                         s.skewed_perpendicular,
-                        s.skewed_facade,
+                        s.skewed_perpendicular_facade,
                         s.settlement_speed,
                         s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
@@ -646,8 +652,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                         s.threshold_front_level,
                         s.threshold_back_level,
                         s.skewed_parallel,
+                        s.skewed_parallel_facade,
                         s.skewed_perpendicular,
-                        s.skewed_facade,
+                        s.skewed_perpendicular_facade,
                         s.settlement_speed,
                         s.skewed_window_frame
                 FROM    report.inquiry_sample AS s
@@ -744,8 +751,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
                             threshold_front_level = @threshold_front_level,
                             threshold_back_level = @threshold_back_level,
                             skewed_parallel = @skewed_parallel,
+                            skewed_parallel_facade = @skewed_parallel_facade,
                             skewed_perpendicular = @skewed_perpendicular,
-                            skewed_facade = @skewed_facade,
+                            skewed_perpendicular_facade = @skewed_perpendicular_facade,
                             settlement_speed = @settlement_speed,
                             skewed_window_frame = @skewed_window_frame
                     FROM 	application.attribution AS a, report.inquiry AS i
