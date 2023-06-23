@@ -6,22 +6,27 @@
 public enum CrackType
 {
     /// <summary>
-    ///     Very mall.
+    ///     None.
     /// </summary>
-    VerySmall = 0,
+    None = 0,
+
+    /// <summary>
+    ///     Nil.
+    /// </summary>
+    Nil = 1,
 
     /// <summary>
     ///     Small.
     /// </summary>
-    Small = 1,
+    Small = 2,
 
     /// <summary>
     ///     Mediocre.
     /// </summary>
-    Mediocre = 2,
+    Mediocre = 3,
 
     /// <summary>
     ///     Big.
     /// </summary>
-    Big = 3,
+    Big = 4,
 }

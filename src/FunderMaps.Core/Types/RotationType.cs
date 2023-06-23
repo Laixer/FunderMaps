@@ -11,22 +11,22 @@ public enum RotationType
     Nil = 0,
 
     /// <summary>
-    ///     Very small.
-    /// </summary>
-    VerySmall = 1,
-
-    /// <summary>
     ///     Small.
     /// </summary>
-    Small = 2,
+    Small = 1,
 
     /// <summary>
     ///     Mediocre.
     /// </summary>
-    Mediocre = 3,
+    Mediocre = 2,
 
     /// <summary>
     ///     Big.
     /// </summary>
-    Big = 4,
+    Big = 3,
+
+    /// <summary>
+    ///     Very big.
+    /// </summary>
+    VeryBig = 4,
 }

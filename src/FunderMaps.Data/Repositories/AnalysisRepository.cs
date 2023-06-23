@@ -51,7 +51,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                 ra.dewatering_depth_risk_reliability,
                 ra.unclassified_risk,
                 ra.recovery_type
-            FROM application.request_analysis(@organization_id, @id) ra
+            FROM application.request_analysis2(@organization_id, @id) ra
             JOIN geocoder.address_building ab ON ab.building_id = ra.building_id
             JOIN geocoder.address a ON a.id = ab.address_id
             LIMIT 1";
