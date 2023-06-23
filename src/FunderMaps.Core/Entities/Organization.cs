@@ -36,43 +36,43 @@ public sealed class Organization : IdentifiableEntity<Organization, Guid>, ITena
     /// <summary>
     ///     Phone number.
     /// </summary>
-    [Phone]
-    public string PhoneNumber { get; set; }
+    // [Phone]
+    // public string PhoneNumber { get; set; }
 
     /// <summary>
     ///     Gets or sets the organization logo.
     /// </summary>
-    public string BrandingLogo { get; set; }
+    // public string BrandingLogo { get; set; }
 
     /// <summary>
     ///     Street.
     /// </summary>
-    public string HomeStreet { get; set; }
+    // public string HomeStreet { get; set; }
 
     /// <summary>
     ///     Street number.
     /// </summary>
-    public int? HomeAddressNumber { get; set; }
+    // public int? HomeAddressNumber { get; set; }
 
     /// <summary>
     ///     Address number postfix.
     /// </summary>
-    public string HomeAddressNumberPostfix { get; set; }
+    // public string HomeAddressNumberPostfix { get; set; }
 
     /// <summary>
     ///     City.
     /// </summary>
-    public string HomeCity { get; set; }
+    // public string HomeCity { get; set; }
 
     /// <summary>
     ///     Postbox number.
     /// </summary>
-    public string HomePostbox { get; set; }
+    // public string HomePostbox { get; set; }
 
     /// <summary>
     ///     Zipcode or postcode.
     /// </summary>
-    public string HomeZipcode { get; set; }
+    // public string HomeZipcode { get; set; }
 
     /// <summary>
     ///     Geospatial account area.

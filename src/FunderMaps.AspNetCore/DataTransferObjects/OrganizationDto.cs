@@ -27,45 +27,45 @@ public sealed record OrganizationDto
     /// <summary>
     ///     Phone number.
     /// </summary>
-    [Phone]
-    public string PhoneNumber { get; init; }
+    // [Phone]
+    // public string PhoneNumber { get; init; }
 
     /// <summary>
     ///     Gets or sets the organization logo.
     /// </summary>
-    public string BrandingLogo { get; init; }
+    // public string BrandingLogo { get; init; }
 
     // FUTURE: Convert to geocoder address?
 
     /// <summary>
     ///     Street.
     /// </summary>
-    public string HomeStreet { get; init; }
+    // public string HomeStreet { get; init; }
 
     /// <summary>
     ///     Street number.
     /// </summary>
-    public int? HomeAddressNumber { get; init; }
+    // public int? HomeAddressNumber { get; init; }
 
     /// <summary>
     ///     Address number postfix.
     /// </summary>
-    public string HomeAddressNumberPostfix { get; init; }
+    // public string HomeAddressNumberPostfix { get; init; }
 
     /// <summary>
     ///     City.
     /// </summary>
-    public string HomeCity { get; init; }
+    // public string HomeCity { get; init; }
 
     /// <summary>
     ///     Postbox number.
     /// </summary>
-    public string HomePostbox { get; init; }
+    // public string HomePostbox { get; init; }
 
     /// <summary>
     ///     Zipcode or postcode.
     /// </summary>
-    public string HomeZipcode { get; init; }
+    // public string HomeZipcode { get; init; }
 
     /// <summary>
     ///     Area X min.

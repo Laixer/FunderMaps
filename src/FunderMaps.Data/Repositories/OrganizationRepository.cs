@@ -84,14 +84,14 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             throw new ArgumentNullException(nameof(entity));
         }
 
-        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
-        context.AddParameterWithValue("branding_logo", entity.BrandingLogo);
-        context.AddParameterWithValue("home_address", entity.HomeStreet);
-        context.AddParameterWithValue("home_address_number", entity.HomeAddressNumber);
-        context.AddParameterWithValue("home_address_number_postfix", entity.HomeAddressNumberPostfix);
-        context.AddParameterWithValue("home_city", entity.HomeCity);
-        context.AddParameterWithValue("home_postbox", entity.HomePostbox);
-        context.AddParameterWithValue("home_zipcode", entity.HomeZipcode);
+        // context.AddParameterWithValue("phone_number", entity.PhoneNumber);
+        // context.AddParameterWithValue("branding_logo", entity.BrandingLogo);
+        // context.AddParameterWithValue("home_address", entity.HomeStreet);
+        // context.AddParameterWithValue("home_address_number", entity.HomeAddressNumber);
+        // context.AddParameterWithValue("home_address_number_postfix", entity.HomeAddressNumberPostfix);
+        // context.AddParameterWithValue("home_city", entity.HomeCity);
+        // context.AddParameterWithValue("home_postbox", entity.HomePostbox);
+        // context.AddParameterWithValue("home_zipcode", entity.HomeZipcode);
     }
 
     private static Organization MapFromReader(DbDataReader reader, int offset = 0)
@@ -100,14 +100,14 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             Id = reader.GetGuid(offset++),
             Name = reader.GetSafeString(offset++),
             Email = reader.GetSafeString(offset++),
-            PhoneNumber = reader.GetSafeString(offset++),
-            BrandingLogo = reader.GetSafeString(offset++),
-            HomeStreet = reader.GetSafeString(offset++),
-            HomeAddressNumber = reader.GetSafeInt(offset++),
-            HomeAddressNumberPostfix = reader.GetSafeString(offset++),
-            HomeCity = reader.GetSafeString(offset++),
-            HomePostbox = reader.GetSafeString(offset++),
-            HomeZipcode = reader.GetSafeString(offset++),
+            // PhoneNumber = reader.GetSafeString(offset++),
+            // BrandingLogo = reader.GetSafeString(offset++),
+            // HomeStreet = reader.GetSafeString(offset++),
+            // HomeAddressNumber = reader.GetSafeInt(offset++),
+            // HomeAddressNumberPostfix = reader.GetSafeString(offset++),
+            // HomeCity = reader.GetSafeString(offset++),
+            // HomePostbox = reader.GetSafeString(offset++),
+            // HomeZipcode = reader.GetSafeString(offset++),
             Area = new()
             {
                 XMin = reader.GetSafeDouble(offset++),
@@ -138,14 +138,14 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
                 SELECT  id,
                         name,
                         email,
-                        phone_number,
-                        branding_logo,
-                        home_address,
-                        home_address_number,
-                        home_address_number_postfix,
-                        home_city,
-                        home_postbox,
-                        home_zipcode,
+                        --phone_number,
+                        --branding_logo,
+                        --home_address,
+                        --home_address_number,
+                        --home_address_number_postfix,
+                        --home_city,
+                        --home_postbox,
+                        --home_zipcode,
                         st_xmin(fence) AS x_min,
                         st_ymin(fence) AS y_min,
                         st_xmax(fence) AS x_max,
@@ -175,14 +175,14 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
                 SELECT  id,
                         name,
                         email,
-                        phone_number,
-                        branding_logo,
-                        home_address,
-                        home_address_number,
-                        home_address_number_postfix,
-                        home_city,
-                        home_postbox,
-                        home_zipcode,
+                        --phone_number,
+                        --branding_logo,
+                        --home_address,
+                        --home_address_number,
+                        --home_address_number_postfix,
+                        --home_city,
+                        --home_postbox,
+                        --home_zipcode,
                         st_xmin(fence) AS x_min,
                         st_ymin(fence) AS y_min,
                         st_xmax(fence) AS x_max,
@@ -207,26 +207,27 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
     /// <param name="entity">Entity object.</param>
     public override async Task UpdateAsync(Organization entity)
     {
-        ResetCacheEntity(entity);
+        await Task.CompletedTask;
+        // ResetCacheEntity(entity);
 
-        var sql = @"
-                UPDATE  application.organization
-                SET     phone_number = @phone_number,
-                        branding_logo = @branding_logo,
-                        home_address = @home_address,
-                        home_address_number = @home_address_number,
-                        home_address_number_postfix = @home_address_number_postfix,
-                        home_city = @home_city,
-                        home_postbox = @home_postbox,
-                        home_zipcode = @home_zipcode
-                WHERE   id = @id";
+        // var sql = @"
+        //         UPDATE  application.organization
+        //         SET     --phone_number = @phone_number,
+        //                 --branding_logo = @branding_logo,
+        //                 --home_address = @home_address,
+        //                 --home_address_number = @home_address_number,
+        //                 --home_address_number_postfix = @home_address_number_postfix,
+        //                 --home_city = @home_city,
+        //                 --home_postbox = @home_postbox,
+        //                 --home_zipcode = @home_zipcode
+        //         WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        // await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("id", entity.Id);
+        // context.AddParameterWithValue("id", entity.Id);
 
-        MapToWriter(context, entity);
+        // MapToWriter(context, entity);
 
-        await context.NonQueryAsync();
+        // await context.NonQueryAsync();
     }
 }
