@@ -52,8 +52,6 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-            // Assert.Equal(updateObject.PhoneNumber, returnObject.PhoneNumber);
-            // Assert.Equal(updateObject.BrandingLogo, returnObject.BrandingLogo);
         }
 
         [Theory]

@@ -25,49 +25,6 @@ public sealed record OrganizationDto
     public string Email { get; init; }
 
     /// <summary>
-    ///     Phone number.
-    /// </summary>
-    // [Phone]
-    // public string PhoneNumber { get; init; }
-
-    /// <summary>
-    ///     Gets or sets the organization logo.
-    /// </summary>
-    // public string BrandingLogo { get; init; }
-
-    // FUTURE: Convert to geocoder address?
-
-    /// <summary>
-    ///     Street.
-    /// </summary>
-    // public string HomeStreet { get; init; }
-
-    /// <summary>
-    ///     Street number.
-    /// </summary>
-    // public int? HomeAddressNumber { get; init; }
-
-    /// <summary>
-    ///     Address number postfix.
-    /// </summary>
-    // public string HomeAddressNumberPostfix { get; init; }
-
-    /// <summary>
-    ///     City.
-    /// </summary>
-    // public string HomeCity { get; init; }
-
-    /// <summary>
-    ///     Postbox number.
-    /// </summary>
-    // public string HomePostbox { get; init; }
-
-    /// <summary>
-    ///     Zipcode or postcode.
-    /// </summary>
-    // public string HomeZipcode { get; init; }
-
-    /// <summary>
     ///     Area X min.
     /// </summary>
     public double? XMin { get; set; }
