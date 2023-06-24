@@ -20,11 +20,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
-        var sql = @"
-            SELECT  COUNT(*)
-            FROM    application.contractor";
+        var cmd = CountCommand("application");
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(cmd);
 
         return await context.ScalarAsync<long>();
     }
@@ -37,12 +35,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     {
         ResetCacheEntity(id);
 
-        var sql = @"
-            DELETE
-            FROM    application.contractor
-            WHERE   id = @id";
+        var cmd = DeleteCommand("application", "id");
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(cmd);
 
         context.AddParameterWithValue("id", id);
 
@@ -53,7 +48,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
         => new()
         {
             Id = reader.GetInt(offset++),
-            Name = reader.GetSafeString(offset++),
+            Name = reader.GetString(offset++),
         };
 
     /// <summary>
@@ -68,14 +63,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
             return entity;
         }
 
-        var sql = @"
-            SELECT  id,
-                    name
-            FROM    application.contractor
-            WHERE   id = @id
-            LIMIT   1";
+        var cmd = SingleCommand("application", new[] { "id", "name" });
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(cmd);
 
         context.AddParameterWithValue("id", id);
 
@@ -90,14 +80,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     /// <returns>List of <see cref="Contractor"/>.</returns>
     public override async IAsyncEnumerable<Contractor> ListAllAsync(Navigation navigation)
     {
-        var sql = @"
-            SELECT  id,
-                    name
-            FROM    application.contractor";
+        var cmd = AllCommand("application", new[] { "id", "name" }, navigation);
 
-        sql = ConstructNavigation(sql, navigation);
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var context = await DbContextFactory.CreateAsync(cmd);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {

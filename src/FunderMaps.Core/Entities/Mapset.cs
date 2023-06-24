@@ -45,7 +45,7 @@ public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
     /// <summary>
     ///     Map layers.
     /// </summary>
-    public string[] Layers { get; set; }
+    public string[]? Layers { get; set; }
 
     /// <summary>
     ///     Map options.

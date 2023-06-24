@@ -25,13 +25,13 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
     /// <summary>
     ///     User firstname.
     /// </summary>
-    public string GivenName { get; set; }
+    public string? GivenName { get; set; }
 
     // TODO: Surname
     /// <summary>
     ///     User lastname.
     /// </summary>
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     /// <summary>
     ///     Unique email address.
@@ -43,19 +43,19 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
     /// <summary>
     ///     Avatar.
     /// </summary>
-    public string Avatar { get; set; }
+    public string? Avatar { get; set; }
 
     // TODO: Remove
     /// <summary>
     ///     Job title.
     /// </summary>
-    public string JobTitle { get; set; }
+    public string? JobTitle { get; set; }
 
     /// <summary>
     ///     Phone number.
     /// </summary>
     [Phone]
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     // TODO: Move up
     /// <summary>

@@ -146,6 +146,56 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
         return cmdText;
     }
 
+    protected static string EntityTable(string? schema = null)
+    {
+        var table = typeof(TEntity).Name.ToLowerInvariant();
+
+        if (schema is not null)
+        {
+            table = $"{schema}.{table}";
+        }
+
+        return table;
+    }
+
+    protected static string CountCommand(string? schema = null)
+    {
+        var entityName = EntityTable(schema);
+
+        var sql = $@"SELECT COUNT(*) FROM {entityName} LIMIT 1";
+
+        return sql;
+    }
+
+    protected static string DeleteCommand(string schema, string column)
+    {
+        var entityName = EntityTable(schema);
+
+        var sql = $@"DELETE FROM {entityName} WHERE {column} = @id";
+
+        return sql;
+    }
+
+    protected static string SingleCommand(string schema, string[] columns)
+    {
+        var entityName = EntityTable(schema);
+
+        var sql = $@"SELECT {string.Join(", ", columns)} FROM {entityName} WHERE {columns[0]} = @id LIMIT 1";
+
+        return sql;
+    }
+
+    protected static string AllCommand(string schema, string[] columns, Navigation navigation)
+    {
+        var entityName = EntityTable(schema);
+
+        var sql = $@"SELECT {string.Join(", ", columns)} FROM {entityName}";
+
+        sql = ConstructNavigation(sql, navigation);
+
+        return sql;
+    }
+
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddGetAsync"/>
     /// </summary>

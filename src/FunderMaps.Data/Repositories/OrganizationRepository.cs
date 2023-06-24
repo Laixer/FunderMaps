@@ -81,8 +81,8 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
         => new()
         {
             Id = reader.GetGuid(offset++),
-            Name = reader.GetSafeString(offset++),
-            Email = reader.GetSafeString(offset++),
+            Name = reader.GetString(offset++),
+            Email = reader.GetString(offset++),
             Area = new()
             {
                 XMin = reader.GetSafeDouble(offset++),

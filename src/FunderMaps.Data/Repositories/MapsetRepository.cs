@@ -78,7 +78,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
         => new()
         {
             Id = reader.GetGuid(0),
-            Name = reader.GetSafeString(1),
+            Name = reader.GetString(1),
             Style = reader.GetString(2),
             Layers = reader.GetSafeFieldValue<string[]>(3),
             Options = reader.GetFieldValue<object>(4),
@@ -179,7 +179,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
         => new()
         {
             Id = reader.GetGuid(0),
-            Name = reader.GetSafeString(1),
+            Name = reader.GetString(1),
             Style = reader.GetString(2),
             Layers = reader.GetSafeFieldValue<string[]>(3),
             Options = reader.GetFieldValue<object>(4),
