@@ -19,6 +19,11 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     /// <returns>Created <see cref="InquiryFull"/>.</returns>
     public override async Task<int> AddAsync(InquiryFull entity)
     {
+        if (entity is null)
+        {
+            throw new ArgumentNullException(nameof(entity));
+        }
+
         var sql = @"
             WITH attribution AS (
                 INSERT INTO application.attribution(

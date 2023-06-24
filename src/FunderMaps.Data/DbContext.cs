@@ -96,7 +96,7 @@ internal class DbContext : IAsyncDisposable
     /// </remarks>
     /// <param name="parameterName">Parameter name.</param>
     /// <param name="value">Parameter value.</param>
-    public void AddParameterWithValue(string parameterName, object value)
+    public void AddParameterWithValue(string parameterName, object? value)
     {
         var parameter = Command.CreateParameter();
 

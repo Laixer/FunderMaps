@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
@@ -18,9 +17,7 @@ public class ContractorController : ControllerBase
     ///     Create new instance.
     /// </summary>
     public ContractorController(IOrganizationRepository organizationRepository, IContractorRepository contractorRepository)
-    {
-        _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
-    }
+        => _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
 
     // GET: api/contractor
     /// <summary>
