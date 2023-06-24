@@ -1,13 +1,12 @@
-﻿namespace FunderMaps.Core.Interfaces.Repositories
+﻿namespace FunderMaps.Core.Interfaces.Repositories;
+
+/// <summary>
+///     Operations for the test repository.
+/// </summary>
+public interface ITestRepository
 {
     /// <summary>
-    ///     Operations for the test repository.
+    ///     Check if backend is online.
     /// </summary>
-    public interface ITestRepository
-    {
-        /// <summary>
-        ///     Check if backend is online.
-        /// </summary>
-        Task<bool> IsAliveAsync();
-    }
+    Task<bool> IsAliveAsync();
 }

@@ -1,5 +1,3 @@
-using FunderMaps.Core.DataAnnotations;
-
 namespace FunderMaps.Core.Entities;
 
 public class Layer
@@ -72,7 +70,7 @@ public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
     /// <summary>
     ///     Map layers sets.
     /// </summary>
-    public object LayerSet { get; set; }
+    public object? LayerSet { get; set; }
 
     /// <summary>
     ///     List of layers in this mapset.

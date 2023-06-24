@@ -3,6 +3,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Extensions;
 using System.Data.Common;
+using System.Text.Json;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -185,6 +186,6 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             Public = reader.GetBoolean(5),
             Consent = reader.GetSafeString(6),
             FenceMunicipality = reader.GetSafeString(7),
-            LayerSet = System.Text.Json.JsonSerializer.Deserialize<object>(reader.GetString(8)),
+            LayerSet = JsonSerializer.Deserialize<object>(reader.GetString(8)),
         };
 }

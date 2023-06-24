@@ -39,7 +39,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     public static Address MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
-            Id = reader.GetSafeString(offset++),
+            Id = reader.GetString(offset++),
             BuildingNumber = reader.GetSafeString(offset++),
             PostalCode = reader.GetSafeString(offset++),
             Street = reader.GetSafeString(offset++),
@@ -81,7 +81,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var reader = await context.ReaderAsync();
 
-        return reader.GetSafeString(0);
+        return reader.GetString(0);
     }
 
     /// <summary>
