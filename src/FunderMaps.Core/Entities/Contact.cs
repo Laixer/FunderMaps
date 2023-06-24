@@ -44,6 +44,5 @@ public sealed class Contact : IdentifiableEntity<Contact, string>
     /// </summary>
     /// <param name="other">Entity to compare.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
-    public override bool Equals(Contact other)
-        => other is not null && Email == other.Email;
+    public override bool Equals(Contact other) => Email == other.Email;
 }

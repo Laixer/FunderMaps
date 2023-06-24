@@ -20,133 +20,133 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     public override async Task<int> AddAsync(InquirySample entity)
     {
         var sql = @"
-                INSERT INTO report.inquiry_sample(
-                    inquiry,
-                    address,
-                    note,
-                    built_year,
-                    substructure,
-                    overall_quality,
-                    wood_quality,
-                    construction_quality,
-                    wood_capacity_horizontal_quality,
-                    pile_wood_capacity_vertical_quality,
-                    carrying_capacity_quality,
-                    mason_quality,
-                    wood_quality_necessity,
-                    construction_level,
-                    wood_level,
-                    pile_diameter_top,
-                    pile_diameter_bottom,
-                    pile_head_level,
-                    pile_tip_level,
-                    foundation_depth,
-                    mason_level,
-                    concrete_charger_length,
-                    pile_distance_length,
-                    wood_penetration_depth,
-                    cpt,
-                    monitoring_well,
-                    groundwater_level_temp,
-                    groundlevel,
-                    groundwater_level_net,
-                    foundation_type,
-                    enforcement_term,
-                    recovery_advised,
-                    damage_cause,
-                    damage_characteristics,
-                    construction_pile,
-                    wood_type,
-                    wood_encroachement,
-                    crack_indoor_restored,
-                    crack_indoor_type,
-                    crack_indoor_size,
-                    crack_facade_front_restored,
-                    crack_facade_front_type,
-                    crack_facade_front_size,
-                    crack_facade_back_restored,
-                    crack_facade_back_type,
-                    crack_facade_back_size,
-                    crack_facade_left_restored,
-                    crack_facade_left_type,
-                    crack_facade_left_size,
-                    crack_facade_right_restored,
-                    crack_facade_right_type,
-                    crack_facade_right_size,
-                    deformed_facade,
-                    threshold_updown_skewed,
-                    threshold_front_level,
-                    threshold_back_level,
-                    skewed_parallel,
-                    skewed_parallel_facade,
-                    skewed_perpendicular,
-                    skewed_perpendicular_facade,
-                    settlement_speed,
-                    skewed_window_frame)
-                VALUES (
-                    @inquiry,
-                    @address,
-                    @note,
-                    @built_year,
-                    @substructure,
-                    @overall_quality,
-                    @wood_quality,
-                    @construction_quality,
-                    @wood_capacity_horizontal_quality,
-                    @pile_wood_capacity_vertical_quality,
-                    @carrying_capacity_quality,
-                    @mason_quality,
-                    @wood_quality_necessity,
-                    @construction_level,
-                    @wood_level,
-                    @pile_diameter_top,
-                    @pile_diameter_bottom,
-                    @pile_head_level,
-                    @pile_tip_level,
-                    @foundation_depth,
-                    @mason_level,
-                    @concrete_charger_length,
-                    @pile_distance_length,
-                    @wood_penetration_depth,
-                    @cpt,
-                    @monitoring_well,
-                    @groundwater_level_temp,
-                    @groundlevel,
-                    @groundwater_level_net,
-                    @foundation_type,
-                    @enforcement_term,
-                    @recovery_advised,
-                    @damage_cause,
-                    @damage_characteristics,
-                    @construction_pile,
-                    @wood_type,
-                    @wood_encroachement,
-                    @crack_indoor_restored,
-                    @crack_indoor_type,
-                    @crack_indoor_size,
-                    @crack_facade_front_restored,
-                    @crack_facade_front_type,
-                    @crack_facade_front_size,
-                    @crack_facade_back_restored,
-                    @crack_facade_back_type,
-                    @crack_facade_back_size,
-                    @crack_facade_left_restored,
-                    @crack_facade_left_type,
-                    @crack_facade_left_size,
-                    @crack_facade_right_restored,
-                    @crack_facade_right_type,
-                    @crack_facade_right_size,
-                    @deformed_facade,
-                    @threshold_updown_skewed,
-                    @threshold_front_level,
-                    @threshold_back_level,
-                    @skewed_parallel,
-                    @skewed_parallel_facade,
-                    @skewed_perpendicular,
-                    @skewed_perpendicular_facade,
-                    @settlement_speed,
-                    @skewed_window_frame)
-                RETURNING id";
+            INSERT INTO report.inquiry_sample(
+                inquiry,
+                address,
+                note,
+                built_year,
+                substructure,
+                overall_quality,
+                wood_quality,
+                construction_quality,
+                wood_capacity_horizontal_quality,
+                pile_wood_capacity_vertical_quality,
+                carrying_capacity_quality,
+                mason_quality,
+                wood_quality_necessity,
+                construction_level,
+                wood_level,
+                pile_diameter_top,
+                pile_diameter_bottom,
+                pile_head_level,
+                pile_tip_level,
+                foundation_depth,
+                mason_level,
+                concrete_charger_length,
+                pile_distance_length,
+                wood_penetration_depth,
+                cpt,
+                monitoring_well,
+                groundwater_level_temp,
+                groundlevel,
+                groundwater_level_net,
+                foundation_type,
+                enforcement_term,
+                recovery_advised,
+                damage_cause,
+                damage_characteristics,
+                construction_pile,
+                wood_type,
+                wood_encroachement,
+                crack_indoor_restored,
+                crack_indoor_type,
+                crack_indoor_size,
+                crack_facade_front_restored,
+                crack_facade_front_type,
+                crack_facade_front_size,
+                crack_facade_back_restored,
+                crack_facade_back_type,
+                crack_facade_back_size,
+                crack_facade_left_restored,
+                crack_facade_left_type,
+                crack_facade_left_size,
+                crack_facade_right_restored,
+                crack_facade_right_type,
+                crack_facade_right_size,
+                deformed_facade,
+                threshold_updown_skewed,
+                threshold_front_level,
+                threshold_back_level,
+                skewed_parallel,
+                skewed_parallel_facade,
+                skewed_perpendicular,
+                skewed_perpendicular_facade,
+                settlement_speed,
+                skewed_window_frame)
+            VALUES (
+                @inquiry,
+                @address,
+                NULLIF(trim(@note), ''),
+                @built_year,
+                @substructure,
+                @overall_quality,
+                @wood_quality,
+                @construction_quality,
+                @wood_capacity_horizontal_quality,
+                @pile_wood_capacity_vertical_quality,
+                @carrying_capacity_quality,
+                @mason_quality,
+                @wood_quality_necessity,
+                @construction_level,
+                @wood_level,
+                @pile_diameter_top,
+                @pile_diameter_bottom,
+                @pile_head_level,
+                @pile_tip_level,
+                @foundation_depth,
+                @mason_level,
+                @concrete_charger_length,
+                @pile_distance_length,
+                @wood_penetration_depth,
+                NULLIF(trim(@cpt), ''),
+                NULLIF(trim(@monitoring_well), ''),
+                @groundwater_level_temp,
+                @groundlevel,
+                @groundwater_level_net,
+                @foundation_type,
+                @enforcement_term,
+                @recovery_advised,
+                @damage_cause,
+                @damage_characteristics,
+                @construction_pile,
+                @wood_type,
+                @wood_encroachement,
+                @crack_indoor_restored,
+                @crack_indoor_type,
+                @crack_indoor_size,
+                @crack_facade_front_restored,
+                @crack_facade_front_type,
+                @crack_facade_front_size,
+                @crack_facade_back_restored,
+                @crack_facade_back_type,
+                @crack_facade_back_size,
+                @crack_facade_left_restored,
+                @crack_facade_left_type,
+                @crack_facade_left_size,
+                @crack_facade_right_restored,
+                @crack_facade_right_type,
+                @crack_facade_right_size,
+                @deformed_facade,
+                @threshold_updown_skewed,
+                @threshold_front_level,
+                @threshold_back_level,
+                @skewed_parallel,
+                @skewed_parallel_facade,
+                @skewed_perpendicular,
+                @skewed_perpendicular_facade,
+                @settlement_speed,
+                @skewed_window_frame)
+            RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -162,11 +162,11 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     public override async Task<long> CountAsync()
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.inquiry_sample AS s
-                JOIN 	report.inquiry AS i ON i.id = s.inquiry
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant";
+            SELECT  COUNT(*)
+            FROM    report.inquiry_sample AS s
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -182,12 +182,12 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     public async Task<long> CountAsync(int report)
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.inquiry_sample AS s
-                JOIN    report.inquiry AS i ON i.id = s.inquiry
-                JOIN    application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant
-                AND     i.id = @id";
+            SELECT  COUNT(*)
+            FROM    report.inquiry_sample AS s
+            JOIN    report.inquiry AS i ON i.id = s.inquiry
+            JOIN    application.attribution AS a ON a.id = i.attribution
+            WHERE   a.owner = @tenant
+            AND     i.id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -206,13 +206,13 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         ResetCacheEntity(id);
 
         var sql = @"
-                DELETE
-                FROM    report.inquiry_sample AS s
-                USING 	application.attribution AS a, report.inquiry AS i
-                WHERE   i.id = s.inquiry
-                AND     a.id = i.attribution
-                AND     s.id = @id
-                AND     a.owner = @tenant";
+            DELETE
+            FROM    report.inquiry_sample AS s
+            USING 	application.attribution AS a, report.inquiry AS i
+            WHERE   i.id = s.inquiry
+            AND     a.id = i.attribution
+            AND     s.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -298,7 +298,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         {
             Id = reader.GetInt(offset + 0),
             Inquiry = reader.GetInt(offset + 1),
-            Address = reader.GetSafeString(offset + 2),
+            Address = reader.GetString(offset + 2),
             Note = reader.GetSafeString(offset + 3),
             CreateDate = reader.GetDateTime(offset + 4),
             UpdateDate = reader.GetSafeDateTime(offset + 5),
@@ -377,89 +377,89 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         }
 
         var sql = @"
-                SELECT  -- InquirySample
-                        s.id,
-                        s.inquiry,
-                        s.address,
-                        s.note,
-                        s.create_date,
-                        s.update_date,
-                        s.delete_date,
-                        s.built_year,
-                        s.substructure,
+            SELECT  -- InquirySample
+                    s.id,
+                    s.inquiry,
+                    s.address,
+                    s.note,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.built_year,
+                    s.substructure,
 
-                        -- Foundation Assessment
-                        s.overall_quality,
-                        s.wood_quality,
-                        s.construction_quality,
-                        s.wood_capacity_horizontal_quality,
-                        s.pile_wood_capacity_vertical_quality,
-                        s.carrying_capacity_quality,
-                        s.mason_quality,
-                        s.wood_quality_necessity,
+                    -- Foundation Assessment
+                    s.overall_quality,
+                    s.wood_quality,
+                    s.construction_quality,
+                    s.wood_capacity_horizontal_quality,
+                    s.pile_wood_capacity_vertical_quality,
+                    s.carrying_capacity_quality,
+                    s.mason_quality,
+                    s.wood_quality_necessity,
 
-                        -- Foundation Measurement
-                        s.construction_level,
-                        s.wood_level,
-                        s.pile_diameter_top,
-                        s.pile_diameter_bottom,
-                        s.pile_head_level,
-                        s.pile_tip_level,
-                        s.foundation_depth,
-                        s.mason_level,
-                        s.concrete_charger_length,
-                        s.pile_distance_length,
-                        s.wood_penetration_depth,
+                    -- Foundation Measurement
+                    s.construction_level,
+                    s.wood_level,
+                    s.pile_diameter_top,
+                    s.pile_diameter_bottom,
+                    s.pile_head_level,
+                    s.pile_tip_level,
+                    s.foundation_depth,
+                    s.mason_level,
+                    s.concrete_charger_length,
+                    s.pile_distance_length,
+                    s.wood_penetration_depth,
 
-                        -- Surrounding
-                        s.cpt,
-                        s.monitoring_well,
-                        s.groundwater_level_temp,
-                        s.groundlevel,
-                        s.groundwater_level_net,
-                        
-                        -- Foundation
-                        s.foundation_type,
-                        s.enforcement_term,
-                        s.recovery_advised,
-                        s.damage_cause,
-                        s.damage_characteristics,
-                        s.construction_pile,
-                        s.wood_type,
-                        s.wood_encroachement,
+                    -- Surrounding
+                    s.cpt,
+                    s.monitoring_well,
+                    s.groundwater_level_temp,
+                    s.groundlevel,
+                    s.groundwater_level_net,
+                    
+                    -- Foundation
+                    s.foundation_type,
+                    s.enforcement_term,
+                    s.recovery_advised,
+                    s.damage_cause,
+                    s.damage_characteristics,
+                    s.construction_pile,
+                    s.wood_type,
+                    s.wood_encroachement,
 
-                        -- Building
-                        s.crack_indoor_restored,
-                        s.crack_indoor_type,
-                        s.crack_indoor_size,
-                        s.crack_facade_front_restored,
-                        s.crack_facade_front_type,
-                        s.crack_facade_front_size,
-                        s.crack_facade_back_restored,
-                        s.crack_facade_back_type,
-                        s.crack_facade_back_size,
-                        s.crack_facade_left_restored,
-                        s.crack_facade_left_type,
-                        s.crack_facade_left_size,
-                        s.crack_facade_right_restored,
-                        s.crack_facade_right_type,
-                        s.crack_facade_right_size,
-                        s.deformed_facade,
-                        s.threshold_updown_skewed,
-                        s.threshold_front_level,
-                        s.threshold_back_level,
-                        s.skewed_parallel,
-                        s.skewed_parallel_facade,
-                        s.skewed_perpendicular,
-                        s.skewed_perpendicular_facade,
-                        s.settlement_speed,
-                        s.skewed_window_frame
-                FROM    report.inquiry_sample AS s
-                JOIN 	report.inquiry AS i ON i.id = s.inquiry
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   s.id = @id
-                AND     a.owner = @tenant
-                LIMIT   1";
+                    -- Building
+                    s.crack_indoor_restored,
+                    s.crack_indoor_type,
+                    s.crack_indoor_size,
+                    s.crack_facade_front_restored,
+                    s.crack_facade_front_type,
+                    s.crack_facade_front_size,
+                    s.crack_facade_back_restored,
+                    s.crack_facade_back_type,
+                    s.crack_facade_back_size,
+                    s.crack_facade_left_restored,
+                    s.crack_facade_left_type,
+                    s.crack_facade_left_size,
+                    s.crack_facade_right_restored,
+                    s.crack_facade_right_type,
+                    s.crack_facade_right_size,
+                    s.deformed_facade,
+                    s.threshold_updown_skewed,
+                    s.threshold_front_level,
+                    s.threshold_back_level,
+                    s.skewed_parallel,
+                    s.skewed_parallel_facade,
+                    s.skewed_perpendicular,
+                    s.skewed_perpendicular_facade,
+                    s.settlement_speed,
+                    s.skewed_window_frame
+            FROM    report.inquiry_sample AS s
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   s.id = @id
+            AND     a.owner = @tenant
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -478,88 +478,88 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     public override async IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  -- InquirySample
-                        s.id,
-                        s.inquiry,
-                        s.address,
-                        s.note,
-                        s.create_date,
-                        s.update_date,
-                        s.delete_date,
-                        s.built_year,
-                        s.substructure,
+            SELECT  -- InquirySample
+                    s.id,
+                    s.inquiry,
+                    s.address,
+                    s.note,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.built_year,
+                    s.substructure,
 
-                        -- Foundation Assessment
-                        s.overall_quality,
-                        s.wood_quality,
-                        s.construction_quality,
-                        s.wood_capacity_horizontal_quality,
-                        s.pile_wood_capacity_vertical_quality,
-                        s.carrying_capacity_quality,
-                        s.mason_quality,
-                        s.wood_quality_necessity,
+                    -- Foundation Assessment
+                    s.overall_quality,
+                    s.wood_quality,
+                    s.construction_quality,
+                    s.wood_capacity_horizontal_quality,
+                    s.pile_wood_capacity_vertical_quality,
+                    s.carrying_capacity_quality,
+                    s.mason_quality,
+                    s.wood_quality_necessity,
 
-                        -- Foundation Measurement
-                        s.construction_level,
-                        s.wood_level,
-                        s.pile_diameter_top,
-                        s.pile_diameter_bottom,
-                        s.pile_head_level,
-                        s.pile_tip_level,
-                        s.foundation_depth,
-                        s.mason_level,
-                        s.concrete_charger_length,
-                        s.pile_distance_length,
-                        s.wood_penetration_depth,
+                    -- Foundation Measurement
+                    s.construction_level,
+                    s.wood_level,
+                    s.pile_diameter_top,
+                    s.pile_diameter_bottom,
+                    s.pile_head_level,
+                    s.pile_tip_level,
+                    s.foundation_depth,
+                    s.mason_level,
+                    s.concrete_charger_length,
+                    s.pile_distance_length,
+                    s.wood_penetration_depth,
 
-                        -- Surrounding
-                        s.cpt,
-                        s.monitoring_well,
-                        s.groundwater_level_temp,
-                        s.groundlevel,
-                        s.groundwater_level_net,
-                        
-                        -- Foundation
-                        s.foundation_type,
-                        s.enforcement_term,
-                        s.recovery_advised,
-                        s.damage_cause,
-                        s.damage_characteristics,
-                        s.construction_pile,
-                        s.wood_type,
-                        s.wood_encroachement,
+                    -- Surrounding
+                    s.cpt,
+                    s.monitoring_well,
+                    s.groundwater_level_temp,
+                    s.groundlevel,
+                    s.groundwater_level_net,
+                    
+                    -- Foundation
+                    s.foundation_type,
+                    s.enforcement_term,
+                    s.recovery_advised,
+                    s.damage_cause,
+                    s.damage_characteristics,
+                    s.construction_pile,
+                    s.wood_type,
+                    s.wood_encroachement,
 
-                        -- Building
-                        s.crack_indoor_restored,
-                        s.crack_indoor_type,
-                        s.crack_indoor_size,
-                        s.crack_facade_front_restored,
-                        s.crack_facade_front_type,
-                        s.crack_facade_front_size,
-                        s.crack_facade_back_restored,
-                        s.crack_facade_back_type,
-                        s.crack_facade_back_size,
-                        s.crack_facade_left_restored,
-                        s.crack_facade_left_type,
-                        s.crack_facade_left_size,
-                        s.crack_facade_right_restored,
-                        s.crack_facade_right_type,
-                        s.crack_facade_right_size,
-                        s.deformed_facade,
-                        s.threshold_updown_skewed,
-                        s.threshold_front_level,
-                        s.threshold_back_level,
-                        s.skewed_parallel,
-                        s.skewed_parallel_facade,
-                        s.skewed_perpendicular,
-                        s.skewed_perpendicular_facade,
-                        s.settlement_speed,
-                        s.skewed_window_frame
-                FROM    report.inquiry_sample AS s
-                JOIN 	report.inquiry AS i ON i.id = s.inquiry
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant
-                ORDER BY s.create_date DESC";
+                    -- Building
+                    s.crack_indoor_restored,
+                    s.crack_indoor_type,
+                    s.crack_indoor_size,
+                    s.crack_facade_front_restored,
+                    s.crack_facade_front_type,
+                    s.crack_facade_front_size,
+                    s.crack_facade_back_restored,
+                    s.crack_facade_back_type,
+                    s.crack_facade_back_size,
+                    s.crack_facade_left_restored,
+                    s.crack_facade_left_type,
+                    s.crack_facade_left_size,
+                    s.crack_facade_right_restored,
+                    s.crack_facade_right_type,
+                    s.crack_facade_right_size,
+                    s.deformed_facade,
+                    s.threshold_updown_skewed,
+                    s.threshold_front_level,
+                    s.threshold_back_level,
+                    s.skewed_parallel,
+                    s.skewed_parallel_facade,
+                    s.skewed_perpendicular,
+                    s.skewed_perpendicular_facade,
+                    s.settlement_speed,
+                    s.skewed_window_frame
+            FROM    report.inquiry_sample AS s
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   a.owner = @tenant
+            ORDER BY s.create_date DESC";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -580,89 +580,89 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation)
     {
         var sql = @"
-                SELECT  -- InquirySample
-                        s.id,
-                        s.inquiry,
-                        s.address,
-                        s.note,
-                        s.create_date,
-                        s.update_date,
-                        s.delete_date,
-                        s.built_year,
-                        s.substructure,
+            SELECT  -- InquirySample
+                    s.id,
+                    s.inquiry,
+                    s.address,
+                    s.note,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.built_year,
+                    s.substructure,
 
-                        -- Foundation Assessment
-                        s.overall_quality,
-                        s.wood_quality,
-                        s.construction_quality,
-                        s.wood_capacity_horizontal_quality,
-                        s.pile_wood_capacity_vertical_quality,
-                        s.carrying_capacity_quality,
-                        s.mason_quality,
-                        s.wood_quality_necessity,
+                    -- Foundation Assessment
+                    s.overall_quality,
+                    s.wood_quality,
+                    s.construction_quality,
+                    s.wood_capacity_horizontal_quality,
+                    s.pile_wood_capacity_vertical_quality,
+                    s.carrying_capacity_quality,
+                    s.mason_quality,
+                    s.wood_quality_necessity,
 
-                        -- Foundation Measurement
-                        s.construction_level,
-                        s.wood_level,
-                        s.pile_diameter_top,
-                        s.pile_diameter_bottom,
-                        s.pile_head_level,
-                        s.pile_tip_level,
-                        s.foundation_depth,
-                        s.mason_level,
-                        s.concrete_charger_length,
-                        s.pile_distance_length,
-                        s.wood_penetration_depth,
+                    -- Foundation Measurement
+                    s.construction_level,
+                    s.wood_level,
+                    s.pile_diameter_top,
+                    s.pile_diameter_bottom,
+                    s.pile_head_level,
+                    s.pile_tip_level,
+                    s.foundation_depth,
+                    s.mason_level,
+                    s.concrete_charger_length,
+                    s.pile_distance_length,
+                    s.wood_penetration_depth,
 
-                        -- Surrounding
-                        s.cpt,
-                        s.monitoring_well,
-                        s.groundwater_level_temp,
-                        s.groundlevel,
-                        s.groundwater_level_net,
-                        
-                        -- Foundation
-                        s.foundation_type,
-                        s.enforcement_term,
-                        s.recovery_advised,
-                        s.damage_cause,
-                        s.damage_characteristics,
-                        s.construction_pile,
-                        s.wood_type,
-                        s.wood_encroachement,
+                    -- Surrounding
+                    s.cpt,
+                    s.monitoring_well,
+                    s.groundwater_level_temp,
+                    s.groundlevel,
+                    s.groundwater_level_net,
+                    
+                    -- Foundation
+                    s.foundation_type,
+                    s.enforcement_term,
+                    s.recovery_advised,
+                    s.damage_cause,
+                    s.damage_characteristics,
+                    s.construction_pile,
+                    s.wood_type,
+                    s.wood_encroachement,
 
-                        -- Building
-                        s.crack_indoor_restored,
-                        s.crack_indoor_type,
-                        s.crack_indoor_size,
-                        s.crack_facade_front_restored,
-                        s.crack_facade_front_type,
-                        s.crack_facade_front_size,
-                        s.crack_facade_back_restored,
-                        s.crack_facade_back_type,
-                        s.crack_facade_back_size,
-                        s.crack_facade_left_restored,
-                        s.crack_facade_left_type,
-                        s.crack_facade_left_size,
-                        s.crack_facade_right_restored,
-                        s.crack_facade_right_type,
-                        s.crack_facade_right_size,
-                        s.deformed_facade,
-                        s.threshold_updown_skewed,
-                        s.threshold_front_level,
-                        s.threshold_back_level,
-                        s.skewed_parallel,
-                        s.skewed_parallel_facade,
-                        s.skewed_perpendicular,
-                        s.skewed_perpendicular_facade,
-                        s.settlement_speed,
-                        s.skewed_window_frame
-                FROM    report.inquiry_sample AS s
-                JOIN 	report.inquiry AS i ON i.id = s.inquiry
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant
-                AND     i.id = @id
-                ORDER BY s.create_date DESC";
+                    -- Building
+                    s.crack_indoor_restored,
+                    s.crack_indoor_type,
+                    s.crack_indoor_size,
+                    s.crack_facade_front_restored,
+                    s.crack_facade_front_type,
+                    s.crack_facade_front_size,
+                    s.crack_facade_back_restored,
+                    s.crack_facade_back_type,
+                    s.crack_facade_back_size,
+                    s.crack_facade_left_restored,
+                    s.crack_facade_left_type,
+                    s.crack_facade_left_size,
+                    s.crack_facade_right_restored,
+                    s.crack_facade_right_type,
+                    s.crack_facade_right_size,
+                    s.deformed_facade,
+                    s.threshold_updown_skewed,
+                    s.threshold_front_level,
+                    s.threshold_back_level,
+                    s.skewed_parallel,
+                    s.skewed_parallel_facade,
+                    s.skewed_perpendicular,
+                    s.skewed_perpendicular_facade,
+                    s.settlement_speed,
+                    s.skewed_window_frame
+            FROM    report.inquiry_sample AS s
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   a.owner = @tenant
+            AND     i.id = @id
+            ORDER BY s.create_date DESC";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -682,85 +682,85 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         ResetCacheEntity(entity);
 
         var sql = @"
-                    UPDATE  report.inquiry_sample AS s
-                    SET     -- InquirySample
-                            inquiry = @inquiry,
-                            address = @address,
-                            note = @note,
-                            built_year = @built_year,
-                            substructure = @substructure,
+            UPDATE  report.inquiry_sample AS s
+            SET     -- InquirySample
+                    inquiry = @inquiry,
+                    address = @address,
+                    note = NULLIF(trim(@note), ''),
+                    built_year = @built_year,
+                    substructure = @substructure,
 
-                            -- Foundation Assessment
-                            overall_quality = @overall_quality,
-                            wood_quality = @wood_quality,
-                            construction_quality = @construction_quality,
-                            wood_capacity_horizontal_quality = @wood_capacity_horizontal_quality,
-                            pile_wood_capacity_vertical_quality = @pile_wood_capacity_vertical_quality,
-                            carrying_capacity_quality = @carrying_capacity_quality,
-                            mason_quality = @mason_quality,
-                            wood_quality_necessity = @wood_quality_necessity,
+                    -- Foundation Assessment
+                    overall_quality = @overall_quality,
+                    wood_quality = @wood_quality,
+                    construction_quality = @construction_quality,
+                    wood_capacity_horizontal_quality = @wood_capacity_horizontal_quality,
+                    pile_wood_capacity_vertical_quality = @pile_wood_capacity_vertical_quality,
+                    carrying_capacity_quality = @carrying_capacity_quality,
+                    mason_quality = @mason_quality,
+                    wood_quality_necessity = @wood_quality_necessity,
 
-                            -- Foundation Measurement
-                            construction_level = @construction_level,
-                            wood_level = @wood_level,
-                            pile_diameter_top = @pile_diameter_top,
-                            pile_diameter_bottom = @pile_diameter_bottom,
-                            pile_head_level = @pile_head_level,
-                            pile_tip_level = @pile_tip_level,
-                            foundation_depth = @foundation_depth,
-                            mason_level = @mason_level,
-                            concrete_charger_length = @concrete_charger_length,
-                            pile_distance_length = @pile_distance_length,
-                            wood_penetration_depth = @wood_penetration_depth,
+                    -- Foundation Measurement
+                    construction_level = @construction_level,
+                    wood_level = @wood_level,
+                    pile_diameter_top = @pile_diameter_top,
+                    pile_diameter_bottom = @pile_diameter_bottom,
+                    pile_head_level = @pile_head_level,
+                    pile_tip_level = @pile_tip_level,
+                    foundation_depth = @foundation_depth,
+                    mason_level = @mason_level,
+                    concrete_charger_length = @concrete_charger_length,
+                    pile_distance_length = @pile_distance_length,
+                    wood_penetration_depth = @wood_penetration_depth,
 
-                            -- Surrounding
-                            cpt = @cpt,
-                            monitoring_well = @monitoring_well,
-                            groundwater_level_temp = @groundwater_level_temp,
-                            groundlevel = @groundlevel,
-                            groundwater_level_net = @groundwater_level_net,
-                        
-                            -- Foundation
-                            foundation_type = @foundation_type,
-                            enforcement_term = @enforcement_term,
-                            recovery_advised = @recovery_advised,
-                            damage_cause = @damage_cause,
-                            damage_characteristics = @damage_characteristics,
-                            construction_pile = @construction_pile,
-                            wood_type = @wood_type,
-                            wood_encroachement = @wood_encroachement,
+                    -- Surrounding
+                    cpt = NULLIF(trim(@cpt), ''),
+                    monitoring_well = NULLIF(trim(@monitoring_well), ''),
+                    groundwater_level_temp = @groundwater_level_temp,
+                    groundlevel = @groundlevel,
+                    groundwater_level_net = @groundwater_level_net,
+                
+                    -- Foundation
+                    foundation_type = @foundation_type,
+                    enforcement_term = @enforcement_term,
+                    recovery_advised = @recovery_advised,
+                    damage_cause = @damage_cause,
+                    damage_characteristics = @damage_characteristics,
+                    construction_pile = @construction_pile,
+                    wood_type = @wood_type,
+                    wood_encroachement = @wood_encroachement,
 
-                            -- Building
-                            crack_indoor_restored = @crack_indoor_restored,
-                            crack_indoor_type = @crack_indoor_type,
-                            crack_indoor_size = @crack_indoor_size,
-                            crack_facade_front_restored = @crack_facade_front_restored,
-                            crack_facade_front_type = @crack_facade_front_type,
-                            crack_facade_front_size = @crack_facade_front_size,
-                            crack_facade_back_restored = @crack_facade_back_restored,
-                            crack_facade_back_type = @crack_facade_back_type,
-                            crack_facade_back_size = @crack_facade_back_size,
-                            crack_facade_left_restored = @crack_facade_left_restored,
-                            crack_facade_left_type = @crack_facade_left_type,
-                            crack_facade_left_size = @crack_facade_left_size,
-                            crack_facade_right_restored = @crack_facade_right_restored,
-                            crack_facade_right_type = @crack_facade_right_type,
-                            crack_facade_right_size = @crack_facade_right_size,
-                            deformed_facade = @deformed_facade,
-                            threshold_updown_skewed = @threshold_updown_skewed,
-                            threshold_front_level = @threshold_front_level,
-                            threshold_back_level = @threshold_back_level,
-                            skewed_parallel = @skewed_parallel,
-                            skewed_parallel_facade = @skewed_parallel_facade,
-                            skewed_perpendicular = @skewed_perpendicular,
-                            skewed_perpendicular_facade = @skewed_perpendicular_facade,
-                            settlement_speed = @settlement_speed,
-                            skewed_window_frame = @skewed_window_frame
-                    FROM 	application.attribution AS a, report.inquiry AS i
-                    WHERE   i.id = s.inquiry
-                    AND     a.id = i.attribution
-                    AND     s.id = @id
-                    AND     a.owner = @tenant";
+                    -- Building
+                    crack_indoor_restored = @crack_indoor_restored,
+                    crack_indoor_type = @crack_indoor_type,
+                    crack_indoor_size = @crack_indoor_size,
+                    crack_facade_front_restored = @crack_facade_front_restored,
+                    crack_facade_front_type = @crack_facade_front_type,
+                    crack_facade_front_size = @crack_facade_front_size,
+                    crack_facade_back_restored = @crack_facade_back_restored,
+                    crack_facade_back_type = @crack_facade_back_type,
+                    crack_facade_back_size = @crack_facade_back_size,
+                    crack_facade_left_restored = @crack_facade_left_restored,
+                    crack_facade_left_type = @crack_facade_left_type,
+                    crack_facade_left_size = @crack_facade_left_size,
+                    crack_facade_right_restored = @crack_facade_right_restored,
+                    crack_facade_right_type = @crack_facade_right_type,
+                    crack_facade_right_size = @crack_facade_right_size,
+                    deformed_facade = @deformed_facade,
+                    threshold_updown_skewed = @threshold_updown_skewed,
+                    threshold_front_level = @threshold_front_level,
+                    threshold_back_level = @threshold_back_level,
+                    skewed_parallel = @skewed_parallel,
+                    skewed_parallel_facade = @skewed_parallel_facade,
+                    skewed_perpendicular = @skewed_perpendicular,
+                    skewed_perpendicular_facade = @skewed_perpendicular_facade,
+                    settlement_speed = @settlement_speed,
+                    skewed_window_frame = @skewed_window_frame
+            FROM 	application.attribution AS a, report.inquiry AS i
+            WHERE   i.id = s.inquiry
+            AND     a.id = i.attribution
+            AND     s.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

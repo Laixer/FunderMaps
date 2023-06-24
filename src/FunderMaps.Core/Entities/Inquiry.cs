@@ -48,7 +48,7 @@ public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>
     ///     Note.
     /// </summary>
     [DataType(DataType.MultilineText)]
-    public string Note { get; set; }
+    public string? Note { get; set; }
 
     /// <summary>
     ///     Original document creation.

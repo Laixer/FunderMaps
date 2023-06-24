@@ -144,13 +144,13 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         => new()
         {
             Id = reader.GetInt(offset + 0),
-            DocumentName = reader.GetSafeString(offset + 1),
+            DocumentName = reader.GetString(offset + 1),
             Inspection = reader.GetBoolean(offset + 2),
             JointMeasurement = reader.GetBoolean(offset + 3),
             FloorMeasurement = reader.GetBoolean(offset + 4),
             Note = reader.GetSafeString(offset + 5),
             DocumentDate = reader.GetDateTime(offset + 6),
-            DocumentFile = reader.GetSafeString(offset + 7),
+            DocumentFile = reader.GetString(offset + 7),
             Type = reader.GetFieldValue<InquiryType>(offset + 8),
             StandardF3o = reader.GetBoolean(offset + 9),
             Attribution = new()
@@ -294,31 +294,31 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         ResetCacheEntity(entity);
 
         var sql = @"
-                -- Attribution
-                UPDATE  application.attribution AS a
-                SET     reviewer = @reviewer,
-                        contractor2 = @contractor
-                FROM    report.inquiry AS i
-                WHERE   a.id = i.attribution
-                AND     i.id = @id
-                AND     a.owner = @tenant;
+            -- Attribution
+            UPDATE  application.attribution AS a
+            SET     reviewer = @reviewer,
+                    contractor2 = @contractor
+            FROM    report.inquiry AS i
+            WHERE   a.id = i.attribution
+            AND     i.id = @id
+            AND     a.owner = @tenant;
 
-                -- Inquiry
-                UPDATE  report.inquiry AS i
-                SET     document_name = @document_name,
-                        inspection = @inspection,
-                        joint_measurement = @joint_measurement,
-                        floor_measurement = @floor_measurement,
-                        note = NULLIF(trim(@note), ''),
-                        document_date = @document_date,
-                        document_file = @document_file,
-                        access_policy = @access_policy,
-                        type = @type,
-                        standard_f3o = @standard_f3o
-                FROM 	application.attribution AS a
-                WHERE   a.id = i.attribution
-                AND     i.id = @id
-                AND     a.owner = @tenant";
+            -- Inquiry
+            UPDATE  report.inquiry AS i
+            SET     document_name = @document_name,
+                    inspection = @inspection,
+                    joint_measurement = @joint_measurement,
+                    floor_measurement = @floor_measurement,
+                    note = NULLIF(trim(@note), ''),
+                    document_date = @document_date,
+                    document_file = @document_file,
+                    access_policy = @access_policy,
+                    type = @type,
+                    standard_f3o = @standard_f3o
+            FROM 	application.attribution AS a
+            WHERE   a.id = i.attribution
+            AND     i.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -347,12 +347,12 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         ResetCacheEntity(id);
 
         var sql = @"
-                UPDATE  report.inquiry AS i
-                SET     audit_status = @status
-                FROM 	application.attribution AS a
-                WHERE   a.id = i.attribution
-                AND     i.id = @id
-                AND     a.owner = @tenant";
+            UPDATE  report.inquiry AS i
+            SET     audit_status = @status
+            FROM 	application.attribution AS a
+            WHERE   a.id = i.attribution
+            AND     i.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

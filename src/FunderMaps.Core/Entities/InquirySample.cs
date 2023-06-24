@@ -36,7 +36,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Note.
     /// </summary>
     [DataType(DataType.MultilineText)]
-    public string Note { get; set; }
+    public string? Note { get; set; }
 
     /// <summary>
     ///     Built year.
@@ -55,12 +55,12 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     CPT.
     /// </summary>
-    public string Cpt { get; set; }
+    public string? Cpt { get; set; }
 
     /// <summary>
     ///     Monitoring well.
     /// </summary>
-    public string MonitoringWell { get; set; }
+    public string? MonitoringWell { get; set; }
 
     /// <summary>
     ///     Groundwater level temp.

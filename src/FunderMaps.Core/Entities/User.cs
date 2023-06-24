@@ -72,11 +72,4 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
         => !string.IsNullOrEmpty(GivenName)
             ? (!string.IsNullOrEmpty(LastName) ? $"{GivenName} {LastName}" : GivenName)
             : (!string.IsNullOrEmpty(Email) ? Email : Id.ToString());
-
-    /// <summary>
-    ///     Check if self is equal to other entity.
-    /// </summary>
-    /// <param name="other">Entity to compare.</param>
-    /// <returns><c>True</c> on success, false otherwise.</returns>
-    public override bool Equals(User other) => Id == other.Id;
 }
