@@ -69,7 +69,10 @@ public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception
         while (_exception is not null)
         {
             yield return _exception;
-            _exception = _exception.InnerException;
+            if (_exception.InnerException is not null)
+            {
+                _exception = _exception.InnerException;
+            }
         }
     }
 
