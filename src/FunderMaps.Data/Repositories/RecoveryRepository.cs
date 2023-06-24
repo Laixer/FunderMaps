@@ -67,41 +67,43 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
     public override async Task<int> AddAsync(Recovery entity)
     {
         var sql = @"
-                WITH attribution AS (
-	                INSERT INTO application.attribution(
-                        reviewer,
-                        creator,
-                        owner,
-                        contractor)
-		            VALUES (
-                        @reviewer,
-                        @user,
-                        @tenant,
-                        @contractor)
-	                RETURNING id AS attribution_id
-                )
-                INSERT INTO report.recovery(
-                    note,
-                    attribution,
-                    access_policy,
-                    type,
-                    document_date,
-                    document_file,
-                    document_name)
-                SELECT
-                    NULLIF(trim(@note), ''),
-                    attribution_id,
-                    @access_policy,
-                    @type,
-                    @document_date,
-                    @document_file,
-                    @document_name
-                FROM attribution
-                RETURNING id";
+            WITH attribution AS (
+                INSERT INTO application.attribution(
+                    reviewer,
+                    creator,
+                    owner,
+                    contractor,
+                    contractor2)
+                VALUES (
+                    @reviewer,
+                    @user,
+                    @tenant,
+                    'd8c19418-c832-4c91-8993-84b8ed641448',
+                    @contractor)
+                RETURNING id AS attribution_id
+            )
+            INSERT INTO report.recovery(
+                note,
+                attribution,
+                access_policy,
+                type,
+                document_date,
+                document_file,
+                document_name)
+            SELECT
+                NULLIF(trim(@note), ''),
+                attribution_id,
+                @access_policy,
+                @type,
+                @document_date,
+                @document_file,
+                @document_name
+            FROM attribution
+            RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
+        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
         context.AddParameterWithValue("user", AppContext.UserId);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
@@ -118,8 +120,8 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
     public override async Task<long> CountAsync()
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.recovery";
+            SELECT  COUNT(*)
+            FROM    report.recovery";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -133,9 +135,9 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
     public override async Task DeleteAsync(int id)
     {
         var sql = @"
-                DELETE
-                FROM    report.recovery
-                WHERE   id = @id";
+            DELETE
+            FROM    report.recovery
+            WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -157,35 +159,35 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         }
 
         var sql = @"
-                SELECT  -- Recovery
-                        r.id,
-                        r.note,
-                        r.type,
-                        r.document_date,
-                        r.document_file,
-                        r.document_name,
+            SELECT  -- Recovery
+                    r.id,
+                    r.note,
+                    r.type,
+                    r.document_date,
+                    r.document_file,
+                    r.document_name,
 
-                        -- Attribution
-                        a.reviewer,
-                        a.creator,
-                        a.owner,
-                        a.contractor,
+                    -- Attribution
+                    a.reviewer,
+                    a.creator,
+                    a.owner,
+                    a.contractor,
 
-                        -- State control
-                        r.audit_status,
+                    -- State control
+                    r.audit_status,
 
-                        -- Access control
-                        r.access_policy,
+                    -- Access control
+                    r.access_policy,
 
-                        -- Record control
-                        r.create_date,
-		                r.update_date,
-		                r.delete_date
-                FROM    report.recovery AS r
-                JOIN 	application.attribution AS a ON a.id = r.attribution
-                WHERE   r.id = @id
-                AND     a.owner = @tenant
-                LIMIT   1";
+                    -- Record control
+                    r.create_date,
+                    r.update_date,
+                    r.delete_date
+            FROM    report.recovery AS r
+            JOIN 	application.attribution AS a ON a.id = r.attribution
+            WHERE   r.id = @id
+            AND     a.owner = @tenant
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -204,34 +206,34 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
     public override async IAsyncEnumerable<Recovery> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  -- Recovery
-                        r.id,
-                        r.note,
-                        r.type,
-                        r.document_date,
-                        r.document_file,
-                        r.document_name,
+            SELECT  -- Recovery
+                    r.id,
+                    r.note,
+                    r.type,
+                    r.document_date,
+                    r.document_file,
+                    r.document_name,
 
-                        -- Attribution
-                        a.reviewer,
-                        a.creator,
-                        a.owner,
-                        a.contractor,
+                    -- Attribution
+                    a.reviewer,
+                    a.creator,
+                    a.owner,
+                    a.contractor,
 
-                        -- State control
-                        r.audit_status,
+                    -- State control
+                    r.audit_status,
 
-                        -- Access control
-                        r.access_policy,
+                    -- Access control
+                    r.access_policy,
 
-                        -- Record control
-                        r.create_date,
-		                r.update_date,
-		                r.delete_date
-                FROM    report.recovery AS r
-                JOIN 	application.attribution AS a ON a.id = r.attribution
-                WHERE   a.owner = @tenant
-                ORDER BY coalesce(r.update_date, r.create_date) DESC";
+                    -- Record control
+                    r.create_date,
+                    r.update_date,
+                    r.delete_date
+            FROM    report.recovery AS r
+            JOIN 	application.attribution AS a ON a.id = r.attribution
+            WHERE   a.owner = @tenant
+            ORDER BY coalesce(r.update_date, r.create_date) DESC";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -254,32 +256,32 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         ResetCacheEntity(entity);
 
         var sql = @"
-                    -- Attribution
-                    UPDATE  application.attribution AS a
-                    SET     reviewer = @reviewer,
-                            contractor = @contractor
-                    FROM    report.recovery AS r
-                    WHERE   a.id = r.attribution
-                    AND     r.id = @id
-                    AND     a.owner = @tenant;
-                    
-                    -- Recovery
-                    UPDATE  report.recovery AS r
-                    SET     note = NULLIF(trim(@note), ''),
-                            access_policy = @access_policy,
-                            type = @type,
-                            document_date = @document_date,
-                            document_file = @document_file,
-                            document_name = @document_name
-                    FROM 	application.attribution AS a
-                    WHERE   a.id = r.attribution
-                    AND     r.id = @id
-                    AND     a.owner = @tenant";
+                -- Attribution
+                UPDATE  application.attribution AS a
+                SET     reviewer = @reviewer,
+                        contractor = @contractor
+                FROM    report.recovery AS r
+                WHERE   a.id = r.attribution
+                AND     r.id = @id
+                AND     a.owner = @tenant;
+                
+                -- Recovery
+                UPDATE  report.recovery AS r
+                SET     note = NULLIF(trim(@note), ''),
+                        access_policy = @access_policy,
+                        type = @type,
+                        document_date = @document_date,
+                        document_file = @document_file,
+                        document_name = @document_name
+                FROM 	application.attribution AS a
+                WHERE   a.id = r.attribution
+                AND     r.id = @id
+                AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", entity.Id);
-        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
+        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
@@ -303,12 +305,12 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         ResetCacheEntity(id);
 
         var sql = @"
-                    UPDATE  report.recovery AS r
-                    SET     audit_status = @status
-                    FROM 	application.attribution AS a
-                    WHERE   a.id = r.attribution
-                    AND     r.id = @id
-                    AND     a.owner = @tenant";
+                UPDATE  report.recovery AS r
+                SET     audit_status = @status
+                FROM 	application.attribution AS a
+                WHERE   a.id = r.attribution
+                AND     r.id = @id
+                AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

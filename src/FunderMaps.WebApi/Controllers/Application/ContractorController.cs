@@ -12,7 +12,6 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </summary>
 public class ContractorController : ControllerBase
 {
-    // private readonly IMapper _mapper;
     private readonly IContractorRepository _contractorRepository;
 
     /// <summary>
@@ -20,7 +19,6 @@ public class ContractorController : ControllerBase
     /// </summary>
     public ContractorController(IOrganizationRepository organizationRepository, IContractorRepository contractorRepository)
     {
-        // _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
     }
 
@@ -32,8 +30,7 @@ public class ContractorController : ControllerBase
     ///     Cache response for 8 hours. Contractors will not change often.
     ///     Contractors are tenant independent.
     /// </remarks>
-    // [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 8)]
-    [HttpGet("contractor")]
+    [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
     public async IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination)
     {
         await foreach (var contractor in _contractorRepository.ListAllAsync(Navigation.All))

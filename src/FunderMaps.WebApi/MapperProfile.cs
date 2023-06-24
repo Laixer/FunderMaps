@@ -14,7 +14,7 @@ public class MapperProfile : Profile
     /// </summary>
     public MapperProfile()
     {
-        CreateMap<Organization, ContractorDto>();
+        // CreateMap<Organization, ContractorDto>();
         CreateMap<Inquiry, InquiryDto>().ReverseMap();
         // FUTURE: Try and map nested objects in a cleaner way
         CreateMap<InquiryFull, InquiryDto>()

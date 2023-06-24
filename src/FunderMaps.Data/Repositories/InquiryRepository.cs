@@ -20,50 +20,50 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     public override async Task<int> AddAsync(InquiryFull entity)
     {
         var sql = @"
-                WITH attribution AS (
-	                INSERT INTO application.attribution(
-                        reviewer,
-                        creator,
-                        owner,
-                        contractor,
-                        contractor2)
-		            VALUES (
-                        @reviewer,
-                        @user,
-                        @tenant,
-                        'd8c19418-c832-4c91-8993-84b8ed641448',
-                        @contractor)
-	                RETURNING id AS attribution_id
-                )
-                INSERT INTO report.inquiry(
-	                document_name,
-	                inspection,
-	                joint_measurement,
-	                floor_measurement,
-	                note,
-	                document_date,
-	                document_file,
-	                attribution,
-                    access_policy,
-	                type,
-	                standard_f3o)
-                SELECT @document_name,
-                    @inspection,
-                    @joint_measurement,
-                    @floor_measurement,
-                    NULLIF(trim(@note), ''),
-                    @document_date,
-                    @document_file,
-	                attribution_id,
-                    @access_policy,
-	                @type,
-                    @standard_f3o
-                FROM attribution
-                RETURNING id";
+            WITH attribution AS (
+                INSERT INTO application.attribution(
+                    reviewer,
+                    creator,
+                    owner,
+                    contractor,
+                    contractor2)
+                VALUES (
+                    @reviewer,
+                    @user,
+                    @tenant,
+                    'd8c19418-c832-4c91-8993-84b8ed641448',
+                    @contractor)
+                RETURNING id AS attribution_id
+            )
+            INSERT INTO report.inquiry(
+                document_name,
+                inspection,
+                joint_measurement,
+                floor_measurement,
+                note,
+                document_date,
+                document_file,
+                attribution,
+                access_policy,
+                type,
+                standard_f3o)
+            SELECT @document_name,
+                @inspection,
+                @joint_measurement,
+                @floor_measurement,
+                NULLIF(trim(@note), ''),
+                @document_date,
+                @document_file,
+                attribution_id,
+                @access_policy,
+                @type,
+                @standard_f3o
+            FROM attribution
+            RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
+        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
         context.AddParameterWithValue("user", AppContext.UserId);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
@@ -80,10 +80,10 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     public override async Task<long> CountAsync()
     {
         var sql = @"
-				SELECT  COUNT(*)
-                FROM    report.inquiry AS i
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-				WHERE   a.owner = @tenant";
+            SELECT  COUNT(*)
+            FROM    report.inquiry AS i
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -101,12 +101,12 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         ResetCacheEntity(id);
 
         var sql = @"
-                DELETE
-                FROM    report.inquiry AS i
-                USING 	application.attribution AS a
-                WHERE   a.id = i.attribution
-                AND     i.id = @id
-                AND     a.owner = @tenant";
+            DELETE
+            FROM    report.inquiry AS i
+            USING 	application.attribution AS a
+            WHERE   a.id = i.attribution
+            AND     i.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -184,39 +184,39 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         }
 
         var sql = @"
-                SELECT  -- Inquiry
-                        i.id,
-                        i.document_name,
-                        i.inspection,
-                        i.joint_measurement,
-                        i.floor_measurement,
-                        i.note,
-                        i.document_date,
-                        i.document_file,
-                        i.type,
-                        i.standard_f3o,
+            SELECT  -- Inquiry
+                    i.id,
+                    i.document_name,
+                    i.inspection,
+                    i.joint_measurement,
+                    i.floor_measurement,
+                    i.note,
+                    i.document_date,
+                    i.document_file,
+                    i.type,
+                    i.standard_f3o,
 
-                        -- Attribution
-                        a.reviewer,
-                        a.creator,
-                        a.owner,
-                        a.contractor2,
+                    -- Attribution
+                    a.reviewer,
+                    a.creator,
+                    a.owner,
+                    a.contractor2,
 
-                        -- State control
-                        i.audit_status,
+                    -- State control
+                    i.audit_status,
 
-                        -- Access control
-                        i.access_policy,
-		                
-                        -- Record control
-                        i.create_date,
-		                i.update_date,
-		                i.delete_date
-                FROM    report.inquiry AS i
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   i.id = @id
-                AND     a.owner = @tenant
-                LIMIT   1";
+                    -- Access control
+                    i.access_policy,
+                    
+                    -- Record control
+                    i.create_date,
+                    i.update_date,
+                    i.delete_date
+            FROM    report.inquiry AS i
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   i.id = @id
+            AND     a.owner = @tenant
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -235,38 +235,38 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     public override async IAsyncEnumerable<InquiryFull> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  -- Inquiry
-                        i.id,
-                        i.document_name,
-                        i.inspection,
-                        i.joint_measurement,
-                        i.floor_measurement,
-                        i.note,
-                        i.document_date,
-                        i.document_file,
-                        i.type,
-                        i.standard_f3o,
+            SELECT  -- Inquiry
+                    i.id,
+                    i.document_name,
+                    i.inspection,
+                    i.joint_measurement,
+                    i.floor_measurement,
+                    i.note,
+                    i.document_date,
+                    i.document_file,
+                    i.type,
+                    i.standard_f3o,
 
-                        -- Attribution
-                        a.reviewer,
-                        a.creator,
-                        a.owner,
-                        a.contractor2,
+                    -- Attribution
+                    a.reviewer,
+                    a.creator,
+                    a.owner,
+                    a.contractor2,
 
-                        -- State control
-                        i.audit_status,
+                    -- State control
+                    i.audit_status,
 
-                        -- Access control
-                        i.access_policy,
+                    -- Access control
+                    i.access_policy,
 
-                        -- Record control
-                        i.create_date,
-                        i.update_date,
-                        i.delete_date
-                FROM    report.inquiry AS i
-                JOIN 	application.attribution AS a ON a.id = i.attribution
-                WHERE   a.owner = @tenant
-                ORDER BY coalesce(i.update_date, i.create_date) DESC";
+                    -- Record control
+                    i.create_date,
+                    i.update_date,
+                    i.delete_date
+            FROM    report.inquiry AS i
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   a.owner = @tenant
+            ORDER BY coalesce(i.update_date, i.create_date) DESC";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -289,36 +289,36 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         ResetCacheEntity(entity);
 
         var sql = @"
-                    -- Attribution
-                    UPDATE  application.attribution AS a
-                    SET     reviewer = @reviewer,
-                            contractor2 = @contractor
-                    FROM    report.inquiry AS i
-                    WHERE   a.id = i.attribution
-                    AND     i.id = @id
-                    AND     a.owner = @tenant;
+                -- Attribution
+                UPDATE  application.attribution AS a
+                SET     reviewer = @reviewer,
+                        contractor2 = @contractor
+                FROM    report.inquiry AS i
+                WHERE   a.id = i.attribution
+                AND     i.id = @id
+                AND     a.owner = @tenant;
 
-                    -- Inquiry
-                    UPDATE  report.inquiry AS i
-                    SET     document_name = @document_name,
-                            inspection = @inspection,
-                            joint_measurement = @joint_measurement,
-                            floor_measurement = @floor_measurement,
-                            note = NULLIF(trim(@note), ''),
-                            document_date = @document_date,
-                            document_file = @document_file,
-                            access_policy = @access_policy,
-                            type = @type,
-                            standard_f3o = @standard_f3o
-                    FROM 	application.attribution AS a
-                    WHERE   a.id = i.attribution
-                    AND     i.id = @id
-                    AND     a.owner = @tenant";
+                -- Inquiry
+                UPDATE  report.inquiry AS i
+                SET     document_name = @document_name,
+                        inspection = @inspection,
+                        joint_measurement = @joint_measurement,
+                        floor_measurement = @floor_measurement,
+                        note = NULLIF(trim(@note), ''),
+                        document_date = @document_date,
+                        document_file = @document_file,
+                        access_policy = @access_policy,
+                        type = @type,
+                        standard_f3o = @standard_f3o
+                FROM 	application.attribution AS a
+                WHERE   a.id = i.attribution
+                AND     i.id = @id
+                AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", entity.Id);
-        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
+        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
@@ -342,12 +342,12 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         ResetCacheEntity(id);
 
         var sql = @"
-                    UPDATE  report.inquiry AS i
-                    SET     audit_status = @status
-                    FROM 	application.attribution AS a
-                    WHERE   a.id = i.attribution
-                    AND     i.id = @id
-                    AND     a.owner = @tenant";
+                UPDATE  report.inquiry AS i
+                SET     audit_status = @status
+                FROM 	application.attribution AS a
+                WHERE   a.id = i.attribution
+                AND     i.id = @id
+                AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

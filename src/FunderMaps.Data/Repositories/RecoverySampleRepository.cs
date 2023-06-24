@@ -60,31 +60,31 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public override async Task<int> AddAsync(RecoverySample entity)
     {
         var sql = @"
-                INSERT INTO report.recovery_sample(
-                    recovery,
-                    address,
-                    note,
-                    status,
-                    type,
-                    pile_type,
-                    contractor,
-                    facade,
-                    permit,
-                    permit_date,
-                    recovery_date)
-                VALUES (
-                    @recovery,
-                    @address,
-                    NULLIF(trim(@note), ''),
-                    @status,
-                    @type,
-                    @pile_type,
-                    @contractor,
-                    @facade,
-                    @permit,
-                    @permit_date,
-                    @recovery_date)
-                RETURNING id";
+            INSERT INTO report.recovery_sample(
+                recovery,
+                address,
+                note,
+                status,
+                type,
+                pile_type,
+                contractor,
+                facade,
+                permit,
+                permit_date,
+                recovery_date)
+            VALUES (
+                @recovery,
+                @address,
+                NULLIF(trim(@note), ''),
+                @status,
+                @type,
+                @pile_type,
+                @contractor,
+                @facade,
+                @permit,
+                @permit_date,
+                @recovery_date)
+            RETURNING id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -100,8 +100,8 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public override async Task<long> CountAsync()
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.recovery_sample";
+            SELECT  COUNT(*)
+            FROM    report.recovery_sample";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -115,12 +115,12 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public async Task<long> CountAsync(int recovery)
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    report.recovery_sample AS s
-                JOIN    report.recovery AS r ON r.id = s.recovery
-                JOIN    application.attribution AS a ON a.id = r.attribution
-                WHERE   a.owner = @tenant
-                AND     r.id = @id";
+            SELECT  COUNT(*)
+            FROM    report.recovery_sample AS s
+            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    application.attribution AS a ON a.id = r.attribution
+            WHERE   a.owner = @tenant
+            AND     r.id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -137,9 +137,9 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public override async Task DeleteAsync(int id)
     {
         var sql = @"
-                DELETE
-                FROM    report.recovery_sample
-                WHERE   id = @id";
+            DELETE
+            FROM    report.recovery_sample
+            WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -156,25 +156,25 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public override async Task<RecoverySample> GetByIdAsync(int id)
     {
         var sql = @"
-                SELECT  -- RecoverySample
-                        s.id,
-                        s.recovery,
-                        s.address,
-                        s.create_date,
-                        s.update_date,
-                        s.delete_date,
-                        s.note,
-                        s.status,
-                        s.type,
-                        s.pile_type,
-                        s.contractor,
-                        s.facade,
-                        s.permit,
-                        s.permit_date,
-                        s.recovery_date
-                FROM    report.recovery_sample AS s
-                WHERE   id = @id
-                LIMIT   1";
+            SELECT  -- RecoverySample
+                    s.id,
+                    s.recovery,
+                    s.address,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.note,
+                    s.status,
+                    s.type,
+                    s.pile_type,
+                    s.contractor,
+                    s.facade,
+                    s.permit,
+                    s.permit_date,
+                    s.recovery_date
+            FROM    report.recovery_sample AS s
+            WHERE   id = @id
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -192,27 +192,27 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public override async IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  -- RecoverySample
-                        s.id,
-                        s.recovery,
-                        s.address,
-                        s.create_date,
-                        s.update_date,
-                        s.delete_date,
-                        s.note,
-                        s.status,
-                        s.type,
-                        s.pile_type,
-                        s.contractor,
-                        s.facade,
-                        s.permit,
-                        s.permit_date,
-                        s.recovery_date
-                FROM    report.recovery_sample AS s
-                JOIN    report.recovery AS r ON r.id = s.recovery
-                JOIN    application.attribution AS a ON a.id = r.attribution
-                WHERE   a.owner = @tenant
-                ORDER BY s.create_date DESC";
+            SELECT  -- RecoverySample
+                    s.id,
+                    s.recovery,
+                    s.address,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.note,
+                    s.status,
+                    s.type,
+                    s.pile_type,
+                    s.contractor,
+                    s.facade,
+                    s.permit,
+                    s.permit_date,
+                    s.recovery_date
+            FROM    report.recovery_sample AS s
+            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    application.attribution AS a ON a.id = r.attribution
+            WHERE   a.owner = @tenant
+            ORDER BY s.create_date DESC";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -233,28 +233,28 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation)
     {
         var sql = @"
-                SELECT  -- RecoverySample
-                        s.id,
-                        s.recovery,
-                        s.address,
-                        s.create_date,
-                        s.update_date,
-                        s.delete_date,
-                        s.note,
-                        s.status,
-                        s.type,
-                        s.pile_type,
-                        s.contractor,
-                        s.facade,
-                        s.permit,
-                        s.permit_date,
-                        s.recovery_date
-                FROM    report.recovery_sample AS s
-                JOIN    report.recovery AS r ON r.id = s.recovery
-                JOIN    application.attribution AS a ON a.id = r.attribution
-                WHERE   a.owner = @tenant
-                AND     r.id = @id
-                ORDER BY s.create_date DESC";
+            SELECT  -- RecoverySample
+                    s.id,
+                    s.recovery,
+                    s.address,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.note,
+                    s.status,
+                    s.type,
+                    s.pile_type,
+                    s.contractor,
+                    s.facade,
+                    s.permit,
+                    s.permit_date,
+                    s.recovery_date
+            FROM    report.recovery_sample AS s
+            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    application.attribution AS a ON a.id = r.attribution
+            WHERE   a.owner = @tenant
+            AND     r.id = @id
+            ORDER BY s.create_date DESC";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -272,19 +272,19 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     public override async Task UpdateAsync(RecoverySample entity)
     {
         var sql = @"
-                    UPDATE  report.recovery_sample
-                    SET     recovery = @recovery,
-                            address = @address,
-                            note = NULLIF(trim(@note), ''),
-                            status = @status,
-                            type = @type,
-                            pile_type = @pile_type,
-                            contractor = @contractor,
-                            facade = @facade,
-                            permit = @permit,
-                            permit_date = @permit_date,
-                            recovery_date = @recovery_date
-                    WHERE   id = @id";
+            UPDATE  report.recovery_sample
+            SET     recovery = @recovery,
+                    address = @address,
+                    note = NULLIF(trim(@note), ''),
+                    status = @status,
+                    type = @type,
+                    pile_type = @pile_type,
+                    contractor = @contractor,
+                    facade = @facade,
+                    permit = @permit,
+                    permit_date = @permit_date,
+                    recovery_date = @recovery_date
+            WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
