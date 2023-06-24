@@ -256,27 +256,27 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         ResetCacheEntity(entity);
 
         var sql = @"
-                -- Attribution
-                UPDATE  application.attribution AS a
-                SET     reviewer = @reviewer,
-                        contractor = @contractor
-                FROM    report.recovery AS r
-                WHERE   a.id = r.attribution
-                AND     r.id = @id
-                AND     a.owner = @tenant;
-                
-                -- Recovery
-                UPDATE  report.recovery AS r
-                SET     note = NULLIF(trim(@note), ''),
-                        access_policy = @access_policy,
-                        type = @type,
-                        document_date = @document_date,
-                        document_file = @document_file,
-                        document_name = @document_name
-                FROM 	application.attribution AS a
-                WHERE   a.id = r.attribution
-                AND     r.id = @id
-                AND     a.owner = @tenant";
+            -- Attribution
+            UPDATE  application.attribution AS a
+            SET     reviewer = @reviewer,
+                    contractor = @contractor
+            FROM    report.recovery AS r
+            WHERE   a.id = r.attribution
+            AND     r.id = @id
+            AND     a.owner = @tenant;
+            
+            -- Recovery
+            UPDATE  report.recovery AS r
+            SET     note = NULLIF(trim(@note), ''),
+                    access_policy = @access_policy,
+                    type = @type,
+                    document_date = @document_date,
+                    document_file = @document_file,
+                    document_name = @document_name
+            FROM 	application.attribution AS a
+            WHERE   a.id = r.attribution
+            AND     r.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -305,12 +305,12 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         ResetCacheEntity(id);
 
         var sql = @"
-                UPDATE  report.recovery AS r
-                SET     audit_status = @status
-                FROM 	application.attribution AS a
-                WHERE   a.id = r.attribution
-                AND     r.id = @id
-                AND     a.owner = @tenant";
+            UPDATE  report.recovery AS r
+            SET     audit_status = @status
+            FROM 	application.attribution AS a
+            WHERE   a.id = r.attribution
+            AND     r.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

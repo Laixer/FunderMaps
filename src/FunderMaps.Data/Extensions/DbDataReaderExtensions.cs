@@ -108,7 +108,7 @@ internal static class DbDataReaderExtensions
     /// <param name="reader">Input reader to extend.</param>
     /// <param name="ordinal">Column ordinal.</param>
     /// <returns>Value as nullable string.</returns>
-    public static string GetSafeString(this DbDataReader reader, int ordinal)
+    public static string? GetSafeString(this DbDataReader reader, int ordinal)
     {
         if (reader is null)
         {
@@ -173,7 +173,7 @@ internal static class DbDataReaderExtensions
     /// <param name="reader">Input reader to extend.</param>
     /// <param name="ordinal">Column ordinal.</param>
     /// <returns>Value or null.</returns>
-    public static TFieldType GetSafeFieldValue<TFieldType>(this DbDataReader reader, int ordinal)
+    public static TFieldType? GetSafeFieldValue<TFieldType>(this DbDataReader reader, int ordinal)
         where TFieldType : class
     {
         if (reader is null)

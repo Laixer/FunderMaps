@@ -26,7 +26,7 @@ public sealed class Recovery : IdentifiableEntity<Recovery, int>, IAttribution, 
     /// <summary>
     ///     Note.
     /// </summary>
-    public string Note { get; set; }
+    public string? Note { get; set; }
 
     /// <summary>
     ///     Foundation recovery type.
