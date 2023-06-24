@@ -24,14 +24,14 @@ public sealed class Contact : IdentifiableEntity<Contact, string>
     /// <summary>
     ///     Contact name.
     /// </summary>
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     /// <summary>
     ///     Contact phone number.
     /// </summary>
     [Phone]
     [StringLength(16)]
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
     ///     Print object as name.
@@ -45,8 +45,5 @@ public sealed class Contact : IdentifiableEntity<Contact, string>
     /// <param name="other">Entity to compare.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
     public override bool Equals(Contact other)
-        => other != null &&
-            Email == other.Email &&
-            Name == other.Name &&
-            PhoneNumber == other.PhoneNumber;
+        => other is not null && Email == other.Email;
 }

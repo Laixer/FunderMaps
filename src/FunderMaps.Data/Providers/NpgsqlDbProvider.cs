@@ -22,6 +22,11 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
     public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
         : base(options)
     {
+        if (_options.ConnectionStringName is null)
+        {
+            throw new ArgumentNullException(nameof(_options.ConnectionStringName));
+        }
+
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString(_options.ConnectionStringName));
 
         if (!string.IsNullOrEmpty(_options.ApplicationName))

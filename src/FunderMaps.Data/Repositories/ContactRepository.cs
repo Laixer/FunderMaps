@@ -20,15 +20,15 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
     public override async Task<string> AddAsync(Contact entity)
     {
         var sql = @"
-                INSERT INTO application.contact(
-                    email,
-                    name,
-                    phone_number)
-                VALUES (
-                    @email,
-                    NULLIF(trim(@name), ''),
-                    NULLIF(trim(@phone_number), ''))
-                ON CONFLICT DO NOTHING";
+            INSERT INTO application.contact(
+                email,
+                name,
+                phone_number)
+            VALUES (
+                @email,
+                NULLIF(trim(@name), ''),
+                NULLIF(trim(@phone_number), ''))
+            ON CONFLICT DO NOTHING";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -46,8 +46,8 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
     public override async Task<long> CountAsync()
     {
         var sql = @"
-                SELECT  COUNT(*)
-                FROM    application.contact";
+            SELECT  COUNT(*)
+            FROM    application.contact";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -63,9 +63,9 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
         ResetCacheEntity(email);
 
         var sql = @"
-                DELETE
-                FROM    application.contact
-                WHERE   email = @email";
+            DELETE
+            FROM    application.contact
+            WHERE   email = @email";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -89,7 +89,7 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
     public static Contact MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
-            Email = reader.GetSafeString(offset + 0),
+            Email = reader.GetString(offset + 0),
             Name = reader.GetSafeString(offset + 1),
             PhoneNumber = reader.GetSafeString(offset + 2),
         };
@@ -107,13 +107,13 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
         }
 
         var sql = @"
-                SELECT  -- Contact
-                        c.email,
-                        c.name,
-                        c.phone_number
-                FROM    application.contact AS c
-                WHERE   c.email = @email
-                LIMIT   1";
+            SELECT  -- Contact
+                    c.email,
+                    c.name,
+                    c.phone_number
+            FROM    application.contact AS c
+            WHERE   c.email = @email
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -131,11 +131,11 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
     public override async IAsyncEnumerable<Contact> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-                SELECT  -- Contact
-                        c.email,
-                        c.name,
-                        c.phone_number
-                FROM    application.contact AS c";
+            SELECT  -- Contact
+                    c.email,
+                    c.name,
+                    c.phone_number
+            FROM    application.contact AS c";
 
         sql = ConstructNavigation(sql, navigation);
 
@@ -161,10 +161,10 @@ internal class ContactRepository : RepositoryBase<Contact, string>, IContactRepo
         ResetCacheEntity(entity);
 
         var sql = @"
-                    UPDATE  application.contact
-                    SET     name = NULLIF(trim(@name), '')),
-                            phone_number = NULLIF(trim(@phone_number), ''))
-                    WHERE   email = @email";
+            UPDATE  application.contact
+            SET     name = NULLIF(trim(@name), '')),
+                    phone_number = NULLIF(trim(@phone_number), ''))
+            WHERE   email = @email";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
