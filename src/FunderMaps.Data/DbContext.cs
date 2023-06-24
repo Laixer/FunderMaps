@@ -1,4 +1,3 @@
-using FunderMaps.Core;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Data.Providers;
 using System.Data.Common;
@@ -11,43 +10,22 @@ namespace FunderMaps.Data;
 /// </summary>
 internal class DbContext : IAsyncDisposable
 {
-    /// <summary>
-    ///     Data provider interface.
-    /// </summary>
-    public DbProvider DbProvider { get; set; }
+    private readonly DbProvider _dbProvider;
+    private readonly Core.AppContext _appContext;
+    private readonly DbConnection _dbConnection;
+    private readonly DbCommand _dbCommand;
+    private DbDataReader? _dbDataReader;
 
     /// <summary>
-    ///     Application context.
+    ///     Construct a new database context.
     /// </summary>
-    public Core.AppContext AppContext { get; set; }
-
-    /// <summary>
-    ///     Database connection.
-    /// </summary>
-    public DbConnection Connection { get; private set; }
-
-    /// <summary>
-    ///     Database command.
-    /// </summary>
-    public DbCommand Command { get; private set; }
-
-    private DbDataReader reader;
-
-    /// <summary>
-    ///     Database resultset reader.
-    /// </summary>
-    /// <remarks>
-    ///     Resultsets are expensive so if a new reader is set on 
-    ///     this context then dispose the current resultset right away.
-    /// </remarks>
-    public DbDataReader Reader
+    public DbContext(DbProvider dbProvider, Core.AppContext appContext, string cmdText)
     {
-        get => reader;
-        set
-        {
-            reader?.Dispose();
-            reader = value;
-        }
+        _dbProvider = dbProvider ?? throw new ArgumentNullException(nameof(dbProvider));
+        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+
+        _dbConnection = _dbProvider.ConnectionScope();
+        _dbCommand = _dbProvider.CreateCommand(cmdText, _dbConnection);
     }
 
     /// <summary>
@@ -71,7 +49,7 @@ internal class DbContext : IAsyncDisposable
     {
         // FUTURE: Log debug
 
-        DbProvider.HandleException(edi);
+        _dbProvider.HandleException(edi);
     }
 
     /// <summary>
@@ -82,11 +60,14 @@ internal class DbContext : IAsyncDisposable
     ///     we'll return an explicit valuetask.
     /// </remarks>
     /// <param name="cmdText">The text of the query.</param>
-    public async ValueTask InitializeAsync(string cmdText)
+    public static async ValueTask<DbContext> OpenSessionAsync(DbProvider dbProvider, Core.AppContext appContext, string cmdText)
     {
-        Connection = await DbProvider.OpenConnectionScopeAsync(AppContext.CancellationToken);
-        Command = DbProvider.CreateCommand(cmdText, Connection);
+        DbContext context = new(dbProvider, appContext, cmdText);
+        await context.OpenAsync();
+        return context;
     }
+
+    public async Task OpenAsync() => await _dbConnection.OpenAsync(_appContext.CancellationToken);
 
     /// <summary>
     ///     Add parameter with key and value to command.
@@ -98,7 +79,7 @@ internal class DbContext : IAsyncDisposable
     /// <param name="value">Parameter value.</param>
     public void AddParameterWithValue(string parameterName, object? value)
     {
-        var parameter = Command.CreateParameter();
+        var parameter = _dbCommand.CreateParameter();
 
         parameter.ParameterName = parameterName;
         parameter.Value = value ?? DBNull.Value;
@@ -108,7 +89,7 @@ internal class DbContext : IAsyncDisposable
             parameter.Value = DBNull.Value;
         }
 
-        Command.Parameters.Add(parameter);
+        _dbCommand.Parameters.Add(parameter);
     }
 
     // FUTURE: Do not depend on Npgsql. Too npgsql specific.
@@ -120,14 +101,14 @@ internal class DbContext : IAsyncDisposable
     /// </remarks>
     /// <param name="parameterName">Parameter name.</param>
     /// <param name="value">Parameter value.</param>
-    public void AddJsonParameterWithValue(string parameterName, object value)
+    public void AddJsonParameterWithValue(string parameterName, object? value)
     {
         Npgsql.NpgsqlParameter parameter = new(parameterName, NpgsqlTypes.NpgsqlDbType.Jsonb)
         {
             Value = value ?? DBNull.Value
         };
 
-        Command.Parameters.Add(parameter);
+        _dbCommand.Parameters.Add(parameter);
     }
 
     /// <summary>
@@ -139,18 +120,18 @@ internal class DbContext : IAsyncDisposable
     {
         try
         {
-            Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
-            if (!Reader.HasRows && hasRowsGuard)
+            _dbDataReader = await _dbCommand.ExecuteReaderAsync(_appContext.CancellationToken);
+            if (!_dbDataReader.HasRows && hasRowsGuard)
             {
                 throw new EntityNotFoundException();
             }
 
             if (readAhead)
             {
-                await Reader.ReadAsync(AppContext.CancellationToken);
+                await _dbDataReader.ReadAsync(_appContext.CancellationToken);
             }
 
-            return Reader;
+            return _dbDataReader;
         }
         catch (DbException exception)
         {
@@ -167,8 +148,8 @@ internal class DbContext : IAsyncDisposable
     {
         try
         {
-            Reader = await Command.ExecuteReaderAsync(AppContext.CancellationToken);
-            if (!Reader.HasRows && hasRowsGuard)
+            _dbDataReader = await _dbCommand.ExecuteReaderAsync(_appContext.CancellationToken);
+            if (!_dbDataReader.HasRows && hasRowsGuard)
             {
                 throw new EntityNotFoundException();
             }
@@ -182,9 +163,9 @@ internal class DbContext : IAsyncDisposable
         // NOTE: An unfortunate consequence of the yield return is the incapability
         //       of running inside a try-catch block. It should be rare for an exception
         //       to occur after the command has been executed, but not impossible.
-        while (await Reader.ReadAsync(AppContext.CancellationToken))
+        while (await _dbDataReader.ReadAsync(_appContext.CancellationToken))
         {
-            yield return Reader;
+            yield return _dbDataReader;
         }
     }
 
@@ -196,7 +177,7 @@ internal class DbContext : IAsyncDisposable
     {
         try
         {
-            int affected = await Command.ExecuteNonQueryAsync(AppContext.CancellationToken);
+            int affected = await _dbCommand.ExecuteNonQueryAsync(_appContext.CancellationToken);
             if (affected <= 0 && affectedGuard)
             {
                 throw new EntityNotFoundException();
@@ -209,15 +190,21 @@ internal class DbContext : IAsyncDisposable
         }
     }
 
+    // TODO: Replace resultGuard with a default value.
     /// <summary>
     ///     Execute command and return scalar result.
     /// </summary>
     /// <param name="resultGuard">Throw if no result was returned.</param>
     public async Task<TResult> ScalarAsync<TResult>(bool resultGuard = true)
     {
+        if (_dbCommand is null)
+        {
+            throw new InvalidOperationException("Database command not initialized.");
+        }
+
         try
         {
-            var result = await Command.ExecuteScalarAsync(AppContext.CancellationToken);
+            var result = await _dbCommand.ExecuteScalarAsync(_appContext.CancellationToken);
             if (result is null)
             {
                 if (resultGuard)
@@ -241,12 +228,12 @@ internal class DbContext : IAsyncDisposable
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        if (Reader is not null)
+        if (_dbDataReader is not null)
         {
-            await Reader.DisposeAsync();
+            await _dbDataReader.DisposeAsync();
         }
 
-        await Command.DisposeAsync();
-        await Connection.DisposeAsync();
+        await _dbCommand.DisposeAsync();
+        await _dbConnection.CloseAsync();
     }
 }

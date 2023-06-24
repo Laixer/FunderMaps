@@ -24,18 +24,6 @@ internal abstract class DbProvider
     public abstract DbConnection ConnectionScope();
 
     /// <summary>
-    ///     Open database connection.
-    /// </summary>
-    /// <param name="token">The cancellation instruction.</param>
-    /// <returns>See <see cref="DbConnection"/>.</returns>
-    public virtual async Task<DbConnection> OpenConnectionScopeAsync(CancellationToken token = default)
-    {
-        var connection = ConnectionScope();
-        await connection.OpenAsync(token);
-        return connection;
-    }
-
-    /// <summary>
     ///     Create command on the database connection.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>

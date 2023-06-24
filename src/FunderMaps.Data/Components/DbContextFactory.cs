@@ -21,23 +21,9 @@ internal class DbContextFactory
     }
 
     /// <summary>
-    ///     Create the <see cref="DbContext"/>.
-    /// </summary>
-    public virtual DbContext CreateAsync()
-        => new()
-        {
-            DbProvider = _dbProvider,
-            AppContext = _appContext,
-        };
-
-    /// <summary>
     ///     Create and initialize the <see cref="DbContext"/>.
     /// </summary>
     /// <param name="cmdText">The text of the query.</param>
-    public virtual async ValueTask<DbContext> CreateAsync(string cmdText)
-    {
-        DbContext context = CreateAsync();
-        await context.InitializeAsync(cmdText);
-        return context;
-    }
+    public virtual ValueTask<DbContext> CreateAsync(string cmdText)
+        => DbContext.OpenSessionAsync(_dbProvider, _appContext, cmdText);
 }
