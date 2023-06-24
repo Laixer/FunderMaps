@@ -196,12 +196,8 @@ internal class DbContext : IAsyncDisposable
     /// </summary>
     /// <param name="resultGuard">Throw if no result was returned.</param>
     public async Task<TResult> ScalarAsync<TResult>(bool resultGuard = true)
+        where TResult : new()
     {
-        if (_dbCommand is null)
-        {
-            throw new InvalidOperationException("Database command not initialized.");
-        }
-
         try
         {
             var result = await _dbCommand.ExecuteScalarAsync(_appContext.CancellationToken);
@@ -211,7 +207,7 @@ internal class DbContext : IAsyncDisposable
                 {
                     throw new EntityNotFoundException();
                 }
-                return default;
+                return new TResult();
             }
 
             return (TResult)result;

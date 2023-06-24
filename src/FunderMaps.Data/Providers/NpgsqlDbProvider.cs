@@ -14,7 +14,6 @@ namespace FunderMaps.Data.Providers;
 /// </summary>
 internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
 {
-    // private readonly string _connectionString;
     private readonly NpgsqlDataSource _dataSource;
 
     /// <summary>
@@ -30,35 +29,61 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
             dataSourceBuilder.ConnectionStringBuilder.ApplicationName = _options.ApplicationName;
         }
 
-        dataSourceBuilder.MapEnum<AccessPolicy>("application.access_policy");
+        // dataSourceBuilder.MapEnum<AccessPolicy>("application.access_policy");
+        dataSourceBuilder.MapEnum<AccessPolicy>();
         dataSourceBuilder.MapEnum<ApplicationRole>("application.role");
-        dataSourceBuilder.MapEnum<AuditStatus>("report.audit_status");
-        dataSourceBuilder.MapEnum<BuildingType>("geocoder.building_type");
-        dataSourceBuilder.MapEnum<BuiltYearSource>("report.built_year_source");
-        dataSourceBuilder.MapEnum<ConstructionPile>("report.construction_pile");
-        dataSourceBuilder.MapEnum<CrackType>("report.crack_type");
-        dataSourceBuilder.MapEnum<EnforcementTerm>("report.enforcement_term");
-        dataSourceBuilder.MapEnum<EnvironmentDamageCharacteristics>("report.environment_damage_characteristics");
+        // dataSourceBuilder.MapEnum<AuditStatus>("report.audit_status");
+        dataSourceBuilder.MapEnum<AuditStatus>();
+        // dataSourceBuilder.MapEnum<BuildingType>("geocoder.building_type");
+        dataSourceBuilder.MapEnum<BuildingType>();
+        // dataSourceBuilder.MapEnum<BuiltYearSource>("report.built_year_source");
+        dataSourceBuilder.MapEnum<BuiltYearSource>();
+        // dataSourceBuilder.MapEnum<ConstructionPile>("report.construction_pile");
+        dataSourceBuilder.MapEnum<ConstructionPile>();
+        // dataSourceBuilder.MapEnum<CrackType>("report.crack_type");
+        dataSourceBuilder.MapEnum<CrackType>();
+        // dataSourceBuilder.MapEnum<EnforcementTerm>("report.enforcement_term");
+        dataSourceBuilder.MapEnum<EnforcementTerm>();
+        // dataSourceBuilder.MapEnum<EnvironmentDamageCharacteristics>("report.environment_damage_characteristics");
+        dataSourceBuilder.MapEnum<EnvironmentDamageCharacteristics>();
         dataSourceBuilder.MapEnum<ExternalDataSource>("geocoder.data_source");
-        dataSourceBuilder.MapEnum<Facade>("report.facade");
-        dataSourceBuilder.MapEnum<FoundationDamageCause>("report.foundation_damage_cause");
-        dataSourceBuilder.MapEnum<FoundationDamageCharacteristics>("report.foundation_damage_characteristics");
-        dataSourceBuilder.MapEnum<FoundationQuality>("report.foundation_quality");
+        // dataSourceBuilder.MapEnum<Facade>("report.facade");
+        dataSourceBuilder.MapEnum<Facade>();
+        // dataSourceBuilder.MapEnum<FoundationDamageCause>("report.foundation_damage_cause");
+        dataSourceBuilder.MapEnum<FoundationDamageCause>();
+        // dataSourceBuilder.MapEnum<FoundationDamageCharacteristics>("report.foundation_damage_characteristics");
+        dataSourceBuilder.MapEnum<FoundationDamageCharacteristics>();
+        // dataSourceBuilder.MapEnum<FoundationQuality>("report.foundation_quality");
+        dataSourceBuilder.MapEnum<FoundationQuality>();
         dataSourceBuilder.MapEnum<FoundationRisk>("data.foundation_risk_indication");
-        dataSourceBuilder.MapEnum<FoundationType>("report.foundation_type");
-        dataSourceBuilder.MapEnum<IncidentQuestionType>("report.incident_question_type");
-        dataSourceBuilder.MapEnum<InquiryType>("report.inquiry_type");
-        dataSourceBuilder.MapEnum<OrganizationRole>("application.organization_role");
-        dataSourceBuilder.MapEnum<PileType>("report.pile_type");
-        dataSourceBuilder.MapEnum<Quality>("report.quality");
-        dataSourceBuilder.MapEnum<RecoveryDocumentType>("report.recovery_document_type");
-        dataSourceBuilder.MapEnum<RecoveryStatus>("report.recovery_status");
-        dataSourceBuilder.MapEnum<RecoveryType>("report.recovery_type");
-        dataSourceBuilder.MapEnum<RotationType>("report.rotation_type");
-        dataSourceBuilder.MapEnum<Substructure>("report.substructure");
-        dataSourceBuilder.MapEnum<WoodEncroachement>("report.wood_encroachement");
-        dataSourceBuilder.MapEnum<WoodQuality>("report.wood_quality");
-        dataSourceBuilder.MapEnum<WoodType>("report.wood_type");
+        // dataSourceBuilder.MapEnum<FoundationType>("report.foundation_type");
+        dataSourceBuilder.MapEnum<FoundationType>();
+        // dataSourceBuilder.MapEnum<IncidentQuestionType>("report.incident_question_type");
+        dataSourceBuilder.MapEnum<IncidentQuestionType>();
+        // dataSourceBuilder.MapEnum<InquiryType>("report.inquiry_type");
+        dataSourceBuilder.MapEnum<InquiryType>();
+        // dataSourceBuilder.MapEnum<OrganizationRole>("application.organization_role");
+        dataSourceBuilder.MapEnum<OrganizationRole>();
+        // dataSourceBuilder.MapEnum<PileType>("report.pile_type");
+        dataSourceBuilder.MapEnum<PileType>();
+        // dataSourceBuilder.MapEnum<Quality>("report.quality");
+        dataSourceBuilder.MapEnum<Quality>();
+        // dataSourceBuilder.MapEnum<RecoveryDocumentType>("report.recovery_document_type");
+        dataSourceBuilder.MapEnum<RecoveryDocumentType>();
+        // dataSourceBuilder.MapEnum<RecoveryStatus>("report.recovery_status");
+        dataSourceBuilder.MapEnum<RecoveryStatus>();
+        // dataSourceBuilder.MapEnum<RecoveryType>("report.recovery_type");
+        dataSourceBuilder.MapEnum<RecoveryType>();
+        // dataSourceBuilder.MapEnum<RotationType>("report.rotation_type");
+        dataSourceBuilder.MapEnum<RotationType>();
+        // dataSourceBuilder.MapEnum<Substructure>("report.substructure");
+        dataSourceBuilder.MapEnum<Substructure>();
+        // dataSourceBuilder.MapEnum<WoodEncroachement>("report.wood_encroachement");
+        dataSourceBuilder.MapEnum<WoodEncroachement>();
+        // dataSourceBuilder.MapEnum<WoodQuality>("report.wood_quality");
+        dataSourceBuilder.MapEnum<WoodQuality>();
+        // dataSourceBuilder.MapEnum<WoodType>("report.wood_type");
+        dataSourceBuilder.MapEnum<WoodType>();
 
         _dataSource = dataSourceBuilder.Build();
     }
@@ -96,7 +121,6 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
 
                 case "UX101":
                     throw new InvalidIdentifierException(exception.Message, exception);
-
             }
         }
 
