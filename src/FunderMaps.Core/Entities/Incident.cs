@@ -124,36 +124,6 @@ public sealed class Incident : RecordControl<Incident, string>
     public override string ToString() => Id;
 
     /// <summary>
-    ///     Initialize property defaults.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = null;
-        AuditStatus = AuditStatus.Todo;
-        CreateDate = DateTime.MinValue;
-        UpdateDate = null;
-        DeleteDate = null;
-        AddressNavigation = null;
-    }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults(Incident other)
-    {
-        if (other is null)
-        {
-            throw new ArgumentNullException(nameof(other));
-        }
-
-        Id = other.Id;
-        AuditStatus = other.AuditStatus;
-        CreateDate = other.CreateDate;
-        UpdateDate = other.UpdateDate;
-        DeleteDate = other.DeleteDate;
-    }
-
-    /// <summary>
     ///     Contact object.
     /// </summary>
     public Contact ContactNavigation { get; set; }

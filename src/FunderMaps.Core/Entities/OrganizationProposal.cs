@@ -37,12 +37,4 @@ public sealed class OrganizationProposal : IdentifiableEntity<OrganizationPropos
     /// </summary>
     /// <returns>String representing organization.</returns>
     public override string ToString() => Name;
-
-    /// <summary>
-    ///     Initialize property defaults.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = Guid.Empty;
-    }
 }

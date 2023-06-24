@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Base for all entities.
 /// </summary>
-public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEntity>, IInitializable<TEntity>
+public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEntity>
     where TEntity : class
 {
     /// <summary>
@@ -31,20 +31,6 @@ public abstract class BaseEntity<TEntity> : IEquatable<TEntity>, IComparable<TEn
             ValidateOject();
             IsValidated = true;
         }
-    }
-
-    /// <summary>
-    ///     Let the object initliaze defaults after the instance was created.
-    /// </summary>
-    public virtual void InitializeDefaults()
-    {
-    }
-
-    /// <summary>
-    ///     Let the object initliaze defaults from another entity of the same type.
-    /// </summary>
-    public virtual void InitializeDefaults(TEntity other)
-    {
     }
 
     // FUTURE: validate navigation properties as well
@@ -193,5 +179,5 @@ public abstract class IdentifiableEntity<TEntity, TEntryIdentifier> : BaseEntity
     /// <param name="other">Entity to compare.</param>
     /// <returns>The Levenshtein distance between objects.</returns>
     public override int CompareTo(TEntity other)
-        => other == null ? 1 : Identifier.CompareTo(EntityIdentifier(other));
+        => other is null ? 1 : Identifier.CompareTo(EntityIdentifier(other));
 }

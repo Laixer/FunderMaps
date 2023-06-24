@@ -48,27 +48,4 @@ public sealed class Organization : IdentifiableEntity<Organization, Guid>, ITena
     /// </summary>
     /// <returns>String representing organization.</returns>
     public override string ToString() => Name;
-
-    /// <summary>
-    ///     Initialize property defaults.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = Guid.Empty;
-    }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults(Organization other)
-    {
-        if (other is null)
-        {
-            throw new ArgumentNullException(nameof(other));
-        }
-
-        Id = other.Id;
-        Name = other.Name;
-        Email = other.Email;
-    }
 }

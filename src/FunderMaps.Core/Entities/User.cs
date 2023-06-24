@@ -74,36 +74,9 @@ public sealed class User : IdentifiableEntity<User, Guid>, IUser
             : (!string.IsNullOrEmpty(Email) ? Email : Id.ToString());
 
     /// <summary>
-    ///     Initialize property defaults.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = Guid.Empty;
-        Role = ApplicationRole.User;
-    }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults(User other)
-    {
-        if (other is null)
-        {
-            throw new ArgumentNullException(nameof(other));
-        }
-
-        Id = other.Id;
-        Email = other.Email;
-        Role = other.Role;
-    }
-
-    /// <summary>
     ///     Check if self is equal to other entity.
     /// </summary>
     /// <param name="other">Entity to compare.</param>
     /// <returns><c>True</c> on success, false otherwise.</returns>
-    public override bool Equals(User other)
-        => Id == other.Id &&
-            Email == other.Email &&
-            Role == other.Role;
+    public override bool Equals(User other) => Id == other.Id;
 }

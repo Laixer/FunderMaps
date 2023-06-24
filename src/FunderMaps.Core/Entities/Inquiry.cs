@@ -78,14 +78,6 @@ public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>
     /// </summary>
     /// <returns>String representing inquiry.</returns>
     public override string ToString() => DocumentName;
-
-    /// <summary>
-    ///     Initialize property defaults.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = 0;
-    }
 }
 
 /// <summary>
@@ -99,19 +91,6 @@ public class Inquiry : InquiryBase<Inquiry>
     public Inquiry()
         : base(e => e.Id)
     {
-    }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults(Inquiry other)
-    {
-        if (other == null)
-        {
-            throw new ArgumentNullException(nameof(other));
-        }
-
-        Id = other.Id;
     }
 }
 
@@ -147,18 +126,5 @@ public sealed class InquiryFull : InquiryBase<InquiryFull>, IAttribution, IState
     ///     Record control.
     /// </summary>
     public RecordControl Record { get; set; }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults(InquiryFull other)
-    {
-        if (other == null)
-        {
-            throw new ArgumentNullException(nameof(other));
-        }
-
-        Id = other.Id;
-    }
 }
 

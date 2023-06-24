@@ -77,15 +77,4 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     ///     Recovery date.
     /// </summary>
     public DateTime RecoveryDate { get; set; }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = 0;
-        CreateDate = DateTime.MinValue;
-        UpdateDate = null;
-        DeleteDate = null;
-    }
 }

@@ -352,15 +352,4 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Skewed window and/or frame.
     /// </summary>
     public bool? SkewedWindowFrame { get; set; }
-
-    /// <summary>
-    ///     Initialize properties from another entity.
-    /// </summary>
-    public override void InitializeDefaults()
-    {
-        Id = 0;
-        CreateDate = DateTime.MinValue;
-        UpdateDate = null;
-        DeleteDate = null;
-    }
 }
