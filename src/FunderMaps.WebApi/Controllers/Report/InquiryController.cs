@@ -26,7 +26,6 @@ public class InquiryController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IInquiryRepository _inquiryRepository;
     private readonly IBlobStorageService _blobStorageService;
-    // private readonly INotifyService _notifyService;
 
     /// <summary>
     ///     Create new instance.
@@ -45,7 +44,6 @@ public class InquiryController : ControllerBase
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        // _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
     }
 
     // GET: api/inquiry/stats
@@ -70,33 +68,20 @@ public class InquiryController : ControllerBase
     ///     Return inquiry by id.
     /// </summary>
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetAsync(int id)
-    {
-        // Act.
-        var inquiry = await _inquiryRepository.GetByIdAsync(id);
-
-        // Map.
-        var output = _mapper.Map<InquiryDto>(inquiry);
-
-        // Return.
-        return Ok(output);
-    }
+    public async Task<InquiryFull> GetAsync(int id)
+        => await _inquiryRepository.GetByIdAsync(id);
 
     // GET: api/inquiry
     /// <summary>
     ///     Return all inquiries.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
+    public async IAsyncEnumerable<InquiryFull> GetAllAsync([FromQuery] PaginationDto pagination)
     {
-        // Act.
-        IAsyncEnumerable<InquiryFull> organizationList = _inquiryRepository.ListAllAsync(pagination.Navigation);
-
-        // Map.
-        var output = await _mapper.MapAsync<IList<InquiryDto>, InquiryFull>(organizationList);
-
-        // Return.
-        return Ok(output);
+        await foreach (var inquiry in _inquiryRepository.ListAllAsync(pagination.Navigation))
+        {
+            yield return inquiry;
+        }
     }
 
     // POST: api/inquiry
@@ -207,7 +192,6 @@ public class InquiryController : ControllerBase
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
         }
 
-        // Return.
         return NoContent();
     }
 
@@ -219,16 +203,11 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> ResetAsync(int id)
     {
-        // Act.
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id);
 
-        // Transition.
         inquiry.State.TransitionToPending();
-
-        // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        // Return.
         return NoContent();
     }
 
@@ -242,14 +221,11 @@ public class InquiryController : ControllerBase
     {
         // Act.
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        // User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        // User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
 
-        // Transition.
         inquiry.State.TransitionToReview();
-
-        // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
         // string subject = $"FunderMaps - Rapportage ter review";
@@ -278,7 +254,6 @@ public class InquiryController : ControllerBase
         //         },
         // });
 
-        // Return.
         return NoContent();
     }
 
@@ -292,14 +267,11 @@ public class InquiryController : ControllerBase
     {
         // Act.
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
-        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        // User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        // User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
-        // Transition.
         inquiry.State.TransitionToRejected();
-
-        // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
         // string subject = $"FunderMaps - Rapportage afgekeurd";
@@ -329,7 +301,6 @@ public class InquiryController : ControllerBase
         //         },
         // });
 
-        // Return.
         return NoContent();
     }
 
@@ -341,16 +312,12 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusApprovedAsync(int id)
     {
-        // Act.
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
-        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        // User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        // User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
-        // Transition.
         inquiry.State.TransitionToDone();
-
-        // Act.
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
         // string subject = $"FunderMaps - Rapportage goedgekeurd";
@@ -378,7 +345,6 @@ public class InquiryController : ControllerBase
         //         },
         // });
 
-        // Return.
         return NoContent();
     }
 
@@ -390,10 +356,8 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        // Act.
         await _inquiryRepository.DeleteAsync(id);
 
-        // Return.
         return NoContent();
     }
 }

@@ -3,6 +3,7 @@ namespace FunderMaps.Core.Types;
 /// <summary>
 ///     Building type.
 /// </summary>
+[Obsolete]
 public enum BuildingType
 {
     /// <summary>

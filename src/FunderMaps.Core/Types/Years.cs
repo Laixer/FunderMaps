@@ -8,13 +8,6 @@ namespace FunderMaps.Core.Types;
 public sealed class Years
 {
     /// <summary>
-    ///     Empty constructor.
-    /// </summary>
-    public Years()
-    {
-    }
-
-    /// <summary>
     ///     Static constructor for easy decade creation.
     /// </summary>
     /// <remarks>

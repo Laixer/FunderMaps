@@ -3,6 +3,7 @@ namespace FunderMaps.Core.Types;
 /// <summary>
 ///     Represents an external data source.
 /// </summary>
+[Obsolete]
 public enum BuiltYearSource
 {
     /// <summary>
