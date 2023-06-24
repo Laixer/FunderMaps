@@ -30,13 +30,11 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                     reviewer,
                     creator,
                     owner,
-                    contractor,
-                    contractor2)
+                    contractor)
                 VALUES (
                     @reviewer,
                     @user,
                     @tenant,
-                    'd8c19418-c832-4c91-8993-84b8ed641448',
                     @contractor)
                 RETURNING id AS attribution_id
             )
@@ -205,7 +203,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                     a.reviewer,
                     a.creator,
                     a.owner,
-                    a.contractor2,
+                    a.contractor,
 
                     -- State control
                     i.audit_status,
@@ -256,7 +254,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                     a.reviewer,
                     a.creator,
                     a.owner,
-                    a.contractor2,
+                    a.contractor,
 
                     -- State control
                     i.audit_status,
@@ -297,7 +295,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
             -- Attribution
             UPDATE  application.attribution AS a
             SET     reviewer = @reviewer,
-                    contractor2 = @contractor
+                    contractor = @contractor
             FROM    report.inquiry AS i
             WHERE   a.id = i.attribution
             AND     i.id = @id
