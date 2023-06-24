@@ -1,8 +1,8 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Application;
@@ -12,17 +12,15 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </summary>
 public class ContractorController : ControllerBase
 {
-    private readonly IMapper _mapper;
-    private readonly IOrganizationRepository _organizationRepository;
+    // private readonly IMapper _mapper;
     private readonly IContractorRepository _contractorRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public ContractorController(IMapper mapper, IOrganizationRepository organizationRepository, IContractorRepository contractorRepository)
+    public ContractorController(IOrganizationRepository organizationRepository, IContractorRepository contractorRepository)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+        // _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
     }
 
@@ -36,13 +34,11 @@ public class ContractorController : ControllerBase
     /// </remarks>
     // [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 8)]
     [HttpGet("contractor")]
-    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
+    public async IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination)
     {
-        // Assign.
-        IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);
-
-        IAsyncEnumerable<Contractor> contractorList = _contractorRepository.ListAllAsync(pagination.Navigation);
-
-        return Ok(contractorList);
+        await foreach (var contractor in _contractorRepository.ListAllAsync(Navigation.All))
+        {
+            yield return contractor;
+        }
     }
 }

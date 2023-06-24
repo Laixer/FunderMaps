@@ -41,7 +41,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
                 Reviewer = reader.GetFieldValue<Guid?>(offset + 6),
                 Creator = reader.GetGuid(offset + 7),
                 Owner = reader.GetGuid(offset + 8),
-                Contractor = reader.GetGuid(offset + 9),
+                Contractor = reader.GetInt(offset + 9),
             },
             State = new()
             {

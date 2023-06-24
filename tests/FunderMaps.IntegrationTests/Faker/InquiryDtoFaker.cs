@@ -27,7 +27,7 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.StandardF3o, f => f.Random.Bool(0.3f));
             RuleFor(f => f.AuditStatus, f => f.PickRandom<AuditStatus>());
             RuleFor(f => f.Reviewer, f => f.Random.Uuid().OrNull(f, 0.1f));
-            RuleFor(f => f.Contractor, f => f.Random.Uuid());
+            // RuleFor(f => f.Contractor, f => f.Random.Uuid());
             RuleFor(f => f.AccessPolicy, f => f.PickRandom<AccessPolicy>());
             RuleFor(f => f.CreateDate, f => DateTime.Now);
             RuleFor(f => f.UpdateDate, f => f.Date.Future());

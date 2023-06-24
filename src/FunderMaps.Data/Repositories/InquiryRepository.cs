@@ -25,11 +25,13 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                         reviewer,
                         creator,
                         owner,
-                        contractor)
+                        contractor,
+                        contractor2)
 		            VALUES (
                         @reviewer,
                         @user,
                         @tenant,
+                        'd8c19418-c832-4c91-8993-84b8ed641448',
                         @contractor)
 	                RETURNING id AS attribution_id
                 )
@@ -151,7 +153,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                 Reviewer = reader.GetFieldValue<Guid?>(offset + 10),
                 Creator = reader.GetGuid(offset + 11),
                 Owner = reader.GetGuid(offset + 12),
-                Contractor = reader.GetGuid(offset + 13),
+                Contractor = reader.GetInt(offset + 13),
             },
             State = new()
             {
@@ -198,7 +200,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                         a.reviewer,
                         a.creator,
                         a.owner,
-                        a.contractor,
+                        a.contractor2,
 
                         -- State control
                         i.audit_status,
@@ -249,7 +251,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                         a.reviewer,
                         a.creator,
                         a.owner,
-                        a.contractor,
+                        a.contractor2,
 
                         -- State control
                         i.audit_status,
@@ -290,7 +292,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
                     -- Attribution
                     UPDATE  application.attribution AS a
                     SET     reviewer = @reviewer,
-                            contractor = @contractor
+                            contractor2 = @contractor
                     FROM    report.inquiry AS i
                     WHERE   a.id = i.attribution
                     AND     i.id = @id

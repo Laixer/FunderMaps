@@ -28,5 +28,5 @@ public class AttributionControl
     /// <summary>
     ///     Contractor identifier.
     /// </summary>
-    public Guid Contractor { get; set; }
+    public int Contractor { get; set; }
 }

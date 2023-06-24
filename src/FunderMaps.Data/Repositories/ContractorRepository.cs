@@ -9,9 +9,9 @@ namespace FunderMaps.Data.Repositories;
 /// <summary>
 ///     Contractor repository.
 /// </summary>
-internal class ContractorRepository : RepositoryBase<Contractor, Guid>, IContractorRepository
+internal class ContractorRepository : RepositoryBase<Contractor, int>, IContractorRepository
 {
-    public override Task<Guid> AddAsync(Contractor entity)
+    public override Task<int> AddAsync(Contractor entity)
         => throw new InvalidOperationException();
 
     /// <summary>
@@ -33,7 +33,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, Guid>, IContrac
     ///     Delete <see cref="Contractor"/>.
     /// </summary>
     /// <param name="id">Entity id.</param>
-    public override async Task DeleteAsync(Guid id)
+    public override async Task DeleteAsync(int id)
     {
         ResetCacheEntity(id);
 
@@ -52,7 +52,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, Guid>, IContrac
     private static Contractor MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
-            Id = reader.GetGuid(offset++),
+            Id = reader.GetInt(offset++),
             Name = reader.GetSafeString(offset++),
         };
 
@@ -61,7 +61,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, Guid>, IContrac
     /// </summary>
     /// <param name="id">Unique identifier.</param>
     /// <returns><see cref="Contractor"/>.</returns>
-    public override async Task<Contractor> GetByIdAsync(Guid id)
+    public override async Task<Contractor> GetByIdAsync(int id)
     {
         if (TryGetEntity(id, out Contractor entity))
         {
@@ -69,7 +69,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, Guid>, IContrac
         }
 
         var sql = @"
-            SELECT  id_old,
+            SELECT  id,
                     name
             FROM    application.contractor
             WHERE   id = @id
@@ -91,7 +91,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, Guid>, IContrac
     public override async IAsyncEnumerable<Contractor> ListAllAsync(Navigation navigation)
     {
         var sql = @"
-            SELECT  id_old,
+            SELECT  id,
                     name
             FROM    application.contractor";
 

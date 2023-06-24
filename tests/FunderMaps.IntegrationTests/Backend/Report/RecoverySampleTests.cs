@@ -68,7 +68,7 @@ public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
             using var client = Factory.CreateClient(OrganizationRole.Writer);
             var newObject = new RecoverySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-82f95c059fe04aeda704f8bae52d92eb")
-                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
 
             // Act
@@ -187,7 +187,7 @@ public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
             using var client = Factory.CreateClient();
             var newObject = new RecoverySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-90a268c6e8264bf6b86752e3986541e1")
-                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
 
             // Act
@@ -202,7 +202,7 @@ public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
             using var client = Factory.CreateClient();
             var newObject = new RecoverySampleDtoFaker()
                 .RuleFor(f => f.Address, f => "gfm-6c5b890d3f7f4d90a85156891e5b9ea9")
-                .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
 
             // Act

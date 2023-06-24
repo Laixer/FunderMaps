@@ -95,7 +95,7 @@ public sealed class InquiryDto
     /// <summary>
     ///     Contractor identifier.
     /// </summary>
-    public Guid Contractor { get; set; }
+    public int Contractor { get; set; }
 
     /// <summary>
     ///     Record access policy.

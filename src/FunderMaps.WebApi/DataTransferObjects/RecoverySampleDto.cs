@@ -45,7 +45,7 @@ public sealed class RecoverySampleDto
     /// <summary>
     ///     Contractor organization identifier.
     /// </summary>
-    public Guid? Contractor { get; set; }
+    public int Contractor { get; set; }
 
     /// <summary>
     ///     Facade.

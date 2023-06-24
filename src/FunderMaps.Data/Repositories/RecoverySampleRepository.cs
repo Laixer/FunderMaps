@@ -45,7 +45,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             Status = reader.GetFieldValue<RecoveryStatus>(offset++),
             Type = reader.GetFieldValue<RecoveryType>(offset++),
             PileType = reader.GetFieldValue<PileType>(offset++),
-            Contractor = reader.GetFieldValue<Guid?>(offset++),
+            Contractor = reader.GetInt(offset++),
             Facade = reader.GetFieldValue<Facade[]>(offset++),
             Permit = reader.GetSafeString(offset++),
             PermitDate = reader.GetDateTime(offset++),

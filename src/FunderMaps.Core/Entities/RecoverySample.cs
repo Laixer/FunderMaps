@@ -56,7 +56,7 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     /// <summary>
     ///     Contractor organization identifier.
     /// </summary>
-    public Guid? Contractor { get; set; }
+    public int Contractor { get; set; }
 
     /// <summary>
     ///     Facade.

@@ -21,7 +21,7 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.Status, f => f.PickRandom<RecoveryStatus>());
             RuleFor(f => f.Type, f => f.PickRandom<RecoveryType>());
             RuleFor(f => f.PileType, f => f.PickRandom<PileType>());
-            RuleFor(f => f.Contractor, f => f.Random.Uuid());
+            // RuleFor(f => f.Contractor, f => f.Random.Uuid());
             RuleFor(f => f.Facade, f => f.Random.ArrayElements((Facade[])Enum.GetValues(typeof(Facade))));
             RuleFor(f => f.Permit, f => f.Commerce.Product());
             RuleFor(f => f.PermitDate, f => f.Date.Past(30));

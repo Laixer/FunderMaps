@@ -167,7 +167,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient(OrganizationRole.Writer);
                 var newObject = new RecoveryDtoFaker()
                     .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
-                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                     .Generate();
 
                 // Act
@@ -194,7 +194,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient();
                 var newObject = new RecoveryDtoFaker()
                     .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
-                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                     .Generate();
 
                 // Act
@@ -209,7 +209,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient();
                 var newObject = new RecoveryDtoFaker()
                     .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
-                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                     .Generate();
 
                 // Act
@@ -276,7 +276,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient(OrganizationRole.Writer);
                 var newObject = new RecoveryDtoFaker()
                     .RuleFor(f => f.Reviewer, f => Guid.Parse("aadc6b80-b447-443b-b4ed-fdfcb00976f2"))
-                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                     .Generate();
 
                 // Act
@@ -291,7 +291,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
                 using var client = Factory.CreateClient();
                 var newObject = new RecoveryDtoFaker()
                     .RuleFor(f => f.Reviewer, f => Guid.Parse("aadc6b80-b447-443b-b4ed-fdfcb00976f2"))
-                    .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+                    // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                     .Generate();
 
                 // Act

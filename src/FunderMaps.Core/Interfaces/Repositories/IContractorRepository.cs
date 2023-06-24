@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces.Repositories
     /// <summary>
     /// Operations for the contact repository.
     /// </summary>
-    public interface IContractorRepository : IAsyncRepository<Contractor, Guid>
+    public interface IContractorRepository : IAsyncRepository<Contractor, int>
     {
     }
 }

@@ -10,7 +10,7 @@ public class ContractorDto
     /// <summary>
     ///     Contractor identifier.
     /// </summary>
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     ///     Gets or sets the name for the contractor.
