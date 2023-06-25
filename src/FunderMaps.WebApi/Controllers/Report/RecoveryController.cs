@@ -26,7 +26,6 @@ public class RecoveryController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IRecoveryRepository _recoveryRepository;
     private readonly IBlobStorageService _blobStorageService;
-    // private readonly INotifyService _notifyService;
 
     /// <summary>
     ///     Create new instance.
@@ -45,7 +44,6 @@ public class RecoveryController : ControllerBase
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        // _notifyService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
     }
 
     // GET: api/recovery/stats
@@ -55,13 +53,11 @@ public class RecoveryController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync()
     {
-        // Map.
         DatasetStatsDto output = new()
         {
             Count = await _recoveryRepository.CountAsync(),
         };
 
-        // Return.
         return Ok(output);
     }
 
@@ -72,13 +68,10 @@ public class RecoveryController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetAsync(int id)
     {
-        // Act.
         Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
 
-        // Map.
         var output = _mapper.Map<RecoveryDto>(recovery);
 
-        // Return.
         return Ok(output);
     }
 
@@ -89,13 +82,10 @@ public class RecoveryController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
     {
-        // Act.
         IAsyncEnumerable<Recovery> organizationList = _recoveryRepository.ListAllAsync(pagination.Navigation);
 
-        // Map.
         var output = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(organizationList);
 
-        // Return.
         return Ok(output);
     }
 
@@ -107,20 +97,16 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
     {
-        // Map.
         var recovery = _mapper.Map<Recovery>(input);
         if (_appContext.UserId == input.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        // Act.
         recovery = await _recoveryRepository.AddGetAsync(recovery);
 
-        // Map.
         var output = _mapper.Map<RecoveryDto>(recovery);
 
-        // Return.
         return Ok(output);
     }
 
@@ -133,7 +119,6 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
     {
-        // Act.
         string storeFileName = FileHelper.GetUniqueName(input.FileName);
         await _blobStorageService.StoreFileAsync(
             containerName: Core.Constants.RecoveryStorageFolderName,
@@ -146,7 +131,6 @@ public class RecoveryController : ControllerBase
             Name = storeFileName,
         };
 
-        // Return.
         return Ok(output);
     }
 
@@ -157,20 +141,17 @@ public class RecoveryController : ControllerBase
     [HttpGet("{id:int}/download")]
     public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
     {
-        // Act.
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+        var recovery = await _recoveryRepository.GetByIdAsync(id);
         Uri link = await _blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.RecoveryStorageFolderName,
             fileName: recovery.DocumentFile,
             hoursValid: 1);
 
-        // Map.
         BlobAccessLinkDto result = new()
         {
             AccessLink = link
         };
 
-        // Return.
         return Ok(result);
     }
 
@@ -182,17 +163,15 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
     {
-        // Map.
         var recovery = _mapper.Map<Recovery>(input);
         recovery.Id = id;
 
-        Recovery recovery_existing = await _recoveryRepository.GetByIdAsync(id);
+        var recovery_existing = await _recoveryRepository.GetByIdAsync(id);
         if (recovery_existing.Attribution.Creator == input.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        // Act.
         await _recoveryRepository.UpdateAsync(recovery);
 
         // FUTURE: Does this make sense?
@@ -200,14 +179,10 @@ public class RecoveryController : ControllerBase
         // a pending state after update.
         if (recovery.State.AuditStatus == AuditStatus.Rejected)
         {
-            // Transition.
             recovery.State.TransitionToPending();
-
-            // Act.
             await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
         }
 
-        // Return.
         return NoContent();
     }
 
@@ -219,16 +194,11 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> ResetAsync(int id)
     {
-        // Act.
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
+        var recovery = await _recoveryRepository.GetByIdAsync(id);
 
-        // Transition.
         recovery.State.TransitionToPending();
-
-        // Act.
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
-        // Return.
         return NoContent();
     }
 
@@ -241,10 +211,10 @@ public class RecoveryController : ControllerBase
     public async Task<IActionResult> SetStatusReviewAsync(int id)
     {
         // Act.
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
-        User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        // User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        // User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
 
         // Transition.
         recovery.State.TransitionToReview();
@@ -278,7 +248,6 @@ public class RecoveryController : ControllerBase
         //         },
         // });
 
-        // Return.
         return NoContent();
     }
 
@@ -291,10 +260,10 @@ public class RecoveryController : ControllerBase
     public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
     {
         // Act.
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
-        User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        // User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+        // User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         // Transition.
         recovery.State.TransitionToRejected();
@@ -329,7 +298,6 @@ public class RecoveryController : ControllerBase
         //         },
         // });
 
-        // Return.
         return NoContent();
     }
 
@@ -342,10 +310,10 @@ public class RecoveryController : ControllerBase
     public async Task<IActionResult> SetStatusApprovedAsync(int id)
     {
         // Act.
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
-        User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        // User reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer.Value);
+        // User creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         // Transition.
         recovery.State.TransitionToDone();
@@ -378,7 +346,6 @@ public class RecoveryController : ControllerBase
         //         },
         // });
 
-        // Return.
         return NoContent();
     }
 
@@ -390,10 +357,8 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        // Act.
         await _recoveryRepository.DeleteAsync(id);
 
-        // Return.
         return NoContent();
     }
 }

@@ -17,12 +17,12 @@ public static class FunderMapsDataServiceCollectionExtensions
     /// <summary>
     ///     Configuration.
     /// </summary>
-    public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration { get; set; } = default!;
 
     /// <summary>
     ///     Host environment.
     /// </summary>
-    public static IHostEnvironment HostEnvironment { get; set; }
+    public static IHostEnvironment HostEnvironment { get; set; } = default!;
 
     /// <summary>
     ///     Add repository with application context injection to container.
