@@ -1,17 +1,28 @@
 using System.Text.Json;
 using FunderMaps.AspNetCore.Services;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+    .Build();
+
 var serviceProvider = new ServiceCollection()
     .AddLogging()
-    .AddScoped<WebserviceClient>(_ => new(new()
+    .AddSingleton<IConfiguration>(configuration)
+    .AddScoped<WebserviceClient>(serviceProvider =>
     {
-        Email = "",
-        Password = "",
-    }, "http://localhost:5000/")
-    )
+        var config = serviceProvider.GetRequiredService<IConfiguration>();
+
+        var domain = config.GetValue<string>("FunderMaps:Domain");
+        var email = config.GetValue<string>("FunderMaps:Email") ?? throw new ArgumentNullException("FunderMaps:Email");
+        var password = config.GetValue<string>("FunderMaps:Password") ?? throw new ArgumentNullException("FunderMaps:Password");
+
+        return new WebserviceClient(new() { Email = email, Password = password }, domain);
+    })
     .BuildServiceProvider();
+
 
 //configure console logging
 // serviceProvider
