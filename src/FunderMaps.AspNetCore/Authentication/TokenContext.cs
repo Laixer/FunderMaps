@@ -10,10 +10,10 @@ public record TokenContext
     /// <summary>
     ///     Security token as string.
     /// </summary>
-    public string TokenString { get; init; }
+    public string TokenString { get; init; } = default!;
 
     /// <summary>
     ///     Security token.
     /// </summary>
-    public SecurityToken Token { get; init; }
+    public SecurityToken Token { get; init; } = default!;
 }

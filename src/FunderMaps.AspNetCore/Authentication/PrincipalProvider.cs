@@ -35,11 +35,11 @@ public static class PrincipalProvider
 
         var claims = new[]
         {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.Tenant, tenant.Id.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, tenantRole.ToString()),
-            };
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new Claim(FunderMapsAuthenticationClaimTypes.Tenant, tenant.Id.ToString()),
+            new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, tenantRole.ToString()),
+        };
 
         return new(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
     }
@@ -58,7 +58,7 @@ public static class PrincipalProvider
         ITenant tenant,
         OrganizationRole tenantRole,
         string authenticationType,
-        IEnumerable<Claim> additionalClaims = null)
+        IEnumerable<Claim>? additionalClaims = null)
     {
         ClaimsIdentity identity = CreateTenantUserIdentity(user, tenant, tenantRole, authenticationType);
 

@@ -11,11 +11,11 @@ public sealed record SignInDto
     ///     User email address.
     /// </summary>
     [Required, EmailAddress]
-    public string? Email { get; init; }
+    public string Email { get; init; } = default!;
 
     /// <summary>
     ///     User password.
     /// </summary>
     [Required]
-    public string? Password { get; init; }
+    public string Password { get; init; } = default!;
 }

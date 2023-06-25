@@ -27,12 +27,12 @@ public class FunderMapsStartup : IHostingStartup
     /// <summary>
     ///     Configuration.
     /// </summary>
-    public static IConfiguration Configuration { get; set; }
+    public static IConfiguration Configuration { get; set; } = default!;
 
     /// <summary>
     ///     Host environment.
     /// </summary>
-    public static IHostEnvironment HostEnvironment { get; set; }
+    public static IHostEnvironment HostEnvironment { get; set; } = default!;
 
     /// <summary>
     ///     Use this method to add entity and object mapping configurations.

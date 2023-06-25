@@ -16,13 +16,13 @@ public sealed record OrganizationDto
     ///     Gets or sets the name for the organization.
     /// </summary>
     [Required]
-    public string Name { get; init; }
+    public string Name { get; init; } = default!;
 
     /// <summary>
     ///     Gets or sets the email address for the organization.
     /// </summary>
     [Required, EmailAddress]
-    public string Email { get; init; }
+    public string Email { get; init; } = default!;
 
     /// <summary>
     ///     Area X min.

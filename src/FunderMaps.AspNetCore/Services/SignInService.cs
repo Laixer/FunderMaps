@@ -9,201 +9,200 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
-namespace FunderMaps.AspNetCore.Services
+namespace FunderMaps.AspNetCore.Services;
+
+/// <summary>
+///     Provides the APIs for authentication.
+/// </summary>
+public class SignInService
 {
     /// <summary>
-    ///     Provides the APIs for authentication.
+    ///     The <see cref="IUserRepository"/> used.
     /// </summary>
-    public class SignInService
+    public IUserRepository UserRepository { get; }
+
+    /// <summary>
+    ///     The <see cref="IOrganizationUserRepository"/> used.
+    /// </summary>
+    public IOrganizationUserRepository OrganizationUserRepository { get; }
+
+    /// <summary>
+    ///     The <see cref="IOrganizationRepository"/> used.
+    /// </summary>
+    public IOrganizationRepository OrganizationRepository { get; }
+
+    /// <summary>
+    ///     The <see cref="IPasswordHasher"/> used.
+    /// </summary>
+    public IPasswordHasher PasswordHasher { get; }
+
+    /// <summary>
+    ///     The <see cref="ISecurityTokenProvider"/> used.
+    /// </summary>
+    public ISecurityTokenProvider TokenProvider { get; }
+
+    /// <summary>
+    ///     Gets the <see cref="ILogger"/> used to log messages.
+    /// </summary>
+    protected ILogger Logger { get; }
+
+    /// <summary>
+    ///     Creates a new instance.
+    /// </summary>
+    public SignInService(
+        IUserRepository userRepository,
+        IOrganizationUserRepository organizationUserRepository,
+        IOrganizationRepository organizationRepository,
+        IPasswordHasher passwordHasher,
+        ISecurityTokenProvider tokenProvider,
+        ILogger<SignInService> logger)
     {
-        /// <summary>
-        ///     The <see cref="IUserRepository"/> used.
-        /// </summary>
-        public IUserRepository UserRepository { get; }
+        UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        OrganizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+        OrganizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+        PasswordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
+        TokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    }
 
-        /// <summary>
-        ///     The <see cref="IOrganizationUserRepository"/> used.
-        /// </summary>
-        public IOrganizationUserRepository OrganizationUserRepository { get; }
+    /// <summary>
+    ///     Test if the provided password is valid for the user.
+    /// </summary>
+    /// <param name="id">The user id whose password should be checked.</param>
+    /// <param name="password">The password to be checked against the user.</param>
+    /// <returns><c>True</c> if the specified password is valid for the user, otherwise false.</returns>
+    public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
+    {
+        string passwordHash = await UserRepository.GetPasswordHashAsync(id);
+        return PasswordHasher.IsPasswordValid(passwordHash, password);
+    }
 
-        /// <summary>
-        ///     The <see cref="IOrganizationRepository"/> used.
-        /// </summary>
-        public IOrganizationRepository OrganizationRepository { get; }
+    /// <summary>
+    ///     Set the password for the user.
+    /// </summary>
+    /// <param name="id">The user id whose password should be set.</param>
+    /// <param name="password">The plaintext password to be set on the user.</param>
+    public virtual async Task SetPasswordAsync(Guid id, string password)
+    {
+        string passwordHash = PasswordHasher.HashPassword(password);
+        await UserRepository.SetPasswordHashAsync(id, passwordHash);
+    }
 
-        /// <summary>
-        ///     The <see cref="IPasswordHasher"/> used.
-        /// </summary>
-        public IPasswordHasher PasswordHasher { get; }
-
-        /// <summary>
-        ///     The <see cref="ISecurityTokenProvider"/> used.
-        /// </summary>
-        public ISecurityTokenProvider TokenProvider { get; }
-
-        /// <summary>
-        ///     Gets the <see cref="ILogger"/> used to log messages.
-        /// </summary>
-        protected ILogger Logger { get; }
-
-        /// <summary>
-        ///     Creates a new instance.
-        /// </summary>
-        public SignInService(
-            IUserRepository userRepository,
-            IOrganizationUserRepository organizationUserRepository,
-            IOrganizationRepository organizationRepository,
-            IPasswordHasher passwordHasher,
-            ISecurityTokenProvider tokenProvider,
-            ILogger<SignInService> logger)
+    /// <summary>
+    ///     Attempts to sign in the specified <paramref name="principal"/>.
+    /// </summary>
+    /// <param name="principal">The principal to sign in.</param>
+    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
+    public virtual ValueTask<TokenContext> SignInAsync(ClaimsPrincipal principal)
+    {
+        if (principal is null)
         {
-            UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            OrganizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-            OrganizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-            PasswordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-            TokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
-            Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            throw new ArgumentNullException(nameof(principal));
         }
 
-        /// <summary>
-        ///     Test if the provided password is valid for the user.
-        /// </summary>
-        /// <param name="id">The user id whose password should be checked.</param>
-        /// <param name="password">The password to be checked against the user.</param>
-        /// <returns><c>True</c> if the specified password is valid for the user, otherwise false.</returns>
-        public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
+        var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(principal);
+        if (user is null || tenant is null)
         {
-            string passwordHash = await UserRepository.GetPasswordHashAsync(id);
-            return PasswordHasher.IsPasswordValid(passwordHash, password);
+            throw new AuthenticationException();
         }
 
-        /// <summary>
-        ///     Set the password for the user.
-        /// </summary>
-        /// <param name="id">The user id whose password should be set.</param>
-        /// <param name="password">The plaintext password to be set on the user.</param>
-        public virtual async Task SetPasswordAsync(Guid id, string password)
+        var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.TenantRole);
+        if (claim is null)
         {
-            string passwordHash = PasswordHasher.HashPassword(password);
-            await UserRepository.SetPasswordHashAsync(id, passwordHash);
+            throw new AuthenticationException();
         }
 
-        /// <summary>
-        ///     Attempts to sign in the specified <paramref name="principal"/>.
-        /// </summary>
-        /// <param name="principal">The principal to sign in.</param>
-        /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-        public virtual ValueTask<TokenContext> SignInAsync(ClaimsPrincipal principal)
+        Logger.LogTrace($"User '{user}' sign in was successful.");
+
+        principal = PrincipalProvider.CreateTenantUserPrincipal(user, tenant,
+            Enum.Parse<OrganizationRole>(claim.Value),
+            JwtBearerDefaults.AuthenticationScheme);
+        return new(TokenProvider.GetTokenContext(principal));
+    }
+
+    /// <summary>
+    ///     Attempts to sign in the specified <paramref name="email"/> and <paramref name="password"/> combination.
+    /// </summary>
+    /// <param name="email">The user email to sign in.</param>
+    /// <param name="password">The password to attempt to authenticate.</param>
+    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
+    public virtual async Task<TokenContext> PasswordSignInAsync(string email, string password)
+    {
+        if (await UserRepository.GetByEmailAsync(email) is not IUser user)
         {
-            if (principal is null)
+            throw new AuthenticationException();
+        }
+
+        // FUTURE: Single call?
+        var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
+
+        if (await CheckPasswordAsync(user.Id, password))
+        {
+            if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
             {
-                throw new ArgumentNullException(nameof(principal));
-            }
+                Logger.LogWarning($"User '{user}' locked out.");
 
-            var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(principal);
-            if (user is null || tenant is null)
-            {
                 throw new AuthenticationException();
             }
 
-            Claim claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.TenantRole);
-            if (claim is null)
-            {
-                throw new AuthenticationException();
-            }
+            await UserRepository.ResetAccessFailed(user.Id);
+            await UserRepository.RegisterAccess(user.Id);
 
-            Logger.LogTrace($"User '{user}' sign in was successful.");
+            Logger.LogInformation($"User '{user}' password sign in was successful.");
 
-            principal = PrincipalProvider.CreateTenantUserPrincipal(user, tenant,
-                Enum.Parse<OrganizationRole>(claim.Value),
+            Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
+            OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
+
+            ClaimsPrincipal principal = PrincipalProvider.CreateTenantUserPrincipal(user, organization,
+                organizationRole,
                 JwtBearerDefaults.AuthenticationScheme);
-            return new(TokenProvider.GetTokenContext(principal));
+            return TokenProvider.GetTokenContext(principal);
         }
 
-        /// <summary>
-        ///     Attempts to sign in the specified <paramref name="email"/> and <paramref name="password"/> combination.
-        /// </summary>
-        /// <param name="email">The user email to sign in.</param>
-        /// <param name="password">The password to attempt to authenticate.</param>
-        /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-        public virtual async Task<TokenContext> PasswordSignInAsync(string email, string password)
+        Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+
+        await UserRepository.BumpAccessFailed(user.Id);
+
+        throw new AuthenticationException();
+    }
+
+    // TODO: Fow now
+    public virtual async Task<ClaimsPrincipal> PasswordSignIn2Async(string email, string password)
+    {
+        if (await UserRepository.GetByEmailAsync(email) is not IUser user)
         {
-            if (await UserRepository.GetByEmailAsync(email) is not IUser user)
-            {
-                throw new AuthenticationException();
-            }
-
-            // FUTURE: Single call?
-            var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
-
-            if (await CheckPasswordAsync(user.Id, password))
-            {
-                if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
-                {
-                    Logger.LogWarning($"User '{user}' locked out.");
-
-                    throw new AuthenticationException();
-                }
-
-                await UserRepository.ResetAccessFailed(user.Id);
-                await UserRepository.RegisterAccess(user.Id);
-
-                Logger.LogInformation($"User '{user}' password sign in was successful.");
-
-                Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
-                OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
-
-                ClaimsPrincipal principal = PrincipalProvider.CreateTenantUserPrincipal(user, organization,
-                    organizationRole,
-                    JwtBearerDefaults.AuthenticationScheme);
-                return TokenProvider.GetTokenContext(principal);
-            }
-
-            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
-
-            await UserRepository.BumpAccessFailed(user.Id);
-
             throw new AuthenticationException();
         }
 
-        // TODO: Fow now
-        public virtual async Task<ClaimsPrincipal> PasswordSignIn2Async(string email, string password)
+        // FUTURE: Single call?
+        var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
+
+        if (await CheckPasswordAsync(user.Id, password))
         {
-            if (await UserRepository.GetByEmailAsync(email) is not IUser user)
+            if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
             {
+                Logger.LogWarning($"User '{user}' locked out.");
+
                 throw new AuthenticationException();
             }
 
-            // FUTURE: Single call?
-            var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
+            await UserRepository.ResetAccessFailed(user.Id);
+            await UserRepository.RegisterAccess(user.Id);
 
-            if (await CheckPasswordAsync(user.Id, password))
-            {
-                if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
-                {
-                    Logger.LogWarning($"User '{user}' locked out.");
+            Logger.LogInformation($"User '{user}' password sign in was successful.");
 
-                    throw new AuthenticationException();
-                }
+            Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
+            OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
 
-                await UserRepository.ResetAccessFailed(user.Id);
-                await UserRepository.RegisterAccess(user.Id);
-
-                Logger.LogInformation($"User '{user}' password sign in was successful.");
-
-                Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
-                OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
-
-                return PrincipalProvider.CreateTenantUserPrincipal(user, organization,
-                    organizationRole,
-                    JwtBearerDefaults.AuthenticationScheme);
-            }
-
-            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
-
-            await UserRepository.BumpAccessFailed(user.Id);
-
-            throw new AuthenticationException();
+            return PrincipalProvider.CreateTenantUserPrincipal(user, organization,
+                organizationRole,
+                JwtBearerDefaults.AuthenticationScheme);
         }
+
+        Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+
+        await UserRepository.BumpAccessFailed(user.Id);
+
+        throw new AuthenticationException();
     }
 }

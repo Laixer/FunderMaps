@@ -21,7 +21,8 @@ public static class ConfigurationExtensions
             throw new ArgumentNullException(nameof(configuration));
         }
 
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SignatureKey"]));
+        var signatureKey = configuration["Jwt:SignatureKey"] ?? throw new InvalidOperationException("JWT signature key not found in configuration.");
+        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signatureKey));
     }
 
     /// <summary>
@@ -35,7 +36,7 @@ public static class ConfigurationExtensions
             throw new ArgumentNullException(nameof(configuration));
         }
 
-        return configuration["Jwt:Issuer"];
+        return configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not found in configuration.");
     }
 
     /// <summary>
@@ -49,7 +50,7 @@ public static class ConfigurationExtensions
             throw new ArgumentNullException(nameof(configuration));
         }
 
-        return configuration["Jwt:Audience"];
+        return configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience not found in configuration.");
     }
 
     /// <summary>
@@ -63,6 +64,7 @@ public static class ConfigurationExtensions
             throw new ArgumentNullException(nameof(configuration));
         }
 
-        return TimeSpan.FromMinutes(double.Parse(configuration["Jwt:TokenValidity"], NumberFormatInfo.InvariantInfo));
+        var tokenValidity = configuration["Jwt:TokenValidity"] ?? throw new InvalidOperationException("JWT token validity not found in configuration.");
+        return TimeSpan.FromMinutes(double.Parse(tokenValidity, NumberFormatInfo.InvariantInfo));
     }
 }

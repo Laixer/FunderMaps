@@ -48,8 +48,7 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
     /// <summary>
     ///     Find the first security token handler that can write a token.
     /// </summary>
-    private SecurityTokenHandler Handler
-        => (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);
+    private SecurityTokenHandler Handler => (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);
 
     /// <summary>
     ///     Generate a <see cref="SecurityToken"/> from a <see cref="ClaimsPrincipal"/>.
@@ -65,7 +64,8 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
 
         AuthenticationProperties properties = new();
 
-        var JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters;
+        JwtTokenValidationParameters JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters
+            ?? throw new InvalidCastException("Cannot cast TokenValidationParameters to JwtTokenValidationParameters.");
         var issuerSigningKey = JwtTokenValidationParameters.IssuerSigningKey;
         SigningCredentials SigningCredentials = new(issuerSigningKey, SecurityAlgorithms.HmacSha256);
 

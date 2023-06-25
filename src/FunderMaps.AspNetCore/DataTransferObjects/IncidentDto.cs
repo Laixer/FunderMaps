@@ -13,7 +13,7 @@ public sealed record IncidentDto
     ///     Unique identifier.
     /// </summary>
     [Incident]
-    public string Id { get; init; }
+    public string Id { get; init; } = default!;
 
     // FUTURE: Rename to type
     /// <summary>
@@ -51,7 +51,7 @@ public sealed record IncidentDto
     /// <summary>
     ///     Document name.
     /// </summary>
-    public string[] DocumentFile { get; init; }
+    public string[]? DocumentFile { get; init; }
 
     /// <summary>
     ///     Note.
@@ -79,13 +79,13 @@ public sealed record IncidentDto
     ///     Foundational damage.
     /// </summary>
     [ArrayEnumDataTypeAttribute(typeof(FoundationDamageCharacteristics))]
-    public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; init; }
+    public FoundationDamageCharacteristics[]? FoundationDamageCharacteristics { get; init; }
 
     /// <summary>
     ///     Environmental damage.
     /// </summary>
     [ArrayEnumDataTypeAttribute(typeof(EnvironmentDamageCharacteristics))]
-    public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; init; }
+    public EnvironmentDamageCharacteristics[]? EnvironmentDamageCharacteristics { get; init; }
 
     /// <summary>
     ///     Contact email.
