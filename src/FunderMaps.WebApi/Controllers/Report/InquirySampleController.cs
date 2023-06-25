@@ -55,33 +55,20 @@ public class InquirySampleController : ControllerBase
     ///     Return inquiry sample by id.
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetAsync(int id)
-    {
-        // Act.
-        InquirySample inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
-
-        // Map.
-        var output = _mapper.Map<InquirySampleDto>(inquirySample);
-
-        // Return.
-        return Ok(output);
-    }
+    public async Task<InquirySample> GetAsync(int id)
+        => await _inquirySampleRepository.GetByIdAsync(id);
 
     // GET: api/inquiry/{id}/sample
     /// <summary>
     ///     Return all inquiry samples.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
+    public async IAsyncEnumerable<InquirySample> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
     {
-        // Act.
-        IAsyncEnumerable<InquirySample> inquirySampleList = _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation);
-
-        // Map.
-        var output = await _mapper.MapAsync<IList<InquirySampleDto>, InquirySample>(inquirySampleList);
-
-        // Return.
-        return Ok(output);
+        await foreach (var inquirySample in _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation))
+        {
+            yield return inquirySample;
+        }
     }
 
     // POST: api/inquiry/{id}/sample/{id}
@@ -94,18 +81,14 @@ public class InquirySampleController : ControllerBase
     /// </remarks>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> CreateAsync(int inquiryId, [FromBody] InquirySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
+    public async Task<InquirySample> CreateAsync(int inquiryId, [FromBody] InquirySample inquirySample, [FromServices] IGeocoderTranslation geocoderTranslation)
     {
-        Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
+        var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
 
-        // Map.
-        var inquirySample = _mapper.Map<InquirySample>(input);
         inquirySample.Address = address.Id;
         inquirySample.Inquiry = inquiryId;
 
-        // Act.
-        // FUTURE: Too much logic
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
@@ -116,11 +99,7 @@ public class InquirySampleController : ControllerBase
         inquiry.State.TransitionToPending();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        // Map.
-        var output = _mapper.Map<InquirySampleDto>(inquirySample);
-
-        // Return.
-        return Ok(output);
+        return inquirySample;
     }
 
     // PUT: api/inquiry/{id}/sample/{id}
@@ -133,15 +112,12 @@ public class InquirySampleController : ControllerBase
     /// </remarks>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySampleDto input)
+    public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample)
     {
-        // Map.
-        var inquirySample = _mapper.Map<InquirySample>(input);
         inquirySample.Id = id;
         inquirySample.Inquiry = inquiryId;
 
-        // Act.
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
@@ -152,7 +128,6 @@ public class InquirySampleController : ControllerBase
         inquiry.State.TransitionToPending();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        // Return.
         return NoContent();
     }
 
@@ -168,15 +143,15 @@ public class InquirySampleController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        // Act.
-        InquirySample inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+        var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+
+        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _inquirySampleRepository.DeleteAsync(id);
+        await _inquirySampleRepository.DeleteAsync(inquirySample.Id);
 
         // FUTURE: Should only select inquiry
         if (await _inquirySampleRepository.CountAsync() == 0)
@@ -185,7 +160,6 @@ public class InquirySampleController : ControllerBase
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
         }
 
-        // Return.
         return NoContent();
     }
 }
