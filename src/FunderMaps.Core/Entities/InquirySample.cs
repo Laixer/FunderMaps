@@ -241,6 +241,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Crack indoor size.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? CrackIndoorSize { get; set; }
 
     /// <summary>
@@ -256,6 +257,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Crack facade front size.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? CrackFacadeFrontSize { get; set; }
 
     /// <summary>
@@ -271,6 +273,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Crack facade back size.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? CrackFacadeBackSize { get; set; }
 
     /// <summary>
@@ -286,6 +289,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Crack facade left size.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? CrackFacadeLeftSize { get; set; }
 
     /// <summary>
@@ -301,6 +305,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Crack facade right size.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? CrackFacadeRightSize { get; set; }
 
     /// <summary>

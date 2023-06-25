@@ -1,10 +1,8 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,19 +14,14 @@ namespace FunderMaps.WebApi.Controllers.Report;
 [Route("inquiry/{inquiryId}/sample")]
 public class InquirySampleController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IInquiryRepository _inquiryRepository;
     private readonly IInquirySampleRepository _inquirySampleRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public InquirySampleController(
-        IMapper mapper,
-        IInquiryRepository inquiryRepository,
-        IInquirySampleRepository inquirySampleRepository)
+    public InquirySampleController(IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
         _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
     }
