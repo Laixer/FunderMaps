@@ -1,11 +1,9 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,22 +15,16 @@ namespace FunderMaps.WebApi.Controllers.Report;
 [Route("recovery/{recoveryId}/sample")]
 public class RecoverySampleController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IRecoverySampleRepository _recoverySampleRepository;
     private readonly IRecoveryRepository _recoveryRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public RecoverySampleController(
-        IMapper mapper,
-        IRecoverySampleRepository recoverySampleRepository,
-        IRecoveryRepository recoveryRepository)
+    public RecoverySampleController(IRecoverySampleRepository recoverySampleRepository, IRecoveryRepository recoveryRepository)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _recoverySampleRepository = recoverySampleRepository ?? throw new ArgumentNullException(nameof(recoverySampleRepository));
         _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
-
     }
 
     // GET: api/recovery/{id}/sample/stats
@@ -42,13 +34,11 @@ public class RecoverySampleController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int recoveryId)
     {
-        // Map.
         DatasetStatsDto output = new()
         {
             Count = await _recoverySampleRepository.CountAsync(recoveryId),
         };
 
-        // Return.
         return Ok(output);
     }
 
@@ -57,33 +47,20 @@ public class RecoverySampleController : ControllerBase
     ///     Return recovery sample by id.
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetAsync(int id)
-    {
-        // Act.
-        RecoverySample recoverySample = await _recoverySampleRepository.GetByIdAsync(id);
-
-        // Map.
-        var output = _mapper.Map<RecoverySampleDto>(recoverySample);
-
-        // Return.
-        return Ok(output);
-    }
+    public async Task<RecoverySample> GetAsync(int id)
+        => await _recoverySampleRepository.GetByIdAsync(id);
 
     // GET: api/recovery/{id}/sample
     /// <summary>
     ///     Return all recovery samples.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync(int recoveryId, [FromQuery] PaginationDto pagination)
+    public async IAsyncEnumerable<RecoverySample> GetAllAsync(int recoveryId, [FromQuery] PaginationDto pagination)
     {
-        // Act.
-        IAsyncEnumerable<RecoverySample> recoverySampleList = _recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation);
-
-        // Map.
-        var output = await _mapper.MapAsync<IList<RecoverySampleDto>, RecoverySample>(recoverySampleList);
-
-        // Return.
-        return Ok(output);
+        await foreach (var recoverySample in _recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation))
+        {
+            yield return recoverySample;
+        }
     }
 
     // POST: api/recovery/{id}/sample/{id}
@@ -96,18 +73,14 @@ public class RecoverySampleController : ControllerBase
     /// </remarks>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> CreateAsync(int recoveryId, [FromBody] RecoverySampleDto input, [FromServices] IGeocoderTranslation geocoderTranslation)
+    public async Task<RecoverySample> CreateAsync(int recoveryId, [FromBody] RecoverySample recoverySample, [FromServices] IGeocoderTranslation geocoderTranslation)
     {
-        Address address = await geocoderTranslation.GetAddressIdAsync(input.Address);
+        var address = await geocoderTranslation.GetAddressIdAsync(recoverySample.Address);
 
-        // Map.
-        var recoverySample = _mapper.Map<RecoverySample>(input);
         recoverySample.Address = address.Id;
         recoverySample.Recovery = recoveryId;
 
-        // Act.
-        // FUTURE: Too much logic
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+        var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
@@ -118,11 +91,7 @@ public class RecoverySampleController : ControllerBase
         recovery.State.TransitionToPending();
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
-        // Map.
-        var output = _mapper.Map<RecoverySampleDto>(recoverySample);
-
-        // Return.
-        return Ok(output);
+        return recoverySample;
     }
 
     // PUT: api/recovery/{id}/sample/{id}
@@ -135,16 +104,12 @@ public class RecoverySampleController : ControllerBase
     /// </remarks>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySampleDto input)
+    public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySample recoverySample)
     {
-        // Map.
-        var recoverySample = _mapper.Map<RecoverySample>(input);
         recoverySample.Id = id;
         recoverySample.Recovery = recoveryId;
 
-        // Act.
-        // FUTURE: Too much logic
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+        var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
@@ -155,7 +120,6 @@ public class RecoverySampleController : ControllerBase
         recovery.State.TransitionToPending();
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
 
-        // Return.
         return NoContent();
     }
 
@@ -171,15 +135,15 @@ public class RecoverySampleController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        // Act.
-        RecoverySample recoverySample = await _recoverySampleRepository.GetByIdAsync(id);
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
+        var recoverySample = await _recoverySampleRepository.GetByIdAsync(id);
+
+        var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _recoverySampleRepository.DeleteAsync(id);
+        await _recoverySampleRepository.DeleteAsync(recoverySample.Id);
 
         if (await _recoverySampleRepository.CountAsync(recoverySample.Recovery) == 0)
         {
@@ -187,7 +151,6 @@ public class RecoverySampleController : ControllerBase
             await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
         }
 
-        // Return.
         return NoContent();
     }
 }

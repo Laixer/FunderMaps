@@ -30,7 +30,7 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     ///     Note.
     /// </summary>
     [DataType(DataType.MultilineText)]
-    public string Note { get; set; }
+    public string? Note { get; set; }
 
     /// <summary>
     ///     Address identifier.
@@ -66,7 +66,7 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     /// <summary>
     ///     Permit.
     /// </summary>
-    public string Permit { get; set; }
+    public string? Permit { get; set; }
 
     /// <summary>
     ///     Permit date.

@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
 using FunderMaps.WebApi.DataTransferObjects;
@@ -110,18 +111,18 @@ public static class ReportStub
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
-    public static async Task<RecoverySampleDto> CreateRecoverySampleAsync(BackendFixtureFactory factory, RecoveryDto recovery)
+    public static async Task<RecoverySample> CreateRecoverySampleAsync(BackendFixtureFactory factory, RecoveryDto recovery)
     {
         // Arrange
         using var client = factory.CreateClient(OrganizationRole.Writer);
-        var newObject = new RecoverySampleDtoFaker()
+        var newObject = new RecoverySampleFaker()
             .RuleFor(f => f.Address, f => "gfm-f53334d806ab4ab386e8df29111add21")
             // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
             .Generate();
 
         // Act
         var response = await client.PostAsJsonAsync($"api/recovery/{recovery.Id}/sample", newObject);
-        var returnObject = await response.Content.ReadFromJsonAsync<RecoverySampleDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<RecoverySample>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

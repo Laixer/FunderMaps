@@ -33,13 +33,11 @@ public class InquirySampleController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int inquiryId)
     {
-        // Map.
         DatasetStatsDto output = new()
         {
             Count = await _inquirySampleRepository.CountAsync(inquiryId),
         };
 
-        // Return.
         return Ok(output);
     }
 

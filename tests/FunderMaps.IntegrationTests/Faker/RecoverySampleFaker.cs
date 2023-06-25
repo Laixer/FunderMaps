@@ -1,18 +1,18 @@
 ﻿using Bogus;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.DataTransferObjects;
 
 namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
-    ///     Faker for <see cref="RecoverySampleDto"/>.
+    ///     Faker for <see cref="RecoverySample"/>.
     /// </summary>
-    public class RecoverySampleDtoFaker : Faker<RecoverySampleDto>
+    public class RecoverySampleFaker : Faker<RecoverySample>
     {
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public RecoverySampleDtoFaker()
+        public RecoverySampleFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);
             RuleFor(f => f.Recovery, f => f.UniqueIndex);

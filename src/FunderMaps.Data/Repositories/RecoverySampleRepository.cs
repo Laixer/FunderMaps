@@ -37,7 +37,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         {
             Id = reader.GetInt(offset++),
             Recovery = reader.GetInt(offset++),
-            Address = reader.GetSafeString(offset++),
+            Address = reader.GetString(offset++),
             CreateDate = reader.GetDateTime(offset++),
             UpdateDate = reader.GetSafeDateTime(offset++),
             DeleteDate = reader.GetSafeDateTime(offset++),
