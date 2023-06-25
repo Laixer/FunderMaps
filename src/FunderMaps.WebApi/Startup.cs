@@ -114,7 +114,7 @@ public class Startup
     /// </remarks>
     public static void Configure(IApplicationBuilder app)
     {
-        ForwardedHeadersOptions forwardedOptions = new()
+        var forwardedOptions = new ForwardedHeadersOptions()
         {
             ForwardedHeaders = ForwardedHeaders.All,
         };
