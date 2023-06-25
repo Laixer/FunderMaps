@@ -27,7 +27,7 @@ internal class NullBlobStorageService : IBlobStorageService
     /// <param name="stream">See <see cref="Stream"/>.</param>
     /// <param name="storageObject">Storage object settings.</param>
     /// <returns>See <see cref="ValueTask"/>.</returns>
-    public Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject storageObject = null)
+    public Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject? storageObject = null)
         => Task.CompletedTask;
 
     /// <summary>
@@ -37,7 +37,7 @@ internal class NullBlobStorageService : IBlobStorageService
     /// <param name="directoryPath">Source directory.</param>
     /// <param name="storageObject">Storage object settings.</param>
     /// <returns>See <see cref="ValueTask"/>.</returns>
-    public Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject storageObject = null)
+    public Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject? storageObject = null)
         => Task.CompletedTask;
 
     /// <summary>

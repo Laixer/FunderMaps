@@ -16,8 +16,8 @@ var serviceProvider = new ServiceCollection()
         var config = serviceProvider.GetRequiredService<IConfiguration>();
 
         var domain = config.GetValue<string>("FunderMaps:Domain");
-        var email = config.GetValue<string>("FunderMaps:Email") ?? throw new ArgumentNullException("FunderMaps:Email");
-        var password = config.GetValue<string>("FunderMaps:Password") ?? throw new ArgumentNullException("FunderMaps:Password");
+        var email = config.GetValue<string>("FunderMaps:Email") ?? throw new InvalidOperationException("FunderMaps:Email not found in configuration.");
+        var password = config.GetValue<string>("FunderMaps:Password") ?? throw new InvalidOperationException("FunderMaps:Password not found in configuration.");
 
         return new WebserviceClient(new() { Email = email, Password = password }, domain);
     })

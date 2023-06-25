@@ -21,10 +21,10 @@ internal abstract class DbServiceBase : AppServiceBase
     /// <summary>
     ///     Memory cache.
     /// </summary>
-    public IMemoryCache Cache { get; set; }
+    public IMemoryCache Cache { get; set; } = default!;
 
     /// <summary>
     ///     Data context factory.
     /// </summary>
-    public DbContextFactory DbContextFactory { get; set; }
+    public DbContextFactory DbContextFactory { get; set; } = default!;
 }

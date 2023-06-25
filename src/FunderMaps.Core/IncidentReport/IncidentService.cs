@@ -185,8 +185,8 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
             Varaibles = new Dictionary<string, object>
             {
                 { "id", incident.Id },
-                { "name", name },
-                { "phone", phone },
+                { "name", name ?? throw new ArgumentNullException(nameof(name)) },
+                { "phone", phone ?? throw new ArgumentNullException(nameof(phone)) },
                 { "email", email },
                 { "address", address.FullAddress },
                 { "note", incident.Note },

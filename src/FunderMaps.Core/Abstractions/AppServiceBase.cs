@@ -12,5 +12,5 @@ public abstract class AppServiceBase
     /// <summary>
     ///     Application context.
     /// </summary>
-    public AppContext AppContext { get; set; }
+    public AppContext AppContext { get; set; } = default!;
 }
