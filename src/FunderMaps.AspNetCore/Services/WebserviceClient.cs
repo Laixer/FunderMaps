@@ -24,11 +24,11 @@ public record Authentication
 /// <summary>
 ///     Webservice client.
 /// </summary>
-public class WebserviceClient
+public class WebserviceClient : IDisposable
 {
-    const string DefaultBaseUrl = @"https://ws.fundermaps.com/";
+    private const string DefaultBaseUrl = @"https://ws.fundermaps.com/";
 
-    HttpClient client = new();
+    private HttpClient client = new();
 
     public bool IsAuthenticated => client.DefaultRequestHeaders.Authorization is not null;
 
@@ -54,10 +54,15 @@ public class WebserviceClient
     }
 
     /// <summary>
-    ///     Authenticate the user against the webservice.
+    ///     Ensures there is a valid authentication token.
     /// </summary>
-    private async Task LoginAsync()
+    private async Task EnsureAuthenticationAsync()
     {
+        if (IsAuthenticated)
+        {
+            return;
+        }
+
         var response = await client.PostAsJsonAsync("auth/signin", new
         {
             email = Authentication.Email,
@@ -79,11 +84,7 @@ public class WebserviceClient
     /// <param name="id">Object identifier.</param>
     public async Task<AnalysisProduct?> GetAnalysisAsync(string id)
     {
-        if (!IsAuthenticated)
-        {
-            await LoginAsync();
-        }
-
+        await EnsureAuthenticationAsync();
         return await client.GetFromJsonAsync<AnalysisProduct>($"api/v3/product/analysis/{id}");
     }
 
@@ -93,11 +94,9 @@ public class WebserviceClient
     /// <param name="id">Object identifier.</param>
     public async Task<StatisticsProduct?> GetStatisticsAsync(string id)
     {
-        if (!IsAuthenticated)
-        {
-            await LoginAsync();
-        }
-
+        await EnsureAuthenticationAsync();
         return await client.GetFromJsonAsync<StatisticsProduct>($"api/v3/product/statistics/{id}");
     }
+
+    public void Dispose() => client.Dispose();
 }
