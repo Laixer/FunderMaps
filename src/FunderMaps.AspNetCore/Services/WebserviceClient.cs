@@ -39,9 +39,14 @@ public class WebserviceClient
     /// </summary>
     /// <param name="authentication">Authentication parameters.</param>
     /// <param name="baseUrl">Optional base URL.</param>
-    public WebserviceClient(Authentication authentication, string baseUrl = DefaultBaseUrl)
+    public WebserviceClient(Authentication authentication, string? baseUrl = DefaultBaseUrl)
     {
         Authentication = authentication;
+
+        if (baseUrl is null)
+        {
+            baseUrl = DefaultBaseUrl;
+        }
 
         client.BaseAddress = new(baseUrl);
         client.DefaultRequestHeaders.Accept.Clear();
@@ -51,9 +56,9 @@ public class WebserviceClient
     /// <summary>
     ///     Authenticate the user against the webservice.
     /// </summary>
-    async Task LoginAsync()
+    private async Task LoginAsync()
     {
-        var response = await client.PostAsJsonAsync("api/auth/signin", new
+        var response = await client.PostAsJsonAsync("auth/signin", new
         {
             email = Authentication.Email,
             password = Authentication.Password,
