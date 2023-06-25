@@ -28,13 +28,14 @@ public class AddressTests : IClassFixture<BackendFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("gfm-059f268aad9d43339afe56a32cf641cc", returnObject.Id);
         Assert.Equal("gfm-629e12e409bb4d0893640ae9ef3a53b7", returnObject.BuildingId);
         Assert.Equal("319b", returnObject.BuildingNumber);
         Assert.Equal("3023DG", returnObject.PostalCode);
         Assert.Equal("Rochussenstraat", returnObject.Street);
         Assert.Equal("Rotterdam", returnObject.City);
-        Assert.True(response.Headers.CacheControl.Public);
+        Assert.True(response.Headers.CacheControl?.Public);
     }
 
     [Theory]
@@ -52,8 +53,9 @@ public class AddressTests : IClassFixture<BackendFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(expected, returnObject.Id);
-        Assert.True(response.Headers.CacheControl.Public);
+        Assert.True(response.Headers.CacheControl?.Public);
     }
 
     [Theory]
@@ -70,6 +72,6 @@ public class AddressTests : IClassFixture<BackendFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.True(response.Headers.CacheControl.Public);
+        Assert.True(response.Headers.CacheControl?.Public);
     }
 }

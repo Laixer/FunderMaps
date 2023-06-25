@@ -27,6 +27,7 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(Guid.Parse("ab403d16-e428-4a75-9eec-3dd08b294988"), returnObject.Id);
         Assert.Equal("corene@contoso.com", returnObject.Email);
     }
@@ -46,6 +47,7 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(updateObject.GivenName, returnObject.GivenName);
         Assert.Equal(updateObject.LastName, returnObject.LastName);
         Assert.Equal(updateObject.JobTitle, returnObject.JobTitle);
@@ -69,6 +71,7 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("3122348912", returnObject.PhoneNumber);
     }
 

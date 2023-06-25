@@ -28,6 +28,7 @@ public static class ReportStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
         Assert.Null(returnObject.UpdateDate);
 
@@ -49,6 +50,7 @@ public static class ReportStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
         Assert.Null(returnObject.UpdateDate);
 
@@ -69,6 +71,7 @@ public static class ReportStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.StartsWith("FIR", returnObject.Id, StringComparison.InvariantCulture);
         Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
 
@@ -126,6 +129,7 @@ public static class ReportStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(recovery.Id, returnObject.Recovery);
         Assert.Equal(newObject.Address, returnObject.Address);
 
@@ -145,6 +149,7 @@ public static class ReportStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal(inquiry.Id, returnObject.Inquiry);
         Assert.Equal(newObject.Address, returnObject.Address);
 
