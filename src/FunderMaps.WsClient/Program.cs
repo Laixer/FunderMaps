@@ -1,57 +1,80 @@
-using System.Text.Json;
+using System.CommandLine;
 using FunderMaps.AspNetCore.Services;
-using Microsoft.Extensions.Configuration;
+using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
-    .Build();
-
-var serviceProvider = new ServiceCollection()
-    .AddLogging()
-    .AddSingleton<IConfiguration>(configuration)
-    .AddScoped<WebserviceClient>(serviceProvider =>
-    {
-        var config = serviceProvider.GetRequiredService<IConfiguration>();
-
-        var domain = config.GetValue<string>("FunderMaps:Domain");
-        var email = config.GetValue<string>("FunderMaps:Email") ?? throw new InvalidOperationException("FunderMaps:Email not found in configuration.");
-        var password = config.GetValue<string>("FunderMaps:Password") ?? throw new InvalidOperationException("FunderMaps:Password not found in configuration.");
-
-        return new WebserviceClient(new() { Email = email, Password = password }, domain);
-    })
-    .BuildServiceProvider();
-
-
-//configure console logging
-// serviceProvider
-// .GetService<ILoggerFactory>();
-// .AddConsole(LogLevel.Debug);
-
-var logger = serviceProvider.GetRequiredService<ILoggerFactory>()
-    .CreateLogger<Program>();
-
-logger.LogInformation("Starting application");
-
-var client = serviceProvider.GetRequiredService<WebserviceClient>();
-
-var stopwatch = new System.Diagnostics.Stopwatch();
-stopwatch.Start();
-
-var product = await client.GetAnalysisAsync("NL.IMBAG.PAND.0606100000009175");
-Console.WriteLine($"Address ID: {product?.ExternalAddressId}");
-
-if (product is not null)
+class Program
 {
-    var statistics = await client.GetStatisticsAsync(product.NeighborhoodId);
+    internal static ServiceProvider SetupServiceProvider(Authentication authentication)
+    {
+        return new ServiceCollection()
+            .AddLogging(options =>
+            {
+                options.ClearProviders();
+                options.AddSimpleConsole();
+                options.SetMinimumLevel(LogLevel.Debug);
+            })
+            .AddScoped<WebserviceClient>(serviceProvider => new(authentication))
+            .AddScoped<WebserviceClientLogger>()
+            .BuildServiceProvider();
+    }
 
-    var options = new JsonSerializerOptions { WriteIndented = true };
-    string jsonString = JsonSerializer.Serialize(statistics, options);
+    internal static async Task DoCall(ServiceProvider serviceProvider, string buildingId)
+    {
+        var client = serviceProvider.GetRequiredService<WebserviceClientLogger>();
 
-    Console.WriteLine(jsonString);
+        await client.LogAnalysisAsync(buildingId);
+        // await client.LogStatisticsAsync(buildingId);
+    }
+
+    internal static void TearDownServiceProvider(ServiceProvider serviceProvider)
+    {
+        serviceProvider.Dispose();
+    }
+
+    public static async Task<int> Main(string[] args)
+    {
+        var usernameOption = new Option<string?>("--username", "Webservice username")
+        {
+            IsRequired = true,
+        };
+        usernameOption.AddAlias("-u");
+
+        var passwordOption = new Option<string?>("--password", "Webservice password")
+        {
+            IsRequired = true,
+        };
+        passwordOption.AddAlias("-p");
+
+        var buildingArgument = new Argument<string>("building", "Building identifier")
+        {
+            Arity = ArgumentArity.ExactlyOne,
+        };
+
+        var command = new RootCommand("FunderMaps command line interface")
+        {
+            usernameOption,
+            passwordOption,
+            buildingArgument,
+        };
+
+        command.SetHandler(async (username, password, buildingId) =>
+        {
+            var auth = new Authentication()
+            {
+                Email = username ?? throw new ArgumentNullException(nameof(username)),
+                Password = password ?? throw new ArgumentNullException(nameof(password)),
+            };
+
+            var serviceProvider = SetupServiceProvider(auth);
+
+            await DoCall(serviceProvider, buildingId);
+
+            TearDownServiceProvider(serviceProvider);
+
+        }, usernameOption, passwordOption, buildingArgument);
+
+        return await command.InvokeAsync(args);
+    }
 }
-
-stopwatch.Stop();
-
-Console.WriteLine($"Elapsed: {stopwatch.Elapsed}");
