@@ -15,7 +15,6 @@ public class MapperProfile : Profile
     public MapperProfile()
     {
         CreateMap<Inquiry, InquiryDto>().ReverseMap();
-        // FUTURE: Try and map nested objects in a cleaner way
         CreateMap<InquiryFull, InquiryDto>()
             .ForMember(dest => dest.AuditStatus, o => o.MapFrom(src => src.State.AuditStatus))
             .ForMember(dest => dest.Reviewer, o => o.MapFrom(src => src.Attribution.Reviewer))
@@ -26,9 +25,6 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.CreateDate, o => o.MapFrom(src => src.Record.CreateDate))
             .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
             .ReverseMap();
-        // CreateMap<InquirySample, InquirySampleDto>().ReverseMap();
-        CreateMap<OrganizationProposal, OrganizationProposalDto>().ReverseMap();
-        // FUTURE: Try and map nested objects in a cleaner way
         CreateMap<Recovery, RecoveryDto>()
             .ForMember(dest => dest.AuditStatus, o => o.MapFrom(src => src.State.AuditStatus))
             .ForMember(dest => dest.Reviewer, o => o.MapFrom(src => src.Attribution.Reviewer))

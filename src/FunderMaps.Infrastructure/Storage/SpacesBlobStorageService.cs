@@ -37,7 +37,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
         _awsCredentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
         _clientConfig = new()
         {
-            ServiceURL = _options.ServiceUri.AbsoluteUri
+            ServiceURL = _options.ServiceUri?.AbsoluteUri ?? throw new ArgumentNullException(nameof(_options.ServiceUri)),
         };
     }
 

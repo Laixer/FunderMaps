@@ -4,7 +4,7 @@ using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-class Program
+public class Program
 {
     internal static ServiceProvider SetupServiceProvider(Authentication authentication)
     {

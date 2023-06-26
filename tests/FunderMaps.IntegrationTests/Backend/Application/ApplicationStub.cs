@@ -12,53 +12,53 @@ namespace FunderMaps.IntegrationTests.Backend.Application
     /// </summary>
     public static class ApplicationStub
     {
-        public static async Task<OrganizationProposalDto> CreateProposalAsync(BackendFixtureFactory factory)
-        {
-            // Arrange
-            using var client = factory.CreateAdminClient();
-            var newObject = new OrganizationProposalDtoFaker().Generate();
+        // public static async Task<OrganizationProposalDto> CreateProposalAsync(BackendFixtureFactory factory)
+        // {
+        //     // Arrange
+        //     using var client = factory.CreateAdminClient();
+        //     var newObject = new OrganizationProposalDtoFaker().Generate();
 
-            // Act
-            var response = await client.PostAsJsonAsync("api/organization/proposal", newObject);
-            var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
+        //     // Act
+        //     var response = await client.PostAsJsonAsync("api/organization/proposal", newObject);
+        //     var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(newObject.Name, returnObject.Name);
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.Equal(newObject.Name, returnObject.Name);
 
-            return returnObject;
-        }
+        //     return returnObject;
+        // }
 
-        public static async Task<OrganizationSetupDto> CreateOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
-        {
-            // Arrange
-            using var client = factory.CreateUnauthorizedClient();
-            var newObject = new OrganizationSetupDtoFaker().Generate();
+        // public static async Task<OrganizationSetupDto> CreateOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
+        // {
+        //     // Arrange
+        //     using var client = factory.CreateUnauthorizedClient();
+        //     var newObject = new OrganizationSetupDtoFaker().Generate();
 
-            // Act
-            var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", newObject);
+        //     // Act
+        //     var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", newObject);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-            return newObject;
-        }
+        //     return newObject;
+        // }
 
-        public static async Task<OrganizationDto> GetOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
-        {
-            // Arrange
-            using var client = factory.CreateAdminClient();
+        // public static async Task<OrganizationDto> GetOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
+        // {
+        //     // Arrange
+        //     using var client = factory.CreateAdminClient();
 
-            // Act
-            var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
+        //     // Act
+        //     var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
+        //     var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal(organization.Id, returnObject.Id);
+        //     // Assert
+        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        //     Assert.Equal(organization.Id, returnObject.Id);
 
-            return returnObject;
-        }
+        //     return returnObject;
+        // }
 
         public static async Task DeleteOrganizationAsync(BackendFixtureFactory factory, OrganizationDto organization)
         {
