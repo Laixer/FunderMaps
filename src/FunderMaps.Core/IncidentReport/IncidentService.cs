@@ -163,11 +163,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
         incident.Meta = meta;
         incident.AuditStatus = AuditStatus.Todo;
 
-        var to = new EmailAddress
-        {
-            Address = incident.ContactNavigation.Email,
-            Name = incident.ContactNavigation.Name
-        };
 
         var name = incident.ContactNavigation.Name;
         var email = incident.ContactNavigation.Email;
@@ -179,7 +174,10 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
 
         await _emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[] { to },
+            ToAddresses = new[]
+            {
+                new EmailAddress(incident.ContactNavigation.Email, incident.ContactNavigation.Name)
+            },
             Subject = $"Nieuwe melding: {incident.Id}",
             Template = "incident-customer",
             Varaibles = new Dictionary<string, object>
@@ -202,32 +200,27 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
 
         foreach (var recipient in _options.Recipients)
         {
-            var to2 = new EmailAddress
-            {
-                Address = recipient,
-            };
-
             await _emailService.SendAsync(new EmailMessage
             {
-                ToAddresses = new[] { to2 },
+                ToAddresses = new[] { new EmailAddress(recipient) },
                 Subject = $"Nieuwe melding: {incident.Id}",
                 Template = "incident-reviewer",
                 Varaibles = new Dictionary<string, object>
-            {
-                { "id", incident.Id },
-                { "name", name },
-                { "phone", phone },
-                { "email", email },
-                { "address", address.FullAddress },
-                { "note", incident.Note },
-                { "foundationType", ToFoundationType(incident.FoundationType) },
-                { "chainedBuilding", ToBoolean(incident.ChainedBuilding) },
-                { "owner", ToBoolean(incident.Owner) },
-                { "neighborRecovery", ToBoolean(incident.NeighborRecovery) },
-                { "foundationDamageCause", ToFoundationDamageCause(incident.FoundationDamageCause) },
-                { "foundationDamageCharacteristics", ArrayToFoundationDamageCharacteristics(incident.FoundationDamageCharacteristics) },
-                { "environmentDamageCharacteristics", ArrayToEnvironmentDamageCharacteristics(incident.EnvironmentDamageCharacteristics) },
-            }
+                {
+                    { "id", incident.Id },
+                    { "name", name },
+                    { "phone", phone },
+                    { "email", email },
+                    { "address", address.FullAddress },
+                    { "note", incident.Note },
+                    { "foundationType", ToFoundationType(incident.FoundationType) },
+                    { "chainedBuilding", ToBoolean(incident.ChainedBuilding) },
+                    { "owner", ToBoolean(incident.Owner) },
+                    { "neighborRecovery", ToBoolean(incident.NeighborRecovery) },
+                    { "foundationDamageCause", ToFoundationDamageCause(incident.FoundationDamageCause) },
+                    { "foundationDamageCharacteristics", ArrayToFoundationDamageCharacteristics(incident.FoundationDamageCharacteristics) },
+                    { "environmentDamageCharacteristics", ArrayToEnvironmentDamageCharacteristics(incident.EnvironmentDamageCharacteristics) },
+                }
             });
         }
 

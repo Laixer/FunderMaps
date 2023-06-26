@@ -34,14 +34,29 @@ internal class MailgunService : IEmailService
     /// <param name="token">Cancellation token.</param>
     public async Task SendAsync(EmailMessage emailMessage, CancellationToken token)
     {
-        var fromAddress = $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>";
-        var toAddress = string.Join("; ", emailMessage.ToAddresses.Select(m => $"{m.Name} <{m.Address}>"));
+        if (emailMessage is null)
+        {
+            throw new ArgumentNullException(nameof(emailMessage));
+        }
 
+        if (!emailMessage.ToAddresses.Any())
+        {
+            throw new ArgumentException("No recipients specified.", nameof(emailMessage));
+        }
+
+        foreach (var recipient in emailMessage.ToAddresses)
+        {
+            await SendMailAsync(recipient, emailMessage, token);
+        }
+    }
+
+    public async Task SendMailAsync(EmailAddress recipient, EmailMessage emailMessage, CancellationToken token)
+    {
         var formContent = new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string, string>("from", fromAddress),
-            new KeyValuePair<string, string>("to", toAddress),
-            new KeyValuePair<string, string>("subject", emailMessage.Subject ?? throw new ArgumentNullException()),
+            new KeyValuePair<string, string>("from", $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>"),
+            new KeyValuePair<string, string>("to", $"{recipient.Name} <{recipient.Address}>"),
+            new KeyValuePair<string, string>("subject", emailMessage.Subject ?? throw new ArgumentNullException(nameof(emailMessage.Subject))),
         };
 
         if (emailMessage.Template is not null)
@@ -69,7 +84,7 @@ internal class MailgunService : IEmailService
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
         requestMessage.Content = new FormUrlEncodedContent(formContent);
 
-        _logger.LogDebug($"Sending message to {string.Join(", ", emailMessage.ToAddresses)}");
+        _logger.LogDebug($"Sending message to {recipient.Name} <{recipient.Address}>");
 
         var response = await client.SendAsync(requestMessage);
         response.EnsureSuccessStatusCode();

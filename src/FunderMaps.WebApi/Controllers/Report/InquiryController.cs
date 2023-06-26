@@ -231,15 +231,9 @@ public class InquiryController : ControllerBase
         inquiry.State.TransitionToReview();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        var to = new EmailAddress
-        {
-            Address = reviewer.Email,
-            Name = reviewer.ToString()
-        };
-
         await _emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[] { to },
+            ToAddresses = new[] { new EmailAddress(reviewer.Email, reviewer.ToString()) },
             Subject = "FunderMaps - Rapportage ter review",
             Template = "report-reviewer",
             Varaibles = new Dictionary<string, object>
@@ -251,32 +245,6 @@ public class InquiryController : ControllerBase
                 { "documentName", inquiry.DocumentName },
             }
         });
-
-        // string subject = $"FunderMaps - Rapportage ter review";
-
-        // object header = new
-        // {
-        //     Title = subject,
-        //     Preheader = "Rapportage ter review wordt aangeboden."
-        // };
-
-        // string footer = "Dit bericht wordt verstuurd wanneer een rapportage ter review wordt aangeboden.";
-
-        // await _notifyService.NotifyAsync(new()
-        // {
-        //     Recipients = new List<string> { reviewer.Email },
-        //     Subject = subject,
-        //     Template = "InquiryReview",
-        //     Items = new Dictionary<string, object>
-        //         {
-        //             { "header", header },
-        //             { "footer", footer },
-        //             { "creator", creator.ToString() },
-        //             { "organization", organization.ToString() },
-        //             { "inquiry", inquiry },
-        //             { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
-        //         },
-        // });
 
         return NoContent();
     }
@@ -297,21 +265,13 @@ public class InquiryController : ControllerBase
         inquiry.State.TransitionToRejected();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        var toCreator = new EmailAddress
-        {
-            Address = creator.Email,
-            Name = creator.ToString()
-        };
-
-        var toReviewer = new EmailAddress
-        {
-            Address = reviewer.Email,
-            Name = reviewer.ToString()
-        };
-
         await _emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[] { toCreator, toReviewer },
+            ToAddresses = new[]
+            {
+                new EmailAddress(creator.Email, creator.ToString()),
+                new EmailAddress(reviewer.Email, reviewer.ToString())
+            },
             Subject = "FunderMaps - Rapportage is afgekeurd",
             Template = "report-declined",
             Varaibles = new Dictionary<string, object>
@@ -322,33 +282,6 @@ public class InquiryController : ControllerBase
                 { "motivation", input.Message },
             }
         });
-
-        // string subject = $"FunderMaps - Rapportage afgekeurd";
-
-        // object header = new
-        // {
-        //     Title = subject,
-        //     Preheader = "Rapportage is afgekeurd."
-        // };
-
-        // string footer = "Dit bericht wordt verstuurd wanneer een rapportage is afgekeurd.";
-
-        // await _notifyService.NotifyAsync(new()
-        // {
-        //     Recipients = new List<string> { creator.Email },
-        //     Subject = subject,
-        //     Template = "InquiryRejected",
-        //     Items = new Dictionary<string, object>
-        //         {
-        //             { "header", header },
-        //             { "footer", footer },
-        //             { "reviewer", reviewer.ToString() },
-        //             { "organization", organization.ToString() },
-        //             { "inquiry", inquiry },
-        //             { "message", input.Message },
-        //             { "redirect_link", $"{Request.Scheme}://{Request.Host}/inquiry/{inquiry.Id}" },
-        //         },
-        // });
 
         return NoContent();
     }
@@ -369,21 +302,13 @@ public class InquiryController : ControllerBase
         inquiry.State.TransitionToDone();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        var toCreator = new EmailAddress
-        {
-            Address = creator.Email,
-            Name = creator.ToString()
-        };
-
-        var toReviewer = new EmailAddress
-        {
-            Address = reviewer.Email,
-            Name = reviewer.ToString()
-        };
-
         await _emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[] { toCreator, toReviewer },
+            ToAddresses = new[]
+            {
+                new EmailAddress(creator.Email, creator.ToString()),
+                new EmailAddress(reviewer.Email, reviewer.ToString())
+            },
             Subject = "FunderMaps - Rapportage is goedgekeurd",
             Template = "report-approved",
             Varaibles = new Dictionary<string, object>
@@ -393,31 +318,6 @@ public class InquiryController : ControllerBase
                 { "documentName", inquiry.DocumentName },
             }
         });
-
-        // string subject = $"FunderMaps - Rapportage goedgekeurd";
-
-        // object header = new
-        // {
-        //     Title = subject,
-        //     Preheader = "Rapportage is goedgekeurd."
-        // };
-
-        // string footer = "Dit bericht wordt verstuurd wanneer een rapportage is goedgekeurd.";
-
-        // await _notifyService.NotifyAsync(new()
-        // {
-        //     Recipients = new List<string> { creator.Email },
-        //     Subject = "FunderMaps - Rapportage goedgekeurd",
-        //     Template = "InquiryApproved",
-        //     Items = new Dictionary<string, object>
-        //         {
-        //             { "header", header },
-        //             { "footer", footer },
-        //             { "reviewer", reviewer.ToString() },
-        //             { "organization", organization.ToString() },
-        //             { "inquiry", inquiry },
-        //         },
-        // });
 
         return NoContent();
     }
