@@ -1,6 +1,7 @@
 using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
@@ -26,6 +27,7 @@ public class InquiryController : ControllerBase
     private readonly IUserRepository _userRepository;
     private readonly IInquiryRepository _inquiryRepository;
     private readonly IBlobStorageService _blobStorageService;
+    private readonly IEmailService _emailService;
 
     /// <summary>
     ///     Create new instance.
@@ -36,7 +38,8 @@ public class InquiryController : ControllerBase
         IOrganizationRepository organizationRepository,
         IUserRepository userRepository,
         IInquiryRepository inquiryRepository,
-        IBlobStorageService blobStorageService)
+        IBlobStorageService blobStorageService,
+        IEmailService emailService)
     {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
@@ -44,6 +47,7 @@ public class InquiryController : ControllerBase
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
     }
 
     // GET: api/inquiry/stats
@@ -219,14 +223,34 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> SetStatusReviewAsync(int id)
     {
-        // Act.
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        // User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
-        // User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToReview();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+        var to = new EmailAddress
+        {
+            Address = reviewer.Email,
+            Name = reviewer.ToString()
+        };
+
+        await _emailService.SendAsync(new EmailMessage
+        {
+            ToAddresses = new[] { to },
+            Subject = "FunderMaps - Rapportage ter review",
+            Template = "report-reviewer",
+            Varaibles = new Dictionary<string, object>
+            {
+                { "id", inquiry.Id },
+                { "creatorName", creator.ToString() },
+                { "organizationName", organization.Name },
+                { "reviewerName", reviewer.ToString() },
+                { "documentName", inquiry.DocumentName },
+            }
+        });
 
         // string subject = $"FunderMaps - Rapportage ter review";
 
@@ -265,14 +289,35 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
     {
-        // Act.
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        // User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
-        // User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToRejected();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+        var to = new EmailAddress
+        {
+            Address = reviewer.Email,
+            Name = reviewer.ToString()
+        };
+
+        await _emailService.SendAsync(new EmailMessage
+        {
+            ToAddresses = new[] { to },
+            Subject = "FunderMaps - Rapportage is afgekeurd",
+            Template = "report-declined",
+            Varaibles = new Dictionary<string, object>
+            {
+                { "id", inquiry.Id },
+                { "creatorName", creator.ToString() },
+                { "organizationName", organization.Name },
+                { "reviewerName", reviewer.ToString() },
+                { "documentName", inquiry.DocumentName },
+                { "motivation", input.Message },
+            }
+        });
 
         // string subject = $"FunderMaps - Rapportage afgekeurd";
 
@@ -313,12 +358,33 @@ public class InquiryController : ControllerBase
     public async Task<IActionResult> SetStatusApprovedAsync(int id)
     {
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        // Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        // User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
-        // User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToDone();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+
+        var to = new EmailAddress
+        {
+            Address = reviewer.Email,
+            Name = reviewer.ToString()
+        };
+
+        await _emailService.SendAsync(new EmailMessage
+        {
+            ToAddresses = new[] { to },
+            Subject = "FunderMaps - Rapportage is goedgekeurd",
+            Template = "report-declined",
+            Varaibles = new Dictionary<string, object>
+            {
+                { "id", inquiry.Id },
+                { "creatorName", creator.ToString() },
+                { "organizationName", organization.Name },
+                { "reviewerName", reviewer.ToString() },
+                { "documentName", inquiry.DocumentName },
+            }
+        });
 
         // string subject = $"FunderMaps - Rapportage goedgekeurd";
 

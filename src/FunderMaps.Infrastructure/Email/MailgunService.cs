@@ -8,7 +8,7 @@ namespace FunderMaps.Infrastructure.Email;
 
 internal class MailgunService : IEmailService
 {
-    const string DefaultBaseUrl = @"https://api.eu.mailgun.net/v3/";
+    private const string DefaultBaseUrl = @"https://api.eu.mailgun.net/v3/";
 
     private readonly MailgunOptions _options;
 
@@ -80,8 +80,5 @@ internal class MailgunService : IEmailService
     /// <summary>
     ///     Test the email service backend.
     /// </summary>
-    public async Task HealthCheck()
-    {
-        await Task.CompletedTask;
-    }
+    public async Task HealthCheck() => await Task.CompletedTask;
 }
