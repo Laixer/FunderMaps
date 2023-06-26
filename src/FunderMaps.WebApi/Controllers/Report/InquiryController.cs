@@ -305,8 +305,8 @@ public class InquiryController : ControllerBase
 
         var toReviewer = new EmailAddress
         {
-            Address = creator.Email,
-            Name = creator.ToString()
+            Address = reviewer.Email,
+            Name = reviewer.ToString()
         };
 
         await _emailService.SendAsync(new EmailMessage
@@ -377,8 +377,8 @@ public class InquiryController : ControllerBase
 
         var toReviewer = new EmailAddress
         {
-            Address = creator.Email,
-            Name = creator.ToString()
+            Address = reviewer.Email,
+            Name = reviewer.ToString()
         };
 
         await _emailService.SendAsync(new EmailMessage
