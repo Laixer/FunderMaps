@@ -297,22 +297,26 @@ public class InquiryController : ControllerBase
         inquiry.State.TransitionToRejected();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        var to = new EmailAddress
+        var toCreator = new EmailAddress
         {
-            Address = reviewer.Email,
-            Name = reviewer.ToString()
+            Address = creator.Email,
+            Name = creator.ToString()
+        };
+
+        var toReviewer = new EmailAddress
+        {
+            Address = creator.Email,
+            Name = creator.ToString()
         };
 
         await _emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[] { to },
+            ToAddresses = new[] { toCreator, toReviewer },
             Subject = "FunderMaps - Rapportage is afgekeurd",
             Template = "report-declined",
             Varaibles = new Dictionary<string, object>
             {
                 { "id", inquiry.Id },
-                { "creatorName", creator.ToString() },
-                { "organizationName", organization.Name },
                 { "reviewerName", reviewer.ToString() },
                 { "documentName", inquiry.DocumentName },
                 { "motivation", input.Message },
@@ -365,22 +369,26 @@ public class InquiryController : ControllerBase
         inquiry.State.TransitionToDone();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
 
-        var to = new EmailAddress
+        var toCreator = new EmailAddress
         {
-            Address = reviewer.Email,
-            Name = reviewer.ToString()
+            Address = creator.Email,
+            Name = creator.ToString()
+        };
+
+        var toReviewer = new EmailAddress
+        {
+            Address = creator.Email,
+            Name = creator.ToString()
         };
 
         await _emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[] { to },
+            ToAddresses = new[] { toCreator, toReviewer },
             Subject = "FunderMaps - Rapportage is goedgekeurd",
             Template = "report-declined",
             Varaibles = new Dictionary<string, object>
             {
                 { "id", inquiry.Id },
-                { "creatorName", creator.ToString() },
-                { "organizationName", organization.Name },
                 { "reviewerName", reviewer.ToString() },
                 { "documentName", inquiry.DocumentName },
             }
