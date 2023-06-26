@@ -385,7 +385,7 @@ public class InquiryController : ControllerBase
         {
             ToAddresses = new[] { toCreator, toReviewer },
             Subject = "FunderMaps - Rapportage is goedgekeurd",
-            Template = "report-declined",
+            Template = "report-approved",
             Varaibles = new Dictionary<string, object>
             {
                 { "id", inquiry.Id },
