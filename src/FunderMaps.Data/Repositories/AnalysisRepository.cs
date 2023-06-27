@@ -88,11 +88,11 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     public static AnalysisProduct MapFromReader(DbDataReader reader)
         => new()
         {
-            BuildingId = reader.GetSafeString(0),
-            ExternalBuildingId = reader.GetSafeString(1),
-            AddressId = reader.GetSafeString(2),
-            ExternalAddressId = reader.GetSafeString(3),
-            NeighborhoodId = reader.GetSafeString(4),
+            BuildingId = reader.GetString(0),
+            ExternalBuildingId = reader.GetString(1),
+            AddressId = reader.GetString(2),
+            ExternalAddressId = reader.GetString(3),
+            NeighborhoodId = reader.GetString(4),
             ConstructionYear = reader.GetSafeInt(5),
             ConstructionYearReliability = reader.GetFieldValue<Reliability>(6),
             FoundationType = reader.GetFieldValue<FoundationType>(7),

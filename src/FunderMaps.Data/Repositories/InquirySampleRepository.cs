@@ -23,6 +23,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             INSERT INTO report.inquiry_sample(
                 inquiry,
                 address,
+                building,
                 note,
                 built_year,
                 substructure,
@@ -86,6 +87,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             VALUES (
                 @inquiry,
                 @address,
+                NULL,
                 NULLIF(trim(@note), ''),
                 @built_year,
                 @substructure,

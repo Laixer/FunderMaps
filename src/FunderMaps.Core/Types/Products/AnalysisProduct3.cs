@@ -78,7 +78,7 @@ public sealed record AnalysisProduct
     /// <summary>
     ///     Soil code.
     /// </summary>
-    public string Soil { get; init; }
+    public string? Soil { get; init; }
 
     /// <summary>
     ///     Building surface area in square meters.
