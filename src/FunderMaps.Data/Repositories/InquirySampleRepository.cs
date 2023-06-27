@@ -87,7 +87,11 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             VALUES (
                 @inquiry,
                 @address,
-                NULL,
+                (
+                    SELECT       a.building_id 
+	                FROM         geocoder.address a 
+	                WHERE a.id = @address
+                ),
                 NULLIF(trim(@note), ''),
                 @built_year,
                 @substructure,
