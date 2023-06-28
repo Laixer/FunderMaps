@@ -1,17 +1,19 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
-using FunderMaps.Core.Email;
+using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Infrastructure.Email;
+namespace FunderMaps.Core.Email;
 
 internal class MailgunService : IEmailService
 {
+    /// <summary>
+    ///     Default base URL.
+    /// </summary>
     private const string DefaultBaseUrl = @"https://api.eu.mailgun.net/v3/";
 
     private readonly MailgunOptions _options;
-
     private readonly ILogger _logger;
 
     private HttpClient client = new();

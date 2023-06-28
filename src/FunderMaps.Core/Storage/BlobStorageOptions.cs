@@ -1,10 +1,15 @@
-﻿namespace FunderMaps.Infrastructure.Storage;
+﻿namespace FunderMaps.Core.Storage;
 
 /// <summary>
 ///     Options for the blob storage service.
 /// </summary>
 public sealed record BlobStorageOptions
 {
+    /// <summary>
+    ///     Configuration section key.
+    /// </summary>
+    public const string Section = "BlobStorage";
+
     /// <summary>
     ///     Base service uri for blob storage service.
     /// </summary>

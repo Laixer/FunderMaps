@@ -1,6 +1,6 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Email;
 
-namespace FunderMaps.Core.Email;
+namespace FunderMaps.Core.Interfaces;
 
 /// <summary>
 ///     Email service.

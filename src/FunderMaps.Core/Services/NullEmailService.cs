@@ -1,4 +1,7 @@
-namespace FunderMaps.Core.Email;
+using FunderMaps.Core.Email;
+using FunderMaps.Core.Interfaces;
+
+namespace FunderMaps.Core.Services;
 
 /// <summary>
 ///     Dummy email service.

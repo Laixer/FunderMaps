@@ -1,7 +1,5 @@
-﻿using FunderMaps.Core.Email;
+using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Infrastructure.Email;
-using FunderMaps.Infrastructure.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -32,12 +30,12 @@ public static class FunderMapsInfrastructureServiceCollectionExtensions
     private static void ConfigureExternalServices(IServiceCollection services)
     {
         // Remove all existing email services and inject local email service.
-        services.Configure<MailgunOptions>(Configuration.GetSection(MailgunOptions.Section));
-        services.AddOrReplace<IEmailService, MailgunService>(ServiceLifetime.Singleton);
+        // services.Configure<MailgunOptions>(Configuration.GetSection(MailgunOptions.Section));
+        // services.AddOrReplace<IEmailService, MailgunService>(ServiceLifetime.Singleton);
 
         // Remove all existing file storage services and inject local file stoage service.
-        services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
-        services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Transient);
+        // services.Configure<BlobStorageOptions>(Configuration.GetSection("BlobStorage"));
+        // services.AddOrReplace<IBlobStorageService, SpacesBlobStorageService>(ServiceLifetime.Transient);
     }
 
     /// <summary>

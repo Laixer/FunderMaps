@@ -1,4 +1,4 @@
-using FunderMaps.Core.Email;
+using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 

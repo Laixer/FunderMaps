@@ -4,11 +4,10 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
-using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Infrastructure.Storage;
+namespace FunderMaps.Core.Storage;
 
 /// <summary>
 ///     Amazon S3 implementation of <see cref="IBlobStorageService"/>.
@@ -35,7 +34,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
         _awsCredentials = new BasicAWSCredentials(_options.AccessKey, _options.SecretKey);
-        _clientConfig = new()
+        _clientConfig = new AmazonS3Config()
         {
             ServiceURL = _options.ServiceUri?.AbsoluteUri ?? throw new ArgumentNullException(nameof(_options.ServiceUri)),
         };
@@ -87,7 +86,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
     {
         try
         {
-            TransferUtilityUploadRequest request = new()
+            var request = new TransferUtilityUploadRequest()
             {
                 BucketName = _options.BlobStorageName,
                 ContentType = contentType,
@@ -126,7 +125,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
     {
         try
         {
-            TransferUtilityUploadDirectoryRequest request = new()
+            var request = new TransferUtilityUploadDirectoryRequest()
             {
                 BucketName = _options.BlobStorageName,
                 Directory = directoryPath,
@@ -144,7 +143,7 @@ internal class SpacesBlobStorageService : IBlobStorageService
                 uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding;
             };
 
-            using TransferUtility transferUtility = new(CreateClient);
+            using var transferUtility = new TransferUtility(CreateClient);
             await transferUtility.UploadDirectoryAsync(request);
         }
         catch (AmazonS3Exception e)
@@ -168,14 +167,14 @@ internal class SpacesBlobStorageService : IBlobStorageService
             //       In order to obtain every record that matches our query, 
             //       we have to repeat our request execution in a loop - using continuation tokens -- until no longer truncated.
             //       See https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/MS3ListObjectsV2AsyncListObjectsV2RequestCancellationToken.html
-            ListObjectsV2Request request = new()
+            var request = new ListObjectsV2Request()
             {
                 BucketName = _options.BlobStorageName,
                 Prefix = directoryPath,
                 MaxKeys = MaxKeys
             };
 
-            List<Task> tasklist = new();
+            var tasklist = new List<Task>();
 
             for (ListObjectsV2Response response = await CreateClient.ListObjectsV2Async(request);
                 response.IsTruncated;
