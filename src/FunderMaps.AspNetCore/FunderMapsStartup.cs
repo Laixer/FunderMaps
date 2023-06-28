@@ -40,10 +40,6 @@ public class FunderMapsStartup : IHostingStartup
     private static void ConfigureMapper(IMapperConfigurationExpression mapper)
     {
         mapper.CreateMap<Address, AddressDto>();
-        mapper.CreateMap<Contact, IncidentDto>().ReverseMap();
-        // mapper.CreateMap<Incident, IncidentDto>()
-        //     .IncludeMembers(src => src.ContactNavigation)
-        //     .ReverseMap();
         mapper.CreateMap<Organization, OrganizationDto>()
             .ForMember(dest => dest.XMin, o => o.MapFrom(src => src.Area.XMin))
             .ForMember(dest => dest.YMin, o => o.MapFrom(src => src.Area.YMin))

@@ -15,7 +15,6 @@ namespace FunderMaps.Core.IncidentReport;
 internal class IncidentService : IIncidentService // TODO: inherit from AppServiceBase
 {
     private readonly IncidentOptions _options;
-    private readonly IContactRepository _contactRepository;
     private readonly IIncidentRepository _incidentRepository;
     private readonly IGeocoderTranslation _geocoderTranslation;
     private readonly IEmailService _emailService;
@@ -26,14 +25,12 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
     /// </summary>
     public IncidentService(
         IOptions<IncidentOptions> options,
-        IContactRepository contactRepository,
         IIncidentRepository incidentRepository,
         IGeocoderTranslation geocoderTranslation,
         IEmailService emailService,
         ILogger<IncidentService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _contactRepository = contactRepository ?? throw new ArgumentNullException(nameof(contactRepository));
         _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
         _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
