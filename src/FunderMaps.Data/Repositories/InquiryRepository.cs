@@ -153,7 +153,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
             StandardF3o = reader.GetBoolean(offset + 9),
             Attribution = new()
             {
-                Reviewer = reader.GetFieldValue<Guid?>(offset + 10),
+                Reviewer = reader.GetFieldValue<Guid>(offset + 10),
                 Creator = reader.GetGuid(offset + 11),
                 Owner = reader.GetGuid(offset + 12),
                 Contractor = reader.GetInt(offset + 13),

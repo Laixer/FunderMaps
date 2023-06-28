@@ -34,11 +34,11 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
             Note = reader.GetSafeString(offset + 1),
             Type = reader.GetFieldValue<RecoveryDocumentType>(offset + 2),
             DocumentDate = reader.GetDateTime(offset + 3),
-            DocumentFile = reader.GetSafeString(offset + 4),
-            DocumentName = reader.GetSafeString(offset + 5),
+            DocumentFile = reader.GetString(offset + 4),
+            DocumentName = reader.GetString(offset + 5),
             Attribution = new()
             {
-                Reviewer = reader.GetFieldValue<Guid?>(offset + 6),
+                Reviewer = reader.GetFieldValue<Guid>(offset + 6),
                 Creator = reader.GetGuid(offset + 7),
                 Owner = reader.GetGuid(offset + 8),
                 Contractor = reader.GetInt(offset + 9),

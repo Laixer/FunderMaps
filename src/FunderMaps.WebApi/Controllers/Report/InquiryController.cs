@@ -225,7 +225,7 @@ public class InquiryController : ControllerBase
     {
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
         Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToReview();
@@ -259,7 +259,7 @@ public class InquiryController : ControllerBase
     {
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
         Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToRejected();
@@ -296,7 +296,7 @@ public class InquiryController : ControllerBase
     {
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
         Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer.Value);
+        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToDone();

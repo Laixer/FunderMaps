@@ -13,7 +13,7 @@ public class AttributionControl
     /// <summary>
     ///     Reviewer idenitfier.
     /// </summary>
-    public Guid? Reviewer { get; set; }
+    public Guid Reviewer { get; set; }
 
     /// <summary>
     ///     Creator identifier.
