@@ -3,34 +3,30 @@
 @using FunderMaps.Incident.Data
 
 <div class="Profile__Wrapper">
-    <Title Message="Uw gegevens" Subtitle="Uw persoonsgegevens worden vertrouwelijk behandeld en niet gedeeld met derden." Center="true" />
+    <Title Message="Uw gegevens"
+        Subtitle="Uw persoonsgegevens worden vertrouwelijk behandeld en niet gedeeld met derden." Center="true" />
 
-        <div class="FormField">
-            <label for="voornaam" class="FormField__Label">Voornaam</label>
-            <div class="FormField__Wrapper">
-                <InputText id="voornaam" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.Name" />
-            </div>
+    <div class="FormField">
+        <label for="naam" class="FormField__Label">Naam</label>
+        <div class="FormField__Wrapper">
+            <InputText id="naam" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel"
+            @onblur="ValidateModel" @bind-Value="State.Model.Name" />
         </div>
-        
-        @* <div class="FormField">
-            <label for="achternaam" class="FormField__Label">Achternaam</label>
-            <div class="FormField__Wrapper">
-                <InputText id="achternaam" autocomplete="family-name" class="FormField__Field" @bind-Value="State.Model.ContactNavigationLastName" />
-            </div>
-        </div> *@
-        
-        <div class="FormField">
-            <label for="email" class="FormField__Label">E-mail</label>
-            <div class="FormField__Wrapper">
-                <InputText id="email" autocomplete="email" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.Email" />
-            </div>
-        </div>
+    </div>
 
-        <div class="FormField">
-            <label for="telefoon" class="FormField__Label">Telefoonnummer</label>
-            <div class="FormField__Wrapper">
-                @* <input id="telefoon" type="tel" pattern="/\d+$/" placeholder="+31" autocomplete="tel" class="FormField__Field"> *@
-                <InputText id="telefoon" placeholder="+31" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.PhoneNumber" />
-            </div>
+    <div class="FormField">
+        <label for="email" class="FormField__Label">E-mail</label>
+        <div class="FormField__Wrapper">
+            <InputText id="email" autocomplete="email" class="FormField__Field" @onfocus="ValidateModel"
+            @onblur="ValidateModel" @bind-Value="State.Model.Email" />
         </div>
+    </div>
+
+    <div class="FormField">
+        <label for="telefoon" class="FormField__Label">Telefoonnummer</label>
+        <div class="FormField__Wrapper">
+            <InputText id="telefoon" placeholder="+31" autocomplete="given-name" class="FormField__Field"
+            @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.PhoneNumber" />
+        </div>
+    </div>
 </div>

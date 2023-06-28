@@ -42,6 +42,7 @@ public static class TestStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.NotNull(returnObject.Id);
         Assert.NotNull(returnObject.Token);
         Assert.NotNull(returnObject.Issuer);

@@ -97,18 +97,18 @@ public partial class Address : ComponentBase, IAsyncDisposable
     async Task SelectCustomer(string id)
     {
         var customers = await http.GetFromJsonAsync<PDOKResult2>($"lookup?fl=nummeraanduiding_id,centroide_ll&id={id}");
-
-        Logger.LogDebug($"Selecting: {customers.response.docs[0].nummeraanduiding_id}");
-
-        State.Model.Address = $"NL.IMBAG.NUMMERAANDUIDING.{customers.response.docs[0].nummeraanduiding_id}";
-
-        foreach (var item in autoComplete)
+        if (customers is not null)
         {
-            if (item.id == id)
+            State.Model.Address = $"NL.IMBAG.NUMMERAANDUIDING.{customers.response.docs[0].nummeraanduiding_id}";
+
+            foreach (var item in autoComplete)
             {
-                inputKaasAutoCompleteDing = item.weergavenaam;
-                State.DisableNavNext = false;
-                Parent.Kaas();
+                if (item.id == id)
+                {
+                    inputKaasAutoCompleteDing = item.weergavenaam;
+                    State.DisableNavNext = false;
+                    Parent.Kaas();
+                }
             }
         }
 

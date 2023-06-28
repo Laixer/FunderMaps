@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register components from reference assemblies.
 builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddFunderMapsInfrastructureServices();
 builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
