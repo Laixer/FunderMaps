@@ -21,7 +21,6 @@ public class State
         Model.ChainedBuilding = true;
         Model.Owner = true;
         Model.NeighborRecovery = false;
-        Model.ContactNavigation = new();
         Model.ClientId = 10;
     }
 

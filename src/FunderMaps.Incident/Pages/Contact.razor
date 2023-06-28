@@ -8,7 +8,7 @@
         <div class="FormField">
             <label for="voornaam" class="FormField__Label">Voornaam</label>
             <div class="FormField__Wrapper">
-                <InputText id="voornaam" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.ContactNavigation.Name" />
+                <InputText id="voornaam" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.Name" />
             </div>
         </div>
         
@@ -22,7 +22,7 @@
         <div class="FormField">
             <label for="email" class="FormField__Label">E-mail</label>
             <div class="FormField__Wrapper">
-                <InputText id="email" autocomplete="email" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.ContactNavigation.Email" />
+                <InputText id="email" autocomplete="email" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.Email" />
             </div>
         </div>
 
@@ -30,7 +30,7 @@
             <label for="telefoon" class="FormField__Label">Telefoonnummer</label>
             <div class="FormField__Wrapper">
                 @* <input id="telefoon" type="tel" pattern="/\d+$/" placeholder="+31" autocomplete="tel" class="FormField__Field"> *@
-                <InputText id="telefoon" placeholder="+31" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.ContactNavigation.PhoneNumber" />
+                <InputText id="telefoon" placeholder="+31" autocomplete="given-name" class="FormField__Field" @onfocus="ValidateModel" @onblur="ValidateModel" @bind-Value="State.Model.PhoneNumber" />
             </div>
         </div>
 </div>

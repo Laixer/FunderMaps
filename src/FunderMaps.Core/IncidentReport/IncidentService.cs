@@ -157,34 +157,28 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
     /// <param name="meta">Optional metadata.</param>
     public async Task<Incident> AddAsync(Incident incident, object? meta = null)
     {
-        Address address = await _geocoderTranslation.GetAddressIdAsync(incident.Address);
+        var address = await _geocoderTranslation.GetAddressIdAsync(incident.Address);
 
         incident.Address = address.Id;
         incident.Meta = meta;
         incident.AuditStatus = AuditStatus.Todo;
 
-        var name = incident.ContactNavigation.Name;
-        var email = incident.ContactNavigation.Email;
-        var phone = incident.ContactNavigation.PhoneNumber;
-
-        await _contactRepository.AddAsync(incident.ContactNavigation);
-        incident.Email = email;
         incident = await _incidentRepository.AddGetAsync(incident);
 
         await _emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {
-                new EmailAddress(incident.ContactNavigation.Email, incident.ContactNavigation.Name)
+                new EmailAddress(incident.Email, incident.Name)
             },
             Subject = $"Nieuwe melding: {incident.Id}",
             Template = "incident-customer",
             Varaibles = new Dictionary<string, object>
             {
                 { "id", incident.Id },
-                { "name", name ?? throw new ArgumentNullException(nameof(name)) },
-                { "phone", phone ?? throw new ArgumentNullException(nameof(phone)) },
-                { "email", email },
+                { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
+                { "phone", incident.PhoneNumber ?? throw new ArgumentNullException(nameof(incident.PhoneNumber)) },
+                { "email", incident.Email },
                 { "address", address.FullAddress },
                 { "note", incident.Note },
                 { "foundationType", ToFoundationType(incident.FoundationType) },
@@ -207,9 +201,9 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
                 Varaibles = new Dictionary<string, object>
                 {
                     { "id", incident.Id },
-                    { "name", name },
-                    { "phone", phone },
-                    { "email", email },
+                    { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
+                    { "phone", incident.PhoneNumber ?? throw new ArgumentNullException(nameof(incident.PhoneNumber)) },
+                    { "email", incident.Email },
                     { "address", address.FullAddress },
                     { "note", incident.Note },
                     { "foundationType", ToFoundationType(incident.FoundationType) },

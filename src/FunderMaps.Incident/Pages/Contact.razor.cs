@@ -21,14 +21,12 @@ public partial class Contact : ComponentBase, IDisposable
 
     async Task ClickHandler()
     {
-        var incident = State.Model;
-
-        await incidentService.AddAsync(incident);
+        await incidentService.AddAsync(State.Model);
     }
 
     void ValidateModel()
     {
-        if (!string.IsNullOrEmpty(State.Model.ContactNavigation.Email) && !string.IsNullOrEmpty(State.Model.ContactNavigation.Name))
+        if (!string.IsNullOrEmpty(State.Model.Email) && !string.IsNullOrEmpty(State.Model.Name))
         {
             State.DisableNavNext = false;
             Parent.Kaas();

@@ -69,12 +69,12 @@ public sealed class Incident : RecordControl<Incident, string>
     /// <summary>
     ///     Note.
     /// </summary>
-    public string Note { get; set; }
+    public string? Note { get; set; }
 
     /// <summary>
     ///     Internal note.
     /// </summary>
-    public string InternalNote { get; set; }
+    public string? InternalNote { get; set; }
 
     /// <summary>
     ///     Fouindational damage.
@@ -93,6 +93,18 @@ public sealed class Incident : RecordControl<Incident, string>
     /// </summary>
     [Required, EmailAddress]
     public string Email { get; set; }
+
+    /// <summary>
+    ///     Contact name.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
+    ///     Contact phone number.
+    /// </summary>
+    [Phone]
+    [StringLength(16)]
+    public string? PhoneNumber { get; set; }
 
     /// <summary>
     ///     An address identifier.
@@ -122,11 +134,6 @@ public sealed class Incident : RecordControl<Incident, string>
     /// </summary>
     /// <returns>String representing incident.</returns>
     public override string ToString() => Id;
-
-    /// <summary>
-    ///     Contact object.
-    /// </summary>
-    public Contact ContactNavigation { get; set; }
 
     /// <summary>
     ///     Address object.

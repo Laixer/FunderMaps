@@ -32,6 +32,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 note,
                 internal_note,
                 contact,
+                contact_name,
+                contact_phone_number,
                 foundation_damage_characteristics,
                 environment_damage_characteristics,
                 address,
@@ -50,6 +52,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 NULLIF(trim(@note), ''),
                 NULLIF(trim(@internal_note), ''),
                 NULLIF(trim(@email), ''),
+                NULLIF(trim(@name), ''),
+                NULLIF(trim(@phone_number), ''),
                 NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
                 NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
                 @address,
@@ -123,6 +127,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         context.AddParameterWithValue("foundation_damage_characteristics", entity.FoundationDamageCharacteristics);
         context.AddParameterWithValue("environment_damage_characteristics", entity.EnvironmentDamageCharacteristics);
         context.AddParameterWithValue("email", entity.Email);
+        context.AddParameterWithValue("name", entity.Name);
+        context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         context.AddParameterWithValue("address", entity.Address);
         context.AddParameterWithValue("audit_status", entity.AuditStatus);
         context.AddParameterWithValue("question_type", entity.QuestionType);
@@ -143,6 +149,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             Note = reader.GetSafeString(offset++),
             InternalNote = reader.GetSafeString(offset++),
             Email = reader.GetSafeString(offset++),
+            Name = reader.GetSafeString(offset++),
+            PhoneNumber = reader.GetSafeString(offset++),
             CreateDate = reader.GetDateTime(offset++),
             UpdateDate = reader.GetSafeDateTime(offset++),
             DeleteDate = reader.GetSafeDateTime(offset++),
@@ -178,6 +186,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     note,
                     internal_note,
                     contact,
+                    contact_name,
+                    contact_phone_number,
                     create_date,
                     update_date,
                     delete_date,
@@ -218,6 +228,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     note,
                     internal_note,
                     contact,
+                    contact_name,
+                    contact_phone_number,
                     create_date,
                     update_date,
                     delete_date,
@@ -254,6 +266,8 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     note,
                     internal_note,
                     contact,
+                    contact_name,
+                    contact_phone_number,
                     create_date,
                     update_date,
                     delete_date,
