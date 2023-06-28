@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Identify the geocoder datasource from the input.
 /// </summary>
-public class GeocoderParser : IGeocoderParser
+internal class GeocoderParser : IGeocoderParser
 {
     /// <summary>
     ///     Identify the geocoder datasource from the input.
@@ -50,7 +50,7 @@ public class GeocoderParser : IGeocoderParser
     {
         output = input;
 
-        GeocoderDatasource source = FromIdentifier(input);
+        var source = FromIdentifier(input);
         switch (source)
         {
             case GeocoderDatasource.NlBagLegacyBuilding:

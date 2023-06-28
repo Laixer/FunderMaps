@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Translate any geocoder identifier to an internal entity.
 /// </summary>
-public class GeocoderTranslation : IGeocoderTranslation
+internal class GeocoderTranslation : IGeocoderTranslation
 {
     private readonly IGeocoderParser _geocoderParser;
     private readonly IAddressRepository _addressRepository;

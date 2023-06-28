@@ -8,13 +8,13 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Password hasher.
 /// </summary>
-public class PasswordHasher : IPasswordHasher
+internal class PasswordHasher : IPasswordHasher
 {
-    private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
     private const int iterRounds = 10000;
     private const int subkeyLength = 256 / 8; // 256 bits
     private const int saltSize = 128 / 8; // 128 bits
     private const byte formatMarker = 0x01;
+    private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
 
     /// <summary>
     ///     Gets the <see cref="IRandom"/> used.

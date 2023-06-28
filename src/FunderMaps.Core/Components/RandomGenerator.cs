@@ -6,7 +6,7 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Random value generator.
 /// </summary>
-public class RandomGenerator : IRandom, IDisposable
+internal class RandomGenerator : IRandom, IDisposable
 {
     private readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
     private bool disposedValue;
