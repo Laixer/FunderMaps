@@ -32,7 +32,7 @@ public sealed class Address : IdentifiableEntity<Address, string>
     /// <summary>
     ///     Postcode.
     /// </summary>
-    public string PostalCode { get; set; }
+    public string? PostalCode { get; set; }
 
     /// <summary>
     ///     Street name.
@@ -68,7 +68,7 @@ public sealed class Address : IdentifiableEntity<Address, string>
     ///     Building identifier.
     /// </summary>
     [Geocoder]
-    public string BuildingId { get; set; }
+    public string? BuildingId { get; set; }
 
     /// <summary>
     ///     Full address.

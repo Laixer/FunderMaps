@@ -57,13 +57,11 @@ public class InquiryController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync()
     {
-        // Map.
         DatasetStatsDto output = new()
         {
             Count = await _inquiryRepository.CountAsync(),
         };
 
-        // Return.
         return Ok(output);
     }
 
@@ -96,20 +94,16 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
     {
-        // Map.
         var inquiry = _mapper.Map<InquiryFull>(input);
         if (_appContext.UserId == input.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        // Act.
         inquiry = await _inquiryRepository.AddGetAsync(inquiry);
 
-        // Map.
         var output = _mapper.Map<InquiryDto>(inquiry);
 
-        // Return.
         return Ok(output);
     }
 
@@ -122,7 +116,6 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
     {
-        // Act.
         var storeFileName = FileHelper.GetUniqueName(input.FileName);
         await _blobStorageService.StoreFileAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
@@ -135,7 +128,6 @@ public class InquiryController : ControllerBase
             Name = storeFileName,
         };
 
-        // Return.
         return Ok(output);
     }
 
@@ -146,20 +138,17 @@ public class InquiryController : ControllerBase
     [HttpGet("{id:int}/download")]
     public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
     {
-        // Act.
         InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
         Uri link = await _blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
             fileName: inquiry.DocumentFile,
             hoursValid: 1);
 
-        // Map.
         BlobAccessLinkDto result = new()
         {
             AccessLink = link
         };
 
-        // Return.
         return Ok(result);
     }
 
@@ -171,7 +160,6 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDto input)
     {
-        // Map.
         var inquiry = _mapper.Map<InquiryFull>(input);
         inquiry.Id = id;
 
@@ -181,7 +169,6 @@ public class InquiryController : ControllerBase
             throw new AuthorizationException();
         }
 
-        // Act.
         await _inquiryRepository.UpdateAsync(inquiry);
 
         // FUTURE: Does this make sense?
@@ -189,10 +176,7 @@ public class InquiryController : ControllerBase
         // a pending state after update.
         if (inquiry.State.AuditStatus == AuditStatus.Rejected)
         {
-            // Transition.
             inquiry.State.TransitionToPending();
-
-            // Act.
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
         }
 

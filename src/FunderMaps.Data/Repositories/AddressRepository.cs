@@ -40,13 +40,13 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         => new()
         {
             Id = reader.GetString(offset++),
-            BuildingNumber = reader.GetSafeString(offset++),
+            BuildingNumber = reader.GetString(offset++),
             PostalCode = reader.GetSafeString(offset++),
-            Street = reader.GetSafeString(offset++),
+            Street = reader.GetString(offset++),
             IsActive = reader.GetBoolean(offset++),
-            ExternalId = reader.GetSafeString(offset++),
+            ExternalId = reader.GetString(offset++),
             ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset++),
-            City = reader.GetSafeString(offset++),
+            City = reader.GetString(offset++),
             BuildingId = reader.GetSafeString(offset++),
         };
 

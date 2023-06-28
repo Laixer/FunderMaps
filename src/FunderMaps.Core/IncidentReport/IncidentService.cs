@@ -163,7 +163,6 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
         incident.Meta = meta;
         incident.AuditStatus = AuditStatus.Todo;
 
-
         var name = incident.ContactNavigation.Name;
         var email = incident.ContactNavigation.Email;
         var phone = incident.ContactNavigation.PhoneNumber;
