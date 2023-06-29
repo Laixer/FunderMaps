@@ -38,8 +38,6 @@ public class Startup
             options.ResourcesPath = "Resources";
         });
 
-        // Register components from reference assemblies.
-        services.AddFunderMapsInfrastructureServices();
         services.AddFunderMapsDataServices("FunderMapsConnection");
     }
 

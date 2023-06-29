@@ -84,18 +84,19 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       context if possible.
         services.AddAppContext();
 
+        // Register core services in DI container.
+        // NOTE: These services take time to initialize are used more often. Registering
+        //       them as a singleton will keep the services alife for the entire lifetime
+        //       of the application. Beware to add new services as singletons.
         services.Configure<MailgunOptions>(Configuration.GetSection(MailgunOptions.Section));
         services.TryAddSingleton<IEmailService, MailgunService>();
-
-        services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.Section));
-        services.TryAddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
         // Register core services in DI container.
         // NOTE: These services take time to initialize are used more often. Registering
         //       them as a singleton will keep the services alife for the entire lifetime
         //       of the application. Beware to add new services as singletons.
-        // services.TryAddSingleton<IEmailService, NullEmailService>();
-        // services.TryAddTransient<IBlobStorageService, NullBlobStorageService>();
+        services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.Section));
+        services.TryAddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
         // The application core (as well as many other components) depends upon the ability to cache
         // objects to memory. The memory cache may have already been registered with the container

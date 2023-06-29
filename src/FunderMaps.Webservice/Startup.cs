@@ -33,8 +33,6 @@ public class Startup
     private static void StartupConfigureServices(IServiceCollection services)
     {
         services.AddAutoMapper(typeof(Startup));
-
-        // Register components from reference assemblies.
         services.AddFunderMapsDataServices("FunderMapsConnection");
     }
 
