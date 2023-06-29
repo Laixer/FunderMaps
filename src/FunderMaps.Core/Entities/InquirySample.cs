@@ -65,16 +65,19 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Groundwater level temp.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? GroundwaterLevelTemp { get; set; }
 
     /// <summary>
     ///     Ground level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? GroundLevel { get; set; }
 
     /// <summary>
     ///     Groundwater level net.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? GroundwaterLevelNet { get; set; }
 
     //
@@ -128,56 +131,67 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Construction level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? ConstructionLevel { get; set; }
 
     /// <summary>
     ///     Wood level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? WoodLevel { get; set; }
 
     /// <summary>
     ///     Pile diameter top.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? PileDiameterTop { get; set; }
 
     /// <summary>
     ///     Pile diameter bottom.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? PileDiameterBottom { get; set; }
 
     /// <summary>
     ///     Pile head level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? PileHeadLevel { get; set; }
 
     /// <summary>
     ///     Pile tip level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? PileTipLevel { get; set; }
 
     /// <summary>
     ///     Foundation depth.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? FoundationDepth { get; set; }
 
     /// <summary>
     ///     Mason level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? MasonLevel { get; set; }
 
     /// <summary>
     ///     Concrete charger length.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? ConcreteChargerLength { get; set; }
 
     /// <summary>
     ///     Pile distance length.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? PileDistanceLength { get; set; }
 
     /// <summary>
     ///     Wood penetration depth.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? WoodPenetrationDepth { get; set; }
 
     //
@@ -321,16 +335,19 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Threshold front level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? ThresholdFrontLevel { get; set; }
 
     /// <summary>
     ///     Threshold back level.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? ThresholdBackLevel { get; set; }
 
     /// <summary>
     ///     Skewed parallel.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? SkewedParallel { get; set; }
 
     /// <summary>
@@ -341,6 +358,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Skewed perpendicular.
     /// </summary>
+    [Range(0.0, 999.99)]
     public decimal? SkewedPerpendicular { get; set; }
 
     /// <summary>
