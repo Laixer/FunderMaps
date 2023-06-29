@@ -24,7 +24,6 @@ builder.Services.AddAuthentication(config =>
 
 // Register components from reference assemblies.
 builder.Services.AddFunderMapsCoreServices();
-builder.Services.AddFunderMapsInfrastructureServices();
 builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
 
 // Add services to the container.
