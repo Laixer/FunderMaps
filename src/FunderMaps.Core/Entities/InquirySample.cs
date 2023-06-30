@@ -256,7 +256,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Crack indoor size.
     /// </summary>
     [Range(0, 999)]
-    public decimal? CrackIndoorSize { get; set; }
+    public int? CrackIndoorSize { get; set; }
 
     /// <summary>
     ///     Crack facade front size.
@@ -272,7 +272,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Crack facade front size.
     /// </summary>
     [Range(0, 999)]
-    public decimal? CrackFacadeFrontSize { get; set; }
+    public int? CrackFacadeFrontSize { get; set; }
 
     /// <summary>
     ///     Crack facade back size.
@@ -288,7 +288,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Crack facade back size.
     /// </summary>
     [Range(0, 999)]
-    public decimal? CrackFacadeBackSize { get; set; }
+    public int? CrackFacadeBackSize { get; set; }
 
     /// <summary>
     ///     Crack facade left size.
@@ -304,7 +304,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Crack facade left size.
     /// </summary>
     [Range(0, 999)]
-    public decimal? CrackFacadeLeftSize { get; set; }
+    public int? CrackFacadeLeftSize { get; set; }
 
     /// <summary>
     ///     Crack facade right size.
@@ -320,7 +320,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     ///     Crack facade right size.
     /// </summary>
     [Range(0, 999)]
-    public decimal? CrackFacadeRightSize { get; set; }
+    public int? CrackFacadeRightSize { get; set; }
 
     /// <summary>
     ///     Deformed facade.
