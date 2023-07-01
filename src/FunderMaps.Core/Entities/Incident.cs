@@ -1,4 +1,4 @@
-using FunderMaps.Core.DataAnnotations;
+﻿using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
@@ -38,12 +38,12 @@ public sealed class Incident : RecordControl<Incident, string>
     /// <summary>
     ///     Building chained to another building.
     /// </summary>
-    public bool? ChainedBuilding { get; set; }
+    public bool ChainedBuilding { get; set; }
 
     /// <summary>
     ///     Whether the contact is an owner of the building.
     /// </summary>
-    public bool? Owner { get; set; }
+    public bool Owner { get; set; }
 
     /// <summary>
     ///     Whether foundation was recovered or not.
@@ -53,7 +53,7 @@ public sealed class Incident : RecordControl<Incident, string>
     /// <summary>
     ///     Whether neighbor foundation was recovered or not.
     /// </summary>
-    public bool? NeighborRecovery { get; set; }
+    public bool NeighborRecovery { get; set; }
 
     /// <summary>
     ///     Foundation damage cause.
@@ -80,13 +80,13 @@ public sealed class Incident : RecordControl<Incident, string>
     ///     Fouindational damage.
     /// </summary>
     [ArrayEnumDataTypeAttribute(typeof(FoundationDamageCharacteristics))]
-    public FoundationDamageCharacteristics[] FoundationDamageCharacteristics { get; set; }
+    public FoundationDamageCharacteristics[]? FoundationDamageCharacteristics { get; set; }
 
     /// <summary>
     ///     Environmental damage.
     /// </summary>
     [ArrayEnumDataTypeAttribute(typeof(EnvironmentDamageCharacteristics))]
-    public EnvironmentDamageCharacteristics[] EnvironmentDamageCharacteristics { get; set; }
+    public EnvironmentDamageCharacteristics[]? EnvironmentDamageCharacteristics { get; set; }
 
     /// <summary>
     ///     Contact email.
@@ -111,6 +111,12 @@ public sealed class Incident : RecordControl<Incident, string>
     /// </summary>
     [Required]
     public string Address { get; set; }
+
+    /// <summary>
+    ///     Building identifier.
+    /// </summary>
+    [Required]
+    public string Building { get; set; }
 
     /// <summary>
     ///     Audit status.

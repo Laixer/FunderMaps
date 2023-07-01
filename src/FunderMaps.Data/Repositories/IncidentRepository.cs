@@ -37,6 +37,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 foundation_damage_characteristics,
                 environment_damage_characteristics,
                 address,
+                building,
                 audit_status,
                 question_type,
                 meta)
@@ -57,6 +58,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
                 NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
                 @address,
+                @building,
                 @audit_status,
                 @question_type,
                 @meta)
@@ -130,6 +132,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         context.AddParameterWithValue("name", entity.Name);
         context.AddParameterWithValue("phone_number", entity.PhoneNumber);
         context.AddParameterWithValue("address", entity.Address);
+        context.AddParameterWithValue("building", entity.Building);
         context.AddParameterWithValue("audit_status", entity.AuditStatus);
         context.AddParameterWithValue("question_type", entity.QuestionType);
         context.AddJsonParameterWithValue("meta", entity.Meta);
@@ -139,13 +142,13 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         => new()
         {
             Id = reader.GetString(offset++),
-            FoundationType = reader.GetFieldValue<FoundationType?>(offset++),
+            FoundationType = reader.GetSafe5tructValue<FoundationType>(offset++),
             ChainedBuilding = reader.GetBoolean(offset++),
             Owner = reader.GetBoolean(offset++),
             FoundationRecovery = reader.GetBoolean(offset++),
             NeighborRecovery = reader.GetBoolean(offset++),
-            FoundationDamageCause = reader.GetFieldValue<FoundationDamageCause?>(offset++),
-            DocumentFile = reader.GetSafeFieldValue<string[]>(offset++),
+            FoundationDamageCause = reader.GetSafe5tructValue<FoundationDamageCause>(offset++),
+            DocumentFile = reader.GetSafeStringArray(offset++),
             Note = reader.GetSafeString(offset++),
             InternalNote = reader.GetSafeString(offset++),
             Email = reader.GetString(offset++),
@@ -154,12 +157,13 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             CreateDate = reader.GetDateTime(offset++),
             UpdateDate = reader.GetSafeDateTime(offset++),
             DeleteDate = reader.GetSafeDateTime(offset++),
-            FoundationDamageCharacteristics = reader.GetFieldValue<FoundationDamageCharacteristics[]>(offset++),
-            EnvironmentDamageCharacteristics = reader.GetFieldValue<EnvironmentDamageCharacteristics[]>(offset++),
+            FoundationDamageCharacteristics = reader.GetSafeFieldValue<FoundationDamageCharacteristics[]>(offset++),
+            EnvironmentDamageCharacteristics = reader.GetSafeFieldValue<EnvironmentDamageCharacteristics[]>(offset++),
             Address = reader.GetString(offset++),
+            Building = reader.GetString(offset++),
             AuditStatus = reader.GetFieldValue<AuditStatus>(offset++),
             QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset++),
-            Meta = reader.GetFieldValue<object>(offset++),
+            Meta = reader.GetSafeFieldValue<object>(offset++),
         };
 
     /// <summary>
@@ -194,6 +198,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     foundation_damage_characteristics,
                     environment_damage_characteristics,
                     address,
+                    building,
                     audit_status,
                     question_type,
                     meta
@@ -236,6 +241,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     foundation_damage_characteristics,
                     environment_damage_characteristics,
                     address,
+                    building,
                     audit_status,
                     question_type,
                     meta
@@ -274,6 +280,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     foundation_damage_characteristics,
                     environment_damage_characteristics,
                     address,
+                    building,
                     audit_status,
                     question_type,
                     meta

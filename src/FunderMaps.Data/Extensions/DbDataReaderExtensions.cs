@@ -119,6 +119,22 @@ internal static class DbDataReaderExtensions
     }
 
     /// <summary>
+    ///     Return value as nullable string array.
+    /// </summary>
+    /// <param name="reader">Input reader to extend.</param>
+    /// <param name="ordinal">Column ordinal.</param>
+    /// <returns>Value as nullable string.</returns>
+    public static string[]? GetSafeStringArray(this DbDataReader reader, int ordinal)
+    {
+        if (reader is null)
+        {
+            throw new ArgumentNullException(nameof(reader));
+        }
+
+        return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<string[]>(ordinal);
+    }
+
+    /// <summary>
     ///     Return value as nullable datetime.
     /// </summary>
     /// <param name="reader">Input reader to extend.</param>
@@ -164,6 +180,24 @@ internal static class DbDataReaderExtensions
         }
 
         return reader.IsDBNull(ordinal) ? null : (decimal?)reader.GetDecimal(ordinal);
+    }
+
+    /// <summary>
+    ///     Return value as nullable <typeparamref name="TFieldType"/>.
+    /// </summary>
+    /// <typeparam name="TFieldType">Type to return value to.</typeparam>
+    /// <param name="reader">Input reader to extend.</param>
+    /// <param name="ordinal">Column ordinal.</param>
+    /// <returns>Value or null.</returns>
+    public static TFieldType? GetSafe5tructValue<TFieldType>(this DbDataReader reader, int ordinal)
+        where TFieldType : struct
+    {
+        if (reader is null)
+        {
+            throw new ArgumentNullException(nameof(reader));
+        }
+
+        return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<TFieldType>(ordinal);
     }
 
     /// <summary>

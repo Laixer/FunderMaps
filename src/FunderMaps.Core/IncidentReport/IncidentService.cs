@@ -12,7 +12,7 @@ namespace FunderMaps.Core.IncidentReport;
 /// <summary>
 ///     Service to the incidents.
 /// </summary>
-internal class IncidentService : IIncidentService // TODO: inherit from AppServiceBase
+internal class IncidentService : IIncidentService
 {
     private readonly IncidentOptions _options;
     private readonly IIncidentRepository _incidentRepository;
@@ -105,7 +105,7 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
             _ => "Onbekend",
         };
 
-    public static string ArrayToFoundationDamageCharacteristics(IEnumerable<FoundationDamageCharacteristics> values)
+    public static string ArrayToFoundationDamageCharacteristics(IEnumerable<FoundationDamageCharacteristics>? values)
     {
         if (values is not null && values.Any())
         {
@@ -134,7 +134,7 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
             _ => "Onbekend",
         };
 
-    public static string ArrayToEnvironmentDamageCharacteristics(IEnumerable<EnvironmentDamageCharacteristics> values)
+    public static string ArrayToEnvironmentDamageCharacteristics(IEnumerable<EnvironmentDamageCharacteristics>? values)
     {
         if (values is not null && values.Any())
         {
@@ -156,9 +156,7 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
     {
         var address = await _geocoderTranslation.GetAddressIdAsync(incident.Address);
 
-        incident.Address = address.Id;
         incident.Meta = meta;
-        incident.AuditStatus = AuditStatus.Todo;
 
         incident = await _incidentRepository.AddGetAsync(incident);
 
@@ -174,7 +172,7 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
             {
                 { "id", incident.Id },
                 { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
-                { "phone", incident.PhoneNumber ?? throw new ArgumentNullException(nameof(incident.PhoneNumber)) },
+                { "phone", incident.PhoneNumber ?? "-" },
                 { "email", incident.Email },
                 { "address", address.FullAddress },
                 { "note", incident.Note ?? "-" },
@@ -199,7 +197,7 @@ internal class IncidentService : IIncidentService // TODO: inherit from AppServi
                 {
                     { "id", incident.Id },
                     { "name", incident.Name ?? throw new ArgumentNullException(nameof(incident.Name)) },
-                    { "phone", incident.PhoneNumber ?? throw new ArgumentNullException(nameof(incident.PhoneNumber)) },
+                    { "phone", incident.PhoneNumber ?? "-" },
                     { "email", incident.Email },
                     { "address", address.FullAddress },
                     { "note", incident.Note ?? "-" },
