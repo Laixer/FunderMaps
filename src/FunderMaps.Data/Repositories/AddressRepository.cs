@@ -13,14 +13,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
 {
-    protected override void SetCacheItem(CacheKeyPair key, Address value, MemoryCacheEntryOptions options)
-    {
-        options.SlidingExpiration *= 2;
-        options.AbsoluteExpirationRelativeToNow *= 2;
-
-        base.SetCacheItem(key, value, options);
-    }
-
     public static void MapToWriter(DbContext context, Address entity)
     {
         if (entity is null)

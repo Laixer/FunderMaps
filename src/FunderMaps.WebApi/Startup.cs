@@ -32,12 +32,10 @@ public class Startup
     private static void StartupConfigureServices(IServiceCollection services)
     {
         services.AddAutoMapper(typeof(Startup));
-
         services.AddLocalization(options =>
-        {
-            options.ResourcesPath = "Resources";
-        });
-
+         {
+             options.ResourcesPath = "Resources";
+         });
         services.AddFunderMapsDataServices("FunderMapsConnection");
     }
 
