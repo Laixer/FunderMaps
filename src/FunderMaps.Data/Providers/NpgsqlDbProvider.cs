@@ -40,9 +40,9 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
         // dataSourceBuilder.MapEnum<AuditStatus>("report.audit_status");
         dataSourceBuilder.MapEnum<AuditStatus>();
         // dataSourceBuilder.MapEnum<BuildingType>("geocoder.building_type");
-        dataSourceBuilder.MapEnum<BuildingType>();
+        // dataSourceBuilder.MapEnum<BuildingType>();
         // dataSourceBuilder.MapEnum<BuiltYearSource>("report.built_year_source");
-        dataSourceBuilder.MapEnum<BuiltYearSource>();
+        // dataSourceBuilder.MapEnum<BuiltYearSource>();
         // dataSourceBuilder.MapEnum<ConstructionPile>("report.construction_pile");
         dataSourceBuilder.MapEnum<ConstructionPile>();
         // dataSourceBuilder.MapEnum<CrackType>("report.crack_type");

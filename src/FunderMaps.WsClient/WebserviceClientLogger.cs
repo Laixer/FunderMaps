@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.WsClient;
 
+/// <summary>
+///     Webservice client logger.
+/// </summary>
 public class WebserviceClientLogger : IDisposable
 {
     private readonly WebserviceClient _webserviceClient;
@@ -11,6 +14,9 @@ public class WebserviceClientLogger : IDisposable
 
     private AnalysisProduct? _product;
 
+    /// <summary>
+    ///     Construct new instance.
+    /// </summary>
     public WebserviceClientLogger(WebserviceClient webserviceClient, ILogger<WebserviceClientLogger> logger)
     {
         _webserviceClient = webserviceClient ?? throw new ArgumentNullException(nameof(webserviceClient));

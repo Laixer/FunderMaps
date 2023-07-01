@@ -62,7 +62,7 @@ internal class DbContext : IAsyncDisposable
     /// <param name="cmdText">The text of the query.</param>
     public static async ValueTask<DbContext> OpenSessionAsync(DbProvider dbProvider, Core.AppContext appContext, string cmdText)
     {
-        DbContext context = new(dbProvider, appContext, cmdText);
+        var context = new DbContext(dbProvider, appContext, cmdText);
         await context.OpenAsync();
         return context;
     }

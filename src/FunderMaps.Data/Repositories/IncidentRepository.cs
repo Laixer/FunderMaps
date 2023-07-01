@@ -145,7 +145,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             FoundationRecovery = reader.GetBoolean(offset++),
             NeighborRecovery = reader.GetBoolean(offset++),
             FoundationDamageCause = reader.GetFieldValue<FoundationDamageCause?>(offset++),
-            DocumentFile = reader.GetFieldValue<string[]>(offset++),
+            DocumentFile = reader.GetSafeFieldValue<string[]>(offset++),
             Note = reader.GetSafeString(offset++),
             InternalNote = reader.GetSafeString(offset++),
             Email = reader.GetString(offset++),

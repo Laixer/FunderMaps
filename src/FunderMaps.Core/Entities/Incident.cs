@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.DataAnnotations;
 using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
@@ -64,7 +64,7 @@ public sealed class Incident : RecordControl<Incident, string>
     /// <summary>
     ///     Document name.
     /// </summary>
-    public string[] DocumentFile { get; set; }
+    public string[]? DocumentFile { get; set; }
 
     /// <summary>
     ///     Note.
