@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Email;
 internal class MailgunService : IEmailService
 {
     /// <summary>
-    ///     Default base URL.
+    ///     Default base URL for the remote service.
     /// </summary>
     private const string DefaultBaseUrl = @"https://api.eu.mailgun.net/v3/";
 

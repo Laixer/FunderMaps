@@ -24,9 +24,9 @@ public record Authentication
 /// <summary>
 ///     Webservice client.
 /// </summary>
-public class WebserviceClient : IDisposable
+public class WebserviceClient
 {
-    private const string DefaultBaseUrl = @"https://ws.fundermaps.com/";
+    private const string DefaultBaseUrl = @"https://ws.fundermaps.com";
 
     private HttpClient client = new();
 
@@ -48,7 +48,7 @@ public class WebserviceClient : IDisposable
             baseUrl = DefaultBaseUrl;
         }
 
-        client.BaseAddress = new(baseUrl);
+        client.BaseAddress = new Uri(baseUrl);
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
     }
@@ -72,7 +72,7 @@ public class WebserviceClient : IDisposable
         var authToken = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
         if (authToken is null)
         {
-            throw new Exception();
+            throw new Exception(); // TODO
         }
 
         client.DefaultRequestHeaders.Authorization = new("Bearer", authToken.Token);
@@ -98,5 +98,8 @@ public class WebserviceClient : IDisposable
         return await client.GetFromJsonAsync<StatisticsProduct>($"api/v3/product/statistics/{id}");
     }
 
+    /// <summary>
+    ///     Free managed resources.
+    /// </summary>
     public void Dispose() => client.Dispose();
 }
