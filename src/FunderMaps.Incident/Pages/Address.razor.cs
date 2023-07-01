@@ -2,6 +2,7 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using FunderMaps.Incident.Data;
 using FunderMaps.Incident.Shared;
+using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Incident.Pages;
 
@@ -17,6 +18,9 @@ public partial class Address : ComponentBase, IAsyncDisposable
 
     [Inject]
     private ILogger<Address> Logger { get; set; } = default!;
+
+    [Inject]
+    private IGeocoderTranslation GeocoderTranslation { get; set; } = default!;
 
     [CascadingParameter]
     State State { get; set; } = default!;
@@ -82,34 +86,30 @@ public partial class Address : ComponentBase, IAsyncDisposable
         var filter = e.Value?.ToString();
 
         var addressSuggestion = await http.GetFromJsonAsync<PDOKResult>($"suggest?fq=type:adres&q={filter}&rows=7");
-
         if (addressSuggestion is not null)
         {
-            autoComplete.Clear();
-
-            foreach (var item in addressSuggestion.response.docs)
-            {
-                autoComplete.Add(item);
-            }
+            autoComplete = addressSuggestion.response.docs;
         }
     }
 
     async Task SelectCustomer(string id)
     {
+        var suggestion = autoComplete.Find(x => x.id == id);
+        if (suggestion is not null)
+        {
+            inputKaasAutoCompleteDing = suggestion.weergavenaam;
+        }
+
         var customers = await http.GetFromJsonAsync<PDOKResult2>($"lookup?fl=nummeraanduiding_id,centroide_ll&id={id}");
         if (customers is not null)
         {
-            State.Model.Address = $"NL.IMBAG.NUMMERAANDUIDING.{customers.response.docs[0].nummeraanduiding_id}";
+            var address = await GeocoderTranslation.GetAddressIdAsync(customers.response.docs[0].nummeraanduiding_id);
 
-            foreach (var item in autoComplete)
-            {
-                if (item.id == id)
-                {
-                    inputKaasAutoCompleteDing = item.weergavenaam;
-                    State.DisableNavNext = false;
-                    Parent.Kaas();
-                }
-            }
+            State.Model.Address = address.Id;
+            State.Model.Building = address.BuildingId ?? throw new ArgumentNullException(nameof(address.BuildingId));
+
+            State.DisableNavNext = false;
+            Parent.Kaas();
         }
 
         autoComplete.Clear();
