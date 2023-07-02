@@ -4,7 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Core.Services;
 
-public struct PDOKAddressSuggestion
+public struct PDOKSuggestion
+{
+    public string Id { get; set; }
+    public string Suggestion { get; set; }
+}
+
+public struct PDOKDocument
 {
     public string id { get; set; }
     public string type { get; set; }
@@ -18,12 +24,13 @@ struct PDOKResponse
     public int numFound { get; set; }
     public int start { get; set; }
     public float maxScore { get; set; }
-    public List<PDOKAddressSuggestion> docs { get; set; }
+    public List<PDOKDocument> docs { get; set; }
 }
 
 struct LocationServerResult
 {
     public PDOKResponse response { get; set; }
+    public JsonElement highlighting { get; set; }
 }
 
 public class PDOKLocationService
@@ -47,9 +54,28 @@ public class PDOKLocationService
     }
 
     /// <summary>
-    ///     Suggest addresses based on a query.
+    ///     Lookup PDOK document by id.
     /// </summary>
-    public async Task<List<PDOKAddressSuggestion>> SuggestAsync(string query, int rows = 10)
+    public async Task<PDOKDocument> LookupAsync(string id)
+    {
+        var response = await httpClient.GetAsync($"lookup?id={id}");
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Location server API call failed with status code {StatusCode}", response.StatusCode);
+
+            throw new HttpRequestException("Location server API call failed.");
+        }
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        var responseObject = JsonSerializer.Deserialize<LocationServerResult>(jsonResponse);
+
+        return responseObject.response.docs.First();
+    }
+
+    /// <summary>
+    ///     Search addresses based on a query.
+    /// </summary>
+    public async Task<List<PDOKDocument>> SearchAsync(string query, int rows = 10)
     {
         var response = await httpClient.GetAsync($"free?fq=type:adres&fl=id,type,score,nummeraanduiding_id,weergavenaam&q={query}&rows={rows}");
         if (!response.IsSuccessStatusCode)
@@ -63,5 +89,47 @@ public class PDOKLocationService
         var responseObject = JsonSerializer.Deserialize<LocationServerResult>(jsonResponse);
 
         return responseObject.response.docs;
+    }
+
+    /// <summary>
+    ///     Suggest addresses based on a query.
+    /// </summary>
+    public async Task<List<PDOKSuggestion>> SuggestAsync(string query, int rows = 10)
+    {
+        var response = await httpClient.GetAsync($"suggest?fq=type:adres&q={query}&rows={rows}");
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("Location server API call failed with status code {StatusCode}", response.StatusCode);
+
+            throw new HttpRequestException("Location server API call failed.");
+        }
+
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        var responseObject = JsonSerializer.Deserialize<LocationServerResult>(jsonResponse);
+
+        var suggestions = new List<PDOKSuggestion>();
+        foreach (var highlightProperty in responseObject.highlighting.EnumerateObject())
+        {
+            var suggestionProperty = highlightProperty.Value.GetProperty("suggest");
+
+            if (suggestionProperty.GetArrayLength() == 0)
+            {
+                continue;
+            }
+
+            var suggestion = suggestionProperty[0].GetString();
+            if (string.IsNullOrEmpty(suggestion))
+            {
+                continue;
+            }
+
+            suggestions.Add(new PDOKSuggestion
+            {
+                Id = highlightProperty.Name,
+                Suggestion = suggestion,
+            });
+        }
+
+        return suggestions;
     }
 }
