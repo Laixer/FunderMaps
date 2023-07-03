@@ -65,19 +65,19 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Groundwater level temp.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? GroundwaterLevelTemp { get; set; }
 
     /// <summary>
     ///     Ground level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? GroundLevel { get; set; }
 
     /// <summary>
     ///     Groundwater level net.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? GroundwaterLevelNet { get; set; }
 
     //
@@ -131,13 +131,13 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Construction level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? ConstructionLevel { get; set; }
 
     /// <summary>
     ///     Wood level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? WoodLevel { get; set; }
 
     /// <summary>
@@ -155,13 +155,13 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Pile head level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? PileHeadLevel { get; set; }
 
     /// <summary>
     ///     Pile tip level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? PileTipLevel { get; set; }
 
     /// <summary>
@@ -173,7 +173,7 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Mason level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? MasonLevel { get; set; }
 
     /// <summary>
@@ -335,13 +335,13 @@ public sealed class InquirySample : RecordControl<InquirySample, int>
     /// <summary>
     ///     Threshold front level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? ThresholdFrontLevel { get; set; }
 
     /// <summary>
     ///     Threshold back level.
     /// </summary>
-    [Range(0.0, 999.99)]
+    [Range(-999.99, 999.99)]
     public decimal? ThresholdBackLevel { get; set; }
 
     /// <summary>
