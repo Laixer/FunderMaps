@@ -4,23 +4,27 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(config =>
-{
-    config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-})
-.AddCookie(options =>
-{
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-    options.SlidingExpiration = true;
-    options.Cookie.Name = "LaixerAppAuth";
-    options.Cookie.MaxAge = TimeSpan.FromHours(10);
-})
-.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
-    options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
+// builder.Services.AddAuthentication(config =>
+// {
+//     config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//     config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+// })
+// .AddCookie(options =>
+// {
+//     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+//     options.SlidingExpiration = true;
+//     options.Cookie.Name = "LaixerAppAuth";
+//     options.Cookie.MaxAge = TimeSpan.FromHours(10);
+// })
+// .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
+//     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
 // Register components from reference assemblies.
 builder.Services.AddFunderMapsCoreServices();
