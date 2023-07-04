@@ -31,33 +31,26 @@ public class AspAppContextMiddleware
 
         if (httpContext.User.Identity is not null && httpContext.User.Identity.IsAuthenticated)
         {
-            var idClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-            if (idClaim is null)
+            var objectIdClaim = httpContext.User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier");
+            if (objectIdClaim is not null)
             {
-                throw new InvalidOperationException();
+                appContext.User = new User()
+                {
+                    Id = Guid.Parse(objectIdClaim.Value),
+                };
             }
-
-            appContext.User = new User()
+            else
             {
-                Id = Guid.Parse(idClaim.Value),
-            };
+                var idClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+                if (idClaim is null)
+                {
+                    throw new InvalidOperationException();
+                }
+                appContext.User = new User()
+                {
+                    Id = Guid.Parse(idClaim.Value),
+                };
 
-            var emailClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.Email);
-            if (emailClaim is not null)
-            {
-                appContext.User.Email = emailClaim.Value;
-            }
-
-            var givenClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.GivenName);
-            if (givenClaim is not null)
-            {
-                appContext.User.GivenName = givenClaim.Value;
-            }
-
-            var surnameClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.Surname);
-            if (surnameClaim is not null)
-            {
-                appContext.User.LastName = surnameClaim.Value;
             }
 
             foreach (var orgClaim in httpContext.User.FindAll("organization_id"))
@@ -68,12 +61,21 @@ public class AspAppContextMiddleware
                 });
             }
 
-            var (_, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(httpContext.User);
-            if (tenant is not null)
+            var tenantClaim = httpContext.User.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid");
+            if (tenantClaim is not null)
             {
                 appContext.Organizations.Add(new()
                 {
-                    Id = tenant.Id,
+                    Id = Guid.Parse(tenantClaim.Value),
+                });
+            }
+
+            var fundermapsTenantClaim = httpContext.User.FindFirst(FunderMapsAuthenticationClaimTypes.Tenant);
+            if (fundermapsTenantClaim is not null)
+            {
+                appContext.Organizations.Add(new()
+                {
+                    Id = Guid.Parse(fundermapsTenantClaim.Value),
                 });
             }
 
