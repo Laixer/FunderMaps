@@ -22,11 +22,11 @@
                     <div class="GeoCoder__Suggestions">
                         @foreach (var suggestion in autoComplete)
                         {
-                            <div class="Suggestion" title="@suggestion.weergavenaam" @onclick=@(_ => SelectCustomer(suggestion.id))>
+                            <div class="Suggestion" title="@suggestion.Suggestion" @onclick=@(_ => SelectCustomer(suggestion.Id))>
                                 <div class="SvgIcon svg-container">
                                     <SuggestionIcon />
                                 </div>
-                                <span>@((MarkupString)suggestion.weergavenaam)</span>
+                                <span>@((MarkupString)suggestion.Suggestion)</span>
                             </div>
                         }
                     </div>
