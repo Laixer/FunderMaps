@@ -1,11 +1,13 @@
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
+using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFunderMapsCoreServices();
+builder.Services.AddSingleton<PDOKLocationService>();
 builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
 
 builder.Services.AddRazorPages();
