@@ -4,8 +4,6 @@ using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -14,16 +12,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class FunderMapsDataServiceCollectionExtensions
 {
-    /// <summary>
-    ///     Configuration.
-    /// </summary>
-    public static IConfiguration Configuration { get; set; } = default!;
-
-    /// <summary>
-    ///     Host environment.
-    /// </summary>
-    public static IHostEnvironment HostEnvironment { get; set; } = default!;
-
     /// <summary>
     ///     Add repository with application context injection to container.
     /// </summary>
@@ -65,8 +53,7 @@ public static class FunderMapsDataServiceCollectionExtensions
             throw new ArgumentNullException(nameof(services));
         }
 
-        // The startup essential properties can be used to setup components.
-        (Configuration, HostEnvironment) = services.BuildStartupProperties();
+        services.AddSingleton<DbProvider, NpgsqlDbProvider>();
 
         // Register context repositories with the DI container.
         // NOTE: Keep the order in which they are directory listed
@@ -108,7 +95,6 @@ public static class FunderMapsDataServiceCollectionExtensions
         }
 
         services.AddFunderMapsDataServices();
-        services.AddSingleton<DbProvider, NpgsqlDbProvider>();
         // services.AddTransient<Npgsql.Logging.NpgsqlLogger, DataNpgsqlLogger>();
         services.Configure<DbProviderOptions>(options =>
         {
