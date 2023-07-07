@@ -53,7 +53,7 @@ public static class FunderMapsDataServiceCollectionExtensions
             throw new ArgumentNullException(nameof(services));
         }
 
-        // The application core (as well as many other components) depends upon the ability to cache
+        // The data layer depends upon the memory cache service to provide the ability to cache
         // objects to memory. The memory cache may have already been registered with the container
         // by some other package, however we cannot expect this to be the case.
         services.AddMemoryCache();
@@ -101,7 +101,6 @@ public static class FunderMapsDataServiceCollectionExtensions
         }
 
         services.AddFunderMapsDataServices();
-        // services.AddTransient<Npgsql.Logging.NpgsqlLogger, DataNpgsqlLogger>();
         services.Configure<DbProviderOptions>(options =>
         {
             options.ConnectionStringName = dbConfigName;
