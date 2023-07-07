@@ -53,6 +53,11 @@ public static class FunderMapsDataServiceCollectionExtensions
             throw new ArgumentNullException(nameof(services));
         }
 
+        // The application core (as well as many other components) depends upon the ability to cache
+        // objects to memory. The memory cache may have already been registered with the container
+        // by some other package, however we cannot expect this to be the case.
+        services.AddMemoryCache();
+
         services.AddSingleton<DbProvider, NpgsqlDbProvider>();
 
         // Register context repositories with the DI container.

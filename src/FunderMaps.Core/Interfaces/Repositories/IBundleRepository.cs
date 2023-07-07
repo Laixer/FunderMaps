@@ -13,5 +13,8 @@ public interface IBundleRepository : IAsyncRepository<Bundle, string>
     /// <returns>List of <see cref="Bundle"/>.</returns>
     IAsyncEnumerable<Bundle> ListAllEnabledAsync();
 
+    /// <summary>
+    ///     Log the built time of a bundle.
+    /// </summary>
     Task LogBuiltTimeAsync(string id);
 }

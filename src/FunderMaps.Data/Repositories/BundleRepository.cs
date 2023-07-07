@@ -124,6 +124,9 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
         }
     }
 
+    /// <summary>
+    ///     Log the built time of a bundle.
+    /// </summary>
     public async Task LogBuiltTimeAsync(string id)
     {
         var entityName = EntityTable("maplayer");
