@@ -16,6 +16,15 @@ public interface IBlobStorageService : IServiceHealthCheck
     /// <returns>The generated link.</returns>
     Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid);
 
+    /// <summary>
+    ///     Upload an object to the bucket.
+    /// </summary>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="filePath">The file path.</param>
+    /// <param name="storageObject">Storage object settings.</param>
+    /// <returns>See <see cref="ValueTask"/>.</returns>
+    Task StoreFileAsync(string fileName, string filePath, StorageObject? storageObject = null);
+
     // FUTURE: Refactor
     /// <summary>
     ///     Stores a file in Amazon S3.
