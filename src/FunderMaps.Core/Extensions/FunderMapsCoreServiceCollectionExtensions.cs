@@ -5,7 +5,6 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -18,33 +17,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
     ///     Configuration.
     /// </summary>
     public static IConfiguration Configuration { get; set; } = default!;
-
-    /// <summary>
-    ///     Host environment.
-    /// </summary>
-    public static IHostEnvironment HostEnvironment { get; set; } = default!;
-
-    /// <summary>
-    ///     Adds incident reporting service.
-    /// </summary>
-    private static IServiceCollection AddIncident(this IServiceCollection services)
-    {
-        services.AddScoped<IIncidentService, IncidentService>();
-        services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
-
-        return services;
-    }
-
-    /// <summary>
-    ///     Adds the <see cref="AppContext"/> to the container.
-    /// </summary>
-    private static IServiceCollection AddAppContext(this IServiceCollection services)
-    {
-        services.AddSingleton<IAppContextFactory, AppContextFactory>();
-        services.AddScoped<FunderMaps.Core.AppContext>(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
-
-        return services;
-    }
 
     /// <summary>
     ///     Adds the core services to the container.
@@ -66,7 +38,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         }
 
         // The startup essential properties can be used to setup components.
-        (Configuration, HostEnvironment) = services.BuildStartupProperties();
+        (Configuration, _) = services.BuildStartupProperties();
 
         // Register core components in DI container.
         // NOTE: These services are rarely used and should therefore be
@@ -82,7 +54,8 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       in order for core services to be functional. This registration is
         //       merely a placeholder. The front framework should bootstrap the application
         //       context if possible.
-        services.AddAppContext();
+        services.AddSingleton<IAppContextFactory, AppContextFactory>();
+        services.AddScoped<FunderMaps.Core.AppContext>(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
 
         // Register core services in DI container.
         // NOTE: These services take time to initialize are used more often. Registering
@@ -98,13 +71,9 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.Configure<BlobStorageOptions>(Configuration.GetSection(BlobStorageOptions.Section));
         services.TryAddSingleton<IBlobStorageService, SpacesBlobStorageService>();
 
-        // The application core (as well as many other components) depends upon the ability to cache
-        // objects to memory. The memory cache may have already been registered with the container
-        // by some other package, however we cannot expect this to be.
-        services.AddMemoryCache();
-
         // Register the incident core service.
-        services.AddIncident();
+        services.AddScoped<IIncidentService, IncidentService>();
+        services.Configure<IncidentOptions>(Configuration.GetSection(IncidentOptions.Section));
 
         return services;
     }
