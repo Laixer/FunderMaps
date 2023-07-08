@@ -259,6 +259,7 @@ __pycache__/
 *.pyc
 
 # Application settings
+**/appsettings.json
 **/appsettings.*.json
 **/launchSettings.json
 **/Documentation*.xml
