@@ -1,13 +1,13 @@
 using System.Diagnostics;
+using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Core.Services;
 
-// TODO: Make this internal.
 /// <summary>
 ///     Geospatial abstraction service.
 /// </summary>
-public class TippecanoeService
+internal class TippecanoeService : ITilesetGeneratorService
 {
     private readonly ILogger<TippecanoeService> _logger;
 
@@ -18,7 +18,7 @@ public class TippecanoeService
         => _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
-    ///     Generate vector tiles.
+    ///     Generate vector tiles from input.
     /// </summary>
     public void Generate(string input, string output, string? layer = null, int maxZoomLevel = 15, int minZoomLevel = 10)
     {

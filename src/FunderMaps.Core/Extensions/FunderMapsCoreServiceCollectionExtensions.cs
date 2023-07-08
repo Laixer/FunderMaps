@@ -1,7 +1,8 @@
-﻿using FunderMaps.Core.Components;
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
 using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -56,6 +57,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
         services.TryAddSingleton<IEmailService, MailgunService>();
         services.TryAddSingleton<IBlobStorageService, SpacesBlobStorageService>();
+        services.TryAddSingleton<ITilesetGeneratorService, TippecanoeService>();
 
         return services;
     }
