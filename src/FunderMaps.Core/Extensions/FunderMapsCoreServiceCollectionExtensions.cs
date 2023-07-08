@@ -1,4 +1,4 @@
-using FunderMaps.Core.Components;
+﻿using FunderMaps.Core.Components;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
@@ -59,6 +59,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.TryAddSingleton<IBlobStorageService, SpacesBlobStorageService>();
         services.TryAddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.TryAddSingleton<IMapboxService, MapboxService>();
+        services.TryAddSingleton<IGDALService, GeospatialAbstractionService>();
 
         return services;
     }
