@@ -125,6 +125,23 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     }
 
     /// <summary>
+    ///     Run precondition.
+    /// </summary>
+    public async Task<bool> RunPreconditionAsync(string id, string precondition)
+    {
+        var cmd = $@"
+            SELECT  maplayer.{precondition}(built_date) > precondition_threshold AS precondition
+            FROM    maplayer.bundle
+            WHERE   tileset = @tileset";
+
+        await using var context = await DbContextFactory.CreateAsync(cmd);
+
+        context.AddParameterWithValue("tileset", id);
+
+        return await context.ScalarAsync<bool>();
+    }
+
+    /// <summary>
     ///     Log the built time of a bundle.
     /// </summary>
     public async Task LogBuiltTimeAsync(string id)

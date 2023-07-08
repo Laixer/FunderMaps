@@ -14,6 +14,11 @@ public interface IBundleRepository : IAsyncRepository<Bundle, string>
     IAsyncEnumerable<Bundle> ListAllEnabledAsync();
 
     /// <summary>
+    ///     Run precondition.
+    /// </summary>
+    Task<bool> RunPreconditionAsync(string id, string precondition);
+
+    /// <summary>
     ///     Log the built time of a bundle.
     /// </summary>
     Task LogBuiltTimeAsync(string id);
