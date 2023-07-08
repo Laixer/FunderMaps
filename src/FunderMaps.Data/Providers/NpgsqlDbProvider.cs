@@ -13,6 +13,7 @@ namespace FunderMaps.Data.Providers;
 /// </summary>
 internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
 {
+    private readonly NpgsqlDataSourceBuilder _dataSourceBuilder;
     private readonly NpgsqlDataSource _dataSource;
 
     /// <summary>
@@ -56,7 +57,26 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
         dataSourceBuilder.MapEnum<WoodQuality>();
         dataSourceBuilder.MapEnum<WoodType>();
 
+        _dataSourceBuilder = dataSourceBuilder;
+
         _dataSource = dataSourceBuilder.Build();
+    }
+
+    /// <summary>
+    ///     Get the connection as URI.
+    /// </summary>
+    public override string ConnectionUri
+    {
+        get
+        {
+            var username = _dataSourceBuilder.ConnectionStringBuilder.Username;
+            var password = _dataSourceBuilder.ConnectionStringBuilder.Password;
+            var host = _dataSourceBuilder.ConnectionStringBuilder.Host;
+            var port = _dataSourceBuilder.ConnectionStringBuilder.Port;
+            var database = _dataSourceBuilder.ConnectionStringBuilder.Database;
+
+            return $"postgresql://{username}:{password}@{host}:{port}/{database}"; // ?connect_timeout=10&application_name=myapp        
+        }
     }
 
     /// <summary>

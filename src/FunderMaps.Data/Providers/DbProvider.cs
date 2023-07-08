@@ -7,7 +7,7 @@ namespace FunderMaps.Data.Providers;
 /// <summary>
 ///     Database provider.
 /// </summary>
-internal abstract class DbProvider
+public abstract class DbProvider
 {
     protected readonly DbProviderOptions _options;
 
@@ -22,6 +22,11 @@ internal abstract class DbProvider
     /// </summary>
     /// <returns><see cref="DbConnection"/> instance.</returns>
     public abstract DbConnection ConnectionScope();
+
+    /// <summary>
+    ///     Get the connection as URI.
+    /// </summary>
+    public abstract string ConnectionUri { get; }
 
     /// <summary>
     ///     Create command on the database connection.
