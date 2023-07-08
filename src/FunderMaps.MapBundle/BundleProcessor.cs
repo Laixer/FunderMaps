@@ -2,6 +2,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FunderMaps.MapBundle;
 
@@ -12,7 +13,7 @@ public class BundleProcessor
     private readonly IGDALService _gdalService;
     private readonly ITilesetGeneratorService _tilesetGeneratorService;
     private readonly IMapboxService _mapboxService;
-    private readonly DbProvider _dbProvider;
+    private readonly DbProviderOptions _dbProviderOptions;
     private readonly ILogger<BundleProcessor> _logger;
 
     /// <summary>
@@ -24,7 +25,7 @@ public class BundleProcessor
         IGDALService gdalService,
         ITilesetGeneratorService tilesetGeneratorService,
         IMapboxService mapboxService,
-        DbProvider dbProvider,
+        IOptions<DbProviderOptions> dbProviderOptions,
         ILogger<BundleProcessor> logger)
     {
         _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
@@ -32,7 +33,7 @@ public class BundleProcessor
         _gdalService = gdalService ?? throw new ArgumentNullException(nameof(gdalService));
         _tilesetGeneratorService = tilesetGeneratorService ?? throw new ArgumentNullException(nameof(tilesetGeneratorService));
         _mapboxService = mapboxService ?? throw new ArgumentNullException(nameof(mapboxService));
-        _dbProvider = dbProvider ?? throw new ArgumentNullException(nameof(dbProvider));
+        _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -54,7 +55,9 @@ public class BundleProcessor
 
                 _logger.LogInformation($"Processing bundle '{bundle.Tileset}'");
 
-                var input = _dbProvider.ConnectionUri;
+                var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
+
+                var input = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
 
                 _gdalService.Convert(input, $"{bundle.Tileset}.gpkg", $"maplayer.{bundle.Tileset}");
 
