@@ -1,6 +1,5 @@
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Types;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data.Common;
@@ -19,15 +18,10 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public NpgsqlDbProvider(IConfiguration configuration, IOptions<DbProviderOptions> options)
+    public NpgsqlDbProvider(IOptions<DbProviderOptions> options)
         : base(options)
     {
-        if (_options.ConnectionStringName is null)
-        {
-            throw new ArgumentNullException(nameof(_options.ConnectionStringName));
-        }
-
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString(_options.ConnectionStringName));
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(_options.ConnectionString);
 
         if (!string.IsNullOrEmpty(_options.ApplicationName))
         {
