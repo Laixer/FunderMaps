@@ -58,6 +58,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.TryAddSingleton<IEmailService, MailgunService>();
         services.TryAddSingleton<IBlobStorageService, SpacesBlobStorageService>();
         services.TryAddSingleton<ITilesetGeneratorService, TippecanoeService>();
+        services.TryAddSingleton<IMapboxService, MapboxService>();
 
         return services;
     }
