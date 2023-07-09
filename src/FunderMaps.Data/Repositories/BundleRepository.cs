@@ -68,7 +68,20 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
             return entity;
         }
 
-        var cmd = SingleCommand("maplayer", new[] { "tileset", "enabled", "built_date", "precondition", "name", "zoom_min_level", "zoom_max_level" });
+        var entityName = EntityTable("maplayer");
+
+        var cmd = $@"
+        SELECT
+            tileset,
+            enabled,
+            built_date,
+            precondition,
+            name,
+            zoom_min_level,
+            zoom_max_level
+        FROM {entityName}
+        WHERE tileset = @tileset
+        LIMIT 1";
 
         await using var context = await DbContextFactory.CreateAsync(cmd);
 

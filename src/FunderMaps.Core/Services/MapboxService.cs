@@ -41,6 +41,19 @@ struct MapboxCredentialResponse
     public string url { get; set; }
 }
 
+public struct MapboxUploadResponse
+{
+    public bool complete { get; set; }
+    public string tileset { get; set; }
+    public string error { get; set; }
+    public string id { get; set; }
+    public string name { get; set; }
+    public DateTime modified { get; set; }
+    public DateTime created { get; set; }
+    public string owner { get; set; }
+    public int progress { get; set; }
+}
+
 internal class MapboxService : IMapboxService, IDisposable
 {
     /// <summary>
@@ -106,7 +119,7 @@ internal class MapboxService : IMapboxService, IDisposable
     /// <param name="name">Name of the file.</param>
     /// <param name="tileset">Tileset name.</param>
     /// <param name="filePath">Path to file.</param>
-    public async Task UploadAsync(string name, string tileset, string filePath)
+    public async Task<MapboxUploadResponse> UploadAsync(string name, string tileset, string filePath)
     {
         var credentials = await UploadCredentialAsync();
 
@@ -131,9 +144,9 @@ internal class MapboxService : IMapboxService, IDisposable
         }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
-        // var responseObject = JsonSerializer.Deserialize<MapboxCredentialResponse>(jsonResponse);
+        var responseObject = JsonSerializer.Deserialize<MapboxUploadResponse>(jsonResponse);
 
-        // return responseObject;
+        return responseObject;
     }
 
     /// <summary>

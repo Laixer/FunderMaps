@@ -1,3 +1,5 @@
+using FunderMaps.Core.Services;
+
 namespace FunderMaps.Core.Interfaces;
 
 /// <summary>
@@ -11,5 +13,5 @@ public interface IMapboxService
     /// <param name="name">Name of the file.</param>
     /// <param name="tileset">Tileset name.</param>
     /// <param name="filePath">Path to file.</param>
-    Task UploadAsync(string name, string tileset, string filePath);
+    Task<MapboxUploadResponse> UploadAsync(string name, string tileset, string filePath);
 }
