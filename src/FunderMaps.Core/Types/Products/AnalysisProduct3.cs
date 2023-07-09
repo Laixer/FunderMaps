@@ -98,7 +98,7 @@ public sealed record AnalysisProduct
     /// <summary>
     ///     Enforcement term.
     /// </summary>
-    public Quality? OverallQuality { get; init; }
+    public FoundationQuality? OverallQuality { get; init; }
 
     /// <summary>
     ///     Report type.
