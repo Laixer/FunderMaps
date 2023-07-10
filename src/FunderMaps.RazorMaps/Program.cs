@@ -3,6 +3,7 @@ using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Services;
+using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -29,7 +30,7 @@ builder.Services.AddFunderMapsCoreServices();
 
 var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
 builder.Services.AddFunderMapsDataServices();
-builder.Services.Configure<FunderMaps.Data.Providers.DbProviderOptions>(options =>
+builder.Services.Configure<DbProviderOptions>(options =>
 {
     options.ConnectionString = connectionString;
     options.ApplicationName = "FunderMaps.RazorMaps";

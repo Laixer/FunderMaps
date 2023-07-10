@@ -81,31 +81,4 @@ public static class FunderMapsDataServiceCollectionExtensions
 
         return services;
     }
-
-    /// <summary>
-    ///     Adds the data services and database provider to the container.
-    /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/> to add the services to.</param>
-    /// <param name="dbConfigName">Database connection string.</param>
-    /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
-    public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services, string dbConfigName)
-    {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        if (string.IsNullOrEmpty(dbConfigName))
-        {
-            throw new ArgumentNullException(nameof(dbConfigName));
-        }
-
-        services.AddFunderMapsDataServices();
-        services.Configure<DbProviderOptions>(options =>
-        {
-            options.ConnectionStringName = dbConfigName;
-        });
-
-        return services;
-    }
 }

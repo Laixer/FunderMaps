@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -23,29 +24,24 @@ public class Startup
     public Startup(IConfiguration configuration) => Configuration = configuration;
 
     /// <summary>
-    ///     Use this method to add services to the container regardless of the environment.
-    /// </summary>
-    /// <remarks>
-    ///     Order is undetermined when configuring services.
-    /// </remarks>
-    /// <param name="services">See <see cref="IServiceCollection"/>.</param>
-    private static void StartupConfigureServices(IServiceCollection services)
-    {
-        services.AddAutoMapper(typeof(Startup));
-        services.AddLocalization(options =>
-         {
-             options.ResourcesPath = "Resources";
-         });
-        services.AddFunderMapsDataServices("FunderMapsConnection");
-    }
-
-    /// <summary>
     ///     This method gets called by the runtime if no environment is set.
     /// </summary>
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureServices(IServiceCollection services)
     {
-        StartupConfigureServices(services);
+        services.AddAutoMapper(typeof(Startup));
+        services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+
+        var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
+        services.AddFunderMapsDataServices();
+        services.Configure<DbProviderOptions>(options =>
+        {
+            options.ConnectionString = connectionString;
+            options.ApplicationName = "FunderMaps.WebApi";
+        });
     }
 
     /// <summary>
@@ -54,7 +50,19 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureDevelopmentServices(IServiceCollection services)
     {
-        StartupConfigureServices(services);
+        services.AddAutoMapper(typeof(Startup));
+        services.AddLocalization(options =>
+        {
+            options.ResourcesPath = "Resources";
+        });
+
+        var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
+        services.AddFunderMapsDataServices();
+        services.Configure<DbProviderOptions>(options =>
+        {
+            options.ConnectionString = connectionString;
+            options.ApplicationName = "FunderMaps.WebApi";
+        });
 
         services.AddCors(options =>
         {
