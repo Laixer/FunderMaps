@@ -8,8 +8,11 @@ using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+var k = new FunderMaps.AspNetCore.FunderMapsStartup();
+k.Configure(builder.WebHost);
+
+// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    // .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 // builder.Services.AddAuthentication(config =>
 // {
@@ -25,6 +28,7 @@ builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 // })
 // .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
+
 
 // Register components from reference assemblies.
 builder.Services.AddFunderMapsCoreServices();
