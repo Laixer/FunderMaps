@@ -30,7 +30,15 @@ var builder = WebApplication.CreateBuilder(args);
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
 
-builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+        // options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+        options.Cookie.Name = "LaixerLocalAuth";
+        // options.Cookie.MaxAge = TimeSpan.FromHours(10);
+    });
 
 // Register components from reference assemblies.
 builder.Services.AddFunderMapsCoreServices();
@@ -65,7 +73,10 @@ builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AllowAnonymousToPage("/Login");
+});
 // builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
 
 var app = builder.Build();
