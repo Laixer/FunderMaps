@@ -6,13 +6,22 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddSingleton<PDOKLocationService>();
-builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
+
+var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
+builder.Services.AddFunderMapsDataServices();
+builder.Services.Configure<FunderMaps.Data.Providers.DbProviderOptions>(options =>
+{
+    options.ConnectionString = connectionString;
+    options.ApplicationName = "FunderMaps.Incident";
+});
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
+builder.Services.AddHealthChecks()
+    .AddCheck<RepositoryHealthCheck>("data_health_check");
 
 builder.Services.AddHsts(options =>
 {
