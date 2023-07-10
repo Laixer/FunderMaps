@@ -1,28 +1,27 @@
 {
-    "Jwt": {
-        "Issuer": "FunderMaps",
-        "Audience": "FunderMaps",
-        "TokenValidity": 120
-    },
-    "Logging": {
-        "LogLevel": {
-            "Default": "Warning",
-            "Microsoft.AspNetCore.DataProtection": "Error",
-            "FunderMaps": "Information"
-        }
-    },
-    "Mapbox": {
-        "Account": "laixer",
-        "AccessToken": ""
-    },
-    "Smtp": {
-        "SmtpPort": 465,
-        "DefaultSenderName": "FunderMaps",
-        "DefaultSenderAddress": "info@fundermaps.com"
-    },
-    "BlobStorage": {
-        "AccessKey": "ZDQQ3W7SX2LTGEHGIY3M",
-        "ServiceUri": "https://ams3.digitaloceanspaces.com/",
-        "BlobStorageName": "fundermaps-production"
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning",
+      "Microsoft.AspNetCore.DataProtection": "Error",
+      "FunderMaps": "Information"
     }
+  },
+  "Jwt": {
+    "Issuer": "FunderMaps",
+    "Audience": "FunderMaps",
+    "TokenValidity": 120
+  },
+  "Mailgun": {
+    "Domain": "fundermaps.com",
+    "DefaultSenderName": "FunderMaps",
+    "DefaultSenderAddress": "no-reply@fundermaps.com"
+  },
+  "Mapbox": {
+    "Account": "laixer"
+  },
+  "BlobStorage": {
+    "AccessKey": "ZDQQ3W7SX2LTGEHGIY3M",
+    "ServiceUri": "https://ams3.digitaloceanspaces.com/",
+    "BucketName": "fundermaps-production"
+  }
 }

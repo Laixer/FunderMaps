@@ -1,48 +1,29 @@
 {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  },
   "Jwt": {
     "Issuer": "FunderMapsDev",
     "Audience": "FunderMapsDev",
     "TokenValidity": 60,
     "SignatureKey": "dhfgdfubhgbdfghredfgregurhe78gh348yvt784tcno3qt74gntkuirdhg"
   },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Debug"
-    }
-  },
-  "Incident": {
-    "ClientId": 12,
-    "Recipients": [
-      "info@fundermaps.com"
-    ]
-  },
-  "UseExternalServices": false,
-  "BackgroundWorkOptions": {
-    "MaxQueueSize": 16,
-    "Workers": 1
-  },
-  "Batch": {
-    "Interval": 5
+  "Mailgun": {
+    "Domain": "fundermaps.com",
+    "DefaultSenderName": "FunderMaps",
+    "DefaultSenderAddress": "no-reply@fundermaps.com"
   },
   "Mapbox": {
-    "Account": "laixer",
-    "AccessToken": ""
-  },
-  "Smtp": {
-    "SmtpServer": "smtp.transip.email",
-    "SmtpPort": 465,
-    "SmtpUsername": "info@fundermaps.com",
-    "SmtpPassword": null,
-    "DefaultSenderName": "FunderMaps",
-    "DefaultSenderAddress": "info@fundermaps.com"
+    "Account": "laixer"
   },
   "ConnectionStrings": {
     "FunderMapsConnection": "Server=localhost;Database=fundermaps;User Id=fundermaps"
   },
   "BlobStorage": {
     "AccessKey": "LOUSAQJLIXLMIXKTKDW5",
-    "SecretKey": null,
     "ServiceUri": "https://ams3.digitaloceanspaces.com/",
-    "BlobStorageName": "fundermaps-development"
+    "BucketName": "fundermaps-development"
   }
 }
