@@ -1,6 +1,7 @@
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -23,23 +24,24 @@ var builder = WebApplication.CreateBuilder(args);
 // .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddFunderMapsCoreServices();
+
+var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
+builder.Services.AddFunderMapsDataServices();
+builder.Services.Configure<FunderMaps.Data.Providers.DbProviderOptions>(options =>
+{
+    options.ConnectionString = connectionString;
+    options.ApplicationName = "FunderMaps.RazorMaps";
+});
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.SlidingExpiration = true;
-        options.Cookie.Name = "LaixerLocalAuth";
+        options.Cookie.Name = "FunderMaps.Auth.Local";
     });
 
-// Register components from reference assemblies.
-builder.Services.AddFunderMapsCoreServices();
-builder.Services.AddFunderMapsDataServices();
-builder.Services.Configure<FunderMaps.Data.Providers.DbProviderOptions>(options =>
-{
-    options.ConnectionString = builder.Configuration["ConnectionStrings:FunderMapsConnection"];
-});
-
-// Add the authorization layer.
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
@@ -53,26 +55,26 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<SignInService>();
 builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
 
-// NOTE: Register the HttpContextAccessor service to the container.
-//       The HttpContextAccessor exposes a singleton holding the
-//       HttpContext within a scoped resolver, or null outside the scope.
-//       Some components require the HttpContext and its features when the
-//       related service is being resolved within the scope.
-builder.Services.AddHttpContextAccessor();
-
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AllowAnonymousToPage("/Account/Login");
 });
-// builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
+builder.Services.AddHealthChecks()
+    .AddCheck<RepositoryHealthCheck>("data_health_check");
+
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;
+    options.MaxAge = TimeSpan.FromDays(365);
+});
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    ForwardedHeadersOptions forwardedOptions = new()
+    var forwardedOptions = new ForwardedHeadersOptions()
     {
         ForwardedHeaders = ForwardedHeaders.All,
     };
@@ -82,11 +84,13 @@ if (!app.Environment.IsDevelopment())
     forwardedOptions.AllowedHosts.Clear();
 
     app.UseForwardedHeaders(forwardedOptions);
+
+    app.UseHsts();
 }
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseCookiePolicy(new()
+    app.UseCookiePolicy(new CookiePolicyOptions()
     {
         Secure = CookieSecurePolicy.Always,
     });
@@ -96,6 +100,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error");
 }
+
+app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
@@ -108,6 +114,6 @@ app.UseAspAppContext();
 
 app.MapControllers();
 app.MapRazorPages();
-// app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
 
 app.Run();
