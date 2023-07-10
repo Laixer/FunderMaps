@@ -13,9 +13,13 @@ public class Program
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+            .AddJsonFile("appsettings.Development.json", optional: true, reloadOnChange: false)
             .AddJsonFile("/etc/fundermaps/appsettings.json", optional: true, reloadOnChange: false)
             .AddEnvironmentVariables()
+            .AddCommandLine(args)
             .Build();
+
+        var connectionString = configuration.GetConnectionString("FunderMapsConnection");
 
         var serviceProvider = new ServiceCollection()
             .AddLogging(options =>
@@ -28,7 +32,7 @@ public class Program
             .AddFunderMapsDataServices()
             .Configure<DbProviderOptions>(options =>
             {
-                options.ConnectionString = configuration["ConnectionStrings:FunderMapsConnection"];
+                options.ConnectionString = connectionString;
                 options.ApplicationName = "FunderMaps.MapBundle";
             })
             .Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.Section))

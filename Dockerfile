@@ -25,8 +25,7 @@ RUN dotnet publish -c release -o /app \
     && echo "$subtool" > /app/SUBTOOL \
     && ln -s "$subtool" /app/entry \
     && rm -f /app/appsettings.json /app/appsettings.*.json \
-    && cp /source/contrib/etc/_appsettings.Production.json /app/appsettings.Production.json \
-    && cp /source/contrib/etc/_appsettings.Staging.json /app/appsettings.Staging.json
+    && cp /source/contrib/etc/_appsettings.Production.json /app/appsettings.Production.json
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
