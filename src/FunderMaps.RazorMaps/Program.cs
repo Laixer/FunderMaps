@@ -37,7 +37,7 @@ builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddRazorPages();
-builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
+// builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
 
 var app = builder.Build();
 
