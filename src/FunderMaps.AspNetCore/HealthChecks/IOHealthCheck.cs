@@ -16,6 +16,7 @@ public class IOHealthCheck : IHealthCheck
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
     {
         var fileName = Path.GetTempFileName();
+
         try
         {
             File.Create(fileName).Close();
