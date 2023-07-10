@@ -8,11 +8,8 @@ using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var k = new FunderMaps.AspNetCore.FunderMapsStartup();
-k.Configure(builder.WebHost);
-
 // builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    // .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+// .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 // builder.Services.AddAuthentication(config =>
 // {
@@ -30,9 +27,38 @@ k.Configure(builder.WebHost);
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
 
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
 // Register components from reference assemblies.
 builder.Services.AddFunderMapsCoreServices();
-builder.Services.AddFunderMapsDataServices("FunderMapsConnection");
+builder.Services.AddFunderMapsDataServices();
+builder.Services.Configure<FunderMaps.Data.Providers.DbProviderOptions>(options =>
+{
+    options.ConnectionString = builder.Configuration["ConnectionStrings:FunderMapsConnection"];
+});
+
+// Add the authorization layer.
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+
+    options.AddFunderMapsPolicy();
+});
+
+
+
+// Adds the core authentication service to the container.
+builder.Services.AddScoped<SignInService>();
+builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
+
+// NOTE: Register the HttpContextAccessor service to the container.
+//       The HttpContextAccessor exposes a singleton holding the
+//       HttpContext within a scoped resolver, or null outside the scope.
+//       Some components require the HttpContext and its features when the
+//       related service is being resolved within the scope.
+builder.Services.AddHttpContextAccessor();
 
 // Add services to the container.
 builder.Services.AddControllers();
