@@ -1,18 +1,12 @@
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-// .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 // builder.Services.AddAuthentication(config =>
 // {
@@ -33,11 +27,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login";
-        // options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
         options.Cookie.Name = "LaixerLocalAuth";
-        // options.Cookie.MaxAge = TimeSpan.FromHours(10);
     });
 
 // Register components from reference assemblies.
@@ -58,8 +49,6 @@ builder.Services.AddAuthorization(options =>
     options.AddFunderMapsPolicy();
 });
 
-
-
 // Adds the core authentication service to the container.
 builder.Services.AddScoped<SignInService>();
 builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
@@ -75,7 +64,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>
 {
-    options.Conventions.AllowAnonymousToPage("/Login");
+    options.Conventions.AllowAnonymousToPage("/Account/Login");
 });
 // builder.Services.AddHealthChecks().AddCheck<RepositoryHealthCheck>("data_health_check");
 

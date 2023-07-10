@@ -18,12 +18,10 @@ public class LoginModel : PageModel
     [BindProperty]
     public string Password { get; set; }
 
-    // private readonly IMapper _mapper;
     private readonly SignInService _signInService;
 
     public LoginModel(SignInService signInService)
     {
-        // _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
     }
 
@@ -34,7 +32,7 @@ public class LoginModel : PageModel
         var authProperties = new AuthenticationProperties();
 
         await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme, 
+            CookieAuthenticationDefaults.AuthenticationScheme,
             principal,
             authProperties);
 
