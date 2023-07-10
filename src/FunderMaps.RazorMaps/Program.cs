@@ -79,6 +79,6 @@ app.UseAspAppContext();
 
 app.MapControllers();
 app.MapRazorPages();
-app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+// app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
 
 app.Run();
