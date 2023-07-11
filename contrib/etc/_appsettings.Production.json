@@ -20,7 +20,7 @@
     "Account": "laixer"
   },
   "BlobStorage": {
-    "AccessKey": "ZDQQ3W7SX2LTGEHGIY3M",
+    "AccessKeyId": "ZDQQ3W7SX2LTGEHGIY3M",
     "ServiceUri": "https://ams3.digitaloceanspaces.com/",
     "BucketName": "fundermaps-production"
   }

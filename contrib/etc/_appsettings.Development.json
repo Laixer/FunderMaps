@@ -22,7 +22,7 @@
     "FunderMapsConnection": "Server=localhost;Database=fundermaps;User Id=fundermaps"
   },
   "BlobStorage": {
-    "AccessKey": "LOUSAQJLIXLMIXKTKDW5",
+    "AccessKeyId": "LOUSAQJLIXLMIXKTKDW5",
     "ServiceUri": "https://ams3.digitaloceanspaces.com/",
     "BucketName": "fundermaps-development"
   }
