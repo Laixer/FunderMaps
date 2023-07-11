@@ -29,19 +29,19 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(Startup));
-        services.AddLocalization(options =>
-        {
-            options.ResourcesPath = "Resources";
-        });
+        // services.AddAutoMapper(typeof(Startup));
+        // services.AddLocalization(options =>
+        // {
+        //     options.ResourcesPath = "Resources";
+        // });
 
-        var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
-        services.AddFunderMapsDataServices();
-        services.Configure<DbProviderOptions>(options =>
-        {
-            options.ConnectionString = connectionString;
-            options.ApplicationName = "FunderMaps.WebApi";
-        });
+        // var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
+        // services.AddFunderMapsDataServices();
+        // services.Configure<DbProviderOptions>(options =>
+        // {
+        //     options.ConnectionString = connectionString;
+        //     options.ApplicationName = "FunderMaps.WebApi";
+        // });
     }
 
     /// <summary>
@@ -50,29 +50,29 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureDevelopmentServices(IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(Startup));
-        services.AddLocalization(options =>
-        {
-            options.ResourcesPath = "Resources";
-        });
+        // services.AddAutoMapper(typeof(Startup));
+        // services.AddLocalization(options =>
+        // {
+        //     options.ResourcesPath = "Resources";
+        // });
 
-        var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
-        services.AddFunderMapsDataServices();
-        services.Configure<DbProviderOptions>(options =>
-        {
-            options.ConnectionString = connectionString;
-            options.ApplicationName = "FunderMaps.WebApi";
-        });
+        // var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
+        // services.AddFunderMapsDataServices();
+        // services.Configure<DbProviderOptions>(options =>
+        // {
+        //     options.ConnectionString = connectionString;
+        //     options.ApplicationName = "FunderMaps.WebApi";
+        // });
 
-        services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(policy =>
-            {
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.AllowAnyOrigin();
-            });
-        });
+        // services.AddCors(options =>
+        // {
+        //     options.AddDefaultPolicy(policy =>
+        //     {
+        //         policy.AllowAnyHeader();
+        //         policy.AllowAnyMethod();
+        //         policy.AllowAnyOrigin();
+        //     });
+        // });
     }
 
     /// <summary>
