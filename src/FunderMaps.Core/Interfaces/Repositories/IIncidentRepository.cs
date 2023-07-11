@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IIncidentRepository : IAsyncRepository<Incident, string>
 {
+    IAsyncEnumerable<Incident> ListAllByBuildingIdAsync(string id);
+
     // TODO; Remove
     IAsyncEnumerable<Incident> ListAllRecentAsync();
 }

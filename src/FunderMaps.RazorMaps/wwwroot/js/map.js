@@ -128,16 +128,38 @@ export class Map {
                     this.map.on("click", layer.id, (e) => {
                         var html = '';
 
+                        var popup = new mapboxgl.Popup().setLngLat(turf.centroid(e.features[0]).geometry.coordinates);
+
                         for (const [key, value] of Object.entries(e.features[0].properties)) {
+                            if (key === 'building_id') {
+                                fetch(`/mapset/building/${value}`)
+                                    .then(function (response) {
+                                        if (!response.ok) {
+                                            throw new Error('Network response was not ok');
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(function (data) {
+                                        data.incidentList.forEach(incident => {
+                                            html += `<b>Incident:</b> ${incident.id}<br/>`;
+                                        });
+                                        data.inquirySampleList.forEach(inquirySample => {
+                                            html += `<b>Inquiry:</b> <a href="https://app.fundermaps.com/inquiry/${inquirySample.inquiry}">${inquirySample.inquiry}</a><br/>`;
+                                        });
+
+                                        popup.setHTML(html);
+                                    })
+                                    .catch(function (error) {
+                                        console.error('Error:', error);
+                                    });
+                            }
+
                             if (this.canShowProperty(e.features[0].layer.id, key)) {
                                 html += this.translateProperty(key, value) + '<br/>';
                             }
                         }
 
-                        new mapboxgl.Popup()
-                            .setLngLat(turf.centroid(e.features[0]).geometry.coordinates)
-                            .setHTML(html)
-                            .addTo(this.map);
+                        popup.setHTML(html).addTo(this.map);
                     });
 
                     layer.hasEventsSet = true;

@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IInquirySampleRepository : IAsyncRepository<InquirySample, int>
 {
+    IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id);
+
     /// <summary>
     ///     Retrieve number of entities and filter on report.
     /// </summary>

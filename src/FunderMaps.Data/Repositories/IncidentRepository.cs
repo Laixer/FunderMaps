@@ -215,6 +215,24 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         return CacheEntity(MapFromReader(reader));
     }
 
+    public async IAsyncEnumerable<Incident> ListAllByBuildingIdAsync(string id)
+    {
+        var sql = @"
+            SELECT  -- Incident
+                    i.id
+            FROM    report.incident AS i
+            WHERE   i.building = @building";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
+        }
+    }
+
     /// <summary>
     ///     Retrieve all <see cref="Incident"/>.
     /// </summary>

@@ -477,6 +477,103 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         return CacheEntity(MapFromReader(reader));
     }
 
+    public async IAsyncEnumerable<InquirySample> ListAllByBuildingIdAsync(string id)
+    {
+        var sql = @"
+            SELECT  -- InquirySample
+                    s.id,
+                    s.inquiry,
+                    s.address,
+                    s.note,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.built_year,
+                    s.substructure,
+
+                    -- Foundation Assessment
+                    s.overall_quality,
+                    s.wood_quality,
+                    s.construction_quality,
+                    s.wood_capacity_horizontal_quality,
+                    s.pile_wood_capacity_vertical_quality,
+                    s.carrying_capacity_quality,
+                    s.mason_quality,
+                    s.wood_quality_necessity,
+
+                    -- Foundation Measurement
+                    s.construction_level,
+                    s.wood_level,
+                    s.pile_diameter_top,
+                    s.pile_diameter_bottom,
+                    s.pile_head_level,
+                    s.pile_tip_level,
+                    s.foundation_depth,
+                    s.mason_level,
+                    s.concrete_charger_length,
+                    s.pile_distance_length,
+                    s.wood_penetration_depth,
+
+                    -- Surrounding
+                    s.cpt,
+                    s.monitoring_well,
+                    s.groundwater_level_temp,
+                    s.groundlevel,
+                    s.groundwater_level_net,
+                    
+                    -- Foundation
+                    s.foundation_type,
+                    s.enforcement_term,
+                    s.recovery_advised,
+                    s.damage_cause,
+                    s.damage_characteristics,
+                    s.construction_pile,
+                    s.wood_type,
+                    s.wood_encroachement,
+
+                    -- Building
+                    s.crack_indoor_restored,
+                    s.crack_indoor_type,
+                    s.crack_indoor_size,
+                    s.crack_facade_front_restored,
+                    s.crack_facade_front_type,
+                    s.crack_facade_front_size,
+                    s.crack_facade_back_restored,
+                    s.crack_facade_back_type,
+                    s.crack_facade_back_size,
+                    s.crack_facade_left_restored,
+                    s.crack_facade_left_type,
+                    s.crack_facade_left_size,
+                    s.crack_facade_right_restored,
+                    s.crack_facade_right_type,
+                    s.crack_facade_right_size,
+                    s.deformed_facade,
+                    s.threshold_updown_skewed,
+                    s.threshold_front_level,
+                    s.threshold_back_level,
+                    s.skewed_parallel,
+                    s.skewed_parallel_facade,
+                    s.skewed_perpendicular,
+                    s.skewed_perpendicular_facade,
+                    s.settlement_speed,
+                    s.skewed_window_frame
+            FROM    report.inquiry_sample AS s
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   s.building = @building
+            ORDER BY s.create_date DESC";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+        context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
+        }
+    }
+
     /// <summary>
     ///     Retrieve all <see cref="InquirySample"/>.
     /// </summary>
