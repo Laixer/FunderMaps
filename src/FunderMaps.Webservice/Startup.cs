@@ -30,15 +30,15 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(Startup));
+        // services.AddAutoMapper(typeof(Startup));
 
-        var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
-        services.AddFunderMapsDataServices();
-        services.Configure<DbProviderOptions>(options =>
-        {
-            options.ConnectionString = connectionString;
-            options.ApplicationName = "FunderMaps.Webservice";
-        });
+        // var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
+        // services.AddFunderMapsDataServices();
+        // services.Configure<DbProviderOptions>(options =>
+        // {
+        //     options.ConnectionString = connectionString;
+        //     options.ApplicationName = "FunderMaps.Webservice";
+        // });
     }
 
     /// <summary>
@@ -47,25 +47,25 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureDevelopmentServices(IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(Startup));
+        // services.AddAutoMapper(typeof(Startup));
 
-        var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
-        services.AddFunderMapsDataServices();
-        services.Configure<DbProviderOptions>(options =>
-        {
-            options.ConnectionString = connectionString;
-            options.ApplicationName = "FunderMaps.Webservice";
-        });
+        // var connectionString = Configuration.GetConnectionString("FunderMapsConnection");
+        // services.AddFunderMapsDataServices();
+        // services.Configure<DbProviderOptions>(options =>
+        // {
+        //     options.ConnectionString = connectionString;
+        //     options.ApplicationName = "FunderMaps.Webservice";
+        // });
 
-        services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(policy =>
-            {
-                policy.AllowAnyHeader();
-                policy.AllowAnyMethod();
-                policy.AllowAnyOrigin();
-            });
-        });
+        // services.AddCors(options =>
+        // {
+        //     options.AddDefaultPolicy(policy =>
+        //     {
+        //         policy.AllowAnyHeader();
+        //         policy.AllowAnyMethod();
+        //         policy.AllowAnyOrigin();
+        //     });
+        // });
     }
 
     /// <summary>
@@ -77,23 +77,23 @@ public class Startup
     /// </remarks>
     public static void ConfigureDevelopment(IApplicationBuilder app)
     {
-        app.UseDeveloperExceptionPage();
-        app.UseCors();
+        // app.UseDeveloperExceptionPage();
+        // app.UseCors();
 
-        app.UseExceptionHandler("/oops");
+        // app.UseExceptionHandler("/oops");
 
-        app.UsePathBase(new("/api"));
-        app.UseRouting();
+        // app.UsePathBase(new("/api"));
+        // app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        // app.UseAuthentication();
+        // app.UseAuthorization();
 
-        app.UseAspAppContext();
+        // app.UseAspAppContext();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        // app.UseEndpoints(endpoints =>
+        // {
+        //     endpoints.MapControllers();
+        // });
     }
 
     /// <summary>
@@ -105,25 +105,25 @@ public class Startup
     /// </remarks>
     public static void Configure(IApplicationBuilder app)
     {
-        app.UseForwardedHeaders(new()
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-        });
+        // app.UseForwardedHeaders(new()
+        // {
+        //     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        // });
 
-        app.UseExceptionHandler("/oops");
+        // app.UseExceptionHandler("/oops");
 
-        app.UsePathBase(new("/api"));
-        app.UseRouting();
+        // app.UsePathBase(new("/api"));
+        // app.UseRouting();
 
-        app.UseAuthentication();
-        app.UseAuthorization();
+        // app.UseAuthentication();
+        // app.UseAuthorization();
 
-        app.UseAspAppContext();
+        // app.UseAspAppContext();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
-        });
+        // app.UseEndpoints(endpoints =>
+        // {
+        //     endpoints.MapControllers();
+        //     endpoints.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+        // });
     }
 }

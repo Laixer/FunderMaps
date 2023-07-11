@@ -72,7 +72,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
 
     public static IServiceCollection AddFunderMapsAspNetCoreAuth(this IServiceCollection services)
     {
-        // The startup essential properties can be used to setup components.
         (Configuration, _) = services.BuildStartupProperties();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -88,7 +87,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
                 };
             });
 
-        // Add the authorization layer.
         services.AddAuthorization(options =>
         {
             options.FallbackPolicy = new AuthorizationPolicyBuilder()
