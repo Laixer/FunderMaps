@@ -1,8 +1,5 @@
-using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.AspNetCore.HealthChecks;
-using FunderMaps.AspNetCore.Services;
 using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -25,8 +22,7 @@ var builder = WebApplication.CreateBuilder(args);
 // .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddFunderMapsCoreServices();
+builder.Services.AddFunderMapsAspNetCoreServicesNew();
 
 var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
 builder.Services.AddFunderMapsDataServices();
@@ -52,24 +48,25 @@ builder.Services.AddAuthorization(options =>
     options.AddFunderMapsPolicy();
 });
 
-// Adds the core authentication service to the container.
-builder.Services.AddScoped<SignInService>();
-builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
-
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>
 {
     options.Conventions.AllowAnonymousToPage("/Account/Login");
 });
-builder.Services.AddHealthChecks()
-    .AddCheck<RepositoryHealthCheck>("data_health_check");
 
-builder.Services.AddHsts(options =>
+if (!builder.Environment.IsDevelopment())
 {
-    options.Preload = true;
-    options.MaxAge = TimeSpan.FromDays(365);
-});
+    builder.Services.AddHsts(options =>
+    {
+        options.Preload = true;
+        options.MaxAge = TimeSpan.FromDays(365);
+    });
+}
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCorsAllowAny();
+}
 
 var app = builder.Build();
 
@@ -87,6 +84,9 @@ if (!app.Environment.IsDevelopment())
     app.UseForwardedHeaders(forwardedOptions);
 
     app.UseHsts();
+    app.UseHttpsRedirection();
+
+    app.UseExceptionHandler("/error");
 }
 
 if (app.Environment.IsDevelopment())
@@ -95,14 +95,10 @@ if (app.Environment.IsDevelopment())
     {
         Secure = CookieSecurePolicy.Always,
     });
-}
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/error");
+    app.UseDeveloperExceptionPage();
+    app.UseCors();
 }
-
-app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 

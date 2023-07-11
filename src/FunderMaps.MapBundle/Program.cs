@@ -21,7 +21,7 @@ public class Program
 
         var connectionString = configuration.GetConnectionString("FunderMapsConnection");
 
-        var serviceProvider = new ServiceCollection()
+        using var serviceProvider = new ServiceCollection()
             .AddLogging(options =>
             {
                 options.ClearProviders();
@@ -41,7 +41,5 @@ public class Program
             .BuildServiceProvider();
 
         await serviceProvider.GetRequiredService<BundleProcessor>().RunAsync();
-
-        await serviceProvider.DisposeAsync();
     }
 }
