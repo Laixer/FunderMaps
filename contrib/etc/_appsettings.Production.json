@@ -3,6 +3,7 @@
     "LogLevel": {
       "Default": "Warning",
       "Microsoft.AspNetCore.DataProtection": "Error",
+      "Microsoft.Hosting.Lifetime": "Information",
       "FunderMaps": "Information"
     }
   },
