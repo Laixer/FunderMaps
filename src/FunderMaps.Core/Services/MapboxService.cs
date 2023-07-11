@@ -83,9 +83,9 @@ internal class MapboxService : IMapboxService, IDisposable
         var response = await httpClient.GetAsync($"uploads/v1/{_options.Account}/credentials?access_token={_options.ApiKey}");
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogError("OpenAI API call failed with status code {StatusCode}", response.StatusCode);
+            _logger.LogError("Mapbox API call failed with status code {StatusCode}", response.StatusCode);
 
-            throw new HttpRequestException("OpenAI API call failed");
+            throw new HttpRequestException("Mapbox API call failed");
         }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -138,15 +138,27 @@ internal class MapboxService : IMapboxService, IDisposable
         var response = await httpClient.PostAsync($"uploads/v1/{_options.Account}?access_token={_options.ApiKey}", content);
         if (!response.IsSuccessStatusCode)
         {
-            _logger.LogError("OpenAI API call failed with status code {StatusCode}", response.StatusCode);
+            _logger.LogError("Mapbox API call failed with status code {StatusCode}", response.StatusCode);
 
-            throw new HttpRequestException("OpenAI API call failed");
+            throw new HttpRequestException("Mapbox API call failed");
         }
 
         var jsonResponse = await response.Content.ReadAsStringAsync();
         var responseObject = JsonSerializer.Deserialize<MapboxUploadResponse>(jsonResponse);
 
         return responseObject;
+    }
+
+    /// <summary>
+    ///     Check if the service is available.
+    /// </summary>
+    public async Task HealthCheck()
+    {
+        var response = await httpClient.GetAsync($"datasets/v1/{_options.Account}?access_token={_options.ApiKey}");
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException("Mapbox API call failed");
+        }
     }
 
     /// <summary>

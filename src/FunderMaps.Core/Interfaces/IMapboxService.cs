@@ -5,7 +5,7 @@ namespace FunderMaps.Core.Interfaces;
 /// <summary>
 ///     Mapbox service.
 /// </summary>
-public interface IMapboxService
+public interface IMapboxService : IServiceHealthCheck
 {
     /// <summary>
     ///     Upload file to Mapbox.

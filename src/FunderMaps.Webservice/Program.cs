@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.Core.Services;
 using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -16,6 +17,7 @@ builder.Services.Configure<DbProviderOptions>(options =>
     options.ConnectionString = connectionString;
     options.ApplicationName = "FunderMaps.Webservice";
 });
+builder.Services.Configure<MapboxOptions>(builder.Configuration.GetSection(MapboxOptions.Section));
 
 if (!builder.Environment.IsDevelopment())
 {
