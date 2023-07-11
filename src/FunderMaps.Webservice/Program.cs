@@ -17,7 +17,7 @@ builder.Services.Configure<DbProviderOptions>(options =>
     options.ConnectionString = connectionString;
     options.ApplicationName = "FunderMaps.Webservice";
 });
-builder.Services.Configure<MapboxOptions>(builder.Configuration.GetSection(MapboxOptions.Section));
+builder.Services.Configure<MapboxOptions>(builder.Configuration.GetSection(MapboxOptions.Section)); // TODO: Move to FunderMaps.Core
 
 if (!builder.Environment.IsDevelopment())
 {
