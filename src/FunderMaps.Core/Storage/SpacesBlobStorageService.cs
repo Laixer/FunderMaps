@@ -238,6 +238,5 @@ internal class SpacesBlobStorageService : IBlobStorageService
     /// <summary>
     ///     Test the Amazon S3 service backend.
     /// </summary>
-    public async Task HealthCheck()
-        => await _s3Client.ListBucketsAsync();
+    public async Task HealthCheck() => await _s3Client.GetBucketVersioningAsync(_options.BucketName);
 }
