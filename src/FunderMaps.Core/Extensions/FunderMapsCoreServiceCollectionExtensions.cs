@@ -33,11 +33,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
     /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddFunderMapsCoreServices2(this IServiceCollection services)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
         // Register core components in DI container.
         // NOTE: These services are rarely used and should therefore be
         //       registered as transient. They are re-instantiated on every
@@ -78,11 +73,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
     /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddFunderMapsCoreServices(this IServiceCollection services)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
         AddFunderMapsCoreServices2(services);
 
         // The startup essential properties can be used to setup components.

@@ -1,5 +1,4 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.Core.Services;
 using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authorization;
@@ -7,8 +6,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddFunderMapsCoreServices();
+builder.Services.AddFunderMapsAspNetCoreServicesNew();
+
 builder.Services.AddSingleton<PDOKLocationService>();
 
 var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
@@ -21,8 +20,6 @@ builder.Services.Configure<DbProviderOptions>(options =>
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddHealthChecks()
-    .AddCheck<RepositoryHealthCheck>("data_health_check");
 
 builder.Services.AddHsts(options =>
 {
@@ -46,6 +43,9 @@ if (!app.Environment.IsDevelopment())
     app.UseForwardedHeaders(forwardedOptions);
 
     app.UseHsts();
+    app.UseHttpsRedirection();
+
+    app.UseExceptionHandler("/error");
 }
 
 if (app.Environment.IsDevelopment())
@@ -54,9 +54,10 @@ if (app.Environment.IsDevelopment())
     {
         Secure = CookieSecurePolicy.Always,
     });
-}
 
-app.UseHttpsRedirection();
+    app.UseDeveloperExceptionPage();
+    app.UseCors();
+}
 
 app.UseStaticFiles();
 

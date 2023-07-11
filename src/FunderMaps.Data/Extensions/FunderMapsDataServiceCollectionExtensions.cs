@@ -48,11 +48,6 @@ public static class FunderMapsDataServiceCollectionExtensions
     /// <returns>An instance of <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddFunderMapsDataServices(this IServiceCollection services)
     {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
         // The data layer depends upon the memory cache service to provide the ability to cache
         // objects to memory. The memory cache may have already been registered with the container
         // by some other package, however we cannot expect this to be the case.
