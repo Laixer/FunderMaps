@@ -1,5 +1,7 @@
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -22,6 +24,9 @@ var builder = WebApplication.CreateBuilder(args);
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
 builder.Services.AddFunderMapsAspNetCoreServicesNew();
+
+builder.Services.AddScoped<SignInService>();
+builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

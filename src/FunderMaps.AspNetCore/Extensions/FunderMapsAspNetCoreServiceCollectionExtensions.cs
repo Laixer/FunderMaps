@@ -52,8 +52,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddFunderMapsCoreServices();
         services.AddFunderMapsDataServices();
 
-        services.AddScoped<SignInService>();
-        services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
+        services.AddScoped<WebserviceClient>();
 
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
@@ -91,6 +90,9 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
 
     public static IServiceCollection AddFunderMapsAspNetCoreAuth(this IServiceCollection services)
     {
+        services.AddScoped<SignInService>();
+        services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
+
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
