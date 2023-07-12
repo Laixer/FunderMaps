@@ -14,11 +14,6 @@ internal static class MvcCoreMvcBuilderExtensions
     /// <returns>The <see cref="IMvcBuilder"/>.</returns>
     public static IMvcBuilder AddFunderMapsAssembly(this IMvcBuilder builder)
     {
-        if (builder is null)
-        {
-            throw new ArgumentNullException(nameof(builder));
-        }
-
         builder.AddApplicationPart(typeof(Constants).Assembly);
 
         return builder;

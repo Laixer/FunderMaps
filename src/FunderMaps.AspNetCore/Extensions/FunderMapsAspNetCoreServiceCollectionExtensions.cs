@@ -126,8 +126,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         // FUTURE: Only load specific parts.
         // NOTE: This will register all controllers in the FunderMaps.AspNetCore
         //       assemly regardless of authentication and authorization.
-        services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)))
-        .AddFunderMapsAssembly();
+        services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter))).AddFunderMapsAssembly();
 
         return services;
     }

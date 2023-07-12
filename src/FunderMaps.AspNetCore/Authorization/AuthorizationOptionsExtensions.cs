@@ -34,11 +34,6 @@ public static class AuthorizationOptionsExtensions
     /// <param name="options">The authorization policy options.</param>
     public static void AddFunderMapsPolicy(this AuthorizationOptions options)
     {
-        if (options is null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
         options.AddPolicy(AuthorizationPolicy.AdministratorPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireRole(Core.Types.ApplicationRole.Administrator.ToString()));

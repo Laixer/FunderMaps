@@ -35,11 +35,6 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
     /// </summary>
     public JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILogger<JwtBearerTokenProvider> logger, ISystemClock clock)
     {
-        if (options is null)
-        {
-            throw new ArgumentNullException(nameof(options));
-        }
-
         Options = options.Get(JwtBearerDefaults.AuthenticationScheme);
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         Clock = clock ?? throw new ArgumentNullException(nameof(clock));
@@ -57,11 +52,6 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
     /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
     protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
     {
-        if (principal is null)
-        {
-            throw new ArgumentNullException(nameof(principal));
-        }
-
         AuthenticationProperties properties = new();
 
         JwtTokenValidationParameters JwtTokenValidationParameters = Options.TokenValidationParameters as JwtTokenValidationParameters
