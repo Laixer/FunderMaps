@@ -11,7 +11,7 @@ namespace FunderMaps.Data.Providers;
 /// <summary>
 ///     Npgsql database provider.
 /// </summary>
-internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
+internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
 {
     private readonly NpgsqlDataSourceBuilder _dataSourceBuilder;
     private readonly NpgsqlDataSource _dataSource;
@@ -117,6 +117,11 @@ internal class NpgsqlDbProvider : DbProvider, IAsyncDisposable
 
         base.HandleException(edi);
     }
+
+    /// <summary>
+    ///     Dispose unmanaged resources.
+    /// </summary>
+    public void Dispose() => _dataSource.Dispose();
 
     /// <summary>
     ///     Dispose unmanaged resources.
