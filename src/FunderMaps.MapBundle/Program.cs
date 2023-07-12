@@ -10,7 +10,7 @@ await Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((hostBuilderContext, services) =>
     {
-        services.AddFunderMapsAspNetCoreServicesNew();
+        services.AddFunderMapsAspNetCoreServices();
         services.AddHostedService<HostedBundleProcessor>();
     })
     .UseSystemd()

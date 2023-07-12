@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFunderMapsAspNetCoreServicesNew();
+builder.Services.AddFunderMapsAspNetCoreServices();
 builder.Services.AddFunderMapsAspNetCoreAuth();
 builder.Services.AddFunderMapsAspNetCoreControllers();
 

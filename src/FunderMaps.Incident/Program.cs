@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFunderMapsAspNetCoreServicesNew();
+builder.Services.AddFunderMapsAspNetCoreServices();
 
 builder.Services.AddSingleton<PDOKLocationService>(); // TODO: Move to FunderMaps.Core
 

@@ -23,7 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 // .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
-builder.Services.AddFunderMapsAspNetCoreServicesNew();
+builder.Services.AddFunderMapsAspNetCoreServices();
 
 builder.Services.AddScoped<SignInService>();
 builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();

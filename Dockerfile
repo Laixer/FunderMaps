@@ -19,7 +19,7 @@ RUN find . -type f -exec sed -i "s/@@VERSION@@/$(git describe --long --always)/"
 
 # Publish and configure subtool application
 WORKDIR "/source/src/$subtool"
-RUN dotnet publish -c release -o /app \
+RUN dotnet publish -c Release -o /app \
     && git describe --long --always > /app/VERSION \
     && git rev-parse HEAD > /app/COMMIT \
     && echo "$subtool" > /app/SUBTOOL \

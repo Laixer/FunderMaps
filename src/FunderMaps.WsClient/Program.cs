@@ -4,77 +4,54 @@ using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-public class Program
+var usernameOption = new Option<string?>("--username", "Webservice username")
 {
-    internal static ServiceProvider SetupServiceProvider(Authentication authentication)
-    {
-        return new ServiceCollection()
-            .AddLogging(options =>
-            {
-                options.ClearProviders();
-                options.AddSimpleConsole();
-                options.SetMinimumLevel(LogLevel.Debug);
-            })
-            .AddScoped<WebserviceClient>(serviceProvider => new(authentication))
-            .AddScoped<WebserviceClientLogger>()
-            .BuildServiceProvider();
-    }
+    IsRequired = true,
+};
+usernameOption.AddAlias("-u");
 
-    internal static async Task DoCall(ServiceProvider serviceProvider, string buildingId)
-    {
-        var client = serviceProvider.GetRequiredService<WebserviceClientLogger>();
+var passwordOption = new Option<string?>("--password", "Webservice password")
+{
+    IsRequired = true,
+};
+passwordOption.AddAlias("-p");
 
-        await client.LogAnalysisAsync(buildingId);
-        // await client.LogStatisticsAsync(buildingId);
-    }
+var buildingArgument = new Argument<string>("building", "Building identifier")
+{
+    Arity = ArgumentArity.ExactlyOne,
+};
 
-    internal static void TearDownServiceProvider(ServiceProvider serviceProvider)
-    {
-        serviceProvider.Dispose();
-    }
+var command = new RootCommand("FunderMaps command line interface")
+{
+    usernameOption,
+    passwordOption,
+    buildingArgument,
+};
 
-    public static async Task<int> Main(string[] args)
-    {
-        var usernameOption = new Option<string?>("--username", "Webservice username")
+command.SetHandler(async (username, password, buildingId) =>
+{
+    await using var serviceProvider = new ServiceCollection()
+        .AddLogging(options =>
         {
-            IsRequired = true,
-        };
-        usernameOption.AddAlias("-u");
-
-        var passwordOption = new Option<string?>("--password", "Webservice password")
+            options.ClearProviders();
+            options.AddSimpleConsole();
+            options.SetMinimumLevel(LogLevel.Debug);
+        })
+        .AddScoped<WebserviceClient>()
+        .Configure<FunderMapsWebserviceOptions>(options =>
         {
-            IsRequired = true,
-        };
-        passwordOption.AddAlias("-p");
+            options.BaseUrl = "https://ws-staging.fundermaps.com";
+            options.Email = username ?? throw new ArgumentNullException(nameof(username));
+            options.Password = password ?? throw new ArgumentNullException(nameof(password));
+        })
+        .AddScoped<WebserviceClientLogger>()
+        .BuildServiceProvider();
 
-        var buildingArgument = new Argument<string>("building", "Building identifier")
-        {
-            Arity = ArgumentArity.ExactlyOne,
-        };
+    var funderMapsWebserviceClient = serviceProvider.GetRequiredService<WebserviceClientLogger>();
 
-        var command = new RootCommand("FunderMaps command line interface")
-        {
-            usernameOption,
-            passwordOption,
-            buildingArgument,
-        };
+    await funderMapsWebserviceClient.LogAnalysisAsync(buildingId);
+    // await funderMapsWebserviceClient.LogStatisticsAsync(buildingId);
 
-        command.SetHandler(async (username, password, buildingId) =>
-        {
-            var auth = new Authentication()
-            {
-                Email = username ?? throw new ArgumentNullException(nameof(username)),
-                Password = password ?? throw new ArgumentNullException(nameof(password)),
-            };
+}, usernameOption, passwordOption, buildingArgument);
 
-            var serviceProvider = SetupServiceProvider(auth);
-
-            await DoCall(serviceProvider, buildingId);
-
-            TearDownServiceProvider(serviceProvider);
-
-        }, usernameOption, passwordOption, buildingArgument);
-
-        return await command.InvokeAsync(args);
-    }
-}
+await command.InvokeAsync(args);

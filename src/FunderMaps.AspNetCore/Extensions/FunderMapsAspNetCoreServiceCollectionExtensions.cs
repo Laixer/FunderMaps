@@ -47,7 +47,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
     }
 
-    public static IServiceCollection AddFunderMapsAspNetCoreServicesNew(this IServiceCollection services)
+    public static IServiceCollection AddFunderMapsAspNetCoreServices(this IServiceCollection services)
     {
         services.AddFunderMapsCoreServices();
         services.AddFunderMapsDataServices();
