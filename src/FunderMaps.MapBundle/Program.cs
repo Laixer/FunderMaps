@@ -13,5 +13,6 @@ await Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
         services.AddFunderMapsAspNetCoreServicesNew();
         services.AddHostedService<HostedBundleProcessor>();
     })
+    .UseSystemd()
     .Build()
     .RunAsync();
