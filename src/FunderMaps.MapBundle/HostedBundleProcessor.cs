@@ -42,11 +42,26 @@ public class HostedBundleProcessor : IHostedService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         using var scope = _serviceScopeFactory.CreateScope();
 
+        var bundleRepository = scope.ServiceProvider.GetRequiredService<IBundleRepository>();
+
+        try
+        {
+            await RunAllEnabledAsync(scope, cancellationToken);
+        }
+        finally
+        {
+            _hostApplicationLifetime.StopApplication();
+        }
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    private async Task RunAllEnabledAsync(IServiceScope scope, CancellationToken cancellationToken)
+    {
         var bundleRepository = scope.ServiceProvider.GetRequiredService<IBundleRepository>();
 
         await foreach (var bundle in bundleRepository.ListAllEnabledAsync())
@@ -100,11 +115,7 @@ public class HostedBundleProcessor : IHostedService
                 {
                     File.Delete($"{bundle.Tileset}.mbtiles");
                 }
-
-                _hostApplicationLifetime.StopApplication();
             }
         }
     }
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
