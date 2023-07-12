@@ -2,55 +2,64 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types.Products;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace FunderMaps.AspNetCore.Services;
 
 /// <summary>
-///     Authentication parameters.
+///     Options for the open AI service.
 /// </summary>
-public record Authentication
+public sealed record FunderMapsWebserviceOptions
 {
     /// <summary>
-    ///     Email address.
+    ///     Configuration section key.
     /// </summary>
-    public string Email { get; init; } = default!;
+    public const string Section = "FunderMapsWebservice";
 
     /// <summary>
-    ///     Password.
+    ///     FunderMaps base URL.
     /// </summary>
-    public string Password { get; init; } = default!;
+    public string? BaseUrl { get; set; }
+
+    /// <summary>
+    ///     FunderMaps email address.
+    /// </summary>
+    public string? Email { get; set; }
+
+    /// <summary>
+    ///     FunderMaps password.
+    /// </summary>
+    public string? Password { get; set; }
 }
 
 /// <summary>
 ///     Webservice client.
 /// </summary>
-public class WebserviceClient
+public class WebserviceClient : IDisposable
 {
+    /// <summary>
+    ///     Default base URL for the remote service.
+    /// </summary>
     private const string DefaultBaseUrl = @"https://ws.fundermaps.com";
 
-    private HttpClient client = new();
+    private readonly HttpClient httpClient = new();
+    private readonly FunderMapsWebserviceOptions _options;
+    private readonly ILogger<WebserviceClient> _logger;
 
-    public bool IsAuthenticated => client.DefaultRequestHeaders.Authorization is not null;
-
-    public Authentication Authentication { get; init; }
+    public bool IsAuthenticated => httpClient.DefaultRequestHeaders.Authorization is not null;
 
     /// <summary>
-    ///     Construct a new webservice client.
+    ///     Construct new instance.
     /// </summary>
-    /// <param name="authentication">Authentication parameters.</param>
-    /// <param name="baseUrl">Optional base URL.</param>
-    public WebserviceClient(Authentication authentication, string? baseUrl = DefaultBaseUrl)
+    public WebserviceClient(IOptions<FunderMapsWebserviceOptions> options, ILogger<WebserviceClient> logger)
     {
-        Authentication = authentication;
+        httpClient.BaseAddress = new Uri(options?.Value.BaseUrl ?? DefaultBaseUrl);
+        httpClient.DefaultRequestHeaders.Accept.Clear();
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        if (baseUrl is null)
-        {
-            baseUrl = DefaultBaseUrl;
-        }
-
-        client.BaseAddress = new Uri(baseUrl);
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+        _logger = logger;
     }
 
     /// <summary>
@@ -63,19 +72,26 @@ public class WebserviceClient
             return;
         }
 
-        var response = await client.PostAsJsonAsync("auth/signin", new
+        var response = await httpClient.PostAsJsonAsync("auth/signin", new
         {
-            email = Authentication.Email,
-            password = Authentication.Password,
+            email = _options.Email,
+            password = _options.Password,
         });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            _logger.LogError("FunderMaps API call failed with status code {StatusCode}", response.StatusCode);
+
+            throw new HttpRequestException("FunderMaps API call failed");
+        }
 
         var authToken = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
         if (authToken is null)
         {
-            throw new Exception(); // TODO
+            throw new HttpRequestException("FunderMaps API call failed");
         }
 
-        client.DefaultRequestHeaders.Authorization = new("Bearer", authToken.Token);
+        httpClient.DefaultRequestHeaders.Authorization = new("Bearer", authToken.Token);
     }
 
     /// <summary>
@@ -85,7 +101,7 @@ public class WebserviceClient
     public async Task<AnalysisProduct?> GetAnalysisAsync(string id)
     {
         await EnsureAuthenticationAsync();
-        return await client.GetFromJsonAsync<AnalysisProduct>($"api/v3/product/analysis/{id}");
+        return await httpClient.GetFromJsonAsync<AnalysisProduct>($"api/v3/product/analysis/{id}");
     }
 
     /// <summary>
@@ -95,11 +111,11 @@ public class WebserviceClient
     public async Task<StatisticsProduct?> GetStatisticsAsync(string id)
     {
         await EnsureAuthenticationAsync();
-        return await client.GetFromJsonAsync<StatisticsProduct>($"api/v3/product/statistics/{id}");
+        return await httpClient.GetFromJsonAsync<StatisticsProduct>($"api/v3/product/statistics/{id}");
     }
 
     /// <summary>
     ///     Free managed resources.
     /// </summary>
-    public void Dispose() => client.Dispose();
+    public void Dispose() => httpClient.Dispose();
 }
