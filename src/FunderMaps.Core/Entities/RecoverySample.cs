@@ -41,7 +41,7 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     /// <summary>
     ///     Status.
     /// </summary>
-    public RecoveryStatus Status { get; set; }
+    public RecoveryStatus? Status { get; set; }
 
     /// <summary>
     ///     Type.
@@ -51,17 +51,17 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     /// <summary>
     ///     Pile type.
     /// </summary>
-    public PileType PileType { get; set; }
+    public PileType? PileType { get; set; }
 
     /// <summary>
     ///     Contractor organization identifier.
     /// </summary>
-    public int Contractor { get; set; }
+    public int? Contractor { get; set; }
 
     /// <summary>
     ///     Facade.
     /// </summary>
-    public Facade[] Facade { get; set; }
+    public Facade[]? Facade { get; set; }
 
     /// <summary>
     ///     Permit.
@@ -71,10 +71,10 @@ public sealed class RecoverySample : RecordControl<RecoverySample, int>
     /// <summary>
     ///     Permit date.
     /// </summary>
-    public DateTime PermitDate { get; set; }
+    public DateTime? PermitDate { get; set; }
 
     /// <summary>
     ///     Recovery date.
     /// </summary>
-    public DateTime RecoveryDate { get; set; }
+    public DateTime? RecoveryDate { get; set; }
 }

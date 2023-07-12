@@ -146,6 +146,9 @@ export class Map {
                                         data.inquirySampleList.forEach(inquirySample => {
                                             html += `<b>Inquiry:</b> <a href="https://app.fundermaps.com/inquiry/${inquirySample.inquiry}">${inquirySample.inquiry}</a><br/>`;
                                         });
+                                        data.recoverySampleList.forEach(recoverySample => {
+                                            html += `<b>Recovery:</b> ${recoverySample.recovery}<br/>`;
+                                        });
 
                                         popup.setHTML(html);
                                     })

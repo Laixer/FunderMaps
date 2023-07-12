@@ -42,14 +42,14 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             UpdateDate = reader.GetSafeDateTime(offset++),
             DeleteDate = reader.GetSafeDateTime(offset++),
             Note = reader.GetSafeString(offset++),
-            Status = reader.GetFieldValue<RecoveryStatus>(offset++),
+            Status = reader.GetSafe5tructValue<RecoveryStatus>(offset++),
             Type = reader.GetFieldValue<RecoveryType>(offset++),
-            PileType = reader.GetFieldValue<PileType>(offset++),
-            Contractor = reader.GetInt(offset++),
-            Facade = reader.GetFieldValue<Facade[]>(offset++),
+            PileType = reader.GetSafe5tructValue<PileType>(offset++),
+            Contractor = reader.GetSafeInt(offset++),
+            Facade = reader.GetSafeFieldValue<Facade[]>(offset++),
             Permit = reader.GetSafeString(offset++),
-            PermitDate = reader.GetDateTime(offset++),
-            RecoveryDate = reader.GetDateTime(offset++),
+            PermitDate = reader.GetSafeDateTime(offset++),
+            RecoveryDate = reader.GetSafeDateTime(offset++),
         };
 
     /// <summary>
@@ -183,6 +183,42 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         await using var reader = await context.ReaderAsync();
 
         return MapFromReader(reader);
+    }
+
+    public async IAsyncEnumerable<RecoverySample> ListAllByBuildingIdAsync(string id)
+    {
+        var sql = @"
+            SELECT  -- RecoverySample
+                    s.id,
+                    s.recovery,
+                    s.address,
+                    s.create_date,
+                    s.update_date,
+                    s.delete_date,
+                    s.note,
+                    s.status,
+                    s.type,
+                    s.pile_type,
+                    s.contractor,
+                    s.facade,
+                    s.permit,
+                    s.permit_date,
+                    s.recovery_date
+            FROM    report.recovery_sample AS s
+            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    application.attribution AS a ON a.id = r.attribution
+            WHERE   s.building = @building
+            ORDER BY s.create_date DESC";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+        // context.AddParameterWithValue("tenant", AppContext.TenantId);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return MapFromReader(reader);
+        }
     }
 
     /// <summary>

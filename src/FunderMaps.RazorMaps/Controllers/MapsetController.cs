@@ -12,6 +12,7 @@ public class MapsetController : ControllerBase
     private readonly IMapsetRepository _mapsetRepository;
     private readonly IIncidentRepository _incidentRepository;
     private readonly IInquirySampleRepository _inquirySampleRepository;
+    private readonly IRecoverySampleRepository _recoverySampleRepository;
     private readonly Core.AppContext _appContext;
 
     /// <summary>
@@ -21,11 +22,13 @@ public class MapsetController : ControllerBase
         IMapsetRepository mapsetRepository,
         IIncidentRepository incidentRepository,
         IInquirySampleRepository inquirySampleRepository,
+        IRecoverySampleRepository recoverySampleRepository,
         Core.AppContext appContext)
     {
         _mapsetRepository = mapsetRepository;
         _incidentRepository = incidentRepository;
         _inquirySampleRepository = inquirySampleRepository;
+        _recoverySampleRepository = recoverySampleRepository;
         _appContext = appContext;
     }
 
@@ -44,13 +47,20 @@ public class MapsetController : ControllerBase
             inquirySampleList.Add(inquirySample);
         }
 
-        var kaas =  new
+        var recoverySampleList = new List<Core.Entities.RecoverySample>();
+        await foreach (var recoverySample in _recoverySampleRepository.ListAllByBuildingIdAsync(buildingId))
+        {
+            recoverySampleList.Add(recoverySample);
+        }
+
+        var buildingProfile =  new
         {
             incidentList,
             inquirySampleList,
+            recoverySampleList,
         };
 
-        return Ok(kaas);
+        return Ok(buildingProfile);
     }
 
     // GET: mapset

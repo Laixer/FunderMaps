@@ -7,6 +7,8 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IRecoverySampleRepository : IAsyncRepository<RecoverySample, int>
 {
+    IAsyncEnumerable<RecoverySample> ListAllByBuildingIdAsync(string id);
+
     /// <summary>
     ///     Retrieve number of <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
     /// </summary>

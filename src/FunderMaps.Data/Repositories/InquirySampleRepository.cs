@@ -566,7 +566,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("building", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        // context.AddParameterWithValue("tenant", AppContext.TenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
