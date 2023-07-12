@@ -8,7 +8,7 @@ namespace FunderMaps.Webservice.Controllers;
 /// <summary>
 ///     Controller for all product endpoints.
 /// </summary>
-[Route("v3/product")]
+[Route("api/v3/product")]
 public class ProductController : ControllerBase
 {
     private readonly IAnalysisRepository _analysisRepository;

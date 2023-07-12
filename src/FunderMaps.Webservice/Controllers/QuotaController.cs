@@ -7,7 +7,7 @@ namespace FunderMaps.Webservice.Controllers;
 /// <summary>
 ///     Controller for all product quotas.
 /// </summary>
-[Route("quota")]
+[Route("api/v3/quota")]
 public sealed class QuotaController : ControllerBase
 {
     private readonly ITelemetryRepository _telemetryRepository;
@@ -22,7 +22,6 @@ public sealed class QuotaController : ControllerBase
     /// <summary>
     ///     Request product quota usage.
     /// </summary>
-    [HttpGet("usage")]
     public IAsyncEnumerable<ProductTelemetry> GetQuotaUsageAsync()
         => _telemetryRepository.ListAllUsageAsync();
 }

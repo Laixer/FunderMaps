@@ -55,7 +55,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 
-app.UsePathBase(new("/api"));
 app.UseRouting();
 
 app.UseAuthentication();
