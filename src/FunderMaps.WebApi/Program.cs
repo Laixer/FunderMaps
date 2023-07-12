@@ -44,7 +44,6 @@ if (!app.Environment.IsDevelopment())
     app.UseForwardedHeaders(forwardedOptions);
 
     app.UseHsts();
-    app.UseHttpsRedirection();
 
     app.UseExceptionHandler("/oops");
 }
