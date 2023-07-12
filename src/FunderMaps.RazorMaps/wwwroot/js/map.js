@@ -143,11 +143,21 @@ export class Map {
                                         data.incidentList.forEach(incident => {
                                             html += `<b>Incident:</b> ${incident.id}<br/>`;
                                         });
+
+                                        var inquirySet = new Set();
                                         data.inquirySampleList.forEach(inquirySample => {
-                                            html += `<b>Inquiry:</b> <a href="https://app.fundermaps.com/inquiry/${inquirySample.inquiry}">${inquirySample.inquiry}</a><br/>`;
+                                            inquirySet.add(inquirySample.inquiry);
                                         });
+                                        inquirySet.forEach(inquiryId => {
+                                            html += `<b>Inquiry:</b> <a href="https://app.fundermaps.com/inquiry/${inquiryId}" target="_blank">${inquiryId}</a><br/>`;
+                                        });
+
+                                        var recoverySet = new Set();
                                         data.recoverySampleList.forEach(recoverySample => {
-                                            html += `<b>Recovery:</b> ${recoverySample.recovery}<br/>`;
+                                            recoverySet.add(recoverySample.recovery);
+                                        });
+                                        recoverySet.forEach(recoveryId => {
+                                            html += `<b>Recovery:</b> ${recoveryId}<br/>`;
                                         });
 
                                         popup.setHTML(html);
