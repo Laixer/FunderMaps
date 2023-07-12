@@ -1,5 +1,4 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -8,14 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFunderMapsAspNetCoreServicesNew();
 builder.Services.AddFunderMapsAspNetCoreAuth();
 builder.Services.AddFunderMapsAspNetCoreControllers();
-
-var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
-builder.Services.AddFunderMapsDataServices();
-builder.Services.Configure<DbProviderOptions>(options =>
-{
-    options.ConnectionString = connectionString;
-    options.ApplicationName = "FunderMaps.WebApi";
-});
 
 builder.Services.AddAutoMapper(typeof(FunderMaps.WebApi.MapperProfile));
 builder.Services.AddLocalization(options =>

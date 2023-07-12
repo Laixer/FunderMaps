@@ -24,7 +24,7 @@ using var serviceProvider = new ServiceCollection()
         options.AddSimpleConsole();
         options.SetMinimumLevel(LogLevel.Debug);
     })
-    .AddFunderMapsCoreServices2()
+    .AddFunderMapsCoreServices()
     .AddFunderMapsDataServices()
     .Configure<DbProviderOptions>(options =>
     {

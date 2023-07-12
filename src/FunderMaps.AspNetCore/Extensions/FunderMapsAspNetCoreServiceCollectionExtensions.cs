@@ -5,7 +5,12 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.AspNetCore.Services;
+using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.IncidentReport;
+using FunderMaps.Core.Services;
+using FunderMaps.Core.Storage;
+using FunderMaps.Data.Providers;
 using FunderMaps.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -18,11 +23,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class FunderMapsAspNetCoreServiceCollectionExtensions
 {
-    /// <summary>
-    ///     Configuration.
-    /// </summary>
-    public static IConfiguration Configuration { get; set; } = default!;
-
     /// <summary>
     ///     Use this method to add entity and object mapping configurations.
     /// </summary>
@@ -50,6 +50,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
     public static IServiceCollection AddFunderMapsAspNetCoreServicesNew(this IServiceCollection services)
     {
         services.AddFunderMapsCoreServices();
+        services.AddFunderMapsDataServices();
 
         services.AddScoped<SignInService>();
         services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
@@ -68,12 +69,30 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             .AddCheck<EmailHealthCheck>("email_health_check")
             .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check");
 
+        var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        // Configure services with configuration.
+        // Any application depending on ASP.NET Core should have an IConfiguration service registered.
+        services.Configure<MailgunOptions>(configuration.GetSection(MailgunOptions.Section));
+        services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.Section));
+        services.Configure<BlobStorageOptions>(configuration.GetSection(BlobStorageOptions.Section));
+        services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
+
+        var connectionString = configuration.GetConnectionString("FunderMapsConnection");
+        services.Configure<DbProviderOptions>(options =>
+        {
+            options.ConnectionString = connectionString;
+            options.ApplicationName = FunderMaps.AspNetCore.Constants.ApplicationName;
+        });
+
         return services;
     }
 
     public static IServiceCollection AddFunderMapsAspNetCoreAuth(this IServiceCollection services)
     {
-        (Configuration, _) = services.BuildStartupProperties();
+        var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -81,10 +100,10 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
                 options.SaveToken = false;
                 options.TokenValidationParameters = new JwtTokenValidationParameters
                 {
-                    ValidIssuer = Configuration.GetJwtIssuer(),
-                    ValidAudience = Configuration.GetJwtAudience(),
-                    IssuerSigningKey = Configuration.GetJwtSigningKey(),
-                    Valid = Configuration.GetJwtTokenExpirationInMinutes(),
+                    ValidIssuer = configuration.GetJwtIssuer(),
+                    ValidAudience = configuration.GetJwtAudience(),
+                    IssuerSigningKey = configuration.GetJwtSigningKey(),
+                    Valid = configuration.GetJwtTokenExpirationInMinutes(),
                 };
             });
 

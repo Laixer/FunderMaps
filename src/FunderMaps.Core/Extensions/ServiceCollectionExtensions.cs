@@ -78,18 +78,4 @@ public static class ServiceCollectionExtensions
         services.Add(new(typeof(TService), typeof(TImplementation), lifetime));
         return services;
     }
-
-    /// <summary>
-    ///     Return <see cref="IConfiguration"/> and <see cref="IHostEnvironment"/> from <see cref="IServiceCollection"/>.
-    /// </summary>
-    public static (IConfiguration, IHostEnvironment) BuildStartupProperties(this IServiceCollection services)
-    {
-        if (services is null)
-        {
-            throw new ArgumentNullException(nameof(services));
-        }
-
-        ServiceProvider serviceProvider = services.BuildServiceProvider();
-        return (serviceProvider.GetRequiredService<IConfiguration>(), serviceProvider.GetRequiredService<IHostEnvironment>());
-    }
 }

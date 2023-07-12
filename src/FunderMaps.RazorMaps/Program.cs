@@ -1,7 +1,5 @@
 using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Core.Services;
-using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -24,15 +22,6 @@ var builder = WebApplication.CreateBuilder(args);
 //     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
 
 builder.Services.AddFunderMapsAspNetCoreServicesNew();
-
-var connectionString = builder.Configuration.GetConnectionString("FunderMapsConnection");
-builder.Services.AddFunderMapsDataServices();
-builder.Services.Configure<DbProviderOptions>(options =>
-{
-    options.ConnectionString = connectionString;
-    options.ApplicationName = "FunderMaps.RazorMaps";
-});
-builder.Services.Configure<MapboxOptions>(builder.Configuration.GetSection(MapboxOptions.Section)); // TODO: Move to FunderMaps.Core
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
