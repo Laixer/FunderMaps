@@ -1,29 +1,17 @@
 using FunderMaps.MapBundle;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Hosting;
 
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
-    .AddJsonFile("/etc/fundermaps/appsettings.json", optional: true)
-    .AddEnvironmentVariables()
-    .AddCommandLine(args)
-    .Build();
-
-var connectionString = configuration.GetConnectionString("FunderMapsConnection");
-
-await using var serviceProvider = new ServiceCollection()
-    .AddLogging(options =>
+await Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
     {
-        options.ClearProviders();
-        options.AddSimpleConsole();
-        options.SetMinimumLevel(LogLevel.Debug);
+        configurationBuilder.AddJsonFile("/etc/fundermaps/appsettings.json", optional: true);
     })
-    .AddSingleton<IConfiguration>(configuration)
-    .AddFunderMapsAspNetCoreServicesNew()
-    .AddScoped<BundleProcessor>()
-    .BuildServiceProvider();
-
-await serviceProvider.GetRequiredService<BundleProcessor>().RunAsync();
+    .ConfigureServices((hostBuilderContext, services) =>
+    {
+        services.AddFunderMapsAspNetCoreServicesNew();
+        services.AddHostedService<HostedBundleProcessor>();
+    })
+    .Build()
+    .RunAsync();
