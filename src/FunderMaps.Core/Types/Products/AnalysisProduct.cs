@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using FunderMaps.Core.DataAnnotations;
 
 namespace FunderMaps.Core.Types.Products;
 
@@ -10,30 +11,32 @@ public sealed record AnalysisProduct
     /// <summary>
     ///     Building identifier.
     /// </summary>
-    [Geocoder]
-    public string BuildingId { get; init; }
+    [Required, Geocoder]
+    public string BuildingId { get; init; } = default!;
 
     /// <summary>
     ///     Building external identifier.
     /// </summary>
-    public string ExternalBuildingId { get; init; }
+    [Required]
+    public string ExternalBuildingId { get; init; } = default!;
 
     /// <summary>
     ///     Address identifier.
     /// </summary>
-    [Geocoder]
-    public string AddressId { get; init; }
+    [Required, Geocoder]
+    public string AddressId { get; init; } = default!;
 
     /// <summary>
     ///     Address external identifier.
     /// </summary>
-    public string ExternalAddressId { get; init; }
+    [Required]
+    public string ExternalAddressId { get; init; } = default!;
 
     /// <summary>
     ///     Neighborhood identifier.
     /// </summary>
-    [Geocoder]
-    public string NeighborhoodId { get; init; }
+    [Required, Geocoder]
+    public string NeighborhoodId { get; init; } = default!;
 
     /// <summary>
     ///     Built year.
