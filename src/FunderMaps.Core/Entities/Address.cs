@@ -9,19 +9,22 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class Address : IEntityIdentifier<string>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public string Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.
     /// </summary>
     [Required, Geocoder]
-    public string Id { get; set; }
+    public string Id { get; set; } = default!;
 
     /// <summary>
     ///     Building number.
     /// </summary>
     [Required]
-    public string BuildingNumber { get; set; }
+    public string BuildingNumber { get; set; } = default!;
 
     /// <summary>
     ///     Postcode.
@@ -32,7 +35,7 @@ public sealed class Address : IEntityIdentifier<string>
     ///     Street name.
     /// </summary>
     [Required]
-    public string Street { get; set; }
+    public string Street { get; set; } = default!;
 
     /// <summary>
     ///     Address is active or not.
@@ -44,7 +47,7 @@ public sealed class Address : IEntityIdentifier<string>
     ///     External data source id.
     /// </summary>
     [Required]
-    public string ExternalId { get; set; }
+    public string ExternalId { get; set; } = default!;
 
     /// <summary>
     ///     External data source.
@@ -56,7 +59,7 @@ public sealed class Address : IEntityIdentifier<string>
     ///     City.
     /// </summary>
     [Required]
-    public string City { get; set; }
+    public string City { get; set; } = default!;
 
     /// <summary>
     ///     Building identifier.

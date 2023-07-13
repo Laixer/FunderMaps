@@ -10,6 +10,9 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class Recovery : IEntityIdentifier<int>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public int Identifier => Id;
 
     /// <summary>
@@ -32,7 +35,7 @@ public sealed class Recovery : IEntityIdentifier<int>
     ///     Document file name.
     /// </summary>
     [Required]
-    public string DocumentFile { get; set; }
+    public string DocumentFile { get; set; } = default!;
 
     /// <summary>
     ///     Document date.
@@ -44,7 +47,7 @@ public sealed class Recovery : IEntityIdentifier<int>
     ///     Client document identifier.
     /// </summary>
     [Required]
-    public string DocumentName { get; set; }
+    public string DocumentName { get; set; } = default!;
 
     /// <summary>
     ///     Attribution control.

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace FunderMaps.Core.Entities;
 
 public class Layer
@@ -19,6 +21,9 @@ public class Field
 /// </summary>
 public sealed class Mapset : IEntityIdentifier<Guid>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public Guid Identifier => Id;
 
     /// <summary>
@@ -29,12 +34,14 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     /// <summary>
     ///     Name.
     /// </summary>
-    public string Name { get; set; }
+    [Required]
+    public string Name { get; set; } = default!;
 
     /// <summary>
     ///     Map style.
     /// </summary>
-    public string Style { get; set; }
+    [Required]
+    public string Style { get; set; } = default!;
 
     /// <summary>
     ///     Map layers.
@@ -44,7 +51,7 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     /// <summary>
     ///     Map options.
     /// </summary>
-    public object Options { get; set; }
+    public object? Options { get; set; }
 
     /// <summary>
     ///     If the map is public or not.

@@ -7,6 +7,9 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class Contractor : IEntityIdentifier<int>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public int Identifier => Id;
 
     /// <summary>
@@ -18,7 +21,7 @@ public sealed class Contractor : IEntityIdentifier<int>
     ///     Gets or sets the name for the contractor.
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     /// <summary>
     ///     Print object as name.

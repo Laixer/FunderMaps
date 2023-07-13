@@ -9,13 +9,16 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class Incident : RecordControl, IEntityIdentifier<string>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public string Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.
     /// </summary>
     [Incident]
-    public string Id { get; set; }
+    public string Id { get; set; } = default!;
 
     /// <summary>
     ///     Client identifier.
@@ -86,7 +89,7 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     ///     Contact email.
     /// </summary>
     [Required, EmailAddress]
-    public string Email { get; set; }
+    public string Email { get; set; } = default!;
 
     /// <summary>
     ///     Contact name.
@@ -104,13 +107,13 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     ///     An address identifier.
     /// </summary>
     [Required]
-    public string Address { get; set; }
+    public string Address { get; set; } = default!;
 
     /// <summary>
     ///     Building identifier.
     /// </summary>
     [Required]
-    public string Building { get; set; }
+    public string Building { get; set; } = default!;
 
     /// <summary>
     ///     Audit status.
@@ -138,5 +141,5 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     /// <summary>
     ///     Address object.
     /// </summary>
-    public Address AddressNavigation { get; set; }
+    public Address AddressNavigation { get; set; } = default!;
 }

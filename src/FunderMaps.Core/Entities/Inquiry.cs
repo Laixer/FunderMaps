@@ -20,7 +20,7 @@ public class InquiryBase<TParent> : IEntityIdentifier<int>
     ///     Client document identifier.
     /// </summary>
     [Required]
-    public string DocumentName { get; set; }
+    public string DocumentName { get; set; } = default!;
 
     /// <summary>
     ///     Inspection.
@@ -54,7 +54,7 @@ public class InquiryBase<TParent> : IEntityIdentifier<int>
     ///     Document file name.
     /// </summary>
     [Required]
-    public string DocumentFile { get; set; }
+    public string DocumentFile { get; set; } = default!;
 
     /// <summary>
     ///     Report type.

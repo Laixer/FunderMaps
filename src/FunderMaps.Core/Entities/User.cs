@@ -9,6 +9,9 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class User : IEntityIdentifier<Guid>, IUser
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public Guid Identifier => Id;
 
     /// <summary>
@@ -21,7 +24,6 @@ public sealed class User : IEntityIdentifier<Guid>, IUser
     /// </summary>
     public string? GivenName { get; set; }
 
-    // TODO: Surname
     /// <summary>
     ///     User lastname.
     /// </summary>
@@ -31,15 +33,13 @@ public sealed class User : IEntityIdentifier<Guid>, IUser
     ///     Unique email address.
     /// </summary>
     [Required, EmailAddress]
-    public string Email { get; set; }
+    public string Email { get; set; } = default!;
 
-    // TODO: Remove
     /// <summary>
     ///     Avatar.
     /// </summary>
     public string? Avatar { get; set; }
 
-    // TODO: Remove
     /// <summary>
     ///     Job title.
     /// </summary>

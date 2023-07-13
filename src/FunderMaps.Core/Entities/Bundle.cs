@@ -7,12 +7,15 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class Bundle : IEntityIdentifier<string>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public string Identifier => Tileset;
 
     /// <summary>
     ///     Tileset name.
     /// </summary>
-    public string Tileset { get; set; }
+    public string Tileset { get; set; } = default!;
 
     /// <summary>
     ///     Whether the bundle is enabled.
@@ -28,7 +31,7 @@ public sealed class Bundle : IEntityIdentifier<string>
     ///     Gets or sets the name for the bundle.
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     /// <summary>
     ///     Get the precondition for the bundle.
