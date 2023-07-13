@@ -11,7 +11,7 @@ namespace FunderMaps.AspNetCore.Controllers;
 /// <summary>
 ///     Endpoint controller for application authentication.
 /// </summary>
-[Authorize, Route("auth")]
+[Authorize, Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IMapper _mapper;
