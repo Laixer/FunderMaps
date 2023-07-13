@@ -5,15 +5,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Contractor entity.
 /// </summary>
-public sealed class Contractor : IdentifiableEntity<Contractor, int>
+public sealed class Contractor : IEntityIdentifier<int>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Contractor()
-        : base(e => e.Id)
-    {
-    }
+    public int Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

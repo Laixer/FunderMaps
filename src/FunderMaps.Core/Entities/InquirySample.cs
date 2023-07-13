@@ -6,15 +6,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Inquiry sample entity.
 /// </summary>
-public sealed class InquirySample : RecordControl<InquirySample, int>
+public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public InquirySample()
-        : base(e => e.Id)
-    {
-    }
+    public int Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

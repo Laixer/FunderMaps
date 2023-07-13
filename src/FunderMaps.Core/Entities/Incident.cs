@@ -7,15 +7,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Indicent entity.
 /// </summary>
-public sealed class Incident : RecordControl<Incident, string>
+public sealed class Incident : RecordControl, IEntityIdentifier<string>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Incident()
-        : base(e => e.Id)
-    {
-    }
+    public string Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

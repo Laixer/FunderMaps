@@ -6,15 +6,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Organization entity.
 /// </summary>
-public sealed class Organization : IdentifiableEntity<Organization, Guid>, ITenant
+public sealed class Organization : IEntityIdentifier<Guid>, ITenant
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Organization()
-        : base(e => e.Id)
-    {
-    }
+    public Guid Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

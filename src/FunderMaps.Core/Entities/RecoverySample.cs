@@ -6,15 +6,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Recovery sample entity.
 /// </summary>
-public sealed class RecoverySample : RecordControl<RecoverySample, int>
+public sealed class RecoverySample : RecordControl, IEntityIdentifier<int>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public RecoverySample()
-        : base(e => e.Id)
-    {
-    }
+    public int Identifier => Id;
 
     /// <summary>
     ///     Recovery sample identifier.

@@ -7,15 +7,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     User entity.
 /// </summary>
-public sealed class User : IdentifiableEntity<User, Guid>, IUser
+public sealed class User : IEntityIdentifier<Guid>, IUser
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public User()
-        : base(e => e.Id)
-    {
-    }
+    public Guid Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

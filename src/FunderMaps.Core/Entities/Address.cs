@@ -7,15 +7,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Access entity.
 /// </summary>
-public sealed class Address : IdentifiableEntity<Address, string>
+public sealed class Address : IEntityIdentifier<string>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Address()
-        : base(e => e.Id)
-    {
-    }
+    public string Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

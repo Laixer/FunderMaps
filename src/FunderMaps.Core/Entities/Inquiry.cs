@@ -7,16 +7,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Inquiry base entity.
 /// </summary>
-public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>
-    where TParent : class
+public class InquiryBase<TParent> : IEntityIdentifier<int>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public InquiryBase(Func<TParent, int> entryPrimaryKey)
-        : base(entryPrimaryKey)
-    {
-    }
+    public int Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.
@@ -85,28 +78,13 @@ public class InquiryBase<TParent> : IdentifiableEntity<TParent, int>
 /// </summary>
 public class Inquiry : InquiryBase<Inquiry>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Inquiry()
-        : base(e => e.Id)
-    {
-    }
 }
 
 /// <summary>
 ///     Inquiry full entity.
 /// </summary>
-public sealed class InquiryFull : InquiryBase<InquiryFull>, IAttribution, IStateControl, IAccessControl, IRecordControl
+public sealed class InquiryFull : InquiryBase<InquiryFull>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public InquiryFull()
-        : base(e => e.Id)
-    {
-    }
-
     /// <summary>
     ///     Attribution control.
     /// </summary>

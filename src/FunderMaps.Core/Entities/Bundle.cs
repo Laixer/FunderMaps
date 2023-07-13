@@ -5,15 +5,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Bundle entity.
 /// </summary>
-public sealed class Bundle : IdentifiableEntity<Bundle, string>
+public sealed class Bundle : IEntityIdentifier<string>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Bundle()
-        : base(e => e.Tileset)
-    {
-    }
+    public string Identifier => Tileset;
 
     /// <summary>
     ///     Tileset name.

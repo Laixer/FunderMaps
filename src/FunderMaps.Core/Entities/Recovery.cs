@@ -8,15 +8,9 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     Foundation recovery entity.
 /// </summary>
-public sealed class Recovery : IdentifiableEntity<Recovery, int>, IAttribution, IStateControl, IAccessControl, IRecordControl
+public sealed class Recovery : IEntityIdentifier<int>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Recovery()
-        : base(e => e.Id)
-    {
-    }
+    public int Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.

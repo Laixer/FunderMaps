@@ -17,15 +17,9 @@ public class Field
 /// <summary>
 ///     Mapset entity.
 /// </summary>
-public sealed class Mapset : IdentifiableEntity<Mapset, Guid>
+public sealed class Mapset : IEntityIdentifier<Guid>
 {
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public Mapset()
-        : base(e => e.Id)
-    {
-    }
+    public Guid Identifier => Id;
 
     /// <summary>
     ///     Unique identifier.
