@@ -104,9 +104,9 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
     /// <returns><see cref="Organization"/>.</returns>
     public override async Task<Organization> GetByIdAsync(Guid id)
     {
-        if (TryGetEntity(id, out Organization entity))
+        if (TryGetEntity(id, out Organization? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var sql = @"

@@ -153,9 +153,9 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
     /// <returns><see cref="Recovery"/>.</returns>
     public override async Task<Recovery> GetByIdAsync(int id)
     {
-        if (TryGetEntity(id, out Recovery entity))
+        if (TryGetEntity(id, out Recovery? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var sql = @"

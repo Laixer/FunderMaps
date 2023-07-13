@@ -3,7 +3,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
-using Microsoft.Extensions.Caching.Memory;
 using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
@@ -133,9 +132,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     /// <returns><see cref="Address"/>.</returns>
     public override async Task<Address> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Address entity))
+        if (TryGetEntity(id, out Address? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var sql = @"

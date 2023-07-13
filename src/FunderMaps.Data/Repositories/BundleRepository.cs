@@ -63,9 +63,9 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     /// <returns><see cref="Bundle"/>.</returns>
     public override async Task<Bundle> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Bundle entity))
+        if (TryGetEntity(id, out Bundle? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var entityName = EntityTable("maplayer");

@@ -117,9 +117,9 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns><see cref="User"/>.</returns>
     public override async Task<User> GetByIdAsync(Guid id)
     {
-        if (TryGetEntity(id, out User entity))
+        if (TryGetEntity(id, out User? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var cmd = SingleCommand("application", new[] { "id", "given_name", "last_name", "email", "avatar", "job_title", "phone_number", "role" });

@@ -173,9 +173,9 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
     /// <returns><see cref="Incident"/>.</returns>
     public override async Task<Incident> GetByIdAsync(string id)
     {
-        if (TryGetEntity(id, out Incident entity))
+        if (TryGetEntity(id, out Incident? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var sql = @"

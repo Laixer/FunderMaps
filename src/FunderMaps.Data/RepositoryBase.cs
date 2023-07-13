@@ -17,97 +17,47 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     #region Cache
 
     /// <summary>
-    ///     Keypair used as cache bucket item.
-    /// </summary>
-    protected record CacheKeyPair
-    {
-        /// <summary>
-        ///     Entity hash key.
-        /// </summary>
-        public int EntityKey { get; init; }
-
-        /// <summary>
-        ///     Object hash key.
-        /// </summary>
-        public int Key { get; init; }
-
-        /// <summary>
-        ///     Keypair identifier.
-        /// </summary>
-        /// <remarks>
-        ///     This is very likely to overflow, however the identity shoud
-        ///     still be unique per keypair.
-        /// </remarks>
-        public int KeyPairIdentity => EntityKey + Key;
-    }
-
-    /// <summary>
-    ///     Build entity hash key.
-    /// </summary>
-    protected static CacheKeyPair EntityHashKey(object key)
-        => new()
-        {
-            EntityKey = typeof(TEntity).GetHashCode(),
-            Key = key.GetHashCode(),
-        };
-
-    /// <summary>
-    ///     Set cache item.
-    /// </summary>
-    /// <remarks>
-    ///     Derived repositories can override this call to change cache behavior.
-    /// </remarks>
-    protected virtual void SetCacheItem(CacheKeyPair key, TEntity value, MemoryCacheEntryOptions options)
-        => Cache.Set(key.KeyPairIdentity, value, options);
-
-    /// <summary>
-    ///     Unset cache item.
-    /// </summary>
-    /// <remarks>
-    ///     Derived repositories can override this call to change cache behavior.
-    /// </remarks>
-    protected virtual void UnsetCacheItem(CacheKeyPair key)
-        => Cache.Remove(key.KeyPairIdentity);
-
-    /// <summary>
-    ///     Get cache item.
-    /// </summary>
-    /// <remarks>
-    ///     Derived repositories can override this call to change cache behavior.
-    /// </remarks>
-    protected virtual bool GetCacheItem(CacheKeyPair key, out TEntity value)
-        => Cache.TryGetValue(key.KeyPairIdentity, out value);
-
-    /// <summary>
     ///     Try get entity from cache.
     /// </summary>
-    protected bool TryGetEntity(TEntityPrimaryKey key, out TEntity value)
-        => GetCacheItem(EntityHashKey(key), out value);
-
-    /// <summary>
-    ///     Cache entity.
-    /// </summary>
-    protected TEntity CacheEntity(TEntityPrimaryKey key, TEntity value)
+    protected bool TryGetEntity(TEntityPrimaryKey key, out TEntity? value)
     {
-        var options = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromMinutes(5))
-            .SetAbsoluteExpiration(TimeSpan.FromMinutes(60));
+        if (key is null)
+        {
+            value = default;
+            return false;
+        }
 
-        SetCacheItem(EntityHashKey(key), value, options);
-        return value;
+        return Cache.TryGetValue(key, out value);
     }
 
     /// <summary>
     ///     Cache entity.
     /// </summary>
     protected TEntity CacheEntity(TEntity value)
-        => CacheEntity(value.Identifier, value);
+    {
+        if (value.Identifier is null)
+        {
+            return value;
+        }
+
+        var options = new MemoryCacheEntryOptions()
+            .SetSlidingExpiration(TimeSpan.FromMinutes(10))
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(90));
+
+        Cache.Set(value.Identifier, value, options);
+        return value;
+    }
 
     /// <summary>
     ///     Remove entity from cache.
     /// </summary>
     protected void ResetCacheEntity(TEntityPrimaryKey key)
-        => UnsetCacheItem(EntityHashKey(key));
+    {
+        if (key is not null)
+        {
+            Cache.Remove(key);
+        }
+    }
 
     /// <summary>
     ///     Remove entity from cache.

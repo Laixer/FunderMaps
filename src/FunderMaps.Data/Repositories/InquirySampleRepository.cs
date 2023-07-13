@@ -377,9 +377,9 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     /// <returns><see cref="InquirySample"/>.</returns>
     public override async Task<InquirySample> GetByIdAsync(int id)
     {
-        if (TryGetEntity(id, out InquirySample entity))
+        if (TryGetEntity(id, out InquirySample? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var sql = @"

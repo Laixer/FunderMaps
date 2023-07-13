@@ -43,7 +43,15 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
     /// <summary>
     ///     Find the first security token handler that can write a token.
     /// </summary>
-    private SecurityTokenHandler Handler => (SecurityTokenHandler)Options.SecurityTokenValidators.FirstOrDefault(s => (s as SecurityTokenHandler).CanWriteToken);
+    private SecurityTokenHandler GetHandler()
+    {
+        var securityToken = Options.SecurityTokenValidators.FirstOrDefault(securityToken =>
+        {
+            var securityTokenHandler = securityToken as SecurityTokenHandler;
+            return securityTokenHandler?.CanWriteToken ?? false;
+        });
+        return securityToken as SecurityTokenHandler ?? throw new InvalidOperationException();
+    }
 
     /// <summary>
     ///     Generate a <see cref="SecurityToken"/> from a <see cref="ClaimsPrincipal"/>.
@@ -111,15 +119,10 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual TokenContext GetTokenContext(ClaimsPrincipal principal)
     {
-        if (Handler is null)
-        {
-            throw new InvalidOperationException();
-        }
-
         SecurityToken token = GetToken(principal);
         return new()
         {
-            TokenString = Handler.WriteToken(token),
+            TokenString = GetHandler().WriteToken(token),
             Token = token,
         };
     }

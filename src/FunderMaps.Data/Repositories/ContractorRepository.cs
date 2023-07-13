@@ -58,9 +58,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     /// <returns><see cref="Contractor"/>.</returns>
     public override async Task<Contractor> GetByIdAsync(int id)
     {
-        if (TryGetEntity(id, out Contractor entity))
+        if (TryGetEntity(id, out Contractor? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var cmd = SingleCommand("application", new[] { "id", "name" });

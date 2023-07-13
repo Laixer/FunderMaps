@@ -181,9 +181,9 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     /// <returns><see cref="InquiryFull"/>.</returns>
     public override async Task<InquiryFull> GetByIdAsync(int id)
     {
-        if (TryGetEntity(id, out InquiryFull entity))
+        if (TryGetEntity(id, out InquiryFull? entity))
         {
-            return entity;
+            return entity ?? throw new InvalidOperationException();
         }
 
         var sql = @"
