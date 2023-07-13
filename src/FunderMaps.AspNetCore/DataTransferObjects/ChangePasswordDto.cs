@@ -11,11 +11,11 @@ public sealed record ChangePasswordDto
     ///     User current password.
     /// </summary>
     [Required]
-    public string? OldPassword { get; init; }
+    public string OldPassword { get; init; } = default!;
 
     /// <summary>
     ///     User new password.
     /// </summary>
     [Required]
-    public string? NewPassword { get; init; }
+    public string NewPassword { get; init; } = default!;
 }

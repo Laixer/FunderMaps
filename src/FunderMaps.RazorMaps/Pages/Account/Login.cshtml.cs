@@ -1,7 +1,4 @@
 using System.Security.Claims;
-using AutoMapper;
-using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -13,10 +10,10 @@ namespace FunderMaps.RazorMaps.Pages;
 public class LoginModel : PageModel
 {
     [BindProperty]
-    public string Username { get; set; }
+    public string? Username { get; set; }
 
     [BindProperty]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
     private readonly SignInService _signInService;
 
@@ -27,6 +24,11 @@ public class LoginModel : PageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
+        if (Username is null || Password is null)
+        {
+            return Page();
+        }
+
         ClaimsPrincipal principal = await _signInService.PasswordSignIn3Async(Username, Password);
 
         var authProperties = new AuthenticationProperties();

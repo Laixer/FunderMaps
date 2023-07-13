@@ -11,5 +11,5 @@ public record OrganizationUserPasswordDto : OrganizationUserDto
     ///     User password.
     /// </summary>
     [Required]
-    public string? Password { get; init; }
+    public string Password { get; init; } = default!;
 }
