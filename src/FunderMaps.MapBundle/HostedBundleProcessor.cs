@@ -132,17 +132,18 @@ public class HostedBundleProcessor : IHostedService
             }
             finally
             {
-                if (File.Exists($"{bundle.Tileset}.gpkg"))
+                var currentDirectory = Directory.GetCurrentDirectory();
+                foreach (string file in Directory.GetFiles(currentDirectory, "*.gpkg"))
                 {
-                    File.Delete($"{bundle.Tileset}.gpkg");
+                    File.Delete(file);
                 }
-                if (File.Exists($"{bundle.Tileset}.geojson"))
+                foreach (string file in Directory.GetFiles(currentDirectory, "*.geojson"))
                 {
-                    File.Delete($"{bundle.Tileset}.geojson");
+                    File.Delete(file);
                 }
-                if (File.Exists($"{bundle.Tileset}.mbtiles"))
+                foreach (string file in Directory.GetFiles(currentDirectory, "*.mbtiles"))
                 {
-                    File.Delete($"{bundle.Tileset}.mbtiles");
+                    File.Delete(file);
                 }
             }
         }
