@@ -36,7 +36,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 contact_phone_number,
                 foundation_damage_characteristics,
                 environment_damage_characteristics,
-                address,
                 building,
                 audit_status,
                 question_type,
@@ -57,7 +56,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 NULLIF(trim(@phone_number), ''),
                 NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
                 NULLIF(@environment_damage_characteristics, '{}'::report.environment_damage_characteristics[]),
-                @address,
                 @building,
                 @audit_status,
                 @question_type,
@@ -131,7 +129,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         context.AddParameterWithValue("email", entity.Email);
         context.AddParameterWithValue("name", entity.Name);
         context.AddParameterWithValue("phone_number", entity.PhoneNumber);
-        context.AddParameterWithValue("address", entity.Address);
         context.AddParameterWithValue("building", entity.Building);
         context.AddParameterWithValue("audit_status", entity.AuditStatus);
         context.AddParameterWithValue("question_type", entity.QuestionType);
@@ -159,7 +156,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
             DeleteDate = reader.GetSafeDateTime(offset++),
             FoundationDamageCharacteristics = reader.GetSafeFieldValue<FoundationDamageCharacteristics[]>(offset++),
             EnvironmentDamageCharacteristics = reader.GetSafeFieldValue<EnvironmentDamageCharacteristics[]>(offset++),
-            Address = reader.GetString(offset++),
             Building = reader.GetString(offset++),
             AuditStatus = reader.GetFieldValue<AuditStatus>(offset++),
             QuestionType = reader.GetFieldValue<IncidentQuestionType>(offset++),
@@ -197,7 +193,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     delete_date,
                     foundation_damage_characteristics,
                     environment_damage_characteristics,
-                    address,
                     building,
                     audit_status,
                     question_type,
@@ -236,7 +231,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     i.delete_date,
                     i.foundation_damage_characteristics,
                     i.environment_damage_characteristics,
-                    i.address,
                     i.building,
                     i.audit_status,
                     i.question_type,
@@ -279,7 +273,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     delete_date,
                     foundation_damage_characteristics,
                     environment_damage_characteristics,
-                    address,
                     building,
                     audit_status,
                     question_type,
@@ -318,7 +311,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                     delete_date,
                     foundation_damage_characteristics,
                     environment_damage_characteristics,
-                    address,
                     building,
                     audit_status,
                     question_type,
