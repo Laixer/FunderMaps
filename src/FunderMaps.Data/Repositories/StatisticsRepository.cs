@@ -6,8 +6,6 @@ using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
-// FUTURE: Change function names and view names.
-
 /// <summary>
 ///     Repository for statistics.
 /// </summary>
@@ -20,11 +18,11 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- FoundationTypeDistribution
-                        spft.foundation_type,
-                        round(spft.percentage::numeric, 2)
-                FROM    data.statistics_product_foundation_type AS spft
-                WHERE   spft.neighborhood_id = @id";
+            SELECT  -- FoundationTypeDistribution
+                    spft.foundation_type,
+                    round(spft.percentage::numeric, 2)
+            FROM    data.statistics_product_foundation_type AS spft
+            WHERE   spft.neighborhood_id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -53,11 +51,11 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- ConstructionYearDistribution
-                        spcy.year_from,
-                        spcy.count
-                FROM    data.statistics_product_construction_years AS spcy
-                WHERE   spcy.neighborhood_id  = @id";
+            SELECT  -- ConstructionYearDistribution
+                    spcy.year_from,
+                    spcy.count
+            FROM    data.statistics_product_construction_years AS spcy
+            WHERE   spcy.neighborhood_id  = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -86,11 +84,11 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<decimal> GetDataCollectedPercentageByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- DataCollected
-                        round(spdc.percentage::numeric, 2)
-                FROM    data.statistics_product_data_collected AS spdc
-                WHERE   spdc.neighborhood_id = @id
-                LIMIT   1";
+            SELECT  -- DataCollected
+                    round(spdc.percentage::numeric, 2)
+            FROM    data.statistics_product_data_collected AS spdc
+            WHERE   spdc.neighborhood_id = @id
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -106,11 +104,11 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- FoundationRiskDistribution
-                        spfr.foundation_risk,
-                        round(spfr.percentage::numeric, 2)
-                FROM    data.statistics_product_foundation_risk AS spfr
-                WHERE   spfr.neighborhood_id  = @id";
+            SELECT  -- FoundationRiskDistribution
+                    spfr.foundation_risk,
+                    round(spfr.percentage::numeric, 2)
+            FROM    data.statistics_product_foundation_risk AS spfr
+            WHERE   spfr.neighborhood_id  = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -147,11 +145,11 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<long> GetTotalBuildingRestoredCountByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- BuildingRestoredCount
-                        spbr.count
-                FROM    data.statistics_product_buildings_restored AS spbr
-                WHERE   spbr.neighborhood_id = @id
-                LIMIT   1";
+            SELECT  -- BuildingRestoredCount
+                    spbr.count
+            FROM    data.statistics_product_buildings_restored AS spbr
+            WHERE   spbr.neighborhood_id = @id
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -167,11 +165,11 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- IncidentCount
-                        spi.year,
-                        spi.count
-                FROM    data.statistics_product_incidents AS spi
-                WHERE   spi.neighborhood_id = @id";
+            SELECT  -- IncidentCount
+                    spi.year,
+                    spi.count
+            FROM    data.statistics_product_incidents AS spi
+            WHERE   spi.neighborhood_id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -196,19 +194,12 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     /// <param name="id">Municipality identifier.</param>
     public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id)
     {
-        // TODO: Replaced by data.statistics_product_incident_municipality
         var sql = @"
-				SELECT  -- Incident
-                        year.year, 
-                        count(i.id) AS count
-                FROM    report.incident i
-                JOIN	geocoder.building b ON b.id::text = i.building::text
-                JOIN	geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
-                JOIN	geocoder.district d ON d.id::text = n.district_id::text
-                JOIN	geocoder.municipality m ON m.id = d.municipality_id,
-                LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
-                WHERE	n.id = @id
-                GROUP BY m.id, year.year";
+            SELECT  -- IncidentCount
+                    spim.year,
+                    spim.count
+            FROM    data.statistics_product_incident_municipality spim
+            WHERE   spim.municipality_id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -234,12 +225,12 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     public async Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id)
     {
         var sql = @"
-                SELECT  -- ReportCount
-                        spi2.year,
-                        spi2.count
-                FROM    data.statistics_product_inquiries AS spi2
-                WHERE   spi2.neighborhood_id = @id
-                LIMIT   1";
+            SELECT  -- ReportCount
+                    spi.year,
+                    spi.count
+            FROM    data.statistics_product_inquiries AS spi
+            WHERE   spi.neighborhood_id = @id
+            LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -264,20 +255,12 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
     /// <param name="id">Municipality identifier.</param>
     public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id)
     {
-        // FUTURE: Maybe move query to db?
         var sql = @"
-				SELECT  -- ReportCount
-                        year.year,
-                        count(i.id) AS count
-                FROM    report.inquiry_sample i
-                JOIN    geocoder.address a ON i.address::text = a.id::text
-                JOIN    geocoder.building b ON a.building_id::text = b.id::text
-                JOIN    geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
-                JOIN    geocoder.district d ON d.id::text = n.district_id::text
-                JOIN    geocoder.municipality m ON m.id = d.municipality_id,
-                LATERAL CAST(date_part('year'::text, i.create_date)::integer AS integer) year(year)
-                WHERE	n.id = @id
-                GROUP BY m.id, year.year";
+            SELECT  -- ReportCount
+                    spim.year,
+                    spim.count
+            FROM    data.statistics_product_inquiry_municipality spim
+            WHERE   spim.municipality_id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
