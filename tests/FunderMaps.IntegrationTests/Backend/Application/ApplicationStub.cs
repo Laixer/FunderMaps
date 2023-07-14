@@ -84,6 +84,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.Equal(newObject.GivenName, returnObject.GivenName);
             Assert.Equal(newObject.LastName, returnObject.LastName);
             Assert.Equal(newObject.Email, returnObject.Email);

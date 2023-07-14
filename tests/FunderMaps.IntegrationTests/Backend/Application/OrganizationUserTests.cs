@@ -44,6 +44,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnList);
             Assert.True(returnList.Count >= 1);
         }
 
@@ -55,6 +56,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
+            Assert.NotNull(user);
             var response = await client.PutAsJsonAsync($"api/organization/user/{user.Id}", new UserDtoFaker().Generate());
 
             // Assert
@@ -69,6 +71,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
+            Assert.NotNull(user);
             var response = await client.PostAsJsonAsync($"api/organization/user/{user.Id}/change-organization-role", new ChangeOrganizationRoleDtoFaker().Generate());
 
             // Assert
@@ -83,6 +86,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
+            Assert.NotNull(user);
             var response = await client.PostAsJsonAsync($"api/organization/user/{user.Id}/change-password", new ChangePasswordDtoFaker().Generate());
 
             // Assert
@@ -97,6 +101,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             var user = await client.PostAsJsonGetFromJsonAsync<UserDto, OrganizationUserPasswordDto>("api/organization/user", new OrganizationUserPasswordDtoFaker().Generate());
 
             // Act
+            Assert.NotNull(user);
             var response = await client.DeleteAsync($"api/organization/user/{user.Id}");
 
             // Assert
@@ -131,6 +136,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             using var client = Factory.CreateClient(role);
 
             // Act
+            Assert.NotNull(user);
             var response = await client.PutAsJsonAsync($"api/organization/user/{user.Id}", new UserDtoFaker().Generate());
 
             // Assert
@@ -149,6 +155,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             using var client = Factory.CreateClient(role);
 
             // Act
+            Assert.NotNull(user); 
             var response = await client.DeleteAsync($"api/organization/user/{user.Id}");
 
             // Assert

@@ -33,6 +33,6 @@ public class ContractorTests : IClassFixture<BackendFixtureFactory>
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(returnList);
         Assert.True(returnList.Count >= 1);
-        Assert.True(response.Headers.CacheControl.Public);
+        Assert.True(response.Headers.CacheControl?.Public);
     }
 }

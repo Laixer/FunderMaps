@@ -40,6 +40,7 @@ public class AuthTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.NotNull(returnObject.Id);
         Assert.NotNull(returnObject.Token);
         Assert.NotNull(returnObject.Issuer);
@@ -62,6 +63,7 @@ public class AuthTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
         Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
     }

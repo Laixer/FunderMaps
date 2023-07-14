@@ -33,6 +33,7 @@ public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.True(returnObject.Count >= 1);
         }
 
@@ -46,6 +47,7 @@ public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.Equal(sample.Id, returnObject.Id);
             Assert.Equal(recovery.Id, returnObject.Recovery);
         }
@@ -60,6 +62,7 @@ public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnList);
             Assert.True(returnList.Count >= 1);
         }
 

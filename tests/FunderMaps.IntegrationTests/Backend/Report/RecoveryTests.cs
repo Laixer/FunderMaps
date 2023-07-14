@@ -30,6 +30,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.NotNull(returnObject.Name);
         }
 
@@ -60,6 +61,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
             Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
@@ -80,6 +82,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
             Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
@@ -99,6 +102,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.NotNull(returnObject);
             Assert.Equal((short)HttpStatusCode.BadRequest, returnObject.Status);
             Assert.Contains("validation", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
         }
@@ -119,7 +123,8 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-                Assert.Equal("https", returnObject.AccessLink.Scheme);
+                Assert.NotNull(returnObject);
+                Assert.Equal("https", returnObject.AccessLink?.Scheme);
             }
 
             {
@@ -132,6 +137,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.NotNull(returnObject);
                 Assert.True(returnObject.Count >= 1);
             }
 
@@ -145,6 +151,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.NotNull(returnObject);
                 Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
                 Assert.Null(returnObject.UpdateDate);
             }
@@ -159,6 +166,7 @@ namespace FunderMaps.IntegrationTests.Backend.Report
 
                 // Assert
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.NotNull(returnList);
                 Assert.True(returnList.Count >= 1);
             }
 

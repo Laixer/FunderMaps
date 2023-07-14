@@ -20,10 +20,10 @@ public static class TestStub
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("json", response.Content.Headers.ContentType.ToString(), StringComparison.InvariantCultureIgnoreCase);
-        Assert.Contains("utf-8", response.Content.Headers.ContentType.ToString(), StringComparison.InvariantCultureIgnoreCase);
-        Assert.True(response.Headers.CacheControl.Public);
-        Assert.NotNull(response.Headers.CacheControl.MaxAge);
+        Assert.Contains("json", response.Content.Headers.ContentType?.ToString(), StringComparison.InvariantCultureIgnoreCase);
+        Assert.Contains("utf-8", response.Content.Headers.ContentType?.ToString(), StringComparison.InvariantCultureIgnoreCase);
+        Assert.True(response.Headers.CacheControl?.Public);
+        Assert.NotNull(response.Headers.CacheControl?.MaxAge);
     }
 
     public static async Task<SignInSecurityTokenDto> LoginAsync<TStartup>(FixtureFactory<TStartup> factory, string username, string password)

@@ -20,6 +20,7 @@ namespace FunderMaps.IntegrationTests.Webservice
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
 
             return returnObject.Where(p => p.Product == product).Select(p => p.Count).First();
         }

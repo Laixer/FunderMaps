@@ -10,7 +10,7 @@ public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplic
     private readonly string _username;
     private readonly string _password;
 
-    public SignInSecurityTokenDto AuthToken { get; private set; }
+    public SignInSecurityTokenDto AuthToken { get; private set; } = default!;
 
     /// <summary>
     ///     Create new instance.
@@ -26,7 +26,7 @@ public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplic
     ///     Called immediately after the class has been created, before it is used.
     /// </summary>
     public override async Task InitializeAsync()
-        => AuthToken = await SignInAsync();
+        => AuthToken = await SignInAsync() ?? throw new InvalidOperationException("Failed to sign in.");
 
     /// <summary>
     ///     Create a user session for the given user.

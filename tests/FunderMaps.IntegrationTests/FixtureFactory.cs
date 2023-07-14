@@ -6,12 +6,12 @@ namespace FunderMaps.IntegrationTests;
 public abstract class FixtureFactory<TStartup> : IAsyncLifetime
     where TStartup : class
 {
-    private AuthFunderMapsWebApplicationFactory<TStartup> adminAppClient;
-    private AuthFunderMapsWebApplicationFactory<TStartup> superuserAppClient;
-    private AuthFunderMapsWebApplicationFactory<TStartup> verifierAppClient;
-    private AuthFunderMapsWebApplicationFactory<TStartup> writerAppClient;
-    private AuthFunderMapsWebApplicationFactory<TStartup> readerAppClient;
-    private AuthFunderMapsWebApplicationFactory<TStartup> alterAppClient;
+    private AuthFunderMapsWebApplicationFactory<TStartup> adminAppClient = default!;
+    private AuthFunderMapsWebApplicationFactory<TStartup> superuserAppClient = default!;
+    private AuthFunderMapsWebApplicationFactory<TStartup> verifierAppClient = default!;
+    private AuthFunderMapsWebApplicationFactory<TStartup> writerAppClient = default!;
+    private AuthFunderMapsWebApplicationFactory<TStartup> readerAppClient = default!;
+    private AuthFunderMapsWebApplicationFactory<TStartup> alterAppClient = default!;
 
     public async Task InitializeAsync()
     {

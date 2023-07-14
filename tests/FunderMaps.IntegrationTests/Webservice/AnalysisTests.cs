@@ -29,6 +29,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
 
         Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis3") > 0);
@@ -46,6 +47,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("gfm-39bd02bbc79e4ed08c97fd6afbbf5fee", returnObject.BuildingId);
 
         Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis3") > 0);
@@ -63,6 +65,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("gfm-d6cc2bda840249209291b125174c07fc", returnObject.BuildingId);
 
         Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis3") > 0);
@@ -80,6 +83,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("gfm-21621a43af364bdb86f192201473ccf9", returnObject.BuildingId);
 
         Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis3") > 0);
@@ -97,6 +101,7 @@ public class AnalysisTests : IClassFixture<WebserviceFixtureFactory>
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
         Assert.Equal("gfm-a724269605954e9285ca378b77dafcda", returnObject.BuildingId);
 
         Assert.True(await WebserviceStub.CheckQuotaUsageAsync(Factory, "analysis3") > 0);
