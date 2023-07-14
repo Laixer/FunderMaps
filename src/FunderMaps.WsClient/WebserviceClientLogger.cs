@@ -9,7 +9,7 @@ namespace FunderMaps.WsClient;
 /// </summary>
 public class WebserviceClientLogger : IDisposable
 {
-    private readonly WebserviceClient _webserviceClient;
+    private readonly FunderMapsClient _webserviceClient;
     private readonly ILogger<WebserviceClientLogger> _logger;
 
     private AnalysisProduct? _product;
@@ -17,7 +17,7 @@ public class WebserviceClientLogger : IDisposable
     /// <summary>
     ///     Construct new instance.
     /// </summary>
-    public WebserviceClientLogger(WebserviceClient webserviceClient, ILogger<WebserviceClientLogger> logger)
+    public WebserviceClientLogger(FunderMapsClient webserviceClient, ILogger<WebserviceClientLogger> logger)
     {
         _webserviceClient = webserviceClient ?? throw new ArgumentNullException(nameof(webserviceClient));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

@@ -50,12 +50,12 @@ public class FunderMapsClient : IDisposable
 
     private readonly HttpClient httpClient = new();
     private readonly FunderMapsClientOptions _options;
-    private readonly ILogger<WebserviceClient> _logger;
+    private readonly ILogger<FunderMapsClient> _logger;
 
     /// <summary>
     ///     Construct new instance.
     /// </summary>
-    public FunderMapsClient(IOptions<FunderMapsClientOptions> options, ILogger<WebserviceClient> logger)
+    public FunderMapsClient(IOptions<FunderMapsClientOptions> options, ILogger<FunderMapsClient> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger;

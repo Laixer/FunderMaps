@@ -52,7 +52,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddFunderMapsCoreServices();
         services.AddFunderMapsDataServices();
 
-        services.AddScoped<WebserviceClient>();
+        services.AddScoped<FunderMapsClient>();
 
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
