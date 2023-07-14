@@ -10,8 +10,10 @@ namespace FunderMaps.MapBundle;
 
 public class HostedBundleProcessor : IHostedService
 {
+    private readonly HealthCheckService _healthCheckService;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IBlobStorageService _blobStorageService;
+    private readonly IEmailService _emailService;
     private readonly IGDALService _gdalService;
     private readonly ITilesetGeneratorService _tilesetGeneratorService;
     private readonly IMapboxService _mapboxService;
@@ -23,8 +25,10 @@ public class HostedBundleProcessor : IHostedService
     ///     Construct new instance.
     /// </summary>
     public HostedBundleProcessor(
+        HealthCheckService healthCheckService,
         IServiceScopeFactory serviceScopeFactory,
         IBlobStorageService blobStorageService,
+        IEmailService emailService,
         IGDALService gdalService,
         ITilesetGeneratorService tilesetGeneratorService,
         IMapboxService mapboxService,
@@ -32,8 +36,10 @@ public class HostedBundleProcessor : IHostedService
         IOptions<DbProviderOptions> dbProviderOptions,
         ILogger<HostedBundleProcessor> logger)
     {
+        _healthCheckService = healthCheckService ?? throw new ArgumentNullException(nameof(healthCheckService));
         _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         _gdalService = gdalService ?? throw new ArgumentNullException(nameof(gdalService));
         _tilesetGeneratorService = tilesetGeneratorService ?? throw new ArgumentNullException(nameof(tilesetGeneratorService));
         _mapboxService = mapboxService ?? throw new ArgumentNullException(nameof(mapboxService));
@@ -44,13 +50,35 @@ public class HostedBundleProcessor : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using var scope = _serviceScopeFactory.CreateScope();
-
-        var bundleRepository = scope.ServiceProvider.GetRequiredService<IBundleRepository>();
-
         try
         {
-            await RunAllEnabledAsync(scope, cancellationToken);
+            var healthReport = await _healthCheckService.CheckHealthAsync(cancellationToken);
+            if (healthReport.Status != HealthStatus.Healthy)
+            {
+                _logger.LogError("Health check failed, stopping application");
+
+                throw new InvalidOperationException("Health check failed, stopping application");
+            }
+            else
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+
+                await RunAllEnabledAsync(scope, cancellationToken);
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Error while processing bundles");
+
+            await _emailService.SendAsync(new Core.Email.EmailMessage
+            {
+                ToAddresses = new[]
+                {
+                    new Core.Email.EmailAddress("yorick@laixer.com", "Yorick de Wid")
+                },
+                Subject = "Error while processing bundles",
+                Content = "Error while processing bundles, see log for details.",
+            });
         }
         finally
         {
