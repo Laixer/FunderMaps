@@ -385,8 +385,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
                         year.year, 
                         count(i.id) AS count
                 FROM    report.incident i
-                JOIN	geocoder.address a ON i.address::text = a.id::text
-                JOIN	geocoder.building b ON a.building_id::text = b.id::text
+                JOIN	geocoder.building b ON b.id::text = i.building::text
                 JOIN	geocoder.neighborhood n ON n.id::text = b.neighborhood_id::text
                 JOIN	geocoder.district d ON d.id::text = n.district_id::text
                 JOIN	geocoder.municipality m ON m.id = d.municipality_id,
