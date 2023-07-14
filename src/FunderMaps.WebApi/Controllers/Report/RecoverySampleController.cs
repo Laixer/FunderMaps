@@ -75,9 +75,6 @@ public class RecoverySampleController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<RecoverySample> CreateAsync(int recoveryId, [FromBody] RecoverySample recoverySample, [FromServices] IGeocoderTranslation geocoderTranslation)
     {
-        var address = await geocoderTranslation.GetAddressIdAsync(recoverySample.Address);
-
-        recoverySample.Address = address.Id;
         recoverySample.Recovery = recoveryId;
 
         var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery);

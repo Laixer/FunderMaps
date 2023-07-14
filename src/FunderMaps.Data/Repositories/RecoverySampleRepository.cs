@@ -20,7 +20,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         }
 
         context.AddParameterWithValue("recovery", entity.Recovery);
-        context.AddParameterWithValue("address", entity.Address);
+        context.AddParameterWithValue("building", entity.Building);
         context.AddParameterWithValue("note", entity.Note);
         context.AddParameterWithValue("status", entity.Status);
         context.AddParameterWithValue("type", entity.Type);
@@ -37,7 +37,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         {
             Id = reader.GetInt(offset++),
             Recovery = reader.GetInt(offset++),
-            Address = reader.GetString(offset++),
+            Building = reader.GetString(offset++),
             CreateDate = reader.GetDateTime(offset++),
             UpdateDate = reader.GetSafeDateTime(offset++),
             DeleteDate = reader.GetSafeDateTime(offset++),
@@ -62,7 +62,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         var sql = @"
             INSERT INTO report.recovery_sample(
                 recovery,
-                address,
+                building,
                 note,
                 status,
                 type,
@@ -74,7 +74,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
                 recovery_date)
             VALUES (
                 @recovery,
-                @address,
+                @building,
                 NULLIF(trim(@note), ''),
                 @status,
                 @type,
@@ -159,7 +159,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.address,
+                    s.building,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -191,7 +191,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.address,
+                    s.building,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -231,7 +231,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.address,
+                    s.building,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -272,7 +272,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
             SELECT  -- RecoverySample
                     s.id,
                     s.recovery,
-                    s.address,
+                    s.building,
                     s.create_date,
                     s.update_date,
                     s.delete_date,
@@ -310,7 +310,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         var sql = @"
             UPDATE  report.recovery_sample
             SET     recovery = @recovery,
-                    address = @address,
+                    building = @building,
                     note = NULLIF(trim(@note), ''),
                     status = @status,
                     type = @type,

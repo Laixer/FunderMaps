@@ -119,7 +119,7 @@ public static class ReportStub
         // Arrange
         using var client = factory.CreateClient(OrganizationRole.Writer);
         var newObject = new RecoverySampleFaker()
-            .RuleFor(f => f.Address, f => "gfm-f53334d806ab4ab386e8df29111add21")
+            .RuleFor(f => f.Building, f => "gfm-f53334d806ab4ab386e8df29111add21")
             // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
             .Generate();
 
@@ -131,7 +131,7 @@ public static class ReportStub
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(returnObject);
         Assert.Equal(recovery.Id, returnObject.Recovery);
-        Assert.Equal(newObject.Address, returnObject.Address);
+        Assert.Equal(newObject.Building, returnObject.Building);
 
         return returnObject;
     }

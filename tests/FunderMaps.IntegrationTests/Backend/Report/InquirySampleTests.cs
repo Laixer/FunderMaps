@@ -185,7 +185,7 @@ public class InquirySampleTests : IClassFixture<BackendFixtureFactory>
             // Arrange
             using var client = Factory.CreateClient();
             var newObject = new RecoverySampleFaker()
-                .RuleFor(f => f.Address, f => "gfm-989b8bd98dfb47e1ae26bd8c0c8be2cb")
+                .RuleFor(f => f.Building, f => "gfm-989b8bd98dfb47e1ae26bd8c0c8be2cb")
                 // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
 
@@ -200,7 +200,7 @@ public class InquirySampleTests : IClassFixture<BackendFixtureFactory>
             // Arrange
             using var client = Factory.CreateClient();
             var newObject = new RecoverySampleFaker()
-                .RuleFor(f => f.Address, f => "gfm-dd25089ebda44dd5b6061000135f60f4")
+                .RuleFor(f => f.Building, f => "gfm-dd25089ebda44dd5b6061000135f60f4")
                 // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
                 .Generate();
 

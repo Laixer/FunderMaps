@@ -8,6 +8,9 @@ namespace FunderMaps.Core.Entities;
 /// </summary>
 public sealed class RecoverySample : RecordControl, IEntityIdentifier<int>
 {
+    /// <summary>
+    ///     Entity identifier.
+    /// </summary>
     public int Identifier => Id;
 
     /// <summary>
@@ -27,10 +30,10 @@ public sealed class RecoverySample : RecordControl, IEntityIdentifier<int>
     public string? Note { get; set; }
 
     /// <summary>
-    ///     Address identifier.
+    ///     Building identifier.
     /// </summary>
     [Required]
-    public string Address { get; set; }
+    public string Building { get; set; } = default!;
 
     /// <summary>
     ///     Status.
