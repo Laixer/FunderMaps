@@ -37,8 +37,8 @@ command.SetHandler(async (username, password, buildingId) =>
             options.AddSimpleConsole();
             options.SetMinimumLevel(LogLevel.Debug);
         })
-        .AddScoped<WebserviceClient>()
-        .Configure<FunderMapsWebserviceOptions>(options =>
+        .AddScoped<FunderMapsClient>()
+        .Configure<FunderMapsClientOptions>(options =>
         {
             options.BaseUrl = "https://ws-staging.fundermaps.com";
             options.Email = username ?? throw new ArgumentNullException(nameof(username));
