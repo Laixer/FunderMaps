@@ -62,11 +62,11 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddHttpContextAccessor();
 
         services.AddHealthChecks()
-            .AddCheck<MapboxHealthCheck>("mapbox_health_check")
-            .AddCheck<IOHealthCheck>("io_health_check")
-            .AddCheck<RepositoryHealthCheck>("data_health_check")
-            .AddCheck<EmailHealthCheck>("email_health_check")
-            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check");
+            .AddCheck<IOHealthCheck>("io_health_check", tags: new[] { "local" })
+            .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: new[] { "extern" })
+            .AddCheck<RepositoryHealthCheck>("data_health_check", tags: new[] { "extern" })
+            .AddCheck<EmailHealthCheck>("email_health_check", tags: new[] { "extern" })
+            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: new[] { "extern" });
 
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
