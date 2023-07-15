@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.AspNetCore.Services;
 
+// TODO: Move into separate unit.
 /// <summary>
 ///     Options for the open AI service.
 /// </summary>
@@ -60,6 +61,8 @@ public class FunderMapsClient : IDisposable
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger;
 
+        _logger.LogDebug("Using FunderMaps API at {BaseUrl}", _options.BaseUrl ?? DefaultBaseUrl);
+
         httpClient.BaseAddress = new Uri(_options.BaseUrl ?? DefaultBaseUrl);
         httpClient.DefaultRequestHeaders.Accept.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -85,6 +88,8 @@ public class FunderMapsClient : IDisposable
     /// </summary>
     private async Task<SignInSecurityTokenDto> GetAuthenticationTokenAsync(string email, string password)
     {
+        _logger.LogDebug("Requesting authentication token");
+
         var response = await httpClient.PostAsJsonAsync("api/auth/signin", new
         {
             email = email,
@@ -103,6 +108,8 @@ public class FunderMapsClient : IDisposable
         {
             throw new HttpRequestException("FunderMaps API call failed");
         }
+
+        _logger.LogDebug("Received authentication token");
 
         return authToken;
     }
