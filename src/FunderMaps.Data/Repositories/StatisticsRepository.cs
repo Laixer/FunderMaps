@@ -114,7 +114,7 @@ internal sealed class StatisticsRepository : DbServiceBase, IStatisticsRepositor
 
         context.AddParameterWithValue("id", id);
 
-        Dictionary<FoundationRisk, decimal> map = new()
+        var map = new Dictionary<FoundationRisk, decimal>()
         {
             { FoundationRisk.A, 0 },
             { FoundationRisk.B, 0 },

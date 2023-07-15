@@ -20,7 +20,7 @@ public class FunderMapsCoreExceptionFilter : IExceptionFilter
         { typeof(InvalidCredentialException), HttpStatusCode.Forbidden },
         { typeof(InvalidIdentifierException), HttpStatusCode.BadRequest },
         { typeof(OperationAbortedException), HttpStatusCode.BadRequest },
-        { typeof(ProcessException), HttpStatusCode.InternalServerError },
+        { typeof(DatabaseException), HttpStatusCode.InternalServerError },
         { typeof(QueueOverflowException), HttpStatusCode.InternalServerError },
         { typeof(ReferenceNotFoundException), HttpStatusCode.NotFound },
         { typeof(ServiceUnavailableException), HttpStatusCode.ServiceUnavailable },

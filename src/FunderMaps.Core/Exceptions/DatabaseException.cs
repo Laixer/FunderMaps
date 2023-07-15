@@ -1,9 +1,9 @@
 namespace FunderMaps.Core.Exceptions;
 
 /// <summary>
-///     Exception indicating a system process was unable to start.
+///     Exception indicating an unhandled database error.
 /// </summary>
-public sealed class ProcessException : FunderMapsCoreException
+public sealed class DatabaseException : FunderMapsCoreException
 {
     /// <summary>
     ///     Exception title
@@ -13,7 +13,7 @@ public sealed class ProcessException : FunderMapsCoreException
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public ProcessException()
+    public DatabaseException()
     {
     }
 
@@ -21,7 +21,7 @@ public sealed class ProcessException : FunderMapsCoreException
     ///     Create new instance.
     /// </summary>
     /// <param name="message"><see cref="Exception.Message"/></param>
-    public ProcessException(string message)
+    public DatabaseException(string message)
         : base(message)
     {
     }
@@ -31,7 +31,7 @@ public sealed class ProcessException : FunderMapsCoreException
     /// </summary>
     /// <param name="message"><see cref="Exception.Message"/></param>
     /// <param name="innerException"><see cref="Exception.InnerException"/></param>
-    public ProcessException(string message, Exception innerException)
+    public DatabaseException(string message, Exception innerException)
         : base(message, innerException)
     {
     }

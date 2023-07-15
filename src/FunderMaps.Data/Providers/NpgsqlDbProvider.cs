@@ -1,5 +1,6 @@
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Types;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using System.Data.Common;
@@ -15,13 +16,16 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
 {
     private readonly NpgsqlDataSourceBuilder _dataSourceBuilder;
     private readonly NpgsqlDataSource _dataSource;
+    private readonly ILogger<NpgsqlDbProvider> _logger;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public NpgsqlDbProvider(IOptions<DbProviderOptions> options)
+    public NpgsqlDbProvider(IOptions<DbProviderOptions> options, ILogger<NpgsqlDbProvider> logger)
         : base(options)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(_options.ConnectionString);
 
         if (!string.IsNullOrEmpty(_options.ApplicationName))
@@ -102,16 +106,23 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
             switch (exception.SqlState)
             {
                 case PostgresErrorCodes.ForeignKeyViolation:
+                    _logger.LogWarning(exception, "Foreign key violation");
                     throw new ReferenceNotFoundException(exception.Message, exception);
 
                 case PostgresErrorCodes.AdminShutdown:
+                    _logger.LogWarning(exception, "Database shutdown");
                     throw new ServiceUnavailableException(exception.Message, exception);
 
                 case PostgresErrorCodes.NoDataFound:
                     throw new ReferenceNotFoundException(exception.Message, exception);
 
                 case "UX101":
+                    _logger.LogWarning(exception, "Unique constraint violation");
                     throw new InvalidIdentifierException(exception.Message, exception);
+
+                default:
+                    _logger.LogWarning(exception, "Unhandled database exception");
+                    throw new DatabaseException(exception.Message, exception);
             }
         }
 
