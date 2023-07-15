@@ -1,5 +1,6 @@
 using FunderMaps.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +64,9 @@ app.UseAuthorization();
 app.UseAspAppContext();
 
 app.MapControllers();
-app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+app.MapHealthChecks("/health", new HealthCheckOptions()
+{
+    Predicate = healthCheck => healthCheck.Tags.Contains("extern")
+}).WithMetadata(new AllowAnonymousAttribute());
 
 app.Run();
