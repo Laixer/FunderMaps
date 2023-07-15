@@ -78,11 +78,6 @@ public class HostedBundleProcessor : IHostedService
 
             await _emailService.SendAsync(new EmailMessage
             {
-                ToAddresses = new[]
-                {
-                    // TODO: Make configurable
-                    new EmailAddress("yorick@laixer.com", "Yorick de Wid")
-                },
                 Subject = "Error while processing bundles",
                 Content = "Error while processing bundles, see log for details.",
             });
