@@ -1,3 +1,4 @@
+using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
@@ -49,6 +50,10 @@ public class HostedBundleProcessor : IHostedService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    /// <summary>
+    ///     Triggered when the application host is ready to start the service.
+    /// </summary>
+    /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         try
@@ -71,11 +76,12 @@ public class HostedBundleProcessor : IHostedService
         {
             _logger.LogError(exception, "Error while processing bundles");
 
-            await _emailService.SendAsync(new Core.Email.EmailMessage
+            await _emailService.SendAsync(new EmailMessage
             {
                 ToAddresses = new[]
                 {
-                    new Core.Email.EmailAddress("yorick@laixer.com", "Yorick de Wid")
+                    // TODO: Make configurable
+                    new EmailAddress("yorick@laixer.com", "Yorick de Wid")
                 },
                 Subject = "Error while processing bundles",
                 Content = "Error while processing bundles, see log for details.",
@@ -87,6 +93,10 @@ public class HostedBundleProcessor : IHostedService
         }
     }
 
+    /// <summary>
+    ///     Triggered when the application host is performing a graceful shutdown.
+    /// </summary>
+    /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     private async Task RunAllEnabledAsync(IServiceScope scope, CancellationToken cancellationToken)
@@ -134,6 +144,10 @@ public class HostedBundleProcessor : IHostedService
             {
                 var currentDirectory = Directory.GetCurrentDirectory();
                 foreach (string file in Directory.GetFiles(currentDirectory, "*.gpkg"))
+                {
+                    File.Delete(file);
+                }
+                foreach (string file in Directory.GetFiles(currentDirectory, "*.gpkg-journal"))
                 {
                     File.Delete(file);
                 }
