@@ -13,7 +13,9 @@
   "Mailgun": {
     "Domain": "fundermaps.com",
     "DefaultSenderName": "FunderMaps",
-    "DefaultSenderAddress": "no-reply@fundermaps.com"
+    "DefaultSenderAddress": "no-reply@fundermaps.com",
+    "DefaultRecipientName": "FunderMaps",
+    "DefaultRecipientAddress": "info@laixer.com"
   },
   "Mapbox": {
     "Account": "laixer"

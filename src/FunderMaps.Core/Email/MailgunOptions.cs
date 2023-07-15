@@ -31,5 +31,16 @@ public sealed record MailgunOptions
     ///     Default sender address if none is provided.
     /// </summary>
     [Required, EmailAddress]
-    public string? DefaultSenderAddress { get; set; }
+    public string DefaultSenderAddress { get; set; } = default!;
+
+    /// <summary>
+    ///     Default recipient name if none is provided.
+    /// </summary>
+    public string? DefaultRecipientName { get; set; }
+
+    /// <summary>
+    ///     Default recipient address if none is provided.
+    /// </summary>
+    [Required, EmailAddress]
+    public string DefaultRecipientAddress { get; set; } = default!;
 }

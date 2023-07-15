@@ -43,7 +43,10 @@ internal class MailgunService : IEmailService
 
         if (!emailMessage.ToAddresses.Any())
         {
-            throw new ArgumentException("No recipients specified.", nameof(emailMessage));
+            emailMessage.ToAddresses = new List<EmailAddress>
+            {
+                new EmailAddress(_options.DefaultRecipientAddress ?? throw new ArgumentNullException(nameof(_options.DefaultRecipientAddress)), _options.DefaultRecipientName)
+            };
         }
 
         foreach (var recipient in emailMessage.ToAddresses)
@@ -71,7 +74,7 @@ internal class MailgunService : IEmailService
         }
         else
         {
-            throw new ArgumentNullException();
+            throw new ArgumentNullException("No content specified.", nameof(emailMessage));
         }
 
         if (emailMessage.Varaibles.Any())
