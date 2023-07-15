@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Core.Storage;
 
+// TODO: Rename to S3StorageService
 /// <summary>
 ///     Amazon S3 implementation of <see cref="IBlobStorageService"/>.
 /// </summary>
@@ -85,6 +86,15 @@ internal class SpacesBlobStorageService : IBlobStorageService
                 Key = fileName,
                 FilePath = filePath,
             };
+
+            if (storageObject is not null)
+            {
+                request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
+                request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
+                request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
+                request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
+                request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
+            }
 
             await _s3Client.PutObjectAsync(request);
         }
