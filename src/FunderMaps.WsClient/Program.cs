@@ -16,6 +16,8 @@ var passwordOption = new Option<string?>("--password", "Webservice password")
 };
 passwordOption.AddAlias("-p");
 
+var logLevel = new Option<LogLevel>(new[] { "--log", "--log-level" }, getDefaultValue: () => LogLevel.Information, "The log level to use");
+
 var buildingArgument = new Argument<string>("building", "Building identifier")
 {
     Arity = ArgumentArity.ExactlyOne,
@@ -25,17 +27,18 @@ var command = new RootCommand("FunderMaps command line interface")
 {
     usernameOption,
     passwordOption,
+    logLevel,
     buildingArgument,
 };
 
-command.SetHandler(async (username, password, buildingId) =>
+command.SetHandler(async (username, password, buildingId, logLevel) =>
 {
     await using var serviceProvider = new ServiceCollection()
         .AddLogging(options =>
         {
             options.ClearProviders();
             options.AddSimpleConsole();
-            options.SetMinimumLevel(LogLevel.Debug);
+            options.SetMinimumLevel(logLevel);
         })
         .AddScoped<FunderMapsClient>()
         .Configure<FunderMapsClientOptions>(options =>
@@ -52,6 +55,6 @@ command.SetHandler(async (username, password, buildingId) =>
     await funderMapsWebserviceClient.LogAnalysisAsync(buildingId);
     // await funderMapsWebserviceClient.LogStatisticsAsync(buildingId);
 
-}, usernameOption, passwordOption, buildingArgument);
+}, usernameOption, passwordOption, buildingArgument, logLevel);
 
 await command.InvokeAsync(args);

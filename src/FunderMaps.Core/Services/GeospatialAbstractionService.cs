@@ -23,7 +23,7 @@ internal class GeospatialAbstractionService : IGDALService
     /// <param name="input">Input file.</param>
     /// <param name="output">Output file.</param>
     /// <param name="layer">Layer name.</param>
-    public void Convert(string input, string output, string? layer = null)
+    public void Convert(string input, string output, string? layer = null, CancellationToken cancellationToken = default)
     {
         var format = "GPKG";
         if (output.StartsWith("PG:"))
@@ -58,6 +58,14 @@ internal class GeospatialAbstractionService : IGDALService
         process.StartInfo.RedirectStandardOutput = true;
 
         process.Start();
+
+        cancellationToken.Register(() =>
+        {
+            if (!process.HasExited)
+            {
+                process.Kill();
+            }
+        });
 
         string standardError = process.StandardError.ReadToEnd();
         string standardOutput = process.StandardOutput.ReadToEnd();

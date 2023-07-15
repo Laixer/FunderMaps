@@ -20,7 +20,7 @@ internal class TippecanoeService : ITilesetGeneratorService
     /// <summary>
     ///     Generate vector tiles from input.
     /// </summary>
-    public void Generate(string input, string output, string? layer = null, int maxZoomLevel = 15, int minZoomLevel = 10)
+    public void Generate(string input, string output, string? layer = null, int maxZoomLevel = 15, int minZoomLevel = 10, CancellationToken cancellationToken = default)
     {
         var process = new Process();
 
@@ -49,6 +49,14 @@ internal class TippecanoeService : ITilesetGeneratorService
         process.StartInfo.RedirectStandardOutput = true;
 
         process.Start();
+
+        cancellationToken.Register(() =>
+        {
+            if (!process.HasExited)
+            {
+                process.Kill();
+            }
+        });
 
         string standardError = process.StandardError.ReadToEnd();
         string standardOutput = process.StandardOutput.ReadToEnd();

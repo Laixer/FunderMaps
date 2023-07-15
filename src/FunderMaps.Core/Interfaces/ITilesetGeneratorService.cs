@@ -13,5 +13,6 @@ public interface ITilesetGeneratorService
     /// <param name="layer">Layer name.</param>
     /// <param name="maxZoomLevel">Maximum zoom level.</param>
     /// <param name="minZoomLevel">Minimum zoom level.</param>
-    void Generate(string input, string output, string? layer = null, int maxZoomLevel = 15, int minZoomLevel = 10);
+    /// <param name="cancellationToken">Cancellation token.</param>
+    void Generate(string input, string output, string? layer = null, int maxZoomLevel = 15, int minZoomLevel = 10, CancellationToken cancellationToken = default);
 }
