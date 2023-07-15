@@ -8,7 +8,7 @@ public sealed class DatabaseException : FunderMapsCoreException
     /// <summary>
     ///     Exception title
     /// </summary>
-    public override string Title => "Application was unable to process the request.";
+    public override string Title => "Unhandled database error.";
 
     /// <summary>
     ///     Create new instance.

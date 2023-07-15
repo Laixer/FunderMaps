@@ -34,7 +34,7 @@ public class RecoverySampleController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int recoveryId)
     {
-        DatasetStatsDto output = new()
+        var output = new DatasetStatsDto()
         {
             Count = await _recoverySampleRepository.CountAsync(recoveryId),
         };
