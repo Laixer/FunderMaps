@@ -70,21 +70,16 @@ public class InquiryController : ControllerBase
     ///     Return inquiry by id.
     /// </summary>
     [HttpGet("{id:int}")]
-    public async Task<InquiryFull> GetAsync(int id)
-        => await _inquiryRepository.GetByIdAsync(id);
+    public Task<InquiryFull> GetAsync(int id)
+        => _inquiryRepository.GetByIdAsync(id);
 
     // GET: api/inquiry
     /// <summary>
     ///     Return all inquiries.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<InquiryFull> GetAllAsync([FromQuery] PaginationDto pagination)
-    {
-        await foreach (var inquiry in _inquiryRepository.ListAllAsync(pagination.Navigation))
-        {
-            yield return inquiry;
-        }
-    }
+    public IAsyncEnumerable<InquiryFull> GetAllAsync([FromQuery] PaginationDto pagination)
+        => _inquiryRepository.ListAllAsync(pagination.Navigation);
 
     // POST: api/inquiry
     /// <summary>
@@ -123,7 +118,7 @@ public class InquiryController : ControllerBase
             contentType: input.ContentType,
             stream: input.OpenReadStream());
 
-        DocumentDto output = new()
+        var output = new DocumentDto()
         {
             Name = storeFileName,
         };
@@ -144,7 +139,7 @@ public class InquiryController : ControllerBase
             fileName: inquiry.DocumentFile,
             hoursValid: 1);
 
-        BlobAccessLinkDto result = new()
+        var result = new BlobAccessLinkDto()
         {
             AccessLink = link
         };
@@ -207,10 +202,10 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> SetStatusReviewAsync(int id)
     {
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
-        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
+        var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToReview();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
@@ -241,10 +236,10 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
     {
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
-        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
+        var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToRejected();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
@@ -278,10 +273,10 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusApprovedAsync(int id)
     {
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-        User reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
-        User creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
+        var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToDone();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
