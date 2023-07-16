@@ -33,7 +33,7 @@ public class InquirySampleController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int inquiryId)
     {
-        DatasetStatsDto output = new()
+        var output = new DatasetStatsDto()
         {
             Count = await _inquirySampleRepository.CountAsync(inquiryId),
         };
@@ -46,21 +46,16 @@ public class InquirySampleController : ControllerBase
     ///     Return inquiry sample by id.
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<InquirySample> GetAsync(int id)
-        => await _inquirySampleRepository.GetByIdAsync(id);
+    public Task<InquirySample> GetAsync(int id)
+        => _inquirySampleRepository.GetByIdAsync(id);
 
     // GET: api/inquiry/{id}/sample
     /// <summary>
     ///     Return all inquiry samples.
     /// </summary>
     [HttpGet]
-    public async IAsyncEnumerable<InquirySample> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
-    {
-        await foreach (var inquirySample in _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation))
-        {
-            yield return inquirySample;
-        }
-    }
+    public IAsyncEnumerable<InquirySample> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
+        => _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation);
 
     // POST: api/inquiry/{id}/sample/{id}
     /// <summary>

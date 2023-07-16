@@ -1,7 +1,7 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using Xunit;
 
@@ -43,7 +43,7 @@ public class InquirySampleTests : IClassFixture<BackendFixtureFactory>
 
             // Act
             var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample/{sample.Id}");
-            var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
+            var returnObject = await response.Content.ReadFromJsonAsync<InquirySample>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -58,7 +58,7 @@ public class InquirySampleTests : IClassFixture<BackendFixtureFactory>
 
             // Act
             var response = await client.GetAsync($"api/inquiry/{inquiry.Id}/sample");
-            var returnList = await response.Content.ReadFromJsonAsync<List<InquirySampleDto>>();
+            var returnList = await response.Content.ReadFromJsonAsync<List<InquirySample>>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -69,7 +69,7 @@ public class InquirySampleTests : IClassFixture<BackendFixtureFactory>
         {
             // Arrange
             using var client = Factory.CreateClient(OrganizationRole.Writer);
-            var newObject = new InquirySampleDtoFaker()
+            var newObject = new InquirySampleFaker()
                 .RuleFor(f => f.Address, f => "gfm-5c9a38bae2b9495b8ef9dc5684ba4fc5")
                 .Generate();
 

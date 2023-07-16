@@ -136,16 +136,16 @@ public static class ReportStub
         return returnObject;
     }
 
-    public static async Task<InquirySampleDto> CreateInquirySampleAsync(BackendFixtureFactory factory, InquiryDto inquiry)
+    public static async Task<InquirySample> CreateInquirySampleAsync(BackendFixtureFactory factory, InquiryDto inquiry)
     {
         using var client = factory.CreateClient(OrganizationRole.Writer);
-        var newObject = new InquirySampleDtoFaker()
+        var newObject = new InquirySampleFaker()
             .RuleFor(f => f.Address, f => "gfm-2687feed6a624636b70700cd374fbd17")
             .Generate();
 
         // Act
         var response = await client.PostAsJsonAsync($"api/inquiry/{inquiry.Id}/sample", newObject);
-        var returnObject = await response.Content.ReadFromJsonAsync<InquirySampleDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<InquirySample>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
