@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -26,7 +25,7 @@ public class ReviewerController : ControllerBase
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public ReviewerController(IMapper mapper, Core.AppContext appContext, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
+    public ReviewerController(Core.AppContext appContext, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
     {
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
