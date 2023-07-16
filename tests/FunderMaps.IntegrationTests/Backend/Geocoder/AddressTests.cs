@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using System.Net;
 using Xunit;
@@ -24,7 +24,7 @@ public class AddressTests : IClassFixture<BackendFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/address/gfm-059f268aad9d43339afe56a32cf641cc");
-        var returnObject = await response.Content.ReadFromJsonAsync<AddressDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<Address>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -49,7 +49,7 @@ public class AddressTests : IClassFixture<BackendFixtureFactory>
 
         // Act
         var response = await client.GetAsync($"api/address/{address}");
-        var returnObject = await response.Content.ReadFromJsonAsync<AddressDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<Address>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

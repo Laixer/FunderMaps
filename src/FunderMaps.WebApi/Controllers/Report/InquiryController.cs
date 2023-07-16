@@ -57,7 +57,7 @@ public class InquiryController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync()
     {
-        DatasetStatsDto output = new()
+        var output = new DatasetStatsDto()
         {
             Count = await _inquiryRepository.CountAsync(),
         };

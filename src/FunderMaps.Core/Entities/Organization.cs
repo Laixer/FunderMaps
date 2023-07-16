@@ -33,12 +33,12 @@ public sealed class Organization : IEntityIdentifier<Guid>, ITenant
     /// <summary>
     ///     Geospatial account area.
     /// </summary>
-    public SpatialBox Area { get; set; }
+    public SpatialBox Area { get; set; } = default!;
 
     /// <summary>
     ///     Geospatial account area center.
     /// </summary>
-    public SpatialPoint Center { get; set; }
+    public SpatialPoint Center { get; set; } = default!;
 
     /// <summary>
     ///     Print object as name.

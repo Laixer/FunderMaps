@@ -1,5 +1,4 @@
 using AutoMapper;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -29,15 +28,6 @@ public class AddressController : ControllerBase
     ///     Contractors are tenant independent.
     /// </remarks>
     [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 8)]
-    public async Task<IActionResult> GetAsync(string id, [FromServices] IGeocoderTranslation geocoderTranslation)
-    {
-        // Assign.
-        Address address = await geocoderTranslation.GetAddressIdAsync(id);
-
-        // Map.
-        var output = _mapper.Map<AddressDto>(address);
-
-        // Return.
-        return Ok(output);
-    }
+    public async Task<Address> GetAsync(string id, [FromServices] IGeocoderTranslation geocoderTranslation)
+        => await geocoderTranslation.GetAddressIdAsync(id);
 }
