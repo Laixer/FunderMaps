@@ -24,7 +24,13 @@ public sealed class InquirySample : RecordControl, IEntityIdentifier<int>
     ///     An address identifier.
     /// </summary>
     [Required]
-    public string Address { get; set; }
+    public string Address { get; set; } = default!;
+
+    /// <summary>
+    ///     Building identifier.
+    /// </summary>
+    // [Required]
+    public string? Building { get; set; } 
 
     /// <summary>
     ///     Note.

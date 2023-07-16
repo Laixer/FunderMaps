@@ -77,7 +77,7 @@ public class InquirySampleController : ControllerBase
         var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
 
         inquirySample.Address = address.Id;
-        // inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
+        inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         inquirySample.Inquiry = inquiryId;
 
         var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
