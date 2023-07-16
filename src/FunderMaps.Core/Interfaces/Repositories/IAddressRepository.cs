@@ -12,7 +12,6 @@ public interface IAddressRepository : IAsyncRepository<Address, string>
     ///     Get address by external id.
     /// </summary>
     /// <param name="id">External identifier.</param>
-    /// <param name="source">External source.</param>
     /// <returns>A single address.</returns>
-    Task<Address> GetByExternalIdAsync(string id, ExternalDataSource source);
+    Task<Address> GetByExternalIdAsync(string id);
 }

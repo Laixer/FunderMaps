@@ -24,7 +24,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         context.AddParameterWithValue("street", entity.Street);
         context.AddParameterWithValue("is_active", entity.IsActive);
         context.AddParameterWithValue("external_id", entity.ExternalId);
-        context.AddParameterWithValue("external_source", entity.ExternalSource);
     }
 
     public static Address MapFromReader(DbDataReader reader, int offset = 0)
@@ -36,7 +35,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             Street = reader.GetString(offset++),
             IsActive = reader.GetBoolean(offset++),
             ExternalId = reader.GetString(offset++),
-            ExternalSource = reader.GetFieldValue<ExternalDataSource>(offset++),
             City = reader.GetString(offset++),
             BuildingId = reader.GetSafeString(offset++),
         };
@@ -54,15 +52,13 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                 postal_code,
                 street,
                 is_active,
-                external_id,
-                external_source)
+                external_id)
             VALUES (
                 @building_number,
                 @postal_code,
                 @street,
                 @is_active,
-                upper(@external_id),
-                @external_source)
+                upper(@external_id))
             ON CONFLICT DO NOTHING
             RETURNING id";
 
@@ -97,7 +93,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
     public override Task DeleteAsync(string id)
         => throw new InvalidOperationException();
 
-    public async Task<Address> GetByExternalIdAsync(string id, ExternalDataSource source)
+    public async Task<Address> GetByExternalIdAsync(string id)
     {
         var sql = @"
             SELECT  -- Address
@@ -107,18 +103,15 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.street,
                     a.is_active,
                     a.external_id,
-                    a.external_source,
                     a.city,
                     a.building_id
             FROM    geocoder.address AS a
             WHERE   a.external_id = upper(@external_id)
-            AND     a.external_source = @external_source
             LIMIT   1";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("external_id", id);
-        context.AddParameterWithValue("external_source", source);
 
         await using var reader = await context.ReaderAsync();
 
@@ -145,7 +138,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.street,
                     a.is_active,
                     a.external_id,
-                    a.external_source,
                     a.city,
                     a.building_id
             FROM    geocoder.address AS a
@@ -175,7 +167,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.street,
                     a.is_active,
                     a.external_id,
-                    a.external_source,
                     a.city,
                     a.building_id,
 
@@ -220,8 +211,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     postal_code = @postal_code,
                     street = @street,
                     is_active = @is_active,
-                    external_id = upper(@external_id),
-                    external_source = @external_source
+                    external_id = upper(@external_id)
             WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);

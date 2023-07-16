@@ -1,8 +1,10 @@
 ﻿namespace FunderMaps.Core.Types;
 
+// TODO: Can we remove this?
 /// <summary>
 ///     Represents an external data source.
 /// </summary>
+[Obsolete]
 public enum ExternalDataSource
 {
     /// <summary>

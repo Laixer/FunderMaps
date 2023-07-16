@@ -40,7 +40,6 @@ internal class NpgsqlDbProvider : DbProvider, IDisposable, IAsyncDisposable
         dataSourceBuilder.MapEnum<CrackType>();
         dataSourceBuilder.MapEnum<EnforcementTerm>();
         dataSourceBuilder.MapEnum<EnvironmentDamageCharacteristics>();
-        dataSourceBuilder.MapEnum<ExternalDataSource>("geocoder.data_source");
         dataSourceBuilder.MapEnum<Facade>();
         dataSourceBuilder.MapEnum<FoundationDamageCause>();
         dataSourceBuilder.MapEnum<FoundationDamageCharacteristics>();

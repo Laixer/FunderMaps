@@ -32,7 +32,7 @@ internal class GeocoderTranslation : IGeocoderTranslation
         => _geocoderParser.FromIdentifier(input, out string id) switch
         {
             GeocoderDatasource.FunderMaps => await _addressRepository.GetByIdAsync(id),
-            GeocoderDatasource.NlBagAddress => await _addressRepository.GetByExternalIdAsync(id, ExternalDataSource.NlBag),
+            GeocoderDatasource.NlBagAddress => await _addressRepository.GetByExternalIdAsync(id),
             _ => throw new EntityNotFoundException("Requested address entity could not be found."),
         };
 }
