@@ -1,5 +1,4 @@
 ﻿using FunderMaps.Core.DataAnnotations;
-using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
@@ -48,12 +47,6 @@ public sealed class Address : IEntityIdentifier<string>
     /// </summary>
     [Required]
     public string ExternalId { get; set; } = default!;
-
-    /// <summary>
-    ///     External data source.
-    /// </summary>
-    [Required]
-    public ExternalDataSource ExternalSource { get; set; }
 
     /// <summary>
     ///     City.

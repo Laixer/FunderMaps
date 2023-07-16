@@ -1,7 +1,6 @@
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
 using FunderMaps.Data.Extensions;
 using System.Data.Common;
 
@@ -14,11 +13,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 {
     public static void MapToWriter(DbContext context, Address entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         context.AddParameterWithValue("building_number", entity.BuildingNumber);
         context.AddParameterWithValue("postal_code", entity.PostalCode);
         context.AddParameterWithValue("street", entity.Street);

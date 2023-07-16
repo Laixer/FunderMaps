@@ -19,11 +19,6 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     /// <returns>Created <see cref="InquiryFull"/>.</returns>
     public override async Task<int> AddAsync(InquiryFull entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         var sql = @"
             WITH attribution AS (
                 INSERT INTO application.attribution(
@@ -66,7 +61,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
+        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
         context.AddParameterWithValue("user", AppContext.UserId);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
@@ -121,11 +116,6 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
 
     public static void MapToWriter(DbContext context, InquiryFull entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         context.AddParameterWithValue("document_name", entity.DocumentName);
         context.AddParameterWithValue("inspection", entity.Inspection);
         context.AddParameterWithValue("joint_measurement", entity.JointMeasurement);
@@ -321,7 +311,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", entity.Id);
-        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
+        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
@@ -337,11 +327,6 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     /// <param name="entity">Entity object.</param>
     public async Task SetAuditStatusAsync(int id, InquiryFull entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         ResetCacheEntity(id);
 
         var sql = @"

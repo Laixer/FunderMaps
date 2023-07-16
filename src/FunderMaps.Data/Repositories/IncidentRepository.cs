@@ -110,11 +110,6 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
 
     public static void MapToWriter(DbContext context, Incident entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         context.AddParameterWithValue("foundation_type", entity.FoundationType);
         context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
         context.AddParameterWithValue("owner", entity.Owner);

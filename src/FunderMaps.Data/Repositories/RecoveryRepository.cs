@@ -14,11 +14,6 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 {
     public static void MapToWriter(DbContext context, Recovery entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         context.AddParameterWithValue("note", entity.Note);
         context.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);
         context.AddParameterWithValue("type", entity.Type);
@@ -103,7 +98,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
+        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
         context.AddParameterWithValue("user", AppContext.UserId);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
@@ -281,7 +276,7 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", entity.Id);
-        context.AddParameterWithValue("reviewer", entity?.Attribution?.Reviewer);
+        context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
         context.AddParameterWithValue("tenant", AppContext.TenantId);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
