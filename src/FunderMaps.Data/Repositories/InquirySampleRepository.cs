@@ -231,7 +231,8 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     private static void MapToWriter(DbContext context, InquirySample entity)
     {
         context.AddParameterWithValue("inquiry", entity.Inquiry);
-        context.AddParameterWithValue("building", entity.Building);
+        context.AddParameterWithValue("address", entity.Address);
+        // context.AddParameterWithValue("building", entity.Building);
         context.AddParameterWithValue("note", entity.Note);
         context.AddParameterWithValue("built_year", entity.BuiltYear);
         context.AddParameterWithValue("substructure", entity.Substructure);
