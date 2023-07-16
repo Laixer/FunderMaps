@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using Xunit;
@@ -26,7 +27,7 @@ public class ReviewerTests : IClassFixture<BackendFixtureFactory>
 
         // Act
         var response = await client.GetAsync("api/reviewer");
-        var returnList = await response.Content.ReadFromJsonAsync<List<ReviewerDto>>();
+        var returnList = await response.Content.ReadFromJsonAsync<List<User>>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

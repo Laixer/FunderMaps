@@ -35,6 +35,5 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.CreateDate, o => o.MapFrom(src => src.Record.CreateDate))
             .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
             .ReverseMap();
-        CreateMap<User, ReviewerDto>();
     }
 }
