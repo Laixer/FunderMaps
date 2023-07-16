@@ -57,17 +57,17 @@ public static class ReportStub
         return returnObject;
     }
 
-    public static async Task<IncidentDto> CreateIncidentAsync(BackendFixtureFactory factory)
+    public static async Task<Incident> CreateIncidentAsync(BackendFixtureFactory factory)
     {
         // Arrange
-        var incident = new IncidentDtoFaker()
+        var incident = new IncidentFaker()
             .RuleFor(f => f.Address, f => "gfm-87ca83c36c904f7e8ad84724bffd2df1")
             .Generate();
         using var client = factory.CreateClient();
 
         // Act
         var response = await client.PostAsJsonAsync("api/incident", incident);
-        var returnObject = await response.Content.ReadFromJsonAsync<IncidentDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<Incident>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -102,7 +102,7 @@ public static class ReportStub
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
-    public static async Task DeleteIncidentAsync(BackendFixtureFactory factory, IncidentDto incident)
+    public static async Task DeleteIncidentAsync(BackendFixtureFactory factory, Incident incident)
     {
         // Arrange
         using var client = factory.CreateClient();

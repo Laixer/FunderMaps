@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects;
 
+// TODO: This is not a DTO, but a view model. Move to core? 
 /// <summary>
 ///     Document DTO.
 /// </summary>

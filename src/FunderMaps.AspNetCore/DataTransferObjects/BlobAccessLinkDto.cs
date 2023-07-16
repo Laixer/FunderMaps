@@ -1,5 +1,6 @@
 namespace FunderMaps.AspNetCore.DataTransferObjects;
 
+// TODO: Move to core?
 /// <summary>
 ///     Blob resource access link DTO.
 /// </summary>
