@@ -3,12 +3,12 @@ using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Core.Storage;
+namespace FunderMaps.Core.ExternalServices.S3Storage;
 
-// TODO: Rename to S3StorageService
 /// <summary>
 ///     Amazon S3 implementation of <see cref="IBlobStorageService"/>.
 /// </summary>
@@ -16,18 +16,18 @@ namespace FunderMaps.Core.Storage;
 ///     This creates an <see cref="IAmazonS3"/> client once in its constructor.
 ///     Register this service as a singleton if dependency injection is used.
 /// </remarks>
-internal class SpacesBlobStorageService : IBlobStorageService
+internal class S3StorageService : IBlobStorageService
 {
     private static readonly byte MaxKeys = 255;
 
-    private readonly BlobStorageOptions _options;
-    private readonly ILogger<SpacesBlobStorageService> _logger;
+    private readonly S3StorageOptions _options;
+    private readonly ILogger<S3StorageService> _logger;
     private readonly IAmazonS3 _s3Client;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public SpacesBlobStorageService(IOptions<BlobStorageOptions> options, ILogger<SpacesBlobStorageService> logger)
+    public S3StorageService(IOptions<S3StorageOptions> options, ILogger<S3StorageService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -246,5 +246,6 @@ internal class SpacesBlobStorageService : IBlobStorageService
     /// <summary>
     ///     Test the Amazon S3 service backend.
     /// </summary>
-    public async Task HealthCheck() => await _s3Client.GetBucketVersioningAsync(_options.BucketName);
+    public async Task HealthCheck()
+        => await _s3Client.GetBucketVersioningAsync(_options.BucketName);
 }

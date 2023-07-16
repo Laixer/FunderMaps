@@ -1,5 +1,5 @@
 using System.CommandLine;
-using FunderMaps.AspNetCore.Services;
+using FunderMaps.Core.ExternalServices.FunderMaps;
 using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,7 +41,7 @@ command.SetHandler(async (username, password, buildingId, logLevel) =>
             options.SetMinimumLevel(logLevel);
         })
         .AddScoped<FunderMapsClient>()
-        .Configure<FunderMapsClientOptions>(options =>
+        .Configure<FunderMapsOptions>(options =>
         {
             options.BaseUrl = "https://ws-staging.fundermaps.com";
             options.Email = username ?? throw new ArgumentNullException(nameof(username));

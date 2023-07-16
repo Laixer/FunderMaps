@@ -1,9 +1,13 @@
 ﻿using FunderMaps.Core.Components;
-using FunderMaps.Core.Email;
+using FunderMaps.Core.ExternalServices.FunderMaps;
+using FunderMaps.Core.ExternalServices.Mailgun;
+using FunderMaps.Core.ExternalServices.Mapbox;
+using FunderMaps.Core.ExternalServices.OpenAI;
+using FunderMaps.Core.ExternalServices.S3Storage;
+using FunderMaps.Core.ExternalServices.Tippecanoe;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
-using FunderMaps.Core.Storage;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -45,10 +49,12 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
         // Register external services in DI container.
         services.AddSingleton<IEmailService, MailgunService>();
-        services.AddSingleton<IBlobStorageService, SpacesBlobStorageService>();
+        services.AddSingleton<IBlobStorageService, S3StorageService>();
         services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
+        services.AddSingleton<OpenAIService>();
+        services.AddSingleton<FunderMapsClient>();
 
         // Register core services in DI container.
         services.AddScoped<IIncidentService, IncidentService>();

@@ -1,14 +1,14 @@
-﻿namespace FunderMaps.Core.Storage;
+﻿namespace FunderMaps.Core.ExternalServices.S3Storage;
 
 /// <summary>
 ///     Options for the blob storage service.
 /// </summary>
-public sealed record BlobStorageOptions
+public sealed record S3StorageOptions
 {
     /// <summary>
     ///     Configuration section key.
     /// </summary>
-    public const string Section = "BlobStorage";
+    public const string Section = "BlobStorage"; // TODO: Rename to S3Storage
 
     /// <summary>
     ///     Base service uri for blob storage service.

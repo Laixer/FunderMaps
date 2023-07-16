@@ -5,11 +5,13 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.AspNetCore.Services;
-using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.ExternalServices.FunderMaps;
+using FunderMaps.Core.ExternalServices.Mailgun;
+using FunderMaps.Core.ExternalServices.Mapbox;
+using FunderMaps.Core.ExternalServices.OpenAI;
+using FunderMaps.Core.ExternalServices.S3Storage;
 using FunderMaps.Core.IncidentReport;
-using FunderMaps.Core.Services;
-using FunderMaps.Core.Storage;
 using FunderMaps.Data.Providers;
 using FunderMaps.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,8 +54,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddFunderMapsCoreServices();
         services.AddFunderMapsDataServices();
 
-        services.AddScoped<FunderMapsClient>();
-
         // NOTE: Register the HttpContextAccessor service to the container.
         //       The HttpContextAccessor exposes a singleton holding the
         //       HttpContext within a scoped resolver, or null outside the scope.
@@ -62,11 +62,12 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddHttpContextAccessor();
 
         services.AddHealthChecks()
-            .AddCheck<IOHealthCheck>("io_health_check", tags: new[] { "local" })
             .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: new[] { "extern" })
             .AddCheck<RepositoryHealthCheck>("data_health_check", tags: new[] { "extern" })
             .AddCheck<EmailHealthCheck>("email_health_check", tags: new[] { "extern" })
-            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: new[] { "extern" });
+            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: new[] { "extern" })
+            .AddCheck<IOHealthCheck>("io_health_check", tags: new[] { "local" })
+            .AddCheck<TippecanoeHealthCheck>("tileset_generator_health_check", tags: new[] { "local" });
 
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
@@ -75,8 +76,10 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         // Any application depending on ASP.NET Core should have an IConfiguration service registered.
         services.Configure<MailgunOptions>(configuration.GetSection(MailgunOptions.Section));
         services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.Section));
-        services.Configure<BlobStorageOptions>(configuration.GetSection(BlobStorageOptions.Section));
+        services.Configure<S3StorageOptions>(configuration.GetSection(S3StorageOptions.Section));
+        services.Configure<OpenAIOptions>(configuration.GetSection(OpenAIOptions.Section));
         services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
+        services.Configure<FunderMapsOptions>(configuration.GetSection(FunderMapsOptions.Section));
 
         var connectionString = configuration.GetConnectionString("FunderMapsConnection");
         services.Configure<DbProviderOptions>(options =>

@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.Services;
+using FunderMaps.Core.ExternalServices.FunderMaps;
 using FunderMaps.Core.Types.Products;
 using Microsoft.Extensions.Logging;
 

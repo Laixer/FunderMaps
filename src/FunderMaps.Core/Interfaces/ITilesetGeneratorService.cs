@@ -3,7 +3,7 @@ namespace FunderMaps.Core.Interfaces;
 /// <summary>
 ///     Tileset generator service.
 /// </summary>
-public interface ITilesetGeneratorService
+public interface ITilesetGeneratorService : IServiceHealthCheck
 {
     /// <summary>
     ///     Generate vector tiles.

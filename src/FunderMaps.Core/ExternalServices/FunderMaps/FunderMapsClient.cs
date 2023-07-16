@@ -1,43 +1,10 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types.Products;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.AspNetCore.Services;
-
-// TODO: Move into separate unit.
-/// <summary>
-///     Options for the open AI service.
-/// </summary>
-public sealed record FunderMapsClientOptions
-{
-    /// <summary>
-    ///     Configuration section key.
-    /// </summary>
-    public const string Section = "FunderMaps";
-
-    /// <summary>
-    ///     FunderMaps base URL.
-    /// </summary>
-    public string? BaseUrl { get; set; }
-
-    /// <summary>
-    ///     FunderMaps email address.
-    /// </summary>
-    public string? Email { get; set; }
-
-    /// <summary>
-    ///     FunderMaps password.
-    /// </summary>
-    public string? Password { get; set; }
-
-    /// <summary>
-    ///     FunderMaps API key.
-    /// </summary>
-    public string? ApiKey { get; set; }
-}
+namespace FunderMaps.Core.ExternalServices.FunderMaps;
 
 /// <summary>
 ///     Webservice client.
@@ -50,13 +17,45 @@ public class FunderMapsClient : IDisposable
     private const string DefaultBaseUrl = @"https://ws.fundermaps.com";
 
     private readonly HttpClient httpClient = new();
-    private readonly FunderMapsClientOptions _options;
+    private readonly FunderMapsOptions _options;
     private readonly ILogger<FunderMapsClient> _logger;
+
+    // FUTURE: This is copied from AspNetCore. We should use the same.
+    /// <summary>
+    ///     User signin result DTO.
+    /// </summary>
+    public record SignInSecurityToken
+    {
+        /// <summary>
+        ///     Authentication token identifier.
+        /// </summary>
+        public string? Id { get; init; }
+
+        /// <summary>
+        ///     Authentication issuer.
+        /// </summary>
+        public string? Issuer { get; init; }
+
+        /// <summary>
+        ///     Authentication token.
+        /// </summary>
+        public string? Token { get; init; }
+
+        /// <summary>
+        ///     Authentication token valid from datetime.
+        /// </summary>
+        public DateTime ValidFrom { get; init; }
+
+        /// <summary>
+        ///     Authentication token valid until datetime.
+        /// </summary>
+        public DateTime ValidTo { get; init; }
+    }
 
     /// <summary>
     ///     Construct new instance.
     /// </summary>
-    public FunderMapsClient(IOptions<FunderMapsClientOptions> options, ILogger<FunderMapsClient> logger)
+    public FunderMapsClient(IOptions<FunderMapsOptions> options, ILogger<FunderMapsClient> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger;
@@ -86,7 +85,7 @@ public class FunderMapsClient : IDisposable
     /// <summary>
     ///     Ensures there is a valid authentication token.
     /// </summary>
-    private async Task<SignInSecurityTokenDto> GetAuthenticationTokenAsync(string email, string password)
+    private async Task<SignInSecurityToken> GetAuthenticationTokenAsync(string email, string password)
     {
         _logger.LogDebug("Requesting authentication token");
 
@@ -103,7 +102,7 @@ public class FunderMapsClient : IDisposable
             throw new HttpRequestException("FunderMaps API call failed");
         }
 
-        var authToken = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
+        var authToken = await response.Content.ReadFromJsonAsync<SignInSecurityToken>();
         if (authToken is null)
         {
             throw new HttpRequestException("FunderMaps API call failed");

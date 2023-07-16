@@ -2,7 +2,7 @@ using System.Diagnostics;
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.Core.Services;
+namespace FunderMaps.Core.ExternalServices.Tippecanoe;
 
 /// <summary>
 ///     Geospatial abstraction service.
@@ -72,5 +72,31 @@ internal class TippecanoeService : ITilesetGeneratorService
         {
             _logger.LogInformation("Console output: " + standardOutput);
         }
+    }
+
+    /// <summary>
+    ///     Test the Tippcanoe service.
+    /// </summary>
+    public Task HealthCheck()
+    {
+        var processStartInfo = new ProcessStartInfo()
+        {
+            FileName = "tippecanoe",
+            Arguments = "--version"
+        };
+
+        using var process = Process.Start(processStartInfo);
+        if (process is null)
+        {
+            throw new InvalidOperationException("Tippecanoe is not installed.");
+        }
+
+        process.WaitForExit();
+        if (process.ExitCode != 0)
+        {
+            throw new InvalidOperationException("Tippecanoe is not installed.");
+        }
+
+        return Task.CompletedTask;
     }
 }

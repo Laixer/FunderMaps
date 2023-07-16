@@ -8,28 +8,7 @@ using Amazon;
 using Amazon.S3.Model;
 using FunderMaps.Core.Interfaces;
 
-namespace FunderMaps.Core.Services;
-
-/// <summary>
-///     Options for the open AI service.
-/// </summary>
-public sealed record MapboxOptions
-{
-    /// <summary>
-    ///     Configuration section key.
-    /// </summary>
-    public const string Section = "Mapbox";
-
-    /// <summary>
-    ///     Mapbox API key.
-    /// </summary>
-    public string? ApiKey { get; set; }
-
-    /// <summary>
-    ///     Mapbox account.
-    /// </summary>
-    public string? Account { get; set; }
-}
+namespace FunderMaps.Core.ExternalServices.Mapbox;
 
 struct MapboxCredentialResponse
 {
@@ -119,7 +98,7 @@ internal class MapboxService : IMapboxService, IDisposable
     /// <param name="name">Name of the file.</param>
     /// <param name="tileset">Tileset name.</param>
     /// <param name="filePath">Path to file.</param>
-    public async Task<MapboxUploadResponse> UploadAsync(string name, string tileset, string filePath)
+    public async Task UploadAsync(string name, string tileset, string filePath)
     {
         var credentials = await UploadCredentialAsync();
 
@@ -146,7 +125,7 @@ internal class MapboxService : IMapboxService, IDisposable
         var jsonResponse = await response.Content.ReadAsStringAsync();
         var responseObject = JsonSerializer.Deserialize<MapboxUploadResponse>(jsonResponse);
 
-        return responseObject;
+        // return responseObject;
     }
 
     /// <summary>

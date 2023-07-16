@@ -5,23 +5,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Core.Services;
-
-/// <summary>
-///     Options for the open AI service.
-/// </summary>
-public sealed record OpenAIOptions
-{
-    /// <summary>
-    ///     Configuration section key.
-    /// </summary>
-    public const string Section = "OpenAI";
-
-    /// <summary>
-    ///     OpenAI API key.
-    /// </summary>
-    public string? ApiKey { get; set; }
-}
+namespace FunderMaps.Core.ExternalServices.OpenAI;
 
 public class OpenAIService : IDisposable
 {
@@ -44,10 +28,10 @@ public class OpenAIService : IDisposable
 
     private class OpenAIResponseChoice
     {
-        public string text { get; set; }
+        public string? text { get; set; }
         public int index { get; set; }
-        public List<double> logprobs { get; set; }
-        public string finish_reason { get; set; }
+        public List<double> logprobs { get; set; } = new();
+        public string? finish_reason { get; set; }
     }
 
     struct OpenAIResponse

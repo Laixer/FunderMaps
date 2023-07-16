@@ -4,6 +4,7 @@ using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -106,6 +107,9 @@ app.UseAspAppContext();
 
 app.MapControllers();
 app.MapRazorPages();
-app.MapHealthChecks("/health").WithMetadata(new AllowAnonymousAttribute());
+app.MapHealthChecks("/health", new HealthCheckOptions()
+{
+    Predicate = healthCheck => healthCheck.Tags.Contains("extern")
+}).WithMetadata(new AllowAnonymousAttribute());
 
 app.Run();
