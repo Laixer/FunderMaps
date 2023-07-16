@@ -12,14 +12,6 @@ namespace FunderMaps.WebApi.Controllers.Application;
 [Route("api")]
 public class ContractorController : ControllerBase
 {
-    private readonly IContractorRepository _contractorRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public ContractorController(IOrganizationRepository organizationRepository, IContractorRepository contractorRepository)
-        => _contractorRepository = contractorRepository ?? throw new ArgumentNullException(nameof(contractorRepository));
-
     // GET: api/contractor
     /// <summary>
     ///     Return all contractors.
@@ -29,9 +21,9 @@ public class ContractorController : ControllerBase
     ///     Contractors are tenant independent.
     /// </remarks>
     [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
-    public async IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination)
+    public async IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination, [FromServices] IContractorRepository contractorRepository)
     {
-        await foreach (var contractor in _contractorRepository.ListAllAsync(Navigation.All))
+        await foreach (var contractor in contractorRepository.ListAllAsync(Navigation.All))
         {
             yield return contractor;
         }

@@ -53,7 +53,7 @@ public class RecoveryController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync()
     {
-        DatasetStatsDto output = new()
+        var output = new DatasetStatsDto()
         {
             Count = await _recoveryRepository.CountAsync(),
         };
@@ -66,28 +66,16 @@ public class RecoveryController : ControllerBase
     ///     Return recovery by id.
     /// </summary>
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetAsync(int id)
-    {
-        Recovery recovery = await _recoveryRepository.GetByIdAsync(id);
-
-        var output = _mapper.Map<RecoveryDto>(recovery);
-
-        return Ok(output);
-    }
+    public Task<Recovery> GetAsync(int id)
+        => _recoveryRepository.GetByIdAsync(id);
 
     // GET: api/recovery
     /// <summary>
     ///     Return all recoveries.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
-    {
-        IAsyncEnumerable<Recovery> organizationList = _recoveryRepository.ListAllAsync(pagination.Navigation);
-
-        var output = await _mapper.MapAsync<IList<RecoveryDto>, Recovery>(organizationList);
-
-        return Ok(output);
-    }
+    public IAsyncEnumerable<Recovery> GetAllAsync([FromQuery] PaginationDto pagination)
+        => _recoveryRepository.ListAllAsync(pagination.Navigation);
 
     // POST: api/recovery
     /// <summary>
@@ -95,19 +83,15 @@ public class RecoveryController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> CreateAsync([FromBody] RecoveryDto input)
+    public Task<Recovery> CreateAsync([FromBody] Recovery input)
     {
-        var recovery = _mapper.Map<Recovery>(input);
-        if (_appContext.UserId == input.Reviewer)
+        // TODO: Creator must be self
+        if (_appContext.UserId == input.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        recovery = await _recoveryRepository.AddGetAsync(recovery);
-
-        var output = _mapper.Map<RecoveryDto>(recovery);
-
-        return Ok(output);
+        return _recoveryRepository.AddGetAsync(input);
     }
 
     // POST: api/recovery/upload-document
@@ -126,7 +110,7 @@ public class RecoveryController : ControllerBase
             contentType: input.ContentType,
             stream: input.OpenReadStream());
 
-        DocumentDto output = new()
+        var output = new DocumentDto()
         {
             Name = storeFileName,
         };
@@ -147,7 +131,7 @@ public class RecoveryController : ControllerBase
             fileName: recovery.DocumentFile,
             hoursValid: 1);
 
-        BlobAccessLinkDto result = new()
+        var result = new BlobAccessLinkDto()
         {
             AccessLink = link
         };
@@ -161,26 +145,25 @@ public class RecoveryController : ControllerBase
     /// </summary>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] RecoveryDto input)
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] Recovery input)
     {
-        var recovery = _mapper.Map<Recovery>(input);
-        recovery.Id = id;
+        // var recovery = _mapper.Map<Recovery>(input);
+        input.Id = id;
 
-        var recovery_existing = await _recoveryRepository.GetByIdAsync(id);
-        if (recovery_existing.Attribution.Creator == input.Reviewer)
+        if (input.Attribution.Creator == input.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        await _recoveryRepository.UpdateAsync(recovery);
+        await _recoveryRepository.UpdateAsync(input);
 
         // FUTURE: Does this make sense?
         // Only when this item was rejected can we move into
         // a pending state after update.
-        if (recovery.State.AuditStatus == AuditStatus.Rejected)
+        if (input.State.AuditStatus == AuditStatus.Rejected)
         {
-            recovery.State.TransitionToPending();
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+            input.State.TransitionToPending();
+            await _recoveryRepository.SetAuditStatusAsync(input.Id, input);
         }
 
         return NoContent();

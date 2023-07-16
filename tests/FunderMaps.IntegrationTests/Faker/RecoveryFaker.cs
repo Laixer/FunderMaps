@@ -1,19 +1,18 @@
 ﻿using Bogus;
-using Bogus.Extensions;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.DataTransferObjects;
 
 namespace FunderMaps.IntegrationTests.Faker
 {
     /// <summary>
-    ///     Faker for <see cref="RecoveryDto"/>.
+    ///     Faker for <see cref="Recovery"/>.
     /// </summary>
-    public class RecoveryDtoFaker : Faker<RecoveryDto>
+    public class RecoveryFaker : Faker<Recovery>
     {
         /// <summary>
         ///     Create new instance.
         /// </summary>
-        public RecoveryDtoFaker()
+        public RecoveryFaker()
         {
             RuleFor(f => f.Id, f => f.UniqueIndex);
             RuleFor(f => f.DocumentName, f => f.System.FileName());
@@ -21,10 +20,10 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.Type, f => f.PickRandom<RecoveryDocumentType>());
             RuleFor(f => f.DocumentFile, f => f.System.FileName());
             RuleFor(f => f.DocumentDate, f => f.Date.Between(DateTime.Parse("1000-01-01"), DateTime.Now));
-            RuleFor(f => f.AuditStatus, f => f.PickRandom<AuditStatus>());
-            RuleFor(f => f.Reviewer, f => f.Random.Uuid().OrNull(f, 0.2f));
-            // RuleFor(f => f.Contractor, f => f.Random.Uuid());
-            RuleFor(f => f.AccessPolicy, f => f.PickRandom<AccessPolicy>());
+            RuleFor(f => f.State.AuditStatus, f => f.PickRandom<AuditStatus>());
+            RuleFor(f => f.Attribution.Reviewer, f => f.Random.Uuid().OrNull(f, 0.2f));
+            RuleFor(f => f.Attribution.Contractor, f => f.Random.Int(0, 10_000));
+            RuleFor(f => f.Access.AccessPolicy, f => f.PickRandom<AccessPolicy>());
         }
     }
 }

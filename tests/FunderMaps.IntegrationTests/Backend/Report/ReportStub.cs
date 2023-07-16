@@ -13,24 +13,24 @@ namespace FunderMaps.IntegrationTests.Backend.Report;
 /// </summary>
 public static class ReportStub
 {
-    public static async Task<RecoveryDto> CreateRecoveryAsync(BackendFixtureFactory factory)
+    public static async Task<Recovery> CreateRecoveryAsync(BackendFixtureFactory factory)
     {
         // Arrange
         using var client = factory.CreateClient(OrganizationRole.Writer);
-        var newObject = new RecoveryDtoFaker()
-            .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
-            // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+        var newObject = new RecoveryFaker()
+            .RuleFor(f => f.Attribution.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+            .RuleFor(f => f.Attribution.Contractor, f => 10)
             .Generate();
 
         // Act
         var response = await client.PostAsJsonAsync("api/recovery", newObject);
-        var returnObject = await response.Content.ReadFromJsonAsync<RecoveryDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<Recovery>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(returnObject);
-        Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        Assert.Null(returnObject.UpdateDate);
+        Assert.Equal(AuditStatus.Todo, returnObject.State.AuditStatus);
+        Assert.Null(returnObject.Record.UpdateDate);
 
         return returnObject;
     }
@@ -40,7 +40,7 @@ public static class ReportStub
         // Arrange
         var inquiry = new InquiryDtoFaker()
             .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
-            // .RuleFor(f => f.Contractor, f => Guid.Parse("62af863e-2021-4438-a5ea-730ed3db9eda"))
+            .RuleFor(f => f.Contractor, f => 10)
             .Generate();
         using var client = factory.CreateClient(OrganizationRole.Writer);
 
@@ -78,7 +78,7 @@ public static class ReportStub
         return returnObject;
     }
 
-    public static async Task DeleteRecoveryAsync(BackendFixtureFactory factory, RecoveryDto recovery)
+    public static async Task DeleteRecoveryAsync(BackendFixtureFactory factory, Recovery recovery)
     {
         // Arrange
         using var client = factory.CreateClient(OrganizationRole.Superuser);
@@ -114,7 +114,7 @@ public static class ReportStub
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
-    public static async Task<RecoverySample> CreateRecoverySampleAsync(BackendFixtureFactory factory, RecoveryDto recovery)
+    public static async Task<RecoverySample> CreateRecoverySampleAsync(BackendFixtureFactory factory, Recovery recovery)
     {
         // Arrange
         using var client = factory.CreateClient(OrganizationRole.Writer);

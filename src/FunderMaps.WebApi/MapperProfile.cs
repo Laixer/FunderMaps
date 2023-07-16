@@ -25,15 +25,5 @@ public class MapperProfile : Profile
             .ForMember(dest => dest.CreateDate, o => o.MapFrom(src => src.Record.CreateDate))
             .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
             .ReverseMap();
-        CreateMap<Recovery, RecoveryDto>()
-            .ForMember(dest => dest.AuditStatus, o => o.MapFrom(src => src.State.AuditStatus))
-            .ForMember(dest => dest.Reviewer, o => o.MapFrom(src => src.Attribution.Reviewer))
-            .ForMember(dest => dest.Creator, o => o.MapFrom(src => src.Attribution.Creator))
-            .ForMember(dest => dest.Owner, o => o.MapFrom(src => src.Attribution.Owner))
-            .ForMember(dest => dest.Contractor, o => o.MapFrom(src => src.Attribution.Contractor))
-            .ForMember(dest => dest.AccessPolicy, o => o.MapFrom(src => src.Access.AccessPolicy))
-            .ForMember(dest => dest.CreateDate, o => o.MapFrom(src => src.Record.CreateDate))
-            .ForMember(dest => dest.UpdateDate, o => o.MapFrom(src => src.Record.UpdateDate))
-            .ReverseMap();
     }
 }
