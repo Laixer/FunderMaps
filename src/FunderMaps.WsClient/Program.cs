@@ -4,17 +4,15 @@ using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-var usernameOption = new Option<string?>("--username", "Webservice username")
+var usernameOption = new Option<string?>(new[] { "-u", "--username" }, "Webservice username")
 {
     IsRequired = true,
 };
-usernameOption.AddAlias("-u");
 
-var passwordOption = new Option<string?>("--password", "Webservice password")
+var passwordOption = new Option<string?>(new[] { "-u", "--password" }, "Webservice password")
 {
     IsRequired = true,
 };
-passwordOption.AddAlias("-p");
 
 var logLevel = new Option<LogLevel>(new[] { "--log", "--log-level" }, getDefaultValue: () => LogLevel.Information, "The log level to use");
 

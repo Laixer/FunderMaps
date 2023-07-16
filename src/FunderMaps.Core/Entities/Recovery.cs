@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
-// TODO inherit from StateControl?
 /// <summary>
 ///     Foundation recovery entity.
 /// </summary>
@@ -52,20 +51,20 @@ public sealed class Recovery : IEntityIdentifier<int>
     /// <summary>
     ///     Attribution control.
     /// </summary>
-    public AttributionControl Attribution { get; set; }
+    public AttributionControl Attribution { get; set; } = new();
 
     /// <summary>
     ///     State control.
     /// </summary>
-    public StateControl State { get; set; }
+    public StateControl State { get; set; } = new();
 
     /// <summary>
     ///     Access control.
     /// </summary>
-    public AccessControl Access { get; set; }
+    public AccessControl Access { get; set; } = new();
 
     /// <summary>
     ///     Record control.
     /// </summary>
-    public RecordControl Record { get; set; }
+    public RecordControl Record { get; set; } = new();
 }

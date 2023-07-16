@@ -11,5 +11,5 @@ public class StatusChangeDto
     ///     Status change message.
     /// </summary>
     [Required]
-    public string Message { get; set; }
+    public string Message { get; set; } = default!;
 }
