@@ -43,37 +43,6 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
     /// <summary>
     ///     Retrieve all product telemetrics.
     /// </summary>
-    public async IAsyncEnumerable<ProductTelemetry3> ListRecentByTenantAsync(Guid tenant)
-    {
-        var sql = @"
-            SELECT  -- ProductTracker
-                    pt.product,
-                    pt.building_id,
-                    pt.create_date
-            FROM    application.product_tracker AS pt
-            WHERE   pt.organization_id = @tenant
-            ORDER BY pt.create_date desc
-            LIMIT 10";
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("tenant", tenant);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
-        {
-            yield return new()
-            {
-                Product = reader.GetString(0),
-                BuildingId = reader.GetString(1),
-                CreateDate = reader.GetDateTime(2),
-            };
-        }
-    }
-
-    // TODO: Rename
-    /// <summary>
-    ///     Retrieve all product telemetrics.
-    /// </summary>
     public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
     {
         var sql = @"
