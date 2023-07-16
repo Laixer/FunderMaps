@@ -38,13 +38,10 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<SignInSecurityTokenDto>> SignInAsync([FromBody] SignInDto input)
     {
-        // Act.
         TokenContext context = await _signInService.PasswordSignInAsync(input.Email, input.Password);
 
-        // Map.
         var output = _mapper.Map<SignInSecurityTokenDto>(context);
 
-        // Return.
         return Ok(output);
     }
 
@@ -59,13 +56,10 @@ public class AuthController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<SignInSecurityTokenDto>> RefreshSignInAsync()
     {
-        // Act.
         TokenContext context = await _signInService.SignInAsync(User);
 
-        // Map.
         var output = _mapper.Map<SignInSecurityTokenDto>(context);
 
-        // Return.
         return Ok(output);
     }
 }

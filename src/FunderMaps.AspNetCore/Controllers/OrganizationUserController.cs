@@ -51,12 +51,10 @@ public class OrganizationUserController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<UserDto>> AddUserAsync([FromBody] OrganizationUserPasswordDto input)
+    public async Task<User> AddUserAsync([FromBody] OrganizationUserPasswordDto input)
     {
-        // Map.
         var user = _mapper.Map<User>(input);
 
-        // Act.
         // FUTURE: Do in 1 call.
         user = await _userRepository.AddGetAsync(user);
         if (input.Password is not null)
@@ -65,11 +63,11 @@ public class OrganizationUserController : ControllerBase
         }
         await _organizationUserRepository.AddAsync(_appContext.TenantId, user.Id, input.OrganizationRole);
 
-        // Map.
-        var output = _mapper.Map<UserDto>(user);
+        return user;
 
-        // Return.
-        return Ok(output);
+        // var output = _mapper.Map<UserDto>(user);
+
+        // return Ok(output);
     }
 
     // GET: organization/user
@@ -104,13 +102,12 @@ public class OrganizationUserController : ControllerBase
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] UserDto input)
+    public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] User user)
     {
         // Map.
-        var user = _mapper.Map<User>(input);
+        // var user = _mapper.Map<User>(input);
         user.Id = id;
 
-        // Act.
         // TODO: Move to db
         if (!await _organizationUserRepository.IsUserInOrganization(_appContext.TenantId, user.Id))
         {
@@ -118,7 +115,6 @@ public class OrganizationUserController : ControllerBase
         }
         await _userRepository.UpdateAsync(user);
 
-        // Return.
         return NoContent();
     }
 
@@ -132,7 +128,6 @@ public class OrganizationUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, [FromBody] ChangeOrganizationRoleDto input)
     {
-        // Act.
         // TODO: Move to db
         if (!await _organizationUserRepository.IsUserInOrganization(_appContext.TenantId, id))
         {
@@ -140,7 +135,6 @@ public class OrganizationUserController : ControllerBase
         }
         await _organizationUserRepository.SetOrganizationRoleByUserIdAsync(id, input.Role);
 
-        // Return.
         return NoContent();
     }
 
@@ -155,20 +149,17 @@ public class OrganizationUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ChangePasswordDto input)
     {
-        // Act.
         // TODO: Move to db
         if (!await _organizationUserRepository.IsUserInOrganization(_appContext.TenantId, id))
         {
             throw new AuthorizationException();
         }
 
-        // Act.
         if (input.NewPassword is not null)
         {
             await _signInService.SetPasswordAsync(id, input.NewPassword);
         }
 
-        // Return.
         return NoContent();
     }
 
@@ -182,7 +173,6 @@ public class OrganizationUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteUserAsync(Guid id)
     {
-        // Act.
         // TODO: Move to db
         if (!await _organizationUserRepository.IsUserInOrganization(_appContext.TenantId, id))
         {
@@ -190,7 +180,6 @@ public class OrganizationUserController : ControllerBase
         }
         await _userRepository.DeleteAsync(id);
 
-        // Return.
         return NoContent();
     }
 }

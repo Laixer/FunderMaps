@@ -21,11 +21,6 @@ public class ContractorController : ControllerBase
     ///     Contractors are tenant independent.
     /// </remarks>
     [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
-    public async IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination, [FromServices] IContractorRepository contractorRepository)
-    {
-        await foreach (var contractor in contractorRepository.ListAllAsync(Navigation.All))
-        {
-            yield return contractor;
-        }
-    }
+    public IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination, [FromServices] IContractorRepository contractorRepository)
+        => contractorRepository.ListAllAsync(Navigation.All);
 }

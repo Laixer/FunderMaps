@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.AspNetCore.DataTransferObjects;
 
+// TODO: REMOVE
 /// <summary>
 ///     User DTO.
 /// </summary>

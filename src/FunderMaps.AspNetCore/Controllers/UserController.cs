@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
@@ -20,7 +19,6 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly Core.AppContext _appContext;
     private readonly IUserRepository _userRepository;
     private readonly SignInService _signInService;
@@ -28,9 +26,8 @@ public class UserController : ControllerBase
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public UserController(IMapper mapper, Core.AppContext appContext, IUserRepository userRepository, SignInService signInService)
+    public UserController(Core.AppContext appContext, IUserRepository userRepository, SignInService signInService)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
@@ -43,17 +40,8 @@ public class UserController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<UserDto>> GetAsync()
-    {
-        // Act.
-        User sessionUser = await _userRepository.GetByIdAsync(_appContext.UserId);
-
-        // Map.
-        var output = _mapper.Map<UserDto>(sessionUser);
-
-        // Return.
-        return Ok(output);
-    }
+    public async Task<User> GetAsync()
+        => await _userRepository.GetByIdAsync(_appContext.UserId);
 
     // PUT: user
     /// <summary>
@@ -62,16 +50,12 @@ public class UserController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> UpdateAsync([FromBody] UserDto input)
+    public async Task<IActionResult> UpdateAsync([FromBody] User user)
     {
-        // Map.
-        var user = _mapper.Map<User>(input);
         user.Id = _appContext.UserId;
 
-        // Act.
         await _userRepository.UpdateAsync(user);
 
-        // Return.
         return NoContent();
     }
 
@@ -86,7 +70,6 @@ public class UserController : ControllerBase
     {
         if (input.OldPassword is not null && input.NewPassword is not null)
         {
-            // Act.
             if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
             {
                 throw new InvalidCredentialException();
@@ -95,7 +78,6 @@ public class UserController : ControllerBase
             await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
         }
 
-        // Return.
         return NoContent();
     }
 }

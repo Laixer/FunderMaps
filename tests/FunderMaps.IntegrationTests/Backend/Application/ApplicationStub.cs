@@ -1,7 +1,6 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.IntegrationTests.Faker;
+using FunderMaps.Core.Entities;
 using FunderMaps.Testing.Faker;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using Xunit;
 
@@ -80,7 +79,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
 
             // Act
             var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newObject);
-            var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
+            var returnObject = await response.Content.ReadFromJsonAsync<User>();
 
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -99,7 +98,7 @@ namespace FunderMaps.IntegrationTests.Backend.Application
             };
         }
 
-        public static async Task DeleteOrganizationUserAsync(BackendFixtureFactory factory, OrganizationDto organization, UserDto user)
+        public static async Task DeleteOrganizationUserAsync(BackendFixtureFactory factory, OrganizationDto organization, User user)
         {
             // Arrange
             using var client = factory.CreateAdminClient();

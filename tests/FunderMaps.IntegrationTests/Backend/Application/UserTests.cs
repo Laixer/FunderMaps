@@ -1,4 +1,5 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using FunderMaps.IntegrationTests.Faker;
 using System.Net;
 using Xunit;
@@ -23,7 +24,7 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
 
         // Act
         var response = await client.GetAsync("api/user");
-        var returnObject = await response.Content.ReadFromJsonAsync<UserDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<User>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -37,13 +38,13 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
     {
         // Arrange
         using var client = Factory.CreateAlterClient();
-        var updateObject = new UserDtoFaker().Generate();
+        var updateObject = new UserFaker().Generate();
 
         // Act
         var response = await client.PutAsJsonAsync("api/user", updateObject);
 
         // Act
-        var returnObject = await client.GetFromJsonAsync<UserDto>("api/user");
+        var returnObject = await client.GetFromJsonAsync<User>("api/user");
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
@@ -59,7 +60,7 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
     {
         // Arrange
         using var client = Factory.CreateAlterClient();
-        var updateObject = new UserDtoFaker()
+        var updateObject = new UserFaker()
             .RuleFor(f => f.PhoneNumber, f => "+(31) 2234-89-12")
             .Generate();
 
@@ -67,7 +68,7 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
         var response = await client.PutAsJsonAsync("api/user", updateObject);
 
         // Act
-        var returnObject = await client.GetFromJsonAsync<UserDto>("api/user");
+        var returnObject = await client.GetFromJsonAsync<User>("api/user");
 
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);

@@ -48,22 +48,21 @@ public class OrganizationUserAdminController : ControllerBase
     ///     Add user to organization.
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> AddUserAsync(Guid id, [FromBody] OrganizationUserPasswordDto input)
+    public async Task<User> AddUserAsync(Guid id, [FromBody] OrganizationUserPasswordDto input)
     {
-        // Map.
         var user = _mapper.Map<User>(input);
 
-        // Act.
         // FUTURE: Do in 1 call.
         user = await _userRepository.AddGetAsync(user);
         await _signInService.SetPasswordAsync(user.Id, input.Password);
         await _organizationUserRepository.AddAsync(id, user.Id, input.OrganizationRole);
 
-        // Map.
-        var output = _mapper.Map<UserDto>(user);
+        return user;
+
+        // var output = _mapper.Map<User>(user);
 
         // Return.
-        return Ok(output);
+        // return Ok(output);
     }
 
     // GET: api/admin/organization/{id}/user
@@ -73,7 +72,6 @@ public class OrganizationUserAdminController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
     {
-        // Act.
         // TODO: FIX: This is ugly.
         // TODO: Single call
         var output = new List<OrganizationUserDto>();
@@ -84,7 +82,6 @@ public class OrganizationUserAdminController : ControllerBase
             output.Add(result);
         }
 
-        // Return.
         return Ok(output);
     }
 
@@ -95,11 +92,9 @@ public class OrganizationUserAdminController : ControllerBase
     [HttpPut("{userId:guid}")]
     public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] OrganizationUserDto input)
     {
-        // Map.
         var user = _mapper.Map<User>(input);
         user.Id = userId;
 
-        // Act.
         // TODO: Move to db
         if (!await _organizationUserRepository.IsUserInOrganization(id, user.Id))
         {
@@ -107,7 +102,6 @@ public class OrganizationUserAdminController : ControllerBase
         }
         await _userRepository.UpdateAsync(user);
 
-        // Return.
         return NoContent();
     }
 
