@@ -19,7 +19,7 @@ public class VersionController : ControllerBase
     ///     often and this call is primarily used to check if the
     ///     backend is responding.
     /// </remarks>
-    [HttpGet("version"), ResponseCache(Duration = 60 * 60 * 24)]
+    [HttpGet("api/version"), ResponseCache(Duration = 60 * 60 * 24)]
     public ActionResult<AppVersionDto> Get()
         => Ok(new AppVersionDto
         {

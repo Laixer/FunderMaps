@@ -18,7 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for inquiry operations.
 /// </summary>
-[Route("inquiry")]
+[Route("api/inquiry")]
 public class InquiryController : ControllerBase
 {
     private readonly IMapper _mapper;

@@ -12,7 +12,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for recovery sample operations.
 /// </summary>
-[Route("recovery/{recoveryId}/sample")]
+[Route("api/recovery/{recoveryId}/sample")]
 public class RecoverySampleController : ControllerBase
 {
     private readonly IRecoverySampleRepository _recoverySampleRepository;

@@ -17,7 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for recovery operations.
 /// </summary>
-[Route("recovery")]
+[Route("api/recovery")]
 public class RecoveryController : ControllerBase
 {
     private readonly IMapper _mapper;

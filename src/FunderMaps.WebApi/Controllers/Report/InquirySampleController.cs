@@ -11,7 +11,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for inquiry sample operations.
 /// </summary>
-[Route("inquiry/{inquiryId}/sample")]
+[Route("api/inquiry/{inquiryId}/sample")]
 public class InquirySampleController : ControllerBase
 {
     private readonly IInquiryRepository _inquiryRepository;
@@ -77,6 +77,7 @@ public class InquirySampleController : ControllerBase
         var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
 
         inquirySample.Address = address.Id;
+        inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         inquirySample.Inquiry = inquiryId;
 
         var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);

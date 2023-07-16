@@ -17,6 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     user session. Therefore the user context must be active.
 /// </remarks>
 [Authorize(Policy = "WriterPolicy")]
+[Route("api")]
 public class ReviewerController : ControllerBase
 {
     private readonly IMapper _mapper;

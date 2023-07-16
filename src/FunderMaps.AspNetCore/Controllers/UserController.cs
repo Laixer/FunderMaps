@@ -17,7 +17,7 @@ namespace FunderMaps.AspNetCore.Controllers;
 ///     This controller should *only* handle operations on the current
 ///     user session. Therefore the user context must be active.
 /// </remarks>
-[Authorize, Route("user")]
+[Authorize, Route("api/user")]
 public class UserController : ControllerBase
 {
     private readonly IMapper _mapper;
