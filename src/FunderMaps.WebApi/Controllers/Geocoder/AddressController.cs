@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -11,14 +10,6 @@ namespace FunderMaps.WebApi.Controllers.Geocoder;
 [Route("api/address")]
 public class AddressController : ControllerBase
 {
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public AddressController(IMapper mapper)
-        => _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-
     // GET: api/address
     /// <summary>
     ///     Get address by identifier.
