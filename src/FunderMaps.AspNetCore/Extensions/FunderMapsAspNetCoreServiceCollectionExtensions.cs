@@ -5,7 +5,6 @@ using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.AspNetCore.Services;
-using FunderMaps.Core.Entities;
 using FunderMaps.Core.ExternalServices.FunderMaps;
 using FunderMaps.Core.ExternalServices.Mailgun;
 using FunderMaps.Core.ExternalServices.Mapbox;

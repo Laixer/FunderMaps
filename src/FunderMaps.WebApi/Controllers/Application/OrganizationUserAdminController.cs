@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
@@ -23,7 +22,6 @@ namespace FunderMaps.WebApi.Controllers.Application;
 [Route("api/admin/organization/{id:guid}/user")]
 public class OrganizationUserAdminController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
     private readonly IOrganizationUserRepository _organizationUserRepository;
     private readonly SignInService _signInService;
@@ -32,12 +30,10 @@ public class OrganizationUserAdminController : ControllerBase
     ///     Create new instance.
     /// </summary>
     public OrganizationUserAdminController(
-        IMapper mapper,
         IUserRepository userRepository,
         IOrganizationUserRepository organizationUserRepository,
         SignInService signInService)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
         _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));

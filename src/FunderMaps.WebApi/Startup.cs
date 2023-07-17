@@ -29,7 +29,6 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureServices(IServiceCollection services)
     {
-        // services.AddAutoMapper(typeof(Startup));
         // services.AddLocalization(options =>
         // {
         //     options.ResourcesPath = "Resources";
@@ -50,7 +49,6 @@ public class Startup
     /// <param name="services">See <see cref="IServiceCollection"/>.</param>
     public void ConfigureDevelopmentServices(IServiceCollection services)
     {
-        // services.AddAutoMapper(typeof(Startup));
         // services.AddLocalization(options =>
         // {
         //     options.ResourcesPath = "Resources";
