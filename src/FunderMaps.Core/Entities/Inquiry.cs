@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities;
 
 /// <summary>
-///     Inquiry base entity.
+///     Inquiry entity.
 /// </summary>
-public class InquiryBase<TParent> : IEntityIdentifier<int>
+public class Inquiry : IEntityIdentifier<int>
 {
     public int Identifier => Id;
 
@@ -67,42 +67,23 @@ public class InquiryBase<TParent> : IEntityIdentifier<int>
     public bool StandardF3o { get; set; }
 
     /// <summary>
-    ///     Print object as name.
-    /// </summary>
-    /// <returns>String representing inquiry.</returns>
-    public override string ToString() => DocumentName;
-}
-
-/// <summary>
-///     Inquiry entity.
-/// </summary>
-public class Inquiry : InquiryBase<Inquiry>
-{
-}
-
-/// <summary>
-///     Inquiry full entity.
-/// </summary>
-public sealed class InquiryFull : InquiryBase<InquiryFull>
-{
-    /// <summary>
     ///     Attribution control.
     /// </summary>
-    public AttributionControl Attribution { get; set; }
+    public AttributionControl Attribution { get; set; } = new();
 
     /// <summary>
     ///     State control.
     /// </summary>
-    public StateControl State { get; set; }
+    public StateControl State { get; set; } = new();
 
     /// <summary>
     ///     Access control.
     /// </summary>
-    public AccessControl Access { get; set; }
+    public AccessControl Access { get; set; } = new();
 
     /// <summary>
     ///     Record control.
     /// </summary>
-    public RecordControl Record { get; set; }
+    public RecordControl Record { get; set; } = new();
 }
 

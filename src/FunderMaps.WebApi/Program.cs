@@ -9,7 +9,6 @@ builder.Services.AddFunderMapsAspNetCoreServices();
 builder.Services.AddFunderMapsAspNetCoreAuth();
 builder.Services.AddFunderMapsAspNetCoreControllers();
 
-builder.Services.AddAutoMapper(typeof(FunderMaps.WebApi.MapperProfile));
 builder.Services.AddLocalization(options =>
 {
     options.ResourcesPath = "Resources";

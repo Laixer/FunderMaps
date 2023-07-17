@@ -22,8 +22,10 @@ namespace FunderMaps.IntegrationTests.Faker
             RuleFor(f => f.DocumentDate, f => f.Date.Between(DateTime.Parse("1000-01-01"), DateTime.Now));
             RuleFor(f => f.State.AuditStatus, f => f.PickRandom<AuditStatus>());
             RuleFor(f => f.Attribution.Reviewer, f => f.Random.Uuid().OrNull(f, 0.2f));
-            RuleFor(f => f.Attribution.Contractor, f => f.Random.Int(0, 10_000));
+            RuleFor(f => f.Attribution.Contractor, f => f.Random.Int(0, 10_000).OrNull(f, 0.1f));
             RuleFor(f => f.Access.AccessPolicy, f => f.PickRandom<AccessPolicy>());
+            RuleFor(f => f.Record.CreateDate, f => DateTime.Now);
+            RuleFor(f => f.Record.UpdateDate, f => f.Date.Future());
         }
     }
 }

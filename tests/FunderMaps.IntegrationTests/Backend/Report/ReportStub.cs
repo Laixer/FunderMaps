@@ -35,24 +35,24 @@ public static class ReportStub
         return returnObject;
     }
 
-    public static async Task<InquiryDto> CreateInquiryAsync(BackendFixtureFactory factory)
+    public static async Task<Inquiry> CreateInquiryAsync(BackendFixtureFactory factory)
     {
         // Arrange
-        var inquiry = new InquiryDtoFaker()
-            .RuleFor(f => f.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
-            .RuleFor(f => f.Contractor, f => 10)
+        var inquiry = new InquiryFaker()
+            .RuleFor(f => f.Attribution.Reviewer, f => Guid.Parse("21c403fe-45fc-4106-9551-3aada1bbdec3"))
+            .RuleFor(f => f.Attribution.Contractor, f => 10)
             .Generate();
         using var client = factory.CreateClient(OrganizationRole.Writer);
 
         // Act
         var response = await client.PostAsJsonAsync("api/inquiry", inquiry);
-        var returnObject = await response.Content.ReadFromJsonAsync<InquiryDto>();
+        var returnObject = await response.Content.ReadFromJsonAsync<Inquiry>();
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(returnObject);
-        Assert.Equal(AuditStatus.Todo, returnObject.AuditStatus);
-        Assert.Null(returnObject.UpdateDate);
+        Assert.Equal(AuditStatus.Todo, returnObject.State.AuditStatus);
+        Assert.Null(returnObject.Record.UpdateDate);
 
         return returnObject;
     }
@@ -90,7 +90,7 @@ public static class ReportStub
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
-    public static async Task DeleteInquiryAsync(BackendFixtureFactory factory, InquiryDto inquiry)
+    public static async Task DeleteInquiryAsync(BackendFixtureFactory factory, Inquiry inquiry)
     {
         // Arrange
         using var client = factory.CreateClient(OrganizationRole.Superuser);
@@ -136,7 +136,7 @@ public static class ReportStub
         return returnObject;
     }
 
-    public static async Task<InquirySample> CreateInquirySampleAsync(BackendFixtureFactory factory, InquiryDto inquiry)
+    public static async Task<InquirySample> CreateInquirySampleAsync(BackendFixtureFactory factory, Inquiry inquiry)
     {
         using var client = factory.CreateClient(OrganizationRole.Writer);
         var newObject = new InquirySampleFaker()

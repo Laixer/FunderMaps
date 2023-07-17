@@ -145,24 +145,24 @@ public class RecoveryController : ControllerBase
     /// </summary>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] Recovery input)
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] Recovery recovery)
     {
-        input.Id = id;
+        recovery.Id = id;
 
-        if (input.Attribution.Creator == input.Attribution.Reviewer)
+        if (recovery.Attribution.Creator == recovery.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        await _recoveryRepository.UpdateAsync(input);
+        await _recoveryRepository.UpdateAsync(recovery);
 
         // FUTURE: Does this make sense?
         // Only when this item was rejected can we move into
         // a pending state after update.
-        if (input.State.AuditStatus == AuditStatus.Rejected)
+        if (recovery.State.AuditStatus == AuditStatus.Rejected)
         {
-            input.State.TransitionToPending();
-            await _recoveryRepository.SetAuditStatusAsync(input.Id, input);
+            recovery.State.TransitionToPending();
+            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
         }
 
         return NoContent();

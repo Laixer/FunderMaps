@@ -10,14 +10,14 @@ namespace FunderMaps.Data.Repositories;
 /// <summary>
 ///     Inquiry repository.
 /// </summary>
-internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRepository
+internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryRepository
 {
     /// <summary>
     ///     Create new <see cref="InquiryFull"/>.
     /// </summary>
     /// <param name="entity">Entity object.</param>
     /// <returns>Created <see cref="InquiryFull"/>.</returns>
-    public override async Task<int> AddAsync(InquiryFull entity)
+    public override async Task<int> AddAsync(Inquiry entity)
     {
         var sql = @"
             WITH attribution AS (
@@ -114,7 +114,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         await context.NonQueryAsync();
     }
 
-    public static void MapToWriter(DbContext context, InquiryFull entity)
+    public static void MapToWriter(DbContext context, Inquiry entity)
     {
         context.AddParameterWithValue("document_name", entity.DocumentName);
         context.AddParameterWithValue("inspection", entity.Inspection);
@@ -128,7 +128,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
         context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
     }
 
-    public static InquiryFull MapFromReader(DbDataReader reader, int offset = 0)
+    public static Inquiry MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
             Id = reader.GetInt(offset + 0),
@@ -168,10 +168,10 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     ///     Retrieve <see cref="InquiryFull"/> by id.
     /// </summary>
     /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="InquiryFull"/>.</returns>
-    public override async Task<InquiryFull> GetByIdAsync(int id)
+    /// <returns><see cref="Inquiry"/>.</returns>
+    public override async Task<Inquiry> GetByIdAsync(int id)
     {
-        if (TryGetEntity(id, out InquiryFull? entity))
+        if (TryGetEntity(id, out Inquiry? entity))
         {
             return entity ?? throw new InvalidOperationException();
         }
@@ -225,7 +225,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     ///     Retrieve all <see cref="InquiryFull"/>.
     /// </summary>
     /// <returns>List of <see cref="InquiryFull"/>.</returns>
-    public override async IAsyncEnumerable<InquiryFull> ListAllAsync(Navigation navigation)
+    public override async IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation)
     {
         var sql = @"
             SELECT  -- Inquiry
@@ -277,7 +277,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     ///     Update <see cref="InquiryFull"/>.
     /// </summary>
     /// <param name="entity">Entity object.</param>
-    public override async Task UpdateAsync(InquiryFull entity)
+    public override async Task UpdateAsync(Inquiry entity)
     {
         ResetCacheEntity(entity);
 
@@ -325,7 +325,7 @@ internal class InquiryRepository : RepositoryBase<InquiryFull, int>, IInquiryRep
     /// </summary>
     /// <param name="id">Entity identifier.</param>
     /// <param name="entity">Entity object.</param>
-    public async Task SetAuditStatusAsync(int id, InquiryFull entity)
+    public async Task SetAuditStatusAsync(int id, Inquiry entity)
     {
         ResetCacheEntity(id);
 

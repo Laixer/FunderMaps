@@ -1,4 +1,3 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Email;
@@ -21,7 +20,6 @@ namespace FunderMaps.WebApi.Controllers.Report;
 [Route("api/inquiry")]
 public class InquiryController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly Core.AppContext _appContext;
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IUserRepository _userRepository;
@@ -33,7 +31,6 @@ public class InquiryController : ControllerBase
     ///     Create new instance.
     /// </summary>
     public InquiryController(
-        IMapper mapper,
         Core.AppContext appContext,
         IOrganizationRepository organizationRepository,
         IUserRepository userRepository,
@@ -41,7 +38,6 @@ public class InquiryController : ControllerBase
         IBlobStorageService blobStorageService,
         IEmailService emailService)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -70,7 +66,7 @@ public class InquiryController : ControllerBase
     ///     Return inquiry by id.
     /// </summary>
     [HttpGet("{id:int}")]
-    public Task<InquiryFull> GetAsync(int id)
+    public Task<Inquiry> GetAsync(int id)
         => _inquiryRepository.GetByIdAsync(id);
 
     // GET: api/inquiry
@@ -78,7 +74,7 @@ public class InquiryController : ControllerBase
     ///     Return all inquiries.
     /// </summary>
     [HttpGet]
-    public IAsyncEnumerable<InquiryFull> GetAllAsync([FromQuery] PaginationDto pagination)
+    public IAsyncEnumerable<Inquiry> GetAllAsync([FromQuery] PaginationDto pagination)
         => _inquiryRepository.ListAllAsync(pagination.Navigation);
 
     // POST: api/inquiry
@@ -87,19 +83,15 @@ public class InquiryController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> CreateAsync([FromBody] InquiryDto input)
+    public Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
-        var inquiry = _mapper.Map<InquiryFull>(input);
-        if (_appContext.UserId == input.Reviewer)
+        // TODO: Creator must be self
+        if (_appContext.UserId == inquiry.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }
 
-        inquiry = await _inquiryRepository.AddGetAsync(inquiry);
-
-        var output = _mapper.Map<InquiryDto>(inquiry);
-
-        return Ok(output);
+        return _inquiryRepository.AddGetAsync(inquiry);
     }
 
     // POST: api/inquiry/upload-document
@@ -133,7 +125,7 @@ public class InquiryController : ControllerBase
     [HttpGet("{id:int}/download")]
     public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
     {
-        InquiryFull inquiry = await _inquiryRepository.GetByIdAsync(id);
+        Inquiry inquiry = await _inquiryRepository.GetByIdAsync(id);
         Uri link = await _blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
             fileName: inquiry.DocumentFile,
@@ -153,13 +145,11 @@ public class InquiryController : ControllerBase
     /// </summary>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int id, [FromBody] InquiryDto input)
+    public async Task<IActionResult> UpdateAsync(int id, [FromBody] Inquiry inquiry)
     {
-        var inquiry = _mapper.Map<InquiryFull>(input);
         inquiry.Id = id;
 
-        InquiryFull inquiry_existing = await _inquiryRepository.GetByIdAsync(id);
-        if (inquiry_existing.Attribution.Creator == input.Reviewer)
+        if (inquiry.Attribution.Creator == inquiry.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }
