@@ -4,10 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
+// FUTURE: This used to be a sealed class.
 /// <summary>
 ///     User entity.
 /// </summary>
-public sealed class User : IEntityIdentifier<Guid>, IUser
+public class User : IEntityIdentifier<Guid>, IUser
 {
     /// <summary>
     ///     Entity identifier.

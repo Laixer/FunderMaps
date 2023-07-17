@@ -71,32 +71,32 @@ public static class ApplicationStub
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
-    public static async Task<OrganizationUserPasswordDto> CreateOrganizationUserAsync(BackendFixtureFactory factory, Organization organization)
-    {
-        // Arrange
-        using var client = factory.CreateAdminClient();
-        var newObject = new OrganizationUserPasswordDtoFaker().Generate();
+    // public static async Task<OrganizationUserPasswordDto> CreateOrganizationUserAsync(BackendFixtureFactory factory, Organization organization)
+    // {
+    //     // Arrange
+    //     using var client = factory.CreateAdminClient();
+    //     var newObject = new OrganizationUserPasswordDtoFaker().Generate();
 
-        // Act
-        var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newObject);
-        var returnObject = await response.Content.ReadFromJsonAsync<User>();
+    //     // Act
+    //     var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newObject);
+    //     var returnObject = await response.Content.ReadFromJsonAsync<User>();
 
-        // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(returnObject);
-        Assert.Equal(newObject.GivenName, returnObject.GivenName);
-        Assert.Equal(newObject.LastName, returnObject.LastName);
-        Assert.Equal(newObject.Email, returnObject.Email);
-        Assert.Equal(newObject.Avatar, returnObject.Avatar);
-        Assert.Equal(newObject.JobTitle, returnObject.JobTitle);
-        Assert.Equal(newObject.PhoneNumber, returnObject.PhoneNumber);
-        Assert.Equal(newObject.Role, returnObject.Role);
+    //     // Assert
+    //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    //     Assert.NotNull(returnObject);
+    //     Assert.Equal(newObject.GivenName, returnObject.GivenName);
+    //     Assert.Equal(newObject.LastName, returnObject.LastName);
+    //     Assert.Equal(newObject.Email, returnObject.Email);
+    //     Assert.Equal(newObject.Avatar, returnObject.Avatar);
+    //     Assert.Equal(newObject.JobTitle, returnObject.JobTitle);
+    //     Assert.Equal(newObject.PhoneNumber, returnObject.PhoneNumber);
+    //     Assert.Equal(newObject.Role, returnObject.Role);
 
-        return newObject with
-        {
-            Id = returnObject.Id
-        };
-    }
+    //     return newObject with
+    //     {
+    //         Id = returnObject.Id
+    //     };
+    // }
 
     public static async Task DeleteOrganizationUserAsync(BackendFixtureFactory factory, Organization organization, User user)
     {

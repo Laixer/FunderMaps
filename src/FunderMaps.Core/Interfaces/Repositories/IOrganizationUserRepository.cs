@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Entities;
+using FunderMaps.Core.Types;
 
 namespace FunderMaps.Core.Interfaces.Repositories;
 
@@ -43,7 +44,7 @@ public interface IOrganizationUserRepository
     /// <param name="organizationId">Organization identifier.</param>
     /// <param name="navigation">Recordset nagivation.</param>
     /// <returns>List of user identifiers.</returns>
-    IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation);
+    IAsyncEnumerable<OrganizationUser> ListAllAsync(Guid organizationId, Navigation navigation);
 
     /// <summary>
     ///     List all organization members per role.

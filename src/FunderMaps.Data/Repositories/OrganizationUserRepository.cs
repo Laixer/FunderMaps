@@ -1,7 +1,9 @@
 using FunderMaps.Core;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Data.Abstractions;
+using FunderMaps.Data.Extensions;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -35,15 +37,22 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
     ///     Retrieve all users by organization.
     /// </summary>
     /// <returns>List of user identifiers.</returns>
-    public async IAsyncEnumerable<Guid> ListAllAsync(Guid organizationId, Navigation navigation)
+    public async IAsyncEnumerable<OrganizationUser> ListAllAsync(Guid organizationId, Navigation navigation)
     {
         var sql = @"
-                SELECT  user_id
-                FROM    application.organization_user
-                WHERE   organization_id = @organization_id";
-
-        // TODO:
-        // sql = ConstructNavigation(sql, navigation);
+            SELECT
+                    u.id,
+                    u.given_name,
+                    u.last_name,
+                    u.email,
+                    u.avatar,
+                    u.job_title,
+                    u.phone_number,
+                    u.role,
+                    ou.role AS organization_role
+            FROM   application.user u
+            JOIN   application.organization_user ou ON ou.user_id = u.id
+            WHERE  ou.organization_id = @organization_id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -51,7 +60,18 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
-            yield return reader.GetGuid(0);
+            yield return new()
+            {
+                Id = reader.GetGuid(0),
+                GivenName = reader.GetSafeString(1),
+                LastName = reader.GetSafeString(2),
+                Email = reader.GetString(3),
+                Avatar = reader.GetSafeString(4),
+                JobTitle = reader.GetSafeString(5),
+                PhoneNumber = reader.GetSafeString(6),
+                Role = reader.GetFieldValue<ApplicationRole>(7),
+                OrganizationRole = reader.GetFieldValue<OrganizationRole>(8),
+            };
         }
     }
 

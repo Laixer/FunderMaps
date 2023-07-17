@@ -47,28 +47,24 @@ public class OrganizationUserController : ControllerBase
     /// <summary>
     ///     Add user to session organization.
     /// </summary>
-    [Authorize(Policy = "SuperuserPolicy")]
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<User> AddUserAsync([FromBody] OrganizationUserPasswordDto input)
-    {
-        var user = _mapper.Map<User>(input);
+    // [Authorize(Policy = "SuperuserPolicy")]
+    // [HttpPost]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    // public async Task<User> AddUserAsync([FromBody] user + role + passwd input)
+    // {
+    //     // var user = _mapper.Map<User>(input);
 
-        // FUTURE: Do in 1 call.
-        user = await _userRepository.AddGetAsync(user);
-        if (input.Password is not null)
-        {
-            await _signInService.SetPasswordAsync(user.Id, input.Password);
-        }
-        await _organizationUserRepository.AddAsync(_appContext.TenantId, user.Id, input.OrganizationRole);
+    //     // // FUTURE: Do in 1 call.
+    //     // user = await _userRepository.AddGetAsync(user);
+    //     // if (input.Password is not null)
+    //     // {
+    //     //     await _signInService.SetPasswordAsync(user.Id, input.Password);
+    //     // }
+    //     // await _organizationUserRepository.AddAsync(_appContext.TenantId, user.Id, input.OrganizationRole);
 
-        return user;
-
-        // var output = _mapper.Map<UserDto>(user);
-
-        // return Ok(output);
-    }
+    //     // return user;
+    // }
 
     // GET: organization/user
     /// <summary>
@@ -77,22 +73,8 @@ public class OrganizationUserController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<List<OrganizationUserDto>>> GetAllUserAsync([FromQuery] PaginationDto pagination)
-    {
-        // Act.
-        // TODO: FIX: This is ugly.
-        // TODO: Single call
-        List<OrganizationUserDto> output = new();
-        await foreach (var user in _organizationUserRepository.ListAllAsync(_appContext.TenantId, pagination.Navigation))
-        {
-            var result = _mapper.Map<OrganizationUserDto>(await _userRepository.GetByIdAsync(user));
-            result.OrganizationRole = await _organizationUserRepository.GetOrganizationRoleByUserIdAsync(user);
-            output.Add(result);
-        }
-
-        // Return.
-        return Ok(output);
-    }
+    public IAsyncEnumerable<OrganizationUser> GetAllUserAsync([FromQuery] PaginationDto pagination)
+        => _organizationUserRepository.ListAllAsync(_appContext.TenantId, pagination.Navigation);
 
     // PUT: organization/user/{id}
     /// <summary>
@@ -104,8 +86,6 @@ public class OrganizationUserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] User user)
     {
-        // Map.
-        // var user = _mapper.Map<User>(input);
         user.Id = id;
 
         // TODO: Move to db

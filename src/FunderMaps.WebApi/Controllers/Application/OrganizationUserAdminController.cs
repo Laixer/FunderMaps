@@ -47,52 +47,34 @@ public class OrganizationUserAdminController : ControllerBase
     /// <summary>
     ///     Add user to organization.
     /// </summary>
-    [HttpPost]
-    public async Task<User> AddUserAsync(Guid id, [FromBody] OrganizationUserPasswordDto input)
-    {
-        var user = _mapper.Map<User>(input);
+    // [HttpPost]
+    // public async Task<User> AddUserAsync(Guid id, [FromBody] user + role + passwd input)
+    // {
+    //     var user = _mapper.Map<User>(input);
 
-        // FUTURE: Do in 1 call.
-        user = await _userRepository.AddGetAsync(user);
-        await _signInService.SetPasswordAsync(user.Id, input.Password);
-        await _organizationUserRepository.AddAsync(id, user.Id, input.OrganizationRole);
+    //     // FUTURE: Do in 1 call.
+    //     user = await _userRepository.AddGetAsync(user);
+    //     await _signInService.SetPasswordAsync(user.Id, input.Password);
+    //     await _organizationUserRepository.AddAsync(id, user.Id, input.OrganizationRole);
 
-        return user;
-
-        // var output = _mapper.Map<User>(user);
-
-        // Return.
-        // return Ok(output);
-    }
+    //     return user;
+    // }
 
     // GET: api/admin/organization/{id}/user
     /// <summary>
     ///     Get all users in the organization.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
-    {
-        // TODO: FIX: This is ugly.
-        // TODO: Single call
-        var output = new List<OrganizationUserDto>();
-        await foreach (var user in _organizationUserRepository.ListAllAsync(id, pagination.Navigation))
-        {
-            var result = _mapper.Map<OrganizationUserDto>(await _userRepository.GetByIdAsync(user));
-            result.OrganizationRole = await _organizationUserRepository.GetOrganizationRoleByUserIdAsync(user);
-            output.Add(result);
-        }
-
-        return Ok(output);
-    }
+    public IAsyncEnumerable<OrganizationUser> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
+        => _organizationUserRepository.ListAllAsync(id, pagination.Navigation);
 
     // PUT: api/admin/organization/{id}/user/{id}
     /// <summary>
     ///     Update user in the organization.
     /// </summary>
     [HttpPut("{userId:guid}")]
-    public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] OrganizationUserDto input)
+    public async Task<IActionResult> UpdateUserAsync(Guid id, Guid userId, [FromBody] User user)
     {
-        var user = _mapper.Map<User>(input);
         user.Id = userId;
 
         // TODO: Move to db

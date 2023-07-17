@@ -36,7 +36,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             .ForMember(dest => dest.Token, o => o.MapFrom(src => src.TokenString))
             .ForMember(dest => dest.ValidFrom, o => o.MapFrom(src => src.Token.ValidFrom))
             .ForMember(dest => dest.ValidTo, o => o.MapFrom(src => src.Token.ValidTo));
-        mapper.CreateMap<User, OrganizationUserDto>().ReverseMap();
     }
 
     public static IServiceCollection AddFunderMapsAspNetCoreServices(this IServiceCollection services)
