@@ -129,14 +129,20 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
     /// <param name="id">Entity id.</param>
     public override async Task DeleteAsync(int id)
     {
+        ResetCacheEntity(id);
+
         var sql = @"
             DELETE
-            FROM    report.recovery
-            WHERE   id = @id";
+            FROM    report.recovery AS r
+            USING 	application.attribution AS a
+            WHERE   a.id = r.attribution
+            AND     i.id = @id
+            AND     a.owner = @tenant";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
+        context.AddParameterWithValue("tenant", AppContext.TenantId);
 
         await context.NonQueryAsync();
     }
