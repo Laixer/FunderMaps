@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Identity;
-using FunderMaps.Core.Types;
+﻿using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
@@ -8,7 +7,7 @@ namespace FunderMaps.Core.Entities;
 /// <summary>
 ///     User entity.
 /// </summary>
-public class User : IEntityIdentifier<Guid>, IUser
+public class User : IEntityIdentifier<Guid>
 {
     /// <summary>
     ///     Entity identifier.

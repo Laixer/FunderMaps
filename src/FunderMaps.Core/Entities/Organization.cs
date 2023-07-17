@@ -1,12 +1,11 @@
-﻿using FunderMaps.Core.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
 /// <summary>
 ///     Organization entity.
 /// </summary>
-public sealed class Organization : IEntityIdentifier<Guid>, ITenant
+public sealed class Organization : IEntityIdentifier<Guid>
 {
     /// <summary>
     ///     Entity identifier.

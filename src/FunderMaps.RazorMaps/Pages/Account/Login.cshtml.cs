@@ -29,14 +29,11 @@ public class LoginModel : PageModel
             return Page();
         }
 
-        ClaimsPrincipal principal = await _signInService.PasswordSignIn3Async(Username, Password);
+        var principal = await _signInService.PasswordSignIn3Async(Username, Password);
 
         var authProperties = new AuthenticationProperties();
 
-        await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
-            principal,
-            authProperties);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
         return RedirectToPage("/Index");
     }
