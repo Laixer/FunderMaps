@@ -83,11 +83,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 
     public static void MapToWriter(DbContext context, User entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         context.AddParameterWithValue("given_name", entity.GivenName);
         context.AddParameterWithValue("last_name", entity.LastName);
         context.AddParameterWithValue("email", entity.Email);
@@ -227,11 +222,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <param name="entity">Entity object.</param>
     public override async Task UpdateAsync(User entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         ResetCacheEntity(entity);
 
         var entityName = EntityTable("application");
