@@ -1,7 +1,6 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.AspNetCore.Controllers;
@@ -33,8 +32,6 @@ public class OrganizationController : ControllerBase
     ///     Return session organization.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public Task<Organization> GetAsync()
         => _organizationRepository.GetByIdAsync(_appContext.TenantId);
 
@@ -44,8 +41,6 @@ public class OrganizationController : ControllerBase
     /// </summary>
     [Authorize(Policy = "SuperuserPolicy")]
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
     {
         organization.Id = _appContext.TenantId;

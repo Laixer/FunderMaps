@@ -4,7 +4,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.AspNetCore.Controllers;
@@ -67,8 +66,6 @@ public class OrganizationUserController : ControllerBase
     ///     Get all users in the session organization.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public IAsyncEnumerable<OrganizationUser> GetAllUserAsync([FromQuery] PaginationDto pagination)
         => _organizationUserRepository.ListAllAsync(_appContext.TenantId, pagination.Navigation);
 
@@ -78,8 +75,6 @@ public class OrganizationUserController : ControllerBase
     /// </summary>
     [Authorize(Policy = "SuperuserPolicy")]
     [HttpPut("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] User user)
     {
         user.Id = id;
@@ -100,8 +95,6 @@ public class OrganizationUserController : ControllerBase
     /// </summary>
     [Authorize(Policy = "SuperuserPolicy")]
     [HttpPost("{id:guid}/change-organization-role")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, [FromBody] ChangeOrganizationRoleDto input)
     {
         // TODO: Move to db
@@ -121,8 +114,6 @@ public class OrganizationUserController : ControllerBase
     /// </summary>
     [Authorize(Policy = "SuperuserPolicy")]
     [HttpPost("{id:guid}/change-password")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ChangePasswordDto input)
     {
         // TODO: Move to db
@@ -145,8 +136,6 @@ public class OrganizationUserController : ControllerBase
     /// </summary>
     [Authorize(Policy = "SuperuserPolicy")]
     [HttpDelete("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> DeleteUserAsync(Guid id)
     {
         // TODO: Move to db

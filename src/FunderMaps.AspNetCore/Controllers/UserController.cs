@@ -4,7 +4,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.AspNetCore.Controllers;
@@ -38,8 +37,6 @@ public class UserController : ControllerBase
     ///     Return session user.
     /// </summary>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<User> GetAsync()
         => await _userRepository.GetByIdAsync(_appContext.UserId);
 
@@ -48,8 +45,6 @@ public class UserController : ControllerBase
     ///     Update session user user.
     /// </summary>
     [HttpPut]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateAsync([FromBody] User user)
     {
         user.Id = _appContext.UserId;
@@ -64,19 +59,14 @@ public class UserController : ControllerBase
     ///     Set password for session user.
     /// </summary>
     [HttpPost("change-password")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
     {
-        if (input.OldPassword is not null && input.NewPassword is not null)
+        if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
         {
-            if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
-            {
-                throw new InvalidCredentialException();
-            }
-
-            await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
+            throw new InvalidCredentialException();
         }
+
+        await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
 
         return NoContent();
     }

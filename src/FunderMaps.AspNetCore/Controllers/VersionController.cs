@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.AspNetCore.Controllers;
 
+// TODO: have this at the root of the API.
 /// <summary>
 ///     Return application versioning information.
 /// </summary>

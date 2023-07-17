@@ -73,7 +73,7 @@ public class SignInService
     /// <returns><c>True</c> if the specified password is valid for the user, otherwise false.</returns>
     public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
     {
-        string passwordHash = await UserRepository.GetPasswordHashAsync(id);
+        var passwordHash = await UserRepository.GetPasswordHashAsync(id);
         return PasswordHasher.IsPasswordValid(passwordHash, password);
     }
 
@@ -84,7 +84,7 @@ public class SignInService
     /// <param name="password">The plaintext password to be set on the user.</param>
     public virtual async Task SetPasswordAsync(Guid id, string password)
     {
-        string passwordHash = PasswordHasher.HashPassword(password);
+        var passwordHash = PasswordHasher.HashPassword(password);
         await UserRepository.SetPasswordHashAsync(id, passwordHash);
     }
 
@@ -150,53 +150,14 @@ public class SignInService
 
             Logger.LogInformation($"User '{user}' password sign in was successful.");
 
-            Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
-            OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
+            var organization = await OrganizationRepository.GetByIdAsync(organizationId);
+            var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
 
             ClaimsPrincipal principal = PrincipalProvider.CreateTenantUserPrincipal(user, organization,
                 organizationRole,
                 JwtBearerDefaults.AuthenticationScheme);
+
             return TokenProvider.GetTokenContext(principal);
-        }
-
-        Logger.LogWarning($"User '{user}' failed to provide the correct password.");
-
-        await UserRepository.BumpAccessFailed(user.Id);
-
-        throw new AuthenticationException();
-    }
-
-    // TODO: Fow now
-    public virtual async Task<ClaimsPrincipal> PasswordSignIn2Async(string email, string password)
-    {
-        if (await UserRepository.GetByEmailAsync(email) is not IUser user)
-        {
-            throw new AuthenticationException();
-        }
-
-        // FUTURE: Single call?
-        var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
-
-        if (await CheckPasswordAsync(user.Id, password))
-        {
-            if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
-            {
-                Logger.LogWarning($"User '{user}' locked out.");
-
-                throw new AuthenticationException();
-            }
-
-            await UserRepository.ResetAccessFailed(user.Id);
-            await UserRepository.RegisterAccess(user.Id);
-
-            Logger.LogInformation($"User '{user}' password sign in was successful.");
-
-            Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
-            OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
-
-            return PrincipalProvider.CreateTenantUserPrincipal(user, organization,
-                organizationRole,
-                JwtBearerDefaults.AuthenticationScheme);
         }
 
         Logger.LogWarning($"User '{user}' failed to provide the correct password.");

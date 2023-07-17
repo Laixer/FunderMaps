@@ -1,7 +1,5 @@
-using AutoMapper;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.AspNetCore.Services;
@@ -24,19 +22,6 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class FunderMapsAspNetCoreServiceCollectionExtensions
 {
-    /// <summary>
-    ///     Use this method to add entity and object mapping configurations.
-    /// </summary>
-    private static void ConfigureMapper(IMapperConfigurationExpression mapper)
-    {
-        mapper.CreateMap<TokenContext, SignInSecurityTokenDto>()
-            .ForMember(dest => dest.Id, o => o.MapFrom(src => src.Token.Id))
-            .ForMember(dest => dest.Issuer, o => o.MapFrom(src => src.Token.Issuer))
-            .ForMember(dest => dest.Token, o => o.MapFrom(src => src.TokenString))
-            .ForMember(dest => dest.ValidFrom, o => o.MapFrom(src => src.Token.ValidFrom))
-            .ForMember(dest => dest.ValidTo, o => o.MapFrom(src => src.Token.ValidTo));
-    }
-
     public static IServiceCollection AddFunderMapsAspNetCoreServices(this IServiceCollection services)
     {
         services.AddFunderMapsCoreServices();
@@ -114,8 +99,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
 
     public static IServiceCollection AddFunderMapsAspNetCoreControllers(this IServiceCollection services)
     {
-        services.AddAutoMapper(mapper => ConfigureMapper(mapper));
-
         // FUTURE: Only load specific parts.
         // NOTE: This will register all controllers in the FunderMaps.AspNetCore
         //       assemly regardless of authentication and authorization.
