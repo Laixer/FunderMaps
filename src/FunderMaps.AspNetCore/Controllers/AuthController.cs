@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -50,7 +51,9 @@ public class AuthController : ControllerBase
     [HttpGet("token-refresh")]
     public async Task<SignInSecurityTokenDto> RefreshSignInAsync()
     {
-        var context = await _signInService.SignInAsync(User);
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
+        var context = await _signInService.SignInAsync(userId);
 
         return new SignInSecurityTokenDto()
         {

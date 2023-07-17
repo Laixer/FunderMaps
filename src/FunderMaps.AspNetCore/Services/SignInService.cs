@@ -1,10 +1,9 @@
 ﻿using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Identity;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Types;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
@@ -88,36 +87,53 @@ public class SignInService
         await UserRepository.SetPasswordHashAsync(id, passwordHash);
     }
 
+    private async Task<ClaimsIdentity> CreateClaimsIdentityAsync(User user, string authenticationType)
+    {
+        if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
+        {
+            Logger.LogWarning($"User '{user}' locked out.");
+
+            throw new AuthenticationException();
+        }
+
+        await UserRepository.ResetAccessFailed(user.Id);
+        await UserRepository.RegisterAccess(user.Id);
+
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role.ToString()),
+        };
+
+        var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
+
+        var organization = await OrganizationRepository.GetByIdAsync(organizationId);
+        var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
+
+        claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organization.Id.ToString()));
+        claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()));
+
+        Logger.LogDebug($"User '{user}' signin was successful.");
+
+        return new(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
+    }
+
     /// <summary>
     ///     Attempts to sign in the specified <paramref name="principal"/>.
     /// </summary>
     /// <param name="principal">The principal to sign in.</param>
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-    public virtual ValueTask<TokenContext> SignInAsync(ClaimsPrincipal principal)
+    public virtual async ValueTask<TokenContext> SignInAsync(Guid id)
     {
-        if (principal is null)
-        {
-            throw new ArgumentNullException(nameof(principal));
-        }
+        var user = await UserRepository.GetByIdAsync(id);
 
-        var (user, tenant) = PrincipalProvider.GetUserAndTenant<User, Organization>(principal);
-        if (user is null || tenant is null)
-        {
-            throw new AuthenticationException();
-        }
+        var claimsIdentity = await CreateClaimsIdentityAsync(user, JwtBearerDefaults.AuthenticationScheme);
 
-        var claim = principal.FindFirst(FunderMapsAuthenticationClaimTypes.TenantRole);
-        if (claim is null)
-        {
-            throw new AuthenticationException();
-        }
+        var principal = new ClaimsPrincipal(claimsIdentity);
 
-        Logger.LogTrace($"User '{user}' sign in was successful.");
-
-        principal = PrincipalProvider.CreateTenantUserPrincipal(user, tenant,
-            Enum.Parse<OrganizationRole>(claim.Value),
-            JwtBearerDefaults.AuthenticationScheme);
-        return new(TokenProvider.GetTokenContext(principal));
+        return TokenProvider.GetTokenContext(principal);
     }
 
     /// <summary>
@@ -128,95 +144,55 @@ public class SignInService
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<TokenContext> PasswordSignInAsync(string email, string password)
     {
-        if (await UserRepository.GetByEmailAsync(email) is not IUser user)
+        if (await UserRepository.GetByEmailAsync(email) is not User user)
         {
             throw new AuthenticationException();
         }
 
-        // FUTURE: Single call?
-        var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
-
-        if (await CheckPasswordAsync(user.Id, password))
+        if (!await CheckPasswordAsync(user.Id, password))
         {
-            if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
-            {
-                Logger.LogWarning($"User '{user}' locked out.");
+            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
 
-                throw new AuthenticationException();
-            }
+            await UserRepository.BumpAccessFailed(user.Id);
 
-            await UserRepository.ResetAccessFailed(user.Id);
-            await UserRepository.RegisterAccess(user.Id);
-
-            Logger.LogInformation($"User '{user}' password sign in was successful.");
-
-            var organization = await OrganizationRepository.GetByIdAsync(organizationId);
-            var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
-
-            ClaimsPrincipal principal = PrincipalProvider.CreateTenantUserPrincipal(user, organization,
-                organizationRole,
-                JwtBearerDefaults.AuthenticationScheme);
-
-            return TokenProvider.GetTokenContext(principal);
+            throw new AuthenticationException();
         }
 
-        Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+        Logger.LogInformation($"User '{user}' password signin was successful.");
 
-        await UserRepository.BumpAccessFailed(user.Id);
+        var claimsIdentity = await CreateClaimsIdentityAsync(user, JwtBearerDefaults.AuthenticationScheme);
 
-        throw new AuthenticationException();
+        ClaimsPrincipal principal = new ClaimsPrincipal(claimsIdentity);
+
+        return TokenProvider.GetTokenContext(principal);
     }
 
-    // TODO: Fow now
+    /// <summary>
+    ///     Attempts to sign in the specified <paramref name="email"/> and <paramref name="password"/> combination.
+    /// </summary>
+    /// <param name="email">The user email to sign in.</param>
+    /// <param name="password">The password to attempt to authenticate.</param>
+    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<ClaimsPrincipal> PasswordSignIn3Async(string email, string password)
     {
-        if (await UserRepository.GetByEmailAsync(email) is not IUser user)
+        if (await UserRepository.GetByEmailAsync(email) is not User user)
         {
             throw new AuthenticationException();
         }
 
-        // FUTURE: Single call?
-        var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
-
-        if (await CheckPasswordAsync(user.Id, password))
+        if (!await CheckPasswordAsync(user.Id, password))
         {
-            if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
-            {
-                Logger.LogWarning($"User '{user}' locked out.");
+            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
 
-                throw new AuthenticationException();
-            }
+            await UserRepository.BumpAccessFailed(user.Id);
 
-            await UserRepository.ResetAccessFailed(user.Id);
-            await UserRepository.RegisterAccess(user.Id);
-
-            Logger.LogInformation($"User '{user}' password sign in was successful.");
-
-            Organization organization = await OrganizationRepository.GetByIdAsync(organizationId);
-            OrganizationRole organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
-
-            var claims = new List<Claim>
-            {
-                // new Claim(ClaimTypes.Name, model.Username),
-
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organization.Id.ToString()),
-                new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()),
-            };
-
-            var claimsIdentity = new ClaimsIdentity(
-                claims,
-                Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme,
-                ClaimTypes.Name,
-                ClaimTypes.Role);
-            return new ClaimsPrincipal(claimsIdentity);
+            throw new AuthenticationException();
         }
 
-        Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+        Logger.LogInformation($"User '{user}' password signin was successful.");
 
-        await UserRepository.BumpAccessFailed(user.Id);
+        var claimsIdentity = await CreateClaimsIdentityAsync(user, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        throw new AuthenticationException();
+        return new ClaimsPrincipal(claimsIdentity);
     }
 }
