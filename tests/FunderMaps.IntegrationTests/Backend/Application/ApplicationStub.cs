@@ -4,110 +4,109 @@ using FunderMaps.Testing.Faker;
 using System.Net;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Application
+namespace FunderMaps.IntegrationTests.Backend.Application;
+
+/// <summary>
+///     Teststub for all application tests.
+/// </summary>
+public static class ApplicationStub
 {
-    /// <summary>
-    ///     Teststub for all application tests.
-    /// </summary>
-    public static class ApplicationStub
+    // public static async Task<OrganizationProposalDto> CreateProposalAsync(BackendFixtureFactory factory)
+    // {
+    //     // Arrange
+    //     using var client = factory.CreateAdminClient();
+    //     var newObject = new OrganizationProposalDtoFaker().Generate();
+
+    //     // Act
+    //     var response = await client.PostAsJsonAsync("api/organization/proposal", newObject);
+    //     var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
+
+    //     // Assert
+    //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    //     Assert.Equal(newObject.Name, returnObject.Name);
+
+    //     return returnObject;
+    // }
+
+    // public static async Task<OrganizationSetupDto> CreateOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
+    // {
+    //     // Arrange
+    //     using var client = factory.CreateUnauthorizedClient();
+    //     var newObject = new OrganizationSetupDtoFaker().Generate();
+
+    //     // Act
+    //     var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", newObject);
+
+    //     // Assert
+    //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+    //     return newObject;
+    // }
+
+    // public static async Task<OrganizationDto> GetOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
+    // {
+    //     // Arrange
+    //     using var client = factory.CreateAdminClient();
+
+    //     // Act
+    //     var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
+    //     var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
+
+    //     // Assert
+    //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    //     Assert.Equal(organization.Id, returnObject.Id);
+
+    //     return returnObject;
+    // }
+
+    public static async Task DeleteOrganizationAsync(BackendFixtureFactory factory, Organization organization)
     {
-        // public static async Task<OrganizationProposalDto> CreateProposalAsync(BackendFixtureFactory factory)
-        // {
-        //     // Arrange
-        //     using var client = factory.CreateAdminClient();
-        //     var newObject = new OrganizationProposalDtoFaker().Generate();
+        // Arrange
+        using var client = factory.CreateAdminClient();
 
-        //     // Act
-        //     var response = await client.PostAsJsonAsync("api/organization/proposal", newObject);
-        //     var returnObject = await response.Content.ReadFromJsonAsync<OrganizationProposalDto>();
+        // Act
+        var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}");
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Equal(newObject.Name, returnObject.Name);
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
 
-        //     return returnObject;
-        // }
+    public static async Task<OrganizationUserPasswordDto> CreateOrganizationUserAsync(BackendFixtureFactory factory, Organization organization)
+    {
+        // Arrange
+        using var client = factory.CreateAdminClient();
+        var newObject = new OrganizationUserPasswordDtoFaker().Generate();
 
-        // public static async Task<OrganizationSetupDto> CreateOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
-        // {
-        //     // Arrange
-        //     using var client = factory.CreateUnauthorizedClient();
-        //     var newObject = new OrganizationSetupDtoFaker().Generate();
+        // Act
+        var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newObject);
+        var returnObject = await response.Content.ReadFromJsonAsync<User>();
 
-        //     // Act
-        //     var response = await client.PostAsJsonAsync($"api/organization/{organization.Id}/setup", newObject);
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
+        Assert.Equal(newObject.GivenName, returnObject.GivenName);
+        Assert.Equal(newObject.LastName, returnObject.LastName);
+        Assert.Equal(newObject.Email, returnObject.Email);
+        Assert.Equal(newObject.Avatar, returnObject.Avatar);
+        Assert.Equal(newObject.JobTitle, returnObject.JobTitle);
+        Assert.Equal(newObject.PhoneNumber, returnObject.PhoneNumber);
+        Assert.Equal(newObject.Role, returnObject.Role);
 
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-
-        //     return newObject;
-        // }
-
-        // public static async Task<OrganizationDto> GetOrganizationAsync(BackendFixtureFactory factory, OrganizationProposalDto organization)
-        // {
-        //     // Arrange
-        //     using var client = factory.CreateAdminClient();
-
-        //     // Act
-        //     var response = await client.GetAsync($"api/admin/organization/{organization.Id}");
-        //     var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
-
-        //     // Assert
-        //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        //     Assert.Equal(organization.Id, returnObject.Id);
-
-        //     return returnObject;
-        // }
-
-        public static async Task DeleteOrganizationAsync(BackendFixtureFactory factory, OrganizationDto organization)
+        return newObject with
         {
-            // Arrange
-            using var client = factory.CreateAdminClient();
+            Id = returnObject.Id
+        };
+    }
 
-            // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}");
+    public static async Task DeleteOrganizationUserAsync(BackendFixtureFactory factory, Organization organization, User user)
+    {
+        // Arrange
+        using var client = factory.CreateAdminClient();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        // Act
+        var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{user.Id}");
 
-        public static async Task<OrganizationUserPasswordDto> CreateOrganizationUserAsync(BackendFixtureFactory factory, OrganizationDto organization)
-        {
-            // Arrange
-            using var client = factory.CreateAdminClient();
-            var newObject = new OrganizationUserPasswordDtoFaker().Generate();
-
-            // Act
-            var response = await client.PostAsJsonAsync($"api/admin/organization/{organization.Id}/user", newObject);
-            var returnObject = await response.Content.ReadFromJsonAsync<User>();
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-            Assert.Equal(newObject.GivenName, returnObject.GivenName);
-            Assert.Equal(newObject.LastName, returnObject.LastName);
-            Assert.Equal(newObject.Email, returnObject.Email);
-            Assert.Equal(newObject.Avatar, returnObject.Avatar);
-            Assert.Equal(newObject.JobTitle, returnObject.JobTitle);
-            Assert.Equal(newObject.PhoneNumber, returnObject.PhoneNumber);
-            Assert.Equal(newObject.Role, returnObject.Role);
-
-            return newObject with
-            {
-                Id = returnObject.Id
-            };
-        }
-
-        public static async Task DeleteOrganizationUserAsync(BackendFixtureFactory factory, OrganizationDto organization, User user)
-        {
-            // Arrange
-            using var client = factory.CreateAdminClient();
-
-            // Act
-            var response = await client.DeleteAsync($"api/admin/organization/{organization.Id}/user/{user.Id}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 }

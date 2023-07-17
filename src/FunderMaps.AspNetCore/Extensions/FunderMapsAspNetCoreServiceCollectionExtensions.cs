@@ -30,14 +30,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
     /// </summary>
     private static void ConfigureMapper(IMapperConfigurationExpression mapper)
     {
-        mapper.CreateMap<Organization, OrganizationDto>()
-            .ForMember(dest => dest.XMin, o => o.MapFrom(src => src.Area.XMin))
-            .ForMember(dest => dest.YMin, o => o.MapFrom(src => src.Area.YMin))
-            .ForMember(dest => dest.XMax, o => o.MapFrom(src => src.Area.XMax))
-            .ForMember(dest => dest.YMax, o => o.MapFrom(src => src.Area.YMax))
-            .ForMember(dest => dest.CenterX, o => o.MapFrom(src => src.Center.CenterX))
-            .ForMember(dest => dest.CenterY, o => o.MapFrom(src => src.Center.CenterY))
-            .ReverseMap();
         mapper.CreateMap<TokenContext, SignInSecurityTokenDto>()
             .ForMember(dest => dest.Id, o => o.MapFrom(src => src.Token.Id))
             .ForMember(dest => dest.Issuer, o => o.MapFrom(src => src.Token.Issuer))

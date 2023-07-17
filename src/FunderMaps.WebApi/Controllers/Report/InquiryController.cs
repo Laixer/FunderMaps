@@ -85,7 +85,6 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
-        // TODO: Creator must be self
         if (_appContext.UserId == inquiry.Attribution.Reviewer)
         {
             throw new AuthorizationException();
@@ -149,7 +148,7 @@ public class InquiryController : ControllerBase
     {
         inquiry.Id = id;
 
-        if (inquiry.Attribution.Creator == inquiry.Attribution.Reviewer)
+        if (_appContext.UserId == inquiry.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }

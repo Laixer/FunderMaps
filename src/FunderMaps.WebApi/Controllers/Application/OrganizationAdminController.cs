@@ -41,7 +41,7 @@ public class OrganizationAdminController : ControllerBase
     public async Task<IActionResult> GetStatsAsync()
     {
         // Map.
-        DatasetStatsDto output = new()
+        var output = new DatasetStatsDto()
         {
             Count = await _organizationRepository.CountAsync(),
         };
@@ -55,41 +55,23 @@ public class OrganizationAdminController : ControllerBase
     ///     Return organization by id.
     /// </summary>
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetAsync(Guid id)
-    {
-        // Act.
-        Organization organization = await _organizationRepository.GetByIdAsync(id);
-
-        // Map.
-        var output = _mapper.Map<OrganizationDto>(organization);
-
-        // Return.
-        return Ok(output);
-    }
+    public Task<Organization> GetAsync(Guid id)
+        => _organizationRepository.GetByIdAsync(id);
 
     // GET: api/admin/organization
     /// <summary>
     ///     Return all organizations.
     /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAllAsync([FromQuery] PaginationDto pagination)
-    {
-        // Act.
-        IAsyncEnumerable<Organization> organizationList = _organizationRepository.ListAllAsync(pagination.Navigation);
-
-        // Map.
-        var result = await _mapper.MapAsync<IList<OrganizationDto>, Organization>(organizationList);
-
-        // Return.
-        return Ok(result);
-    }
+    public IAsyncEnumerable<Organization> GetAllAsync([FromQuery] PaginationDto pagination)
+        => _organizationRepository.ListAllAsync(pagination.Navigation);
 
     // PUT: api/admin/organization/{id}
     /// <summary>
     ///     Update organization by id.
     /// </summary>
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] OrganizationDto input)
+    public async Task<IActionResult> UpdateAsync(Guid id, [FromBody] Organization input)
     {
         // Map.
         var organization = _mapper.Map<Organization>(input);

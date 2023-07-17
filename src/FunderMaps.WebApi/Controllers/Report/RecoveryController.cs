@@ -85,7 +85,6 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public Task<Recovery> CreateAsync([FromBody] Recovery input)
     {
-        // TODO: Creator must be self
         if (_appContext.UserId == input.Attribution.Reviewer)
         {
             throw new AuthorizationException();
@@ -149,7 +148,7 @@ public class RecoveryController : ControllerBase
     {
         recovery.Id = id;
 
-        if (recovery.Attribution.Creator == recovery.Attribution.Reviewer)
+        if (_appContext.UserId == recovery.Attribution.Reviewer)
         {
             throw new AuthorizationException();
         }

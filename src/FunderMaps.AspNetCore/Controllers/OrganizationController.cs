@@ -1,5 +1,3 @@
-using AutoMapper;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -18,16 +16,14 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/organization")]
 public class OrganizationController : ControllerBase
 {
-    private readonly IMapper _mapper;
     private readonly Core.AppContext _appContext;
     private readonly IOrganizationRepository _organizationRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public OrganizationController(IMapper mapper, Core.AppContext appContext, IOrganizationRepository organizationRepository)
+    public OrganizationController(Core.AppContext appContext, IOrganizationRepository organizationRepository)
     {
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
     }
@@ -39,14 +35,8 @@ public class OrganizationController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<OrganizationDto>> GetAsync()
-    {
-        Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
-
-        var output = _mapper.Map<OrganizationDto>(organization);
-
-        return Ok(output);
-    }
+    public Task<Organization> GetAsync()
+        => _organizationRepository.GetByIdAsync(_appContext.TenantId);
 
     // PUT: organization
     /// <summary>
@@ -56,9 +46,8 @@ public class OrganizationController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<IActionResult> UpdateAsync([FromBody] OrganizationDto input)
+    public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
     {
-        var organization = _mapper.Map<Organization>(input);
         organization.Id = _appContext.TenantId;
 
         await _organizationRepository.UpdateAsync(organization);

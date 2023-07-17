@@ -1,74 +1,74 @@
 ﻿using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
 using System.Net;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Application
+namespace FunderMaps.IntegrationTests.Backend.Application;
+
+public class OrganizationTests : IClassFixture<BackendFixtureFactory>
 {
-    public class OrganizationTests : IClassFixture<BackendFixtureFactory>
+    private BackendFixtureFactory Factory { get; }
+
+    /// <summary>
+    ///     Create new instance.
+    /// </summary>
+    public OrganizationTests(BackendFixtureFactory factory)
+        => Factory = factory;
+
+    [Theory]
+    [InlineData(OrganizationRole.Superuser)]
+    [InlineData(OrganizationRole.Verifier)]
+    [InlineData(OrganizationRole.Writer)]
+    [InlineData(OrganizationRole.Reader)]
+    public async Task GetOrganizationFromSessionReturnSingleOrganization(OrganizationRole role)
     {
-        private BackendFixtureFactory Factory { get; }
+        // Arrange
+        using var client = Factory.CreateClient(role);
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public OrganizationTests(BackendFixtureFactory factory)
-            => Factory = factory;
+        // Act
+        var response = await client.GetAsync("api/organization");
+        var returnObject = await response.Content.ReadFromJsonAsync<Organization>();
 
-        [Theory]
-        [InlineData(OrganizationRole.Superuser)]
-        [InlineData(OrganizationRole.Verifier)]
-        [InlineData(OrganizationRole.Writer)]
-        [InlineData(OrganizationRole.Reader)]
-        public async Task GetOrganizationFromSessionReturnSingleOrganization(OrganizationRole role)
-        {
-            // Arrange
-            using var client = Factory.CreateClient(role);
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
+        Assert.Equal(Guid.Parse("05203318-6c55-43c1-a6a6-bb8c83f930c3"), returnObject.Id);
+        Assert.NotNull(returnObject.Name);
+        Assert.NotNull(returnObject.Email);
+    }
 
-            // Act
-            var response = await client.GetAsync("api/organization");
-            var returnObject = await response.Content.ReadFromJsonAsync<OrganizationDto>();
+    [Fact]
+    public async Task UpdateOrganizationFromSessionReturnNoContent()
+    {
+        // Arrange
+        using var client = Factory.CreateClient(OrganizationRole.Superuser);
+        var updateObject = new OrganizationFaker().Generate();
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-            Assert.Equal(Guid.Parse("05203318-6c55-43c1-a6a6-bb8c83f930c3"), returnObject.Id);
-            Assert.NotNull(returnObject.Name);
-            Assert.NotNull(returnObject.Email);
-        }
+        // Act
+        var response = await client.PutAsJsonAsync("api/organization", updateObject);
 
-        [Fact]
-        public async Task UpdateOrganizationFromSessionReturnNoContent()
-        {
-            // Arrange
-            using var client = Factory.CreateClient(OrganizationRole.Superuser);
-            var updateObject = new OrganizationDtoFaker().Generate();
+        // Act
+        var returnObject = await client.GetFromJsonAsync<Organization>("api/organization");
 
-            // Act
-            var response = await client.PutAsJsonAsync("api/organization", updateObject);
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
 
-            // Act
-            var returnObject = await client.GetFromJsonAsync<OrganizationDto>("api/organization");
+    [Theory]
+    [InlineData(OrganizationRole.Verifier)]
+    [InlineData(OrganizationRole.Writer)]
+    [InlineData(OrganizationRole.Reader)]
+    public async Task UpdateOrganizationFromSessionReturnForbidden(OrganizationRole role)
+    {
+        // Arrange
+        using var client = Factory.CreateClient(role);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
-        }
+        // Act
+        var response = await client.PutAsJsonAsync("api/organization", new OrganizationFaker().Generate());
 
-        [Theory]
-        [InlineData(OrganizationRole.Verifier)]
-        [InlineData(OrganizationRole.Writer)]
-        [InlineData(OrganizationRole.Reader)]
-        public async Task UpdateOrganizationFromSessionReturnForbidden(OrganizationRole role)
-        {
-            // Arrange
-            using var client = Factory.CreateClient(role);
-
-            // Act
-            var response = await client.PutAsJsonAsync("api/organization", new OrganizationDtoFaker().Generate());
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
+        // Assert
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }
