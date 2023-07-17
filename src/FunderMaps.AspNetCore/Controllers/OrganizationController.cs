@@ -41,13 +41,10 @@ public class OrganizationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<ActionResult<OrganizationDto>> GetAsync()
     {
-        // Act.
         Organization organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
 
-        // Map.
         var output = _mapper.Map<OrganizationDto>(organization);
 
-        // Return.
         return Ok(output);
     }
 
@@ -61,14 +58,11 @@ public class OrganizationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> UpdateAsync([FromBody] OrganizationDto input)
     {
-        // Map.
         var organization = _mapper.Map<Organization>(input);
         organization.Id = _appContext.TenantId;
 
-        // Act.
         await _organizationRepository.UpdateAsync(organization);
 
-        // Return.
         return NoContent();
     }
 }

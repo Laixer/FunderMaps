@@ -164,6 +164,20 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
     ///     Update <see cref="Organization"/>.
     /// </summary>
     /// <param name="entity">Entity object.</param>
-    public override Task UpdateAsync(Organization entity)
-        => throw new InvalidOperationException();
+    public override async Task UpdateAsync(Organization entity)
+    {
+        ResetCacheEntity(entity);
+
+        var sql = @"
+            UPDATE  application.organization
+            SET     email = trim(@email)
+            WHERE   id = @id";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("id", entity.Id);
+        context.AddParameterWithValue("email", entity.Email);
+
+        await context.NonQueryAsync();
+    }
 }
