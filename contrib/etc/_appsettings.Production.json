@@ -12,6 +12,9 @@
     "Audience": "FunderMaps",
     "TokenValidity": 120
   },
+  "DataProtection": {
+    "ApplicationName": "FunderMapsSharedDiscriminator"
+  },
   "Mailgun": {
     "Domain": "fundermaps.com",
     "DefaultSenderName": "FunderMaps",

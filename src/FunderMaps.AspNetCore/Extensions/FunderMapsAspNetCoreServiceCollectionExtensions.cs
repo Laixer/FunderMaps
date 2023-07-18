@@ -72,6 +72,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
 
         var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
         var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
 
         services.Configure<KeyManagementOptions>(options =>
@@ -79,9 +80,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
         });
 
-        services.AddDataProtection().SetApplicationName("FunderMapsDevSharedDiscriminator"); // TODO: From configuration
-
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+        services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
 
         services.AddAuthentication("FunderMapsHybridAuth")
             .AddPolicyScheme("FunderMapsHybridAuth", "Bearer or AuthKey", options =>

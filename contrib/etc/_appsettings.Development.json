@@ -10,6 +10,9 @@
     "TokenValidity": 60,
     "SignatureKey": "dhfgdfubhgbdfghredfgregurhe78gh348yvt784tcno3qt74gntkuirdhg"
   },
+  "DataProtection": {
+    "ApplicationName": "FunderMapsDevSharedDiscriminator"
+  },
   "Mailgun": {
     "Domain": "fundermaps.com",
     "DefaultSenderName": "FunderMaps",
