@@ -1,5 +1,6 @@
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.Authorization;
+using FunderMaps.AspNetCore.DataProtection;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
 using FunderMaps.AspNetCore.Services;
@@ -11,8 +12,9 @@ using FunderMaps.Core.ExternalServices.S3Storage;
 using FunderMaps.Core.IncidentReport;
 using FunderMaps.Data.Providers;
 using FunderMaps.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -70,6 +72,15 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
 
         var serviceProvider = services.BuildServiceProvider();
+        var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
+
+        services.Configure<KeyManagementOptions>(options =>
+        {
+            options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
+        });
+
+        services.AddDataProtection().SetApplicationName("FunderMapsDevSharedDiscriminator");
+
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
         services.AddAuthentication("FunderMapsHybridAuth")
@@ -105,7 +116,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             .AddCookie(options =>
             {
                 options.SlidingExpiration = true;
-                options.Cookie.Name = "FunderMapsRealmAuth";
+                options.Cookie.Name = "FunderMaps.Authentication.Realm";
             })
             .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
             {
