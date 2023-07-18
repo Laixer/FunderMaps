@@ -68,7 +68,7 @@ public class FunderMapsClient : IDisposable
 
         if (_options.ApiKey is not null)
         {
-            httpClient.DefaultRequestHeaders.Authorization = new("Bearer", options.Value.ApiKey);
+            httpClient.DefaultRequestHeaders.Authorization = new("AuthKey", options.Value.ApiKey);
         }
         else
         {

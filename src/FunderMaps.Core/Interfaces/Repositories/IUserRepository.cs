@@ -15,6 +15,13 @@ public interface IUserRepository : IAsyncRepository<User, Guid>
     Task<User> GetByEmailAsync(string email);
 
     /// <summary>
+    ///     Retrieve <see cref="User"/> by authentication key.
+    /// </summary>
+    /// <param name="key">Authentication key.</param>
+    /// <returns><see cref="User"/>.</returns>
+    Task<User> GetByAuthKeyAsync(string key);
+
+    /// <summary>
     ///     Get password hash.
     /// </summary>
     /// <param name="id">Entity identifier.</param>

@@ -24,7 +24,7 @@ public class AuthKeyAuthenticationHandler : AuthenticationHandler<AuthKeyAuthent
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
-        if (authHeader?.StartsWith("AuthKey ") ?? false)
+        if (authHeader?.StartsWith("authkey ", StringComparison.InvariantCultureIgnoreCase) ?? false)
         {
             var token = authHeader.Trim().Substring("authkey ".Length).Trim();
 

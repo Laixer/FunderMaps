@@ -131,16 +131,11 @@ public class SignInService
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<ClaimsPrincipal> AuthKeySignInAsync(string key, string authenticationType)
     {
-        // if (key == "")
-        // {
-        //     var user = await UserRepository.GetByIdAsync(Guid.Parse("7a015c0a-55ce-4b8e-84b5-784bd3363d5b"));
+        var user = await UserRepository.GetByAuthKeyAsync(key);
 
-        //     var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
+        var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 
-        //     return new ClaimsPrincipal(claimsIdentity);
-        // }
-
-        throw new AuthenticationException();
+        return new ClaimsPrincipal(claimsIdentity);
     }
 
     /// <summary>

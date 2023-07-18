@@ -161,6 +161,39 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     }
 
     /// <summary>
+    ///     Retrieve <see cref="User"/> by authentication key.
+    /// </summary>
+    /// <param name="key">Authentication key.</param>
+    /// <returns><see cref="User"/>.</returns>
+    public async Task<User> GetByAuthKeyAsync(string key)
+    {
+        var entityName = EntityTable("application");
+
+        var sql = $@"
+            SELECT  -- User
+                    u.id,
+                    u.given_name,
+                    u.last_name,
+                    u.email,
+                    u.avatar,
+                    u.job_title,
+                    u.phone_number,
+                    u.role
+            FROM    {entityName} AS u
+            JOIN    application.auth_key ak ON ak.user_id = u.id
+            WHERE   ak.key = @key
+            LIMIT   1";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("key", key);
+
+        await using var reader = await context.ReaderAsync();
+
+        return CacheEntity(MapFromReader(reader));
+    }
+
+    /// <summary>
     ///     Get password hash.
     /// </summary>
     /// <param name="id">Entity identifier.</param>

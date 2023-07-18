@@ -9,7 +9,7 @@ var usernameOption = new Option<string?>(new[] { "-u", "--username" }, "Webservi
     IsRequired = true,
 };
 
-var passwordOption = new Option<string?>(new[] { "-u", "--password" }, "Webservice password")
+var passwordOption = new Option<string?>(new[] { "-p", "--password" }, "Webservice password")
 {
     IsRequired = true,
 };

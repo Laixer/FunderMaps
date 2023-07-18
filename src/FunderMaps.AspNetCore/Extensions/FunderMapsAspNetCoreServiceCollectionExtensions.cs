@@ -79,7 +79,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
         });
 
-        services.AddDataProtection().SetApplicationName("FunderMapsDevSharedDiscriminator");
+        services.AddDataProtection().SetApplicationName("FunderMapsDevSharedDiscriminator"); // TODO: From configuration
 
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
@@ -89,11 +89,11 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
                 options.ForwardDefaultSelector = context =>
                 {
                     var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
-                    if (authHeader?.StartsWith("Bearer ") ?? false)
+                    if (authHeader?.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
                         return AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
                     }
-                    else if (authHeader?.StartsWith("AuthKey ") ?? false || !string.IsNullOrEmpty(context.Request.Query["authkey"].FirstOrDefault()))
+                    else if (authHeader?.StartsWith("AuthKey ", StringComparison.InvariantCultureIgnoreCase) ?? false || !string.IsNullOrEmpty(context.Request.Query["authkey"].FirstOrDefault()))
                     {
                         return AuthKeyAuthenticationOptions.DefaultScheme;
                     }
@@ -117,6 +117,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             {
                 options.SlidingExpiration = true;
                 options.Cookie.Name = "FunderMaps.Authentication.Realm";
+                // TODO: Set cookie domain
             })
             .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
             {
