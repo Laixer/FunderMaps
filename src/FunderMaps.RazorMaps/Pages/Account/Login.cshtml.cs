@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,9 +17,7 @@ public class LoginModel : PageModel
     private readonly SignInService _signInService;
 
     public LoginModel(SignInService signInService)
-    {
-        _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-    }
+        => _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
 
     public async Task<IActionResult> OnPostAsync()
     {
@@ -29,7 +26,7 @@ public class LoginModel : PageModel
             return Page();
         }
 
-        var principal = await _signInService.PasswordSignIn3Async(Username, Password);
+        var principal = await _signInService.PasswordSignInAsync(Username, Password, CookieAuthenticationDefaults.AuthenticationScheme);
 
         var authProperties = new AuthenticationProperties();
 

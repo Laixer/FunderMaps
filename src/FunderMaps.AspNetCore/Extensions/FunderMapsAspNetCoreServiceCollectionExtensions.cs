@@ -72,10 +72,28 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication("FunderMapsHybridAuth")
+            .AddPolicyScheme("FunderMapsHybridAuth", "Bearer or AuthKey", options =>
+            {
+                options.ForwardDefaultSelector = context =>
+                {
+                    var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
+                    if (authHeader?.StartsWith("Bearer ") ?? false)
+                    {
+                        return AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
+                    }
+                    else if (authHeader?.StartsWith("AuthKey ") ?? false || !string.IsNullOrEmpty(context.Request.Query["authkey"].FirstOrDefault()))
+                    {
+                        return AuthKeyAuthenticationOptions.DefaultScheme;
+                    }
+                    else
+                    {
+                        return AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
+                    }
+                };
+            })
             .AddJwtBearer(options =>
             {
-                options.SaveToken = false;
                 options.TokenValidationParameters = new JwtTokenValidationParameters
                 {
                     ValidIssuer = configuration.GetJwtIssuer(),
@@ -83,6 +101,15 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
                     IssuerSigningKey = configuration.GetJwtSigningKey(),
                     Valid = configuration.GetJwtTokenExpirationInMinutes(),
                 };
+            })
+            .AddCookie(options =>
+            {
+                options.SlidingExpiration = true;
+                options.Cookie.Name = "FunderMaps.Auth.Local";
+            })
+            .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
+            {
+                //
             });
 
         services.AddAuthorization(options =>

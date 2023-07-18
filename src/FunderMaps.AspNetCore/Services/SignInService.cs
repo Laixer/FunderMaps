@@ -3,8 +3,6 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
@@ -36,11 +34,6 @@ public class SignInService
     public IPasswordHasher PasswordHasher { get; }
 
     /// <summary>
-    ///     The <see cref="ISecurityTokenProvider"/> used.
-    /// </summary>
-    public ISecurityTokenProvider TokenProvider { get; }
-
-    /// <summary>
     ///     Gets the <see cref="ILogger"/> used to log messages.
     /// </summary>
     protected ILogger Logger { get; }
@@ -53,14 +46,12 @@ public class SignInService
         IOrganizationUserRepository organizationUserRepository,
         IOrganizationRepository organizationRepository,
         IPasswordHasher passwordHasher,
-        ISecurityTokenProvider tokenProvider,
         ILogger<SignInService> logger)
     {
         UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         OrganizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
         OrganizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         PasswordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-        TokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -108,7 +99,6 @@ public class SignInService
         };
 
         var organizationId = await OrganizationUserRepository.GetOrganizationByUserIdAsync(user.Id);
-
         var organization = await OrganizationRepository.GetByIdAsync(organizationId);
         var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id);
 
@@ -125,15 +115,32 @@ public class SignInService
     /// </summary>
     /// <param name="principal">The principal to sign in.</param>
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-    public virtual async ValueTask<TokenContext> SignInAsync(Guid id)
+    public virtual async Task<ClaimsPrincipal> UserIdSignInAsync(Guid id, string authenticationType)
     {
         var user = await UserRepository.GetByIdAsync(id);
 
-        var claimsIdentity = await CreateClaimsIdentityAsync(user, JwtBearerDefaults.AuthenticationScheme);
+        var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 
-        var principal = new ClaimsPrincipal(claimsIdentity);
+        return new ClaimsPrincipal(claimsIdentity);
+    }
 
-        return TokenProvider.GetTokenContext(principal);
+    /// <summary>
+    ///     Attempts to sign in the specified <paramref name="principal"/>.
+    /// </summary>
+    /// <param name="principal">The principal to sign in.</param>
+    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
+    public virtual async Task<ClaimsPrincipal> AuthKeySignInAsync(string key, string authenticationType)
+    {
+        // if (key == "")
+        // {
+        //     var user = await UserRepository.GetByIdAsync(Guid.Parse("7a015c0a-55ce-4b8e-84b5-784bd3363d5b"));
+
+        //     var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
+
+        //     return new ClaimsPrincipal(claimsIdentity);
+        // }
+
+        throw new AuthenticationException();
     }
 
     /// <summary>
@@ -142,7 +149,7 @@ public class SignInService
     /// <param name="email">The user email to sign in.</param>
     /// <param name="password">The password to attempt to authenticate.</param>
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-    public virtual async Task<TokenContext> PasswordSignInAsync(string email, string password)
+    public virtual async Task<ClaimsPrincipal> PasswordSignInAsync(string email, string password, string authenticationType)
     {
         if (await UserRepository.GetByEmailAsync(email) is not User user)
         {
@@ -160,38 +167,7 @@ public class SignInService
 
         Logger.LogInformation($"User '{user}' password signin was successful.");
 
-        var claimsIdentity = await CreateClaimsIdentityAsync(user, JwtBearerDefaults.AuthenticationScheme);
-
-        ClaimsPrincipal principal = new ClaimsPrincipal(claimsIdentity);
-
-        return TokenProvider.GetTokenContext(principal);
-    }
-
-    /// <summary>
-    ///     Attempts to sign in the specified <paramref name="email"/> and <paramref name="password"/> combination.
-    /// </summary>
-    /// <param name="email">The user email to sign in.</param>
-    /// <param name="password">The password to attempt to authenticate.</param>
-    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-    public virtual async Task<ClaimsPrincipal> PasswordSignIn3Async(string email, string password)
-    {
-        if (await UserRepository.GetByEmailAsync(email) is not User user)
-        {
-            throw new AuthenticationException();
-        }
-
-        if (!await CheckPasswordAsync(user.Id, password))
-        {
-            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
-
-            await UserRepository.BumpAccessFailed(user.Id);
-
-            throw new AuthenticationException();
-        }
-
-        Logger.LogInformation($"User '{user}' password signin was successful.");
-
-        var claimsIdentity = await CreateClaimsIdentityAsync(user, CookieAuthenticationDefaults.AuthenticationScheme);
+        var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 
         return new ClaimsPrincipal(claimsIdentity);
     }

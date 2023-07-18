@@ -1,49 +1,12 @@
-using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.Authorization;
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.AspNetCore.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.Services.AddAuthentication(config =>
-// {
-//     config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//     config.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-// })
-// .AddCookie(options =>
-// {
-//     options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-//     options.SlidingExpiration = true;
-//     options.Cookie.Name = "LaixerAppAuth";
-//     options.Cookie.MaxAge = TimeSpan.FromHours(10);
-// })
-// .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme,
-//     options => builder.Configuration.GetSection("OpenIdConnect").Bind(options));
-
 builder.Services.AddFunderMapsAspNetCoreServices();
-
-builder.Services.AddScoped<SignInService>();
-builder.Services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
-    {
-        options.SlidingExpiration = true;
-        options.Cookie.Name = "FunderMaps.Auth.Local";
-    });
-
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-
-    options.AddFunderMapsPolicy();
-});
+builder.Services.AddFunderMapsAspNetCoreAuth();
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>

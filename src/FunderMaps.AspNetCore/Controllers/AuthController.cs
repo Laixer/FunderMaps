@@ -1,6 +1,8 @@
 using System.Security.Claims;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,12 +15,16 @@ namespace FunderMaps.AspNetCore.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly SignInService _signInService;
+    private readonly ISecurityTokenProvider _tokenProvider;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public AuthController(SignInService signInService)
-        => _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
+    public AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider)
+    {
+        _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
+        _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
+    }
 
     // POST: auth/signin
     /// <summary>
@@ -30,15 +36,17 @@ public class AuthController : ControllerBase
     [HttpPost("signin")]
     public async Task<SignInSecurityTokenDto> SignInAsync([FromBody] SignInDto input)
     {
-        var context = await _signInService.PasswordSignInAsync(input.Email, input.Password);
+        var principal = await _signInService.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme);
+
+        var tokenContext = _tokenProvider.GetTokenContext(principal);
 
         return new SignInSecurityTokenDto()
         {
-            Id = context.Token.Id,
-            Issuer = context.Token.Issuer,
-            Token = context.TokenString,
-            ValidFrom = context.Token.ValidFrom,
-            ValidTo = context.Token.ValidTo,
+            Id = tokenContext.Token.Id,
+            Issuer = tokenContext.Token.Issuer,
+            Token = tokenContext.TokenString,
+            ValidFrom = tokenContext.Token.ValidFrom,
+            ValidTo = tokenContext.Token.ValidTo,
         };
     }
 
@@ -53,15 +61,17 @@ public class AuthController : ControllerBase
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        var context = await _signInService.SignInAsync(userId);
+        var principal = await _signInService.UserIdSignInAsync(userId, JwtBearerDefaults.AuthenticationScheme);
+
+        var tokenContext = _tokenProvider.GetTokenContext(principal);
 
         return new SignInSecurityTokenDto()
         {
-            Id = context.Token.Id,
-            Issuer = context.Token.Issuer,
-            Token = context.TokenString,
-            ValidFrom = context.Token.ValidFrom,
-            ValidTo = context.Token.ValidTo,
+            Id = tokenContext.Token.Id,
+            Issuer = tokenContext.Token.Issuer,
+            Token = tokenContext.TokenString,
+            ValidFrom = tokenContext.Token.ValidFrom,
+            ValidTo = tokenContext.Token.ValidTo,
         };
     }
 }
