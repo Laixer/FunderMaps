@@ -15,6 +15,12 @@
   "DataProtection": {
     "ApplicationName": "FunderMapsSharedDiscriminator"
   },
+  "Authentication":{
+    "Cookie": {
+      "Name": "FunderMaps.Authentication.Realm",
+      "Domain": "*.fundermaps.com"
+    }
+  },
   "Mailgun": {
     "Domain": "fundermaps.com",
     "DefaultSenderName": "FunderMaps",

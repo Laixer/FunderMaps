@@ -115,8 +115,8 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
             .AddCookie(options =>
             {
                 options.SlidingExpiration = true;
-                options.Cookie.Name = "FunderMaps.Authentication.Realm";
-                // TODO: Set cookie domain
+                options.Cookie.Name = configuration["Authentication:Cookie:Name"];
+                options.Cookie.Domain = configuration["Authentication:Cookie:Domain"];
             })
             .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
             {
