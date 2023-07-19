@@ -31,31 +31,15 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
     ///     Retrieve number of entities.
     /// </summary>
     /// <returns>Number of entities.</returns>
-    public override async Task<long> CountAsync()
-    {
-        var cmd = CountCommand("application");
-
-        await using var context = await DbContextFactory.CreateAsync(cmd);
-
-        return await context.ScalarAsync<long>();
-    }
+    public override Task<long> CountAsync()
+        => throw new NotImplementedException();
 
     /// <summary>
     ///     Delete <see cref="KeyStore"/>.
     /// </summary>
     /// <param name="id">Entity id.</param>
-    public override async Task DeleteAsync(string id)
-    {
-        ResetCacheEntity(id);
-
-        var cmd = DeleteCommand("application", "id");
-
-        await using var context = await DbContextFactory.CreateAsync(cmd);
-
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
-    }
+    public override Task DeleteAsync(string id)
+        => throw new NotImplementedException();
 
     private static KeyStore MapFromReader(DbDataReader reader, int offset = 0)
         => new()
@@ -69,23 +53,8 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
     /// </summary>
     /// <param name="id">Unique identifier.</param>
     /// <returns><see cref="KeyStore"/>.</returns>
-    public override async Task<KeyStore> GetByIdAsync(string id)
-    {
-        if (TryGetEntity(id, out KeyStore? entity))
-        {
-            return entity ?? throw new InvalidOperationException();
-        }
-
-        var cmd = SingleCommand("application", new[] { "name", "value" });
-
-        await using var context = await DbContextFactory.CreateAsync(cmd);
-
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
-    }
+    public override Task<KeyStore> GetByIdAsync(string id)
+        => throw new NotImplementedException();
 
     /// <summary>
     ///     Retrieve all <see cref="KeyStore"/>.
@@ -112,5 +81,5 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
     /// </summary>
     /// <param name="entity">Entity object.</param>
     public override Task UpdateAsync(KeyStore entity)
-        => throw new InvalidOperationException();
+        => throw new NotImplementedException();
 }

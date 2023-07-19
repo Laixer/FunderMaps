@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Webservice.Controllers;
@@ -57,7 +56,6 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
-    // [Authorize(Roles = "webservice-analysis")]
     [HttpGet("analysis/{id}")]
     public async Task<IActionResult> GetAnalysisAsync(string id)
     {
@@ -75,7 +73,6 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
-    // [Authorize(Roles = "webservice-statistics")]
     [HttpGet("at_risk")]
     public Task<bool> GetRiskIndexLegacyAsync([FromQuery] string id)
         => _analysisRepository.GetRiskIndexAsync(id);
@@ -84,7 +81,6 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
-    // [Authorize(Roles = "webservice-atrisk")]
     [HttpGet("at_risk/{id}")]
     public Task<bool> GetRiskIndexAsync(string id)
         => _analysisRepository.GetRiskIndexAsync(id);
@@ -94,7 +90,6 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
-    // [Authorize(Roles = "webservice-statistics")]
     [HttpGet("statistics")]
     public Task<StatisticsProduct> GetStatisticsLegacyAsync([FromQuery] string id)
         => GetStatisticsByIdAsync(id);
@@ -103,7 +98,6 @@ public class ProductController : ControllerBase
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
-    // [Authorize(Roles = "webservice-statistics")]
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => GetStatisticsByIdAsync(id);
