@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers.Geocoder;
 
+// TODO: Obsolete
 /// <summary>
 ///     Endpoint controller for address operations.
 /// </summary>
