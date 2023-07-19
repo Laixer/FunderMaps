@@ -13,4 +13,6 @@ public interface IGeocoderTranslation
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Address"/> entity.</returns>
     Task<Address> GetAddressIdAsync(string input);
+
+    Task<Building> GetBuildingIdAsync(string input);
 }
