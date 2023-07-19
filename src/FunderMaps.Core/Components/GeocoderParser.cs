@@ -17,10 +17,10 @@ internal class GeocoderParser : IGeocoderParser
         => input switch
         {
             string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
-            string when input.StartsWith("NL.IMBAG.PAND", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
-            string when input.StartsWith("NL.IMBAG.LIGPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBerth,
-            string when input.StartsWith("NL.IMBAG.STANDPLAATS", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagPosting,
-            string when input.StartsWith("NL.IMBAG.NUMMERAANDUIDING", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagAddress,
+            string when input.Length == ("NL.IMBAG.PAND.".Length + 16) && input.StartsWith("NL.IMBAG.PAND.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
+            string when input.Length == ("NL.IMBAG.LIGPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.LIGPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBerth,
+            string when input.Length == ("NL.IMBAG.STANDPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.STANDPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagPosting,
+            string when input.Length == ("NL.IMBAG.NUMMERAANDUIDING.".Length + 16) && input.StartsWith("NL.IMBAG.NUMMERAANDUIDING.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagAddress,
             string when input.Length == 10 && input.StartsWith("BU", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsNeighborhood,
             string when input.Length == 8 && input.StartsWith("WK", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsDistrict,
             string when input.Length == 6 && input.StartsWith("GM", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlCbsMunicipality,
