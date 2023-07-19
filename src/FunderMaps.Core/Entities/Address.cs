@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FunderMaps.Core.Entities;
 
 /// <summary>
-///     Access entity.
+///     Address entity.
 /// </summary>
 public sealed class Address : IEntityIdentifier<string>
 {
