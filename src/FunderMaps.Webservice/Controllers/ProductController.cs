@@ -1,4 +1,6 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+﻿using FunderMaps.Core.Exceptions;
+using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +14,19 @@ public class ProductController : ControllerBase
 {
     private readonly IAnalysisRepository _analysisRepository;
     private readonly IStatisticsRepository _statisticsRepository;
+    private readonly IGeocoderTranslation _geocoderTranslation;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
     public ProductController(
         IAnalysisRepository analysisRepository,
-        IStatisticsRepository statisticsRepository)
+        IStatisticsRepository statisticsRepository,
+        IGeocoderTranslation geocoderTranslation)
     {
         _analysisRepository = analysisRepository;
         _statisticsRepository = statisticsRepository;
+        _geocoderTranslation = geocoderTranslation;
     }
 
     private async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
@@ -41,31 +46,29 @@ public class ProductController : ControllerBase
     // TODO: LEGACY
     // GET: api/v3/product/analysis
     [HttpGet("analysis")]
-    public async Task<IActionResult> GetAnalysisLegacyAsync([FromQuery] string id)
-    {
-        var product = await _analysisRepository.GetAsync(id);
-        if (product is not null)
-        {
-            return Ok(product);
-        }
-
-        return NotFound();
-    }
+    public async Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
+        => await GetAnalysisAsync(id);
 
     // GET: api/v3/product/analysis
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
     [HttpGet("analysis/{id}")]
-    public async Task<IActionResult> GetAnalysisAsync(string id)
+    public async Task<AnalysisProduct> GetAnalysisAsync(string id)
     {
-        var product = await _analysisRepository.GetAsync(id);
-        if (product is not null)
+        try
         {
-            return Ok(product);
-        }
+            var building = await _geocoderTranslation.GetBuildingIdAsync(id);
+            var product = await _analysisRepository.GetAsync(building.Id);
 
-        return NotFound();
+            await _analysisRepository.RegisterAccess(building.Id, id, "analysis3");
+            return product;
+        }
+        catch (EntityNotFoundException)
+        {
+            await _analysisRepository.RegisterMismatch(id);
+            throw;
+        }
     }
 
     // TODO: LEGACY
@@ -75,15 +78,29 @@ public class ProductController : ControllerBase
     /// </summary>
     [HttpGet("at_risk")]
     public Task<bool> GetRiskIndexLegacyAsync([FromQuery] string id)
-        => _analysisRepository.GetRiskIndexAsync(id);
+        => GetRiskIndexAsync(id);
 
     // GET: api/v3/product/at_risk
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
     [HttpGet("at_risk/{id}")]
-    public Task<bool> GetRiskIndexAsync(string id)
-        => _analysisRepository.GetRiskIndexAsync(id);
+    public async Task<bool> GetRiskIndexAsync(string id)
+    {
+        try
+        {
+            var building = await _geocoderTranslation.GetBuildingIdAsync(id);
+            var product = await _analysisRepository.GetRiskIndexAsync(building.Id);
+
+            await _analysisRepository.RegisterAccess(building.Id, id, "riskindex");
+            return product;
+        }
+        catch (EntityNotFoundException)
+        {
+            await _analysisRepository.RegisterMismatch(id);
+            throw;
+        }
+    }
 
     // TODO: LEGACY
     // GET: api/v3/product/statistics
@@ -92,7 +109,7 @@ public class ProductController : ControllerBase
     /// </summary>
     [HttpGet("statistics")]
     public Task<StatisticsProduct> GetStatisticsLegacyAsync([FromQuery] string id)
-        => GetStatisticsByIdAsync(id);
+        => GetStatisticsAsync(id);
 
     // GET: api/v3/product/statistics
     /// <summary>

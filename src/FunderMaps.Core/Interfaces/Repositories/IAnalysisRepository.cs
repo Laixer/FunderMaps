@@ -18,4 +18,8 @@ public interface IAnalysisRepository
     /// </summary>
     /// <param name="id">Internal building id.</param>
     Task<bool> GetRiskIndexAsync(string id);
+
+    Task RegisterAccess(string buildingId, string id, string product);
+
+    Task RegisterMismatch(string id);
 }
