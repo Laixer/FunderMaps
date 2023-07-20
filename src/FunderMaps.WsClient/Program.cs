@@ -4,20 +4,17 @@ using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-var usernameOption = new Option<string?>(new[] { "-u", "--username" }, "Webservice username");
-var passwordOption = new Option<string?>(new[] { "-p", "--password" }, "Webservice password");
+var usernameOption = new Option<string>(new[] { "-u", "--username" }, "Webservice username");
+var passwordOption = new Option<string>(new[] { "-p", "--password" }, "Webservice password");
 
-var authkeyOption = new Option<string?>(new[] { "-k", "--key" }, "Webservice authkey")
+var authkeyOption = new Option<string>(new[] { "-k", "--key" }, "Webservice authkey")
 {
-    IsRequired = true,
+    IsRequired = true
 };
 
 var logLevel = new Option<LogLevel>(new[] { "--log", "--log-level" }, getDefaultValue: () => LogLevel.Information, "The log level to use");
 
-var buildingArgument = new Argument<string>("building", "Building identifier")
-{
-    Arity = ArgumentArity.ExactlyOne,
-};
+var buildingArgument = new Argument<string>("building", "Building identifier");
 
 var command = new RootCommand("FunderMaps command line interface")
 {
@@ -28,7 +25,7 @@ var command = new RootCommand("FunderMaps command line interface")
     buildingArgument,
 };
 
-command.SetHandler(async (username, password, buildingId, logLevel) =>
+command.SetHandler(async (authkey, username, password, buildingId, logLevel) =>
 {
     await using var serviceProvider = new ServiceCollection()
         .AddLogging(options =>
@@ -42,32 +39,8 @@ command.SetHandler(async (username, password, buildingId, logLevel) =>
         {
             options.BaseUrl = "https://ws-staging.fundermaps.com";
             // options.BaseUrl = "http://localhost:5000";
-            options.Email = username ?? throw new ArgumentNullException(nameof(username));
-            options.Password = password ?? throw new ArgumentNullException(nameof(password));
-        })
-        .AddScoped<WebserviceClientLogger>()
-        .BuildServiceProvider();
-
-    var funderMapsWebserviceClient = serviceProvider.GetRequiredService<WebserviceClientLogger>();
-
-    await funderMapsWebserviceClient.LogAnalysisAsync(buildingId);
-    // await funderMapsWebserviceClient.LogStatisticsAsync(buildingId);
-}, usernameOption, passwordOption, buildingArgument, logLevel);
-
-command.SetHandler(async (authkey, buildingId, logLevel) =>
-{
-    await using var serviceProvider = new ServiceCollection()
-        .AddLogging(options =>
-        {
-            options.ClearProviders();
-            options.AddSimpleConsole();
-            options.SetMinimumLevel(logLevel);
-        })
-        .AddScoped<FunderMapsClient>()
-        .Configure<FunderMapsOptions>(options =>
-        {
-            options.BaseUrl = "https://ws-staging.fundermaps.com";
-            // options.BaseUrl = "http://localhost:5000";
+            options.Email = username;
+            options.Password = password;
             options.ApiKey = authkey;
         })
         .AddScoped<WebserviceClientLogger>()
@@ -77,6 +50,6 @@ command.SetHandler(async (authkey, buildingId, logLevel) =>
 
     await funderMapsWebserviceClient.LogAnalysisAsync(buildingId);
     // await funderMapsWebserviceClient.LogStatisticsAsync(buildingId);
-}, authkeyOption, buildingArgument, logLevel);
+}, authkeyOption, usernameOption, passwordOption, buildingArgument, logLevel);
 
 await command.InvokeAsync(args);
