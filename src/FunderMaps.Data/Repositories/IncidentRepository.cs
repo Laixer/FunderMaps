@@ -51,7 +51,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
                 NULLIF(@document_file, '{}'::text[]),
                 NULLIF(trim(@note), ''),
                 NULLIF(trim(@internal_note), ''),
-                NULLIF(trim(@email), ''),
+                trim(lower(@email)),
                 NULLIF(trim(@name), ''),
                 NULLIF(trim(@phone_number), ''),
                 NULLIF(@foundation_damage_characteristics, '{}'::report.foundation_damage_characteristics[]),
