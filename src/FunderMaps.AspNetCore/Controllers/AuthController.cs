@@ -2,7 +2,8 @@ using System.Security.Claims;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +27,7 @@ public class AuthController : ControllerBase
         _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
     }
 
-    // POST: auth/signin
+    // POST: api/auth/signin
     /// <summary>
     ///     User sign in endpoint.
     /// </summary>
@@ -36,7 +37,11 @@ public class AuthController : ControllerBase
     [HttpPost("signin")]
     public async Task<SignInSecurityTokenDto> SignInAsync([FromBody] SignInDto input)
     {
-        var principal = await _signInService.PasswordSignInAsync(input.Email, input.Password, JwtBearerDefaults.AuthenticationScheme);
+        var principal = await _signInService.PasswordSignInAsync(input.Email, input.Password, "FunderMapsHybridAuth");
+
+        var authProperties = new AuthenticationProperties();
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
         var tokenContext = _tokenProvider.GetTokenContext(principal);
 
@@ -50,7 +55,7 @@ public class AuthController : ControllerBase
         };
     }
 
-    // GET: auth/token-refresh
+    // GET: api/auth/token-refresh
     /// <summary>
     ///     Refresh access token for user.
     /// </summary>
@@ -61,7 +66,11 @@ public class AuthController : ControllerBase
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        var principal = await _signInService.UserIdSignInAsync(userId, JwtBearerDefaults.AuthenticationScheme);
+        var principal = await _signInService.UserIdSignInAsync(userId, "FunderMapsHybridAuth");
+
+        var authProperties = new AuthenticationProperties();
+
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
         var tokenContext = _tokenProvider.GetTokenContext(principal);
 

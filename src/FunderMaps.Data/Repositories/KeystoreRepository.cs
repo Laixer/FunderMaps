@@ -50,14 +50,6 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
         };
 
     /// <summary>
-    ///     Retrieve <see cref="KeyStore"/> by id.
-    /// </summary>
-    /// <param name="id">Unique identifier.</param>
-    /// <returns><see cref="KeyStore"/>.</returns>
-    public override Task<KeyStore> GetByIdAsync(string id)
-        => throw new NotImplementedException();
-
-    /// <summary>
     ///     Retrieve all <see cref="KeyStore"/>.
     /// </summary>
     /// <returns>List of <see cref="KeyStore"/>.</returns>

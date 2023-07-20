@@ -157,7 +157,8 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntry, TEntityPrimaryKey}.GetByIdAsync"/>
     /// </summary>
-    public abstract Task<TEntity> GetByIdAsync(TEntityPrimaryKey id);
+    public virtual Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
+        => throw new InvalidOperationException();
 
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.ListAllAsync"/>

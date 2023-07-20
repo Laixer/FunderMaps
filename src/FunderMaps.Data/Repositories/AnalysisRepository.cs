@@ -75,7 +75,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     public async Task<bool> GetRiskIndexAsync(string id)
     {
         var sql = @"
-            SELECT exists
+            SELECT EXISTS
             (
                 SELECT TRUE
                 FROM data.model_risk_static mrs

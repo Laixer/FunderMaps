@@ -13,11 +13,7 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
 {
     public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
     {
-        var sql = @"
-            SELECT application.create_organization(
-                @id,
-                @email,
-                @passwordHash)";
+        var sql = @"SELECT application.create_organization(@id, @email, @passwordHash)";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
