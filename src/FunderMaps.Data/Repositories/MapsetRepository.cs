@@ -74,7 +74,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     /// <summary>
     ///     Maps a reader to an <see cref="Mapset"/>.
     /// </summary>
-    public static Mapset MapFromReader(DbDataReader reader)
+    private static Mapset MapFromReader(DbDataReader reader)
         => new()
         {
             Id = reader.GetGuid(0),
@@ -175,7 +175,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
     /// <summary>
     ///     Maps a reader to an <see cref="Mapset"/>.
     /// </summary>
-    public static Mapset MapFromReader2(DbDataReader reader)
+    private static Mapset MapFromReader2(DbDataReader reader)
         => new()
         {
             Id = reader.GetGuid(0),

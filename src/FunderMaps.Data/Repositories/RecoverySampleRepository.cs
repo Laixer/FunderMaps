@@ -12,7 +12,7 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, IRecoverySampleRepository
 {
-    public static void MapToWriter(DbContext context, RecoverySample entity)
+    private static void MapToWriter(DbContext context, RecoverySample entity)
     {
         context.AddParameterWithValue("recovery", entity.Recovery);
         context.AddParameterWithValue("building", entity.Building);
@@ -27,7 +27,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         context.AddParameterWithValue("recovery_date", entity.RecoveryDate);
     }
 
-    public static RecoverySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+    private static RecoverySample MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
         => new()
         {
             Id = reader.GetInt(offset++),

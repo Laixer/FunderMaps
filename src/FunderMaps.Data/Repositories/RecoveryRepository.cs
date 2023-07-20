@@ -12,7 +12,7 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepository
 {
-    public static void MapToWriter(DbContext context, Recovery entity)
+    private static void MapToWriter(DbContext context, Recovery entity)
     {
         context.AddParameterWithValue("note", entity.Note);
         context.AddParameterWithValue("access_policy", entity.Access.AccessPolicy);

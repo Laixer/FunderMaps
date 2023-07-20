@@ -15,14 +15,14 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
     public async Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
     {
         var sql = @"
-                INSERT INTO application.organization_user(
-                    user_id,
-                    organization_id,
-                    role)
-                VALUES (
-                    @user_id,
-                    @organization_id,
-                    @role)";
+            INSERT INTO application.organization_user(
+                user_id,
+                organization_id,
+                role)
+            VALUES (
+                @user_id,
+                @organization_id,
+                @role)";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -78,10 +78,10 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
     public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, Navigation navigation)
     {
         var sql = @"
-                SELECT  user_id
-                FROM    application.organization_user
-                WHERE   organization_id = @organization_id
-                AND     role = ANY(@role)";
+            SELECT  user_id
+            FROM    application.organization_user
+            WHERE   organization_id = @organization_id
+            AND     role = ANY(@role)";
 
         // TODO:
         // sql = ConstructNavigation(sql, navigation);
@@ -97,18 +97,16 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         }
     }
 
-    // TODO: This should not be necessary
     public async Task<bool> IsUserInOrganization(Guid organizationId, Guid userId)
     {
-        // FUTURE: database function
         var sql = @"
-                SELECT EXISTS (
-                    SELECT  1
-                    FROM    application.organization_user
-                    WHERE   user_id = @user_id
-                    AND     organization_id = @organization_id
-                    LIMIT   1
-                )";
+            SELECT EXISTS (
+                SELECT  1
+                FROM    application.organization_user
+                WHERE   user_id = @user_id
+                AND     organization_id = @organization_id
+                LIMIT   1
+            )";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -121,9 +119,9 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
     public async Task<Guid> GetOrganizationByUserIdAsync(Guid userId)
     {
         var sql = @"
-                SELECT  organization_id
-                FROM    application.organization_user
-                WHERE   user_id = @user_id";
+            SELECT  organization_id
+            FROM    application.organization_user
+            WHERE   user_id = @user_id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -137,9 +135,9 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
     public async Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
     {
         var sql = @"
-                SELECT  role
-                FROM    application.organization_user
-                WHERE   user_id = @user_id";
+            SELECT  role
+            FROM    application.organization_user
+            WHERE   user_id = @user_id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -153,9 +151,9 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
     public async Task SetOrganizationRoleByUserIdAsync(Guid userId, OrganizationRole role)
     {
         var sql = @"
-                UPDATE  application.organization_user
-                SET     role = @role
-                WHERE   user_id = @user_id";
+            UPDATE  application.organization_user
+            SET     role = @role
+            WHERE   user_id = @user_id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 

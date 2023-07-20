@@ -108,7 +108,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         await context.NonQueryAsync();
     }
 
-    public static void MapToWriter(DbContext context, Incident entity)
+    private static void MapToWriter(DbContext context, Incident entity)
     {
         context.AddParameterWithValue("foundation_type", entity.FoundationType);
         context.AddParameterWithValue("chained_building", entity.ChainedBuilding);
@@ -130,7 +130,7 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         context.AddJsonParameterWithValue("meta", entity.Meta);
     }
 
-    public static Incident MapFromReader(DbDataReader reader, int offset = 0)
+    private static Incident MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
             Id = reader.GetString(offset++),

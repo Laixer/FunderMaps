@@ -81,7 +81,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         await context.NonQueryAsync();
     }
 
-    public static void MapToWriter(DbContext context, User entity)
+    private static void MapToWriter(DbContext context, User entity)
     {
         context.AddParameterWithValue("given_name", entity.GivenName);
         context.AddParameterWithValue("last_name", entity.LastName);
@@ -92,7 +92,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         context.AddParameterWithValue("role", entity.Role);
     }
 
-    public static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
+    private static User MapFromReader(DbDataReader reader, bool fullMap = false, int offset = 0)
         => new()
         {
             Id = reader.GetGuid(offset + 0),

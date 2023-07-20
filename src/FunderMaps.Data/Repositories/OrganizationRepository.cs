@@ -11,18 +11,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
 {
-    /// <summary>
-    ///     Create new <see cref="Organization"/>.
-    /// </summary>
-    /// <remarks>
-    ///     Organizations can only be created from organization
-    ///     proposals. Therefore this method should be a no-op.
-    /// </remarks>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="Organization"/>.</returns>
-    public override Task<Guid> AddAsync(Organization entity)
-        => throw new InvalidOperationException();
-
     public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
     {
         var sql = @"

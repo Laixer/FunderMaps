@@ -114,7 +114,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         await context.NonQueryAsync();
     }
 
-    public static void MapToWriter(DbContext context, Inquiry entity)
+    private static void MapToWriter(DbContext context, Inquiry entity)
     {
         context.AddParameterWithValue("document_name", entity.DocumentName);
         context.AddParameterWithValue("inspection", entity.Inspection);
@@ -128,7 +128,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         context.AddParameterWithValue("standard_f3o", entity.StandardF3o);
     }
 
-    public static Inquiry MapFromReader(DbDataReader reader, int offset = 0)
+    private static Inquiry MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
             Id = reader.GetInt(offset + 0),

@@ -151,7 +151,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     /// <summary>
     ///     Maps a reader to an <see cref="AnalysisProduct"/>.
     /// </summary>
-    public static AnalysisProduct MapFromReader(DbDataReader reader, int offset = 0)
+    private static AnalysisProduct MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
             BuildingId = reader.GetString(offset++),
