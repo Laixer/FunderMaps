@@ -106,19 +106,23 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     /// </summary>
     /// <param name="buildingId">Internal building id.</param>
     /// <param name="id">External identifier.</param>
-    public async Task RegisterProductMatch(string buildingId, string id, string product)
+    public async Task<bool> RegisterProductMatch(string buildingId, string id, string product)
     {
         var sql = @"
-            INSERT INTO application.product_tracker(organization_id, product, building_id, identifier)
-            SELECT @organization_id, @product, @building_id, @id
-            WHERE NOT EXISTS (
-                SELECT  1
-                FROM    application.product_tracker pt
-                WHERE   pt.organization_id = @organization_id
-                AND     pt.product = @product
-                AND     pt.identifier = @id
-                AND     pt.create_date > CURRENT_TIMESTAMP - interval '24 hours'
-            )";
+            WITH register_product_request AS (
+                INSERT INTO application.product_tracker(organization_id, product, building_id, identifier)
+                SELECT @organization_id, @product, @building_id, @id
+                WHERE NOT EXISTS (
+                    SELECT  1
+                    FROM    application.product_tracker pt
+                    WHERE   pt.organization_id = @organization_id
+                    AND     pt.product = @product
+                    AND     pt.identifier = @id
+                    AND     pt.create_date > CURRENT_TIMESTAMP - interval '24 hours'
+                )
+                RETURNING 1
+            )
+            SELECT EXISTS (SELECT 1 FROM register_product_request) AS is_registered";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
@@ -127,7 +131,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         context.AddParameterWithValue("product", product);
         context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
 
-        await context.NonQueryAsync(affectedGuard: false);
+        return await context.ScalarAsync<bool>();
     }
 
     /// <summary>

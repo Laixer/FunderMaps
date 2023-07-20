@@ -23,7 +23,7 @@ public class GeocoderController : ControllerBase
     /// <remarks>
     ///     Cache response for 8 hours. Addresses will not change often.
     /// </remarks>
-    [HttpGet("address/{id}"), ResponseCache(Duration = 60 * 60 * 8)]
+    [HttpGet("address/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public async Task<Address> GetAddressAsync(string id)
         => await _geocoderTranslation.GetAddressIdAsync(id);
 
@@ -34,7 +34,7 @@ public class GeocoderController : ControllerBase
     /// <remarks>
     ///     Cache response for 8 hours. Building will not change often.
     /// </remarks>
-    [HttpGet("building/{id}"), ResponseCache(Duration = 60 * 60 * 8)]
+    [HttpGet("building/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public async Task<Building> GetBuildingAsync(string id)
         => await _geocoderTranslation.GetBuildingIdAsync(id);
 }

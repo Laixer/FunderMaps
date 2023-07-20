@@ -72,9 +72,17 @@ public class ProductController : ControllerBase
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
             var product = await _analysisRepository.GetAsync(building.Id);
 
-            await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3");
+            var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3");
+            if (registered)
+            {
+                _logger.LogInformation($"{organization.Name} registered 'analysis3' match for identifier: {id}");
+            }
+            else
+            {
+                _logger.LogInformation($"{organization.Name} retrieved 'analysis3' match for identifier: {id}");
+            }
 
-            _logger.LogInformation($"{organization.Name} requested product 'analysis3' match for identifier: {id}");
+            HttpContext.Response.Headers.Add("X-FunderMaps-Product-Registered", registered ? "1" : "0");
 
             return product;
         }
@@ -111,9 +119,17 @@ public class ProductController : ControllerBase
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
             var product = await _analysisRepository.GetRiskIndexAsync(building.Id);
 
-            await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex");
+            var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex");
+            if (registered)
+            {
+                _logger.LogInformation($"{organization.Name} registered 'riskindex' match for identifier: {id}");
+            }
+            else
+            {
+                _logger.LogInformation($"{organization.Name} retrieved 'riskindex' match for identifier: {id}");
+            }
 
-            _logger.LogInformation($"{organization.Name} requested product 'riskindex' match for identifier: {id}");
+            HttpContext.Response.Headers.Add("X-FunderMaps-Product-Registered", registered ? "1" : "0");
 
             return product;
         }

@@ -24,7 +24,7 @@ public interface IAnalysisRepository
     /// </summary>
     /// <param name="buildingId">Internal building id.</param>
     /// <param name="id">External identifier.</param>
-    Task RegisterProductMatch(string buildingId, string id, string product);
+    Task<bool> RegisterProductMatch(string buildingId, string id, string product);
 
     /// <summary>
     ///     Register a product mismatch.
