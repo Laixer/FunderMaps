@@ -11,7 +11,7 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
 {
-    public static void MapToWriter(DbContext context, Address entity)
+    private static void MapToWriter(DbContext context, Address entity)
     {
         context.AddParameterWithValue("building_number", entity.BuildingNumber);
         context.AddParameterWithValue("postal_code", entity.PostalCode);
@@ -20,7 +20,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         context.AddParameterWithValue("external_id", entity.ExternalId);
     }
 
-    public static Address MapFromReader(DbDataReader reader, int offset = 0)
+    private static Address MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
             Id = reader.GetString(offset++),
@@ -32,38 +32,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             City = reader.GetString(offset++),
             BuildingId = reader.GetSafeString(offset++),
         };
-
-    /// <summary>
-    ///     Create new <see cref="Address"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="Address"/>.</returns>
-    public override async Task<string> AddAsync(Address entity)
-    {
-        var sql = @"
-            INSERT INTO geocoder.address(
-                building_number,
-                postal_code,
-                street,
-                is_active,
-                external_id)
-            VALUES (
-                @building_number,
-                @postal_code,
-                @street,
-                @is_active,
-                upper(@external_id))
-            ON CONFLICT DO NOTHING
-            RETURNING id";
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        MapToWriter(context, entity);
-
-        await using var reader = await context.ReaderAsync();
-
-        return reader.GetString(0);
-    }
 
     /// <summary>
     ///     Retrieve number of entities.
@@ -79,13 +47,6 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         return await context.ScalarAsync<long>();
     }
-
-    /// <summary>
-    ///     Delete <see cref="Incident"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    public override Task DeleteAsync(string id)
-        => throw new InvalidOperationException();
 
     public async Task<Address> GetByExternalIdAsync(string id)
     {
@@ -184,36 +145,5 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         {
             yield return CacheEntity(MapFromReader(reader));
         }
-    }
-
-    /// <summary>
-    ///     Update <see cref="Address"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    public override async Task UpdateAsync(Address entity)
-    {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
-        ResetCacheEntity(entity);
-
-        var sql = @"
-            UPDATE  geocoder.address
-            SET     building_number = @building_number,
-                    postal_code = @postal_code,
-                    street = @street,
-                    is_active = @is_active,
-                    external_id = upper(@external_id)
-            WHERE   id = @id";
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("id", entity.Id);
-
-        MapToWriter(context, entity);
-
-        await context.NonQueryAsync();
     }
 }

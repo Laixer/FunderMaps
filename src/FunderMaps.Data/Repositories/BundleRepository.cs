@@ -11,9 +11,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleRepository
 {
-    public override Task<string> AddAsync(Bundle entity)
-        => throw new InvalidOperationException();
-
     /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
@@ -25,23 +22,6 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
         await using var context = await DbContextFactory.CreateAsync(cmd);
 
         return await context.ScalarAsync<long>();
-    }
-
-    /// <summary>
-    ///     Delete <see cref="Bundle"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    public override async Task DeleteAsync(string id)
-    {
-        ResetCacheEntity(id);
-
-        var cmd = DeleteCommand("application", "tileset");
-
-        await using var context = await DbContextFactory.CreateAsync(cmd);
-
-        context.AddParameterWithValue("tileset", id);
-
-        await context.NonQueryAsync();
     }
 
     private static Bundle MapFromReader(DbDataReader reader, int offset = 0)
@@ -71,17 +51,17 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
         var entityName = EntityTable("maplayer");
 
         var cmd = $@"
-        SELECT
-            tileset,
-            enabled,
-            built_date,
-            precondition,
-            name,
-            zoom_min_level,
-            zoom_max_level
-        FROM {entityName}
-        WHERE tileset = @tileset
-        LIMIT 1";
+            SELECT
+                tileset,
+                enabled,
+                built_date,
+                precondition,
+                name,
+                zoom_min_level,
+                zoom_max_level
+            FROM {entityName}
+            WHERE tileset = @tileset
+            LIMIT 1";
 
         await using var context = await DbContextFactory.CreateAsync(cmd);
 
@@ -172,11 +152,4 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await context.NonQueryAsync();
     }
-
-    /// <summary>
-    ///     Update <see cref="Bundle"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    public override Task UpdateAsync(Bundle entity)
-        => throw new InvalidOperationException();
 }

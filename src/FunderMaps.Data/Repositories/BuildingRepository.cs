@@ -11,7 +11,7 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
 {
-    public static Building MapFromReader(DbDataReader reader, int offset = 0)
+    private static Building MapFromReader(DbDataReader reader, int offset = 0)
         => new()
         {
             Id = reader.GetString(offset++),

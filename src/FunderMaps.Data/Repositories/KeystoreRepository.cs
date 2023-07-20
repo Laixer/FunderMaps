@@ -31,15 +31,16 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
     ///     Retrieve number of entities.
     /// </summary>
     /// <returns>Number of entities.</returns>
-    public override Task<long> CountAsync()
-        => throw new NotImplementedException();
+    public override async Task<long> CountAsync()
+    {
+        var sql = @"
+            SELECT  COUNT(*)
+            FROM    application.key_store";
 
-    /// <summary>
-    ///     Delete <see cref="KeyStore"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    public override Task DeleteAsync(string id)
-        => throw new NotImplementedException();
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        return await context.ScalarAsync<long>();
+    }
 
     private static KeyStore MapFromReader(DbDataReader reader, int offset = 0)
         => new()
@@ -75,11 +76,4 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
             yield return CacheEntity(MapFromReader(reader));
         }
     }
-
-    /// <summary>
-    ///     Update <see cref="KeyStore"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    public override Task UpdateAsync(KeyStore entity)
-        => throw new NotImplementedException();
 }

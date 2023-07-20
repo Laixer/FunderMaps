@@ -14,11 +14,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
 {
     public static void MapToWriter(DbContext context, RecoverySample entity)
     {
-        if (entity is null)
-        {
-            throw new ArgumentNullException(nameof(entity));
-        }
-
         context.AddParameterWithValue("recovery", entity.Recovery);
         context.AddParameterWithValue("building", entity.Building);
         context.AddParameterWithValue("note", entity.Note);

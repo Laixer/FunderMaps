@@ -11,9 +11,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class ContractorRepository : RepositoryBase<Contractor, int>, IContractorRepository
 {
-    public override Task<int> AddAsync(Contractor entity)
-        => throw new InvalidOperationException();
-
     /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
@@ -25,23 +22,6 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
         await using var context = await DbContextFactory.CreateAsync(cmd);
 
         return await context.ScalarAsync<long>();
-    }
-
-    /// <summary>
-    ///     Delete <see cref="Contractor"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    public override async Task DeleteAsync(int id)
-    {
-        ResetCacheEntity(id);
-
-        var cmd = DeleteCommand("application", "id");
-
-        await using var context = await DbContextFactory.CreateAsync(cmd);
-
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
     }
 
     private static Contractor MapFromReader(DbDataReader reader, int offset = 0)
@@ -89,11 +69,4 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
             yield return CacheEntity(MapFromReader(reader));
         }
     }
-
-    /// <summary>
-    ///     Update <see cref="Contractor"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    public override Task UpdateAsync(Contractor entity)
-        => throw new InvalidOperationException();
 }
