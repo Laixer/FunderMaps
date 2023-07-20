@@ -14,5 +14,10 @@ public interface IGeocoderTranslation
     /// <returns>If found returns the <see cref="Address"/> entity.</returns>
     Task<Address> GetAddressIdAsync(string input);
 
+    /// <summary>
+    ///     Convert geocoder identifier to building entity.
+    /// </summary>
+    /// <param name="input">Input identifier.</param>
+    /// <returns>If found returns the <see cref="Building"/> entity.</returns>
     Task<Building> GetBuildingIdAsync(string input);
 }

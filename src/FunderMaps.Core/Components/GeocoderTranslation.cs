@@ -38,6 +38,11 @@ internal class GeocoderTranslation : IGeocoderTranslation
             _ => throw new EntityNotFoundException("Requested address entity could not be found."),
         };
 
+    /// <summary>
+    ///     Convert geocoder identifier to building entity.
+    /// </summary>
+    /// <param name="input">Input identifier.</param>
+    /// <returns>If found returns the <see cref="Building"/> entity.</returns>
     public async Task<Building> GetBuildingIdAsync(string input)
         => _geocoderParser.FromIdentifier(input, out string id) switch
         {

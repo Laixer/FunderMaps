@@ -22,14 +22,6 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
         };
 
     /// <summary>
-    ///     Create new <see cref="Building"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="Building"/>.</returns>
-    public override Task<string> AddAsync(Building entity)
-        => throw new InvalidOperationException();
-
-    /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
     /// <returns>Number of entities.</returns>
@@ -43,13 +35,6 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         return await context.ScalarAsync<long>();
     }
-
-    /// <summary>
-    ///     Delete <see cref="Incident"/>.
-    /// </summary>
-    /// <param name="id">Entity id.</param>
-    public override Task DeleteAsync(string id)
-        => throw new InvalidOperationException();
 
     public async Task<Building> GetByExternalIdAsync(string id)
     {
@@ -72,6 +57,11 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
         return CacheEntity(MapFromReader(reader));
     }
 
+    /// <summary>
+    ///     Get building by external address id.
+    /// </summary>
+    /// <param name="id">External address identifier.</param>
+    /// <returns>A single building.</returns>
     public async Task<Building> GetByExternalAddressIdAsync(string id)
     {
         var sql = @"
@@ -149,11 +139,4 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
             yield return CacheEntity(MapFromReader(reader));
         }
     }
-
-    /// <summary>
-    ///     Update <see cref="Building"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    public override Task UpdateAsync(Building entity)
-        => throw new InvalidOperationException();
 }

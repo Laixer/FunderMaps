@@ -167,17 +167,20 @@ internal abstract class RepositoryBase<TEntity, TEntityPrimaryKey> : DbServiceBa
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.AddAsync"/>
     /// </summary>
-    public abstract Task<TEntityPrimaryKey> AddAsync(TEntity entity);
+    public virtual Task<TEntityPrimaryKey> AddAsync(TEntity entity)
+        => throw new InvalidOperationException();
 
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.UpdateAsync"/>
     /// </summary>
-    public abstract Task UpdateAsync(TEntity entity);
+    public virtual Task UpdateAsync(TEntity entity)
+        => throw new InvalidOperationException();
 
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.DeleteAsync"/>
     /// </summary>
-    public abstract Task DeleteAsync(TEntityPrimaryKey id);
+    public virtual Task DeleteAsync(TEntityPrimaryKey id)
+        => throw new InvalidOperationException();
 
     /// <summary>
     ///     <see cref="IAsyncRepository{TEntity, TEntityPrimaryKey}.CountAsync"/>
