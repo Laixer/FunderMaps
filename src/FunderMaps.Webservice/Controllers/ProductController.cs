@@ -12,23 +12,29 @@ namespace FunderMaps.Webservice.Controllers;
 [Route("api/v3/product")]
 public class ProductController : ControllerBase
 {
+    private readonly Core.AppContext _appContext;
     private readonly IAnalysisRepository _analysisRepository;
     private readonly IStatisticsRepository _statisticsRepository;
     private readonly IGeocoderTranslation _geocoderTranslation;
+    private readonly IOrganizationRepository _organizationRepository;
     private readonly ILogger<ProductController> _logger;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
     public ProductController(
+        Core.AppContext appContext,
         IAnalysisRepository analysisRepository,
         IStatisticsRepository statisticsRepository,
         IGeocoderTranslation geocoderTranslation,
+        IOrganizationRepository organizationRepository,
         ILogger<ProductController> logger)
     {
+        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _analysisRepository = analysisRepository;
         _statisticsRepository = statisticsRepository;
         _geocoderTranslation = geocoderTranslation;
+        _organizationRepository = organizationRepository;
         _logger = logger;
     }
 
@@ -59,6 +65,8 @@ public class ProductController : ControllerBase
     [HttpGet("analysis/{id}")]
     public async Task<AnalysisProduct> GetAnalysisAsync(string id)
     {
+        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+
         try
         {
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
@@ -66,8 +74,7 @@ public class ProductController : ControllerBase
 
             await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3");
 
-            // TODO: Also log the organization name
-            _logger.LogInformation($"Product 'analysis3' match for building: {building.Id}");
+            _logger.LogInformation($"{organization.Name} requested product 'analysis3' match for identifier: {id}");
 
             return product;
         }
@@ -75,7 +82,7 @@ public class ProductController : ControllerBase
         {
             await _analysisRepository.RegisterProductMismatch(id);
 
-            _logger.LogInformation($"Product 'analysis3' mismatch for identifier: {id}");
+            _logger.LogInformation($"{organization.Name} requested product 'analysis3' mismatch for identifier: {id}");
 
             throw;
         }
@@ -97,6 +104,8 @@ public class ProductController : ControllerBase
     [HttpGet("at_risk/{id}")]
     public async Task<bool> GetRiskIndexAsync(string id)
     {
+        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+
         try
         {
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
@@ -104,8 +113,7 @@ public class ProductController : ControllerBase
 
             await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex");
 
-            // TODO: Also log the organization name
-            _logger.LogInformation($"Product 'riskindex' match for building: {building.Id}");
+            _logger.LogInformation($"{organization.Name} requested product 'riskindex' match for identifier: {id}");
 
             return product;
         }
@@ -113,7 +121,7 @@ public class ProductController : ControllerBase
         {
             await _analysisRepository.RegisterProductMismatch(id);
 
-            _logger.LogInformation($"Product 'riskindex' mismatch for identifier: {id}");
+            _logger.LogInformation($"{organization.Name} requested product 'riskindex' mismatch for identifier: {id}");
 
             throw;
         }
