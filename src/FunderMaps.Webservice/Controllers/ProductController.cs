@@ -15,6 +15,7 @@ public class ProductController : ControllerBase
     private readonly IAnalysisRepository _analysisRepository;
     private readonly IStatisticsRepository _statisticsRepository;
     private readonly IGeocoderTranslation _geocoderTranslation;
+    private readonly ILogger<ProductController> _logger;
 
     /// <summary>
     ///     Create new instance.
@@ -22,11 +23,13 @@ public class ProductController : ControllerBase
     public ProductController(
         IAnalysisRepository analysisRepository,
         IStatisticsRepository statisticsRepository,
-        IGeocoderTranslation geocoderTranslation)
+        IGeocoderTranslation geocoderTranslation,
+        ILogger<ProductController> logger)
     {
         _analysisRepository = analysisRepository;
         _statisticsRepository = statisticsRepository;
         _geocoderTranslation = geocoderTranslation;
+        _logger = logger;
     }
 
     private async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
@@ -61,12 +64,19 @@ public class ProductController : ControllerBase
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
             var product = await _analysisRepository.GetAsync(building.Id);
 
-            await _analysisRepository.RegisterAccess(building.Id, id, "analysis3");
+            await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3");
+
+            // TODO: Also log the organization name
+            _logger.LogInformation($"Product 'analysis3' match for building: {building.Id}");
+
             return product;
         }
         catch (EntityNotFoundException)
         {
-            await _analysisRepository.RegisterMismatch(id);
+            await _analysisRepository.RegisterProductMismatch(id);
+
+            _logger.LogInformation($"Product 'analysis3' mismatch for identifier: {id}");
+
             throw;
         }
     }
@@ -92,12 +102,19 @@ public class ProductController : ControllerBase
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
             var product = await _analysisRepository.GetRiskIndexAsync(building.Id);
 
-            await _analysisRepository.RegisterAccess(building.Id, id, "riskindex");
+            await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex");
+
+            // TODO: Also log the organization name
+            _logger.LogInformation($"Product 'riskindex' match for building: {building.Id}");
+
             return product;
         }
         catch (EntityNotFoundException)
         {
-            await _analysisRepository.RegisterMismatch(id);
+            await _analysisRepository.RegisterProductMismatch(id);
+
+            _logger.LogInformation($"Product 'riskindex' mismatch for identifier: {id}");
+
             throw;
         }
     }
