@@ -1,8 +1,7 @@
-﻿using FunderMaps.Core;
+﻿using Dapper;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -17,19 +16,12 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
-        var cmd = CountCommand("application");
+        var sql = "SELECT count(*) FROM application.contractor";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await conn.ExecuteScalarAsync<long>(sql);
     }
-
-    private static Contractor MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Id = reader.GetInt(offset++),
-            Name = reader.GetString(offset++),
-        };
 
     /// <summary>
     ///     Retrieve <see cref="Contractor"/> by id.
@@ -43,15 +35,11 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
             return entity ?? throw new InvalidOperationException();
         }
 
-        var cmd = SingleCommand("application", new[] { "id", "name" });
+        var sql = "SELECT id, name FROM application.contractor WHERE id = @id ORDER BY id";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await conn.QuerySingleOrDefaultAsync<Contractor>(sql, new { id }));
     }
 
     /// <summary>
@@ -60,13 +48,13 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     /// <returns>List of <see cref="Contractor"/>.</returns>
     public override async IAsyncEnumerable<Contractor> ListAllAsync(Navigation navigation)
     {
-        var cmd = AllCommand("application", new[] { "id", "name" }, navigation);
+        var sql = "SELECT id, name FROM application.contractor ORDER BY id";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await conn.QueryAsync<Contractor>(sql))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 }

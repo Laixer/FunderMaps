@@ -1,8 +1,7 @@
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -11,28 +10,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepository
 {
-    private static void MapToWriter(DbContext context, Address entity)
-    {
-        context.AddParameterWithValue("building_number", entity.BuildingNumber);
-        context.AddParameterWithValue("postal_code", entity.PostalCode);
-        context.AddParameterWithValue("street", entity.Street);
-        context.AddParameterWithValue("is_active", entity.IsActive);
-        context.AddParameterWithValue("external_id", entity.ExternalId);
-    }
-
-    private static Address MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Id = reader.GetString(offset++),
-            BuildingNumber = reader.GetString(offset++),
-            PostalCode = reader.GetSafeString(offset++),
-            Street = reader.GetString(offset++),
-            IsActive = reader.GetBoolean(offset++),
-            ExternalId = reader.GetString(offset++),
-            City = reader.GetString(offset++),
-            BuildingId = reader.GetSafeString(offset++),
-        };
-
     /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
@@ -43,13 +20,18 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             SELECT  COUNT(*)
             FROM    geocoder.address";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await conn.ExecuteScalarAsync<long>(sql);
     }
 
     public async Task<Address> GetByExternalIdAsync(string id)
     {
+        if (TryGetEntity(id, out Address? entity))
+        {
+            return entity ?? throw new InvalidOperationException();
+        }
+
         var sql = @"
             SELECT  -- Address
                     a.id,
@@ -64,13 +46,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             WHERE   a.external_id = upper(@external_id)
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("external_id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await conn.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id }));
     }
 
     /// <summary>
@@ -99,13 +77,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             WHERE   a.id = @id
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await conn.QuerySingleOrDefaultAsync<Address>(sql, new { id }));
     }
 
     /// <summary>
@@ -123,27 +97,16 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
                     a.is_active,
                     a.external_id,
                     a.city,
-                    a.building_id,
-
-                    -- Building
-                    b.id,
-                    b.building_type,
-                    b.built_year,
-                    b.is_active,
-                    b.external_id, 
-                    b.external_source, 
-                    b.geom,
-                    b.neighborhood_id
+                    a.building_id
             FROM    geocoder.address AS a
-            JOIN    geocoder.building_encoded_geom AS b ON b.id = a.building_id";
+            OFFSET  @offset
+            LIMIT   @limit";
 
-        sql = ConstructNavigation(sql, navigation);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await conn.QueryAsync<Address>(sql, navigation))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 }

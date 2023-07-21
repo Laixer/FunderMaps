@@ -1,7 +1,7 @@
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -17,14 +17,9 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
             VALUES (@name, @value)
             RETURNING name";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("name", entity.Name);
-        context.AddParameterWithValue("value", entity.Value);
-
-        await using var reader = await context.ReaderAsync();
-
-        return reader.GetString(0);
+        return await conn.ExecuteScalarAsync<string>(sql, entity);
     }
 
     /// <summary>
@@ -37,17 +32,10 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
             SELECT  COUNT(*)
             FROM    application.key_store";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await conn.ExecuteScalarAsync<long>(sql);
     }
-
-    private static KeyStore MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Name = reader.GetString(offset++),
-            Value = reader.GetString(offset++),
-        };
 
     /// <summary>
     ///     Retrieve all <see cref="KeyStore"/>.
@@ -61,11 +49,11 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
                     ks.value
             FROM    application.key_store ks";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        var conn = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await conn.QueryAsync<KeyStore>(sql))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return item;
         }
     }
 }

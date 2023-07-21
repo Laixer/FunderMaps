@@ -20,6 +20,8 @@ internal class DbContextFactory
         _dbProvider = dbProvider ?? throw new System.ArgumentNullException(nameof(dbProvider));
     }
 
+    public DbProvider DbProvider => _dbProvider;
+
     /// <summary>
     ///     Create and initialize the <see cref="DbContext"/>.
     /// </summary>
