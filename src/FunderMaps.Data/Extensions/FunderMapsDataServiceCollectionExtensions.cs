@@ -76,6 +76,8 @@ public static class FunderMapsDataServiceCollectionExtensions
         services.AddContextRepository<ITelemetryRepository, TelemetryRepository>();
         services.AddContextRepository<IUserRepository, UserRepository>();
 
+        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
         return services;
     }
 }
