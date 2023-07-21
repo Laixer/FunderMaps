@@ -132,15 +132,4 @@ public sealed class Incident : RecordControl, IEntityIdentifier<string>
     ///     Meta data.
     /// </summary>
     public object? Meta { get; set; }
-
-    /// <summary>
-    ///     Print object as name.
-    /// </summary>
-    /// <returns>String representing incident.</returns>
-    public override string ToString() => Id;
-
-    /// <summary>
-    ///     Address object.
-    /// </summary>
-    public Address AddressNavigation { get; set; } = default!;
 }
