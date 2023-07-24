@@ -25,18 +25,19 @@ public interface IOrganizationUserRepository
     Task<bool> IsUserInOrganization(Guid organizationId, Guid userId);
 
     /// <summary>
-    ///     Find organization by user.
+    ///     Find all organizations by user identifier.
     /// </summary>
     /// <param name="userId">User identifier.</param>
-    /// <returns>Identifier of organization.</returns>
-    Task<Guid> GetOrganizationByUserIdAsync(Guid userId);
+    /// <returns>List of organization identifiers.</returns>
+    IAsyncEnumerable<Guid> ListAllOrganizationIdByUserIdAsync(Guid userId);
 
     /// <summary>
     ///     Get user role within the organization.
     /// </summary>
     /// <param name="userId">User identifier.</param>
+    /// <param name="organizationId">Organization identifier.</param>
     /// <returns>Organization role.</returns>
-    Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId);
+    Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId);
 
     /// <summary>
     ///     List all organization members.

@@ -83,9 +83,6 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
             WHERE   organization_id = @organization_id
             AND     role = ANY(@role)";
 
-        // TODO:
-        // sql = ConstructNavigation(sql, navigation);
-
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("organization_id", organizationId);
@@ -116,7 +113,7 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         return await context.ScalarAsync<bool>();
     }
 
-    public async Task<Guid> GetOrganizationByUserIdAsync(Guid userId)
+    public async IAsyncEnumerable<Guid> ListAllOrganizationIdByUserIdAsync(Guid userId)
     {
         var sql = @"
             SELECT  organization_id
@@ -127,27 +124,31 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
 
         context.AddParameterWithValue("user_id", userId);
 
-        await using var reader = await context.ReaderAsync();
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return reader.GetGuid(0);
+        }
+   }
 
-        return reader.GetGuid(0);
-    }
-
-    public async Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId)
+    public async Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId)
     {
         var sql = @"
             SELECT  role
             FROM    application.organization_user
-            WHERE   user_id = @user_id";
+            WHERE   user_id = @user_id
+            AND     organization_id = @organization_id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("user_id", userId);
+        context.AddParameterWithValue("organization_id", organizationId);
 
         await using var reader = await context.ReaderAsync();
 
         return reader.GetFieldValue<OrganizationRole>(0);
     }
 
+    // TODO: Also request the organization for which this role must be set.
     public async Task SetOrganizationRoleByUserIdAsync(Guid userId, OrganizationRole role)
     {
         var sql = @"
