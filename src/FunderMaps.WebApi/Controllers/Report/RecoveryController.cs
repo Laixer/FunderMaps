@@ -1,4 +1,5 @@
-﻿using FunderMaps.AspNetCore.DataAnnotations;
+﻿using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
@@ -68,15 +69,28 @@ public class RecoveryController : ControllerBase
     /// </summary>
     [HttpGet("{id:int}")]
     public Task<Recovery> GetAsync(int id)
-        => _recoveryRepository.GetByIdAsync(id);
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        var recovery = _recoveryRepository.GetByIdAsync(id, tenantId);
+
+        return recovery;
+    }
 
     // GET: api/recovery
     /// <summary>
     ///     Return all recoveries.
     /// </summary>
     [HttpGet]
-    public IAsyncEnumerable<Recovery> GetAllAsync([FromQuery] PaginationDto pagination)
-        => _recoveryRepository.ListAllAsync(pagination.Navigation);
+    public async IAsyncEnumerable<Recovery> GetAllAsync([FromQuery] PaginationDto pagination)
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        await foreach (var recovery in _recoveryRepository.ListAllAsync(pagination.Navigation, tenantId))
+        {
+            yield return recovery;
+        }
+    }
 
     // POST: api/recovery
     /// <summary>
@@ -87,9 +101,10 @@ public class RecoveryController : ControllerBase
     public Task<Recovery> CreateAsync([FromBody] Recovery recovery)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         recovery.Attribution.Creator = userId;
-        recovery.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+        recovery.Attribution.Owner = tenantId;
 
         if (recovery.Attribution.Reviewer == userId)
         {
@@ -153,10 +168,11 @@ public class RecoveryController : ControllerBase
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] Recovery recovery)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         recovery.Id = id;
         recovery.Attribution.Creator = userId;
-        recovery.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+        recovery.Attribution.Owner = tenantId;
 
         if (recovery.Attribution.Reviewer == userId)
         {
@@ -171,7 +187,7 @@ public class RecoveryController : ControllerBase
         if (recovery.State.AuditStatus == AuditStatus.Rejected)
         {
             recovery.State.TransitionToPending();
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
         }
 
         return NoContent();
@@ -185,10 +201,12 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> ResetAsync(int id)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var recovery = await _recoveryRepository.GetByIdAsync(id);
 
         recovery.State.TransitionToPending();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         return NoContent();
     }
@@ -201,13 +219,15 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> SetStatusReviewAsync(int id)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var recovery = await _recoveryRepository.GetByIdAsync(id);
-        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         recovery.State.TransitionToReview();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         await _emailService.SendAsync(new EmailMessage
         {
@@ -235,13 +255,15 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var recovery = await _recoveryRepository.GetByIdAsync(id);
-        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         recovery.State.TransitionToRejected();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         await _emailService.SendAsync(new EmailMessage
         {
@@ -272,13 +294,15 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusApprovedAsync(int id)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var recovery = await _recoveryRepository.GetByIdAsync(id);
-        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         recovery.State.TransitionToDone();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery);
+        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         await _emailService.SendAsync(new EmailMessage
         {
@@ -308,7 +332,9 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        await _recoveryRepository.DeleteAsync(id);
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        await _recoveryRepository.DeleteAsync(id, tenantId);
 
         return NoContent();
     }

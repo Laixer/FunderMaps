@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,13 @@ public sealed class QuotaController : ControllerBase
     /// <summary>
     ///     Request product quota usage.
     /// </summary>
-    public IAsyncEnumerable<ProductTelemetry> GetQuotaUsageAsync()
-        => _telemetryRepository.ListAllUsageAsync();
+    public async IAsyncEnumerable<ProductTelemetry> GetQuotaUsageAsync()
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        await foreach (var telemetry in _telemetryRepository.ListAllUsageAsync(tenantId))
+        {
+            yield return telemetry;
+        }
+    }
 }

@@ -107,7 +107,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     ///     Retrieve number of <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
     /// </summary>
     /// <returns>Number of <see cref="RecoverySample"/>.</returns>
-    public async Task<long> CountAsync(int recovery)
+    public async Task<long> CountAsync(int recovery, Guid tenantId)
     {
         var sql = @"
             SELECT  COUNT(*)
@@ -120,16 +120,21 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", recovery);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         return await context.ScalarAsync<long>();
+    }
+
+    public override Task DeleteAsync(int id)
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
     ///     Delete <see cref="RecoverySample"/>.
     /// </summary>
     /// <param name="id">Entity id.</param>
-    public override async Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id, Guid tenantId)
     {
         var sql = @"
             DELETE
@@ -143,12 +148,17 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         await context.NonQueryAsync();
     }
 
+    public override Task<RecoverySample> GetByIdAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///     Retrieve <see cref="RecoverySample"/> by id.
     /// </summary>
     /// <param name="id">Unique identifier.</param>
     /// <returns><see cref="RecoverySample"/>.</returns>
-    public override async Task<RecoverySample> GetByIdAsync(int id)
+    public async Task<RecoverySample> GetByIdAsync(int id, Guid tenantId)
     {
         var sql = @"
             SELECT  -- RecoverySample
@@ -208,7 +218,6 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("building", id);
-        // context.AddParameterWithValue("tenant", AppContext.TenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -216,11 +225,16 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         }
     }
 
+    public override IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///     Retrieve all <see cref="RecoverySample"/>.
     /// </summary>
     /// <returns>List of <see cref="RecoverySample"/>.</returns>
-    public override async IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<RecoverySample> ListAllAsync(Navigation navigation, Guid tenantId)
     {
         var sql = @"
             SELECT  -- RecoverySample
@@ -249,7 +263,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -261,7 +275,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
     ///     Retrieve all <see cref="RecoverySample"/> for a given <see cref="Recovery"/>.
     /// </summary>
     /// <returns>List of <see cref="RecoverySample"/>.</returns>
-    public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation)
+    public async IAsyncEnumerable<RecoverySample> ListAllAsync(int recovery, Navigation navigation, Guid tenantId)
     {
         var sql = @"
             SELECT  -- RecoverySample
@@ -292,7 +306,7 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", recovery);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -300,7 +314,12 @@ internal class RecoverySampleRepository : RepositoryBase<RecoverySample, int>, I
         }
     }
 
-    public override async Task UpdateAsync(RecoverySample entity)
+    public override Task UpdateAsync(RecoverySample entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task UpdateAsync(RecoverySample entity, Guid tenantId)
     {
         var sql = @"
             UPDATE  report.recovery_sample

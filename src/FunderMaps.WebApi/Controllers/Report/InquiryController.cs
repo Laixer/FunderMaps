@@ -171,7 +171,7 @@ public class InquiryController : ControllerBase
 
         inquiry.Id = id;
         inquiry.Attribution.Creator = userId;
-        inquiry.Attribution.Owner = tenantId; // TODO: LEGACY
+        inquiry.Attribution.Owner = tenantId;
 
         if (inquiry.Attribution.Reviewer == userId)
         {

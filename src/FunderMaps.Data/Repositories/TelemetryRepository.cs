@@ -43,7 +43,7 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
     /// <summary>
     ///     Retrieve all product telemetrics.
     /// </summary>
-    public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync()
+    public async IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync(Guid tenantId)
     {
         var sql = @"
             SELECT  -- ProductTracker
@@ -55,7 +55,7 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
