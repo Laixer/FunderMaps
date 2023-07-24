@@ -15,7 +15,6 @@ public class MapsetController : ControllerBase
     private readonly IIncidentRepository _incidentRepository;
     private readonly IInquirySampleRepository _inquirySampleRepository;
     private readonly IRecoverySampleRepository _recoverySampleRepository;
-    private readonly Core.AppContext _appContext;
 
     /// <summary>
     ///     Create new instance.
@@ -24,14 +23,12 @@ public class MapsetController : ControllerBase
         IMapsetRepository mapsetRepository,
         IIncidentRepository incidentRepository,
         IInquirySampleRepository inquirySampleRepository,
-        IRecoverySampleRepository recoverySampleRepository,
-        Core.AppContext appContext)
+        IRecoverySampleRepository recoverySampleRepository)
     {
         _mapsetRepository = mapsetRepository;
         _incidentRepository = incidentRepository;
         _inquirySampleRepository = inquirySampleRepository;
         _recoverySampleRepository = recoverySampleRepository;
-        _appContext = appContext;
     }
 
     [HttpGet("building/{buildingId}")]

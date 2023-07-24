@@ -14,7 +14,6 @@ namespace FunderMaps.Webservice.Controllers;
 [Route("api/v3/product")]
 public class ProductController : ControllerBase
 {
-    private readonly Core.AppContext _appContext;
     private readonly IAnalysisRepository _analysisRepository;
     private readonly IStatisticsRepository _statisticsRepository;
     private readonly IGeocoderTranslation _geocoderTranslation;
@@ -25,14 +24,12 @@ public class ProductController : ControllerBase
     ///     Create new instance.
     /// </summary>
     public ProductController(
-        Core.AppContext appContext,
         IAnalysisRepository analysisRepository,
         IStatisticsRepository statisticsRepository,
         IGeocoderTranslation geocoderTranslation,
         IOrganizationRepository organizationRepository,
         ILogger<ProductController> logger)
     {
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _analysisRepository = analysisRepository;
         _statisticsRepository = statisticsRepository;
         _geocoderTranslation = geocoderTranslation;

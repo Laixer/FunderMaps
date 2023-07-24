@@ -22,7 +22,6 @@ namespace FunderMaps.WebApi.Controllers.Report;
 [Route("api/recovery")]
 public class RecoveryController : ControllerBase
 {
-    private readonly Core.AppContext _appContext;
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IUserRepository _userRepository;
     private readonly IRecoveryRepository _recoveryRepository;
@@ -33,14 +32,12 @@ public class RecoveryController : ControllerBase
     ///     Create new instance.
     /// </summary>
     public RecoveryController(
-        Core.AppContext appContext,
         IOrganizationRepository organizationRepository,
         IUserRepository userRepository,
         IRecoveryRepository recoveryRepository,
         IBlobStorageService blobStorageService,
         IEmailService emailService)
     {
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));

@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Abstractions;
-using FunderMaps.Core.Components;
+﻿using FunderMaps.Core.Components;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FunderMaps.Data.Abstractions;
@@ -16,7 +15,7 @@ namespace FunderMaps.Data.Abstractions;
 ///         This class is modelled after <seealso cref="AppServiceBase"/>.
 ///     </para>
 /// </remarks>
-internal abstract class DbServiceBase : AppServiceBase
+internal abstract class DbServiceBase
 {
     /// <summary>
     ///     Memory cache.

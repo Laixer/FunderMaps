@@ -34,7 +34,6 @@ public static class FunderMapsDataServiceCollectionExtensions
             TImplementation repository = new();
             DbServiceBase injectorBase = repository as DbServiceBase;
 
-            injectorBase.AppContext = serviceProvider.GetRequiredService<FunderMaps.Core.AppContext>();
             injectorBase.Cache = serviceProvider.GetRequiredService<IMemoryCache>();
             injectorBase.DbContextFactory = ActivatorUtilities.CreateInstance<DbContextFactory>(serviceProvider);
 
