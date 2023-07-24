@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -15,15 +17,13 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/organization")]
 public class OrganizationController : ControllerBase
 {
-    private readonly Core.AppContext _appContext;
     private readonly IOrganizationRepository _organizationRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public OrganizationController(Core.AppContext appContext, IOrganizationRepository organizationRepository)
+    public OrganizationController(IOrganizationRepository organizationRepository)
     {
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
     }
 
@@ -32,8 +32,12 @@ public class OrganizationController : ControllerBase
     ///     Return session organization.
     /// </summary>
     [HttpGet]
-    public Task<Organization> GetAsync()
-        => _organizationRepository.GetByIdAsync(_appContext.TenantId);
+    public async Task<Organization> GetAsync()
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        return await _organizationRepository.GetByIdAsync(tenantId);
+    }
 
     // PUT: organization
     /// <summary>
@@ -43,7 +47,7 @@ public class OrganizationController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
     {
-        organization.Id = _appContext.TenantId;
+        organization.Id = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         await _organizationRepository.UpdateAsync(organization);
 
