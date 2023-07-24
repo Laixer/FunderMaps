@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
@@ -18,16 +19,14 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/user")]
 public class UserController : ControllerBase
 {
-    private readonly Core.AppContext _appContext;
     private readonly IUserRepository _userRepository;
     private readonly SignInService _signInService;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public UserController(Core.AppContext appContext, IUserRepository userRepository, SignInService signInService)
+    public UserController(IUserRepository userRepository, SignInService signInService)
     {
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
     }
@@ -38,7 +37,11 @@ public class UserController : ControllerBase
     /// </summary>
     [HttpGet]
     public async Task<User> GetAsync()
-        => await _userRepository.GetByIdAsync(_appContext.UserId);
+    {
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
+        return await _userRepository.GetByIdAsync(userId);
+    }
 
     // PUT: user
     /// <summary>
@@ -47,7 +50,7 @@ public class UserController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateAsync([FromBody] User user)
     {
-        user.Id = _appContext.UserId;
+        user.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
         await _userRepository.UpdateAsync(user);
 
@@ -61,12 +64,14 @@ public class UserController : ControllerBase
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
     {
-        if (!await _signInService.CheckPasswordAsync(_appContext.UserId, input.OldPassword))
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
+        if (!await _signInService.CheckPasswordAsync(userId, input.OldPassword))
         {
             throw new InvalidCredentialException();
         }
 
-        await _signInService.SetPasswordAsync(_appContext.UserId, input.NewPassword);
+        await _signInService.SetPasswordAsync(userId, input.NewPassword);
 
         return NoContent();
     }

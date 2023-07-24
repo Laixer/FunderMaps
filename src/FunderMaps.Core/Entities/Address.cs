@@ -64,10 +64,4 @@ public sealed class Address : IEntityIdentifier<string>
     ///     Full address.
     /// </summary>
     public string FullAddress => $"{Street} {BuildingNumber}, {City}";
-
-    /// <summary>
-    ///     Print object as name.
-    /// </summary>
-    /// <returns>String representing user.</returns>
-    public override string ToString() => Id;
 }

@@ -11,6 +11,7 @@ using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace FunderMaps.WebApi.Controllers.Report;
 
@@ -83,14 +84,19 @@ public class RecoveryController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public Task<Recovery> CreateAsync([FromBody] Recovery input)
+    public Task<Recovery> CreateAsync([FromBody] Recovery recovery)
     {
-        if (_appContext.UserId == input.Attribution.Reviewer)
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
+        recovery.Attribution.Creator = userId;
+        recovery.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+
+        if (recovery.Attribution.Reviewer == userId)
         {
             throw new AuthorizationException();
         }
 
-        return _recoveryRepository.AddGetAsync(input);
+        return _recoveryRepository.AddGetAsync(recovery);
     }
 
     // POST: api/recovery/upload-document
@@ -146,9 +152,13 @@ public class RecoveryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] Recovery recovery)
     {
-        recovery.Id = id;
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        if (_appContext.UserId == recovery.Attribution.Reviewer)
+        recovery.Id = id;
+        recovery.Attribution.Creator = userId;
+        recovery.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+
+        if (recovery.Attribution.Reviewer == userId)
         {
             throw new AuthorizationException();
         }

@@ -62,8 +62,8 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
-        context.AddParameterWithValue("user", AppContext.UserId);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("user", entity.Attribution.Creator);
+        context.AddParameterWithValue("tenant", entity.Attribution.Owner);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
         MapToWriter(context, entity);
@@ -312,7 +312,7 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
 
         context.AddParameterWithValue("id", entity.Id);
         context.AddParameterWithValue("reviewer", entity.Attribution.Reviewer);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", entity.Attribution.Owner);
         context.AddParameterWithValue("contractor", entity.Attribution.Contractor);
 
         MapToWriter(context, entity);

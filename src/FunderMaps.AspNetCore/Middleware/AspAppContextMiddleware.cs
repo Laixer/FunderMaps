@@ -24,35 +24,9 @@ public class AspAppContextMiddleware
     public async Task InvokeAsync(HttpContext httpContext, Core.AppContext appContext)
     {
         appContext.CancellationToken = httpContext.RequestAborted;
-        appContext.Host = httpContext.Request.Host.Value;
-        appContext.UserAgent = httpContext.Request.Headers.UserAgent;
-        appContext.RemoteIpAddress = httpContext.Connection.RemoteIpAddress;
-        appContext.Identity = httpContext.User.Identity;
 
         if (httpContext.User.Identity is not null && httpContext.User.Identity.IsAuthenticated)
         {
-            var objectIdClaim = httpContext.User.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier");
-            if (objectIdClaim is not null)
-            {
-                appContext.User = new User()
-                {
-                    Id = Guid.Parse(objectIdClaim.Value),
-                };
-            }
-            else
-            {
-                var idClaim = httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-                if (idClaim is null)
-                {
-                    throw new InvalidOperationException();
-                }
-                appContext.User = new User()
-                {
-                    Id = Guid.Parse(idClaim.Value),
-                };
-
-            }
-
             foreach (var orgClaim in httpContext.User.FindAll("organization_id"))
             {
                 appContext.Organizations.Add(new()

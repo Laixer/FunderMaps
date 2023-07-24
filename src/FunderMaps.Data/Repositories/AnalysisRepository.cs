@@ -129,7 +129,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         context.AddParameterWithValue("building_id", buildingId);
         context.AddParameterWithValue("id", id);
         context.AddParameterWithValue("product", product);
-        context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
+        context.AddParameterWithValue("organization_id", AppContext.TenantId);
 
         return await context.ScalarAsync<bool>();
     }
@@ -147,7 +147,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("organization_id", AppContext.OrganizationId);
+        context.AddParameterWithValue("organization_id", AppContext.TenantId);
 
         await context.NonQueryAsync(affectedGuard: false);
     }

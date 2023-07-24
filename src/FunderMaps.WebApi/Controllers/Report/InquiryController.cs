@@ -11,6 +11,7 @@ using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace FunderMaps.WebApi.Controllers.Report;
 
@@ -85,7 +86,12 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
-        if (_appContext.UserId == inquiry.Attribution.Reviewer)
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
+        inquiry.Attribution.Creator = userId;
+        inquiry.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+
+        if (inquiry.Attribution.Reviewer == userId)
         {
             throw new AuthorizationException();
         }
@@ -146,9 +152,13 @@ public class InquiryController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] Inquiry inquiry)
     {
-        inquiry.Id = id;
+        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        if (_appContext.UserId == inquiry.Attribution.Reviewer)
+        inquiry.Id = id;
+        inquiry.Attribution.Creator = userId;
+        inquiry.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+
+        if (inquiry.Attribution.Reviewer == userId)
         {
             throw new AuthorizationException();
         }
