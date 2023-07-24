@@ -35,14 +35,14 @@ public class AspAppContextMiddleware
                 });
             }
 
-            var tenantClaim = httpContext.User.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid");
-            if (tenantClaim is not null)
-            {
-                appContext.Organizations.Add(new()
-                {
-                    Id = Guid.Parse(tenantClaim.Value),
-                });
-            }
+            // var tenantClaim = httpContext.User.FindFirst("http://schemas.microsoft.com/identity/claims/tenantid");
+            // if (tenantClaim is not null)
+            // {
+            //     appContext.Organizations.Add(new()
+            //     {
+            //         Id = Guid.Parse(tenantClaim.Value),
+            //     });
+            // }
 
             var fundermapsTenantClaim = httpContext.User.FindFirst(FunderMapsAuthenticationClaimTypes.Tenant);
             if (fundermapsTenantClaim is not null)
