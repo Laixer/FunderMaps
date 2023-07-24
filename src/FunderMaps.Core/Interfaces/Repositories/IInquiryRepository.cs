@@ -7,10 +7,18 @@ namespace FunderMaps.Core.Interfaces.Repositories;
 /// </summary>
 public interface IInquiryRepository : IAsyncRepository<Inquiry, int>
 {
+    Task<long> CountAsync(Guid tenantId);
+
+    Task DeleteAsync(int id, Guid tenantId);
+
+    Task<Inquiry> GetByIdAsync(int id, Guid tenantId);
+
+    IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation, Guid tenantId);
+
     /// <summary>
     ///     Set <see cref="InquiryFull"/> audit status.
     /// </summary>
     /// <param name="id">Entity identifier.</param>
     /// <param name="entity">Entity object.</param>
-    Task SetAuditStatusAsync(int id, Inquiry entity);
+    Task SetAuditStatusAsync(int id, Inquiry entity, Guid tenantId);
 }

@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -69,6 +71,8 @@ public class InquirySampleController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<InquirySample> CreateAsync(int inquiryId, [FromBody] InquirySample inquirySample, [FromServices] IGeocoderTranslation geocoderTranslation)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
 
         inquirySample.Address = address.Id;
@@ -84,7 +88,7 @@ public class InquirySampleController : ControllerBase
         inquirySample = await _inquirySampleRepository.AddGetAsync(inquirySample);
 
         inquiry.State.TransitionToPending();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
         return inquirySample;
     }
@@ -101,6 +105,8 @@ public class InquirySampleController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         inquirySample.Id = id;
         inquirySample.Inquiry = inquiryId;
 
@@ -113,7 +119,7 @@ public class InquirySampleController : ControllerBase
         await _inquirySampleRepository.UpdateAsync(inquirySample);
 
         inquiry.State.TransitionToPending();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
         return NoContent();
     }
@@ -130,6 +136,8 @@ public class InquirySampleController : ControllerBase
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
 
         var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
@@ -144,7 +152,7 @@ public class InquirySampleController : ControllerBase
         if (await _inquirySampleRepository.CountAsync() == 0)
         {
             inquiry.State.TransitionToTodo();
-            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry);
+            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
         }
 
         return NoContent();
