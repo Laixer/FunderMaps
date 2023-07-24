@@ -35,9 +35,11 @@ public class InquirySampleController : ControllerBase
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int inquiryId)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var output = new DatasetStatsDto()
         {
-            Count = await _inquirySampleRepository.CountAsync(inquiryId),
+            Count = await _inquirySampleRepository.CountAsync(inquiryId, tenantId),
         };
 
         return Ok(output);
@@ -49,15 +51,26 @@ public class InquirySampleController : ControllerBase
     /// </summary>
     [HttpGet("{id}")]
     public Task<InquirySample> GetAsync(int id)
-        => _inquirySampleRepository.GetByIdAsync(id);
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        return _inquirySampleRepository.GetByIdAsync(id, tenantId);
+    }
 
     // GET: api/inquiry/{id}/sample
     /// <summary>
     ///     Return all inquiry samples.
     /// </summary>
     [HttpGet]
-    public IAsyncEnumerable<InquirySample> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
-        => _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation);
+    public async IAsyncEnumerable<InquirySample> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        await foreach (var item in _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, tenantId))
+        {
+            yield return item;
+        }
+    }
 
     // POST: api/inquiry/{id}/sample/{id}
     /// <summary>
@@ -79,7 +92,7 @@ public class InquirySampleController : ControllerBase
         inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         inquirySample.Inquiry = inquiryId;
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
@@ -110,13 +123,13 @@ public class InquirySampleController : ControllerBase
         inquirySample.Id = id;
         inquirySample.Inquiry = inquiryId;
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _inquirySampleRepository.UpdateAsync(inquirySample);
+        await _inquirySampleRepository.UpdateAsync(inquirySample, tenantId);
 
         inquiry.State.TransitionToPending();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
@@ -138,18 +151,17 @@ public class InquirySampleController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquirySample = await _inquirySampleRepository.GetByIdAsync(id);
+        var inquirySample = await _inquirySampleRepository.GetByIdAsync(id, tenantId);
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry);
+        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _inquirySampleRepository.DeleteAsync(inquirySample.Id);
+        await _inquirySampleRepository.DeleteAsync(inquirySample.Id, tenantId);
 
-        // FUTURE: Should only select inquiry
-        if (await _inquirySampleRepository.CountAsync() == 0)
+        if (await _inquirySampleRepository.CountAsync(inquiry.Id, tenantId) == 0)
         {
             inquiry.State.TransitionToTodo();
             await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);

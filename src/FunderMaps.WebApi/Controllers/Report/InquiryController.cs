@@ -22,7 +22,6 @@ namespace FunderMaps.WebApi.Controllers.Report;
 [Route("api/inquiry")]
 public class InquiryController : ControllerBase
 {
-    private readonly Core.AppContext _appContext;
     private readonly IOrganizationRepository _organizationRepository;
     private readonly IUserRepository _userRepository;
     private readonly IInquiryRepository _inquiryRepository;
@@ -33,14 +32,12 @@ public class InquiryController : ControllerBase
     ///     Create new instance.
     /// </summary>
     public InquiryController(
-        Core.AppContext appContext,
         IOrganizationRepository organizationRepository,
         IUserRepository userRepository,
         IInquiryRepository inquiryRepository,
         IBlobStorageService blobStorageService,
         IEmailService emailService)
     {
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
@@ -103,9 +100,10 @@ public class InquiryController : ControllerBase
     public Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         inquiry.Attribution.Creator = userId;
-        inquiry.Attribution.Owner = _appContext.TenantId; // TODO: LEGACY
+        inquiry.Attribution.Owner = tenantId;
 
         if (inquiry.Attribution.Reviewer == userId)
         {

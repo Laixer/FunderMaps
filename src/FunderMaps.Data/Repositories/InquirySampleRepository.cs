@@ -157,11 +157,17 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         return await context.ScalarAsync<int>();
     }
 
+    public override Task<long> CountAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    // TODO: Maybe remove this method?.
     /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
     /// <returns>Number of entities.</returns>
-    public override async Task<long> CountAsync()
+    public async Task<long> CountAsync(Guid tenantId)
     {
         var sql = @"
             SELECT  COUNT(*)
@@ -172,7 +178,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         return await context.ScalarAsync<long>();
     }
@@ -181,7 +187,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     ///     Retrieve number of entities.
     /// </summary>
     /// <returns>Number of entities.</returns>
-    public async Task<long> CountAsync(int report)
+    public async Task<long> CountAsync(int report, Guid tenantId)
     {
         var sql = @"
             SELECT  COUNT(*)
@@ -194,16 +200,21 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", report);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         return await context.ScalarAsync<long>();
+    }
+
+    public override Task DeleteAsync(int id)
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
     ///     Delete <see cref="InquirySample"/>.
     /// </summary>
     /// <param name="id">Entity object.</param>
-    public override async Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id, Guid tenantId)
     {
         ResetCacheEntity(id);
 
@@ -219,7 +230,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await context.NonQueryAsync();
     }
@@ -363,12 +374,17 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
             SkewedWindowFrame = reader.GetSafeBoolean(offset++),
         };
 
+    public override Task<InquirySample> GetByIdAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <summary>
     ///     Retrieve <see cref="InquirySample"/> by id.
     /// </summary>
     /// <param name="id">Unique identifier.</param>
     /// <returns><see cref="InquirySample"/>.</returns>
-    public override async Task<InquirySample> GetByIdAsync(int id)
+    public async Task<InquirySample> GetByIdAsync(int id, Guid tenantId)
     {
         if (TryGetEntity(id, out InquirySample? entity))
         {
@@ -464,7 +480,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await using var reader = await context.ReaderAsync();
 
@@ -561,7 +577,6 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("building", id);
-        // context.AddParameterWithValue("tenant", AppContext.TenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -569,11 +584,17 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         }
     }
 
+    public override IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation)
+    {
+        throw new NotImplementedException();
+    }
+
+    // TOOD: Remove
     /// <summary>
     ///     Retrieve all <see cref="InquirySample"/>.
     /// </summary>
     /// <returns>List of <see cref="InquirySample"/>.</returns>
-    public override async IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation)
+    public async IAsyncEnumerable<InquirySample> ListAllAsync(Navigation navigation, Guid tenantId)
     {
         var sql = @"
             SELECT  -- InquirySample
@@ -664,7 +685,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
 
         await using var context = await DbContextFactory.CreateAsync(sql);
 
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -676,7 +697,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
     ///     Retrieve all entities and filter on report.
     /// </summary>
     /// <returns>List of entities.</returns>
-    public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation)
+    public async IAsyncEnumerable<InquirySample> ListAllAsync(int report, Navigation navigation, Guid tenantId)
     {
         var sql = @"
             SELECT  -- InquirySample
@@ -769,7 +790,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", report);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -777,7 +798,12 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         }
     }
 
-    public override async Task UpdateAsync(InquirySample entity)
+    public override Task UpdateAsync(InquirySample entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task UpdateAsync(InquirySample entity, Guid tenantId)
     {
         ResetCacheEntity(entity);
 
@@ -866,7 +892,7 @@ internal class InquirySampleRepository : RepositoryBase<InquirySample, int>, IIn
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", entity.Id);
-        context.AddParameterWithValue("tenant", AppContext.TenantId);
+        context.AddParameterWithValue("tenant", tenantId);
 
         MapToWriter(context, entity);
 
