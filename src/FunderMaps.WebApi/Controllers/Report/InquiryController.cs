@@ -146,7 +146,9 @@ public class InquiryController : ControllerBase
     [HttpGet("{id:int}/download")]
     public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
     {
-        Inquiry inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        Inquiry inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
         Uri link = await _blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
             fileName: inquiry.DocumentFile,
@@ -222,7 +224,7 @@ public class InquiryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
         var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
@@ -258,7 +260,7 @@ public class InquiryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
         var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
@@ -297,7 +299,7 @@ public class InquiryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
         var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);

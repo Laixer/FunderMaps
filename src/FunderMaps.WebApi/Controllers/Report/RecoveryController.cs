@@ -147,7 +147,9 @@ public class RecoveryController : ControllerBase
     [HttpGet("{id:int}/download")]
     public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
     {
-        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
         Uri link = await _blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.RecoveryStorageFolderName,
             fileName: recovery.DocumentFile,
@@ -223,7 +225,7 @@ public class RecoveryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
         var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
@@ -259,7 +261,7 @@ public class RecoveryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
         var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
@@ -298,7 +300,7 @@ public class RecoveryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
         var organization = await _organizationRepository.GetByIdAsync(tenantId);
         var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
         var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
