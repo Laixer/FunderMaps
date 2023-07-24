@@ -204,7 +204,7 @@ public class InquiryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id);
+        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
 
         inquiry.State.TransitionToPending();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);

@@ -205,7 +205,7 @@ public class RecoveryController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id);
+        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
 
         recovery.State.TransitionToPending();
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
