@@ -98,7 +98,8 @@ public class RecoverySampleController : ControllerBase
             throw new EntityReadOnlyException();
         }
 
-        recoverySample = await _recoverySampleRepository.AddGetAsync(recoverySample);
+        await _recoverySampleRepository.AddAsync(recoverySample);
+        recoverySample = await _recoverySampleRepository.GetByIdAsync(recoverySample.Id, tenantId);
 
         recovery.State.TransitionToPending();
         await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
