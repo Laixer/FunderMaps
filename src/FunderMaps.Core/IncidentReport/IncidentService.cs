@@ -158,7 +158,8 @@ internal class IncidentService : IIncidentService
 
         incident.Meta = meta;
 
-        incident = await _incidentRepository.AddGetAsync(incident);
+        await _incidentRepository.AddAsync(incident);
+        incident = await _incidentRepository.GetByIdAsync(incident.Id);
 
         await _emailService.SendAsync(new EmailMessage
         {

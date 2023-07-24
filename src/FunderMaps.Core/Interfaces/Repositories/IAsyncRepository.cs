@@ -11,13 +11,6 @@ public interface IAsyncRepository<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
     /// <summary>
-    ///     Create and return <typeparamref name="TEntity"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <typeparamref name="TEntity"/>.</returns>
-    Task<TEntity> AddGetAsync(TEntity entity);
-
-    /// <summary>
     ///     Retrieve <typeparamref name="TEntity"/> by id.
     /// </summary>
     /// <param name="id">Entity identifier.</param>

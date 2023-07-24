@@ -97,7 +97,7 @@ public class InquiryController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
+    public async Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
@@ -110,7 +110,9 @@ public class InquiryController : ControllerBase
             throw new AuthorizationException();
         }
 
-        return _inquiryRepository.AddGetAsync(inquiry);
+        await _inquiryRepository.AddAsync(inquiry);
+
+        return await _inquiryRepository.GetByIdAsync(inquiry.Id, tenantId);
     }
 
     // POST: api/inquiry/upload-document

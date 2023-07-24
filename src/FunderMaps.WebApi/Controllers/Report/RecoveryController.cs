@@ -98,7 +98,7 @@ public class RecoveryController : ControllerBase
     /// </summary>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public Task<Recovery> CreateAsync([FromBody] Recovery recovery)
+    public async Task<Recovery> CreateAsync([FromBody] Recovery recovery)
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
@@ -111,7 +111,9 @@ public class RecoveryController : ControllerBase
             throw new AuthorizationException();
         }
 
-        return _recoveryRepository.AddGetAsync(recovery);
+        await _recoveryRepository.AddAsync(recovery);
+
+        return await _recoveryRepository.GetByIdAsync(recovery.Id, tenantId);
     }
 
     // POST: api/recovery/upload-document
