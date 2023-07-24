@@ -1,5 +1,3 @@
-using FunderMaps.Core.Entities;
-
 namespace FunderMaps.Core;
 
 /// <summary>
@@ -16,20 +14,4 @@ public record AppContext
     ///     Notifies when this call is aborted and thus request operations should be cancelled.
     /// </summary>
     public CancellationToken CancellationToken { get; set; }
-
-    /// <summary>
-    ///     All organizations of which the current user is a member of.
-    /// </summary>
-    public List<Organization> Organizations { get; set; } = new();
-
-    /// <summary>
-    ///     Active organization.
-    /// </summary>
-    public Organization ActiveOrganization { get; set; } = default!;
-
-    // FUTURE: REMOVE
-    /// <summary>
-    ///     Tenant identifier.
-    /// </summary>
-    public Guid TenantId => ActiveOrganization.Identifier;
 }
