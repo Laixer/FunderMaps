@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -18,16 +20,14 @@ namespace FunderMaps.WebApi.Controllers.Application;
 [Route("api")]
 public class ReviewerController : ControllerBase
 {
-    private readonly Core.AppContext _appContext;
     private readonly IOrganizationUserRepository _organizationUserRepository;
     private readonly IUserRepository _userRepository;
 
     /// <summary>
     ///     Create new instance.
     /// </summary>
-    public ReviewerController(Core.AppContext appContext, IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
+    public ReviewerController(IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
     {
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
         _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
@@ -39,8 +39,10 @@ public class ReviewerController : ControllerBase
     [HttpGet("reviewer"), ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     public async IAsyncEnumerable<User> GetAllAsync([FromQuery] PaginationDto pagination)
     {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
         var roles = new OrganizationRole[] { OrganizationRole.Verifier, OrganizationRole.Superuser };
-        await foreach (var user in _organizationUserRepository.ListAllByRoleAsync(_appContext.TenantId, roles, pagination.Navigation))
+        await foreach (var user in _organizationUserRepository.ListAllByRoleAsync(tenantId, roles, pagination.Navigation))
         {
             yield return await _userRepository.GetByIdAsync(user);
         }

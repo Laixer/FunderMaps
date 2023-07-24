@@ -24,11 +24,14 @@ public interface IAnalysisRepository
     /// </summary>
     /// <param name="buildingId">Internal building id.</param>
     /// <param name="id">External identifier.</param>
-    Task<bool> RegisterProductMatch(string buildingId, string id, string product);
+    /// <param name="product">Product name.</param>
+    /// <param name="tenantId">Tenant identifier.</param>
+    Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId);
 
     /// <summary>
     ///     Register a product mismatch.
     /// </summary>
     /// <param name="id">External identifier.</param>
-    Task RegisterProductMismatch(string id);
+    /// <param name="tenantId">Tenant identifier.</param>
+    Task RegisterProductMismatch(string id, Guid tenantId);
 }

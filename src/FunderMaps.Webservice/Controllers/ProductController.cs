@@ -1,4 +1,6 @@
-﻿using FunderMaps.Core.Exceptions;
+﻿using System.Security.Claims;
+using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
@@ -65,14 +67,15 @@ public class ProductController : ControllerBase
     [HttpGet("analysis/{id}")]
     public async Task<AnalysisProduct> GetAnalysisAsync(string id)
     {
-        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+        var organization = await _organizationRepository.GetByIdAsync(tenantId);
 
         try
         {
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
             var product = await _analysisRepository.GetAsync(building.Id);
 
-            var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3");
+            var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3", tenantId);
             if (registered)
             {
                 _logger.LogInformation($"{organization.Name} registered 'analysis3' match for identifier: {id}");
@@ -88,7 +91,7 @@ public class ProductController : ControllerBase
         }
         catch (EntityNotFoundException)
         {
-            await _analysisRepository.RegisterProductMismatch(id);
+            await _analysisRepository.RegisterProductMismatch(id, tenantId);
 
             _logger.LogInformation($"{organization.Name} requested product 'analysis3' mismatch for identifier: {id}");
 
@@ -112,14 +115,15 @@ public class ProductController : ControllerBase
     [HttpGet("at_risk/{id}")]
     public async Task<bool> GetRiskIndexAsync(string id)
     {
-        var organization = await _organizationRepository.GetByIdAsync(_appContext.TenantId);
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+        var organization = await _organizationRepository.GetByIdAsync(tenantId);
 
         try
         {
             var building = await _geocoderTranslation.GetBuildingIdAsync(id);
             var product = await _analysisRepository.GetRiskIndexAsync(building.Id);
 
-            var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex");
+            var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex", tenantId);
             if (registered)
             {
                 _logger.LogInformation($"{organization.Name} registered 'riskindex' match for identifier: {id}");
@@ -135,7 +139,7 @@ public class ProductController : ControllerBase
         }
         catch (EntityNotFoundException)
         {
-            await _analysisRepository.RegisterProductMismatch(id);
+            await _analysisRepository.RegisterProductMismatch(id, tenantId);
 
             _logger.LogInformation($"{organization.Name} requested product 'riskindex' mismatch for identifier: {id}");
 

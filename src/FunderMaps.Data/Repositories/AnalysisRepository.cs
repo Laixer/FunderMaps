@@ -1,4 +1,3 @@
-using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
@@ -106,7 +105,9 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     /// </summary>
     /// <param name="buildingId">Internal building id.</param>
     /// <param name="id">External identifier.</param>
-    public async Task<bool> RegisterProductMatch(string buildingId, string id, string product)
+    /// <param name="product">Product name.</param>
+    /// <param name="tenantId">Tenant identifier.</param>
+    public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)
     {
         var sql = @"
             WITH register_product_request AS (
@@ -129,7 +130,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         context.AddParameterWithValue("building_id", buildingId);
         context.AddParameterWithValue("id", id);
         context.AddParameterWithValue("product", product);
-        context.AddParameterWithValue("organization_id", AppContext.TenantId);
+        context.AddParameterWithValue("organization_id", tenantId);
 
         return await context.ScalarAsync<bool>();
     }
@@ -138,7 +139,8 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     ///     Register a product mismatch.
     /// </summary>
     /// <param name="id">External identifier.</param>
-    public async Task RegisterProductMismatch(string id)
+    /// <param name="tenantId">Tenant identifier.</param>
+    public async Task RegisterProductMismatch(string id, Guid tenantId)
     {
         var sql = @"
             INSERT INTO application.product_tracker_mismatch(organization_id, identifier)
@@ -147,7 +149,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("organization_id", AppContext.TenantId);
+        context.AddParameterWithValue("organization_id", tenantId);
 
         await context.NonQueryAsync(affectedGuard: false);
     }
