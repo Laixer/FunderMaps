@@ -83,25 +83,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
 
         services.AddAuthentication("FunderMapsHybridAuth")
-            .AddPolicyScheme("FunderMapsHybridAuth", "Bearer or AuthKey", options =>
-            {
-                options.ForwardDefaultSelector = context =>
-                {
-                    var authHeader = context.Request.Headers.Authorization.FirstOrDefault();
-                    if (authHeader?.StartsWith("Bearer ", StringComparison.InvariantCultureIgnoreCase) ?? false)
-                    {
-                        return AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
-                    }
-                    else if (authHeader?.StartsWith("AuthKey ", StringComparison.InvariantCultureIgnoreCase) ?? false || !string.IsNullOrEmpty(context.Request.Query["authkey"].FirstOrDefault()))
-                    {
-                        return AuthKeyAuthenticationOptions.DefaultScheme;
-                    }
-                    else
-                    {
-                        return AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme;
-                    }
-                };
-            })
+            .AddFunderMapsScheme()
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new JwtTokenValidationParameters
