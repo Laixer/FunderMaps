@@ -58,6 +58,7 @@ public partial class MainLayout : LayoutComponentBase
         {
             var hostname = absoluteUri.DnsSafeHost;
 
+            // TODO: This is a hack, we should use a proper DNS name from configuration.
             if (hostname.EndsWith("fundermaps.com"))
             {
                 var nodes = hostname.Split('.');
@@ -136,6 +137,11 @@ public partial class MainLayout : LayoutComponentBase
                     state.StepId = 10;
                     break;
             }
+        }
+
+        if (state.Model.Building is null && state.StepId > 1)
+        {
+            NavigationManager.NavigateTo("/survey/address", true);
         }
 
         state.DisableNavNext = state.HoldNavNext();
