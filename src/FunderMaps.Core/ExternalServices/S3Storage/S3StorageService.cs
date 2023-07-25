@@ -1,7 +1,6 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
@@ -18,8 +17,6 @@ namespace FunderMaps.Core.ExternalServices.S3Storage;
 /// </remarks>
 internal class S3StorageService : IBlobStorageService
 {
-    private static readonly byte MaxKeys = 255;
-
     private readonly S3StorageOptions _options;
     private readonly ILogger<S3StorageService> _logger;
     private readonly IAmazonS3 _s3Client;
@@ -50,23 +47,14 @@ internal class S3StorageService : IBlobStorageService
     /// <returns>Access <see cref="Uri"/>.</returns>
     public Task<Uri> GetAccessLinkAsync(string containerName, string fileName, double hoursValid)
     {
-        try
+        var url = _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
         {
-            var url = _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
-            {
-                BucketName = _options.BucketName,
-                Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
-                Expires = DateTime.UtcNow.AddHours(hoursValid)
-            });
+            BucketName = _options.BucketName,
+            Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
+            Expires = DateTime.UtcNow.AddHours(hoursValid)
+        });
 
-            return Task.FromResult(new Uri(url));
-        }
-        catch (AmazonS3Exception e)
-        {
-            _logger.LogError("Could not get access link from Spaces using S3");
-
-            throw new StorageException("Could not get access link", e);
-        }
+        return Task.FromResult(new Uri(url));
     }
 
     /// <summary>
@@ -78,32 +66,23 @@ internal class S3StorageService : IBlobStorageService
     /// <returns>See <see cref="ValueTask"/>.</returns>
     public async Task StoreFileAsync(string fileName, string filePath, StorageObject? storageObject)
     {
-        try
+        var request = new PutObjectRequest
         {
-            var request = new PutObjectRequest
-            {
-                BucketName = _options.BucketName,
-                Key = fileName,
-                FilePath = filePath,
-            };
+            BucketName = _options.BucketName,
+            Key = fileName,
+            FilePath = filePath,
+        };
 
-            if (storageObject is not null)
-            {
-                request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
-                request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
-                request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
-                request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
-                request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
-            }
-
-            await _s3Client.PutObjectAsync(request);
-        }
-        catch (AmazonS3Exception e)
+        if (storageObject is not null)
         {
-            _logger.LogError($"Could not store file {fileName} to S3");
-
-            throw new StorageException($"Could not store file {fileName} to S3", e);
+            request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
+            request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
+            request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
+            request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
+            request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
         }
+
+        await _s3Client.PutObjectAsync(request);
     }
 
     /// <summary>
@@ -117,34 +96,24 @@ internal class S3StorageService : IBlobStorageService
     /// <returns>See <see cref="ValueTask"/>.</returns>
     public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject? storageObject)
     {
-        try
+        var request = new PutObjectRequest
         {
-            var request = new TransferUtilityUploadRequest()
-            {
-                BucketName = _options.BucketName,
-                ContentType = contentType,
-                Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
-                InputStream = stream,
-            };
+            BucketName = _options.BucketName,
+            ContentType = contentType,
+            Key = string.IsNullOrEmpty(containerName) ? fileName : $"{containerName}/{fileName}",
+            InputStream = stream,
+        };
 
-            if (storageObject is not null)
-            {
-                request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
-                request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
-                request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
-                request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
-                request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
-            }
-
-            using TransferUtility transferUtility = new(_s3Client);
-            await transferUtility.UploadAsync(request);
-        }
-        catch (AmazonS3Exception e)
+        if (storageObject is not null)
         {
-            _logger.LogError($"Could not store file with content type {contentType} to Spaces using S3");
-
-            throw new StorageException($"Could not upload file with content type {contentType}", e);
+            request.CannedACL = storageObject.IsPublic ? S3CannedACL.PublicRead : S3CannedACL.Private;
+            request.Headers.ContentType = storageObject.ContentType ?? request.Headers.ContentType;
+            request.Headers.CacheControl = storageObject.CacheControl ?? request.Headers.CacheControl;
+            request.Headers.ContentDisposition = storageObject.ContentDisposition ?? request.Headers.ContentDisposition;
+            request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
         }
+
+        await _s3Client.PutObjectAsync(request);
     }
 
     /// <summary>
@@ -156,91 +125,26 @@ internal class S3StorageService : IBlobStorageService
     /// <returns>See <see cref="ValueTask"/>.</returns>
     public async Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject? storageObject)
     {
-        try
+        var request = new TransferUtilityUploadDirectoryRequest()
         {
-            var request = new TransferUtilityUploadDirectoryRequest()
-            {
-                BucketName = _options.BucketName,
-                Directory = directoryPath,
-                KeyPrefix = directoryName,
-                SearchOption = SearchOption.AllDirectories,
-                UploadFilesConcurrently = true,
-            };
+            BucketName = _options.BucketName,
+            Directory = directoryPath,
+            KeyPrefix = directoryName,
+            SearchOption = SearchOption.AllDirectories,
+            UploadFilesConcurrently = true,
+        };
 
-            request.UploadDirectoryFileRequestEvent += (sender, uploadDirectoryRequest) =>
-            {
-                uploadDirectoryRequest.UploadRequest.CannedACL = (storageObject?.IsPublic ?? false) ? S3CannedACL.PublicRead : S3CannedACL.Private;
-                uploadDirectoryRequest.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? uploadDirectoryRequest.UploadRequest.Headers.ContentType;
-                uploadDirectoryRequest.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? uploadDirectoryRequest.UploadRequest.Headers.CacheControl;
-                uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition;
-                uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding;
-            };
-
-            using var transferUtility = new TransferUtility(_s3Client);
-            await transferUtility.UploadDirectoryAsync(request);
-        }
-        catch (AmazonS3Exception e)
+        request.UploadDirectoryFileRequestEvent += (sender, uploadDirectoryRequest) =>
         {
-            _logger.LogError("Could not store directory to Spaces using S3");
+            uploadDirectoryRequest.UploadRequest.CannedACL = (storageObject?.IsPublic ?? false) ? S3CannedACL.PublicRead : S3CannedACL.Private;
+            uploadDirectoryRequest.UploadRequest.Headers.ContentType = storageObject?.ContentType ?? uploadDirectoryRequest.UploadRequest.Headers.ContentType;
+            uploadDirectoryRequest.UploadRequest.Headers.CacheControl = storageObject?.CacheControl ?? uploadDirectoryRequest.UploadRequest.Headers.CacheControl;
+            uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition = storageObject?.ContentDisposition ?? uploadDirectoryRequest.UploadRequest.Headers.ContentDisposition;
+            uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding = storageObject?.ContentEncoding ?? uploadDirectoryRequest.UploadRequest.Headers.ContentEncoding;
+        };
 
-            throw new StorageException("Could not store directory", e);
-        }
-    }
-
-    /// <summary>
-    ///     Remove directory and its contents.
-    /// </summary>
-    /// <param name="directoryPath">Full path of the directory to delete.</param>
-    /// <returns>See <see cref="ValueTask"/>.</returns>
-    public async Task RemoveDirectoryAsync(string directoryPath)
-    {
-        try
-        {
-            // NOTE: This call returns max. up to 1000 records by design.
-            //       In order to obtain every record that matches our query, 
-            //       we have to repeat our request execution in a loop - using continuation tokens -- until no longer truncated.
-            //       See https://docs.aws.amazon.com/sdkfornet/v3/apidocs/items/S3/MS3ListObjectsV2AsyncListObjectsV2RequestCancellationToken.html
-            var request = new ListObjectsV2Request()
-            {
-                BucketName = _options.BucketName,
-                Prefix = directoryPath,
-                MaxKeys = MaxKeys
-            };
-
-            var tasklist = new List<Task>();
-
-            for (ListObjectsV2Response response = await _s3Client.ListObjectsV2Async(request);
-                response.IsTruncated;
-                request.ContinuationToken = response.NextContinuationToken, response = await _s3Client.ListObjectsV2Async(request))
-            {
-                // TODO; Move this into for loop
-                if (response.S3Objects.Count <= 0)
-                {
-                    break;
-                }
-
-                Task deleteTask = _s3Client.DeleteObjectsAsync(new()
-                {
-                    BucketName = _options.BucketName,
-                    Objects = response.S3Objects.Select(x => new KeyVersion()
-                    {
-                        Key = x.Key
-                    }).ToList()
-                });
-
-                tasklist.Add(deleteTask);
-
-                _ = Task.Run(() => deleteTask);
-            }
-
-            await Task.WhenAll(tasklist.ToArray());
-        }
-        catch (AmazonS3Exception e)
-        {
-            _logger.LogError("Could not delete directory on Spaces using S3");
-
-            throw new StorageException("Could delete directory", e);
-        }
+        using var transferUtility = new TransferUtility(_s3Client);
+        await transferUtility.UploadDirectoryAsync(request);
     }
 
     /// <summary>
