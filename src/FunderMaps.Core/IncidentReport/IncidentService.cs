@@ -18,6 +18,7 @@ internal class IncidentService : IIncidentService
     private readonly IIncidentRepository _incidentRepository;
     private readonly IGeocoderTranslation _geocoderTranslation;
     private readonly IEmailService _emailService;
+    private readonly IBlobStorageService _blobStorageService;
     private readonly ILogger<IncidentService> _logger;
 
     /// <summary>
@@ -28,12 +29,14 @@ internal class IncidentService : IIncidentService
         IIncidentRepository incidentRepository,
         IGeocoderTranslation geocoderTranslation,
         IEmailService emailService,
+        IBlobStorageService blobStorageService,
         ILogger<IncidentService> logger)
     {
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
         _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -161,6 +164,20 @@ internal class IncidentService : IIncidentService
         incident.Id = await _incidentRepository.AddAsync(incident);
         incident = await _incidentRepository.GetByIdAsync(incident.Id);
 
+        var documentLinkList = new List<string>();
+        if (incident.DocumentFile is not null)
+        {
+            foreach (var file in incident.DocumentFile)
+            {
+                Uri link = await _blobStorageService.GetAccessLinkAsync(
+                    containerName: Core.Constants.IncidentStorageFolderName,
+                    fileName: file,
+                    hoursValid: 24 * 7 * 4);
+
+                documentLinkList.Add(link.ToString());
+            }
+        }
+
         await _emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
@@ -209,6 +226,7 @@ internal class IncidentService : IIncidentService
                     { "foundationDamageCause", ToFoundationDamageCause(incident.FoundationDamageCause) },
                     { "foundationDamageCharacteristics", ArrayToFoundationDamageCharacteristics(incident.FoundationDamageCharacteristics) },
                     { "environmentDamageCharacteristics", ArrayToEnvironmentDamageCharacteristics(incident.EnvironmentDamageCharacteristics) },
+                    { "documentLinks", documentLinkList },
                 }
             });
         }
