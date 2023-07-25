@@ -1,9 +1,7 @@
+using Dapper;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
-using System.Text.Json;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -45,13 +43,9 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             AND     m.public = true
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return MapFromReader2(reader);
+        return await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id });
     }
 
     /// <summary>
@@ -88,30 +82,11 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
             WHERE   mo.organization_id = @id
             AND     m.public = false";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await connection.QueryAsync<Mapset>(sql, new { id }))
         {
-            yield return MapFromReader2(reader);
+            yield return item;
         }
     }
-
-    /// <summary>
-    ///     Maps a reader to an <see cref="Mapset"/>.
-    /// </summary>
-    private static Mapset MapFromReader2(DbDataReader reader)
-        => new()
-        {
-            Id = reader.GetGuid(0),
-            Name = reader.GetString(1),
-            Style = reader.GetString(2),
-            Layers = reader.GetSafeStringArray(3),
-            Options = reader.GetFieldValue<object>(4),
-            Public = reader.GetBoolean(5),
-            Consent = reader.GetSafeString(6),
-            FenceMunicipality = reader.GetSafeString(7),
-            LayerSet = JsonSerializer.Deserialize<object>(reader.GetString(8)),
-        };
 }

@@ -24,11 +24,6 @@ public class SignInService
     public IOrganizationUserRepository OrganizationUserRepository { get; }
 
     /// <summary>
-    ///     The <see cref="IOrganizationRepository"/> used.
-    /// </summary>
-    public IOrganizationRepository OrganizationRepository { get; }
-
-    /// <summary>
     ///     The <see cref="IPasswordHasher"/> used.
     /// </summary>
     public IPasswordHasher PasswordHasher { get; }
@@ -44,13 +39,11 @@ public class SignInService
     public SignInService(
         IUserRepository userRepository,
         IOrganizationUserRepository organizationUserRepository,
-        IOrganizationRepository organizationRepository,
         IPasswordHasher passwordHasher,
         ILogger<SignInService> logger)
     {
         UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         OrganizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-        OrganizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
         PasswordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
         Logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -78,6 +71,12 @@ public class SignInService
         await UserRepository.SetPasswordHashAsync(id, passwordHash);
     }
 
+    /// <summary>
+    ///     Attempts to sign in the specified <paramref name="user"/>.
+    /// </summary>
+    /// <param name="user">The user to sign in.</param>
+    /// <param name="authenticationType">The authentication type.</param>
+    /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     private async Task<ClaimsIdentity> CreateClaimsIdentityAsync(User user, string authenticationType)
     {
         if (await UserRepository.GetAccessFailedCount(user.Id) > 10)

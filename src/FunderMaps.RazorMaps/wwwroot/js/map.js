@@ -50,8 +50,6 @@ export class Map {
         this.map.on('style.load', () => {
             const uu = sessionStorage.getItem(`active-layers-${this.mapset.id}`);
 
-            console.log(this.mapset.layerSet);
-
             if (this.mapset.fenceMunicipality !== null) {
                 for (const layer of this.mapset.layerSet) {
                     const updatedFilter = [
@@ -217,6 +215,7 @@ export class Map {
 
     canShowProperty(layerId, key) {
         switch (key) {
+            case "building_id": return false;
             case "neighborhood_id": return false;
             case "district_id": return false;
             case "municipality_id": return false;
@@ -289,8 +288,11 @@ export class Map {
 
     translateProperty(key, value) {
         const result = ({
-            "building_id": ['FunderMaps ID', value],
             "address_count": ['Adressen', value],
+            "create_date": ['Aanmaakdatum', value],
+            "chained_building": ['Aangrenzende gebouwen', value ? 'Ja' : 'Nee'],
+            "foundation_recovery": ['Herstel', value ? 'Ja' : 'Nee'],
+            "neightbor_recovery": ['Herstel buren', value ? 'Ja' : 'Nee'],
             "construction_year": ['Bouwjaar', value],
             "construction_year_reliability": ['Bouwjaar betrouwbaarheid', value],
             "overall_quality": ['Funderingskwaliteit', value],
@@ -302,7 +304,7 @@ export class Map {
             "incidents": ['Incidenten', value],
             "restoration_costs": ['Herstelkosten', value],
             "inquiry_type": ['Rapportage', value],
-            "owner": ['Eigenaar', value],
+            "owner": ['Eigenaar', value ? 'Ja' : 'Nee'],
             "drystand": ['Droogstand', `${parseFloat(value).toFixed(2)} meter`],
             "drystand_risk": ['Risico droogstand', value],
             "drystand_risk_reliability": ['Risico droogstand betrouwbaarheid', value],
@@ -315,6 +317,7 @@ export class Map {
             "foundation_type": ['Funderingstype', value],
             "foundation_type_reliability": ['Betrouwbaarheid', value],
             "enforcement_term": ['Handhavingstermijn', `${value} jaar`],
+            "unclassified_risk": ['Risico overig', value],
             "velocity": ['Zakkingssnelheid', `${parseFloat(value).toFixed(2)}mm/jaar`],
         })[key] ?? [key, value]
 

@@ -11,16 +11,25 @@ public class AuthKeyAuthenticationOptions : AuthenticationSchemeOptions
     public const string DefaultScheme = "AuthKeyAuthenticationScheme";
 }
 
+/// <summary>
+///     Authentication handler for auth key authentication.
+/// </summary>
 public class AuthKeyAuthenticationHandler : AuthenticationHandler<AuthKeyAuthenticationOptions>
 {
     private readonly SignInService _signInService;
 
+    /// <summary>
+    ///     Create the auth key authentication handler.
+    /// </summary>
     public AuthKeyAuthenticationHandler(SignInService signInService, IOptionsMonitor<AuthKeyAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
         : base(options, logger, encoder, clock)
     {
         _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
     }
 
+    /// <summary>
+    ///     Authenticate the request.
+    /// </summary>
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
         var authHeader = Request.Headers.Authorization.FirstOrDefault();

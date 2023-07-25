@@ -4,6 +4,8 @@ export class MapsetManager {
         this.mapSetArray = await response.json();
         this.currentMapSetIdx = 0;
 
+        this.mapSetArray.map(x => x.layerSet = JSON.parse(x.layerSet));
+
         const sessionMapSetId = sessionStorage.getItem('currentMapset');
         if (sessionMapSetId !== null) {
             this.setMapsetById(sessionMapSetId);
