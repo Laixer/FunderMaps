@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core.Interfaces.Repositories;
+﻿using Dapper;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 
 namespace FunderMaps.Data.Repositories;
@@ -19,8 +20,8 @@ internal sealed class TestRepository : DbServiceBase, ITestRepository
     {
         var sql = @"SELECT 1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<int>() == 1;
+        return await connection.ExecuteScalarAsync<int>(sql) == 1;
     }
 }

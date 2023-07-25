@@ -4,28 +4,26 @@ using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-var usernameOption = new Option<string>(new[] { "-u", "--username" }, "Webservice username");
-var passwordOption = new Option<string>(new[] { "-p", "--password" }, "Webservice password");
-
 var authkeyOption = new Option<string>(new[] { "-k", "--key" }, "Webservice authkey")
 {
     IsRequired = true
 };
 
-var logLevel = new Option<LogLevel>(new[] { "--log", "--log-level" }, getDefaultValue: () => LogLevel.Information, "The log level to use");
+var baseUrlOption = new Option<string>(new[] { "-u", "--url" }, "Webservice base url");
+
+var logLevelOption = new Option<LogLevel>(new[] { "--log", "--log-level" }, getDefaultValue: () => LogLevel.Information, "The log level to use");
 
 var buildingArgument = new Argument<string>("building", "Building identifier");
 
 var command = new RootCommand("FunderMaps command line interface")
 {
-    usernameOption,
-    passwordOption,
     authkeyOption,
-    logLevel,
+    baseUrlOption,
+    logLevelOption,
     buildingArgument,
 };
 
-command.SetHandler(async (authkey, username, password, buildingId, logLevel) =>
+command.SetHandler(async (authkey, buildingId, baseUrl, logLevel) =>
 {
     await using var serviceProvider = new ServiceCollection()
         .AddLogging(options =>
@@ -37,10 +35,7 @@ command.SetHandler(async (authkey, username, password, buildingId, logLevel) =>
         .AddScoped<FunderMapsClient>()
         .Configure<FunderMapsOptions>(options =>
         {
-            options.BaseUrl = "https://ws-staging.fundermaps.com";
-            // options.BaseUrl = "http://localhost:5000";
-            options.Email = username;
-            options.Password = password;
+            options.BaseUrl = baseUrl;
             options.ApiKey = authkey;
         })
         .AddScoped<WebserviceClientLogger>()
@@ -50,6 +45,6 @@ command.SetHandler(async (authkey, username, password, buildingId, logLevel) =>
 
     await funderMapsWebserviceClient.LogAnalysisAsync(buildingId);
     // await funderMapsWebserviceClient.LogStatisticsAsync(buildingId);
-}, authkeyOption, usernameOption, passwordOption, buildingArgument, logLevel);
+}, authkeyOption, buildingArgument, baseUrlOption, logLevelOption);
 
 await command.InvokeAsync(args);

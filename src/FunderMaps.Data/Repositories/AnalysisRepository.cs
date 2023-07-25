@@ -1,3 +1,4 @@
+using Dapper;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
@@ -93,11 +94,9 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             )
             LIMIT 1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        return await context.ScalarAsync<bool>();
+        return await connection.ExecuteScalarAsync<bool>(sql, new { id });
     }
 
     /// <summary>
@@ -125,14 +124,9 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             )
             SELECT EXISTS (SELECT 1 FROM register_product_request) AS is_registered";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("building_id", buildingId);
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("product", product);
-        context.AddParameterWithValue("organization_id", tenantId);
-
-        return await context.ScalarAsync<bool>();
+        return await connection.ExecuteScalarAsync<bool>(sql, new { building_id = buildingId, id, product, organization_id = tenantId });
     }
 
     /// <summary>
@@ -146,12 +140,9 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             INSERT INTO application.product_tracker_mismatch(organization_id, identifier)
             VALUES(@organization_id, @id)";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("organization_id", tenantId);
-
-        await context.NonQueryAsync(affectedGuard: false);
+        await connection.ExecuteAsync(sql, new { id, organization_id = tenantId });
     }
 
     /// <summary>
