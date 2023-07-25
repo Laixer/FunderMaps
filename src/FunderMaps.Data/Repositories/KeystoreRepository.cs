@@ -17,9 +17,9 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
             VALUES (@name, @value)
             RETURNING name";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await conn.ExecuteScalarAsync<string>(sql, entity);
+        return await connection.ExecuteScalarAsync<string>(sql, entity);
     }
 
     /// <summary>
@@ -32,9 +32,9 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
             SELECT  COUNT(*)
             FROM    application.key_store";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await conn.ExecuteScalarAsync<long>(sql);
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     /// <summary>
@@ -49,9 +49,9 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
                     ks.value
             FROM    application.key_store ks";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await conn.QueryAsync<KeyStore>(sql))
+        foreach (var item in await connection.QueryAsync<KeyStore>(sql))
         {
             yield return item;
         }

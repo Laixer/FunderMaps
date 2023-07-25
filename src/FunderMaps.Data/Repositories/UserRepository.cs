@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core;
+﻿using Dapper;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
@@ -55,11 +56,13 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
-        var cmd = CountCommand("application");
+        var sql = @"
+            SELECT  COUNT(*)
+            FROM    application.user";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     // FUTURE: If user is in use it violates foreign key constraint, returning
@@ -72,13 +75,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     {
         ResetCacheEntity(id);
 
-        var cmd = DeleteCommand("application", "id");
+        var sql = @"
+            DELETE
+            FROM    application.user
+            WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id });
     }
 
     private static void MapToWriter(DbContext context, User entity)
@@ -117,9 +121,21 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             return entity ?? throw new InvalidOperationException();
         }
 
-        var cmd = SingleCommand("application", new[] { "id", "given_name", "last_name", "email", "avatar", "job_title", "phone_number", "role" });
+        var sql = @"
+            SELECT  -- User
+                    u.id,
+                    u.given_name,
+                    u.last_name,
+                    u.email,
+                    u.avatar,
+                    u.job_title,
+                    u.phone_number,
+                    u.role
+            FROM    application.user AS u
+            WHERE   u.id = @id
+            LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("id", id);
 
@@ -135,9 +151,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByEmailAsync(string email)
     {
-        var entityName = EntityTable("application");
-
-        var sql = $@"
+        var sql = @"
             SELECT  -- User
                     u.id,
                     u.given_name,
@@ -147,7 +161,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.job_title,
                     u.phone_number,
                     u.role
-            FROM    {entityName} AS u
+            FROM    application.user AS u
             WHERE   u.normalized_email = application.normalize(@email)
             LIMIT   1";
 
@@ -167,9 +181,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByAuthKeyAsync(string key)
     {
-        var entityName = EntityTable("application");
-
-        var sql = $@"
+        var sql = @"
             SELECT  -- User
                     u.id,
                     u.given_name,
@@ -179,7 +191,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     u.job_title,
                     u.phone_number,
                     u.role
-            FROM    {entityName} AS u
+            FROM    application.user AS u
             JOIN    application.auth_key ak ON ak.user_id = u.id
             WHERE   ak.key = @key
             LIMIT   1";
@@ -200,15 +212,15 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns>Password hash as string.</returns>
     public async Task<string> GetPasswordHashAsync(Guid id)
     {
-        var cmd = SingleCommand("application", new[] { "id", "password_hash" });
+        var sql = @"
+            SELECT  u.password_hash
+            FROM    application.user AS u
+            WHERE   u.id = @id
+            LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return reader.GetString(1);
+        return await connection.ExecuteScalarAsync<string>(sql, new { id });
     }
 
     /// <summary>
@@ -218,19 +230,15 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns>Failed access count.</returns>
     public async Task<int> GetAccessFailedCount(Guid id)
     {
-        var entityName = EntityTable("application");
-
-        var sql = $@"
-            SELECT  access_failed_count
-            FROM    {entityName}
+        var sql = @"
+            SELECT  u.access_failed_count
+            FROM    application.user AS u
             WHERE   id = @id
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        return await context.ScalarAsync<int>();
+        return await connection.ExecuteScalarAsync<int>(sql, new { id });
     }
 
     /// <summary>
@@ -239,9 +247,19 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <returns>List of <see cref="User"/>.</returns>
     public override async IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
     {
-        var cmd = AllCommand("application", new[] { "id", "given_name", "last_name", "email", "avatar", "job_title", "phone_number", "role" }, navigation);
+        var sql = @"
+            SELECT  -- User
+                    u.id,
+                    u.given_name,
+                    u.last_name,
+                    u.email,
+                    u.avatar,
+                    u.job_title,
+                    u.phone_number,
+                    u.role
+            FROM    application.user AS u";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var context = await DbContextFactory.CreateAsync(sql);
 
         await foreach (var reader in context.EnumerableReaderAsync())
         {
@@ -257,10 +275,8 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     {
         ResetCacheEntity(entity);
 
-        var entityName = EntityTable("application");
-
-        var sql = $@"
-            UPDATE  {entityName}
+        var sql = @"
+            UPDATE  application.user
             SET     given_name = @given_name,
                     last_name = @last_name,
                     avatar = @avatar,
@@ -285,19 +301,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <param name="passwordHash">New password hash.</param>
     public async Task SetPasswordHashAsync(Guid id, string passwordHash)
     {
-        var entityName = EntityTable("application");
+        var sql = @"
+            UPDATE  application.user
+            SET     password_hash = @password_hash
+            WHERE   id = @id";
 
-        var sql = $@"
-                UPDATE  {entityName}
-                SET     password_hash = @password_hash
-                WHERE   id = @id";
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("password_hash", passwordHash);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id, password_hash = passwordHash });
     }
 
     /// <summary>
@@ -306,18 +317,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <param name="id">Entity identifier.</param>
     public async Task BumpAccessFailed(Guid id)
     {
-        var entityName = EntityTable("application");
-
-        var sql = $@"
-            UPDATE  {entityName}
+        var sql = @"
+            UPDATE  application.user
             SET     access_failed_count = access_failed_count + 1
             WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id });
     }
 
     /// <summary>
@@ -326,18 +333,14 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <param name="id">Entity identifier.</param>
     public async Task ResetAccessFailed(Guid id)
     {
-        var entityName = EntityTable("application");
+        var sql = @"
+            UPDATE  application.user
+            SET     access_failed_count = 0
+            WHERE   id = @id";
 
-        var sql = $@"
-                UPDATE  {entityName}
-                SET     access_failed_count = 0
-                WHERE   id = @id";
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id });
     }
 
     /// <summary>
@@ -346,13 +349,10 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <param name="id">Entity identifier.</param>
     public async Task RegisterAccess(Guid id)
     {
-        // FUTURE: Maybe call SP directly.
         var sql = @"SELECT application.log_access(@id)";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync(affectedGuard: false);
+        await connection.ExecuteScalarAsync(sql, new { id });
     }
 }

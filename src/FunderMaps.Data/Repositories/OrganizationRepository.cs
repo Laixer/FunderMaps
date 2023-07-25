@@ -1,4 +1,5 @@
-﻿using FunderMaps.Core;
+﻿using Dapper;
+using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Extensions;
@@ -11,21 +12,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrganizationRepository
 {
-    public async Task<Guid> AddFromProposalAsync(Guid id, string email, string passwordHash)
-    {
-        var sql = @"SELECT application.create_organization(@id, @email, @passwordHash)";
-
-        await using var context = await DbContextFactory.CreateAsync(sql);
-
-        context.AddParameterWithValue("id", id);
-        context.AddParameterWithValue("email", email);
-        context.AddParameterWithValue("passwordHash", passwordHash);
-
-        await using var reader = await context.ReaderAsync();
-
-        return reader.GetGuid(0);
-    }
-
     /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
@@ -36,9 +22,9 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             SELECT  COUNT(*)
             FROM    application.organization";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     /// <summary>
@@ -54,11 +40,9 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             FROM    application.organization
             WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { id });
     }
 
     private static Organization MapFromReader(DbDataReader reader, int offset = 0)
@@ -157,11 +141,8 @@ internal class OrganizationRepository : RepositoryBase<Organization, Guid>, IOrg
             SET     email = trim(@email)
             WHERE   id = @id";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", entity.Id);
-        context.AddParameterWithValue("email", entity.Email);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { entity.Id, entity.Email });
     }
 }
