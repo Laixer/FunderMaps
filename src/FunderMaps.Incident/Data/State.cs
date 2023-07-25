@@ -68,8 +68,7 @@ public class State
                 uri = "/survey/environment-damage-characteristics";
                 break;
             case 8:
-                // uri = "/survey/upload";
-                uri = "/survey/environment-damage-characteristics";
+                uri = "/survey/upload";
                 break;
             case 9:
                 uri = "/survey/note";
@@ -107,8 +106,7 @@ public class State
                 uri = "/survey/environment-damage-characteristics";
                 break;
             case 6:
-                // uri = "/survey/upload";
-                uri = "/survey/note";
+                uri = "/survey/upload";
                 break;
             case 7:
                 uri = "/survey/note";

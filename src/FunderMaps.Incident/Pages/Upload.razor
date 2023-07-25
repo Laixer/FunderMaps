@@ -13,17 +13,32 @@
     <form id="upload-area" class="UploadArea dropzone dz-clickable">
         <label for="file-upload">
             <div class="dz-message align-self-center">
-                <img alt="upload" src="/img/upload.svg">
-                <p class="mb-0 mt-3">
-                    <InputFile Id="file-upload" style="display:none" OnChange="@LoadFiles" multiple />
-                    @* <strong>Sleep hier bestanden om te uploaden.</strong>
-                    <br>
-                    <span> of klik om een bestand te kiezen</span> *@
+                <InputFile Id="file-upload" style="display:none" OnChange="@LoadFiles" multiple />
 
-                    <strong>Upload onderzoeksrapporten, archiefstukken, tekeningen of foto's</strong>
-                    <div>
-                        <span>Klik om een bestand te kiezen</span>
+                @if (loadedFiles.Count > 0)
+                {
+                    <div style="display: flex; justify-content: center;">
+                        @foreach (var file in loadedFiles)
+                        {
+                            <div>
+                                <img alt="uploaded"
+                                    src="https://images.freeimages.com/fic/images/icons/2813/flat_jewels/512/file.png"
+                                    width="150">
+                                <p>@file.Name</p>
+                            </div>
+                        }
                     </div>
+                }
+                else
+                {
+                    <img alt="upload" src="/img/upload.svg" />
+                }
+
+                <p class="mb-0 mt-3">
+                    <strong>Upload onderzoeksrapporten, archiefstukken, tekeningen of foto's</strong>
+                <div>
+                    <span>Klik om een bestand te kiezen</span>
+                </div>
                 </p>
             </div>
         </label>
@@ -34,6 +49,8 @@
 @code {
     [CascadingParameter]
     protected State State { get; set; } = default!;
+
+    private List<IBrowserFile> loadedFiles = new();
 
     private async Task LoadFiles(InputFileChangeEventArgs e)
     {
@@ -46,7 +63,9 @@
                     containerName: Core.Constants.IncidentStorageFolderName,
                     fileName: storeFileName,
                     contentType: file.ContentType,
-                    stream: file.OpenReadStream(128 * 1024 * 1024));
+                    stream: file.OpenReadStream(512 * 1024 * 1024));
+
+                loadedFiles.Add(file);
 
                 if (State.Model.DocumentFile is null)
                 {
@@ -64,7 +83,7 @@
             }
             catch (Exception ex)
             {
-                Logger.LogError("File: {Filename} Error: {Error}", file.Name, ex.Message);
+                Logger.LogError(ex, "Failed to upload file.");
             }
         }
     }
