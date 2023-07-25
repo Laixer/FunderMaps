@@ -101,39 +101,39 @@ public partial class MainLayout : LayoutComponentBase
 
         if (RouteData is not null)
         {
-            switch (RouteData.PageType.ToString())
+            switch (RouteData.PageType.Name)
             {
-                case "FunderMaps.Incident.Pages.Index":
+                case "Index":
                     state.StepId = 0;
                     break;
-                case "FunderMaps.Incident.Pages.Address":
+                case "Address":
                     state.StepId = 1;
                     break;
-                case "FunderMaps.Incident.Pages.FoundationDamage":
+                case "FoundationDamage":
                     state.StepId = 2;
                     break;
-                case "FunderMaps.Incident.Pages.FoundationDamageCharacteristics":
+                case "FoundationDamageCharacteristics":
                     state.StepId = 3;
                     break;
-                case "FunderMaps.Incident.Pages.AddressCharacteristics":
+                case "AddressCharacteristics":
                     state.StepId = 4;
                     break;
-                case "FunderMaps.Incident.Pages.FoundationType":
+                case "FoundationType":
                     state.StepId = 5;
                     break;
-                case "FunderMaps.Incident.Pages.EnvironmentDamageCharacteristics":
+                case "EnvironmentDamageCharacteristics":
                     state.StepId = 6;
                     break;
-                case "FunderMaps.Incident.Pages.Upload":
+                case "Upload":
                     state.StepId = 7;
                     break;
-                case "FunderMaps.Incident.Pages.Note":
+                case "Note":
                     state.StepId = 8;
                     break;
-                case "FunderMaps.Incident.Pages.Contact":
+                case "Contact":
                     state.StepId = 9;
                     break;
-                case "FunderMaps.Incident.Pages.Finish":
+                case "Finish":
                     state.StepId = 10;
                     break;
             }

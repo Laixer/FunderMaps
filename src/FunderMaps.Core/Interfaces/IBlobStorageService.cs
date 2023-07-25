@@ -46,11 +46,4 @@ public interface IBlobStorageService : IServiceHealthCheck
     /// <param name="storageObject">Storage object settings.</param>
     /// <returns>See <see cref="ValueTask"/>.</returns>
     Task StoreDirectoryAsync(string directoryName, string directoryPath, StorageObject? storageObject = null);
-
-    /// <summary>
-    ///     Removes a directory in Amazon S3.
-    /// </summary>
-    /// <param name="directoryPath">Full path of the directory to delete.</param>
-    /// <returns>See <see cref="ValueTask"/>.</returns>
-    Task RemoveDirectoryAsync(string directoryPath);
 }
