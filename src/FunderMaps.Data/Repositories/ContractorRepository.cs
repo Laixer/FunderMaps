@@ -18,9 +18,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     {
         var sql = "SELECT count(*) FROM application.contractor";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await conn.ExecuteScalarAsync<long>(sql);
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     /// <summary>
@@ -37,9 +37,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
 
         var sql = "SELECT id, name FROM application.contractor WHERE id = @id ORDER BY id";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await conn.QuerySingleOrDefaultAsync<Contractor>(sql, new { id }));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Contractor>(sql, new { id }));
     }
 
     /// <summary>
@@ -50,9 +50,9 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
     {
         var sql = "SELECT id, name FROM application.contractor ORDER BY id";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await conn.QueryAsync<Contractor>(sql))
+        foreach (var item in await connection.QueryAsync<Contractor>(sql))
         {
             yield return CacheEntity(item);
         }

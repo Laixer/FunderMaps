@@ -1,8 +1,7 @@
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -17,24 +16,14 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     /// <returns>Number of entities.</returns>
     public override async Task<long> CountAsync()
     {
-        var cmd = CountCommand("maplayer");
+        var sql = @"
+            SELECT  COUNT(*)
+            FROM    maplayer.bundle";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
-
-    private static Bundle MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Tileset = reader.GetString(offset++),
-            Enabled = reader.GetBoolean(offset++),
-            BuiltDate = reader.GetSafeDateTime(offset++),
-            Precondition = reader.GetSafeString(offset++),
-            Name = reader.GetString(offset++),
-            MinZoomLevel = reader.GetInt(offset++),
-            MaxZoomLevel = reader.GetInt(offset++),
-        };
 
     /// <summary>
     ///     Retrieve <see cref="Bundle"/> by id.
@@ -48,28 +37,22 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
             return entity ?? throw new InvalidOperationException();
         }
 
-        var entityName = EntityTable("maplayer");
-
-        var cmd = $@"
+        var sql = $@"
             SELECT
-                tileset,
-                enabled,
-                built_date,
-                precondition,
-                name,
-                zoom_min_level,
-                zoom_max_level
-            FROM {entityName}
-            WHERE tileset = @tileset
-            LIMIT 1";
+                    b.tileset,
+                    b.enabled,
+                    b.built_date,
+                    b.precondition,
+                    b.name,
+                    b.zoom_min_level AS min_zoom_level,
+                    b.zoom_max_level AS max_zoom_level
+            FROM    maplayer.bundle AS b
+            WHERE   b.tileset = @tileset
+            LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("tileset", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Bundle>(sql, new { tileset = id }));
     }
 
     /// <summary>
@@ -78,13 +61,24 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     /// <returns>List of <see cref="Bundle"/>.</returns>
     public override async IAsyncEnumerable<Bundle> ListAllAsync(Navigation navigation)
     {
-        var cmd = AllCommand("maplayer", new[] { "tileset", "enabled", "built_date", "precondition", "name", "zoom_min_level", "zoom_max_level" }, navigation);
+        var sql = $@"
+            SELECT
+                    b.tileset,
+                    b.enabled,
+                    b.built_date,
+                    b.precondition,
+                    b.name,
+                    b.zoom_min_level AS min_zoom_level,
+                    b.zoom_max_level AS max_zoom_level
+            FROM    maplayer.bundle AS b
+            OFFSET  @offset
+            LIMIT   @limit";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await connection.QueryAsync<Bundle>(sql, navigation))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 
@@ -94,26 +88,24 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     /// <returns>List of <see cref="Bundle"/>.</returns>
     public async IAsyncEnumerable<Bundle> ListAllEnabledAsync()
     {
-        var entityName = EntityTable("maplayer");
-
-        var cmd = $@"
+        var sql = $@"
             SELECT
-                tileset,
-                enabled,
-                built_date,
-                precondition,
-                name,
-                zoom_min_level,
-                zoom_max_level
-            FROM {entityName}
-            WHERE enabled
+                    b.tileset,
+                    b.enabled,
+                    b.built_date,
+                    b.precondition,
+                    b.name,
+                    b.zoom_min_level AS min_zoom_level,
+                    b.zoom_max_level AS max_zoom_level
+            FROM    maplayer.bundle AS b
+            WHERE   enabled
             ORDER BY built_date ASC NULLS FIRST";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await connection.QueryAsync<Bundle>(sql))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 
@@ -122,16 +114,14 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     /// </summary>
     public async Task<bool> RunPreconditionAsync(string id, string precondition)
     {
-        var cmd = $@"
+        var sql = $@"
             SELECT  maplayer.{precondition}(built_date) > precondition_threshold AS precondition
             FROM    maplayer.bundle
             WHERE   tileset = @tileset";
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("tileset", id);
-
-        return await context.ScalarAsync<bool>();
+        return await connection.ExecuteScalarAsync<bool>(sql, new { tileset = id });
     }
 
     /// <summary>
@@ -139,17 +129,13 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
     /// </summary>
     public async Task LogBuiltTimeAsync(string id)
     {
-        var entityName = EntityTable("maplayer");
+        var sql = $@"
+            UPDATE  maplayer.bundle
+            SET     built_date = NOW()
+            WHERE   tileset = @tileset";
 
-        var cmd = $@"
-            UPDATE {entityName}
-            SET built_date = NOW()
-            WHERE tileset = @tileset";
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await using var context = await DbContextFactory.CreateAsync(cmd);
-
-        context.AddParameterWithValue("tileset", id);
-
-        await context.NonQueryAsync();
+        await connection.ExecuteAsync(sql, new { tileset = id });
     }
 }

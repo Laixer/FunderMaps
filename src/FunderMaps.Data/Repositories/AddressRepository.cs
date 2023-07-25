@@ -20,9 +20,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             SELECT  COUNT(*)
             FROM    geocoder.address";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await conn.ExecuteScalarAsync<long>(sql);
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     public async Task<Address> GetByExternalIdAsync(string id)
@@ -46,9 +46,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             WHERE   a.external_id = upper(@external_id)
             LIMIT   1";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await conn.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id }));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id }));
     }
 
     /// <summary>
@@ -77,9 +77,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             WHERE   a.id = @id
             LIMIT   1";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await conn.QuerySingleOrDefaultAsync<Address>(sql, new { id }));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id }));
     }
 
     /// <summary>
@@ -102,9 +102,9 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
             OFFSET  @offset
             LIMIT   @limit";
 
-        var conn = DbContextFactory.DbProvider.ConnectionScope();
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await conn.QueryAsync<Address>(sql, navigation))
+        foreach (var item in await connection.QueryAsync<Address>(sql, navigation))
         {
             yield return CacheEntity(item);
         }

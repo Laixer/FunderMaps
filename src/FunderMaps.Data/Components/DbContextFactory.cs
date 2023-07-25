@@ -16,8 +16,8 @@ internal class DbContextFactory
     /// </summary>
     public DbContextFactory(AppContext appContext, DbProvider dbProvider)
     {
-        _appContext = appContext ?? throw new System.ArgumentNullException(nameof(appContext));
-        _dbProvider = dbProvider ?? throw new System.ArgumentNullException(nameof(dbProvider));
+        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+        _dbProvider = dbProvider ?? throw new ArgumentNullException(nameof(dbProvider));
     }
 
     public DbProvider DbProvider => _dbProvider;

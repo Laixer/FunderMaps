@@ -1,8 +1,7 @@
+using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Data.Extensions;
-using System.Data.Common;
 
 namespace FunderMaps.Data.Repositories;
 
@@ -11,16 +10,6 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingRepository
 {
-    private static Building MapFromReader(DbDataReader reader, int offset = 0)
-        => new()
-        {
-            Id = reader.GetString(offset++),
-            BuiltYear = reader.GetSafeDateTime(offset++),
-            IsActive = true,
-            ExternalId = reader.GetString(offset++),
-            NeighborhoodId = reader.GetSafeString(offset++),
-        };
-
     /// <summary>
     ///     Retrieve number of entities.
     /// </summary>
@@ -31,9 +20,9 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
             SELECT  COUNT(*)
             FROM    geocoder.building_active";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await context.ScalarAsync<long>();
+        return await connection.ExecuteScalarAsync<long>(sql);
     }
 
     public async Task<Building> GetByExternalIdAsync(string id)
@@ -48,13 +37,9 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
             WHERE   ba.external_id = upper(@external_id)
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("external_id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id }));
     }
 
     /// <summary>
@@ -76,13 +61,9 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
             WHERE   a.external_id = upper(@external_id)
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("external_id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id }));
     }
 
     /// <summary>
@@ -107,13 +88,9 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
             WHERE   ba.id = @id
             LIMIT   1";
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        context.AddParameterWithValue("id", id);
-
-        await using var reader = await context.ReaderAsync();
-
-        return CacheEntity(MapFromReader(reader));
+        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id }));
     }
 
     /// <summary>
@@ -128,15 +105,17 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
                     ba.built_year,
                     ba.external_id,
                     ba.neighborhood_id
-            FROM    geocoder.building_active AS ba";
+            FROM    geocoder.building_active AS ba
+            OFFSET  @offset
+            LIMIT   @limit";
 
         sql = ConstructNavigation(sql, navigation);
 
-        await using var context = await DbContextFactory.CreateAsync(sql);
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        await foreach (var reader in context.EnumerableReaderAsync())
+        foreach (var item in await connection.QueryAsync<Building>(sql, navigation))
         {
-            yield return CacheEntity(MapFromReader(reader));
+            yield return CacheEntity(item);
         }
     }
 }
