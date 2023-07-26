@@ -34,6 +34,6 @@
   "BlobStorage": {
     "AccessKeyId": "ZDQQ3W7SX2LTGEHGIY3M",
     "ServiceUri": "https://ams3.digitaloceanspaces.com/",
-    "BucketName": "fundermaps-production"
+    "BucketName": "fundermaps"
   }
 }
