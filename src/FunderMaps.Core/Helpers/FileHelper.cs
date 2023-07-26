@@ -19,4 +19,17 @@ public static class FileHelper
 
         return $"{Guid.NewGuid()}{Path.GetExtension(fileName)}";
     }
+
+    /// <summary>
+    ///     Delete all files with a given extension in a directory.
+    /// </summary>
+    /// <param name="path">Directory path.</param>
+    /// <param name="extension">File extension.</param>
+    public static void DeleteFilesWithExtension(string path, string extension)
+    {
+        foreach (string file in Directory.EnumerateFiles(path, $"*.{extension}"))
+        {
+            File.Delete(file);
+        }
+    }
 }

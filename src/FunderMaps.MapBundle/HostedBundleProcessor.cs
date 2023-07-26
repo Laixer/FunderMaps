@@ -1,4 +1,5 @@
 using FunderMaps.Core.Email;
+using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
@@ -138,22 +139,11 @@ public class HostedBundleProcessor : IHostedService
             finally
             {
                 var currentDirectory = Directory.GetCurrentDirectory();
-                foreach (string file in Directory.GetFiles(currentDirectory, "*.gpkg"))
-                {
-                    File.Delete(file);
-                }
-                foreach (string file in Directory.GetFiles(currentDirectory, "*.gpkg-journal"))
-                {
-                    File.Delete(file);
-                }
-                foreach (string file in Directory.GetFiles(currentDirectory, "*.geojson"))
-                {
-                    File.Delete(file);
-                }
-                foreach (string file in Directory.GetFiles(currentDirectory, "*.mbtiles"))
-                {
-                    File.Delete(file);
-                }
+
+                FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg");
+                FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg-journal");
+                FileHelper.DeleteFilesWithExtension(currentDirectory, "geojson");
+                FileHelper.DeleteFilesWithExtension(currentDirectory, "mbtiles");
             }
         }
     }
