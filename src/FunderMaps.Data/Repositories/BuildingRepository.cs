@@ -1,6 +1,7 @@
 using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
@@ -39,7 +40,13 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id }));
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id });
+        if (building is null)
+        {
+            throw new EntityNotFoundException(nameof(Building));
+        }
+
+        return CacheEntity(building);
     }
 
     /// <summary>
@@ -63,7 +70,13 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id }));
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id });
+        if (building is null)
+        {
+            throw new EntityNotFoundException(nameof(Building));
+        }
+
+        return CacheEntity(building);
     }
 
     /// <summary>
@@ -90,7 +103,13 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id }));
+        var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id });
+        if (building is null)
+        {
+            throw new EntityNotFoundException(nameof(Building));
+        }
+
+        return CacheEntity(building);
     }
 
     /// <summary>

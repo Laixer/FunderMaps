@@ -1,6 +1,7 @@
 using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
@@ -48,7 +49,13 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id }));
+        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id });
+        if (address is null)
+        {
+            throw new EntityNotFoundException(nameof(Address));
+        }
+
+        return CacheEntity(address);
     }
 
     /// <summary>
@@ -79,7 +86,13 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id }));
+        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id });
+        if (address is null)
+        {
+            throw new EntityNotFoundException(nameof(Address));
+        }
+
+        return CacheEntity(address);
     }
 
     /// <summary>
