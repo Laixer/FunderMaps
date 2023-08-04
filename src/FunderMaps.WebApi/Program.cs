@@ -21,6 +21,16 @@ if (!builder.Environment.IsDevelopment())
         options.Preload = true;
         options.MaxAge = TimeSpan.FromDays(365);
     });
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins("https://api.pdok.nl");
+            policy.AllowAnyHeader();
+            policy.AllowAnyMethod();
+        });
+    });
 }
 
 if (builder.Environment.IsDevelopment())
