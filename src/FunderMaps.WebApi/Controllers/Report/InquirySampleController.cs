@@ -98,8 +98,7 @@ public class InquirySampleController : ControllerBase
             throw new EntityReadOnlyException();
         }
 
-        await _inquirySampleRepository.AddAsync(inquirySample);
-        inquirySample = await _inquirySampleRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        inquirySample.Id = await _inquirySampleRepository.AddAsync(inquirySample);
 
         inquiry.State.TransitionToPending();
         await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);

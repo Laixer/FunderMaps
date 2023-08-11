@@ -110,7 +110,7 @@ public class InquiryController : ControllerBase
             throw new AuthorizationException();
         }
 
-        await _inquiryRepository.AddAsync(inquiry);
+        inquiry.Id = await _inquiryRepository.AddAsync(inquiry);
 
         return await _inquiryRepository.GetByIdAsync(inquiry.Id, tenantId);
     }
