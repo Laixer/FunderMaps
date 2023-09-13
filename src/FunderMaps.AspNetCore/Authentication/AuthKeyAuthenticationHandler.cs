@@ -35,19 +35,19 @@ public class AuthKeyAuthenticationHandler : AuthenticationHandler<AuthKeyAuthent
         var authHeader = Request.Headers.Authorization.FirstOrDefault();
         if (authHeader?.StartsWith("authkey ", StringComparison.InvariantCultureIgnoreCase) ?? false)
         {
-            var token = authHeader.Trim().Substring("authkey ".Length).Trim();
+            var token = authHeader.Trim()["authkey ".Length..].Trim();
 
-            var principal = await _signInService.AuthKeySignInAsync(token, this.Scheme.Name);
+            var principal = await _signInService.AuthKeySignInAsync(token, Scheme.Name);
 
-            return AuthenticateResult.Success(new AuthenticationTicket(principal, this.Scheme.Name));
+            return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
         }
 
         var authQuery = Request.Query["authkey"].FirstOrDefault();
         if (!string.IsNullOrEmpty(authQuery))
         {
-            var principal = await _signInService.AuthKeySignInAsync(authQuery, this.Scheme.Name);
+            var principal = await _signInService.AuthKeySignInAsync(authQuery, Scheme.Name);
 
-            return AuthenticateResult.Success(new AuthenticationTicket(principal, this.Scheme.Name));
+            return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
         }
 
         return AuthenticateResult.Fail("Missing authorization header");

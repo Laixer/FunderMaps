@@ -91,10 +91,10 @@ public class SignInService
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.ToString()),
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Role, user.Role.ToString()),
         };
 
         var organizationIds = await OrganizationUserRepository.ListAllOrganizationIdByUserIdAsync(user.Id).ToListAsync();
@@ -103,6 +103,7 @@ public class SignInService
             claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organizationId.ToString()));
         }
 
+        // FIX: BUG: This can result in a null reference exception.
         // FUTURE: There is a role per organization, but we only support one role for now.
         var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
         claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()));
