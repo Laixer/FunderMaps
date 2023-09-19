@@ -41,12 +41,7 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id });
-        if (building is null)
-        {
-            throw new EntityNotFoundException(nameof(Building));
-        }
-
-        return CacheEntity(building);
+        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
     }
 
     /// <summary>
@@ -71,12 +66,7 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { external_id = id });
-        if (building is null)
-        {
-            throw new EntityNotFoundException(nameof(Building));
-        }
-
-        return CacheEntity(building);
+        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
     }
 
     /// <summary>
@@ -104,12 +94,7 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var building = await connection.QuerySingleOrDefaultAsync<Building>(sql, new { id });
-        if (building is null)
-        {
-            throw new EntityNotFoundException(nameof(Building));
-        }
-
-        return CacheEntity(building);
+        return building is null ? throw new EntityNotFoundException(nameof(Building)) : CacheEntity(building);
     }
 
     /// <summary>

@@ -50,12 +50,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id });
-        if (address is null)
-        {
-            throw new EntityNotFoundException(nameof(Address));
-        }
-
-        return CacheEntity(address);
+        return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
     }
 
     /// <summary>
@@ -87,12 +82,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { id });
-        if (address is null)
-        {
-            throw new EntityNotFoundException(nameof(Address));
-        }
-
-        return CacheEntity(address);
+        return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
     }
 
     /// <summary>
