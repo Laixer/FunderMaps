@@ -41,6 +41,7 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
             SELECT
                     b.tileset,
                     b.enabled,
+                    b.map_enabled,
                     b.built_date,
                     b.precondition,
                     b.name,
@@ -65,6 +66,7 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
             SELECT
                     b.tileset,
                     b.enabled,
+                    b.map_enabled,
                     b.built_date,
                     b.precondition,
                     b.name,
@@ -92,6 +94,7 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
             SELECT
                     b.tileset,
                     b.enabled,
+                    b.map_enabled,
                     b.built_date,
                     b.precondition,
                     b.name,

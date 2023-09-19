@@ -23,6 +23,11 @@ public sealed class Bundle : IEntityIdentifier<string>
     public bool Enabled { get; set; }
 
     /// <summary>
+    ///     Whether the bundle should create a map/tileset.
+    /// </summary>
+    public bool MapEnabled { get; set; }
+
+    /// <summary>
     ///     Last build date.
     /// </summary>
     public DateTime? BuiltDate { get; set; }

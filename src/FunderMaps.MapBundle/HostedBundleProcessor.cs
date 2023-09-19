@@ -128,11 +128,14 @@ public class HostedBundleProcessor : IHostedService
 
                 await _blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
-                _gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson", cancellationToken: cancellationToken);
+                if (bundle.MapEnabled)
+                {
+                    _gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson", cancellationToken: cancellationToken);
 
-                _tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
+                    _tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
 
-                await _mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
+                    await _mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
+                }
 
                 await bundleRepository.LogBuiltTimeAsync(bundle.Tileset);
             }
