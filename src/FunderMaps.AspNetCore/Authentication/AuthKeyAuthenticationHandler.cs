@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.Services;
+using FunderMaps.Core.Exceptions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -32,24 +33,31 @@ public class AuthKeyAuthenticationHandler : AuthenticationHandler<AuthKeyAuthent
     /// </summary>
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        var authHeader = Request.Headers.Authorization.FirstOrDefault();
-        if (authHeader?.StartsWith("authkey ", StringComparison.InvariantCultureIgnoreCase) ?? false)
+        try
         {
-            var token = authHeader.Trim()["authkey ".Length..].Trim();
+            var authHeader = Request.Headers.Authorization.FirstOrDefault();
+            if (authHeader?.StartsWith("authkey ", StringComparison.InvariantCultureIgnoreCase) ?? false)
+            {
+                var token = authHeader.Trim()["authkey ".Length..].Trim();
 
-            var principal = await _signInService.AuthKeySignInAsync(token, Scheme.Name);
+                var principal = await _signInService.AuthKeySignInAsync(token, Scheme.Name);
 
-            return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+                return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+            }
+
+            var authQuery = Request.Query["authkey"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(authQuery))
+            {
+                var principal = await _signInService.AuthKeySignInAsync(authQuery, Scheme.Name);
+
+                return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+            }
+
+            return AuthenticateResult.Fail("Missing authorization header");
         }
-
-        var authQuery = Request.Query["authkey"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(authQuery))
+        catch (AuthenticationException ex)
         {
-            var principal = await _signInService.AuthKeySignInAsync(authQuery, Scheme.Name);
-
-            return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+            return AuthenticateResult.Fail(ex.Message);
         }
-
-        return AuthenticateResult.Fail("Missing authorization header");
     }
 }

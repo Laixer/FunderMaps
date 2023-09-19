@@ -120,11 +120,21 @@ public class SignInService
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<ClaimsPrincipal> UserIdSignInAsync(Guid id, string authenticationType)
     {
-        var user = await UserRepository.GetByIdAsync(id);
+        try
+        {
+            if (await UserRepository.GetByIdAsync(id) is not User user)
+            {
+                throw new AuthenticationException();
+            }
 
-        var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
+            var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 
-        return new ClaimsPrincipal(claimsIdentity);
+            return new ClaimsPrincipal(claimsIdentity);
+        }
+        catch (EntityNotFoundException)
+        {
+            throw new AuthenticationException();
+        }
     }
 
     /// <summary>
@@ -134,11 +144,21 @@ public class SignInService
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<ClaimsPrincipal> AuthKeySignInAsync(string key, string authenticationType)
     {
-        var user = await UserRepository.GetByAuthKeyAsync(key);
+        try
+        {
+            if (await UserRepository.GetByAuthKeyAsync(key) is not User user)
+            {
+                throw new AuthenticationException();
+            }
 
-        var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
+            var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 
-        return new ClaimsPrincipal(claimsIdentity);
+            return new ClaimsPrincipal(claimsIdentity);
+        }
+        catch (EntityNotFoundException)
+        {
+            throw new AuthenticationException();
+        }
     }
 
     /// <summary>
@@ -149,24 +169,31 @@ public class SignInService
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public virtual async Task<ClaimsPrincipal> PasswordSignInAsync(string email, string password, string authenticationType)
     {
-        if (await UserRepository.GetByEmailAsync(email) is not User user)
+        try
+        {
+            if (await UserRepository.GetByEmailAsync(email) is not User user)
+            {
+                throw new AuthenticationException();
+            }
+
+            if (!await CheckPasswordAsync(user.Id, password))
+            {
+                Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+
+                await UserRepository.BumpAccessFailed(user.Id);
+
+                throw new AuthenticationException();
+            }
+
+            Logger.LogInformation($"User '{user}' password signin was successful.");
+
+            var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
+
+            return new ClaimsPrincipal(claimsIdentity);
+        }
+        catch (EntityNotFoundException)
         {
             throw new AuthenticationException();
         }
-
-        if (!await CheckPasswordAsync(user.Id, password))
-        {
-            Logger.LogWarning($"User '{user}' failed to provide the correct password.");
-
-            await UserRepository.BumpAccessFailed(user.Id);
-
-            throw new AuthenticationException();
-        }
-
-        Logger.LogInformation($"User '{user}' password signin was successful.");
-
-        var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
-
-        return new ClaimsPrincipal(claimsIdentity);
     }
 }
