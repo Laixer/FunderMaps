@@ -9,14 +9,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.MapBundle;
 
-public class ProductExporter : IHostedService
+public class ProductExporter : SingleShotService
 {
-    private readonly HealthCheckService _healthCheckService;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IBlobStorageService _blobStorageService;
-    private readonly IEmailService _emailService;
-    private readonly IHostApplicationLifetime _hostApplicationLifetime;
-    private readonly ILogger<ProductExporter> _logger;
 
     /// <summary>
     ///     Construct new instance.
@@ -28,60 +23,12 @@ public class ProductExporter : IHostedService
         IEmailService emailService,
         IHostApplicationLifetime hostApplicationLifetime,
         ILogger<ProductExporter> logger)
+        : base(healthCheckService, serviceScopeFactory, emailService, hostApplicationLifetime, logger)
     {
-        _healthCheckService = healthCheckService ?? throw new ArgumentNullException(nameof(healthCheckService));
-        _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-        _hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentNullException(nameof(hostApplicationLifetime));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    /// <summary>
-    ///     Triggered when the application host is ready to start the service.
-    /// </summary>
-    /// <param name="cancellationToken">Indicates that the start process has been aborted.</param>
-    public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        try
-        {
-            var healthReport = await _healthCheckService.CheckHealthAsync(cancellationToken);
-            if (healthReport.Status != HealthStatus.Healthy)
-            {
-                _logger.LogError("Health check failed, stopping application");
-
-                throw new InvalidOperationException("Health check failed, stopping application");
-            }
-            else
-            {
-                using var scope = _serviceScopeFactory.CreateScope();
-
-                await RunAllEnabledAsync(scope, cancellationToken);
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, "Error while creating product export");
-
-            await _emailService.SendAsync(new EmailMessage
-            {
-                Subject = "Error while creating product export",
-                Content = "Error while creating product export, see log for details.",
-            });
-        }
-        finally
-        {
-            _hostApplicationLifetime.StopApplication();
-        }
-    }
-
-    /// <summary>
-    ///     Triggered when the application host is performing a graceful shutdown.
-    /// </summary>
-    /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-    private async Task RunAllEnabledAsync(IServiceScope scope, CancellationToken cancellationToken)
+    protected override async Task RunAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var telemetryRepository = scope.ServiceProvider.GetRequiredService<ITelemetryRepository>();
 
@@ -106,7 +53,7 @@ public class ProductExporter : IHostedService
                 using var writer = new StreamWriter(filePath);
                 using var csv = new CsvHelper.CsvWriter(writer, csvConfig);
 
-                await csv.WriteRecordsAsync(telemetryRepository.ListLastMonthByOrganizationIdAsync(organization));
+                await csv.WriteRecordsAsync(telemetryRepository.ListLastMonthByOrganizationIdAsync(organization), cancellationToken);
 
                 await _blobStorageService.StoreFileAsync($"product/export_{lastMonthName.ToLower()}_{organization}.csv", filePath);
             }
@@ -117,5 +64,11 @@ public class ProductExporter : IHostedService
                 FileHelper.DeleteFilesWithExtension(currentDirectory, "csv");
             }
         }
+
+        await _emailService.SendAsync(new EmailMessage
+        {
+            Subject = "FunderMaps product",
+            Content = "FunderMaps product export complete for last month.",
+        });
     }
 }
