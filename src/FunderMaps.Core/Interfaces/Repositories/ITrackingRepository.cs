@@ -17,4 +17,8 @@ public interface ITelemetryRepository
     ///     Retrieve all product telemetrics.
     /// </summary>
     IAsyncEnumerable<ProductTelemetry> ListAllUsageAsync(Guid tenantId);
+
+    IAsyncEnumerable<Guid> ListLastMonthOrganizationaAsync();
+
+    IAsyncEnumerable<ProductCall> ListLastMonthByOrganizationIdAsync(Guid id);
 }
