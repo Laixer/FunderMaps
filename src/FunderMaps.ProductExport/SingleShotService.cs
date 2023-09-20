@@ -5,7 +5,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.MapBundle;
+namespace FunderMaps.ProductExporter;
 
 public abstract class SingleShotService : IHostedService
 {

@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Incident", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.MapBundle", "src\FunderMaps.MapBundle\FunderMaps.MapBundle.csproj", "{0CAB7476-817B-4274-97D5-101AFE27E5ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.ProductExport", "src\FunderMaps.ProductExport\FunderMaps.ProductExport.csproj", "{34D94CAD-C49C-4AAE-8112-242939316B1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{0CAB7476-817B-4274-97D5-101AFE27E5ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0CAB7476-817B-4274-97D5-101AFE27E5ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0CAB7476-817B-4274-97D5-101AFE27E5ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34D94CAD-C49C-4AAE-8112-242939316B1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34D94CAD-C49C-4AAE-8112-242939316B1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34D94CAD-C49C-4AAE-8112-242939316B1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34D94CAD-C49C-4AAE-8112-242939316B1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{CD5E0F90-6094-4148-8944-3C0F15E1265F} = {2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}
 		{4EC7CFA9-64AC-4823-815E-97D3C1F3AB8C} = {2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}
 		{0CAB7476-817B-4274-97D5-101AFE27E5ED} = {2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}
+		{34D94CAD-C49C-4AAE-8112-242939316B1C} = {2E7D6F8C-F448-46D2-88BA-2CA8DD7836E9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDA50611-E011-4C1E-8823-7A6943652DCE}
