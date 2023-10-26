@@ -1,5 +1,3 @@
-using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Components;
 using FunderMaps.Incident.Data;
 
