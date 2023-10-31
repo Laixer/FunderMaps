@@ -116,12 +116,16 @@ public class InquirySampleController : ControllerBase
     /// </remarks>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample)
+    public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample, [FromServices] IGeocoderTranslation geocoderTranslation)
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
+        var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
+
         inquirySample.Id = id;
         inquirySample.Inquiry = inquiryId;
+        inquirySample.Address = address.Id;
+        inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
 
         var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
