@@ -26,6 +26,12 @@ public sealed class ProductCall
     public string? BuildingId { get; set; }
 
     /// <summary>
+    ///     External data source id.
+    /// </summary>
+    [Required]
+    public string ExternalId { get; set; } = default!;
+
+    /// <summary>
     ///     Record create date.
     /// </summary>
     public DateTime CreateDate { get; set; }

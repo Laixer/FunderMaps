@@ -93,9 +93,11 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
                     pt.organization_id,
                     pt.product,
                     pt.building_id,
+                    b.external_id,
                     pt.create_date,
                     pt.identifier AS request
             FROM    application.product_tracker AS pt
+            JOIN    geocoder.building AS b ON b.id = pt.building_id
             WHERE   pt.organization_id = @id
             AND     pt.create_date >= date_trunc('month', CURRENT_DATE) - interval '1 month'
             AND     pt.create_date < date_trunc('month', CURRENT_DATE)";
