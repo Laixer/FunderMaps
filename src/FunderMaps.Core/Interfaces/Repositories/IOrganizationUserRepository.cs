@@ -37,7 +37,7 @@ public interface IOrganizationUserRepository
     /// <param name="userId">User identifier.</param>
     /// <param name="organizationId">Organization identifier.</param>
     /// <returns>Organization role.</returns>
-    Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId);
+    Task<OrganizationRole?> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId);
 
     /// <summary>
     ///     List all organization members.

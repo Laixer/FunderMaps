@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.Authentication;
+﻿using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
@@ -13,6 +13,8 @@ namespace FunderMaps.AspNetCore.Services;
 /// </summary>
 public class SignInService
 {
+    const int MaxFailedAccessAttempts = 10;
+
     /// <summary>
     ///     The <see cref="IUserRepository"/> used.
     /// </summary>
@@ -84,7 +86,7 @@ public class SignInService
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     private async Task<ClaimsIdentity> CreateClaimsIdentityAsync(User user, string authenticationType)
     {
-        if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
+        if (await UserRepository.GetAccessFailedCount(user.Id) > MaxFailedAccessAttempts)
         {
             Logger.LogWarning("User '{user}' locked out.", user);
 
@@ -108,10 +110,12 @@ public class SignInService
             claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organizationId.ToString()));
         }
 
-        // FIX: BUG: This can result in a null reference exception.
         // FUTURE: There is a role per organization, but we only support one role for now.
         var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
-        claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()));
+        if (organizationRole is not null)
+        {
+            claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString() ?? string.Empty));
+        }
 
         Logger.LogDebug("User '{user}' signin was successful.", user);
 

@@ -128,9 +128,9 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
         {
             yield return reader.GetGuid(0);
         }
-   }
+    }
 
-    public async Task<OrganizationRole> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId)
+    public async Task<OrganizationRole?> GetOrganizationRoleByUserIdAsync(Guid userId, Guid organizationId)
     {
         var sql = @"
             SELECT  role
@@ -145,7 +145,7 @@ internal class OrganizationUserRepository : DbServiceBase, IOrganizationUserRepo
 
         await using var reader = await context.ReaderAsync();
 
-        return reader.GetFieldValue<OrganizationRole>(0);
+        return reader.GetSafeStructValue<OrganizationRole>(0);
     }
 
     // TODO: Also request the organization for which this role must be set.
