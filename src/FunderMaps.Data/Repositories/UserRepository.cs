@@ -210,7 +210,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// </summary>
     /// <param name="id">Entity identifier.</param>
     /// <returns>Password hash as string.</returns>
-    public async Task<string> GetPasswordHashAsync(Guid id)
+    public async Task<string?> GetPasswordHashAsync(Guid id)
     {
         var sql = @"
             SELECT  u.password_hash

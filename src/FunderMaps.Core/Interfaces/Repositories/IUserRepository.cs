@@ -26,7 +26,7 @@ public interface IUserRepository : IAsyncRepository<User, Guid>
     /// </summary>
     /// <param name="id">Entity identifier.</param>
     /// <returns>Password hash as string.</returns>
-    Task<string> GetPasswordHashAsync(Guid id);
+    Task<string?> GetPasswordHashAsync(Guid id);
 
     /// <summary>
     ///     Get access failed count.

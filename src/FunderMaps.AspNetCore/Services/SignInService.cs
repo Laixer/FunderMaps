@@ -57,6 +57,11 @@ public class SignInService
     public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
     {
         var passwordHash = await UserRepository.GetPasswordHashAsync(id);
+        if (passwordHash is null)
+        {
+            return false;
+        }
+
         return PasswordHasher.IsPasswordValid(passwordHash, password);
     }
 
