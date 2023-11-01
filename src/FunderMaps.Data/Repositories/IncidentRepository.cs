@@ -134,12 +134,12 @@ internal class IncidentRepository : RepositoryBase<Incident, string>, IIncidentR
         => new()
         {
             Id = reader.GetString(offset++),
-            FoundationType = reader.GetSafe5tructValue<FoundationType>(offset++),
+            FoundationType = reader.GetSafeStructValue<FoundationType>(offset++),
             ChainedBuilding = reader.GetBoolean(offset++),
             Owner = reader.GetBoolean(offset++),
             FoundationRecovery = reader.GetBoolean(offset++),
             NeighborRecovery = reader.GetBoolean(offset++),
-            FoundationDamageCause = reader.GetSafe5tructValue<FoundationDamageCause>(offset++),
+            FoundationDamageCause = reader.GetSafeStructValue<FoundationDamageCause>(offset++),
             DocumentFile = reader.GetSafeStringArray(offset++),
             Note = reader.GetSafeString(offset++),
             InternalNote = reader.GetSafeString(offset++),
