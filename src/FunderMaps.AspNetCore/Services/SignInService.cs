@@ -1,4 +1,4 @@
-﻿using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
@@ -86,7 +86,7 @@ public class SignInService
     {
         if (await UserRepository.GetAccessFailedCount(user.Id) > 10)
         {
-            Logger.LogWarning($"User '{user}' locked out.");
+            Logger.LogWarning("User '{user}' locked out.", user);
 
             throw new AuthenticationException();
         }
@@ -113,7 +113,7 @@ public class SignInService
         var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
         claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString()));
 
-        Logger.LogDebug($"User '{user}' signin was successful.");
+        Logger.LogDebug("User '{user}' signin was successful.", user);
 
         return new(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
     }
@@ -183,14 +183,14 @@ public class SignInService
 
             if (!await CheckPasswordAsync(user.Id, password))
             {
-                Logger.LogWarning($"User '{user}' failed to provide the correct password.");
+                Logger.LogWarning("User '{user}' failed to provide the correct password.", user);
 
                 await UserRepository.BumpAccessFailed(user.Id);
 
                 throw new AuthenticationException();
             }
 
-            Logger.LogInformation($"User '{user}' password signin was successful.");
+            Logger.LogInformation("User '{user}' password signin was successful.", user);
 
             var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 

@@ -90,12 +90,12 @@ internal class MailgunService : IEmailService
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
         requestMessage.Content = new FormUrlEncodedContent(formContent);
 
-        _logger.LogDebug($"Sending message to {recipient.Name} <{recipient.Address}>");
+        _logger.LogDebug("Sending message to {Name} <{Address}>", recipient.Name, recipient.Address);
 
         var response = await client.SendAsync(requestMessage);
         response.EnsureSuccessStatusCode();
 
-        _logger.LogDebug($"Message sent with success");
+        _logger.LogDebug("Message sent with success");
     }
 
     /// <summary>

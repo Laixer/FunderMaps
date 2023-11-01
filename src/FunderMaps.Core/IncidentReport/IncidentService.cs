@@ -231,7 +231,7 @@ internal class IncidentService : IIncidentService
             });
         }
 
-        _logger.LogInformation($"Incident {incident.Id} was registered");
+        _logger.LogInformation("Incident {Id} was registered", incident.Id);
 
         return incident;
     }

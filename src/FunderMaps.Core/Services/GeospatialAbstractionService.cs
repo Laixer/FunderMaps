@@ -74,12 +74,12 @@ internal class GeospatialAbstractionService : IGDALService
 
         if (!string.IsNullOrEmpty(standardError))
         {
-            _logger.LogError("Error output: " + standardError);
+            _logger.LogError("Error output: {standardError}", standardError);
         }
 
         if (!string.IsNullOrEmpty(standardOutput))
         {
-            _logger.LogInformation("Console output: " + standardOutput);
+            _logger.LogInformation("Console output: {standardOutput}", standardOutput);
         }
     }
 }
