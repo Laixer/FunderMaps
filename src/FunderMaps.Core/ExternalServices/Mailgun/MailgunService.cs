@@ -17,7 +17,7 @@ internal class MailgunService : IEmailService
     private readonly MailgunOptions _options;
     private readonly ILogger _logger;
 
-    private HttpClient client = new();
+    private readonly HttpClient client = new();
 
     /// <summary>
     ///     Create new instance.
@@ -46,7 +46,7 @@ internal class MailgunService : IEmailService
         {
             emailMessage.ToAddresses = new List<EmailAddress>
             {
-                new EmailAddress(_options.DefaultRecipientAddress ?? throw new ArgumentNullException(nameof(_options.DefaultRecipientAddress)), _options.DefaultRecipientName)
+                new(_options.DefaultRecipientAddress ?? throw new ArgumentNullException(nameof(_options.DefaultRecipientAddress)), _options.DefaultRecipientName)
             };
         }
 
@@ -60,9 +60,9 @@ internal class MailgunService : IEmailService
     {
         var formContent = new List<KeyValuePair<string, string>>
         {
-            new KeyValuePair<string, string>("from", $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>"),
-            new KeyValuePair<string, string>("to", $"{recipient.Name} <{recipient.Address}>"),
-            new KeyValuePair<string, string>("subject", emailMessage.Subject ?? throw new ArgumentNullException(nameof(emailMessage.Subject))),
+            new("from", $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>"),
+            new("to", $"{recipient.Name} <{recipient.Address}>"),
+            new("subject", emailMessage.Subject ?? throw new ArgumentNullException(nameof(emailMessage.Subject))),
         };
 
         if (emailMessage.Template is not null)

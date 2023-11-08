@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.MapBundle;
 
+// TODO: Inherit from SingleShotService
 public class HostedBundleProcessor : IHostedService
 {
     private readonly HealthCheckService _healthCheckService;
@@ -112,13 +113,13 @@ public class HostedBundleProcessor : IHostedService
                 {
                     if (!await bundleRepository.RunPreconditionAsync(bundle.Tileset, bundle.Precondition))
                     {
-                        _logger.LogInformation($"Precondition for bundle '{bundle.Tileset}' failed, skipping");
+                        _logger.LogInformation("Precondition for bundle '{Tileset}' failed, skipping", bundle.Tileset);
 
                         continue;
                     }
                 }
 
-                _logger.LogInformation($"Processing tileset '{bundle.Tileset}'");
+                _logger.LogInformation("Processing tileset '{Tileset}'", bundle.Tileset);
 
                 var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
 

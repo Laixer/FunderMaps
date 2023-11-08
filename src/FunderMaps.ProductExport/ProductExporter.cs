@@ -41,15 +41,16 @@ public class ProductExporter : SingleShotService
 
         var csvConfig = new CsvHelper.Configuration.CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture)
         {
-
             HasHeaderRecord = true,
         };
 
         using var csv = new CsvHelper.CsvWriter(writer, csvConfig);
-
         await csv.WriteRecordsAsync(productCalls, cancellationToken);
     }
 
+    /// <summary>
+    ///    Triggered when the application host is ready to start the service.
+    /// </summary>
     protected override async Task RunAsync(IServiceScope scope, CancellationToken cancellationToken)
     {
         var telemetryRepository = scope.ServiceProvider.GetRequiredService<ITelemetryRepository>();

@@ -76,5 +76,10 @@ public abstract class SingleShotService : IHostedService
     /// <param name="cancellationToken">Indicates that the shutdown process should no longer be graceful.</param>
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
+    /// <summary>
+    ///    Triggered when the application host is ready to start the service.
+    /// </summary>
+    /// <param name="scope">Service scope.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     protected abstract Task RunAsync(IServiceScope scope, CancellationToken cancellationToken);
 }

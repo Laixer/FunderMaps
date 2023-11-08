@@ -107,8 +107,8 @@ internal class MapboxService : IMapboxService, IDisposable
         var requestBody = new
         {
             tileset = $"{_options.Account}.{tileset}",
-            url = credentials.url,
-            name = name,
+            credentials.url,
+            name,
         };
 
         string jsonBody = JsonSerializer.Serialize(requestBody);
