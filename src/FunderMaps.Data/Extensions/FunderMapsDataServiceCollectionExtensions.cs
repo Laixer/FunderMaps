@@ -32,7 +32,7 @@ public static class FunderMapsDataServiceCollectionExtensions
         => services.AddScoped<TService, TImplementation>(serviceProvider =>
         {
             TImplementation repository = new();
-            DbServiceBase injectorBase = repository as DbServiceBase;
+            DbServiceBase injectorBase = repository;
 
             injectorBase.Cache = serviceProvider.GetRequiredService<IMemoryCache>();
             injectorBase.DbContextFactory = ActivatorUtilities.CreateInstance<DbContextFactory>(serviceProvider);

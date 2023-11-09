@@ -91,8 +91,8 @@ public class FunderMapsClient : IDisposable
 
         var response = await httpClient.PostAsJsonAsync("api/auth/signin", new
         {
-            email = email,
-            password = password,
+            email,
+            password,
         });
 
         if (!response.IsSuccessStatusCode)
@@ -102,12 +102,7 @@ public class FunderMapsClient : IDisposable
             throw new HttpRequestException("FunderMaps API call failed");
         }
 
-        var authToken = await response.Content.ReadFromJsonAsync<SignInSecurityToken>();
-        if (authToken is null)
-        {
-            throw new HttpRequestException("FunderMaps API call failed");
-        }
-
+        var authToken = await response.Content.ReadFromJsonAsync<SignInSecurityToken>() ?? throw new HttpRequestException("FunderMaps API call failed");
         _logger.LogDebug("Received authentication token");
 
         return authToken;
