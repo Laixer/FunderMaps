@@ -31,7 +31,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Incident", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.MapBundle", "src\FunderMaps.MapBundle\FunderMaps.MapBundle.csproj", "{0CAB7476-817B-4274-97D5-101AFE27E5ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.ProductExport", "src\FunderMaps.ProductExport\FunderMaps.ProductExport.csproj", "{34D94CAD-C49C-4AAE-8112-242939316B1C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunderMaps.Worker", "src\FunderMaps.Worker\FunderMaps.Worker.csproj", "{34D94CAD-C49C-4AAE-8112-242939316B1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

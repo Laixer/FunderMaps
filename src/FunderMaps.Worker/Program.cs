@@ -1,4 +1,4 @@
-using FunderMaps.ProductExporter;
+using FunderMaps.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,7 +11,7 @@ await Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostBuilderContext, services) =>
     {
         services.AddFunderMapsAspNetCoreServices();
-        services.AddHostedService<ProductExporter>();
+        services.AddHostedService<TaskRunner>();
     })
     .UseSystemd()
     .Build()

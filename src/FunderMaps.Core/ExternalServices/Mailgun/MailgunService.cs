@@ -84,7 +84,7 @@ internal class MailgunService : IEmailService
         }
 
         var authenticationString = $"api:{_options.ApiKey}";
-        var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
+        var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(authenticationString));
 
         var requestMessage = new HttpRequestMessage(HttpMethod.Post, $"{_options.Domain}/messages");
         requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
