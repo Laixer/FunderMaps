@@ -32,7 +32,7 @@ fi
 git pull
 rm -rf /opt/FunderMaps/*
 
-pushd src/FunderMaps.MapBundle/
+pushd src/FunderMaps.Worker/
 dotnet publish -c Release -o /opt/FunderMaps/
 popd
 
