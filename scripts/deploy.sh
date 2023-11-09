@@ -14,14 +14,19 @@ then
     exit 1
 fi
 
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Run script as root"
+    exit 1
+fi
+
 directory="/opt/FunderMaps/"
 
 if [ ! -d "$directory" ]; then
     mkdir -p "$directory"
     if [ $? -eq 0 ]; then
-        echo "Directory created successfully."
+        echo "Directory created successfully"
     else
-        echo "Failed to create directory."
+        echo "Failed to create directory"
         exit 1
     fi
 else
