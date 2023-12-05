@@ -10,10 +10,10 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Worker/bin/Debug/net7.0/FunderMaps.Worker.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.Worker/bin/Debug/net8.0/FunderMaps.Worker.dll",
             "args": [
                 "--Task",
-                "ProductExport",
+                "RefreshModels",
             ],
             "cwd": "${workspaceFolder}/src/FunderMaps.Worker",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -32,7 +32,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.WsClient/bin/Debug/net7.0/FunderMaps.WsClient.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.WsClient/bin/Debug/net8.0/FunderMaps.WsClient.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.WsClient",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -51,7 +51,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/net7.0/FunderMaps.Webservice.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.Webservice/bin/Debug/net8.0/FunderMaps.Webservice.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Webservice",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -70,7 +70,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/net7.0/FunderMaps.WebApi.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.WebApi/bin/Debug/net8.0/FunderMaps.WebApi.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.WebApi",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -89,7 +89,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.RazorMaps/bin/Debug/net7.0/FunderMaps.RazorMaps.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.RazorMaps/bin/Debug/net8.0/FunderMaps.RazorMaps.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.RazorMaps",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -108,7 +108,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Incident/bin/Debug/net7.0/FunderMaps.Incident.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.Incident/bin/Debug/net8.0/FunderMaps.Incident.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Incident",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -127,7 +127,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.InfraTest/bin/Debug/net7.0/FunderMaps.InfraTest.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.InfraTest/bin/Debug/net8.0/FunderMaps.InfraTest.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.InfraTest",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -146,7 +146,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/net7.0/FunderMaps.Portal.dll",
+            "program": "${workspaceFolder}/src/FunderMaps.Portal/bin/Debug/net8.0/FunderMaps.Portal.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/FunderMaps.Portal",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
