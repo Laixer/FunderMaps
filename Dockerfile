@@ -28,7 +28,7 @@ RUN dotnet publish -c Release -o /app \
     && cp /source/contrib/etc/_appsettings.Production.json /app/appsettings.Production.json
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 ENV Logging__Console__FormatterName=Simple
 WORKDIR /app
