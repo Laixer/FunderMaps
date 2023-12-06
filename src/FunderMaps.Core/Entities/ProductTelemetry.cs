@@ -11,7 +11,7 @@ public sealed class ProductTelemetry
     ///     Product name.
     /// </summary>
     [Required]
-    public string Product { get; set; }
+    public string Product { get; set; } = default!;
 
     /// <summary>
     ///     Product hit count.
@@ -35,13 +35,13 @@ public sealed class ProductTelemetry2
     ///     Organization name.
     /// </summary>
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     /// <summary>
     ///     Product name.
     /// </summary>
     [Required]
-    public string Product { get; set; }
+    public string Product { get; set; } = default!;
 
     /// <summary>
     ///     Product hit count.
@@ -49,26 +49,3 @@ public sealed class ProductTelemetry2
     public int Count { get; set; }
 }
 
-// TODO: Consolidate
-/// <summary>
-///     Product telemetry.
-/// </summary>
-public sealed class ProductTelemetry3
-{
-    /// <summary>
-    ///     Product name.
-    /// </summary>
-    [Required]
-    public string Product { get; set; }
-
-    /// <summary>
-    ///     Building ID.
-    /// </summary>
-    [Required]
-    public string BuildingId { get; set; }
-
-    /// <summary>
-    ///     Registration date.
-    /// </summary>
-    public DateTime CreateDate { get; set; }
-}

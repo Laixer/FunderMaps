@@ -1,6 +1,7 @@
 using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
@@ -19,7 +20,7 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await connection.ExecuteScalarAsync<string>(sql, entity);
+        return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new DatabaseException("Unable to insert record.");
     }
 
     /// <summary>
