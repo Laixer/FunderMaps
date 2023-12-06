@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace FunderMaps.Incident.Data;
+namespace FunderMaps.Incident.Components;
 
 public class State
 {

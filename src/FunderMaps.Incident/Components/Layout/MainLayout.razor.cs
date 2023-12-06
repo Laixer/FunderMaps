@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using FunderMaps.Incident.Data;
 
-namespace FunderMaps.Incident.Shared;
+namespace FunderMaps.Incident.Components.Layout;
 
 public partial class MainLayout : LayoutComponentBase
 {

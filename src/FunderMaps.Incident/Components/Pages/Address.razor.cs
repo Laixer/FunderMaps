@@ -1,11 +1,10 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
-using FunderMaps.Incident.Data;
-using FunderMaps.Incident.Shared;
+using FunderMaps.Incident.Components.Layout;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 
-namespace FunderMaps.Incident.Pages;
+namespace FunderMaps.Incident.Components.Pages;
 
 public partial class Address : ComponentBase, IAsyncDisposable
 {

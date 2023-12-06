@@ -1,13 +1,14 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <CascadingValue Name="AppRouteData" Value="@routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
         </CascadingValue>
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
+        <LayoutView Layout="@typeof(Layout.MainLayout)">
             <p role="alert">Sorry, there's nothing at this address.</p>
         </LayoutView>
     </NotFound>
 </Router>
+

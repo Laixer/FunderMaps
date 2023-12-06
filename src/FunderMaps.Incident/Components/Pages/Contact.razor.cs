@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Components;
-using FunderMaps.Incident.Data;
 using FunderMaps.Core.IncidentReport;
-using FunderMaps.Incident.Shared;
+using FunderMaps.Incident.Components.Layout;
 
-namespace FunderMaps.Incident.Pages;
+namespace FunderMaps.Incident.Components.Pages;
 
 public partial class Contact : ComponentBase, IDisposable
 {

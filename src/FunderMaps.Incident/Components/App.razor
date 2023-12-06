@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="application-name" content="FunderMaps Incidenten Loket" />
+    <meta name="author" content="FunderMaps B.V." />
+    <meta name="description" content="Incidenten loket voor het melden van schade aan woning" />
+    <meta name="keywords" content="fundering, loket, incidenten, zakking, pandzakking, melding, woningschade" />
+    <meta name="referrer" content="strict-origin" />
+
+    @* <meta http-equiv="Content-Security-Policy" content="base-uri 'self';
+        default-src https:;
+        img-src data: https:;
+        object-src 'none';
+        frame-src 'none';
+        connect-src 'self' https://*.mapbox.com/;
+        script-src 'self' 'unsafe-inline' https://*.mapbox.com/;
+        style-src 'self' 'unsafe-inline' https://*.mapbox.com/;
+        worker-src 'self' blob:;"> *@
+
+    <base href="/" />
+
+    <link href="css/variables.css" rel="stylesheet" />
+    <link href="css/root.css" rel="stylesheet" />
+    <link href="css/blazor.css" rel="stylesheet" />
+    <link href="FunderMaps.Incident.styles.css" rel="stylesheet" />
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet" />
+
+    <HeadOutlet @rendermode="InteractiveServer" />
+</head>
+
+<body>
+    <Routes @rendermode="InteractiveServer" />
+    <script src="_framework/blazor.web.js"></script>
+</body>
+
+</html>

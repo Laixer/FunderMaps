@@ -1,5 +1,6 @@
 using FunderMaps.AspNetCore.Extensions;
 using FunderMaps.Core.Services;
+using FunderMaps.Incident.Components;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -10,8 +11,7 @@ builder.Services.AddFunderMapsAspNetCoreServices();
 
 builder.Services.AddSingleton<PDOKLocationService>(); // TODO: Move to FunderMaps.Core
 
-builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services.AddHsts(options =>
 {
@@ -53,10 +53,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAntiforgery();
+
 app.UseAspAppContext();
 
-app.MapBlazorHub();
-app.MapFallbackToPage("/_Host");
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
 app.MapHealthChecks("/health", new HealthCheckOptions()
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("extern")
