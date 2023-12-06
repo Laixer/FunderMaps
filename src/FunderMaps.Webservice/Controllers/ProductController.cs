@@ -11,31 +11,22 @@ namespace FunderMaps.Webservice.Controllers;
 /// <summary>
 ///     Controller for all product endpoints.
 /// </summary>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Route("api/v3/product")]
-public class ProductController : ControllerBase
+public class ProductController(
+    IAnalysisRepository analysisRepository,
+    IStatisticsRepository statisticsRepository,
+    IGeocoderTranslation geocoderTranslation,
+    IOrganizationRepository organizationRepository,
+    ILogger<ProductController> logger) : ControllerBase
 {
-    private readonly IAnalysisRepository _analysisRepository;
-    private readonly IStatisticsRepository _statisticsRepository;
-    private readonly IGeocoderTranslation _geocoderTranslation;
-    private readonly IOrganizationRepository _organizationRepository;
-    private readonly ILogger<ProductController> _logger;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public ProductController(
-        IAnalysisRepository analysisRepository,
-        IStatisticsRepository statisticsRepository,
-        IGeocoderTranslation geocoderTranslation,
-        IOrganizationRepository organizationRepository,
-        ILogger<ProductController> logger)
-    {
-        _analysisRepository = analysisRepository;
-        _statisticsRepository = statisticsRepository;
-        _geocoderTranslation = geocoderTranslation;
-        _organizationRepository = organizationRepository;
-        _logger = logger;
-    }
+    private readonly IAnalysisRepository _analysisRepository = analysisRepository;
+    private readonly IStatisticsRepository _statisticsRepository = statisticsRepository;
+    private readonly IGeocoderTranslation _geocoderTranslation = geocoderTranslation;
+    private readonly IOrganizationRepository _organizationRepository = organizationRepository;
+    private readonly ILogger<ProductController> _logger = logger;
 
     private async Task<StatisticsProduct> GetStatisticsByIdAsync(string id)
         => new()
@@ -75,14 +66,14 @@ public class ProductController : ControllerBase
             var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "analysis3", tenantId);
             if (registered)
             {
-                _logger.LogInformation($"{organization.Name} registered 'analysis3' match for identifier: {id}");
+                _logger.LogInformation("{Name} registered 'analysis3' match for identifier: {id}", organization.Name, id);
             }
             else
             {
-                _logger.LogInformation($"{organization.Name} retrieved 'analysis3' match for identifier: {id}");
+                _logger.LogInformation("{Name} retrieved 'analysis3' match for identifier: {id}", organization.Name, id);
             }
 
-            HttpContext.Response.Headers.Add("X-FunderMaps-Product-Registered", registered ? "1" : "0");
+            HttpContext.Response.Headers.Append("X-FunderMaps-Product-Registered", registered ? "1" : "0");
 
             return product;
         }
@@ -90,7 +81,7 @@ public class ProductController : ControllerBase
         {
             await _analysisRepository.RegisterProductMismatch(id, tenantId);
 
-            _logger.LogInformation($"{organization.Name} requested product 'analysis3' mismatch for identifier: {id}");
+            _logger.LogInformation("{Name} requested product 'analysis3' mismatch for identifier: {id}", organization.Name, id);
 
             throw;
         }
@@ -123,14 +114,14 @@ public class ProductController : ControllerBase
             var registered = await _analysisRepository.RegisterProductMatch(building.Id, id, "riskindex", tenantId);
             if (registered)
             {
-                _logger.LogInformation($"{organization.Name} registered 'riskindex' match for identifier: {id}");
+                _logger.LogInformation("{Name} registered 'riskindex' match for identifier: {id}", organization.Name, id);
             }
             else
             {
-                _logger.LogInformation($"{organization.Name} retrieved 'riskindex' match for identifier: {id}");
+                _logger.LogInformation("{Name} retrieved 'riskindex' match for identifier: {id}", organization.Name, id);
             }
 
-            HttpContext.Response.Headers.Add("X-FunderMaps-Product-Registered", registered ? "1" : "0");
+            HttpContext.Response.Headers.Append("X-FunderMaps-Product-Registered", registered ? "1" : "0");
 
             return product;
         }
@@ -138,7 +129,7 @@ public class ProductController : ControllerBase
         {
             await _analysisRepository.RegisterProductMismatch(id, tenantId);
 
-            _logger.LogInformation($"{organization.Name} requested product 'riskindex' mismatch for identifier: {id}");
+            _logger.LogInformation("{Name} requested product 'riskindex' mismatch for identifier: {id}", organization.Name, id);
 
             throw;
         }
