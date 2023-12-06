@@ -34,12 +34,4 @@ public sealed class QueueOverflowException : FunderMapsCoreException
         : base(message, innerException)
     {
     }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public QueueOverflowException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

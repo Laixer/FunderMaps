@@ -41,14 +41,6 @@ public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception
     }
 
     /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    protected FunderMapsCoreException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
-
-    /// <summary>
     ///     Deconstruct this exception into a title and a message.
     /// </summary>
     /// <remarks>

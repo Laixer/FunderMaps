@@ -15,18 +15,12 @@ public class AuthKeyAuthenticationOptions : AuthenticationSchemeOptions
 /// <summary>
 ///     Authentication handler for auth key authentication.
 /// </summary>
-public class AuthKeyAuthenticationHandler : AuthenticationHandler<AuthKeyAuthenticationOptions>
+/// <remarks>
+///     Create the auth key authentication handler.
+/// </remarks>
+public class AuthKeyAuthenticationHandler(SignInService signInService, IOptionsMonitor<AuthKeyAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder) : AuthenticationHandler<AuthKeyAuthenticationOptions>(options, logger, encoder)
 {
-    private readonly SignInService _signInService;
-
-    /// <summary>
-    ///     Create the auth key authentication handler.
-    /// </summary>
-    public AuthKeyAuthenticationHandler(SignInService signInService, IOptionsMonitor<AuthKeyAuthenticationOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-        : base(options, logger, encoder, clock)
-    {
-        _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-    }
+    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
 
     /// <summary>
     ///     Authenticate the request.
