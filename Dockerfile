@@ -33,5 +33,5 @@ ENV DOTNET_PRINT_TELEMETRY_MESSAGE=false
 ENV Logging__Console__FormatterName=Simple
 WORKDIR /app
 COPY --from=build /app .
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 ENTRYPOINT "/app/entry"
