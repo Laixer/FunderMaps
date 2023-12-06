@@ -1,0 +1,60 @@
+.AddressCharacteristics {
+    padding: 20px 20px;
+}
+
+@media only screen and (min-width: 900px) {
+    .AddressCharacteristics {
+        padding: 50px 80px;
+    }
+}
+
+.AddressCharacteristics .Title {
+    margin-bottom: 21px;
+}
+
+.AddressCharacteristics .Form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media only screen and (min-width: 1115px) {
+    .AddressCharacteristics .Form {
+        flex-direction: row;
+    }
+}
+
+.AddressCharacteristics--one,
+.AddressCharacteristics--two {
+    padding-bottom: 44px;
+    /* border-bottom: 1px solid #d4daf0; */
+}
+
+.AddressCharacteristics--two,
+.AddressCharacteristics--three {
+    padding-top: 25px;
+}
+
+.AddressCharacteristics--three {
+    padding-bottom: 24px;
+}
+
+/* More than regular breakpoint, because the items won't fit otherwise */
+@media only screen and (min-width: 1115px) {
+    .AddressCharacteristics--one {
+        width: 430px;
+        padding: 0 50px 31px 0;
+    }
+
+    .AddressCharacteristics--two {
+        width: 430px;
+        padding: 0 0 31px 50px;
+        border-left: 1px solid #d4daf0;
+    }
+
+    .AddressCharacteristics--three {
+        padding-bottom: 0;
+    }
+}

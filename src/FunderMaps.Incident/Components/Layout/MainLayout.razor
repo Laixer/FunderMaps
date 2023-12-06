@@ -54,6 +54,7 @@
                 </button>
             </NavLink>
         }
+        
         @if (state.ShowNavNext && !state.DisableNavNext)
         {
             <NavLink @onclick="@(() => state.OnNextClick.InvokeAsync())" href="@state.NavLinkNextPage()">

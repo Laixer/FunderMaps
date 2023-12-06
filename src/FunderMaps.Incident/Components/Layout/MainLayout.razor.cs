@@ -4,7 +4,7 @@ namespace FunderMaps.Incident.Components.Layout;
 
 public partial class MainLayout : LayoutComponentBase
 {
-    private State state = new();
+    private readonly State state = new();
 
     [Inject]
     public NavigationManager NavigationManager { get; set; } = default!;
@@ -17,29 +17,29 @@ public partial class MainLayout : LayoutComponentBase
 
     public void Kaas()
     {
-        this.StateHasChanged();
+        StateHasChanged();
     }
 
     public string VendorLogo()
     {
         if (!string.IsNullOrEmpty(state.Vendor))
         {
-            string rootpath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
+            string rootpath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
 
-            var image_svg = System.IO.Path.Combine(rootpath, $"img/logo_{state.Vendor}.svg");
-            if (System.IO.File.Exists(image_svg))
+            var image_svg = Path.Combine(rootpath, $"img/logo_{state.Vendor}.svg");
+            if (File.Exists(image_svg))
             {
                 return $"/img/logo_{state.Vendor}.svg";
             }
 
-            var image_png = System.IO.Path.Combine(rootpath, $"img/logo_{state.Vendor}.png");
-            if (System.IO.File.Exists(image_png))
+            var image_png = Path.Combine(rootpath, $"img/logo_{state.Vendor}.png");
+            if (File.Exists(image_png))
             {
                 return $"/img/logo_{state.Vendor}.png";
             }
 
-            var image_jpg = System.IO.Path.Combine(rootpath, $"img/logo_{state.Vendor}.jpg");
-            if (System.IO.File.Exists(image_jpg))
+            var image_jpg = Path.Combine(rootpath, $"img/logo_{state.Vendor}.jpg");
+            if (File.Exists(image_jpg))
             {
                 return $"/img/logo_{state.Vendor}.jpg";
             }
@@ -92,6 +92,11 @@ public partial class MainLayout : LayoutComponentBase
                             case "fundermaps":
                                 state.Model.ClientId = 20;
                                 break;
+
+                            case "feedback":
+                                state.Model.ClientId = 77;
+                                state.Feedback = true;
+                                break;
                         }
                     }
                 }
@@ -108,13 +113,16 @@ public partial class MainLayout : LayoutComponentBase
                 case "Address":
                     state.StepId = 1;
                     break;
-                case "FoundationDamage":
-                    state.StepId = 2;
-                    break;
                 case "FoundationDamageCharacteristics":
                     state.StepId = 3;
                     break;
                 case "AddressCharacteristics":
+                    state.StepId = 4;
+                    break;
+                case "FeedbackCharacteristics":
+                    state.StepId = 4;
+                    break;
+                case "FoundationDamage":
                     state.StepId = 4;
                     break;
                 case "FoundationType":
@@ -136,6 +144,11 @@ public partial class MainLayout : LayoutComponentBase
                     state.StepId = 10;
                     break;
             }
+        }
+
+        if (state.Feedback && state.StepId == 0)
+        {
+            NavigationManager.NavigateTo("/survey/address", true);
         }
 
         if (state.Model.Building is null && state.StepId > 1)

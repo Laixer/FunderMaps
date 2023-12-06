@@ -7,10 +7,7 @@ namespace FunderMaps.Incident.Components.Pages;
 public partial class Contact : ComponentBase, IDisposable
 {
     [Inject]
-    private ILogger<Finish> Logger { get; set; } = default!;
-
-    [Inject]
-    private IIncidentService incidentService { get; set; } = default!;
+    private IIncidentService IncidentService { get; set; } = default!;
 
     [CascadingParameter]
     State State { get; set; } = default!;
@@ -20,7 +17,10 @@ public partial class Contact : ComponentBase, IDisposable
 
     async Task ClickHandler()
     {
-        await incidentService.AddAsync(State.Model);
+        if (!State.Feedback)
+        {
+            await IncidentService.AddAsync(State.Model);
+        }
     }
 
     void ValidateModel()
