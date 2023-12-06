@@ -13,32 +13,25 @@ namespace FunderMaps.AspNetCore.Authentication;
 /// <summary>
 ///     Jwt bearer token provider.
 /// </summary>
-public class JwtBearerTokenProvider : ISecurityTokenProvider
+/// <remarks>
+///     Create new instance.
+/// </remarks>
+public class JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILogger<JwtBearerTokenProvider> logger, TimeProvider timeProvider) : ISecurityTokenProvider
 {
     /// <summary>
     ///     The <see cref="JwtBearerOptions"/> used.
     /// </summary>
-    public JwtBearerOptions Options { get; private set; }
+    public JwtBearerOptions Options { get; private set; } = options.Get(JwtBearerDefaults.AuthenticationScheme);
 
     /// <summary>
     ///     Gets the <see cref="ILogger"/> used to log messages from the manager.
     /// </summary>
-    protected ILogger Logger { get; }
+    protected ILogger Logger { get; } = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     ///     System clock.
     /// </summary>
-    protected ISystemClock Clock { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILogger<JwtBearerTokenProvider> logger, ISystemClock clock)
-    {
-        Options = options.Get(JwtBearerDefaults.AuthenticationScheme);
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        Clock = clock ?? throw new ArgumentNullException(nameof(clock));
-    }
+    protected TimeProvider TimeProvider { get; } = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
 
     /// <summary>
     ///     Find the first security token handler that can write a token.
@@ -85,7 +78,7 @@ public class JwtBearerTokenProvider : ISecurityTokenProvider
         }
         else
         {
-            issuedUtc = Clock.UtcNow;
+            issuedUtc = TimeProvider.GetUtcNow();
             properties.IssuedUtc = issuedUtc;
         }
 
