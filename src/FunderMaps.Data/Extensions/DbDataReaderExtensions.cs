@@ -15,11 +15,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Value as integer.</returns>
     public static int GetInt(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.GetInt32(ordinal);
     }
 
@@ -31,11 +26,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Value as integer.</returns>
     public static uint GetUInt(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return (uint)reader.GetInt(ordinal);
     }
 
@@ -47,11 +37,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Value as nullable integer.</returns>
     public static int? GetSafeInt(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         if (reader.IsDBNull(ordinal))
         {
             return null;
@@ -68,11 +53,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Value as nullable double.</returns>
     public static double? GetSafeDouble(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         if (reader.IsDBNull(ordinal))
         {
             return null;
@@ -89,11 +69,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Value as nullable string.</returns>
     public static string? GetSafeString(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : reader.GetString(ordinal);
     }
 
@@ -105,11 +80,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Value as nullable string.</returns>
     public static string[]? GetSafeStringArray(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<string[]>(ordinal);
     }
 
@@ -121,11 +91,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Datetime or null.</returns>
     public static DateTime? GetSafeDateTime(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : (DateTime?)reader.GetDateTime(ordinal);
     }
 
@@ -137,11 +102,6 @@ internal static class DbDataReaderExtensions
     /// <returns>Boolean or null.</returns>
     public static bool? GetSafeBoolean(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : (bool?)reader.GetBoolean(ordinal);
     }
 
@@ -153,11 +113,6 @@ internal static class DbDataReaderExtensions
     /// <returns>decimal or null.</returns>
     public static decimal? GetSafeDecimal(this DbDataReader reader, int ordinal)
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : (decimal?)reader.GetDecimal(ordinal);
     }
 
@@ -171,11 +126,6 @@ internal static class DbDataReaderExtensions
     public static TFieldType? GetSafeStructValue<TFieldType>(this DbDataReader reader, int ordinal)
         where TFieldType : struct
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<TFieldType>(ordinal);
     }
 
@@ -189,11 +139,6 @@ internal static class DbDataReaderExtensions
     public static TFieldType? GetSafeFieldValue<TFieldType>(this DbDataReader reader, int ordinal)
         where TFieldType : class
     {
-        if (reader is null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         return reader.IsDBNull(ordinal) ? null : reader.GetFieldValue<TFieldType>(ordinal);
     }
 }

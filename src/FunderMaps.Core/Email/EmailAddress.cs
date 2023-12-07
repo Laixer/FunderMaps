@@ -7,6 +7,11 @@ namespace FunderMaps.Core.Email;
 /// </summary>
 public record EmailAddress
 {
+    /// <summary>
+    ///    Create new instance.
+    /// </summary>
+    /// <param name="address">Address.</param>
+    /// <param name="name">Name.</param>
     public EmailAddress(string address, string? name = null)
     {
         Address = address;

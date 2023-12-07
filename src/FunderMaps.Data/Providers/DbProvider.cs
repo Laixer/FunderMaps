@@ -7,15 +7,9 @@ namespace FunderMaps.Data.Providers;
 /// <summary>
 ///     Database provider.
 /// </summary>
-public abstract class DbProvider
+public abstract class DbProvider(IOptions<DbProviderOptions> options)
 {
-    protected readonly DbProviderOptions _options;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public DbProvider(IOptions<DbProviderOptions> options)
-        => _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
+    protected readonly DbProviderOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
     /// <summary>
     ///     Create a new connection instance.
@@ -36,11 +30,6 @@ public abstract class DbProvider
     /// <returns>See <see cref="DbCommand"/>.</returns>
     public virtual DbCommand CreateCommand(string cmdText, DbConnection connection)
     {
-        if (connection is null)
-        {
-            throw new ArgumentNullException(nameof(connection));
-        }
-
         var cmd = connection.CreateCommand();
         cmd.CommandText = cmdText;
         return cmd;
