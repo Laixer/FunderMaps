@@ -4,7 +4,7 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.Worker;
+namespace FunderMaps.Worker.Tasks;
 
 /// <summary>
 ///     Construct new instance.

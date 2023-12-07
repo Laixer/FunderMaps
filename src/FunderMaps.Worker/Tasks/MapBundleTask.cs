@@ -5,7 +5,7 @@ using FunderMaps.Data.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Worker;
+namespace FunderMaps.Worker.Tasks;
 
 /// <summary>
 ///     Construct new instance.

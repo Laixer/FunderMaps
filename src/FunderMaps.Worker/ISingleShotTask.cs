@@ -1,5 +1,6 @@
 namespace FunderMaps.Worker;
 
+// TODO: Move to FunderMaps.Core
 public interface ISingleShotTask
 {
     /// <summary>

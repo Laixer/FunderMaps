@@ -24,6 +24,9 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class FunderMapsAspNetCoreServiceCollectionExtensions
 {
+    private static readonly string[] externalTags = ["extern"];
+    private static readonly string[] localTags = ["local"];
+
     public static IServiceCollection AddFunderMapsAspNetCoreServices(this IServiceCollection services)
     {
         services.AddFunderMapsCoreServices();
@@ -37,12 +40,12 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         services.AddHttpContextAccessor();
 
         services.AddHealthChecks()
-            .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: new[] { "extern" })
-            .AddCheck<RepositoryHealthCheck>("data_health_check", tags: new[] { "extern" })
-            .AddCheck<EmailHealthCheck>("email_health_check", tags: new[] { "extern" })
-            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: new[] { "extern" })
-            .AddCheck<IOHealthCheck>("io_health_check", tags: new[] { "local" })
-            .AddCheck<TippecanoeHealthCheck>("tileset_generator_health_check", tags: new[] { "local" });
+            .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: externalTags)
+            .AddCheck<RepositoryHealthCheck>("data_health_check", tags: externalTags)
+            .AddCheck<EmailHealthCheck>("email_health_check", tags: externalTags)
+            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: externalTags)
+            .AddCheck<IOHealthCheck>("io_health_check", tags: localTags)
+            .AddCheck<TippecanoeHealthCheck>("tileset_generator_health_check", tags: localTags);
 
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();

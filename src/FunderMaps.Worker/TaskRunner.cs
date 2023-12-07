@@ -1,5 +1,6 @@
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Worker.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
