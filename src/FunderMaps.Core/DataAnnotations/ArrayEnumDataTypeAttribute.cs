@@ -7,23 +7,9 @@ namespace FunderMaps.Core.DataAnnotations;
 ///     Enum data type validator over array.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-public class ArrayEnumDataTypeAttribute : ValidationAttribute
+public class ArrayEnumDataTypeAttribute(Type enumType) : ValidationAttribute
 {
-    /// <summary>
-    ///     Gets or sets the enumeration type.
-    /// </summary>
-    public Type EnumType { get; }
-
-    private readonly EnumDataTypeAttribute validator;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public ArrayEnumDataTypeAttribute(Type enumType)
-    {
-        validator = new EnumDataTypeAttribute(enumType);
-        EnumType = enumType;
-    }
+    private readonly EnumDataTypeAttribute validator = new(enumType);
 
     /// <summary>
     ///     Returns true if the array is all valid enum types.

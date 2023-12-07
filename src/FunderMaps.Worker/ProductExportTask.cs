@@ -14,10 +14,6 @@ public class ProductExportTask(
     ITelemetryRepository telemetryRepository,
     ILogger<ProductExportTask> logger) : ISingleShotTask
 {
-    private readonly ITelemetryRepository _telemetryRepository = telemetryRepository ?? throw new ArgumentNullException(nameof(telemetryRepository));
-    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
     /// <summary>
     ///    Write CSV file.
     /// </summary>
@@ -42,22 +38,22 @@ public class ProductExportTask(
     /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
-        await foreach (var organization in _telemetryRepository.ListLastMonthOrganizationaAsync())
+        await foreach (var organization in telemetryRepository.ListLastMonthOrganizationaAsync())
         {
             try
             {
                 string filePath = $"product_tracker_{organization}.csv";
 
-                await WriteCsvAsync(filePath, _telemetryRepository.ListLastMonthByOrganizationIdAsync(organization), cancellationToken);
+                await WriteCsvAsync(filePath, telemetryRepository.ListLastMonthByOrganizationIdAsync(organization), cancellationToken);
 
                 var currentDate = DateTime.Now;
                 var firstDayOfCurrentMonth = new DateTime(currentDate.Year, currentDate.Month, 1);
                 var lastDayOfLastMonth = firstDayOfCurrentMonth.AddDays(-1);
 
-                _logger.LogInformation("Uploading product tracker file for {Organization} for {Month}", organization, lastDayOfLastMonth);
+                logger.LogInformation("Uploading product tracker file for {Organization} for {Month}", organization, lastDayOfLastMonth);
 
                 string lastMonthName = lastDayOfLastMonth.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture);
-                await _blobStorageService.StoreFileAsync($"product/export_{lastMonthName.ToLower()}_{organization}.csv", filePath);
+                await blobStorageService.StoreFileAsync($"product/export_{lastMonthName.ToLower()}_{organization}.csv", filePath);
             }
             finally
             {
