@@ -7,16 +7,8 @@ namespace FunderMaps.Core.Services;
 /// <summary>
 ///     Geospatial abstraction service.
 /// </summary>
-internal class GeospatialAbstractionService : IGDALService
+internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService> logger) : IGDALService
 {
-    private readonly ILogger<GeospatialAbstractionService> _logger;
-
-    /// <summary>
-    ///     Construct new instance.
-    /// </summary>
-    public GeospatialAbstractionService(ILogger<GeospatialAbstractionService> logger)
-        => _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
     /// <summary>
     ///     Convert geospatial file from one format to another.
     /// </summary>
@@ -74,12 +66,12 @@ internal class GeospatialAbstractionService : IGDALService
 
         if (!string.IsNullOrEmpty(standardError))
         {
-            _logger.LogError("Error output: {standardError}", standardError);
+            logger.LogError("Error output: {standardError}", standardError);
         }
 
         if (!string.IsNullOrEmpty(standardOutput))
         {
-            _logger.LogInformation("Console output: {standardOutput}", standardOutput);
+            logger.LogInformation("Console output: {standardOutput}", standardOutput);
         }
     }
 }

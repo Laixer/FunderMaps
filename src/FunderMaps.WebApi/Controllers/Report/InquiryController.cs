@@ -30,12 +30,6 @@ public class InquiryController(
     IBlobStorageService blobStorageService,
     IEmailService emailService) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    private readonly IInquiryRepository _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
-    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-    private readonly IEmailService _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-
     // GET: api/inquiry/stats
     /// <summary>
     ///     Return inquiry statistics.
@@ -47,7 +41,7 @@ public class InquiryController(
 
         var output = new DatasetStatsDto()
         {
-            Count = await _inquiryRepository.CountAsync(tenantId),
+            Count = await inquiryRepository.CountAsync(tenantId),
         };
 
         return Ok(output);
@@ -62,7 +56,7 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
 
         return inquiry;
     }
@@ -76,7 +70,7 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await foreach (var inquiry in _inquiryRepository.ListAllAsync(pagination.Navigation, tenantId))
+        await foreach (var inquiry in inquiryRepository.ListAllAsync(pagination.Navigation, tenantId))
         {
             yield return inquiry;
         }
@@ -101,9 +95,9 @@ public class InquiryController(
             throw new AuthorizationException();
         }
 
-        inquiry.Id = await _inquiryRepository.AddAsync(inquiry);
+        inquiry.Id = await inquiryRepository.AddAsync(inquiry);
 
-        return await _inquiryRepository.GetByIdAsync(inquiry.Id, tenantId);
+        return await inquiryRepository.GetByIdAsync(inquiry.Id, tenantId);
     }
 
     // POST: api/inquiry/upload-document
@@ -116,7 +110,7 @@ public class InquiryController(
     public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
     {
         var storeFileName = FileHelper.GetUniqueName(input.FileName);
-        await _blobStorageService.StoreFileAsync(
+        await blobStorageService.StoreFileAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
             fileName: storeFileName,
             contentType: input.ContentType,
@@ -139,8 +133,8 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        Inquiry inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
-        Uri link = await _blobStorageService.GetAccessLinkAsync(
+        Inquiry inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
+        Uri link = await blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
             fileName: inquiry.DocumentFile,
             hoursValid: 1);
@@ -173,7 +167,7 @@ public class InquiryController(
             throw new AuthorizationException();
         }
 
-        await _inquiryRepository.UpdateAsync(inquiry);
+        await inquiryRepository.UpdateAsync(inquiry);
 
         // FUTURE: Does this make sense?
         // Only when this item was rejected can we move into
@@ -181,7 +175,7 @@ public class InquiryController(
         if (inquiry.State.AuditStatus == AuditStatus.Rejected)
         {
             inquiry.State.TransitionToPending();
-            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+            await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
         }
 
         return NoContent();
@@ -197,10 +191,10 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
 
         inquiry.State.TransitionToPending();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
         return NoContent();
     }
@@ -215,15 +209,15 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
-        var organization = await _organizationRepository.GetByIdAsync(tenantId);
-        var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
-        var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
+        var creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToReview();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[] { new EmailAddress(reviewer.Email, reviewer.ToString()) },
             Subject = "FunderMaps - Rapportage ter review",
@@ -251,15 +245,15 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
-        var organization = await _organizationRepository.GetByIdAsync(tenantId);
-        var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
-        var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
+        var creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToRejected();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {
@@ -290,15 +284,15 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(id, tenantId);
-        var organization = await _organizationRepository.GetByIdAsync(tenantId);
-        var reviewer = await _userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
-        var creator = await _userRepository.GetByIdAsync(inquiry.Attribution.Creator);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
+        var creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToDone();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {
@@ -328,7 +322,7 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await _inquiryRepository.DeleteAsync(id, tenantId);
+        await inquiryRepository.DeleteAsync(id, tenantId);
 
         return NoContent();
     }

@@ -18,9 +18,6 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/auth")]
 public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : ControllerBase
 {
-    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-    private readonly ISecurityTokenProvider _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
-
     // POST: api/auth/signin
     /// <summary>
     ///     User sign in endpoint.
@@ -31,13 +28,13 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
     [HttpPost("signin")]
     public async Task<SignInSecurityTokenDto> SignInAsync([FromBody] SignInDto input)
     {
-        var principal = await _signInService.PasswordSignInAsync(input.Email, input.Password, "FunderMapsHybridAuth");
+        var principal = await signInService.PasswordSignInAsync(input.Email, input.Password, "FunderMapsHybridAuth");
 
         var authProperties = new AuthenticationProperties();
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
-        var tokenContext = _tokenProvider.GetTokenContext(principal);
+        var tokenContext = tokenProvider.GetTokenContext(principal);
 
         return new SignInSecurityTokenDto()
         {
@@ -60,13 +57,13 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        var principal = await _signInService.UserIdSignInAsync(userId, "FunderMapsHybridAuth");
+        var principal = await signInService.UserIdSignInAsync(userId, "FunderMapsHybridAuth");
 
         var authProperties = new AuthenticationProperties();
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
-        var tokenContext = _tokenProvider.GetTokenContext(principal);
+        var tokenContext = tokenProvider.GetTokenContext(principal);
 
         return new SignInSecurityTokenDto()
         {

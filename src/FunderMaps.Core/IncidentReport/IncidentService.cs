@@ -8,37 +8,20 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Core.IncidentReport;
 
+// TODO: Move to services.
 // FUTURE: Revamp this service.
 /// <summary>
 ///     Service to the incidents.
 /// </summary>
-internal class IncidentService : IIncidentService
+internal class IncidentService(
+    IOptions<IncidentOptions> options,
+    IIncidentRepository incidentRepository,
+    IGeocoderTranslation geocoderTranslation,
+    IEmailService emailService,
+    IBlobStorageService blobStorageService,
+    ILogger<IncidentService> logger) : IIncidentService
 {
-    private readonly IncidentOptions _options;
-    private readonly IIncidentRepository _incidentRepository;
-    private readonly IGeocoderTranslation _geocoderTranslation;
-    private readonly IEmailService _emailService;
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly ILogger<IncidentService> _logger;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public IncidentService(
-        IOptions<IncidentOptions> options,
-        IIncidentRepository incidentRepository,
-        IGeocoderTranslation geocoderTranslation,
-        IEmailService emailService,
-        IBlobStorageService blobStorageService,
-        ILogger<IncidentService> logger)
-    {
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-        _incidentRepository = incidentRepository ?? throw new ArgumentNullException(nameof(incidentRepository));
-        _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly IncidentOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
     public static string ToFoundationType(FoundationType? value)
         => value switch
@@ -157,19 +140,19 @@ internal class IncidentService : IIncidentService
     /// <param name="meta">Optional metadata.</param>
     public async Task<Incident> AddAsync(Incident incident, object? meta = null)
     {
-        var address = await _geocoderTranslation.GetAddressIdAsync(incident.Address);
+        var address = await geocoderTranslation.GetAddressIdAsync(incident.Address);
 
         incident.Meta = meta;
 
-        incident.Id = await _incidentRepository.AddAsync(incident);
-        incident = await _incidentRepository.GetByIdAsync(incident.Id);
+        incident.Id = await incidentRepository.AddAsync(incident);
+        incident = await incidentRepository.GetByIdAsync(incident.Id);
 
         var documentLinkList = new List<string>();
         if (incident.DocumentFile is not null)
         {
             foreach (var file in incident.DocumentFile)
             {
-                Uri link = await _blobStorageService.GetAccessLinkAsync(
+                Uri link = await blobStorageService.GetAccessLinkAsync(
                     containerName: Core.Constants.IncidentStorageFolderName,
                     fileName: file,
                     hoursValid: 24 * 7 * 4);
@@ -178,7 +161,7 @@ internal class IncidentService : IIncidentService
             }
         }
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {
@@ -206,7 +189,7 @@ internal class IncidentService : IIncidentService
 
         foreach (var recipient in _options.Recipients)
         {
-            await _emailService.SendAsync(new EmailMessage
+            await emailService.SendAsync(new EmailMessage
             {
                 ToAddresses = new[] { new EmailAddress(recipient) },
                 Subject = $"Nieuwe melding: {incident.Id}",
@@ -231,7 +214,7 @@ internal class IncidentService : IIncidentService
             });
         }
 
-        _logger.LogInformation("Incident {Id} was registered", incident.Id);
+        logger.LogInformation("Incident {Id} was registered", incident.Id);
 
         return incident;
     }

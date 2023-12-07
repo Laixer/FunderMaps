@@ -17,11 +17,10 @@ namespace FunderMaps.WebApi.Controllers.Report;
 ///     Create new instance.
 /// </remarks>
 [Route("api/inquiry/{inquiryId}/sample")]
-public class InquirySampleController(IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository) : ControllerBase
+public class InquirySampleController(
+    IInquiryRepository inquiryRepository,
+    IInquirySampleRepository inquirySampleRepository) : ControllerBase
 {
-    private readonly IInquiryRepository _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
-    private readonly IInquirySampleRepository _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
-
     // GET: api/inquiry/{id}/sample/stats
     /// <summary>
     ///     Return inquiry report sample statistics.
@@ -33,7 +32,7 @@ public class InquirySampleController(IInquiryRepository inquiryRepository, IInqu
 
         var output = new DatasetStatsDto()
         {
-            Count = await _inquirySampleRepository.CountAsync(inquiryId, tenantId),
+            Count = await inquirySampleRepository.CountAsync(inquiryId, tenantId),
         };
 
         return Ok(output);
@@ -48,7 +47,7 @@ public class InquirySampleController(IInquiryRepository inquiryRepository, IInqu
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        return _inquirySampleRepository.GetByIdAsync(id, tenantId);
+        return inquirySampleRepository.GetByIdAsync(id, tenantId);
     }
 
     // GET: api/inquiry/{id}/sample
@@ -60,7 +59,7 @@ public class InquirySampleController(IInquiryRepository inquiryRepository, IInqu
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await foreach (var item in _inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, tenantId))
+        await foreach (var item in inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, tenantId))
         {
             yield return item;
         }
@@ -86,16 +85,16 @@ public class InquirySampleController(IInquiryRepository inquiryRepository, IInqu
         inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         inquirySample.Inquiry = inquiryId;
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        inquirySample.Id = await _inquirySampleRepository.AddAsync(inquirySample);
+        inquirySample.Id = await inquirySampleRepository.AddAsync(inquirySample);
 
         inquiry.State.TransitionToPending();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
         return inquirySample;
     }
@@ -121,16 +120,16 @@ public class InquirySampleController(IInquiryRepository inquiryRepository, IInqu
         inquirySample.Address = address.Id;
         inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _inquirySampleRepository.UpdateAsync(inquirySample, tenantId);
+        await inquirySampleRepository.UpdateAsync(inquirySample, tenantId);
 
         inquiry.State.TransitionToPending();
-        await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
 
         return NoContent();
     }
@@ -149,20 +148,20 @@ public class InquirySampleController(IInquiryRepository inquiryRepository, IInqu
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquirySample = await _inquirySampleRepository.GetByIdAsync(id, tenantId);
+        var inquirySample = await inquirySampleRepository.GetByIdAsync(id, tenantId);
 
-        var inquiry = await _inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _inquirySampleRepository.DeleteAsync(inquirySample.Id, tenantId);
+        await inquirySampleRepository.DeleteAsync(inquirySample.Id, tenantId);
 
-        if (await _inquirySampleRepository.CountAsync(inquiry.Id, tenantId) == 0)
+        if (await inquirySampleRepository.CountAsync(inquiry.Id, tenantId) == 0)
         {
             inquiry.State.TransitionToTodo();
-            await _inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+            await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
         }
 
         return NoContent();

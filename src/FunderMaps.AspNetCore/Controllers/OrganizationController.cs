@@ -20,8 +20,6 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/organization")]
 public class OrganizationController(IOrganizationRepository organizationRepository) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-
     // GET: organization
     /// <summary>
     ///     Return session organization.
@@ -31,7 +29,7 @@ public class OrganizationController(IOrganizationRepository organizationReposito
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        return await _organizationRepository.GetByIdAsync(tenantId);
+        return await organizationRepository.GetByIdAsync(tenantId);
     }
 
     // PUT: organization
@@ -44,7 +42,7 @@ public class OrganizationController(IOrganizationRepository organizationReposito
     {
         organization.Id = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await _organizationRepository.UpdateAsync(organization);
+        await organizationRepository.UpdateAsync(organization);
 
         return NoContent();
     }

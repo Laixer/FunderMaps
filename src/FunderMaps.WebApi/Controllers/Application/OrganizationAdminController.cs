@@ -23,8 +23,6 @@ namespace FunderMaps.WebApi.Controllers.Application;
 [Route("api/admin/organization")]
 public class OrganizationAdminController(IOrganizationRepository organizationRepository) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-
     // GET: api/admin/organization/stats
     /// <summary>
     ///     Return organization statistics.
@@ -34,7 +32,7 @@ public class OrganizationAdminController(IOrganizationRepository organizationRep
     {
         var output = new DatasetStatsDto()
         {
-            Count = await _organizationRepository.CountAsync(),
+            Count = await organizationRepository.CountAsync(),
         };
 
         return Ok(output);
@@ -46,7 +44,7 @@ public class OrganizationAdminController(IOrganizationRepository organizationRep
     /// </summary>
     [HttpGet("{id:guid}")]
     public Task<Organization> GetAsync(Guid id)
-        => _organizationRepository.GetByIdAsync(id);
+        => organizationRepository.GetByIdAsync(id);
 
     // GET: api/admin/organization
     /// <summary>
@@ -54,7 +52,7 @@ public class OrganizationAdminController(IOrganizationRepository organizationRep
     /// </summary>
     [HttpGet]
     public IAsyncEnumerable<Organization> GetAllAsync([FromQuery] PaginationDto pagination)
-        => _organizationRepository.ListAllAsync(pagination.Navigation);
+        => organizationRepository.ListAllAsync(pagination.Navigation);
 
     // PUT: api/admin/organization/{id}
     /// <summary>
@@ -65,7 +63,7 @@ public class OrganizationAdminController(IOrganizationRepository organizationRep
     {
         organization.Id = id;
 
-        await _organizationRepository.UpdateAsync(organization);
+        await organizationRepository.UpdateAsync(organization);
 
         return NoContent();
     }
@@ -77,7 +75,7 @@ public class OrganizationAdminController(IOrganizationRepository organizationRep
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteAsync(Guid id)
     {
-        await _organizationRepository.DeleteAsync(id);
+        await organizationRepository.DeleteAsync(id);
 
         return NoContent();
     }

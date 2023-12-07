@@ -11,8 +11,6 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/geocoder")]
 public class GeocoderController(IGeocoderTranslation geocoderTranslation) : ControllerBase
 {
-    private readonly IGeocoderTranslation _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
-
     // GET: api/geocoder/address
     /// <summary>
     ///     Get address by identifier.
@@ -22,7 +20,7 @@ public class GeocoderController(IGeocoderTranslation geocoderTranslation) : Cont
     /// </remarks>
     [HttpGet("address/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Address> GetAddressAsync(string id)
-        => _geocoderTranslation.GetAddressIdAsync(id);
+        => geocoderTranslation.GetAddressIdAsync(id);
 
     // GET: api/geocoder/building
     /// <summary>
@@ -33,5 +31,5 @@ public class GeocoderController(IGeocoderTranslation geocoderTranslation) : Cont
     /// </remarks>
     [HttpGet("building/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Building> GetBuildingAsync(string id)
-        => _geocoderTranslation.GetBuildingIdAsync(id);
+        => geocoderTranslation.GetBuildingIdAsync(id);
 }

@@ -26,10 +26,6 @@ public class OrganizationUserController(
     IOrganizationUserRepository organizationUserRepository,
     SignInService signInService) : ControllerBase
 {
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    private readonly IOrganizationUserRepository _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-
     // GET: organization/user
     /// <summary>
     ///     Get all users in the session organization.
@@ -39,7 +35,7 @@ public class OrganizationUserController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await foreach (var user in _organizationUserRepository.ListAllAsync(tenantId, pagination.Navigation))
+        await foreach (var user in organizationUserRepository.ListAllAsync(tenantId, pagination.Navigation))
         {
             yield return user;
         }
@@ -58,11 +54,11 @@ public class OrganizationUserController(
         user.Id = id;
 
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(tenantId, user.Id))
+        if (!await organizationUserRepository.IsUserInOrganization(tenantId, user.Id))
         {
             throw new AuthorizationException();
         }
-        await _userRepository.UpdateAsync(user);
+        await userRepository.UpdateAsync(user);
 
         return NoContent();
     }
@@ -78,11 +74,11 @@ public class OrganizationUserController(
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(tenantId, id))
+        if (!await organizationUserRepository.IsUserInOrganization(tenantId, id))
         {
             throw new AuthorizationException();
         }
-        await _organizationUserRepository.SetOrganizationRoleByUserIdAsync(id, input.Role);
+        await organizationUserRepository.SetOrganizationRoleByUserIdAsync(id, input.Role);
 
         return NoContent();
     }
@@ -99,14 +95,14 @@ public class OrganizationUserController(
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(tenantId, id))
+        if (!await organizationUserRepository.IsUserInOrganization(tenantId, id))
         {
             throw new AuthorizationException();
         }
 
         if (input.NewPassword is not null)
         {
-            await _signInService.SetPasswordAsync(id, input.NewPassword);
+            await signInService.SetPasswordAsync(id, input.NewPassword);
         }
 
         return NoContent();
@@ -123,11 +119,11 @@ public class OrganizationUserController(
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(tenantId, id))
+        if (!await organizationUserRepository.IsUserInOrganization(tenantId, id))
         {
             throw new AuthorizationException();
         }
-        await _userRepository.DeleteAsync(id);
+        await userRepository.DeleteAsync(id);
 
         return NoContent();
     }

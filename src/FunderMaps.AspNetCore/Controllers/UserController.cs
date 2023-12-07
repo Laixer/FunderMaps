@@ -22,9 +22,6 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/user")]
 public class UserController(IUserRepository userRepository, SignInService signInService) : ControllerBase
 {
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-
     // GET: user
     /// <summary>
     ///     Return session user.
@@ -34,7 +31,7 @@ public class UserController(IUserRepository userRepository, SignInService signIn
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        return await _userRepository.GetByIdAsync(userId);
+        return await userRepository.GetByIdAsync(userId);
     }
 
     // PUT: user
@@ -46,7 +43,7 @@ public class UserController(IUserRepository userRepository, SignInService signIn
     {
         user.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        await _userRepository.UpdateAsync(user);
+        await userRepository.UpdateAsync(user);
 
         return NoContent();
     }
@@ -60,12 +57,12 @@ public class UserController(IUserRepository userRepository, SignInService signIn
     {
         var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
-        if (!await _signInService.CheckPasswordAsync(userId, input.OldPassword))
+        if (!await signInService.CheckPasswordAsync(userId, input.OldPassword))
         {
             throw new InvalidCredentialException();
         }
 
-        await _signInService.SetPasswordAsync(userId, input.NewPassword);
+        await signInService.SetPasswordAsync(userId, input.NewPassword);
 
         return NoContent();
     }

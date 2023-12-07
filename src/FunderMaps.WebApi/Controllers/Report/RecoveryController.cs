@@ -30,12 +30,6 @@ public class RecoveryController(
     IBlobStorageService blobStorageService,
     IEmailService emailService) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    private readonly IRecoveryRepository _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
-    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-    private readonly IEmailService _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-
     // GET: api/recovery/stats
     /// <summary>
     ///     Return recovery statistics.
@@ -45,7 +39,7 @@ public class RecoveryController(
     {
         var output = new DatasetStatsDto()
         {
-            Count = await _recoveryRepository.CountAsync(),
+            Count = await recoveryRepository.CountAsync(),
         };
 
         return Ok(output);
@@ -60,7 +54,7 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = _recoveryRepository.GetByIdAsync(id, tenantId);
+        var recovery = recoveryRepository.GetByIdAsync(id, tenantId);
 
         return recovery;
     }
@@ -74,7 +68,7 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await foreach (var recovery in _recoveryRepository.ListAllAsync(pagination.Navigation, tenantId))
+        await foreach (var recovery in recoveryRepository.ListAllAsync(pagination.Navigation, tenantId))
         {
             yield return recovery;
         }
@@ -99,9 +93,9 @@ public class RecoveryController(
             throw new AuthorizationException();
         }
 
-        await _recoveryRepository.AddAsync(recovery);
+        await recoveryRepository.AddAsync(recovery);
 
-        return await _recoveryRepository.GetByIdAsync(recovery.Id, tenantId);
+        return await recoveryRepository.GetByIdAsync(recovery.Id, tenantId);
     }
 
     // POST: api/recovery/upload-document
@@ -114,7 +108,7 @@ public class RecoveryController(
     public async Task<IActionResult> UploadDocumentAsync([Required][FormFile(Core.Constants.AllowedFileMimes)] IFormFile input)
     {
         string storeFileName = FileHelper.GetUniqueName(input.FileName);
-        await _blobStorageService.StoreFileAsync(
+        await blobStorageService.StoreFileAsync(
             containerName: Core.Constants.RecoveryStorageFolderName,
             fileName: storeFileName,
             contentType: input.ContentType,
@@ -137,8 +131,8 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
-        Uri link = await _blobStorageService.GetAccessLinkAsync(
+        var recovery = await recoveryRepository.GetByIdAsync(id, tenantId);
+        Uri link = await blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.RecoveryStorageFolderName,
             fileName: recovery.DocumentFile,
             hoursValid: 1);
@@ -171,7 +165,7 @@ public class RecoveryController(
             throw new AuthorizationException();
         }
 
-        await _recoveryRepository.UpdateAsync(recovery);
+        await recoveryRepository.UpdateAsync(recovery);
 
         // FUTURE: Does this make sense?
         // Only when this item was rejected can we move into
@@ -179,7 +173,7 @@ public class RecoveryController(
         if (recovery.State.AuditStatus == AuditStatus.Rejected)
         {
             recovery.State.TransitionToPending();
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+            await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
         }
 
         return NoContent();
@@ -195,10 +189,10 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(id, tenantId);
 
         recovery.State.TransitionToPending();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         return NoContent();
     }
@@ -213,15 +207,15 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
-        var organization = await _organizationRepository.GetByIdAsync(tenantId);
-        var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
-        var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        var recovery = await recoveryRepository.GetByIdAsync(id, tenantId);
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var reviewer = await userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
+        var creator = await userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         recovery.State.TransitionToReview();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[] { new EmailAddress(reviewer.Email, reviewer.ToString()) },
             Subject = "FunderMaps - Rapportage ter review",
@@ -249,15 +243,15 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
-        var organization = await _organizationRepository.GetByIdAsync(tenantId);
-        var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
-        var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        var recovery = await recoveryRepository.GetByIdAsync(id, tenantId);
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var reviewer = await userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
+        var creator = await userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         recovery.State.TransitionToRejected();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {
@@ -288,15 +282,15 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = await _recoveryRepository.GetByIdAsync(id, tenantId);
-        var organization = await _organizationRepository.GetByIdAsync(tenantId);
-        var reviewer = await _userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
-        var creator = await _userRepository.GetByIdAsync(recovery.Attribution.Creator);
+        var recovery = await recoveryRepository.GetByIdAsync(id, tenantId);
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var reviewer = await userRepository.GetByIdAsync(recovery.Attribution.Reviewer);
+        var creator = await userRepository.GetByIdAsync(recovery.Attribution.Creator);
 
         recovery.State.TransitionToDone();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {
@@ -326,7 +320,7 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await _recoveryRepository.DeleteAsync(id, tenantId);
+        await recoveryRepository.DeleteAsync(id, tenantId);
 
         return NoContent();
     }

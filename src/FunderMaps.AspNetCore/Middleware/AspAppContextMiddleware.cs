@@ -5,13 +5,8 @@ namespace FunderMaps.AspNetCore.Middleware;
 /// <summary>
 ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.
 /// </summary>
-/// <remarks>
-///     Create new instance.
-/// </remarks>
 public class AspAppContextMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next = next;
-
     /// <summary>
     ///     Invoke this middleware.
     /// </summary>
@@ -21,6 +16,6 @@ public class AspAppContextMiddleware(RequestDelegate next)
     {
         appContext.CancellationToken = httpContext.RequestAborted;
 
-        await _next(httpContext);
+        await next(httpContext);
     }
 }

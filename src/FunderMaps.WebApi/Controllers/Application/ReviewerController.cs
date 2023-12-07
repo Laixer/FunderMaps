@@ -21,11 +21,10 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </remarks>
 [Authorize(Policy = "WriterPolicy")]
 [Route("api")]
-public class ReviewerController(IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository) : ControllerBase
+public class ReviewerController(
+    IOrganizationUserRepository organizationUserRepository,
+    IUserRepository userRepository) : ControllerBase
 {
-    private readonly IOrganizationUserRepository _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-
     // GET: api/reviewer
     /// <summary>
     ///     Return all reviewers.
@@ -36,9 +35,9 @@ public class ReviewerController(IOrganizationUserRepository organizationUserRepo
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         var roles = new OrganizationRole[] { OrganizationRole.Verifier, OrganizationRole.Superuser };
-        await foreach (var user in _organizationUserRepository.ListAllByRoleAsync(tenantId, roles, pagination.Navigation))
+        await foreach (var user in organizationUserRepository.ListAllByRoleAsync(tenantId, roles, pagination.Navigation))
         {
-            yield return await _userRepository.GetByIdAsync(user);
+            yield return await userRepository.GetByIdAsync(user);
         }
     }
 }

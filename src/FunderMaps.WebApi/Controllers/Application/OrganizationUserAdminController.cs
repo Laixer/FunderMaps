@@ -28,10 +28,6 @@ public class OrganizationUserAdminController(
     IOrganizationUserRepository organizationUserRepository,
     SignInService signInService) : ControllerBase
 {
-    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    private readonly IOrganizationUserRepository _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-
     // POST: api/admin/organization/{id}/user
     /// <summary>
     ///     Add user to organization.
@@ -55,7 +51,7 @@ public class OrganizationUserAdminController(
     /// </summary>
     [HttpGet]
     public IAsyncEnumerable<OrganizationUser> GetAllUserAsync(Guid id, [FromQuery] PaginationDto pagination)
-        => _organizationUserRepository.ListAllAsync(id, pagination.Navigation);
+        => organizationUserRepository.ListAllAsync(id, pagination.Navigation);
 
     // PUT: api/admin/organization/{id}/user/{id}
     /// <summary>
@@ -67,11 +63,11 @@ public class OrganizationUserAdminController(
         user.Id = userId;
 
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(id, user.Id))
+        if (!await organizationUserRepository.IsUserInOrganization(id, user.Id))
         {
             throw new AuthorizationException();
         }
-        await _userRepository.UpdateAsync(user);
+        await userRepository.UpdateAsync(user);
 
         return NoContent();
     }
@@ -85,11 +81,11 @@ public class OrganizationUserAdminController(
     {
         // Act.
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+        if (!await organizationUserRepository.IsUserInOrganization(id, userId))
         {
             throw new AuthorizationException();
         }
-        await _organizationUserRepository.SetOrganizationRoleByUserIdAsync(userId, input.Role);
+        await organizationUserRepository.SetOrganizationRoleByUserIdAsync(userId, input.Role);
 
         // Return.
         return NoContent();
@@ -105,13 +101,13 @@ public class OrganizationUserAdminController(
     {
         // Act.
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+        if (!await organizationUserRepository.IsUserInOrganization(id, userId))
         {
             throw new AuthorizationException();
         }
 
         // Act.
-        await _signInService.SetPasswordAsync(userId, input.NewPassword);
+        await signInService.SetPasswordAsync(userId, input.NewPassword);
 
         // Return.
         return NoContent();
@@ -126,11 +122,11 @@ public class OrganizationUserAdminController(
     {
         // Act.
         // TODO: Move to db
-        if (!await _organizationUserRepository.IsUserInOrganization(id, userId))
+        if (!await organizationUserRepository.IsUserInOrganization(id, userId))
         {
             throw new AuthorizationException();
         }
-        await _userRepository.DeleteAsync(userId);
+        await userRepository.DeleteAsync(userId);
 
         // Return.
         return NoContent();

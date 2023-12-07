@@ -18,11 +18,10 @@ namespace FunderMaps.WebApi.Controllers.Report;
 ///     Create new instance.
 /// </remarks>
 [Route("api/recovery/{recoveryId}/sample")]
-public class RecoverySampleController(IRecoverySampleRepository recoverySampleRepository, IRecoveryRepository recoveryRepository) : ControllerBase
+public class RecoverySampleController(
+    IRecoverySampleRepository recoverySampleRepository,
+    IRecoveryRepository recoveryRepository) : ControllerBase
 {
-    private readonly IRecoverySampleRepository _recoverySampleRepository = recoverySampleRepository ?? throw new ArgumentNullException(nameof(recoverySampleRepository));
-    private readonly IRecoveryRepository _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
-
     // GET: api/recovery/{id}/sample/stats
     /// <summary>
     ///     Return recovery report sample statistics.
@@ -34,7 +33,7 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
 
         var output = new DatasetStatsDto()
         {
-            Count = await _recoverySampleRepository.CountAsync(recoveryId, tenantId),
+            Count = await recoverySampleRepository.CountAsync(recoveryId, tenantId),
         };
 
         return Ok(output);
@@ -49,7 +48,7 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        return await _recoverySampleRepository.GetByIdAsync(id, tenantId);
+        return await recoverySampleRepository.GetByIdAsync(id, tenantId);
     }
 
     // GET: api/recovery/{id}/sample
@@ -61,7 +60,7 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await foreach (var recoverySample in _recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation, tenantId))
+        await foreach (var recoverySample in recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation, tenantId))
         {
             yield return recoverySample;
         }
@@ -71,7 +70,7 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
     /// <summary>
     ///     Create recovery sample.
     /// </summary>
-    ///         /// <remarks>
+    /// <remarks>
     ///     Transition <see cref="Recovery"/> into <see cref="AuditStatus.Pending"/> if a <see cref="RecoverySample"/>
     ///     was successfully created within this <see cref="Recovery"/>.
     /// </remarks>
@@ -86,17 +85,17 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
         // recoverySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         recoverySample.Recovery = recoveryId;
 
-        var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _recoverySampleRepository.AddAsync(recoverySample);
-        recoverySample = await _recoverySampleRepository.GetByIdAsync(recoverySample.Id, tenantId);
+        await recoverySampleRepository.AddAsync(recoverySample);
+        recoverySample = await recoverySampleRepository.GetByIdAsync(recoverySample.Id, tenantId);
 
         recovery.State.TransitionToPending();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         return recoverySample;
     }
@@ -118,16 +117,16 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
         recoverySample.Id = id;
         recoverySample.Recovery = recoveryId;
 
-        var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _recoverySampleRepository.UpdateAsync(recoverySample, tenantId);
+        await recoverySampleRepository.UpdateAsync(recoverySample, tenantId);
 
         recovery.State.TransitionToPending();
-        await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
 
         return NoContent();
     }
@@ -146,20 +145,20 @@ public class RecoverySampleController(IRecoverySampleRepository recoverySampleRe
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recoverySample = await _recoverySampleRepository.GetByIdAsync(id, tenantId);
+        var recoverySample = await recoverySampleRepository.GetByIdAsync(id, tenantId);
 
-        var recovery = await _recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await _recoverySampleRepository.DeleteAsync(recoverySample.Id, tenantId);
+        await recoverySampleRepository.DeleteAsync(recoverySample.Id, tenantId);
 
-        if (await _recoverySampleRepository.CountAsync(recoverySample.Recovery, tenantId) == 0)
+        if (await recoverySampleRepository.CountAsync(recoverySample.Recovery, tenantId) == 0)
         {
             recovery.State.TransitionToTodo();
-            await _recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+            await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
         }
 
         return NoContent();

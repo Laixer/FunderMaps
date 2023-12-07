@@ -33,6 +33,7 @@ struct LocationServerResult
     public JsonElement highlighting { get; set; }
 }
 
+// TODO: Move to external services.
 public class PDOKLocationService
 {
     /// <summary>
@@ -42,7 +43,7 @@ public class PDOKLocationService
 
     private readonly ILogger<PDOKLocationService> _logger;
 
-    private HttpClient httpClient = new();
+    private readonly HttpClient httpClient = new();
 
     public PDOKLocationService(ILogger<PDOKLocationService> logger)
     {
