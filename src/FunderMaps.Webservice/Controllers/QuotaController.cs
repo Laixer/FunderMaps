@@ -10,16 +10,8 @@ namespace FunderMaps.Webservice.Controllers;
 ///     Controller for all product quotas.
 /// </summary>
 [Route("api/v3/quota")]
-public sealed class QuotaController : ControllerBase
+public sealed class QuotaController(ITelemetryRepository telemetryRepository) : ControllerBase
 {
-    private readonly ITelemetryRepository _telemetryRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public QuotaController(ITelemetryRepository telemetryRepository)
-        => _telemetryRepository = telemetryRepository ?? throw new ArgumentNullException(nameof(telemetryRepository));
-
     // GET: api/quota/usage
     /// <summary>
     ///     Request product quota usage.
@@ -28,7 +20,7 @@ public sealed class QuotaController : ControllerBase
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        await foreach (var telemetry in _telemetryRepository.ListAllUsageAsync(tenantId))
+        await foreach (var telemetry in telemetryRepository.ListAllUsageAsync(tenantId))
         {
             yield return telemetry;
         }
