@@ -11,44 +11,36 @@ namespace FunderMaps.AspNetCore.Services;
 /// <summary>
 ///     Provides the APIs for authentication.
 /// </summary>
-public class SignInService
+/// <remarks>
+///     Creates a new instance.
+/// </remarks>
+public class SignInService(
+    IUserRepository userRepository,
+    IOrganizationUserRepository organizationUserRepository,
+    IPasswordHasher passwordHasher,
+    ILogger<SignInService> logger)
 {
     const int MaxFailedAccessAttempts = 10;
 
     /// <summary>
     ///     The <see cref="IUserRepository"/> used.
     /// </summary>
-    public IUserRepository UserRepository { get; }
+    public IUserRepository UserRepository { get; } = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 
     /// <summary>
     ///     The <see cref="IOrganizationUserRepository"/> used.
     /// </summary>
-    public IOrganizationUserRepository OrganizationUserRepository { get; }
+    public IOrganizationUserRepository OrganizationUserRepository { get; } = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
 
     /// <summary>
     ///     The <see cref="IPasswordHasher"/> used.
     /// </summary>
-    public IPasswordHasher PasswordHasher { get; }
+    public IPasswordHasher PasswordHasher { get; } = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
 
     /// <summary>
     ///     Gets the <see cref="ILogger"/> used to log messages.
     /// </summary>
-    protected ILogger Logger { get; }
-
-    /// <summary>
-    ///     Creates a new instance.
-    /// </summary>
-    public SignInService(
-        IUserRepository userRepository,
-        IOrganizationUserRepository organizationUserRepository,
-        IPasswordHasher passwordHasher,
-        ILogger<SignInService> logger)
-    {
-        UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        OrganizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-        PasswordHasher = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-        Logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    protected ILogger Logger { get; } = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     ///     Test if the provided password is valid for the user.

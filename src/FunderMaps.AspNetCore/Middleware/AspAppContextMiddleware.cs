@@ -5,14 +5,12 @@ namespace FunderMaps.AspNetCore.Middleware;
 /// <summary>
 ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.
 /// </summary>
-public class AspAppContextMiddleware
+/// <remarks>
+///     Create new instance.
+/// </remarks>
+public class AspAppContextMiddleware(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public AspAppContextMiddleware(RequestDelegate next) => _next = next;
+    private readonly RequestDelegate _next = next;
 
     /// <summary>
     ///     Invoke this middleware.

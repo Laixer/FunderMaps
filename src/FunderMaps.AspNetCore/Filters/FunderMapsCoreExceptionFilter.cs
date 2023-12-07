@@ -9,7 +9,10 @@ namespace FunderMaps.AspNetCore.Middleware;
 /// <summary>
 ///     Filter <see cref="FunderMapsCoreException"/> and convert into a <see cref="ProblemDetails"/> response.
 /// </summary>
-public class FunderMapsCoreExceptionFilter : IExceptionFilter
+/// <remarks>
+///     Create new instance.
+/// </remarks>
+public class FunderMapsCoreExceptionFilter(ProblemDetailsFactory problemDetailsFactory) : IExceptionFilter
 {
     private static readonly Dictionary<Type, HttpStatusCode> exceptionMap = new()
     {
@@ -29,13 +32,7 @@ public class FunderMapsCoreExceptionFilter : IExceptionFilter
         { typeof(UnhandledTaskException), HttpStatusCode.InternalServerError },
     };
 
-    private readonly ProblemDetailsFactory _problemDetailsFactory;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public FunderMapsCoreExceptionFilter(ProblemDetailsFactory problemDetailsFactory)
-        => _problemDetailsFactory = problemDetailsFactory;
+    private readonly ProblemDetailsFactory _problemDetailsFactory = problemDetailsFactory;
 
     /// <summary>
     ///     Called after an action has thrown an <see cref="Exception"/>.
