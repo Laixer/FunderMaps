@@ -16,7 +16,10 @@ namespace FunderMaps.AspNetCore.Authentication;
 /// <remarks>
 ///     Create new instance.
 /// </remarks>
-public class JwtBearerTokenProvider(IOptionsMonitor<JwtBearerOptions> options, ILogger<JwtBearerTokenProvider> logger, TimeProvider timeProvider) : ISecurityTokenProvider
+public class JwtBearerTokenProvider(
+    IOptionsMonitor<JwtBearerOptions> options,
+    ILogger<JwtBearerTokenProvider> logger,
+    TimeProvider timeProvider) : ISecurityTokenProvider
 {
     /// <summary>
     ///     The <see cref="JwtBearerOptions"/> used.
