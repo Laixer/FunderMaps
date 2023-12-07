@@ -9,45 +9,29 @@ namespace FunderMaps.RazorMaps.Controllers;
 ///     Controller for all product endpoints.
 /// </summary>
 [Route("mapset")]
-public class MapsetController : ControllerBase
+public class MapsetController(
+    IMapsetRepository mapsetRepository,
+    IIncidentRepository incidentRepository,
+    IInquirySampleRepository inquirySampleRepository,
+    IRecoverySampleRepository recoverySampleRepository) : ControllerBase
 {
-    private readonly IMapsetRepository _mapsetRepository;
-    private readonly IIncidentRepository _incidentRepository;
-    private readonly IInquirySampleRepository _inquirySampleRepository;
-    private readonly IRecoverySampleRepository _recoverySampleRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public MapsetController(
-        IMapsetRepository mapsetRepository,
-        IIncidentRepository incidentRepository,
-        IInquirySampleRepository inquirySampleRepository,
-        IRecoverySampleRepository recoverySampleRepository)
-    {
-        _mapsetRepository = mapsetRepository;
-        _incidentRepository = incidentRepository;
-        _inquirySampleRepository = inquirySampleRepository;
-        _recoverySampleRepository = recoverySampleRepository;
-    }
-
     [HttpGet("building/{buildingId}")]
     public async Task<IActionResult> GetReportsByBuildingAsync(string buildingId)
     {
         var incidentList = new List<Core.Entities.Incident>();
-        await foreach (var incident in _incidentRepository.ListAllByBuildingIdAsync(buildingId))
+        await foreach (var incident in incidentRepository.ListAllByBuildingIdAsync(buildingId))
         {
             incidentList.Add(incident);
         }
 
         var inquirySampleList = new List<Core.Entities.InquirySample>();
-        await foreach (var inquirySample in _inquirySampleRepository.ListAllByBuildingIdAsync(buildingId))
+        await foreach (var inquirySample in inquirySampleRepository.ListAllByBuildingIdAsync(buildingId))
         {
             inquirySampleList.Add(inquirySample);
         }
 
         var recoverySampleList = new List<Core.Entities.RecoverySample>();
-        await foreach (var recoverySample in _recoverySampleRepository.ListAllByBuildingIdAsync(buildingId))
+        await foreach (var recoverySample in recoverySampleRepository.ListAllByBuildingIdAsync(buildingId))
         {
             recoverySampleList.Add(recoverySample);
         }
@@ -70,11 +54,11 @@ public class MapsetController : ControllerBase
     [HttpGet("{id:guid?}")]
     public async Task<IActionResult> GetAsync(Guid id)
     {
-        List<Core.Entities.Mapset> mapSetList = new();
+        List<Core.Entities.Mapset> mapSetList = [];
 
         if (id != Guid.Empty)
         {
-            var set = await _mapsetRepository.GetPublicAsync2(id);
+            var set = await mapsetRepository.GetPublicAsync2(id);
             mapSetList.Add(set);
         }
 
@@ -82,7 +66,7 @@ public class MapsetController : ControllerBase
         {
             var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-            await foreach (var set in _mapsetRepository.GetByOrganizationIdAsync2(tenantId))
+            await foreach (var set in mapsetRepository.GetByOrganizationIdAsync2(tenantId))
             {
                 mapSetList.Add(set);
             }

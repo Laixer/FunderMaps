@@ -56,13 +56,12 @@ if (app.Environment.IsDevelopment())
     });
 
     app.UseDeveloperExceptionPage();
+    app.UseCors();
 }
 
-app.UseFileServer(new FileServerOptions());
+app.UseFileServer();
 
 app.UseRouting();
-
-app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

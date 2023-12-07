@@ -1,5 +1,6 @@
 namespace FunderMaps.Core.IncidentReport;
 
+// TODO: Move into FunderMaps.Core.Options
 /// <summary>
 ///     Incident options.
 /// </summary>
