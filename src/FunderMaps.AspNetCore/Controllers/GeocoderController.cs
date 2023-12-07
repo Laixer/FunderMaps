@@ -9,12 +9,9 @@ namespace FunderMaps.AspNetCore.Controllers;
 ///     Endpoint controller for address operations.
 /// </summary>
 [Authorize, Route("api/geocoder")]
-public class GeocoderController : ControllerBase
+public class GeocoderController(IGeocoderTranslation geocoderTranslation) : ControllerBase
 {
-    private readonly IGeocoderTranslation _geocoderTranslation;
-
-    public GeocoderController(IGeocoderTranslation geocoderTranslation)
-        => _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
+    private readonly IGeocoderTranslation _geocoderTranslation = geocoderTranslation ?? throw new ArgumentNullException(nameof(geocoderTranslation));
 
     // GET: api/geocoder/address
     /// <summary>

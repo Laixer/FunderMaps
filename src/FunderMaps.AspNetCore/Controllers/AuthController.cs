@@ -12,20 +12,14 @@ namespace FunderMaps.AspNetCore.Controllers;
 /// <summary>
 ///     Endpoint controller for application authentication.
 /// </summary>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Authorize, Route("api/auth")]
-public class AuthController : ControllerBase
+public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : ControllerBase
 {
-    private readonly SignInService _signInService;
-    private readonly ISecurityTokenProvider _tokenProvider;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider)
-    {
-        _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-        _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
-    }
+    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
+    private readonly ISecurityTokenProvider _tokenProvider = tokenProvider ?? throw new ArgumentNullException(nameof(tokenProvider));
 
     // POST: api/auth/signin
     /// <summary>

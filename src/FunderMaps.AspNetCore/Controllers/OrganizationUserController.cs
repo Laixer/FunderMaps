@@ -17,25 +17,18 @@ namespace FunderMaps.AspNetCore.Controllers;
 ///     This controller should *only* handle organization operations on the current
 ///     user session. Therefore the user context must be active.
 /// </remarks>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Authorize, Route("api/organization/user")]
-public class OrganizationUserController : ControllerBase
+public class OrganizationUserController(
+    IUserRepository userRepository,
+    IOrganizationUserRepository organizationUserRepository,
+    SignInService signInService) : ControllerBase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IOrganizationUserRepository _organizationUserRepository;
-    private readonly SignInService _signInService;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public OrganizationUserController(
-        IUserRepository userRepository,
-        IOrganizationUserRepository organizationUserRepository,
-        SignInService signInService)
-    {
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-        _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-    }
+    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly IOrganizationUserRepository _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
 
     // GET: organization/user
     /// <summary>
