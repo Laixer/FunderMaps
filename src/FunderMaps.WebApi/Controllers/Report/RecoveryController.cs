@@ -54,9 +54,7 @@ public class RecoveryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var recovery = recoveryRepository.GetByIdAsync(id, tenantId);
-
-        return recovery;
+        return recoveryRepository.GetByIdAsync(id, tenantId);
     }
 
     // GET: api/recovery

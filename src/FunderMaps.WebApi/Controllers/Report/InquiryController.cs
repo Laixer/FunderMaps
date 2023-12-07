@@ -56,9 +56,7 @@ public class InquiryController(
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
-        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
-
-        return inquiry;
+        return await inquiryRepository.GetByIdAsync(id, tenantId);
     }
 
     // GET: api/inquiry
