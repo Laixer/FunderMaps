@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-app.UseStaticFiles();
+app.UseFileServer(new FileServerOptions());
 
 app.UseRouting();
 
@@ -74,5 +74,6 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
 {
     Predicate = healthCheck => healthCheck.Tags.Contains("extern")
 }).WithMetadata(new AllowAnonymousAttribute());
+app.MapFallbackToFile("/index.html");
 
 app.Run();
