@@ -1,5 +1,4 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Data.Providers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;

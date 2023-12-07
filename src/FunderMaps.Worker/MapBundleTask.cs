@@ -7,36 +7,25 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Worker;
 
-public class MapBundleTask : ISingleShotTask
+/// <summary>
+///     Construct new instance.
+/// </summary>
+public class MapBundleTask(
+    IOptions<DbProviderOptions> dbProviderOptions,
+    IBlobStorageService blobStorageService,
+    IGDALService gdalService,
+    IBundleRepository bundleRepository,
+    ITilesetGeneratorService tilesetGeneratorService,
+    IMapboxService mapboxService,
+    ILogger<MapBundleTask> logger) : ISingleShotTask
 {
-    private readonly DbProviderOptions _dbProviderOptions;
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly IGDALService _gdalService;
-    private readonly ITilesetGeneratorService _tilesetGeneratorService;
-    private readonly IBundleRepository _bundleRepository;
-    private readonly IMapboxService _mapboxService;
-    private readonly ILogger _logger;
-
-    /// <summary>
-    ///     Construct new instance.
-    /// </summary>
-    public MapBundleTask(
-        IOptions<DbProviderOptions> dbProviderOptions,
-        IBlobStorageService blobStorageService,
-        IGDALService gdalService,
-        IBundleRepository bundleRepository,
-        ITilesetGeneratorService tilesetGeneratorService,
-        IMapboxService mapboxService,
-        ILogger<MapBundleTask> logger)
-    {
-        _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
-        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _gdalService = gdalService ?? throw new ArgumentNullException(nameof(gdalService));
-        _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
-        _tilesetGeneratorService = tilesetGeneratorService ?? throw new ArgumentNullException(nameof(tilesetGeneratorService));
-        _mapboxService = mapboxService ?? throw new ArgumentNullException(nameof(mapboxService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
+    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+    private readonly IGDALService _gdalService = gdalService ?? throw new ArgumentNullException(nameof(gdalService));
+    private readonly ITilesetGeneratorService _tilesetGeneratorService = tilesetGeneratorService ?? throw new ArgumentNullException(nameof(tilesetGeneratorService));
+    private readonly IBundleRepository _bundleRepository = bundleRepository ?? throw new ArgumentNullException(nameof(bundleRepository));
+    private readonly IMapboxService _mapboxService = mapboxService ?? throw new ArgumentNullException(nameof(mapboxService));
+    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     ///    Triggered when the application host is ready to start the service.

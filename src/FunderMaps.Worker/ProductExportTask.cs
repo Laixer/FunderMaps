@@ -6,24 +6,17 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Worker;
 
-public class ProductExportTask : ISingleShotTask
+/// <summary>
+///     Construct new instance.
+/// </summary>
+public class ProductExportTask(
+    IBlobStorageService blobStorageService,
+    ITelemetryRepository telemetryRepository,
+    ILogger<ProductExportTask> logger) : ISingleShotTask
 {
-    private readonly ITelemetryRepository _telemetryRepository;
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly ILogger _logger;
-
-    /// <summary>
-    ///     Construct new instance.
-    /// </summary>
-    public ProductExportTask(
-        IBlobStorageService blobStorageService,
-        ITelemetryRepository telemetryRepository,
-        ILogger<ProductExportTask> logger)
-    {
-        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _telemetryRepository = telemetryRepository ?? throw new ArgumentNullException(nameof(telemetryRepository));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly ITelemetryRepository _telemetryRepository = telemetryRepository ?? throw new ArgumentNullException(nameof(telemetryRepository));
+    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     ///    Write CSV file.

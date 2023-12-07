@@ -8,33 +8,23 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Worker;
 
-public class TaskRunner : IHostedService
+/// <summary>
+///     Construct new instance.
+/// </summary>
+public class TaskRunner(
+    HealthCheckService healthCheckService,
+    IServiceScopeFactory serviceScopeFactory,
+    IEmailService emailService,
+    IHostApplicationLifetime hostApplicationLifetime,
+    IConfiguration configuration,
+    ILogger<TaskRunner> logger) : IHostedService
 {
-    private readonly HealthCheckService _healthCheckService;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly IEmailService _emailService;
-    private readonly IHostApplicationLifetime _hostApplicationLifetime;
-    private readonly IConfiguration _configuration;
-    private readonly ILogger<TaskRunner> _logger;
-
-    /// <summary>
-    ///     Construct new instance.
-    /// </summary>
-    public TaskRunner(
-        HealthCheckService healthCheckService,
-        IServiceScopeFactory serviceScopeFactory,
-        IEmailService emailService,
-        IHostApplicationLifetime hostApplicationLifetime,
-        IConfiguration configuration,
-        ILogger<TaskRunner> logger)
-    {
-        _healthCheckService = healthCheckService ?? throw new ArgumentNullException(nameof(healthCheckService));
-        _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-        _hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentNullException(nameof(hostApplicationLifetime));
-        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly HealthCheckService _healthCheckService = healthCheckService ?? throw new ArgumentNullException(nameof(healthCheckService));
+    private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
+    private readonly IEmailService _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+    private readonly IHostApplicationLifetime _hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentNullException(nameof(hostApplicationLifetime));
+    private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+    private readonly ILogger<TaskRunner> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     ///     Triggered when the application host is ready to start the service.

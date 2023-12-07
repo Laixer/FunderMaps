@@ -6,32 +6,19 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Worker;
 
-public class DownloadBagTask : ISingleShotTask
+/// <summary>
+///     Construct new instance.
+/// </summary>
+public class DownloadBagTask(
+    IOptions<DbProviderOptions> dbProviderOptions,
+    IGDALService gdalService,
+    ILogger<DownloadBagTask> logger) : ISingleShotTask
 {
     private const string FileUrl = "https://service.pdok.nl/lv/bag/atom/downloads/bag-light.gpkg";
 
-    private readonly DbProviderOptions _dbProviderOptions;
-    private readonly IEmailService _emailService;
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly IGDALService _gdalService;
-    private readonly ILogger _logger;
-
-    /// <summary>
-    ///     Construct new instance.
-    /// </summary>
-    public DownloadBagTask(
-        IOptions<DbProviderOptions> dbProviderOptions,
-        IEmailService emailService,
-        IBlobStorageService blobStorageService,
-        IGDALService gdalService,
-        ILogger<DownloadBagTask> logger)
-    {
-        _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _gdalService = gdalService ?? throw new ArgumentNullException(nameof(gdalService));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
+    private readonly IGDALService _gdalService = gdalService ?? throw new ArgumentNullException(nameof(gdalService));
+    private readonly ILogger _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     /// <summary>
     ///    Triggered when the application host is ready to start the service.
