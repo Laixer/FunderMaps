@@ -19,31 +19,22 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for inquiry operations.
 /// </summary>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Route("api/inquiry")]
-public class InquiryController : ControllerBase
+public class InquiryController(
+    IOrganizationRepository organizationRepository,
+    IUserRepository userRepository,
+    IInquiryRepository inquiryRepository,
+    IBlobStorageService blobStorageService,
+    IEmailService emailService) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IInquiryRepository _inquiryRepository;
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly IEmailService _emailService;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public InquiryController(
-        IOrganizationRepository organizationRepository,
-        IUserRepository userRepository,
-        IInquiryRepository inquiryRepository,
-        IBlobStorageService blobStorageService,
-        IEmailService emailService)
-    {
-        _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
-        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-    }
+    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly IInquiryRepository _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
+    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+    private readonly IEmailService _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 
     // GET: api/inquiry/stats
     /// <summary>

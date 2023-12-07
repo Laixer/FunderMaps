@@ -14,20 +14,14 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for recovery sample operations.
 /// </summary>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Route("api/recovery/{recoveryId}/sample")]
-public class RecoverySampleController : ControllerBase
+public class RecoverySampleController(IRecoverySampleRepository recoverySampleRepository, IRecoveryRepository recoveryRepository) : ControllerBase
 {
-    private readonly IRecoverySampleRepository _recoverySampleRepository;
-    private readonly IRecoveryRepository _recoveryRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public RecoverySampleController(IRecoverySampleRepository recoverySampleRepository, IRecoveryRepository recoveryRepository)
-    {
-        _recoverySampleRepository = recoverySampleRepository ?? throw new ArgumentNullException(nameof(recoverySampleRepository));
-        _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
-    }
+    private readonly IRecoverySampleRepository _recoverySampleRepository = recoverySampleRepository ?? throw new ArgumentNullException(nameof(recoverySampleRepository));
+    private readonly IRecoveryRepository _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
 
     // GET: api/recovery/{id}/sample/stats
     /// <summary>

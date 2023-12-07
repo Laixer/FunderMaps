@@ -15,29 +15,22 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     This controller provides organization administration.
 ///     <para>
 ///         For the variant based on the current session see 
-///         <see cref="FunderMaps.AspNetCore.Controllers.OrganizationUserController"/>.
+///         <see cref="AspNetCore.Controllers.OrganizationUserController"/>.
 ///     </para>
+/// </remarks>
+/// <remarks>
+///     Create new instance.
 /// </remarks>
 [Authorize(Policy = "AdministratorPolicy")]
 [Route("api/admin/organization/{id:guid}/user")]
-public class OrganizationUserAdminController : ControllerBase
+public class OrganizationUserAdminController(
+    IUserRepository userRepository,
+    IOrganizationUserRepository organizationUserRepository,
+    SignInService signInService) : ControllerBase
 {
-    private readonly IUserRepository _userRepository;
-    private readonly IOrganizationUserRepository _organizationUserRepository;
-    private readonly SignInService _signInService;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public OrganizationUserAdminController(
-        IUserRepository userRepository,
-        IOrganizationUserRepository organizationUserRepository,
-        SignInService signInService)
-    {
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-        _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
-    }
+    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly IOrganizationUserRepository _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+    private readonly SignInService _signInService = signInService ?? throw new ArgumentNullException(nameof(signInService));
 
     // POST: api/admin/organization/{id}/user
     /// <summary>

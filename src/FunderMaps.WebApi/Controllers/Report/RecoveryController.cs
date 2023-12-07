@@ -19,31 +19,22 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for recovery operations.
 /// </summary>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Route("api/recovery")]
-public class RecoveryController : ControllerBase
+public class RecoveryController(
+    IOrganizationRepository organizationRepository,
+    IUserRepository userRepository,
+    IRecoveryRepository recoveryRepository,
+    IBlobStorageService blobStorageService,
+    IEmailService emailService) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository;
-    private readonly IUserRepository _userRepository;
-    private readonly IRecoveryRepository _recoveryRepository;
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly IEmailService _emailService;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public RecoveryController(
-        IOrganizationRepository organizationRepository,
-        IUserRepository userRepository,
-        IRecoveryRepository recoveryRepository,
-        IBlobStorageService blobStorageService,
-        IEmailService emailService)
-    {
-        _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
-        _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
-        _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
-    }
+    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
+    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    private readonly IRecoveryRepository _recoveryRepository = recoveryRepository ?? throw new ArgumentNullException(nameof(recoveryRepository));
+    private readonly IBlobStorageService _blobStorageService = blobStorageService ?? throw new ArgumentNullException(nameof(blobStorageService));
+    private readonly IEmailService _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 
     // GET: api/recovery/stats
     /// <summary>

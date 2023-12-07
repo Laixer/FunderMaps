@@ -13,22 +13,17 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     This controller provides organization administration.
 ///     <para>
 ///         For the variant based on the current session see 
-///         <see cref="FunderMaps.AspNetCore.Controllers.OrganizationController"/>.
+///         <see cref="AspNetCore.Controllers.OrganizationController"/>.
 ///     </para>
+/// </remarks>
+/// <remarks>
+///     Create new instance.
 /// </remarks>
 [Authorize(Policy = "AdministratorPolicy")]
 [Route("api/admin/organization")]
-public class OrganizationAdminController : ControllerBase
+public class OrganizationAdminController(IOrganizationRepository organizationRepository) : ControllerBase
 {
-    private readonly IOrganizationRepository _organizationRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public OrganizationAdminController(IOrganizationRepository organizationRepository)
-    {
-        _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
-    }
+    private readonly IOrganizationRepository _organizationRepository = organizationRepository ?? throw new ArgumentNullException(nameof(organizationRepository));
 
     // GET: api/admin/organization/stats
     /// <summary>

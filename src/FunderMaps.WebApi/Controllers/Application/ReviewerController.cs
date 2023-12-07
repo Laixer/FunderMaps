@@ -16,21 +16,15 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     This controller should *only* handle operations on the current
 ///     user session. Therefore the user context must be active.
 /// </remarks>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Authorize(Policy = "WriterPolicy")]
 [Route("api")]
-public class ReviewerController : ControllerBase
+public class ReviewerController(IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository) : ControllerBase
 {
-    private readonly IOrganizationUserRepository _organizationUserRepository;
-    private readonly IUserRepository _userRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public ReviewerController(IOrganizationUserRepository organizationUserRepository, IUserRepository userRepository)
-    {
-        _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-    }
+    private readonly IOrganizationUserRepository _organizationUserRepository = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
+    private readonly IUserRepository _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
 
     // GET: api/reviewer
     /// <summary>

@@ -13,20 +13,14 @@ namespace FunderMaps.WebApi.Controllers.Report;
 /// <summary>
 ///     Endpoint controller for inquiry sample operations.
 /// </summary>
+/// <remarks>
+///     Create new instance.
+/// </remarks>
 [Route("api/inquiry/{inquiryId}/sample")]
-public class InquirySampleController : ControllerBase
+public class InquirySampleController(IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository) : ControllerBase
 {
-    private readonly IInquiryRepository _inquiryRepository;
-    private readonly IInquirySampleRepository _inquirySampleRepository;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public InquirySampleController(IInquiryRepository inquiryRepository, IInquirySampleRepository inquirySampleRepository)
-    {
-        _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
-        _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
-    }
+    private readonly IInquiryRepository _inquiryRepository = inquiryRepository ?? throw new ArgumentNullException(nameof(inquiryRepository));
+    private readonly IInquirySampleRepository _inquirySampleRepository = inquirySampleRepository ?? throw new ArgumentNullException(nameof(inquirySampleRepository));
 
     // GET: api/inquiry/{id}/sample/stats
     /// <summary>
