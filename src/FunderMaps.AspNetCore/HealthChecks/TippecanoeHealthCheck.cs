@@ -7,17 +7,8 @@ namespace FunderMaps.AspNetCore.HealthChecks;
 /// <summary>
 ///     Check if the tile generator backend is alive.
 /// </summary>
-public class TippecanoeHealthCheck : IHealthCheck
+public class TippecanoeHealthCheck(ITilesetGeneratorService tilesetGeneratorService, ILogger<TippecanoeHealthCheck> logger) : IHealthCheck
 {
-    private readonly ITilesetGeneratorService _tilesetGeneratorService;
-    private readonly ILogger<TippecanoeHealthCheck> _logger;
-
-    /// <summary>
-    ///     Create a new instance.
-    /// </summary>
-    public TippecanoeHealthCheck(ITilesetGeneratorService tilesetGeneratorService, ILogger<TippecanoeHealthCheck> logger)
-        => (_tilesetGeneratorService, _logger) = (tilesetGeneratorService, logger);
-
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
     /// </summary>
@@ -28,12 +19,12 @@ public class TippecanoeHealthCheck : IHealthCheck
     {
         try
         {
-            await _tilesetGeneratorService.HealthCheck();
+            await tilesetGeneratorService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
-            _logger.LogTrace(exception, "Health check failed");
+            logger.LogTrace(exception, "Health check failed");
 
             return HealthCheckResult.Unhealthy("blob storage service");
         }

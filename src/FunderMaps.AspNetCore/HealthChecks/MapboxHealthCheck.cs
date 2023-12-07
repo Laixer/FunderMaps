@@ -7,17 +7,8 @@ namespace FunderMaps.AspNetCore.HealthChecks;
 /// <summary>
 ///     Check if the blob storage backend is alive.
 /// </summary>
-public class MapboxHealthCheck : IHealthCheck
+public class MapboxHealthCheck(IMapboxService mapboxService, ILogger<MapboxHealthCheck> logger) : IHealthCheck
 {
-    private readonly IMapboxService _mapboxService;
-    private readonly ILogger<MapboxHealthCheck> _logger;
-
-    /// <summary>
-    ///     Create a new instance.
-    /// </summary>
-    public MapboxHealthCheck(IMapboxService mapboxService, ILogger<MapboxHealthCheck> logger)
-        => (_mapboxService, _logger) = (mapboxService, logger);
-
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
     /// </summary>
@@ -28,12 +19,12 @@ public class MapboxHealthCheck : IHealthCheck
     {
         try
         {
-            await _mapboxService.HealthCheck();
+            await mapboxService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
-            _logger.LogTrace(exception, "Health check failed");
+            logger.LogTrace(exception, "Health check failed");
 
             return HealthCheckResult.Unhealthy("mapbox service");
         }

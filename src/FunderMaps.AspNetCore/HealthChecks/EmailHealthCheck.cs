@@ -7,17 +7,8 @@ namespace FunderMaps.AspNetCore.HealthChecks;
 /// <summary>
 ///     Check if the email backend is alive.
 /// </summary>
-public class EmailHealthCheck : IHealthCheck
+public class EmailHealthCheck(IEmailService emailService, ILogger<EmailHealthCheck> logger) : IHealthCheck
 {
-    private readonly IEmailService _emailService;
-    private readonly ILogger<EmailHealthCheck> _logger;
-
-    /// <summary>
-    ///     Create a new instance.
-    /// </summary>
-    public EmailHealthCheck(IEmailService emailService, ILogger<EmailHealthCheck> logger)
-        => (_emailService, _logger) = (emailService, logger);
-
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
     /// </summary>
@@ -28,12 +19,12 @@ public class EmailHealthCheck : IHealthCheck
     {
         try
         {
-            await _emailService.HealthCheck();
+            await emailService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
-            _logger.LogTrace(exception, "Health check failed");
+            logger.LogTrace(exception, "Health check failed");
 
             return HealthCheckResult.Unhealthy("email service");
         }

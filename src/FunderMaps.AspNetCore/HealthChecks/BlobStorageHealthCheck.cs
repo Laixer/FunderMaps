@@ -7,17 +7,8 @@ namespace FunderMaps.AspNetCore.HealthChecks;
 /// <summary>
 ///     Check if the blob storage backend is alive.
 /// </summary>
-public class BlobStorageHealthCheck : IHealthCheck
+public class BlobStorageHealthCheck(IBlobStorageService blobStorageService, ILogger<BlobStorageHealthCheck> logger) : IHealthCheck
 {
-    private readonly IBlobStorageService _blobStorageService;
-    private readonly ILogger<BlobStorageHealthCheck> _logger;
-
-    /// <summary>
-    ///     Create a new instance.
-    /// </summary>
-    public BlobStorageHealthCheck(IBlobStorageService blobStorageService, ILogger<BlobStorageHealthCheck> logger)
-        => (_blobStorageService, _logger) = (blobStorageService, logger);
-
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
     /// </summary>
@@ -28,12 +19,12 @@ public class BlobStorageHealthCheck : IHealthCheck
     {
         try
         {
-            await _blobStorageService.HealthCheck();
+            await blobStorageService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
-            _logger.LogTrace(exception, "Health check failed");
+            logger.LogTrace(exception, "Health check failed");
 
             return HealthCheckResult.Unhealthy("blob storage service");
         }
