@@ -8,29 +8,13 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Password hasher.
 /// </summary>
-internal class PasswordHasher : IPasswordHasher
+internal class PasswordHasher(IRandom random, ILogger<PasswordHasher> logger) : IPasswordHasher
 {
     private const int iterRounds = 10000;
     private const int subkeyLength = 256 / 8; // 256 bits
     private const int saltSize = 128 / 8; // 128 bits
     private const byte formatMarker = 0x01;
     private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
-
-    /// <summary>
-    ///     Gets the <see cref="IRandom"/> used.
-    /// </summary>
-    public IRandom Random { get; }
-
-    /// <summary>
-    ///     Gets the <see cref="ILogger"/> used.
-    /// </summary>
-    public ILogger Logger { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public PasswordHasher(IRandom random, ILogger<PasswordHasher> logger)
-        => (Random, Logger) = (random, logger);
 
     // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -47,7 +31,7 @@ internal class PasswordHasher : IPasswordHasher
         var areSame = true;
         for (var i = 0; i < a.Length; i++)
         {
-            areSame &= (a[i] == b[i]);
+            areSame &= a[i] == b[i];
         }
         return areSame;
     }
@@ -55,7 +39,7 @@ internal class PasswordHasher : IPasswordHasher
     private byte[] GeneratePasswordHash(string password)
     {
         byte[] salt = new byte[saltSize];
-        Random.WriteBytes(salt);
+        random.WriteBytes(salt);
         //_rng.GetBytes(salt);
 
         using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterRounds, hashAlgorithm);
@@ -131,7 +115,7 @@ internal class PasswordHasher : IPasswordHasher
         }
         catch (SystemException exception)
         {
-            Logger.LogError(exception, "Error occurred during password validation");
+            logger.LogError(exception, "Error occurred during password validation");
 
             return false;
         }

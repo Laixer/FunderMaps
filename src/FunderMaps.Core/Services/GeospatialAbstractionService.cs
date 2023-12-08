@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Core.Services;
 
+// TODO: Move to external service.
 /// <summary>
 ///     Geospatial abstraction service.
 /// </summary>

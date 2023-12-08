@@ -20,27 +20,7 @@ public class SignInService(
     IPasswordHasher passwordHasher,
     ILogger<SignInService> logger)
 {
-    const int MaxFailedAccessAttempts = 10;
-
-    /// <summary>
-    ///     The <see cref="IUserRepository"/> used.
-    /// </summary>
-    public IUserRepository UserRepository { get; } = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-
-    /// <summary>
-    ///     The <see cref="IOrganizationUserRepository"/> used.
-    /// </summary>
-    public IOrganizationUserRepository OrganizationUserRepository { get; } = organizationUserRepository ?? throw new ArgumentNullException(nameof(organizationUserRepository));
-
-    /// <summary>
-    ///     The <see cref="IPasswordHasher"/> used.
-    /// </summary>
-    public IPasswordHasher PasswordHasher { get; } = passwordHasher ?? throw new ArgumentNullException(nameof(passwordHasher));
-
-    /// <summary>
-    ///     Gets the <see cref="ILogger"/> used to log messages.
-    /// </summary>
-    protected ILogger Logger { get; } = logger ?? throw new ArgumentNullException(nameof(logger));
+    private const int MaxFailedAccessAttempts = 10;
 
     /// <summary>
     ///     Test if the provided password is valid for the user.
@@ -50,13 +30,8 @@ public class SignInService(
     /// <returns><c>True</c> if the specified password is valid for the user, otherwise false.</returns>
     public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
     {
-        var passwordHash = await UserRepository.GetPasswordHashAsync(id);
-        if (passwordHash is null)
-        {
-            return false;
-        }
-
-        return PasswordHasher.IsPasswordValid(passwordHash, password);
+        var passwordHash = await userRepository.GetPasswordHashAsync(id);
+        return passwordHash is not null && passwordHasher.IsPasswordValid(passwordHash, password);
     }
 
     /// <summary>
@@ -66,8 +41,8 @@ public class SignInService(
     /// <param name="password">The plaintext password to be set on the user.</param>
     public virtual async Task SetPasswordAsync(Guid id, string password)
     {
-        var passwordHash = PasswordHasher.HashPassword(password);
-        await UserRepository.SetPasswordHashAsync(id, passwordHash);
+        var passwordHash = passwordHasher.HashPassword(password);
+        await userRepository.SetPasswordHashAsync(id, passwordHash);
     }
 
     /// <summary>
@@ -78,15 +53,15 @@ public class SignInService(
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     private async Task<ClaimsIdentity> CreateClaimsIdentityAsync(User user, string authenticationType)
     {
-        if (await UserRepository.GetAccessFailedCount(user.Id) > MaxFailedAccessAttempts)
+        if (await userRepository.GetAccessFailedCount(user.Id) > MaxFailedAccessAttempts)
         {
-            Logger.LogWarning("User '{user}' locked out.", user);
+            logger.LogWarning("User '{user}' locked out.", user);
 
             throw new AuthenticationException();
         }
 
-        await UserRepository.ResetAccessFailed(user.Id);
-        await UserRepository.RegisterAccess(user.Id);
+        await userRepository.ResetAccessFailed(user.Id);
+        await userRepository.RegisterAccess(user.Id);
 
         var claims = new List<Claim>
         {
@@ -96,20 +71,20 @@ public class SignInService(
             new(ClaimTypes.Role, user.Role.ToString()),
         };
 
-        var organizationIds = await OrganizationUserRepository.ListAllOrganizationIdByUserIdAsync(user.Id).ToListAsync();
+        var organizationIds = await organizationUserRepository.ListAllOrganizationIdByUserIdAsync(user.Id).ToListAsync();
         foreach (var organizationId in organizationIds)
         {
             claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.Tenant, organizationId.ToString()));
         }
 
         // FUTURE: There is a role per organization, but we only support one role for now.
-        var organizationRole = await OrganizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
+        var organizationRole = await organizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
         if (organizationRole is not null)
         {
             claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString() ?? string.Empty));
         }
 
-        Logger.LogDebug("User '{user}' signin was successful.", user);
+        logger.LogDebug("User '{user}' signin was successful.", user);
 
         return new(claims, authenticationType, ClaimTypes.Name, ClaimTypes.Role);
     }
@@ -123,7 +98,7 @@ public class SignInService(
     {
         try
         {
-            if (await UserRepository.GetByIdAsync(id) is not User user)
+            if (await userRepository.GetByIdAsync(id) is not User user)
             {
                 throw new AuthenticationException();
             }
@@ -147,7 +122,7 @@ public class SignInService(
     {
         try
         {
-            if (await UserRepository.GetByAuthKeyAsync(key) is not User user)
+            if (await userRepository.GetByAuthKeyAsync(key) is not User user)
             {
                 throw new AuthenticationException();
             }
@@ -172,21 +147,21 @@ public class SignInService(
     {
         try
         {
-            if (await UserRepository.GetByEmailAsync(email) is not User user)
+            if (await userRepository.GetByEmailAsync(email) is not User user)
             {
                 throw new AuthenticationException();
             }
 
             if (!await CheckPasswordAsync(user.Id, password))
             {
-                Logger.LogWarning("User '{user}' failed to provide the correct password.", user);
+                logger.LogWarning("User '{user}' failed to provide the correct password.", user);
 
-                await UserRepository.BumpAccessFailed(user.Id);
+                await userRepository.BumpAccessFailed(user.Id);
 
                 throw new AuthenticationException();
             }
 
-            Logger.LogInformation("User '{user}' password signin was successful.", user);
+            logger.LogInformation("User '{user}' password signin was successful.", user);
 
             var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
 

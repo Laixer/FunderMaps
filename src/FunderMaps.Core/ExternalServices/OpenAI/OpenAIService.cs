@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace FunderMaps.Core.ExternalServices.OpenAI;
 
+// TODO: Implement OpenAI interface.
 public class OpenAIService : IDisposable
 {
     /// <summary>
@@ -20,37 +21,34 @@ public class OpenAIService : IDisposable
 
     private class OpenAIResponseUsage
     {
-        public int text_characters { get; set; }
-        public int text_units { get; set; }
-        public int total_characters { get; set; }
-        public int total_units { get; set; }
+        public int TextCharacters { get; set; }
+        public int TextUnits { get; set; }
+        public int TotalCharacters { get; set; }
+        public int TotalUnits { get; set; }
     }
 
     private class OpenAIResponseChoice
     {
-        public string? text { get; set; }
-        public int index { get; set; }
-        public List<double> logprobs { get; set; } = new();
-        public string? finish_reason { get; set; }
+        public string? Text { get; set; }
+        public int Index { get; set; }
+        public List<double> Logprobs { get; set; } = new();
+        public string? FinishReason { get; set; }
     }
 
     struct OpenAIResponse
     {
-        public string id { get; set; }
-        public string @object { get; set; }
-        public int created { get; set; }
-        public string model { get; set; }
-        public List<OpenAIResponseChoice> choices { get; set; }
-        public OpenAIResponseUsage usage { get; set; }
+        public string Id { get; set; }
+        public string Object { get; set; }
+        public int Created { get; set; }
+        public string Model { get; set; }
+        public List<OpenAIResponseChoice> Choices { get; set; }
+        public OpenAIResponseUsage Usage { get; set; }
     }
 
     struct OpenAIRequest
     {
-        [JsonPropertyName("prompt")]
         public string Prompt { get; set; }
-        [JsonPropertyName("max_tokens")]
         public int MaxTokens { get; set; }
-        [JsonPropertyName("temperature")]
         public double? Temperature { get; set; }
     }
 
@@ -87,10 +85,15 @@ public class OpenAIService : IDisposable
             throw new HttpRequestException("OpenAI API call failed");
         }
 
-        var jsonResponse = await response.Content.ReadAsStringAsync();
-        var responseObject = JsonSerializer.Deserialize<OpenAIResponse>(jsonResponse);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
-        return responseObject.choices[0].text;
+        var jsonResponse = await response.Content.ReadAsStringAsync();
+        var responseObject = JsonSerializer.Deserialize<OpenAIResponse>(jsonResponse, options);
+
+        return responseObject.Choices[0].Text;
     }
 
     /// <summary>

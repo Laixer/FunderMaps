@@ -9,7 +9,7 @@ namespace FunderMaps.Core.Components;
 internal class RandomGenerator : IRandom, IDisposable
 {
     private readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
-    private bool disposedValue;
+    private bool disposedValue = false;
 
     /// <summary>
     ///     Fills the specified byte array with a cryptographically strong random sequence of values.

@@ -7,16 +7,8 @@ namespace FunderMaps.Core.ExternalServices.Tippecanoe;
 /// <summary>
 ///     Geospatial abstraction service.
 /// </summary>
-internal class TippecanoeService : ITilesetGeneratorService
+internal class TippecanoeService(ILogger<TippecanoeService> logger) : ITilesetGeneratorService
 {
-    private readonly ILogger<TippecanoeService> _logger;
-
-    /// <summary>
-    ///     Construct new instance.
-    /// </summary>
-    public TippecanoeService(ILogger<TippecanoeService> logger)
-        => _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
     /// <summary>
     ///     Generate vector tiles from input.
     /// </summary>
@@ -65,12 +57,12 @@ internal class TippecanoeService : ITilesetGeneratorService
 
         if (!string.IsNullOrEmpty(standardError))
         {
-            _logger.LogError("Error output: {standardError}", standardError);
+            logger.LogError("Error output: {standardError}", standardError);
         }
 
         if (!string.IsNullOrEmpty(standardOutput))
         {
-            _logger.LogInformation("Console output: {standardOutput}", standardOutput);
+            logger.LogInformation("Console output: {standardOutput}", standardOutput);
         }
     }
 
@@ -85,13 +77,9 @@ internal class TippecanoeService : ITilesetGeneratorService
             Arguments = "--version"
         };
 
-        using var process = Process.Start(processStartInfo);
-        if (process is null)
-        {
-            throw new InvalidOperationException("Tippecanoe is not installed.");
-        }
-
+        using var process = Process.Start(processStartInfo) ?? throw new InvalidOperationException("Tippecanoe is not installed.");
         process.WaitForExit();
+
         if (process.ExitCode != 0)
         {
             throw new InvalidOperationException("Tippecanoe is not installed.");

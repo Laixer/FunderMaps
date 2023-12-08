@@ -3,7 +3,7 @@
 /// <summary>
 ///     Navigation structure.
 /// </summary>
-public class Navigation
+public record Navigation
 {
     /// <summary>
     ///     Offset in list.

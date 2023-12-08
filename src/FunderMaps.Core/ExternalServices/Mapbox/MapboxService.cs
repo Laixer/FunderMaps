@@ -10,7 +10,7 @@ using FunderMaps.Core.Interfaces;
 
 namespace FunderMaps.Core.ExternalServices.Mapbox;
 
-struct MapboxCredentialResponse
+internal struct MapboxCredentialResponse
 {
     public string bucket { get; set; }
     public string key { get; set; }
@@ -20,7 +20,7 @@ struct MapboxCredentialResponse
     public string url { get; set; }
 }
 
-public struct MapboxUploadResponse
+internal struct MapboxUploadResponse
 {
     public bool complete { get; set; }
     public string tileset { get; set; }
