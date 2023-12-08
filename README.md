@@ -6,7 +6,7 @@ Foundation issues occur and are actively investigated by local government. Gaini
 
 ## Requirements
 
-* .NET 7 Runtime and SDK
+* .NET 8.0 Runtime and SDK
 * Docker
 
 See https://docs.microsoft.com/en-us/dotnet/core/install/ for installation instructions of .NET.
