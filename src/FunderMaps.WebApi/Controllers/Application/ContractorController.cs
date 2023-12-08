@@ -10,7 +10,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     Endpoint controller for application contractors.
 /// </summary>
 [Route("api")]
-public class ContractorController : ControllerBase
+public class ContractorController(IContractorRepository contractorRepository) : ControllerBase
 {
     // GET: api/contractor
     /// <summary>
@@ -21,6 +21,6 @@ public class ContractorController : ControllerBase
     ///     Contractors are tenant independent.
     /// </remarks>
     [HttpGet("contractor"), ResponseCache(Duration = 60 * 60 * 12)]
-    public IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination, [FromServices] IContractorRepository contractorRepository)
+    public IAsyncEnumerable<Contractor> GetAllAsync([FromQuery] PaginationDto pagination)
         => contractorRepository.ListAllAsync(Navigation.All);
 }
