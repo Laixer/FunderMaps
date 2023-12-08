@@ -19,17 +19,15 @@ namespace FunderMaps.AspNetCore.Controllers;
 [Authorize, Route("api/user")]
 public class UserController(IUserRepository userRepository, SignInService signInService) : ControllerBase
 {
+    private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
     // GET: user
     /// <summary>
     ///     Return session user.
     /// </summary>
     [HttpGet]
     public async Task<User> GetAsync()
-    {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-
-        return await userRepository.GetByIdAsync(userId);
-    }
+        => await userRepository.GetByIdAsync(UserId);
 
     // PUT: user
     /// <summary>
@@ -38,7 +36,7 @@ public class UserController(IUserRepository userRepository, SignInService signIn
     [HttpPut]
     public async Task<IActionResult> UpdateAsync([FromBody] User user)
     {
-        user.Id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+        user.Id = UserId;
 
         await userRepository.UpdateAsync(user);
 
@@ -52,14 +50,12 @@ public class UserController(IUserRepository userRepository, SignInService signIn
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-
-        if (!await signInService.CheckPasswordAsync(userId, input.OldPassword))
+        if (!await signInService.CheckPasswordAsync(UserId, input.OldPassword))
         {
             throw new InvalidCredentialException();
         }
 
-        await signInService.SetPasswordAsync(userId, input.NewPassword);
+        await signInService.SetPasswordAsync(UserId, input.NewPassword);
 
         return NoContent();
     }

@@ -18,9 +18,6 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///         <see cref="AspNetCore.Controllers.OrganizationUserController"/>.
 ///     </para>
 /// </remarks>
-/// <remarks>
-///     Create new instance.
-/// </remarks>
 [Authorize(Policy = "AdministratorPolicy")]
 [Route("api/admin/organization/{id:guid}/user")]
 public class OrganizationUserAdminController(
