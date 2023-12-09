@@ -10,14 +10,14 @@ namespace FunderMaps.Worker.Tasks;
 /// <summary>
 ///     Construct new instance.
 /// </summary>
-public class MapBundleTask(
+internal class MapBundleTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IBlobStorageService blobStorageService,
     IGDALService gdalService,
     IBundleRepository bundleRepository,
     ITilesetGeneratorService tilesetGeneratorService,
     IMapboxService mapboxService,
-    ILogger<MapBundleTask> logger) : ISingleShotTask
+    ILogger<MapBundleTask> logger) : ITaskService
 {
     private readonly DbProviderOptions _dbProviderOptions = dbProviderOptions?.Value ?? throw new ArgumentNullException(nameof(dbProviderOptions));
 

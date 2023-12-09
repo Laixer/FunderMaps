@@ -9,10 +9,11 @@ namespace FunderMaps.Worker.Tasks;
 /// <summary>
 ///     Construct new instance.
 /// </summary>
-public class ProductExportTask(
+// [SingleShotTask("product-export")]
+internal class ProductExportTask(
     IBlobStorageService blobStorageService,
     ITelemetryRepository telemetryRepository,
-    ILogger<ProductExportTask> logger) : ISingleShotTask
+    ILogger<ProductExportTask> logger) : ITaskService
 {
     /// <summary>
     ///    Write CSV file.

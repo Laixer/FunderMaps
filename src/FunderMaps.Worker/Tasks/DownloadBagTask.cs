@@ -9,10 +9,10 @@ namespace FunderMaps.Worker.Tasks;
 /// <summary>
 ///     Construct new instance.
 /// </summary>
-public class DownloadBagTask(
+internal class DownloadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IGDALService gdalService,
-    ILogger<DownloadBagTask> logger) : ISingleShotTask
+    ILogger<DownloadBagTask> logger) : ITaskService
 {
     private const string FileUrl = "https://service.pdok.nl/lv/bag/atom/downloads/bag-light.gpkg";
 

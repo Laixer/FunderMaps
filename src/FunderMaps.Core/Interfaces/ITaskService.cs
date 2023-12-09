@@ -1,7 +1,6 @@
-namespace FunderMaps.Worker;
+namespace FunderMaps.Core.Interfaces;
 
-// TODO: Move to FunderMaps.Core
-public interface ISingleShotTask
+public interface ITaskService
 {
     /// <summary>
     ///    Triggered when the application host is ready to start the service.

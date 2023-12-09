@@ -12,7 +12,7 @@ namespace FunderMaps.Webservice.Controllers;
 ///     Controller for all product endpoints.
 /// </summary>
 [Route("api/v3/product")]
-public class ProductController(
+public sealed class ProductController(
     IAnalysisRepository analysisRepository,
     IStatisticsRepository statisticsRepository,
     IGeocoderTranslation geocoderTranslation,
