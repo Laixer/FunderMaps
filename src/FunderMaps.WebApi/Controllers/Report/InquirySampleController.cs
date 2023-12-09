@@ -17,7 +17,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 ///     Create new instance.
 /// </remarks>
 [Route("api/inquiry/{inquiryId}/sample")]
-public class InquirySampleController(
+public sealed class InquirySampleController(
     IInquiryRepository inquiryRepository,
     IInquirySampleRepository inquirySampleRepository) : ControllerBase
 {

@@ -10,7 +10,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     Endpoint controller for application contractors.
 /// </summary>
 [Route("api")]
-public class ContractorController(IContractorRepository contractorRepository) : ControllerBase
+public sealed class ContractorController(IContractorRepository contractorRepository) : ControllerBase
 {
     // GET: api/contractor
     /// <summary>

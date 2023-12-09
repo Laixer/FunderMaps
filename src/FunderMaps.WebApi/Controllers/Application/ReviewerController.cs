@@ -18,7 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </remarks>
 [Authorize(Policy = "WriterPolicy")]
 [Route("api")]
-public class ReviewerController(
+public sealed class ReviewerController(
     IOrganizationUserRepository organizationUserRepository,
     IUserRepository userRepository) : ControllerBase
 {

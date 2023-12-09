@@ -8,7 +8,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for address operations.
 /// </summary>
 [Route("api/geocoder")]
-public class GeocoderController(IGeocoderTranslation geocoderTranslation) : ControllerBase
+public sealed class GeocoderController(IGeocoderTranslation geocoderTranslation) : ControllerBase
 {
     // GET: api/geocoder/address
     /// <summary>

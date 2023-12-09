@@ -9,7 +9,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for mapset.
 /// </summary>
 [Route("api/mapset")]
-public class MapsetController(
+public sealed class MapsetController(
     IMapsetRepository mapsetRepository,
     IIncidentRepository incidentRepository,
     IInquirySampleRepository inquirySampleRepository,

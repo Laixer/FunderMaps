@@ -20,7 +20,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </remarks>
 [Authorize(Policy = "AdministratorPolicy")]
 [Route("api/admin/organization/{id:guid}/user")]
-public class OrganizationUserAdminController(
+public sealed class OrganizationUserAdminController(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,
     SignInService signInService) : ControllerBase

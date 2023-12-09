@@ -18,7 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 ///     Create new instance.
 /// </remarks>
 [Route("api/recovery/{recoveryId}/sample")]
-public class RecoverySampleController(
+public sealed class RecoverySampleController(
     IRecoverySampleRepository recoverySampleRepository,
     IRecoveryRepository recoveryRepository) : ControllerBase
 {

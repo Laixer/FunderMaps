@@ -23,7 +23,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 ///     Create new instance.
 /// </remarks>
 [Route("api/inquiry")]
-public class InquiryController(
+public sealed class InquiryController(
     IOrganizationRepository organizationRepository,
     IUserRepository userRepository,
     IInquiryRepository inquiryRepository,

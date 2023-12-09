@@ -23,7 +23,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 ///     Create new instance.
 /// </remarks>
 [Route("api/recovery")]
-public class RecoveryController(
+public sealed class RecoveryController(
     IOrganizationRepository organizationRepository,
     IUserRepository userRepository,
     IRecoveryRepository recoveryRepository,

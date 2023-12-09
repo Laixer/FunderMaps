@@ -21,7 +21,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </remarks>
 [Authorize(Policy = "AdministratorPolicy")]
 [Route("api/admin/organization")]
-public class OrganizationAdminController(IOrganizationRepository organizationRepository) : ControllerBase
+public sealed class OrganizationAdminController(IOrganizationRepository organizationRepository) : ControllerBase
 {
     // GET: api/admin/organization/stats
     /// <summary>
