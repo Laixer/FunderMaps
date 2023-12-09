@@ -10,11 +10,12 @@ namespace FunderMaps.Worker.Tasks;
 ///     Construct new instance.
 /// </summary>
 // [SingleShotTask("product-export")]
-internal class ProductExportTask(
+internal sealed class ProductExportTask(
     IBlobStorageService blobStorageService,
     ITelemetryRepository telemetryRepository,
     ILogger<ProductExportTask> logger) : ITaskService
 {
+    // TODO: Move into service.
     /// <summary>
     ///    Write CSV file.
     /// </summary>

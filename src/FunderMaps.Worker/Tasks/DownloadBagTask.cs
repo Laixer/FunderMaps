@@ -9,7 +9,7 @@ namespace FunderMaps.Worker.Tasks;
 /// <summary>
 ///     Construct new instance.
 /// </summary>
-internal class DownloadBagTask(
+internal sealed class DownloadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IGDALService gdalService,
     ILogger<DownloadBagTask> logger) : ITaskService

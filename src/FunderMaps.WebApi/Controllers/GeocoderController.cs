@@ -1,15 +1,13 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.AspNetCore.Controllers;
+namespace FunderMaps.WebApi.Controllers;
 
-// TODO: Remove, this has been moved to FunderMaps.WebApi.
 /// <summary>
 ///     Endpoint controller for address operations.
 /// </summary>
-[Authorize, Route("api/geocoder")]
+[Route("api/geocoder")]
 public class GeocoderController(IGeocoderTranslation geocoderTranslation) : ControllerBase
 {
     // GET: api/geocoder/address

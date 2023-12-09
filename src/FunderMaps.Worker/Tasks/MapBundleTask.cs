@@ -10,7 +10,7 @@ namespace FunderMaps.Worker.Tasks;
 /// <summary>
 ///     Construct new instance.
 /// </summary>
-internal class MapBundleTask(
+internal sealed class MapBundleTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IBlobStorageService blobStorageService,
     IGDALService gdalService,

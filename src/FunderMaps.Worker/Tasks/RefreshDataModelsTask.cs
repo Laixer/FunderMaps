@@ -7,7 +7,7 @@ using PdfSharp.Snippets.Font;
 
 namespace FunderMaps.Worker.Tasks;
 
-internal class RefreshDataModelsTask : ITaskService
+internal sealed class RefreshDataModelsTask : ITaskService
 {
     /// <summary>
     ///    Triggered when the application host is ready to start the service.
