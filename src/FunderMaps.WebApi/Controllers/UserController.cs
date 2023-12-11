@@ -25,8 +25,8 @@ public class UserController(IUserRepository userRepository) : ControllerBase
     ///     Return session user.
     /// </summary>
     [HttpGet]
-    public async Task<User> GetAsync()
-        => await userRepository.GetByIdAsync(UserId);
+    public Task<User> GetAsync()
+        => userRepository.GetByIdAsync(UserId);
 
     // PUT: user
     /// <summary>
