@@ -8,7 +8,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.AspNetCore.Controllers;
+namespace FunderMaps.WebApi.Controllers;
 
 /// <summary>
 ///     Endpoint controller for organization user operations.
@@ -16,9 +16,6 @@ namespace FunderMaps.AspNetCore.Controllers;
 /// <remarks>
 ///     This controller should *only* handle organization operations on the current
 ///     user session. Therefore the user context must be active.
-/// </remarks>
-/// <remarks>
-///     Create new instance.
 /// </remarks>
 [Authorize, Route("api/organization/user")]
 public class OrganizationUserController(

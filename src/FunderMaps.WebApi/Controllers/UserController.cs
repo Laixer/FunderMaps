@@ -7,7 +7,7 @@ using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.AspNetCore.Controllers;
+namespace FunderMaps.WebApi.Controllers;
 
 /// <summary>
 ///     Endpoint controller for user operations.
