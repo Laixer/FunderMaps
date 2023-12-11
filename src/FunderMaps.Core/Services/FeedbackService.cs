@@ -73,6 +73,7 @@ internal class FeedbackService(
             FoundationDamageCause.Vibrations => "Verkeer",
             FoundationDamageCause.PartialFoundationRecovery => "Naastgelegen funderingsherstel",
             FoundationDamageCause.JapanseKnotweed => "Japanse duizendknoop",
+            FoundationDamageCause.GroundwaterLevelReduction => "Grondwaterstandverlaging",
             _ => "Onbekend",
         };
 
