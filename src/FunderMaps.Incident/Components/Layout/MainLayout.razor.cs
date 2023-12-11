@@ -113,6 +113,9 @@ public partial class MainLayout : LayoutComponentBase
                 case "Address":
                     state.StepId = 1;
                     break;
+                case "Building":
+                    state.StepId = 1;
+                    break;
                 case "FoundationDamageCharacteristics":
                     state.StepId = 3;
                     break;

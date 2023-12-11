@@ -30,7 +30,7 @@ public partial class Address : ComponentBase, IAsyncDisposable
     [CascadingParameter]
     MainLayout Parent { get; set; } = default!;
 
-    private List<FunderMaps.Core.Services.PDOKSuggestion> autoComplete = new();
+    private List<PDOKSuggestion> autoComplete = [];
 
     string? inputKaasAutoCompleteDing;
 
@@ -44,7 +44,7 @@ public partial class Address : ComponentBase, IAsyncDisposable
         }
 
         var addressSuggestion = await LocationService.SuggestAsync(filter, 7);
-        if (addressSuggestion.Any())
+        if (addressSuggestion.Count != 0)
         {
             autoComplete = addressSuggestion;
             return;
