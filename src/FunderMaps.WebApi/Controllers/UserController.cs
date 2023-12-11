@@ -19,6 +19,7 @@ namespace FunderMaps.WebApi.Controllers;
 [Authorize, Route("api/user")]
 public class UserController(IUserRepository userRepository, SignInService signInService) : ControllerBase
 {
+    // TODO: Get this from base controller.
     private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
 
     // GET: user
@@ -43,6 +44,7 @@ public class UserController(IUserRepository userRepository, SignInService signIn
         return NoContent();
     }
 
+    // TODO: Move to auth controller.
     // POST: user/change-password
     /// <summary>
     ///     Set password for session user.

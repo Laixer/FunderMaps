@@ -37,6 +37,7 @@ public sealed class GeocoderController(
     public Task<Building> GetBuildingAsync(string id)
         => geocoderTranslation.GetBuildingIdAsync(id);
 
+    // TODO: Move to report namespace.
     // GET: api/geocoder/building-reports/{id}
     /// <summary>
     ///     Get all reports for a building by identifier.
