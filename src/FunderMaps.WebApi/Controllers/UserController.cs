@@ -1,8 +1,6 @@
 using System.Security.Claims;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +15,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     user session. Therefore the user context must be active.
 /// </remarks>
 [Authorize, Route("api/user")]
-public class UserController(IUserRepository userRepository, SignInService signInService) : ControllerBase
+public class UserController(IUserRepository userRepository) : ControllerBase
 {
     // TODO: Get this from base controller.
     private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
@@ -40,24 +38,6 @@ public class UserController(IUserRepository userRepository, SignInService signIn
         user.Id = UserId;
 
         await userRepository.UpdateAsync(user);
-
-        return NoContent();
-    }
-
-    // TODO: Move to auth controller.
-    // POST: user/change-password
-    /// <summary>
-    ///     Set password for session user.
-    /// </summary>
-    [HttpPost("change-password")]
-    public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
-    {
-        if (!await signInService.CheckPasswordAsync(UserId, input.OldPassword))
-        {
-            throw new InvalidCredentialException();
-        }
-
-        await signInService.SetPasswordAsync(UserId, input.NewPassword);
 
         return NoContent();
     }

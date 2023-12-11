@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using System.Security.Claims;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
@@ -15,6 +16,9 @@ namespace FunderMaps.WebApi.Controllers;
 [Authorize, Route("api/auth")]
 public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : ControllerBase
 {
+    // TODO: Get this from base controller.
+    private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
+
     // POST: api/auth/signin
     /// <summary>
     ///     User sign in endpoint.
@@ -49,9 +53,7 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
     [HttpGet("token-refresh")]
     public async Task<SignInSecurityTokenDto> RefreshSignInAsync()
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-
-        var principal = await signInService.UserIdSignInAsync(userId, "FunderMapsHybridAuth");
+        var principal = await signInService.UserIdSignInAsync(UserId, "FunderMapsHybridAuth");
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
@@ -64,5 +66,22 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
             ValidFrom = tokenContext.Token.ValidFrom,
             ValidTo = tokenContext.Token.ValidTo,
         };
+    }
+
+    // POST: api/auth/change-password
+    /// <summary>
+    ///     Set password for session user.
+    /// </summary>
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto input)
+    {
+        if (!await signInService.CheckPasswordAsync(UserId, input.OldPassword))
+        {
+            throw new InvalidCredentialException();
+        }
+
+        await signInService.SetPasswordAsync(UserId, input.NewPassword);
+
+        return NoContent();
     }
 }
