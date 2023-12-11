@@ -36,7 +36,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       resolve and disposed right after.
         services.AddTransient<IRandom, RandomGenerator>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
-        services.AddTransient<IGeocoderParser, GeocoderParser>();
         services.AddTransient<IGeocoderTranslation, GeocoderTranslation>();
 
         // Register application context in DI container
