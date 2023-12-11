@@ -46,7 +46,7 @@ public partial class Building : ComponentBase
                     NavigationManager.NavigateTo("/survey/foundation-damage-cause", false);
                 }
             }
-            finally
+            catch
             {
                 NavigationManager.NavigateTo("/survey/address", true);
             }
