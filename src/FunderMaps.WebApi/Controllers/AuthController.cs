@@ -7,14 +7,11 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.AspNetCore.Controllers;
+namespace FunderMaps.WebApi.Controllers;
 
 /// <summary>
 ///     Endpoint controller for application authentication.
 /// </summary>
-/// <remarks>
-///     Create new instance.
-/// </remarks>
 [Authorize, Route("api/auth")]
 public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : ControllerBase
 {
@@ -30,12 +27,9 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
     {
         var principal = await signInService.PasswordSignInAsync(input.Email, input.Password, "FunderMapsHybridAuth");
 
-        var authProperties = new AuthenticationProperties();
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         var tokenContext = tokenProvider.GetTokenContext(principal);
-
         return new SignInSecurityTokenDto()
         {
             Id = tokenContext.Token.Id,
@@ -59,12 +53,9 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
 
         var principal = await signInService.UserIdSignInAsync(userId, "FunderMapsHybridAuth");
 
-        var authProperties = new AuthenticationProperties();
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         var tokenContext = tokenProvider.GetTokenContext(principal);
-
         return new SignInSecurityTokenDto()
         {
             Id = tokenContext.Token.Id,
