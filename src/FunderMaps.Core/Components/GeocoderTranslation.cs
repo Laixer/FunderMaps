@@ -109,6 +109,9 @@ internal class GeocoderTranslation(
     /// <summary>
     ///     Convert geocoder identifier to address entity.
     /// </summary>
+    /// <remarks
+    ///    Accepts only address identifiers for either BAG or FunderMaps.
+    /// <remarks>
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Address"/> entity.</returns>
     public async Task<Address> GetAddressIdAsync(string input)
@@ -122,6 +125,9 @@ internal class GeocoderTranslation(
     /// <summary>
     ///     Convert geocoder identifier to building entity.
     /// </summary>
+    /// <remarks>
+    ///    Accepts building and address identifiers for either BAG or building identifier FunderMaps.
+    /// <remarks>
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Building"/> entity.</returns>
     public async Task<Building> GetBuildingIdAsync(string input)
