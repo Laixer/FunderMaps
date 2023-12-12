@@ -52,6 +52,11 @@ internal sealed class MapBundleTask(
                 gdalService.Convert(input, $"{bundle.Tileset}.gpkg", $"maplayer.{bundle.Tileset}", cancellationToken);
                 await blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
+                DateTime currentDate = DateTime.Now;
+                string dateString = currentDate.ToString("yyyy-MM-dd");
+
+                await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}_{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
+
                 if (bundle.MapEnabled)
                 {
                     logger.LogInformation("Generating map for tileset '{Tileset}'", bundle.Tileset);
