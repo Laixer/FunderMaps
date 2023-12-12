@@ -1,4 +1,5 @@
 ﻿using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
@@ -18,9 +19,44 @@ public class SignInService(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,
     IPasswordHasher passwordHasher,
+    IEmailService emailService,
     ILogger<SignInService> logger)
 {
+    /// <summary>
+    ///   The number of failed access attempts allowed before a user is locked out.
+    /// </summary>
     private const int MaxFailedAccessAttempts = 10;
+
+    /// <summary>
+    ///     Send a password reset email to the user.
+    /// </summary>
+    /// <remarks>
+    ///     This method will not throw an exception if the user does not exist.
+    /// </remarks>
+    public virtual async Task ResetPasswordAsync(string email)
+    {
+        try
+        {
+            var user = await userRepository.GetByEmailAsync(email);
+
+            // TOOD: Generate random code and send with email.
+            await emailService.SendAsync(new EmailMessage
+            {
+                ToAddresses = new[] { new EmailAddress(user.Email, user.ToString()) },
+                Subject = "FunderMaps - Wachtwoord reset",
+                Template = "reset-password",
+                Varaibles = new Dictionary<string, object>
+            {
+                { "creatorName", user.ToString() },
+                { "resetToken", "123456" },
+            }
+            });
+        }
+        catch
+        {
+            logger.LogWarning("User '{email}' requested password reset, but does not exist.", email);
+        }
+    }
 
     /// <summary>
     ///     Test if the provided password is valid for the user.

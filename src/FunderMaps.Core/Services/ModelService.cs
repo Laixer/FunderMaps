@@ -11,7 +11,7 @@ internal class ModelService(
     IAnalysisRepository analysisRepository,
     IStatisticsRepository statisticsRepository,
     IOrganizationRepository organizationRepository,
-    ILogger<ModelService> logger) : IModelService
+    ILogger<ModelService> logger) : IModelService // TODO: Expose model service without interface
 {
     public async Task<AnalysisProduct> GetAnalysisAsync(string id, Guid tenantId)
     {

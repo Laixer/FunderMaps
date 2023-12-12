@@ -2,7 +2,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.WebApi.Controllers.Geocoder;
+namespace FunderMaps.WebApi.Controllers;
 
 /// <summary>
 ///     Endpoint controller for address operations.

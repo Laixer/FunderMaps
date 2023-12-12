@@ -68,6 +68,19 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
         };
     }
 
+    // POST: api/auth/reset-password
+    /// <summary>
+    ///     Send password reset email.
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordDto input)
+    {
+        await signInService.ResetPasswordAsync(input.Email);
+
+        return NoContent();
+    }
+
     // POST: api/auth/change-password
     /// <summary>
     ///     Set password for session user.
