@@ -42,5 +42,9 @@ public sealed class ProductController(ModelService modelService) : ControllerBas
     /// </summary>
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
-        => modelService.GetStatisticsAsync(id);
+    {
+        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+
+        return modelService.GetStatisticsAsync(id, tenantId);
+    }
 }

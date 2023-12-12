@@ -75,21 +75,37 @@ public class ModelService(
         }
     }
 
-    public async Task<StatisticsProduct> GetStatisticsAsync(string id)
+    public async Task<StatisticsProduct> GetStatisticsAsync(string id, Guid tenantId)
     {
-        var product = new StatisticsProduct()
-        {
-            FoundationTypeDistribution = await statisticsRepository.GetFoundationTypeDistributionByIdAsync(id),
-            ConstructionYearDistribution = await statisticsRepository.GetConstructionYearDistributionByIdAsync(id),
-            DataCollectedPercentage = await statisticsRepository.GetDataCollectedPercentageByIdAsync(id),
-            FoundationRiskDistribution = await statisticsRepository.GetFoundationRiskDistributionByIdAsync(id),
-            TotalBuildingRestoredCount = await statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(id),
-            TotalIncidentCount = await statisticsRepository.GetTotalIncidentCountByIdAsync(id),
-            MunicipalityIncidentCount = await statisticsRepository.GetMunicipalityIncidentCountByIdAsync(id),
-            TotalReportCount = await statisticsRepository.GetTotalReportCountByIdAsync(id),
-            MunicipalityReportCount = await statisticsRepository.GetMunicipalityReportCountByIdAsync(id),
-        };
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
 
-        return product;
+        try
+        {
+            var neighborhood = await geocoderTranslation.GetNeighborhoodIdAsync(id);
+
+            var product = new StatisticsProduct()
+            {
+                FoundationTypeDistribution = await statisticsRepository.GetFoundationTypeDistributionByIdAsync(neighborhood.Id),
+                ConstructionYearDistribution = await statisticsRepository.GetConstructionYearDistributionByIdAsync(neighborhood.Id),
+                DataCollectedPercentage = await statisticsRepository.GetDataCollectedPercentageByIdAsync(neighborhood.Id),
+                FoundationRiskDistribution = await statisticsRepository.GetFoundationRiskDistributionByIdAsync(neighborhood.Id),
+                TotalBuildingRestoredCount = await statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(neighborhood.Id),
+                TotalIncidentCount = await statisticsRepository.GetTotalIncidentCountByIdAsync(neighborhood.Id),
+                MunicipalityIncidentCount = await statisticsRepository.GetMunicipalityIncidentCountByIdAsync(neighborhood.Id),
+                TotalReportCount = await statisticsRepository.GetTotalReportCountByIdAsync(neighborhood.Id),
+                MunicipalityReportCount = await statisticsRepository.GetMunicipalityReportCountByIdAsync(neighborhood.Id),
+            };
+
+            return product;
+
+        }
+        catch (EntityNotFoundException)
+        {
+            await analysisRepository.RegisterProductMismatch(id, tenantId);
+
+            logger.LogInformation("{Name} requested product 'statistics' mismatch for identifier: {id}", organization.Name, id);
+
+            throw;
+        }
     }
 }
