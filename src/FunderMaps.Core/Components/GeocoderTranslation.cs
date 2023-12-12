@@ -18,7 +18,7 @@ internal class GeocoderTranslation(
     /// </summary>
     /// <param name="input">Input identifier.</param>
     /// <returns>Geocoder datasource via <see cref="GeocoderDatasource"/>.</returns>
-    private GeocoderDatasource FromIdentifier(string input)
+    private static GeocoderDatasource FromIdentifier(string input)
         => input switch
         {
             string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
@@ -51,7 +51,7 @@ internal class GeocoderTranslation(
     /// <param name="input">Input identifier.</param>
     /// <param name="output">Output identifier.</param>
     /// <returns>Geocoder datasource via <see cref="GeocoderDatasource"/>.</returns>
-    private GeocoderDatasource FromIdentifier(string input, out string output)
+    private static GeocoderDatasource FromIdentifier(string input, out string output)
     {
         output = input;
 

@@ -44,7 +44,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       merely a placeholder. The front framework should bootstrap the application
         //       context if possible.
         services.AddSingleton<IAppContextFactory, AppContextFactory>();
-        services.AddScoped<FunderMaps.Core.AppContext>(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
+        services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
 
         // Register external services in DI container.
         services.AddSingleton<IEmailService, MailgunService>();
@@ -52,6 +52,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
+        services.AddTransient<IModelService, ModelService>();
         services.AddSingleton<OpenAIService>();
         services.AddSingleton<FunderMapsClient>();
 
