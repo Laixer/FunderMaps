@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;

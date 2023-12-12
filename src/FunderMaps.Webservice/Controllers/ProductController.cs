@@ -36,8 +36,8 @@ public sealed class ProductController(
     // TODO: LEGACY
     // GET: api/v3/product/analysis
     [HttpGet("analysis")]
-    public async Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
-        => await GetAnalysisAsync(id);
+    public Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
+        => GetAnalysisAsync(id);
 
     // GET: api/v3/product/analysis
     /// <summary>
