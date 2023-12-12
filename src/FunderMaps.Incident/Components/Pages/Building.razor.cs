@@ -32,10 +32,9 @@ public partial class Building : ComponentBase
         {
             try
             {
-                var address = await GeocoderTranslation.GetAddressIdAsync(Id);
+                var building = await GeocoderTranslation.GetBuildingIdAsync(Id);
 
-                State.Model.Address = address.Id;
-                State.Model.Building = address.BuildingId ?? throw new ArgumentNullException(nameof(address.BuildingId));
+                State.Model.Building = building.Id;
 
                 if (State.Feedback)
                 {
