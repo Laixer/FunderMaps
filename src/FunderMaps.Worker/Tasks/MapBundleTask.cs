@@ -26,6 +26,7 @@ internal sealed class MapBundleTask(
     /// </summary>
     public async Task RunAsync(CancellationToken cancellationToken)
     {
+        // TODO: Split the actual processing into a separate function.
         await foreach (var bundle in bundleRepository.ListAllEnabledAsync())
         {
             try

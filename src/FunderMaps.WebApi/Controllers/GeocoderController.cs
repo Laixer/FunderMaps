@@ -37,7 +37,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     ///     Get neighborhood by identifier.
     /// </summary>
     /// <remarks>
-    ///     Cache response for 8 hours. Building will not change often.
+    ///     Cache response for 8 hours. Neighborhood will not change often.
     /// </remarks>
     [HttpGet("neighborhood/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Neighborhood> GetNeighborhoodAsync(string id)

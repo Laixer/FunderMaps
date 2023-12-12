@@ -1,6 +1,5 @@
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 
@@ -58,9 +57,9 @@ public class GeocoderTranslation(
     /// <returns>Geocoder datasource via <see cref="GeocoderDatasource"/>.</returns>
     private static GeocoderDatasource FromIdentifier(string input, out string output)
     {
-        output = input;
+        output = input.Normalize().Replace(" ", "");
 
-        var source = FromIdentifier(input);
+        var source = FromIdentifier(output);
         switch (source)
         {
             case GeocoderDatasource.NlBagLegacyBuilding:
@@ -111,7 +110,6 @@ public class GeocoderTranslation(
         return source;
     }
 
-    // TODO: Normalize identifiers
     /// <summary>
     ///     Convert geocoder identifier to address entity.
     /// </summary>
@@ -120,15 +118,13 @@ public class GeocoderTranslation(
     /// <remarks>
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Address"/> entity.</returns>
-    public async Task<Address> GetAddressIdAsync(string input)
-        => FromIdentifier(input, out string id) switch
-        {
-            GeocoderDatasource.FunderMaps => await addressRepository.GetByIdAsync(id),
-            GeocoderDatasource.NlBagAddress => await addressRepository.GetByExternalIdAsync(id),
-            _ => throw new EntityNotFoundException("Requested address entity could not be found."),
-        };
+    public async Task<Address> GetAddressIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.FunderMaps => await addressRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await addressRepository.GetByExternalIdAsync(id),
+        _ => throw new EntityNotFoundException("Requested address entity could not be found."),
+    };
 
-    // TODO: Normalize identifiers
     /// <summary>
     ///     Convert geocoder identifier to building entity.
     /// </summary>
@@ -137,16 +133,14 @@ public class GeocoderTranslation(
     /// <remarks>
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Building"/> entity.</returns>
-    public async Task<Building> GetBuildingIdAsync(string input)
-        => FromIdentifier(input, out string id) switch
-        {
-            GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id),
-            GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
-            GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
-            _ => throw new EntityNotFoundException("Requested building entity could not be found."),
-        };
+    public async Task<Building> GetBuildingIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
+        _ => throw new EntityNotFoundException("Requested building entity could not be found."),
+    };
 
-    // TODO: Normalize identifiers
     /// <summary>
     ///     Convert geocoder identifier to neighborhood entity.
     /// </summary>
@@ -155,13 +149,12 @@ public class GeocoderTranslation(
     /// <remarks>
     /// <param name="input">Input identifier.</param>
     /// <returns>If found returns the <see cref="Neighborhood"/> entity.</returns>
-    public async Task<Neighborhood> GetNeighborhoodIdAsync(string input)
-        => FromIdentifier(input, out string id) switch
-        {
-            GeocoderDatasource.FunderMaps => await neighborhoodRepository.GetByIdAsync(id),
-            GeocoderDatasource.NlBagAddress => await neighborhoodRepository.GetByExternalAddressIdAsync(id),
-            GeocoderDatasource.NlBagBuilding => await neighborhoodRepository.GetByExternalBuildingIdAsync(id),
-            GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
-            _ => throw new EntityNotFoundException("Requested neighborhood entity could not be found."),
-        };
+    public async Task<Neighborhood> GetNeighborhoodIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.FunderMaps => await neighborhoodRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await neighborhoodRepository.GetByExternalAddressIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await neighborhoodRepository.GetByExternalBuildingIdAsync(id),
+        GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
+        _ => throw new EntityNotFoundException("Requested neighborhood entity could not be found."),
+    };
 }
