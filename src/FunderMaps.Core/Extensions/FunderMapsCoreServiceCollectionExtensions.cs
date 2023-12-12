@@ -52,7 +52,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
-        services.AddTransient<IModelService, ModelService>();
+        services.AddTransient<ModelService>();
         services.AddSingleton<OpenAIService>();
         services.AddSingleton<FunderMapsClient>();
 

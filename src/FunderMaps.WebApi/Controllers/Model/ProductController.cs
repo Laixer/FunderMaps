@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Services;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +10,7 @@ namespace FunderMaps.WebApi.Controllers.Model;
 ///     Controller for all product endpoints.
 /// </summary>
 [Route("api/product")]
-public sealed class ProductController(IModelService modelService) : ControllerBase
+public sealed class ProductController(ModelService modelService) : ControllerBase
 {
     // GET: api/product/analysis
     /// <summary>

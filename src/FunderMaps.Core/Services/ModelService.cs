@@ -6,12 +6,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Core.Services;
 
-internal class ModelService(
+public class ModelService(
     IGeocoderTranslation geocoderTranslation,
     IAnalysisRepository analysisRepository,
     IStatisticsRepository statisticsRepository,
     IOrganizationRepository organizationRepository,
-    ILogger<ModelService> logger) : IModelService // TODO: Expose model service without interface
+    ILogger<ModelService> logger)
 {
     public async Task<AnalysisProduct> GetAnalysisAsync(string id, Guid tenantId)
     {
