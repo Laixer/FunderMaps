@@ -41,5 +41,5 @@ public class FormFileAttribute : ValidationAttribute
     /// <param name="name">The user-visible name to include in the formatted message.</param>
     /// <returns>A string describing the invalid field.</returns>
     public override string FormatErrorMessage(string name)
-        => $"The input file type is not allowed.";
+        => "The input file type is not allowed.";
 }
