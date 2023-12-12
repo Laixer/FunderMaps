@@ -159,6 +159,8 @@ public class GeocoderTranslation(
         => FromIdentifier(input, out string id) switch
         {
             GeocoderDatasource.FunderMaps => await neighborhoodRepository.GetByIdAsync(id),
+            GeocoderDatasource.NlBagAddress => await neighborhoodRepository.GetByExternalAddressIdAsync(id),
+            GeocoderDatasource.NlBagBuilding => await neighborhoodRepository.GetByExternalBuildingIdAsync(id),
             GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
             _ => throw new EntityNotFoundException("Requested neighborhood entity could not be found."),
         };

@@ -13,4 +13,18 @@ public interface INeighborhoodRepository : IAsyncRepository<Neighborhood, string
     /// <param name="id">External identifier.</param>
     /// <returns>A single neighborhood.</returns>
     Task<Neighborhood> GetByExternalIdAsync(string id);
+
+    /// <summary>
+    ///     Get neighborhood by external address id.
+    /// </summary>
+    /// <param name="id">External address identifier.</param>
+    /// <returns>A single neighborhood.</returns>
+    Task<Neighborhood> GetByExternalAddressIdAsync(string id);
+
+    /// <summary>
+    ///     Get neighborhood by external building id.
+    /// </summary>
+    /// <param name="id">External address identifier.</param>
+    /// <returns>A single neighborhood.</returns>
+    Task<Neighborhood> GetByExternalBuildingIdAsync(string id);
 }

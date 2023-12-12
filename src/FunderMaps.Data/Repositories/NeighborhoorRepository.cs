@@ -49,6 +49,56 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
         return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
     }
 
+    public async Task<Neighborhood> GetByExternalAddressIdAsync(string id)
+    {
+        if (TryGetEntity(id, out Neighborhood? entity))
+        {
+            return entity ?? throw new InvalidOperationException();
+        }
+
+        var sql = @"
+            SELECT  -- Neighborhood
+                    n.id,
+                    n.name,
+                    n.external_id,
+                    n.district_id
+            FROM    geocoder.address AS a
+            JOIN    geocoder.address_building AS ab ON ab.address_id = a.id
+            JOIN    geocoder.building_active AS ba ON ba.id = ab.building_id
+            JOIN    geocoder.neighborhood AS n ON n.id = ba.neighborhood_id
+            WHERE   a.external_id = upper(@external_id)
+            LIMIT   1";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        var neighborhood = await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id });
+        return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
+    }
+
+    public async Task<Neighborhood> GetByExternalBuildingIdAsync(string id)
+    {
+        if (TryGetEntity(id, out Neighborhood? entity))
+        {
+            return entity ?? throw new InvalidOperationException();
+        }
+
+        var sql = @"
+            SELECT  -- Neighborhood
+                    n.id,
+                    n.name,
+                    n.external_id,
+                    n.district_id
+            FROM    geocoder.building_active AS ba
+            JOIN    geocoder.neighborhood AS n on n.id = ba.neighborhood_id
+            WHERE   ba.external_id = upper(@external_id)
+            LIMIT   1";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        var neighborhood = await connection.QuerySingleOrDefaultAsync<Neighborhood>(sql, new { external_id = id });
+        return neighborhood is null ? throw new EntityNotFoundException(nameof(Neighborhood)) : CacheEntity(neighborhood);
+    }
+
     /// <summary>
     ///     Retrieve <see cref="Neighborhood"/> by id.
     /// </summary>
