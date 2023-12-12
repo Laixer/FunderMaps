@@ -4,10 +4,11 @@
 
 <div class="Finish">
     <div class="Finish__Wrapper">
-        <Title Message="Advies" />
 
         @if (State.Feedback)
         {
+            <Title Message="Afgerond!" />
+
             <p class="BodyText BodyText--bold" style="margin-bottom: 26px;">
                 <span>Bedankt voor het doorgeven van uw wijzigingen</span>
             </p>
@@ -39,6 +40,8 @@
         }
         else
         {
+            <Title Message="Advies" />
+
             <p class="BodyText BodyText--bold" style="margin-bottom: 26px;">
                 <span>Bedankt voor het doorgeven van uw melding</span>
             </p>
