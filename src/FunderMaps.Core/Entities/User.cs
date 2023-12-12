@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
-// FUTURE: This used to be a sealed class.
 /// <summary>
 ///     User entity.
 /// </summary>
@@ -51,7 +50,6 @@ public class User : IEntityIdentifier<Guid>
     [Phone]
     public string? PhoneNumber { get; set; }
 
-    // TODO: Move up
     /// <summary>
     ///     User role.
     /// </summary>
