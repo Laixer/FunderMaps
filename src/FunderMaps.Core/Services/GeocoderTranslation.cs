@@ -3,7 +3,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 
-namespace FunderMaps.Core.Components;
+namespace FunderMaps.Core.Services;
 
 /// <summary>
 ///     Translate any geocoder identifier to an internal entity.

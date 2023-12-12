@@ -1,4 +1,4 @@
-using FunderMaps.Core.Components;
+using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Components;
 
 namespace FunderMaps.Incident.Components.Pages;
