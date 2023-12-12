@@ -46,10 +46,10 @@ public class SignInService(
                 Subject = "FunderMaps - Wachtwoord reset",
                 Template = "reset-password",
                 Varaibles = new Dictionary<string, object>
-            {
-                { "creatorName", user.ToString() },
-                { "resetToken", "123456" },
-            }
+                {
+                    { "creatorName", user.ToString() },
+                    { "resetToken", "123456" },
+                }
             });
         }
         catch

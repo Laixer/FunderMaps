@@ -37,11 +37,6 @@ internal class MailgunService : IEmailService
     /// <param name="token">Cancellation token.</param>
     public async Task SendAsync(EmailMessage emailMessage, CancellationToken token)
     {
-        if (emailMessage is null)
-        {
-            throw new ArgumentNullException(nameof(emailMessage));
-        }
-
         if (!emailMessage.ToAddresses.Any())
         {
             emailMessage.ToAddresses = new List<EmailAddress>
@@ -62,7 +57,7 @@ internal class MailgunService : IEmailService
         {
             new("from", $"{_options.DefaultSenderName} <{_options.DefaultSenderAddress}>"),
             new("to", $"{recipient.Name} <{recipient.Address}>"),
-            new("subject", emailMessage.Subject ?? throw new ArgumentNullException(nameof(emailMessage.Subject))),
+            new("subject", emailMessage.Subject ?? throw new ArgumentException("Email must have subject", nameof(emailMessage))),
         };
 
         if (emailMessage.Template is not null)
@@ -75,7 +70,7 @@ internal class MailgunService : IEmailService
         }
         else
         {
-            throw new ArgumentNullException("No content specified.", nameof(emailMessage));
+            throw new ArgumentException("No content specified, provide either Template or Content", nameof(emailMessage));
         }
 
         if (emailMessage.Varaibles.Any())
@@ -92,7 +87,7 @@ internal class MailgunService : IEmailService
 
         _logger.LogDebug("Sending message to {Name} <{Address}>", recipient.Name, recipient.Address);
 
-        var response = await client.SendAsync(requestMessage);
+        var response = await client.SendAsync(requestMessage, token);
         response.EnsureSuccessStatusCode();
 
         _logger.LogDebug("Message sent with success");
@@ -101,5 +96,5 @@ internal class MailgunService : IEmailService
     /// <summary>
     ///     Test the email service backend.
     /// </summary>
-    public async Task HealthCheck() => await Task.CompletedTask;
+    public Task HealthCheck() => Task.CompletedTask;
 }
