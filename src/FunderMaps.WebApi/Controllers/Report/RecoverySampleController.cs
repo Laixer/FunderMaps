@@ -3,7 +3,6 @@ using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using Microsoft.AspNetCore.Authorization;
@@ -76,7 +75,7 @@ public sealed class RecoverySampleController(
     /// </remarks>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<RecoverySample> CreateAsync(int recoveryId, [FromBody] RecoverySample recoverySample, [FromServices] IGeocoderTranslation geocoderTranslation)
+    public async Task<RecoverySample> CreateAsync(int recoveryId, [FromBody] RecoverySample recoverySample)
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 

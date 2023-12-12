@@ -1,3 +1,4 @@
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
@@ -11,16 +12,11 @@ namespace FunderMaps.Core.Services;
 ///     Service to the incidents.
 /// </summary>
 internal class FeedbackService(
-    IGeocoderTranslation geocoderTranslation,
+    GeocoderTranslation geocoderTranslation,
     IEmailService emailService,
     IBlobStorageService blobStorageService,
     ILogger<FeedbackService> logger)
 {
-    private readonly IGeocoderTranslation _geocoderTranslation = geocoderTranslation;
-    private readonly IEmailService _emailService = emailService;
-    private readonly IBlobStorageService _blobStorageService = blobStorageService;
-    private readonly ILogger<FeedbackService> logger = logger;
-
     public static string ToFoundationType(FoundationType? value)
         => value switch
         {
@@ -139,7 +135,7 @@ internal class FeedbackService(
     /// <param name="meta">Optional metadata.</param>
     public async Task<Incident> AddAsync(Incident incident, object? meta = null)
     {
-        var address = await _geocoderTranslation.GetAddressIdAsync(incident.Address);
+        var address = await geocoderTranslation.GetAddressIdAsync(incident.Address);
 
         incident.Meta = meta;
 
@@ -151,7 +147,7 @@ internal class FeedbackService(
         {
             foreach (var file in incident.DocumentFile)
             {
-                Uri link = await _blobStorageService.GetAccessLinkAsync(
+                Uri link = await blobStorageService.GetAccessLinkAsync(
                     containerName: Core.Constants.IncidentStorageFolderName,
                     fileName: file,
                     hoursValid: 24 * 7 * 4);
@@ -160,7 +156,7 @@ internal class FeedbackService(
             }
         }
 
-        await _emailService.SendAsync(new EmailMessage
+        await emailService.SendAsync(new EmailMessage
         {
             ToAddresses = new[]
             {

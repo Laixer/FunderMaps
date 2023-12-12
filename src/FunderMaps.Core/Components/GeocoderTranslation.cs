@@ -9,9 +9,10 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Translate any geocoder identifier to an internal entity.
 /// </summary>
-internal class GeocoderTranslation(
+public class GeocoderTranslation(
     IAddressRepository addressRepository,
-    IBuildingRepository buildingRepository) : IGeocoderTranslation
+    IBuildingRepository buildingRepository,
+    INeighborhoodRepository neighborhoodRepository)
 {
     /// <summary>
     ///     Identify the geocoder datasource from the input.
@@ -22,6 +23,10 @@ internal class GeocoderTranslation(
         => input switch
         {
             string when input.StartsWith("gfm-", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FunderMaps,
+            string when input.StartsWith("FIR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsIncidentReport,
+            string when input.StartsWith("FQR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsInquiryReport,
+            string when input.StartsWith("FRR", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.FundermapsRecoveryReport,
+            string when input.Length == 6 && char.IsLetter(input[4]) && char.IsLetter(input[4]) => GeocoderDatasource.NlPostcode,
             string when input.Length == ("NL.IMBAG.PAND.".Length + 16) && input.StartsWith("NL.IMBAG.PAND.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBuilding,
             string when input.Length == ("NL.IMBAG.LIGPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.LIGPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagBerth,
             string when input.Length == ("NL.IMBAG.STANDPLAATS.".Length + 16) && input.StartsWith("NL.IMBAG.STANDPLAATS.", StringComparison.InvariantCultureIgnoreCase) => GeocoderDatasource.NlBagPosting,
@@ -106,6 +111,7 @@ internal class GeocoderTranslation(
         return source;
     }
 
+    // TODO: Normalize identifiers
     /// <summary>
     ///     Convert geocoder identifier to address entity.
     /// </summary>
@@ -122,6 +128,7 @@ internal class GeocoderTranslation(
             _ => throw new EntityNotFoundException("Requested address entity could not be found."),
         };
 
+    // TODO: Normalize identifiers
     /// <summary>
     ///     Convert geocoder identifier to building entity.
     /// </summary>
@@ -137,5 +144,22 @@ internal class GeocoderTranslation(
             GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
             GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
             _ => throw new EntityNotFoundException("Requested building entity could not be found."),
+        };
+
+    // TODO: Normalize identifiers
+    /// <summary>
+    ///     Convert geocoder identifier to neighborhood entity.
+    /// </summary>
+    /// <remarks>
+    ///    Accepts neighborhood identifiers for either CBS or neighborhood identifier FunderMaps.
+    /// <remarks>
+    /// <param name="input">Input identifier.</param>
+    /// <returns>If found returns the <see cref="Neighborhood"/> entity.</returns>
+    public async Task<Neighborhood> GetNeighborhoodIdAsync(string input)
+        => FromIdentifier(input, out string id) switch
+        {
+            GeocoderDatasource.FunderMaps => await neighborhoodRepository.GetByIdAsync(id),
+            GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
+            _ => throw new EntityNotFoundException("Requested neighborhood entity could not be found."),
         };
 }

@@ -71,6 +71,26 @@ public enum GeocoderDatasource
     NlCbsState = 18,
 
     /// <summary>
+    ///     FunderMaps incident report identifier.
+    /// </summary>
+    FundermapsIncidentReport = 19,
+
+    /// <summary>
+    ///     FunderMaps inquiry report identifier.
+    /// </summary>
+    FundermapsInquiryReport = 20,
+
+    /// <summary>
+    ///     FunderMaps recovery report identifier.
+    /// </summary>
+    FundermapsRecoveryReport = 21,
+
+    /// <summary>
+    ///    Postcode.
+    /// </summary>
+    NlPostcode = 22,
+
+    /// <summary>
     ///     Unknown identifier.
     /// </summary>
     Unknown = 50,

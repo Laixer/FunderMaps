@@ -1,5 +1,5 @@
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
@@ -8,7 +8,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for address operations.
 /// </summary>
 [Route("api/geocoder")]
-public sealed class GeocoderController(IGeocoderTranslation geocoderTranslation) : ControllerBase
+public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) : ControllerBase
 {
     // GET: api/geocoder/address/{id}
     /// <summary>
@@ -31,4 +31,15 @@ public sealed class GeocoderController(IGeocoderTranslation geocoderTranslation)
     [HttpGet("building/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Building> GetBuildingAsync(string id)
         => geocoderTranslation.GetBuildingIdAsync(id);
+
+    // GET: api/geocoder/neighborhood/{id}
+    /// <summary>
+    ///     Get neighborhood by identifier.
+    /// </summary>
+    /// <remarks>
+    ///     Cache response for 8 hours. Building will not change often.
+    /// </remarks>
+    [HttpGet("neighborhood/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public Task<Neighborhood> GetNeighborhoodAsync(string id)
+        => geocoderTranslation.GetNeighborhoodIdAsync(id);
 }

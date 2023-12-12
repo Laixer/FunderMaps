@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using FunderMaps.AspNetCore.Authentication;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -75,7 +75,7 @@ public sealed class InquirySampleController(
     /// </remarks>
     [HttpPost]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<InquirySample> CreateAsync(int inquiryId, [FromBody] InquirySample inquirySample, [FromServices] IGeocoderTranslation geocoderTranslation)
+    public async Task<InquirySample> CreateAsync(int inquiryId, [FromBody] InquirySample inquirySample, [FromServices] GeocoderTranslation geocoderTranslation)
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
@@ -109,7 +109,7 @@ public sealed class InquirySampleController(
     /// </remarks>
     [HttpPut("{id:int}")]
     [Authorize(Policy = "WriterAdministratorPolicy")]
-    public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample, [FromServices] IGeocoderTranslation geocoderTranslation)
+    public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample, [FromServices] GeocoderTranslation geocoderTranslation)
     {
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 

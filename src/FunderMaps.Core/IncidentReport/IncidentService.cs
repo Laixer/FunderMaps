@@ -1,3 +1,4 @@
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
@@ -16,7 +17,7 @@ namespace FunderMaps.Core.IncidentReport;
 internal class IncidentService(
     IOptions<IncidentOptions> options,
     IIncidentRepository incidentRepository,
-    IGeocoderTranslation geocoderTranslation,
+    GeocoderTranslation geocoderTranslation,
     IEmailService emailService,
     IBlobStorageService blobStorageService,
     ILogger<IncidentService> logger) : IIncidentService

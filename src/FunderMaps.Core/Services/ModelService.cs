@@ -1,5 +1,5 @@
+using FunderMaps.Core.Components;
 using FunderMaps.Core.Exceptions;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;
 using Microsoft.Extensions.Logging;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 namespace FunderMaps.Core.Services;
 
 public class ModelService(
-    IGeocoderTranslation geocoderTranslation,
+    GeocoderTranslation geocoderTranslation,
     IAnalysisRepository analysisRepository,
     IStatisticsRepository statisticsRepository,
     IOrganizationRepository organizationRepository,

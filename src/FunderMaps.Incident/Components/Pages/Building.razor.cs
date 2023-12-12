@@ -1,4 +1,4 @@
-using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Components;
 using Microsoft.AspNetCore.Components;
 
 namespace FunderMaps.Incident.Components.Pages;
@@ -12,7 +12,7 @@ public partial class Building : ComponentBase
     private ILogger<Building> Logger { get; set; } = default!;
 
     [Inject]
-    private IGeocoderTranslation GeocoderTranslation { get; set; } = default!;
+    private GeocoderTranslation GeocoderTranslation { get; set; } = default!;
 
     [CascadingParameter]
     State State { get; set; } = default!;
