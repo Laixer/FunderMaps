@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +9,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for mapset.
 /// </summary>
 [Route("api/mapset")]
-public sealed class MapsetController(IMapsetRepository mapsetRepository) : ControllerBase
+public sealed class MapsetController(IMapsetRepository mapsetRepository) : FunderMapsController
 {
     // TODO: This method should accept more than GUID. The id could also be a string.
     // GET: api/mapset/{id}
@@ -32,9 +31,7 @@ public sealed class MapsetController(IMapsetRepository mapsetRepository) : Contr
 
         if (User.Identity?.IsAuthenticated ?? false)
         {
-            var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-            await foreach (var set in mapsetRepository.GetByOrganizationIdAsync2(tenantId))
+            await foreach (var set in mapsetRepository.GetByOrganizationIdAsync2(TenantId))
             {
                 mapSets.Add(set);
             }

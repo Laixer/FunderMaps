@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
@@ -10,7 +11,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 ///     Endpoint controller for application contractors.
 /// </summary>
 [Route("api")]
-public sealed class ContractorController(IContractorRepository contractorRepository) : ControllerBase
+public sealed class ContractorController(IContractorRepository contractorRepository) : FunderMapsController
 {
     // GET: api/contractor
     /// <summary>

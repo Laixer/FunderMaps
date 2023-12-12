@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +14,8 @@ namespace FunderMaps.WebApi.Controllers;
 ///     user session. Therefore the user context must be active.
 /// </remarks>
 [Authorize, Route("api/user")]
-public class UserController(IUserRepository userRepository) : ControllerBase
+public class UserController(IUserRepository userRepository) : FunderMapsController
 {
-    // TODO: Get this from base controller.
-    private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-
     // GET: user
     /// <summary>
     ///     Return session user.

@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder;
 public sealed class ReportController(
     IIncidentRepository incidentRepository,
     IInquirySampleRepository inquirySampleRepository,
-    IRecoverySampleRepository recoverySampleRepository) : ControllerBase
+    IRecoverySampleRepository recoverySampleRepository) : FunderMapsController
 {
     // GET: api/report/{id}
     /// <summary>

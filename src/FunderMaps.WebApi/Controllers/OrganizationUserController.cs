@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
@@ -21,7 +20,7 @@ namespace FunderMaps.WebApi.Controllers;
 public class OrganizationUserController(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,
-    SignInService signInService) : ControllerBase
+    SignInService signInService) : FunderMapsController
 {
     // GET: organization/user
     /// <summary>
@@ -30,9 +29,7 @@ public class OrganizationUserController(
     [HttpGet]
     public async IAsyncEnumerable<OrganizationUser> GetAllUserAsync([FromQuery] PaginationDto pagination)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        await foreach (var user in organizationUserRepository.ListAllAsync(tenantId, pagination.Navigation))
+        await foreach (var user in organizationUserRepository.ListAllAsync(TenantId, pagination.Navigation))
         {
             yield return user;
         }
@@ -46,12 +43,10 @@ public class OrganizationUserController(
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateUserAsync(Guid id, [FromBody] User user)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         user.Id = id;
 
         // TODO: Move to db
-        if (!await organizationUserRepository.IsUserInOrganization(tenantId, user.Id))
+        if (!await organizationUserRepository.IsUserInOrganization(TenantId, user.Id))
         {
             throw new AuthorizationException();
         }
@@ -68,10 +63,8 @@ public class OrganizationUserController(
     [HttpPost("{id:guid}/change-organization-role")]
     public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, [FromBody] ChangeOrganizationRoleDto input)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         // TODO: Move to db
-        if (!await organizationUserRepository.IsUserInOrganization(tenantId, id))
+        if (!await organizationUserRepository.IsUserInOrganization(TenantId, id))
         {
             throw new AuthorizationException();
         }
@@ -89,10 +82,8 @@ public class OrganizationUserController(
     [HttpPost("{id:guid}/change-password")]
     public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ChangePasswordDto input)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         // TODO: Move to db
-        if (!await organizationUserRepository.IsUserInOrganization(tenantId, id))
+        if (!await organizationUserRepository.IsUserInOrganization(TenantId, id))
         {
             throw new AuthorizationException();
         }
@@ -113,10 +104,8 @@ public class OrganizationUserController(
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteUserAsync(Guid id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         // TODO: Move to db
-        if (!await organizationUserRepository.IsUserInOrganization(tenantId, id))
+        if (!await organizationUserRepository.IsUserInOrganization(TenantId, id))
         {
             throw new AuthorizationException();
         }

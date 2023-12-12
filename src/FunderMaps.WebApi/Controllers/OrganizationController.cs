@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -15,19 +14,15 @@ namespace FunderMaps.WebApi.Controllers;
 ///     user session. Therefore the user context must be active.
 /// </remarks>
 [Authorize, Route("api/organization")]
-public class OrganizationController(IOrganizationRepository organizationRepository) : ControllerBase
+public class OrganizationController(IOrganizationRepository organizationRepository) : FunderMapsController
 {
     // GET: organization
     /// <summary>
     ///     Return session organization.
     /// </summary>
     [HttpGet]
-    public async Task<Organization> GetAsync()
-    {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return await organizationRepository.GetByIdAsync(tenantId);
-    }
+    public Task<Organization> GetAsync()
+        => organizationRepository.GetByIdAsync(TenantId);
 
     // PUT: organization
     /// <summary>
@@ -37,7 +32,7 @@ public class OrganizationController(IOrganizationRepository organizationReposito
     [HttpPut]
     public async Task<IActionResult> UpdateAsync([FromBody] Organization organization)
     {
-        organization.Id = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+        organization.Id = TenantId;
 
         await organizationRepository.UpdateAsync(organization);
 

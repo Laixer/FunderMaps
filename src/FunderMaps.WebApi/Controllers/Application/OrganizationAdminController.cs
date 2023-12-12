@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -21,7 +22,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 /// </remarks>
 [Authorize(Policy = "AdministratorPolicy")]
 [Route("api/admin/organization")]
-public sealed class OrganizationAdminController(IOrganizationRepository organizationRepository) : ControllerBase
+public sealed class OrganizationAdminController(IOrganizationRepository organizationRepository) : FunderMapsController
 {
     // GET: api/admin/organization/stats
     /// <summary>

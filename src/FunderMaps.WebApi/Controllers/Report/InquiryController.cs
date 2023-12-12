@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Email;
@@ -12,7 +12,6 @@ using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace FunderMaps.WebApi.Controllers.Report;
 
@@ -28,7 +27,7 @@ public sealed class InquiryController(
     IUserRepository userRepository,
     IInquiryRepository inquiryRepository,
     IBlobStorageService blobStorageService,
-    IEmailService emailService) : ControllerBase
+    IEmailService emailService) : FunderMapsController
 {
     // GET: api/inquiry/stats
     /// <summary>
@@ -37,11 +36,9 @@ public sealed class InquiryController(
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync()
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         var output = new DatasetStatsDto()
         {
-            Count = await inquiryRepository.CountAsync(tenantId),
+            Count = await inquiryRepository.CountAsync(TenantId),
         };
 
         return Ok(output);
@@ -54,9 +51,7 @@ public sealed class InquiryController(
     [HttpGet("{id:int}")]
     public async Task<Inquiry> GetAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return await inquiryRepository.GetByIdAsync(id, tenantId);
+        return await inquiryRepository.GetByIdAsync(id, TenantId);
     }
 
     // GET: api/inquiry
@@ -66,9 +61,7 @@ public sealed class InquiryController(
     [HttpGet]
     public async IAsyncEnumerable<Inquiry> GetAllAsync([FromQuery] PaginationDto pagination)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        await foreach (var inquiry in inquiryRepository.ListAllAsync(pagination.Navigation, tenantId))
+        await foreach (var inquiry in inquiryRepository.ListAllAsync(pagination.Navigation, TenantId))
         {
             yield return inquiry;
         }
@@ -82,20 +75,17 @@ public sealed class InquiryController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<Inquiry> CreateAsync([FromBody] Inquiry inquiry)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+        inquiry.Attribution.Creator = UserId;
+        inquiry.Attribution.Owner = TenantId;
 
-        inquiry.Attribution.Creator = userId;
-        inquiry.Attribution.Owner = tenantId;
-
-        if (inquiry.Attribution.Reviewer == userId)
+        if (inquiry.Attribution.Reviewer == UserId)
         {
             throw new AuthorizationException();
         }
 
         inquiry.Id = await inquiryRepository.AddAsync(inquiry);
 
-        return await inquiryRepository.GetByIdAsync(inquiry.Id, tenantId);
+        return await inquiryRepository.GetByIdAsync(inquiry.Id, TenantId);
     }
 
     // POST: api/inquiry/upload-document
@@ -129,9 +119,7 @@ public sealed class InquiryController(
     [HttpGet("{id:int}/download")]
     public async Task<IActionResult> GetDocumentAccessLinkAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        Inquiry inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
+        Inquiry inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
         Uri link = await blobStorageService.GetAccessLinkAsync(
             containerName: Core.Constants.InquiryStorageFolderName,
             fileName: inquiry.DocumentFile,
@@ -153,14 +141,11 @@ public sealed class InquiryController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int id, [FromBody] Inquiry inquiry)
     {
-        var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         inquiry.Id = id;
-        inquiry.Attribution.Creator = userId;
-        inquiry.Attribution.Owner = tenantId;
+        inquiry.Attribution.Creator = UserId;
+        inquiry.Attribution.Owner = TenantId;
 
-        if (inquiry.Attribution.Reviewer == userId)
+        if (inquiry.Attribution.Reviewer == UserId)
         {
             throw new AuthorizationException();
         }
@@ -173,7 +158,7 @@ public sealed class InquiryController(
         if (inquiry.State.AuditStatus == AuditStatus.Rejected)
         {
             inquiry.State.TransitionToPending();
-            await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+            await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
         }
 
         return NoContent();
@@ -187,12 +172,10 @@ public sealed class InquiryController(
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> ResetAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
 
         inquiry.State.TransitionToPending();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
 
         return NoContent();
     }
@@ -205,15 +188,13 @@ public sealed class InquiryController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> SetStatusReviewAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
+        var organization = await organizationRepository.GetByIdAsync(TenantId);
         var reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         var creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToReview();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
 
         await emailService.SendAsync(new EmailMessage
         {
@@ -241,15 +222,12 @@ public sealed class InquiryController(
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusRejectedAsync(int id, StatusChangeDto input)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
         var reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         var creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToRejected();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
 
         await emailService.SendAsync(new EmailMessage
         {
@@ -280,15 +258,12 @@ public sealed class InquiryController(
     [Authorize(Policy = "VerifierAdministratorPolicy")]
     public async Task<IActionResult> SetStatusApprovedAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        var inquiry = await inquiryRepository.GetByIdAsync(id, tenantId);
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(id, TenantId);
         var reviewer = await userRepository.GetByIdAsync(inquiry.Attribution.Reviewer);
         var creator = await userRepository.GetByIdAsync(inquiry.Attribution.Creator);
 
         inquiry.State.TransitionToDone();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
 
         await emailService.SendAsync(new EmailMessage
         {
@@ -318,9 +293,7 @@ public sealed class InquiryController(
     [Authorize(Policy = "SuperuserAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        await inquiryRepository.DeleteAsync(id, tenantId);
+        await inquiryRepository.DeleteAsync(id, TenantId);
 
         return NoContent();
     }

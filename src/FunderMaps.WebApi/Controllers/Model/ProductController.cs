@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+﻿using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc;
@@ -10,31 +9,23 @@ namespace FunderMaps.WebApi.Controllers.Model;
 ///     Controller for all product endpoints.
 /// </summary>
 [Route("api/product")]
-public sealed class ProductController(ModelService modelService) : ControllerBase
+public sealed class ProductController(ModelService modelService) : FunderMapsController
 {
     // GET: api/product/analysis
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
     [HttpGet("analysis/{id}")]
-    public async Task<AnalysisProduct> GetAnalysisAsync(string id)
-    {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return await modelService.GetAnalysisAsync(id, tenantId);
-    }
+    public Task<AnalysisProduct> GetAnalysisAsync(string id)
+        => modelService.GetAnalysisAsync(id, TenantId);
 
     // GET: api/product/at_risk
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
     [HttpGet("at_risk/{id}")]
-    public async Task<bool> GetRiskIndexAsync(string id)
-    {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return await modelService.GetRiskIndexAsync(id, tenantId);
-    }
+    public Task<bool> GetRiskIndexAsync(string id)
+        => modelService.GetRiskIndexAsync(id, TenantId);
 
     // GET: api/product/statistics
     /// <summary>
@@ -42,9 +33,5 @@ public sealed class ProductController(ModelService modelService) : ControllerBas
     /// </summary>
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
-    {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return modelService.GetStatisticsAsync(id, tenantId);
-    }
+        => modelService.GetStatisticsAsync(id, TenantId);
 }

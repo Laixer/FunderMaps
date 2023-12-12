@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Entities;
@@ -23,7 +24,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 public sealed class OrganizationUserAdminController(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,
-    SignInService signInService) : ControllerBase
+    SignInService signInService) : FunderMapsController
 {
     // POST: api/admin/organization/{id}/user
     /// <summary>

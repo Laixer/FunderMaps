@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -19,7 +18,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 [Route("api/recovery/{recoveryId}/sample")]
 public sealed class RecoverySampleController(
     IRecoverySampleRepository recoverySampleRepository,
-    IRecoveryRepository recoveryRepository) : ControllerBase
+    IRecoveryRepository recoveryRepository) : FunderMapsController
 {
     // GET: api/recovery/{id}/sample/stats
     /// <summary>
@@ -28,11 +27,9 @@ public sealed class RecoverySampleController(
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int recoveryId)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         var output = new DatasetStatsDto()
         {
-            Count = await recoverySampleRepository.CountAsync(recoveryId, tenantId),
+            Count = await recoverySampleRepository.CountAsync(recoveryId, TenantId),
         };
 
         return Ok(output);
@@ -43,12 +40,8 @@ public sealed class RecoverySampleController(
     ///     Return recovery sample by id.
     /// </summary>
     [HttpGet("{id}")]
-    public async Task<RecoverySample> GetAsync(int id)
-    {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return await recoverySampleRepository.GetByIdAsync(id, tenantId);
-    }
+    public Task<RecoverySample> GetAsync(int id)
+        => recoverySampleRepository.GetByIdAsync(id, TenantId);
 
     // GET: api/recovery/{id}/sample
     /// <summary>
@@ -57,9 +50,7 @@ public sealed class RecoverySampleController(
     [HttpGet]
     public async IAsyncEnumerable<RecoverySample> GetAllAsync(int recoveryId, [FromQuery] PaginationDto pagination)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        await foreach (var recoverySample in recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation, tenantId))
+        await foreach (var recoverySample in recoverySampleRepository.ListAllAsync(recoveryId, pagination.Navigation, TenantId))
         {
             yield return recoverySample;
         }
@@ -77,24 +68,22 @@ public sealed class RecoverySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<RecoverySample> CreateAsync(int recoveryId, [FromBody] RecoverySample recoverySample)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         // var address = await geocoderTranslation.GetAddressIdAsync(recoverySample.Address);
 
         // recoverySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         recoverySample.Recovery = recoveryId;
 
-        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, TenantId);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
         await recoverySampleRepository.AddAsync(recoverySample);
-        recoverySample = await recoverySampleRepository.GetByIdAsync(recoverySample.Id, tenantId);
+        recoverySample = await recoverySampleRepository.GetByIdAsync(recoverySample.Id, TenantId);
 
         recovery.State.TransitionToPending();
-        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, TenantId);
 
         return recoverySample;
     }
@@ -111,21 +100,19 @@ public sealed class RecoverySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int recoveryId, int id, [FromBody] RecoverySample recoverySample)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         recoverySample.Id = id;
         recoverySample.Recovery = recoveryId;
 
-        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, TenantId);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await recoverySampleRepository.UpdateAsync(recoverySample, tenantId);
+        await recoverySampleRepository.UpdateAsync(recoverySample, TenantId);
 
         recovery.State.TransitionToPending();
-        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+        await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, TenantId);
 
         return NoContent();
     }
@@ -142,22 +129,20 @@ public sealed class RecoverySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+        var recoverySample = await recoverySampleRepository.GetByIdAsync(id, TenantId);
 
-        var recoverySample = await recoverySampleRepository.GetByIdAsync(id, tenantId);
-
-        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, tenantId);
+        var recovery = await recoveryRepository.GetByIdAsync(recoverySample.Recovery, TenantId);
         if (!recovery.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await recoverySampleRepository.DeleteAsync(recoverySample.Id, tenantId);
+        await recoverySampleRepository.DeleteAsync(recoverySample.Id, TenantId);
 
-        if (await recoverySampleRepository.CountAsync(recoverySample.Recovery, tenantId) == 0)
+        if (await recoverySampleRepository.CountAsync(recoverySample.Recovery, TenantId) == 0)
         {
             recovery.State.TransitionToTodo();
-            await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, tenantId);
+            await recoveryRepository.SetAuditStatusAsync(recovery.Id, recovery, TenantId);
         }
 
         return NoContent();

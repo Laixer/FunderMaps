@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -20,7 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Report;
 public sealed class InquirySampleController(
     IInquiryRepository inquiryRepository,
     IInquirySampleRepository inquirySampleRepository,
-    GeocoderTranslation geocoderTranslation) : ControllerBase
+    GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
     // GET: api/inquiry/{id}/sample/stats
     /// <summary>
@@ -29,11 +28,9 @@ public sealed class InquirySampleController(
     [HttpGet("stats")]
     public async Task<IActionResult> GetStatsAsync(int inquiryId)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         var output = new DatasetStatsDto()
         {
-            Count = await inquirySampleRepository.CountAsync(inquiryId, tenantId),
+            Count = await inquirySampleRepository.CountAsync(inquiryId, TenantId),
         };
 
         return Ok(output);
@@ -45,11 +42,7 @@ public sealed class InquirySampleController(
     /// </summary>
     [HttpGet("{id}")]
     public Task<InquirySample> GetAsync(int id)
-    {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        return inquirySampleRepository.GetByIdAsync(id, tenantId);
-    }
+        => inquirySampleRepository.GetByIdAsync(id, TenantId);
 
     // GET: api/inquiry/{id}/sample
     /// <summary>
@@ -58,9 +51,7 @@ public sealed class InquirySampleController(
     [HttpGet]
     public async IAsyncEnumerable<InquirySample> GetAllAsync(int inquiryId, [FromQuery] PaginationDto pagination)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
-        await foreach (var item in inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, tenantId))
+        await foreach (var item in inquirySampleRepository.ListAllAsync(inquiryId, pagination.Navigation, TenantId))
         {
             yield return item;
         }
@@ -78,15 +69,13 @@ public sealed class InquirySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<InquirySample> CreateAsync(int inquiryId, [FromBody] InquirySample inquirySample)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
 
         inquirySample.Address = address.Id;
         inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
         inquirySample.Inquiry = inquiryId;
 
-        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, TenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
@@ -95,7 +84,7 @@ public sealed class InquirySampleController(
         inquirySample.Id = await inquirySampleRepository.AddAsync(inquirySample);
 
         inquiry.State.TransitionToPending();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
 
         return inquirySample;
     }
@@ -112,8 +101,6 @@ public sealed class InquirySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> UpdateAsync(int inquiryId, int id, [FromBody] InquirySample inquirySample)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         var address = await geocoderTranslation.GetAddressIdAsync(inquirySample.Address);
 
         inquirySample.Id = id;
@@ -121,16 +108,16 @@ public sealed class InquirySampleController(
         inquirySample.Address = address.Id;
         inquirySample.Building = address.BuildingId ?? throw new InvalidOperationException();
 
-        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, TenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await inquirySampleRepository.UpdateAsync(inquirySample, tenantId);
+        await inquirySampleRepository.UpdateAsync(inquirySample, TenantId);
 
         inquiry.State.TransitionToPending();
-        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+        await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
 
         return NoContent();
     }
@@ -147,22 +134,20 @@ public sealed class InquirySampleController(
     [Authorize(Policy = "WriterAdministratorPolicy")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
+        var inquirySample = await inquirySampleRepository.GetByIdAsync(id, TenantId);
 
-        var inquirySample = await inquirySampleRepository.GetByIdAsync(id, tenantId);
-
-        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, tenantId);
+        var inquiry = await inquiryRepository.GetByIdAsync(inquirySample.Inquiry, TenantId);
         if (!inquiry.State.AllowWrite)
         {
             throw new EntityReadOnlyException();
         }
 
-        await inquirySampleRepository.DeleteAsync(inquirySample.Id, tenantId);
+        await inquirySampleRepository.DeleteAsync(inquirySample.Id, TenantId);
 
-        if (await inquirySampleRepository.CountAsync(inquiry.Id, tenantId) == 0)
+        if (await inquirySampleRepository.CountAsync(inquiry.Id, TenantId) == 0)
         {
             inquiry.State.TransitionToTodo();
-            await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, tenantId);
+            await inquiryRepository.SetAuditStatusAsync(inquiry.Id, inquiry, TenantId);
         }
 
         return NoContent();

@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
@@ -20,7 +19,7 @@ namespace FunderMaps.WebApi.Controllers.Application;
 [Route("api")]
 public sealed class ReviewerController(
     IOrganizationUserRepository organizationUserRepository,
-    IUserRepository userRepository) : ControllerBase
+    IUserRepository userRepository) : FunderMapsController
 {
     // GET: api/reviewer
     /// <summary>
@@ -29,10 +28,8 @@ public sealed class ReviewerController(
     [HttpGet("reviewer"), ResponseCache(Duration = 60 * 60, VaryByHeader = "Authorization", Location = ResponseCacheLocation.Client)]
     public async IAsyncEnumerable<User> GetAllAsync([FromQuery] PaginationDto pagination)
     {
-        var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
-
         var roles = new OrganizationRole[] { OrganizationRole.Verifier, OrganizationRole.Superuser };
-        await foreach (var user in organizationUserRepository.ListAllByRoleAsync(tenantId, roles, pagination.Navigation))
+        await foreach (var user in organizationUserRepository.ListAllByRoleAsync(TenantId, roles, pagination.Navigation))
         {
             yield return await userRepository.GetByIdAsync(user);
         }

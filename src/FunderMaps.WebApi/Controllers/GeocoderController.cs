@@ -1,3 +1,4 @@
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for address operations.
 /// </summary>
 [Route("api/geocoder")]
-public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) : ControllerBase
+public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
     // GET: api/geocoder/address/{id}
     /// <summary>

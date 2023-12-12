@@ -1,6 +1,6 @@
 using System.Security.Authentication;
-using System.Security.Claims;
 using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.AspNetCore.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -14,11 +14,8 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for application authentication.
 /// </summary>
 [Authorize, Route("api/auth")]
-public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : ControllerBase
+public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : FunderMapsController
 {
-    // TODO: Get this from base controller.
-    private Guid UserId => Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException());
-
     // POST: api/auth/signin
     /// <summary>
     ///     User sign in endpoint.
