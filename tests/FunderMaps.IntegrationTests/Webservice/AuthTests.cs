@@ -9,30 +9,22 @@ namespace FunderMaps.IntegrationTests.Webservice;
 /// <summary>
 ///     Tests our authentication.
 /// </summary>
-public class AuthTests : IClassFixture<WebserviceFixtureFactory>
+public class AuthTests(WebserviceFixtureFactory factory) : IClassFixture<WebserviceFixtureFactory>
 {
-    private WebserviceFixtureFactory Factory { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public AuthTests(WebserviceFixtureFactory factory)
-        => Factory = factory;
-
     [Fact]
     public async Task SignInReturnSuccessAndToken()
     {
-        await TestStub.LoginAsync(Factory, "Javier40@yahoo.com", "fundermaps");
-        await TestStub.LoginAsync(Factory, "Freda@contoso.com", "fundermaps");
-        await TestStub.LoginAsync(Factory, "patsy@contoso.com", "fundermaps");
-        await TestStub.LoginAsync(Factory, "lester@contoso.com", "fundermaps");
+        await TestStub.LoginAsync(factory, "Javier40@yahoo.com", "fundermaps");
+        await TestStub.LoginAsync(factory, "Freda@contoso.com", "fundermaps");
+        await TestStub.LoginAsync(factory, "patsy@contoso.com", "fundermaps");
+        await TestStub.LoginAsync(factory, "lester@contoso.com", "fundermaps");
     }
 
     [Fact]
     public async Task RefreshSignInReturnSuccessAndToken()
     {
         // Arrange
-        using var client = Factory.CreateClient();
+        using var client = factory.CreateClient();
 
         // Act
         var response = await client.GetAsync("api/auth/token-refresh");
@@ -51,7 +43,7 @@ public class AuthTests : IClassFixture<WebserviceFixtureFactory>
     public async Task SignInInvalidCredentialsReturnError()
     {
         // Arrange
-        using var client = Factory.CreateUnauthorizedClient();
+        using var client = factory.CreateUnauthorizedClient();
 
         // Act
         var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
@@ -76,7 +68,7 @@ public class AuthTests : IClassFixture<WebserviceFixtureFactory>
     public async Task SignInInvalidRequestReturnBadRequest(string email, string password)
     {
         // Arrange
-        using var client = Factory.CreateUnauthorizedClient();
+        using var client = factory.CreateUnauthorizedClient();
 
         // Act
         var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
@@ -94,7 +86,7 @@ public class AuthTests : IClassFixture<WebserviceFixtureFactory>
     public async Task SignInRandomDataReturnNot500(string email, string password)
     {
         // Arrange
-        using var client = Factory.CreateUnauthorizedClient();
+        using var client = factory.CreateUnauthorizedClient();
 
         // Act
         var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
@@ -113,7 +105,7 @@ public class AuthTests : IClassFixture<WebserviceFixtureFactory>
     public async Task RefreshSignInReturnUnauthorized(string uri)
     {
         // Arrange
-        using var client = Factory.CreateUnauthorizedClient();
+        using var client = factory.CreateUnauthorizedClient();
 
         // Act
         var response = await client.GetAsync(uri);

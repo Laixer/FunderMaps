@@ -68,3 +68,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions()
 }).WithMetadata(new AllowAnonymousAttribute());
 
 app.Run();
+
+public partial class Program { }
