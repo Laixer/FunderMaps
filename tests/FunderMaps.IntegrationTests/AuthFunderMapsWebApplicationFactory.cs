@@ -3,24 +3,13 @@ using System.Net.Http.Headers;
 
 namespace FunderMaps.IntegrationTests;
 
-public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplicationFactory<TStartup>
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class AuthFunderMapsWebApplicationFactory<TStartup>(HttpClient httpClient, string username, string password) : FunderMapsWebApplicationFactory<TStartup>
     where TStartup : class
 {
-    private readonly HttpClient _httpClient;
-    private readonly string _username;
-    private readonly string _password;
-
     public SignInSecurityTokenDto AuthToken { get; private set; } = default!;
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public AuthFunderMapsWebApplicationFactory(HttpClient httpClient, string username, string password)
-    {
-        _httpClient = httpClient;
-        _username = username;
-        _password = password;
-    }
 
     /// <summary>
     ///     Called immediately after the class has been created, before it is used.
@@ -32,10 +21,10 @@ public class AuthFunderMapsWebApplicationFactory<TStartup> : FunderMapsWebApplic
     ///     Create a user session for the given user.
     /// </summary>
     protected async virtual Task<SignInSecurityTokenDto?> SignInAsync()
-        => await _httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInDto>("api/auth/signin", new()
+        => await httpClient.PostAsJsonGetFromJsonAsync<SignInSecurityTokenDto, SignInDto>("api/auth/signin", new()
         {
-            Email = _username,
-            Password = _password,
+            Email = username,
+            Password = password,
         });
 
     protected override void ConfigureClient(HttpClient client)
