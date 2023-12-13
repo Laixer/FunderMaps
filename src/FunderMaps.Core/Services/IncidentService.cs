@@ -2,25 +2,24 @@ using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
-using FunderMaps.Core.Services;
+using FunderMaps.Core.Options;
 using FunderMaps.Core.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Core.IncidentReport;
+namespace FunderMaps.Core.Services;
 
-// TODO: Move to services.
 // FUTURE: Revamp this service.
 /// <summary>
 ///     Service to the incidents.
 /// </summary>
-internal class IncidentService(
+public class IncidentService(
     IOptions<IncidentOptions> options,
     IIncidentRepository incidentRepository,
     GeocoderTranslation geocoderTranslation,
     IEmailService emailService,
     IBlobStorageService blobStorageService,
-    ILogger<IncidentService> logger) : IIncidentService
+    ILogger<IncidentService> logger)
 {
     private readonly IncidentOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 

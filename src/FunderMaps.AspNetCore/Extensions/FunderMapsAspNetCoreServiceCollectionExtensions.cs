@@ -9,7 +9,7 @@ using FunderMaps.Core.ExternalServices.Mailgun;
 using FunderMaps.Core.ExternalServices.Mapbox;
 using FunderMaps.Core.ExternalServices.OpenAI;
 using FunderMaps.Core.ExternalServices.S3Storage;
-using FunderMaps.Core.IncidentReport;
+using FunderMaps.Core.Options;
 using FunderMaps.Data.Providers;
 using FunderMaps.Extensions;
 using Microsoft.AspNetCore.Authorization;

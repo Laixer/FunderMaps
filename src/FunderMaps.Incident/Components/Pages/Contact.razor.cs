@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Components;
-using FunderMaps.Core.IncidentReport;
 using FunderMaps.Incident.Components.Layout;
+using FunderMaps.Core.Services;
 
 namespace FunderMaps.Incident.Components.Pages;
 
 public partial class Contact : ComponentBase, IDisposable
 {
     [Inject]
-    private IIncidentService IncidentService { get; set; } = default!;
+    private IncidentService IncidentService { get; set; } = default!;
 
     [CascadingParameter]
     State State { get; set; } = default!;

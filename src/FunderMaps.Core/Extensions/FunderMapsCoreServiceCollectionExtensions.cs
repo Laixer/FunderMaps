@@ -6,7 +6,6 @@ using FunderMaps.Core.ExternalServices.Mapbox;
 using FunderMaps.Core.ExternalServices.OpenAI;
 using FunderMaps.Core.ExternalServices.S3Storage;
 using FunderMaps.Core.ExternalServices.Tippecanoe;
-using FunderMaps.Core.IncidentReport;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 
@@ -38,6 +37,8 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddTransient<IRandom, RandomGenerator>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
         services.AddTransient<GeocoderTranslation>();
+        services.AddTransient<ModelService>();
+        services.AddScoped<IncidentService>(); // TODO: Should be transient?
 
         // Register application context in DI container
         // NOTE: The application context *must* be registered with the container
@@ -53,12 +54,8 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<ITilesetGeneratorService, TippecanoeService>();
         services.AddSingleton<IMapboxService, MapboxService>();
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
-        services.AddTransient<ModelService>();
         services.AddSingleton<OpenAIService>();
         services.AddSingleton<FunderMapsClient>();
-
-        // Register core services in DI container.
-        services.AddScoped<IIncidentService, IncidentService>();
 
         return services;
     }
