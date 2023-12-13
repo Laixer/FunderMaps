@@ -6,8 +6,8 @@ on:
       - master
 
 env:
-  DOTNET_VERSION: '6.0'
-  DOTNET_VERSION_INCLUDE_PRERELEASE: true
+  DOTNET_VERSION: '8.0'
+  BUILD_CONFIG: Release
 
 jobs:
   build:
@@ -22,7 +22,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        include-prerelease: ${{ env.DOTNET_VERSION_INCLUDE_PRERELEASE }}
 
     - name: Install dependencies
       run: dotnet restore --no-cache --force-evaluate

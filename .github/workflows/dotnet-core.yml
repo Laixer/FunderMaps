@@ -69,6 +69,7 @@ jobs:
         Jwt__SignatureKey: somelargetextstringusedinsignatures
         Incident__ClientId: 42
         Incident__Recipients__0: info@example.com
+        DataProtection__ApplicationName: FunderMapsTest
         ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp"
 
     # - name: Testing Portal
