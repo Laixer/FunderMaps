@@ -1,44 +1,36 @@
 ﻿using FunderMaps.Core.Types.Products;
+using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Webservice;
+namespace FunderMaps.Webservice.Tests.Controllers;
 
 /// <summary>
 ///     Integration test for the statistics controller.
 /// </summary>
-public class StatisticsTests(WebserviceFixtureFactory factory) : IClassFixture<WebserviceFixtureFactory>
+public class StatisticsTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
-    private WebserviceFixtureFactory Factory { get; } = factory;
 
     [Fact(Skip = "Needs FIX")]
     public async Task GetProductByIdReturnProduct()
     {
-        // Arrange
-        using var client = Factory.CreateClient();
+        using var client = factory.CreateClient();
 
-        // Act.
-        var response = await client.GetAsync($"api/v3/product/statistics/gfm-6aae47cb5aa4416abdf19d98ba8218ac");
+        var response = await client.GetAsync("api/v3/product/statistics/gfm-6aae47cb5aa4416abdf19d98ba8218ac");
         var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
 
-        // Assert.
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        // Assert.True(returnObject.ItemCount >= 1);
     }
 
     [Fact(Skip = "Needs FIX")]
     public async Task GetProductByExternalIdReturnProduct()
     {
-        // Arrange
-        using var client = Factory.CreateClient();
+        using var client = factory.CreateClient();
 
-        // Act.
-        var response = await client.GetAsync($"api/v3/product/statistics/BU05031403");
+        var response = await client.GetAsync("api/v3/product/statistics/BU05031403");
         var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
 
-        // Assert.
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        // Assert.True(returnObject.ItemCount >= 1);
     }
 
     [Theory(Skip = "Needs FIX")]
@@ -48,13 +40,10 @@ public class StatisticsTests(WebserviceFixtureFactory factory) : IClassFixture<W
     [InlineData("fdshjbf438gi")]
     public async Task GetByIdInvalidAddressThrows(string address)
     {
-        // Arrange
-        using var client = Factory.CreateClient();
+        using var client = factory.CreateClient();
 
-        // Act.
         var response = await client.GetAsync($"api/v3/product/statistics/{address}");
 
-        // Assert.
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }

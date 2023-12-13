@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using Xunit;
 
-namespace FunderMaps.Webservice.Tests;
+namespace FunderMaps.Webservice.Tests.Controllers;
 
 /// <summary>
 ///     Tests our authentication.

@@ -2,7 +2,7 @@
 using Xunit;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace FunderMaps.Webservice.Tests;
+namespace FunderMaps.Webservice.Tests.Controllers;
 
 public class VersionsTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
