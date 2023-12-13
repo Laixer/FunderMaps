@@ -1,5 +1,5 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.Core.Services;
+using FunderMaps.Core.ExternalServices.PDOK;
 using FunderMaps.Incident.Components;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;

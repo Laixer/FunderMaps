@@ -45,7 +45,7 @@ internal sealed class MapBundleTask(
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
             var input = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
 
-            gdalService.Convert(input, $"{bundle.Tileset}.gpkg", $"maplayer.{bundle.Tileset}", cancellationToken);
+            gdalService.Convert(input, $"{bundle.Tileset}.gpkg", $"maplayer.{bundle.Tileset}");
             await blobStorageService.StoreFileAsync($"tileset/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
             DateTime currentDate = DateTime.Now;
@@ -57,7 +57,7 @@ internal sealed class MapBundleTask(
             {
                 logger.LogInformation("Generating map for tileset '{Tileset}'", bundle.Tileset);
 
-                gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson", cancellationToken: cancellationToken);
+                gdalService.Convert($"{bundle.Tileset}.gpkg", $"{bundle.Tileset}.geojson");
                 tilesetGeneratorService.Generate($"{bundle.Tileset}.geojson", $"{bundle.Tileset}.mbtiles", bundle.Tileset, bundle.MaxZoomLevel, bundle.MinZoomLevel, cancellationToken);
                 await mapboxService.UploadAsync(bundle.Name, bundle.Tileset, $"{bundle.Tileset}.mbtiles");
             }

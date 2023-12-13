@@ -2,9 +2,8 @@ using System.Diagnostics;
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.Core.Services;
+namespace FunderMaps.Core.ExternalServices.GDAL;
 
-// TODO: Move to external service.
 /// <summary>
 ///     Geospatial abstraction service.
 /// </summary>
@@ -16,7 +15,7 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
     /// <param name="input">Input file.</param>
     /// <param name="output">Output file.</param>
     /// <param name="layer">Layer name.</param>
-    public void Convert(string input, string output, string? layer = null, CancellationToken cancellationToken = default)
+    public void Convert(string input, string output, string? layer = null)
     {
         var format = "GPKG";
         if (output.StartsWith("PG:"))
@@ -51,14 +50,6 @@ internal class GeospatialAbstractionService(ILogger<GeospatialAbstractionService
         process.StartInfo.RedirectStandardOutput = true;
 
         process.Start();
-
-        cancellationToken.Register(() =>
-        {
-            if (!process.HasExited)
-            {
-                process.Kill();
-            }
-        });
 
         string standardError = process.StandardError.ReadToEnd();
         string standardOutput = process.StandardOutput.ReadToEnd();

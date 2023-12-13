@@ -11,5 +11,5 @@ public interface IGDALService
     /// <param name="input">Input file.</param>
     /// <param name="output">Output file.</param>
     /// <param name="layer">Layer name.</param>
-    void Convert(string input, string output, string? layer = null, CancellationToken cancellationToken = default);
+    void Convert(string input, string output, string? layer = null);
 }

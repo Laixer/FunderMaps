@@ -1,4 +1,3 @@
-using FunderMaps.Core.Components;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types.Products;

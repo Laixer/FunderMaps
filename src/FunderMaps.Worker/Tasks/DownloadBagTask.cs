@@ -43,7 +43,7 @@ internal sealed class DownloadBagTask(
 
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
             var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
-            gdalService.Convert(destinationPath, output, cancellationToken: cancellationToken);
+            gdalService.Convert(destinationPath, output);
         }
         finally
         {

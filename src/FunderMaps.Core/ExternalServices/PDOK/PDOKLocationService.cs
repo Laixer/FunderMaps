@@ -2,7 +2,7 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.Core.Services;
+namespace FunderMaps.Core.ExternalServices.PDOK;
 
 public struct PDOKSuggestion
 {
@@ -33,13 +33,12 @@ struct LocationServerResult
     public JsonElement highlighting { get; set; }
 }
 
-// TODO: Move to external services.
 public class PDOKLocationService
 {
     /// <summary>
     ///     Default base URL for the remote service.
     /// </summary>
-    private const string DefaultBaseUrl = @"https://api.pdok.nl/bzk/locatieserver/search/v3_1/";
+    private const string DefaultBaseUrl = "https://api.pdok.nl/bzk/locatieserver/search/v3_1/";
 
     private readonly ILogger<PDOKLocationService> _logger;
 
