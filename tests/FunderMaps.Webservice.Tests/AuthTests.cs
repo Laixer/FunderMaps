@@ -1,4 +1,6 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
+﻿using Bogus;
+using Bogus.DataSets;
+using FunderMaps.AspNetCore.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc.Testing;
 using System.Net;
 using Xunit;
@@ -59,7 +61,7 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IClassFixture<W
         var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
             Email = "lester@contoso.com",
-            Password = "ABC@123", //new Randomizer().Password(64),
+            Password = new Randomizer().Password(64),
         });
         var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
@@ -70,11 +72,10 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IClassFixture<W
     }
 
     [Theory]
-    [InlineData(null, null)]
-    [InlineData(null, "")]
-    [InlineData("", null)]
+    [InlineData("test@test.com", "")]
+    [InlineData("", "password")]
     [InlineData("", "")]
-    public async Task SignInInvalidRequestReturnBadRequest(string? email, string? password)
+    public async Task SignInInvalidRequestReturnBadRequest(string email, string password)
     {
         using var client = factory.CreateClient();
 
@@ -87,30 +88,15 @@ public class AuthTests(WebApplicationFactory<Program> factory) : IClassFixture<W
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    // [Theory]
-    // [ClassData(typeof(RandomStringGeneratorP2))]
-    // public async Task SignInRandomDataReturnNot500(string email, string password)
-    // {
-    //     using var client = factory.CreateClient();
+    [Theory]
+    [InlineData("api/user")]
+    [InlineData("api/auth/token-refresh")]
+    public async Task RefreshSignInReturnUnauthorized(string uri)
+    {
+        using var client = factory.CreateClient();
 
-    //     var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
-    //     {
-    //         Email = email,
-    //         Password = password,
-    //     });
+        var response = await client.GetAsync(uri);
 
-    //     Assert.NotEqual(HttpStatusCode.InternalServerError, response.StatusCode);
-    // }
-
-    // [Theory]
-    // [InlineData("api/user")]
-    // [InlineData("api/auth/token-refresh")]
-    // public async Task RefreshSignInReturnUnauthorized(string uri)
-    // {
-    //     using var client = factory.CreateClient();
-
-    //     var response = await client.GetAsync(uri);
-
-    //     Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    // }
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
 }
