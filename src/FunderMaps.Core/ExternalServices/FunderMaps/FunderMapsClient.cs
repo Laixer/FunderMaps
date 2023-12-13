@@ -14,7 +14,7 @@ public class FunderMapsClient : IDisposable
     /// <summary>
     ///     Default base URL for the remote service.
     /// </summary>
-    private const string DefaultBaseUrl = @"https://ws.fundermaps.com";
+    private const string DefaultBaseUrl = "https://ws.fundermaps.com";
 
     private readonly HttpClient httpClient = new();
     private readonly FunderMapsOptions _options;
@@ -60,9 +60,11 @@ public class FunderMapsClient : IDisposable
         _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
         _logger = logger;
 
-        _logger.LogDebug("Using FunderMaps API at {BaseUrl}", _options.BaseUrl ?? DefaultBaseUrl);
+        var host = new Uri(_options.BaseUrl ?? DefaultBaseUrl);
 
-        httpClient.BaseAddress = new Uri(_options.BaseUrl ?? DefaultBaseUrl);
+        _logger.LogDebug("Using FunderMaps API at {host}", host);
+
+        httpClient.BaseAddress = new Uri(host.Scheme + "://" + host.Host + (host.IsDefaultPort ? "" : ":" + host.Port));
         httpClient.DefaultRequestHeaders.Accept.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 

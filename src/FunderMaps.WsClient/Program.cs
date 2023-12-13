@@ -4,14 +4,14 @@ using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-var authkeyOption = new Option<string>(new[] { "-k", "--key" }, "Webservice authkey")
+var authkeyOption = new Option<string>(["-k", "--key"], "Webservice authkey")
 {
     IsRequired = true
 };
 
-var baseUrlOption = new Option<string>(new[] { "-u", "--url" }, "Webservice base url");
+var baseUrlOption = new Option<string>(["-u", "--url"], "Webservice base url");
 
-var logLevelOption = new Option<LogLevel>(new[] { "--log", "--log-level" }, getDefaultValue: () => LogLevel.Information, "The log level to use");
+var logLevelOption = new Option<LogLevel>(["--log", "--log-level"], getDefaultValue: () => LogLevel.Information, "The log level to use");
 
 var buildingArgument = new Argument<string>("building", "Building identifier");
 
