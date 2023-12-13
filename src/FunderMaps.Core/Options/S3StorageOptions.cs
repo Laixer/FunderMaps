@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.Core.ExternalServices.S3Storage;
+﻿namespace FunderMaps.Core.Options;
 
 /// <summary>
 ///     Options for the blob storage service.

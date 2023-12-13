@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Net;
-using FunderMaps.Core.ExternalServices.FunderMaps;
+using FunderMaps.Core.ExternalServices;
 using FunderMaps.Core.Types.Products;
 using Microsoft.Extensions.Logging;
 

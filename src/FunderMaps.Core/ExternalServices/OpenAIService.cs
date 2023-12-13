@@ -1,11 +1,11 @@
 using System.Text;
 using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using FunderMaps.Core.Options;
 
-namespace FunderMaps.Core.ExternalServices.OpenAI;
+namespace FunderMaps.Core.ExternalServices;
 
 // TODO: Implement OpenAI interface.
 public class OpenAIService : IDisposable
@@ -13,7 +13,7 @@ public class OpenAIService : IDisposable
     /// <summary>
     ///     Default base URL for the remote service.
     /// </summary>
-    private const string DefaultBaseUrl = @"https://api.openai.com";
+    private const string DefaultBaseUrl = "https://api.openai.com";
 
     private readonly HttpClient httpClient = new();
     private readonly IOptions<OpenAIOptions> _options;

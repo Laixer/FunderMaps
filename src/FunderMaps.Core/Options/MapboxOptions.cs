@@ -1,4 +1,4 @@
-namespace FunderMaps.Core.ExternalServices.Mapbox;
+namespace FunderMaps.Core.Options;
 
 /// <summary>
 ///     Options for the Mapbox service.

@@ -2,7 +2,7 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using FunderMaps.Incident.Components.Layout;
 using FunderMaps.Core.Services;
-using FunderMaps.Core.ExternalServices.PDOK;
+using FunderMaps.Core.ExternalServices;
 
 namespace FunderMaps.Incident.Components.Pages;
 

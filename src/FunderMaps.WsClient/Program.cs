@@ -1,5 +1,6 @@
 using System.CommandLine;
-using FunderMaps.Core.ExternalServices.FunderMaps;
+using FunderMaps.Core.ExternalServices;
+using FunderMaps.Core.Options;
 using FunderMaps.WsClient;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

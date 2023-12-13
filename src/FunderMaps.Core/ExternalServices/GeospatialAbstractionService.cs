@@ -2,7 +2,7 @@ using System.Diagnostics;
 using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.Core.ExternalServices.GDAL;
+namespace FunderMaps.Core.ExternalServices;
 
 /// <summary>
 ///     Geospatial abstraction service.

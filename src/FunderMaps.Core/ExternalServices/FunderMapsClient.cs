@@ -1,10 +1,11 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using FunderMaps.Core.Options;
 using FunderMaps.Core.Types.Products;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Core.ExternalServices.FunderMaps;
+namespace FunderMaps.Core.ExternalServices;
 
 /// <summary>
 ///     Webservice client.

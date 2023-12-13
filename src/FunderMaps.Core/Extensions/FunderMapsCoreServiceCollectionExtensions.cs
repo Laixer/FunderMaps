@@ -1,11 +1,5 @@
 ﻿using FunderMaps.Core.Components;
-using FunderMaps.Core.ExternalServices.FunderMaps;
-using FunderMaps.Core.ExternalServices.GDAL;
-using FunderMaps.Core.ExternalServices.Mailgun;
-using FunderMaps.Core.ExternalServices.Mapbox;
-using FunderMaps.Core.ExternalServices.OpenAI;
-using FunderMaps.Core.ExternalServices.S3Storage;
-using FunderMaps.Core.ExternalServices.Tippecanoe;
+using FunderMaps.Core.ExternalServices;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
 

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.Core.ExternalServices.Mailgun;
+namespace FunderMaps.Core.Options;
 
 /// <summary>
 ///     Options for the smtp service.

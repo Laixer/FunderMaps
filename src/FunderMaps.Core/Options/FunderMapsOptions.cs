@@ -1,4 +1,4 @@
-namespace FunderMaps.Core.ExternalServices.FunderMaps;
+namespace FunderMaps.Core.Options;
 
 /// <summary>
 ///     Options for the open AI service.

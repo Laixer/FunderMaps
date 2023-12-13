@@ -7,8 +7,9 @@ using Amazon.S3;
 using Amazon;
 using Amazon.S3.Model;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Options;
 
-namespace FunderMaps.Core.ExternalServices.Mapbox;
+namespace FunderMaps.Core.ExternalServices;
 
 internal struct MapboxCredentialResponse
 {
@@ -38,7 +39,7 @@ internal class MapboxService : IMapboxService, IDisposable
     /// <summary>
     ///     Default base URL for the remote service.
     /// </summary>
-    private const string DefaultBaseUrl = @"https://api.mapbox.com";
+    private const string DefaultBaseUrl = "https://api.mapbox.com";
 
     private readonly HttpClient httpClient = new();
     private readonly MapboxOptions _options;

@@ -2,11 +2,12 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Options;
 using FunderMaps.Core.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Core.ExternalServices.S3Storage;
+namespace FunderMaps.Core.ExternalServices;
 
 /// <summary>
 ///     Amazon S3 implementation of <see cref="IBlobStorageService"/>.

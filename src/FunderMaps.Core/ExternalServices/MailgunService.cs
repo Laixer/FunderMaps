@@ -2,10 +2,11 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace FunderMaps.Core.ExternalServices.Mailgun;
+namespace FunderMaps.Core.ExternalServices;
 
 internal class MailgunService : IEmailService
 {
