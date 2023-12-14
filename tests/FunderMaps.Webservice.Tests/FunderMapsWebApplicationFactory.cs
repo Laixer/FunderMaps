@@ -10,6 +10,8 @@ namespace FunderMaps.Webservice.Tests;
 
 internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserRepository
 {
+    private readonly Dictionary<Guid, User> memory = [];
+
     /// <summary>
     ///     Create new <see cref="User"/>.
     /// </summary>
@@ -19,9 +21,10 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        // var entityName = EntityTable("application");
+        memory.Add(entity.Id, entity);
 
-        // var sql = @$"
+        return entity.Id;
+
         //     INSERT INTO {entityName} (
         //         given_name,
         //         last_name,
@@ -39,15 +42,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         //         REGEXP_REPLACE(@phone_number,'\D','','g'),
         //         @role)
         //     RETURNING id";
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // MapToWriter(context, entity);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return reader.GetGuid(0);
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -56,14 +50,9 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <returns>Number of entities.</returns>
     public async Task<long> CountAsync()
     {
-        // var sql = @"
-        //     SELECT  COUNT(*)
-        //     FROM    application.user";
+        await Task.CompletedTask;
 
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // return await connection.ExecuteScalarAsync<long>(sql);
-        throw new NotImplementedException();
+        return memory.Count;
     }
 
     // FUTURE: If user is in use it violates foreign key constraint, returning
@@ -74,17 +63,9 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <param name="id">Entity identifier.</param>
     public async Task DeleteAsync(Guid id)
     {
-        // ResetCacheEntity(id);
+        await Task.CompletedTask;
 
-        // var sql = @"
-        //     DELETE
-        //     FROM    application.user
-        //     WHERE   id = @id";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // await connection.ExecuteAsync(sql, new { id });
-        throw new NotImplementedException();
+        memory.Remove(id);
     }
 
     /// <summary>
@@ -94,34 +75,9 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByIdAsync(Guid id)
     {
-        // if (TryGetEntity(id, out User? entity))
-        // {
-        //     return entity ?? throw new InvalidOperationException();
-        // }
+        await Task.CompletedTask;
 
-        // var sql = @"
-        //     SELECT  -- User
-        //             u.id,
-        //             u.given_name,
-        //             u.last_name,
-        //             u.email,
-        //             u.avatar,
-        //             u.job_title,
-        //             u.phone_number,
-        //             u.role
-        //     FROM    application.user AS u
-        //     WHERE   u.id = @id
-        //     LIMIT   1";
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", id);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return CacheEntity(MapFromReader(reader));
-
-        throw new NotImplementedException();
+        return memory[id];
     }
 
     /// <summary>
@@ -133,17 +89,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        return new()
-        {
-            Id = Guid.NewGuid(),
-            GivenName = "John",
-            LastName = "Doe",
-            Email = "javier40@yahoo.com",
-            Avatar = "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
-            JobTitle = "Developer",
-            PhoneNumber = "+31612345678",
-            Role = ApplicationRole.Administrator,
-        };
+        return memory.Values.FirstOrDefault(x => x.Email == email);
     }
 
     /// <summary>
@@ -153,29 +99,11 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByAuthKeyAsync(string key)
     {
-        // var sql = @"
-        //     SELECT  -- User
-        //             u.id,
-        //             u.given_name,
-        //             u.last_name,
-        //             u.email,
-        //             u.avatar,
-        //             u.job_title,
-        //             u.phone_number,
-        //             u.role
-        //     FROM    application.user AS u
-        //     JOIN    application.auth_key ak ON ak.user_id = u.id
-        //     WHERE   ak.key = @key
-        //     LIMIT   1";
+        await Task.CompletedTask;
 
-        // await using var context = await DbContextFactory.CreateAsync(sql);
+        // TODO: Implement
 
-        // context.AddParameterWithValue("key", key);
-
-        // await using var reader = await context.ReaderAsync();
-
-        // return CacheEntity(MapFromReader(reader));
-        throw new NotImplementedException();
+        return memory.Values.FirstOrDefault(x => x.Email == key);
     }
 
     /// <summary>
@@ -194,11 +122,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         //     FROM    application.user AS u
         //     WHERE   u.id = @id
         //     LIMIT   1";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // return await connection.ExecuteScalarAsync<string>(sql, new { id });
-        // throw new NotImplementedException();
     }
 
     /// <summary>
@@ -217,29 +140,9 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     ///     Retrieve all <see cref="User"/>.
     /// </summary>
     /// <returns>List of <see cref="User"/>.</returns>
-    public async IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
+    public IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
     {
-        yield break;
-
-        // var sql = @"
-        //     SELECT  -- User
-        //             u.id,
-        //             u.given_name,
-        //             u.last_name,
-        //             u.email,
-        //             u.avatar,
-        //             u.job_title,
-        //             u.phone_number,
-        //             u.role
-        //     FROM    application.user AS u";
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // await foreach (var reader in context.EnumerableReaderAsync())
-        // {
-        //     yield return CacheEntity(MapFromReader(reader));
-        // }
-        throw new NotImplementedException();
+        return memory.Values.ToAsyncEnumerable();
     }
 
     /// <summary>
@@ -248,26 +151,9 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <param name="entity">Entity object.</param>
     public async Task UpdateAsync(User entity)
     {
-        // ResetCacheEntity(entity);
+        await Task.CompletedTask;
 
-        // var sql = @"
-        //     UPDATE  application.user
-        //     SET     given_name = @given_name,
-        //             last_name = @last_name,
-        //             avatar = @avatar,
-        //             job_title = NULLIF(trim(@job_title), ''),
-        //             phone_number = REGEXP_REPLACE(@phone_number,'\D','','g'),
-        //             role = @role
-        //     WHERE   id = @id";
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("id", entity.Id);
-
-        // MapToWriter(context, entity);
-
-        // await context.NonQueryAsync();
-        throw new NotImplementedException();
+        memory[entity.Id] = entity;
     }
 
     /// <summary>
@@ -277,16 +163,12 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <param name="passwordHash">New password hash.</param>
     public async Task SetPasswordHashAsync(Guid id, string passwordHash)
     {
+        await Task.CompletedTask;
+
         // var sql = @"
         //     UPDATE  application.user
         //     SET     password_hash = @password_hash
         //     WHERE   id = @id";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // await connection.ExecuteAsync(sql, new { id, password_hash = passwordHash });
-
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -295,16 +177,12 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     /// <param name="id">Entity identifier.</param>
     public async Task BumpAccessFailed(Guid id)
     {
+        await Task.CompletedTask;
+
         // var sql = @"
         //     UPDATE  application.user
         //     SET     access_failed_count = access_failed_count + 1
         //     WHERE   id = @id";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // await connection.ExecuteAsync(sql, new { id });
-
-        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -319,12 +197,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         //     UPDATE  application.user
         //     SET     access_failed_count = 0
         //     WHERE   id = @id";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // await connection.ExecuteAsync(sql, new { id });
-
-        // throw new NotImplementedException();
     }
 
     /// <summary>
@@ -336,12 +208,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         // var sql = @"SELECT application.log_access(@id)";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // await connection.ExecuteScalarAsync(sql, new { id });
-
-        // throw new NotImplementedException();
     }
 }
 
@@ -350,8 +216,12 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
 /// </summary>
 internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
 {
+    private readonly Dictionary<Guid, User> memory = [];
+
     public async Task AddAsync(Guid organizationId, Guid userId, OrganizationRole role)
     {
+        await Task.CompletedTask;
+
         // var sql = @"
         //     INSERT INTO application.organization_user(
         //         user_id,
@@ -361,16 +231,6 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
         //         @user_id,
         //         @organization_id,
         //         @role)";
-
-        // await using var context = await DbContextFactory.CreateAsync(sql);
-
-        // context.AddParameterWithValue("user_id", userId);
-        // context.AddParameterWithValue("organization_id", organizationId);
-        // context.AddParameterWithValue("role", role);
-
-        // await context.NonQueryAsync();
-
-        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -534,117 +394,11 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
 }
 
 /// <summary>
-///     KeyStore repository.
-/// </summary>
-internal class MemoryKeystoreRepository : IKeystoreRepository
-{
-    private IDictionary<string, string> memory = new Dictionary<string, string>();
-
-    public async Task<string> AddAsync(KeyStore entity)
-    {
-        // var sql = @"
-        //     INSERT INTO application.key_store(name, value)
-        //     VALUES (@name, @value)
-        //     RETURNING name";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new DatabaseException("Unable to insert record.");
-
-        await Task.CompletedTask;
-
-        // memory.Set(entity.Name, entity.Value);
-
-        memory.Add(entity.Name, entity.Value);
-
-        return entity.Name;
-    }
-
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
-    public async Task<long> CountAsync()
-    {
-        // var sql = @"
-        //     SELECT  COUNT(*)
-        //     FROM    application.key_store";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // return await connection.ExecuteScalarAsync<long>(sql);
-
-        await Task.CompletedTask;
-
-        // memoryCache.Count;
-
-        return memory.Count;
-    }
-
-    public Task DeleteAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<KeyStore> GetByIdAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    ///     Retrieve all <see cref="KeyStore"/>.
-    /// </summary>
-    /// <returns>List of <see cref="KeyStore"/>.</returns>
-    public async IAsyncEnumerable<KeyStore> ListAllAsync(Navigation navigation)
-    {
-        await Task.CompletedTask;
-
-        foreach (var item in memory)
-        {
-            yield return new KeyStore()
-            {
-                Name = item.Key,
-                Value = item.Value,
-            };
-        }
-
-        // foreach (var item in memoryCache)
-        // {
-        //     yield return new KeyStore()
-        //     {
-        //         Name = item.Key,
-        //         Value = item.Value.ToString(),
-        //     };
-        // }
-
-        // var sql = @"
-        //     SELECT  -- Keystore
-        //             ks.name,
-        //             ks.value
-        //     FROM    application.key_store ks";
-
-        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        // foreach (var item in await connection.QueryAsync<KeyStore>(sql))
-        // {
-        //     yield return item;
-        // }
-    }
-
-    public Task UpdateAsync(KeyStore entity)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-
-
-/// <summary>
 ///     Construct new instance.
 /// </summary>
 public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.Repositories.IXmlRepository
 {
-    private IDictionary<string, System.Xml.Linq.XElement> memory = new Dictionary<string, System.Xml.Linq.XElement>();
+    private readonly Dictionary<string, System.Xml.Linq.XElement> memory = [];
 
     public IReadOnlyCollection<System.Xml.Linq.XElement> GetAllElements()
     {
@@ -656,9 +410,6 @@ public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.R
         memory.Add(friendlyName, element);
     }
 }
-
-
-
 
 public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
@@ -683,11 +434,9 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
             // services.AddScoped<ITestRepository, TestRepository>();
             // services.AddScoped<ITelemetryRepository, TelemetryRepository>();
 
-            services.Replace(ServiceDescriptor.Scoped<IKeystoreRepository, MemoryKeystoreRepository>());
+            // services.Replace(ServiceDescriptor.Scoped<IKeystoreRepository, MemoryKeystoreRepository>());
             services.Replace(ServiceDescriptor.Scoped<IOrganizationUserRepository, MemoryOrganizationUserRepository>());
             services.Replace(ServiceDescriptor.Scoped<IUserRepository, MemoryUserRepository>());
-
-            // var keystoreRepository = services.GetRequiredService<IKeystoreRepository>();
 
             services.Configure<Microsoft.AspNetCore.DataProtection.KeyManagement.KeyManagementOptions>(options =>
             {
