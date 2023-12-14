@@ -534,6 +534,135 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
     }
 }
 
+/// <summary>
+///     KeyStore repository.
+/// </summary>
+internal class MemoryKeystoreRepository : IKeystoreRepository
+{
+    private IDictionary<string, string> memory = new Dictionary<string, string>();
+
+    public async Task<string> AddAsync(KeyStore entity)
+    {
+        // var sql = @"
+        //     INSERT INTO application.key_store(name, value)
+        //     VALUES (@name, @value)
+        //     RETURNING name";
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // return await connection.ExecuteScalarAsync<string>(sql, entity) ?? throw new DatabaseException("Unable to insert record.");
+
+        await Task.CompletedTask;
+
+        // memory.Set(entity.Name, entity.Value);
+
+        memory.Add(entity.Name, entity.Value);
+
+        return entity.Name;
+    }
+
+    /// <summary>
+    ///     Retrieve number of entities.
+    /// </summary>
+    /// <returns>Number of entities.</returns>
+    public async Task<long> CountAsync()
+    {
+        // var sql = @"
+        //     SELECT  COUNT(*)
+        //     FROM    application.key_store";
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // return await connection.ExecuteScalarAsync<long>(sql);
+
+        await Task.CompletedTask;
+
+        // memoryCache.Count;
+
+        return memory.Count;
+
+        // return 0;
+    }
+
+    public Task DeleteAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<KeyStore> GetByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    ///     Retrieve all <see cref="KeyStore"/>.
+    /// </summary>
+    /// <returns>List of <see cref="KeyStore"/>.</returns>
+    public async IAsyncEnumerable<KeyStore> ListAllAsync(Navigation navigation)
+    {
+        await Task.CompletedTask;
+
+        foreach (var item in memory)
+        {
+            yield return new KeyStore()
+            {
+                Name = item.Key,
+                Value = item.Value,
+            };
+        }
+
+        // foreach (var item in memoryCache)
+        // {
+        //     yield return new KeyStore()
+        //     {
+        //         Name = item.Key,
+        //         Value = item.Value.ToString(),
+        //     };
+        // }
+
+        // var sql = @"
+        //     SELECT  -- Keystore
+        //             ks.name,
+        //             ks.value
+        //     FROM    application.key_store ks";
+
+        // await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        // foreach (var item in await connection.QueryAsync<KeyStore>(sql))
+        // {
+        //     yield return item;
+        // }
+    }
+
+    public Task UpdateAsync(KeyStore entity)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+
+
+/// <summary>
+///     Construct new instance.
+/// </summary>
+public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.Repositories.IXmlRepository
+{
+    private IDictionary<string, System.Xml.Linq.XElement> memory = new Dictionary<string, System.Xml.Linq.XElement>();
+
+    public IReadOnlyCollection<System.Xml.Linq.XElement> GetAllElements()
+    {
+        return memory.Values.ToList().AsReadOnly();
+    }
+
+    public void StoreElement(System.Xml.Linq.XElement element, string friendlyName)
+    {
+        memory.Add(friendlyName, element);
+    }
+}
+
+
+
+
 public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -559,8 +688,16 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
             // services.AddScoped<ITestRepository, TestRepository>();
             // services.AddScoped<ITelemetryRepository, TelemetryRepository>();
 
+            services.Replace(ServiceDescriptor.Scoped<IKeystoreRepository, MemoryKeystoreRepository>());
             services.Replace(ServiceDescriptor.Scoped<IOrganizationUserRepository, MemoryOrganizationUserRepository>());
             services.Replace(ServiceDescriptor.Scoped<IUserRepository, MemoryUserRepository>());
+
+            // var keystoreRepository = services.GetRequiredService<IKeystoreRepository>();
+
+            services.Configure<Microsoft.AspNetCore.DataProtection.KeyManagement.KeyManagementOptions>(options =>
+            {
+                options.XmlRepository = new MemoryKeystoreXmlRepository();
+            });
         });
 
         // builder.UseEnvironment("Development");
