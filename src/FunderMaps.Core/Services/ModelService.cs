@@ -5,6 +5,14 @@ using Microsoft.Extensions.Logging;
 
 namespace FunderMaps.Core.Services;
 
+/// <summary>
+///     Model service.
+/// </summary>
+/// <param name="geocoderTranslation">Geocoder translation service.</param>
+/// <param name="analysisRepository">Analysis repository.</param>
+/// <param name="statisticsRepository">Statistics repository.</param>
+/// <param name="organizationRepository">Organization repository.</param>
+/// <param name="logger">Logger.</param>
 public class ModelService(
     GeocoderTranslation geocoderTranslation,
     IAnalysisRepository analysisRepository,
@@ -12,6 +20,9 @@ public class ModelService(
     IOrganizationRepository organizationRepository,
     ILogger<ModelService> logger)
 {
+    /// <summary>
+    ///    Get analysis product.
+    /// </summary>
     public async Task<AnalysisProduct> GetAnalysisAsync(string id, Guid tenantId)
     {
         var organization = await organizationRepository.GetByIdAsync(tenantId);
@@ -43,6 +54,9 @@ public class ModelService(
         }
     }
 
+    /// <summary>
+    ///   Get risk index product.
+    /// </summary>
     public async Task<bool> GetRiskIndexAsync(string id, Guid tenantId)
     {
         var organization = await organizationRepository.GetByIdAsync(tenantId);
@@ -74,6 +88,9 @@ public class ModelService(
         }
     }
 
+    /// <summary>
+    ///    Get statistics product.
+    /// </summary>
     public async Task<StatisticsProduct> GetStatisticsAsync(string id, Guid tenantId)
     {
         var organization = await organizationRepository.GetByIdAsync(tenantId);

@@ -1,11 +1,10 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.AspNetCore.Controllers;
+namespace FunderMaps.Webservice.Controllers;
 
-// TODO: Have been moved to the project root.
-// TODO: have this at the root of the API.
 /// <summary>
 ///     Return application versioning information.
 /// </summary>
@@ -21,7 +20,7 @@ public class VersionController : ControllerBase
     ///     often and this call is primarily used to check if the
     ///     backend is responding.
     /// </remarks>
-    [HttpGet("api/version"), ResponseCache(Duration = 60 * 60 * 24)]
+    [HttpGet("version"), ResponseCache(Duration = 60 * 60 * 24)]
     public ActionResult<AppVersionDto> Get()
         => Ok(new AppVersionDto
         {

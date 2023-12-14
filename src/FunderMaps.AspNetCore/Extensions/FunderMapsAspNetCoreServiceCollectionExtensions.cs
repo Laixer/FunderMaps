@@ -115,6 +115,7 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         return services;
     }
 
+    // TODO: Should be obsolete.
     public static IServiceCollection AddFunderMapsAspNetCoreControllers(this IServiceCollection services)
     {
         // FUTURE: Only load specific parts.

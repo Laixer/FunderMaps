@@ -13,7 +13,7 @@ namespace FunderMaps.Webservice.Controllers;
 /// <summary>
 ///     Endpoint controller for application authentication.
 /// </summary>
-[Authorize, Route("api/auth")]
+[Route("api/auth")]
 public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : FunderMapsController
 {
     // POST: api/auth/signin

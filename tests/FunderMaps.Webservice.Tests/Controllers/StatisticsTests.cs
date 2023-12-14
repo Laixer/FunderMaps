@@ -10,7 +10,6 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class StatisticsTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
 {
-
     [Fact(Skip = "Needs FIX")]
     public async Task GetProductByIdReturnProduct()
     {
