@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 
-namespace FunderMaps.Core.Components;
+namespace FunderMaps.Core.Services;
 
 /// <summary>
 ///     Random value generator.

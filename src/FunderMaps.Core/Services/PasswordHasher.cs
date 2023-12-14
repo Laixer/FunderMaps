@@ -1,5 +1,4 @@
-﻿using FunderMaps.Core.Components;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
@@ -8,13 +7,15 @@ namespace FunderMaps.Core.Services;
 /// <summary>
 ///     Password hasher.
 /// </summary>
-public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logger)
+public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logger) : IDisposable
 {
     private const int iterRounds = 10_000;
     private const int subkeyLength = 256 / 8; // 256 bits
     private const int saltSize = 128 / 8; // 128 bits
     private const byte formatMarker = 0x01;
     private static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA256;
+    private readonly RandomNumberGenerator randomNumbergenerator = RandomNumberGenerator.Create();
+    private bool disposedValue;
 
     // Compares two byte arrays for equality. The method is specifically written so that the loop is not optimized.
     [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
@@ -39,7 +40,8 @@ public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logg
     private byte[] GeneratePasswordHash(string password)
     {
         byte[] salt = new byte[saltSize];
-        random.WriteBytes(salt);
+        // random.WriteBytes(salt);
+        randomNumbergenerator.GetBytes(salt);
 
         using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterRounds, hashAlgorithm);
         byte[] subkey = pbkdf2.GetBytes(subkeyLength);
@@ -119,4 +121,34 @@ public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logg
             return false;
         }
     }
+
+    #region Dispose Pattern
+
+    /// <summary>
+    ///     Dispose helper.
+    /// </summary>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                randomNumbergenerator.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    /// <summary>
+    ///     Dispose objects.
+    /// </summary>
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
+
+    #endregion Dispose Pattern
 }
