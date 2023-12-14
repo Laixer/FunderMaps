@@ -1,14 +1,14 @@
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
-using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Services;
 using FunderMaps.Core.Types;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace FunderMaps.Webservice.Tests;
 
-internal class MemoryUserRepository(IPasswordHasher passwordHasher) : IUserRepository
+internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserRepository
 {
     /// <summary>
     ///     Create new <see cref="User"/>.

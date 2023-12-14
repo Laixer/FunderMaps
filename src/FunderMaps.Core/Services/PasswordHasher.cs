@@ -1,15 +1,14 @@
-﻿using FunderMaps.Core.Interfaces;
+﻿using FunderMaps.Core.Components;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 
-namespace FunderMaps.Core.Components;
+namespace FunderMaps.Core.Services;
 
-// TODO: Remove interface.
 /// <summary>
 ///     Password hasher.
 /// </summary>
-internal class PasswordHasher(IRandom random, ILogger<PasswordHasher> logger) : IPasswordHasher
+public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logger)
 {
     private const int iterRounds = 10000;
     private const int subkeyLength = 256 / 8; // 256 bits
@@ -41,7 +40,6 @@ internal class PasswordHasher(IRandom random, ILogger<PasswordHasher> logger) : 
     {
         byte[] salt = new byte[saltSize];
         random.WriteBytes(salt);
-        //_rng.GetBytes(salt);
 
         using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterRounds, hashAlgorithm);
         byte[] subkey = pbkdf2.GetBytes(subkeyLength);

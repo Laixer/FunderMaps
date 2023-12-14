@@ -1,4 +1,3 @@
-using FunderMaps.Core.Interfaces;
 using System.Security.Cryptography;
 
 namespace FunderMaps.Core.Components;
@@ -6,9 +5,9 @@ namespace FunderMaps.Core.Components;
 /// <summary>
 ///     Random value generator.
 /// </summary>
-internal class RandomGenerator : IRandom, IDisposable
+public class RandomGenerator : IDisposable
 {
-    private readonly RandomNumberGenerator _rng = RandomNumberGenerator.Create();
+    private readonly RandomNumberGenerator randomNumbergenerator = RandomNumberGenerator.Create();
     private bool disposedValue = false;
 
     /// <summary>
@@ -16,7 +15,7 @@ internal class RandomGenerator : IRandom, IDisposable
     /// </summary>
     /// <param name="data">The array to fill with cryptographically strong random bytes.</param>
     public virtual void WriteBytes(byte[] data)
-        => _rng.GetBytes(data);
+        => randomNumbergenerator.GetBytes(data);
 
     /// <summary>
     ///     Fills the specified byte array with a cryptographically strong random sequence of values.
@@ -25,7 +24,7 @@ internal class RandomGenerator : IRandom, IDisposable
     /// <param name="offset">The index of the array to start the fill operation.</param>
     /// <param name="count">The number of bytes to fill.</param>
     public virtual void WriteBytes(byte[] data, int offset, int count)
-        => _rng.GetBytes(data, offset, count);
+        => randomNumbergenerator.GetBytes(data, offset, count);
 
     /// <summary>
     ///     Get byte array of cryptographically strong random sequence of values.
@@ -35,7 +34,7 @@ internal class RandomGenerator : IRandom, IDisposable
     public virtual byte[] GetRandomByteArray(int size)
     {
         byte[] buffer = new byte[size];
-        _rng.GetBytes(buffer);
+        randomNumbergenerator.GetBytes(buffer);
         return buffer;
     }
 
@@ -50,7 +49,7 @@ internal class RandomGenerator : IRandom, IDisposable
         {
             if (disposing)
             {
-                _rng.Dispose();
+                randomNumbergenerator.Dispose();
             }
 
             disposedValue = true;

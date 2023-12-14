@@ -15,7 +15,7 @@ namespace FunderMaps.Core.Services;
 public class SignInService(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,
-    IPasswordHasher passwordHasher,
+    PasswordHasher passwordHasher,
     IEmailService emailService,
     ILogger<SignInService> logger)
 {
