@@ -51,7 +51,7 @@ internal sealed class MapBundleTask(
             DateTime currentDate = DateTime.Now;
             string dateString = currentDate.ToString("yyyy-MM-dd");
 
-            await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}_{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
+            await blobStorageService.StoreFileAsync($"tileset/archive/{dateString}/{bundle.Tileset}.gpkg", $"{bundle.Tileset}.gpkg");
 
             if (bundle.MapEnabled)
             {
