@@ -187,8 +187,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        var pwd = passwordHasher.HashPassword("fundermaps");
-        return pwd;
+        return passwordHasher.HashPassword("fundermaps");
 
         // var sql = @"
         //     SELECT  u.password_hash
@@ -580,8 +579,6 @@ internal class MemoryKeystoreRepository : IKeystoreRepository
         // memoryCache.Count;
 
         return memory.Count;
-
-        // return 0;
     }
 
     public Task DeleteAsync(string id)
@@ -677,11 +674,9 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
             // services.AddScoped<IIncidentRepository, IncidentRepository>();
             // services.AddScoped<IInquiryRepository, InquiryRepository>();
             // services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
-            // services.AddScoped<IKeystoreRepository, KeystoreRepository>();
             // services.AddScoped<IMapsetRepository, MapsetRepository>();
             // services.AddScoped<INeighborhoodRepository, NeighborhoodRepository>();
             // services.AddScoped<IOrganizationRepository, OrganizationRepository>();
-            // services.AddScoped<IOrganizationUserRepository, OrganizationUserRepository>();
             // services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             // services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
             // services.AddScoped<IStatisticsRepository, StatisticsRepository>();
@@ -699,7 +694,5 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
                 options.XmlRepository = new MemoryKeystoreXmlRepository();
             });
         });
-
-        // builder.UseEnvironment("Development");
     }
 }
