@@ -11,7 +11,7 @@ public class VersionsTests(FunderMapsWebApplicationFactory<Program> factory) : I
     {
         using var client = factory.CreateClient();
 
-        var response = await client.GetAsync("api/version");
+        var response = await client.GetAsync("version");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
