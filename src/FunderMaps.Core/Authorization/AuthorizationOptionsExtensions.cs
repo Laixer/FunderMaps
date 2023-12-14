@@ -36,78 +36,78 @@ public static class AuthorizationOptionsExtensions
     {
         options.AddPolicy(AuthorizationPolicy.AdministratorPolicy, policy => policy
             .RequireAuthenticatedUser()
-            .RequireRole(Core.Types.ApplicationRole.Administrator.ToString()));
+            .RequireRole(Types.ApplicationRole.Administrator.ToString()));
 
         options.AddPolicy(AuthorizationPolicy.SuperuserAdministratorPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.IsInRole(Types.ApplicationRole.Administrator.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.SuperuserPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.VerifierAdministratorPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                       context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Verifier.ToString()) ||
+                       context.User.IsInRole(Types.ApplicationRole.Administrator.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.VerifierPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Verifier.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.WriterAdministratorPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString()) ||
-                       context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Verifier.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Writer.ToString()) ||
+                       context.User.IsInRole(Types.ApplicationRole.Administrator.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.WriterPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Verifier.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Writer.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.ReaderAdministratorPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Reader.ToString()) ||
-                       context.User.IsInRole(Core.Types.ApplicationRole.Administrator.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Verifier.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Writer.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Reader.ToString()) ||
+                       context.User.IsInRole(Types.ApplicationRole.Administrator.ToString());
             }));
 
         options.AddPolicy(AuthorizationPolicy.ReaderPolicy, policy => policy
             .RequireAuthenticatedUser()
             .RequireAssertion(context =>
             {
-                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Superuser.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Verifier.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Writer.ToString()) ||
-                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Core.Types.OrganizationRole.Reader.ToString());
+                return context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Superuser.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Verifier.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Writer.ToString()) ||
+                       context.User.HasClaim(FunderMapsAuthenticationClaimTypes.TenantRole, Types.OrganizationRole.Reader.ToString());
             }));
     }
 }
