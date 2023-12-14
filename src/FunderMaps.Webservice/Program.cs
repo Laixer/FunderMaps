@@ -1,4 +1,5 @@
 using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.AspNetCore.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -8,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddFunderMapsAspNetCoreServices();
 builder.Services.AddFunderMapsAuthServices();
 // builder.Services.AddFunderMapsAspNetCoreControllers();
+
+builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)));
 
 if (!builder.Environment.IsDevelopment())
 {

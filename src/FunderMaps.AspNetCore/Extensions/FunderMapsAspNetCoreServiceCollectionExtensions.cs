@@ -57,15 +57,15 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
     }
 
     // TODO: Should be obsolete.
-    public static IServiceCollection AddFunderMapsAspNetCoreControllers(this IServiceCollection services)
-    {
-        // FUTURE: Only load specific parts.
-        // NOTE: This will register all controllers in the FunderMaps.AspNetCore
-        //       assemly regardless of authentication and authorization.
-        services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter))).AddFunderMapsAssembly();
+    // public static IServiceCollection AddFunderMapsAspNetCoreControllers(this IServiceCollection services)
+    // {
+    //     // FUTURE: Only load specific parts.
+    //     // NOTE: This will register all controllers in the FunderMaps.AspNetCore
+    //     //       assemly regardless of authentication and authorization.
+    //     services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter))).AddFunderMapsAssembly();
 
-        return services;
-    }
+    //     return services;
+    // }
 
     public static IServiceCollection AddCorsAllowAny(this IServiceCollection services)
     {
