@@ -20,27 +20,9 @@ jobs:
     name: Build & Test
     runs-on: ubuntu-latest
 
-    # services:
-    #   postgres:
-    #     image: postgis/postgis:12-master
-    #     ports:
-    #       - 5432:5432
-
-    #     env:
-    #       POSTGRES_HOST_AUTH_METHOD: trust
-
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
-    # - name: Setup database
-    #   run: ./scripts/loaddb.sh
 
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -58,7 +40,7 @@ jobs:
     - name: Build
       run: dotnet build --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore
 
-    - name: Testing Backend
+    - name: Testing Webservice
       run: dotnet test --nologo --configuration ${{ env.BUILD_CONFIG }} --no-restore --filter FunderMaps.Webservice.Tests
       env:
         ASPNETCORE_ENVIRONMENT: Production
