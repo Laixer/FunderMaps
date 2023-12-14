@@ -1,5 +1,5 @@
 using FunderMaps.AspNetCore.Extensions;
-using FunderMaps.AspNetCore.Middleware;
+using FunderMaps.Core.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;

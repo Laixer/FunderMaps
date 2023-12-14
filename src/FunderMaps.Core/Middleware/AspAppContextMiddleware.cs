@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace FunderMaps.AspNetCore.Middleware;
+namespace FunderMaps.Core.Middleware;
 
 /// <summary>
 ///     Create the <see cref="Core.AppContext"/> from the <see cref="HttpContext"/>.

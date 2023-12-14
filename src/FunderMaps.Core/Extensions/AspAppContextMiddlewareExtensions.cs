@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.Middleware;
+using FunderMaps.Core.Middleware;
 using Microsoft.AspNetCore.Builder;
 
 namespace FunderMaps.AspNetCore.Extensions;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Net;
 
-namespace FunderMaps.AspNetCore.Middleware;
+namespace FunderMaps.Core.Middleware;
 
 /// <summary>
 ///     Filter <see cref="FunderMapsCoreException"/> and convert into a <see cref="ProblemDetails"/> response.

@@ -95,18 +95,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         return services;
     }
 
-    // public static IServiceCollection AddFunderMapsAspNetCoreServices(this IServiceCollection services)
-    // {
-    //     // var connectionString = configuration.GetConnectionString("FunderMapsConnection");
-    //     // services.Configure<DbProviderOptions>(options =>
-    //     // {
-    //     //     options.ConnectionString = connectionString;
-    //     //     options.ApplicationName = FunderMaps.AspNetCore.Constants.ApplicationName;
-    //     // });
-
-    //     return services;
-    // }
-
     public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
     {
         services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
