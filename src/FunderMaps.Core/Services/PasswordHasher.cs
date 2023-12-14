@@ -10,7 +10,7 @@ namespace FunderMaps.Core.Services;
 /// </summary>
 public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logger)
 {
-    private const int iterRounds = 10000;
+    private const int iterRounds = 10_000;
     private const int subkeyLength = 256 / 8; // 256 bits
     private const int saltSize = 128 / 8; // 128 bits
     private const byte formatMarker = 0x01;
