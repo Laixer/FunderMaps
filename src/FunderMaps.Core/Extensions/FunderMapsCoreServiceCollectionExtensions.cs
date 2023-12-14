@@ -97,8 +97,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
     public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
     {
-        // services.AddTransient<ISecurityTokenProvider, JwtSecurityTokenService>();
-
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
