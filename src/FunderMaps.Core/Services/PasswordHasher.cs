@@ -40,7 +40,6 @@ public class PasswordHasher(ILogger<PasswordHasher> logger) : IDisposable
     private byte[] GeneratePasswordHash(string password)
     {
         byte[] salt = new byte[saltSize];
-        // random.WriteBytes(salt);
         randomNumbergenerator.GetBytes(salt);
 
         using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterRounds, hashAlgorithm);

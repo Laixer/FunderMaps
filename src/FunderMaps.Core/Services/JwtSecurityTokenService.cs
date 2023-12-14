@@ -1,36 +1,26 @@
+using FunderMaps.Core.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using TokenContext = FunderMaps.Core.Authentication.TokenContext;
 
-namespace FunderMaps.Core.Authentication;
+namespace FunderMaps.Core.Services;
 
 /// <summary>
 ///     Jwt bearer token provider.
 /// </summary>
-internal class JwtBearerTokenProvider(
+public class JwtSecurityTokenService(
     IOptionsMonitor<JwtBearerOptions> options,
-    ILogger<JwtBearerTokenProvider> logger,
-    TimeProvider timeProvider) : ISecurityTokenProvider
+    TimeProvider timeProvider)
 {
     /// <summary>
     ///     The <see cref="JwtBearerOptions"/> used.
     /// </summary>
     public JwtBearerOptions Options { get; private set; } = options.Get(JwtBearerDefaults.AuthenticationScheme);
-
-    /// <summary>
-    ///     Gets the <see cref="ILogger"/> used to log messages from the manager.
-    /// </summary>
-    protected ILogger Logger { get; } = logger ?? throw new ArgumentNullException(nameof(logger));
-
-    /// <summary>
-    ///     System clock.
-    /// </summary>
-    protected TimeProvider TimeProvider { get; } = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
 
     /// <summary>
     ///     Find the first security token handler that can write a token.
@@ -50,7 +40,7 @@ internal class JwtBearerTokenProvider(
     /// </summary>
     /// <param name="principal">Claims principal.</param>
     /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
-    protected virtual SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
+    protected SecurityToken GenerateSecurityToken(ClaimsPrincipal principal)
     {
         AuthenticationProperties properties = new();
 
@@ -77,7 +67,7 @@ internal class JwtBearerTokenProvider(
         }
         else
         {
-            issuedUtc = TimeProvider.GetUtcNow();
+            issuedUtc = timeProvider.GetUtcNow();
             properties.IssuedUtc = issuedUtc;
         }
 
@@ -101,7 +91,7 @@ internal class JwtBearerTokenProvider(
     /// <param name="principal">Claims principal.</param>
     /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public virtual SecurityToken GetToken(ClaimsPrincipal principal)
+    public SecurityToken GetToken(ClaimsPrincipal principal)
         => GenerateSecurityToken(principal);
 
     /// <summary>
@@ -109,7 +99,7 @@ internal class JwtBearerTokenProvider(
     /// </summary>
     /// <param name="principal">Claims principal.</param>
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
-    public virtual TokenContext GetTokenContext(ClaimsPrincipal principal)
+    public TokenContext GetTokenContext(ClaimsPrincipal principal)
     {
         SecurityToken token = GetToken(principal);
         return new()

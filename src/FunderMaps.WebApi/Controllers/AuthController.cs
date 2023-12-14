@@ -1,5 +1,4 @@
 using System.Security.Authentication;
-using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Services;
@@ -14,7 +13,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Endpoint controller for application authentication.
 /// </summary>
 [Route("api/auth")]
-public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : FunderMapsController
+public class AuthController(SignInService signInService, JwtSecurityTokenService tokenService) : FunderMapsController
 {
     // POST: api/auth/signin
     /// <summary>
@@ -30,7 +29,7 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        var tokenContext = tokenProvider.GetTokenContext(principal);
+        var tokenContext = tokenService.GetTokenContext(principal);
         return new SignInSecurityTokenDto()
         {
             Id = tokenContext.Token.Id,
@@ -54,7 +53,7 @@ public class AuthController(SignInService signInService, ISecurityTokenProvider 
 
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        var tokenContext = tokenProvider.GetTokenContext(principal);
+        var tokenContext = tokenService.GetTokenContext(principal);
         return new SignInSecurityTokenDto()
         {
             Id = tokenContext.Token.Id,
