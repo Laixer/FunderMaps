@@ -1,5 +1,5 @@
-using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;

@@ -1,7 +1,15 @@
-﻿using FunderMaps.Core.Components;
+﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Authorization;
+using FunderMaps.Core.Components;
+using FunderMaps.Core.DataProtection;
 using FunderMaps.Core.ExternalServices;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Services;
+using FunderMaps.Extensions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -33,6 +41,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddTransient<GeocoderTranslation>();
         services.AddTransient<ModelService>();
         services.AddScoped<IncidentService>(); // TODO: Should be transient?
+        services.AddScoped<SignInService>(); // TODO: Should be transient?
 
         // Register application context in DI container
         // NOTE: The application context *must* be registered with the container
@@ -50,6 +59,63 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<IGDALService, GeospatialAbstractionService>();
         services.AddSingleton<OpenAIService>();
         services.AddSingleton<FunderMapsClient>();
+
+        return services;
+    }
+
+
+
+
+
+
+    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
+    {
+        services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
+
+        var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        // TODO: Requesting the repository directly is not the best way to do this. This cannot be replaced later on.
+        var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
+
+        services.Configure<KeyManagementOptions>(options =>
+        {
+            options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
+        });
+
+        services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
+
+        services.AddAuthentication("FunderMapsHybridAuth")
+            .AddFunderMapsScheme()
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new JwtTokenValidationParameters
+                {
+                    ValidIssuer = configuration.GetJwtIssuer(), // TODO: Fetch directly from configuration.
+                    ValidAudience = configuration.GetJwtAudience(),
+                    IssuerSigningKey = configuration.GetJwtSigningKey(),
+                    Valid = configuration.GetJwtTokenExpirationInMinutes(),
+                };
+            })
+            .AddCookie(options =>
+            {
+                options.SlidingExpiration = true;
+                options.Cookie.Name = configuration["Authentication:Cookie:Name"];
+                options.Cookie.Domain = configuration["Authentication:Cookie:Domain"];
+            })
+            .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
+            {
+                //
+            });
+
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            options.AddFunderMapsPolicy();
+        });
 
         return services;
     }

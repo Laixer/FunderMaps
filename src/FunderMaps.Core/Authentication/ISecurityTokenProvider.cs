@@ -1,8 +1,9 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
-namespace FunderMaps.AspNetCore.Authentication;
+namespace FunderMaps.Core.Authentication;
 
+// TODO: Move to FunderMaps.Core.Interfaces?
 /// <summary>
 ///     Security token provider.
 /// </summary>

@@ -1,5 +1,6 @@
 using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core;
+using FunderMaps.Core.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,7 @@ namespace FunderMaps.WebApi.Controllers;
 ///     Return application versioning information.
 /// </summary>
 [AllowAnonymous]
-public class VersionController : ControllerBase
+public class VersionController : FunderMapsController
 {
     // GET: version
     /// <summary>

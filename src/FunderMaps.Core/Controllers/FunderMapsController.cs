@@ -1,8 +1,8 @@
 using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Core.Authentication;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FunderMaps.AspNetCore.Controllers;
+namespace FunderMaps.Core.Controllers;
 
 public abstract class FunderMapsController : ControllerBase
 {

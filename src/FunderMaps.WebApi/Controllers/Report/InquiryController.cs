@@ -1,6 +1,6 @@
-using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataAnnotations;
 using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;

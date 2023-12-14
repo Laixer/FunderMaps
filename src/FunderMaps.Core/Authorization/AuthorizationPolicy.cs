@@ -1,4 +1,4 @@
-﻿namespace FunderMaps.AspNetCore.Authorization;
+﻿namespace FunderMaps.Core.Authorization;
 
 /// <summary>
 ///     Authorization policy names.

@@ -1,7 +1,7 @@
-﻿using FunderMaps.AspNetCore.Authentication;
+﻿using FunderMaps.Core.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
-namespace FunderMaps.AspNetCore.Authorization;
+namespace FunderMaps.Core.Authorization;
 
 /// <summary>
 ///     Extensions to the authorization options.

@@ -1,4 +1,4 @@
-﻿using FunderMaps.AspNetCore.Authentication;
+﻿using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -7,9 +7,8 @@ using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 
-namespace FunderMaps.AspNetCore.Services;
+namespace FunderMaps.Core.Services;
 
-// TODO: Move to core.services.
 /// <summary>
 ///     Provides the APIs for authentication.
 /// </summary>

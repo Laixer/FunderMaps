@@ -1,9 +1,9 @@
-using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.Services;
+using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

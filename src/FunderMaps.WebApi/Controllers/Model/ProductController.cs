@@ -1,4 +1,4 @@
-﻿using FunderMaps.AspNetCore.Controllers;
+﻿using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc;

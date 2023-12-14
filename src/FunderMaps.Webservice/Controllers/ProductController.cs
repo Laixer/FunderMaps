@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +25,7 @@ public sealed class ProductController(ModelService modelService) : ControllerBas
     [HttpGet("analysis/{id}")]
     public async Task<AnalysisProduct> GetAnalysisAsync(string id)
     {
+        // TODO: Get from base controller
         var tenantId = Guid.Parse(User.FindFirstValue(FunderMapsAuthenticationClaimTypes.Tenant) ?? throw new InvalidOperationException());
 
         return await modelService.GetAnalysisAsync(id, tenantId);

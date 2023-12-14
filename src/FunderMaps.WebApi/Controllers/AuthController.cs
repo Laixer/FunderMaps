@@ -1,8 +1,8 @@
 using System.Security.Authentication;
-using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.Controllers;
 using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.AspNetCore.Services;
+using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Controllers;
+using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +13,7 @@ namespace FunderMaps.WebApi.Controllers;
 /// <summary>
 ///     Endpoint controller for application authentication.
 /// </summary>
-[Authorize, Route("api/auth")]
+[Route("api/auth")]
 public class AuthController(SignInService signInService, ISecurityTokenProvider tokenProvider) : FunderMapsController
 {
     // POST: api/auth/signin

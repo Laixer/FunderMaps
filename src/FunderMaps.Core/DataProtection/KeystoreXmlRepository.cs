@@ -3,7 +3,7 @@ using FunderMaps.Core.Entities;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.DataProtection.Repositories;
 
-namespace FunderMaps.AspNetCore.DataProtection;
+namespace FunderMaps.Core.DataProtection;
 
 /// <summary>
 ///     Construct new instance.
@@ -13,7 +13,7 @@ public class KeystoreXmlRepository(IKeystoreRepository keystoreRepository) : IXm
     public IReadOnlyCollection<XElement> GetAllElements()
     {
         // TODO: Use async/await.
-        var rr = keystoreRepository.ListAllAsync(Core.Navigation.All).ToListAsync().GetAwaiter().GetResult();
+        var rr = keystoreRepository.ListAllAsync(Navigation.All).ToListAsync().GetAwaiter().GetResult();
 
         return rr.Select(x => XElement.Parse(x.Value)).ToList().AsReadOnly();
     }

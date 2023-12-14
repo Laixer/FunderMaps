@@ -1,9 +1,9 @@
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Core.Authentication;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace FunderMaps.Extensions;
+namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
 ///     Extensions to the authentication builder.

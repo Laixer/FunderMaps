@@ -1,6 +1,6 @@
 using Microsoft.IdentityModel.Tokens;
 
-namespace FunderMaps.AspNetCore.Authentication;
+namespace FunderMaps.Core.Authentication;
 
 /// <summary>
 ///     Extends the <see cref="TokenValidationParameters"/> with additional JWT parameters.

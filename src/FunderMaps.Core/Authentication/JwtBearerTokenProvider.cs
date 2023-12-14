@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 
-namespace FunderMaps.AspNetCore.Authentication;
+namespace FunderMaps.Core.Authentication;
 
 /// <summary>
 ///     Jwt bearer token provider.

@@ -1,5 +1,6 @@
 using System.Security.Claims;
-using FunderMaps.AspNetCore.Authentication;
+using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ public class MapsetController(
     IMapsetRepository mapsetRepository,
     IIncidentRepository incidentRepository,
     IInquirySampleRepository inquirySampleRepository,
-    IRecoverySampleRepository recoverySampleRepository) : ControllerBase
+    IRecoverySampleRepository recoverySampleRepository) : FunderMapsController
 {
     [HttpGet("building/{buildingId}")]
     public async Task<IActionResult> GetReportsByBuildingAsync(string buildingId)

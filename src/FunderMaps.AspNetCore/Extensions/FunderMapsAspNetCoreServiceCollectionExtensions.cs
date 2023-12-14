@@ -1,15 +1,7 @@
-using FunderMaps.AspNetCore.Authentication;
-using FunderMaps.AspNetCore.Authorization;
-using FunderMaps.AspNetCore.DataProtection;
 using FunderMaps.AspNetCore.HealthChecks;
 using FunderMaps.AspNetCore.Middleware;
-using FunderMaps.AspNetCore.Services;
 using FunderMaps.Core.Options;
 using FunderMaps.Data.Providers;
-using FunderMaps.Extensions;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -59,57 +51,6 @@ public static class FunderMapsAspNetCoreServiceCollectionExtensions
         {
             options.ConnectionString = connectionString;
             options.ApplicationName = FunderMaps.AspNetCore.Constants.ApplicationName;
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection AddFunderMapsAspNetCoreAuth(this IServiceCollection services)
-    {
-        services.AddScoped<SignInService>();
-        services.AddTransient<ISecurityTokenProvider, JwtBearerTokenProvider>();
-
-        var serviceProvider = services.BuildServiceProvider();
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-        var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
-
-        services.Configure<KeyManagementOptions>(options =>
-        {
-            options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
-        });
-
-        services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
-
-        services.AddAuthentication("FunderMapsHybridAuth")
-            .AddFunderMapsScheme()
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new JwtTokenValidationParameters
-                {
-                    ValidIssuer = configuration.GetJwtIssuer(),
-                    ValidAudience = configuration.GetJwtAudience(),
-                    IssuerSigningKey = configuration.GetJwtSigningKey(),
-                    Valid = configuration.GetJwtTokenExpirationInMinutes(),
-                };
-            })
-            .AddCookie(options =>
-            {
-                options.SlidingExpiration = true;
-                options.Cookie.Name = configuration["Authentication:Cookie:Name"];
-                options.Cookie.Domain = configuration["Authentication:Cookie:Domain"];
-            })
-            .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
-            {
-                //
-            });
-
-        services.AddAuthorization(options =>
-        {
-            options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
-            options.AddFunderMapsPolicy();
         });
 
         return services;
