@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 
 namespace FunderMaps.Core.Components;
 
+// TODO: Remove interface.
 /// <summary>
 ///     Password hasher.
 /// </summary>

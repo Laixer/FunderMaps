@@ -9,12 +9,10 @@ using System.Security.Claims;
 
 namespace FunderMaps.AspNetCore.Services;
 
+// TODO: Move to core.services.
 /// <summary>
 ///     Provides the APIs for authentication.
 /// </summary>
-/// <remarks>
-///     Creates a new instance.
-/// </remarks>
 public class SignInService(
     IUserRepository userRepository,
     IOrganizationUserRepository organizationUserRepository,
