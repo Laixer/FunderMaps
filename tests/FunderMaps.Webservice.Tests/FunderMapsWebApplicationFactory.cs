@@ -305,7 +305,7 @@ internal class MemoryUserRepository(IPasswordHasher passwordHasher) : IUserRepos
 
         // await connection.ExecuteAsync(sql, new { id });
 
-        throw new NotImplementedException();
+        await Task.CompletedTask;
     }
 
     /// <summary>
