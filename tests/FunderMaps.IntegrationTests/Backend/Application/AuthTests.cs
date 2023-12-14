@@ -1,6 +1,6 @@
 ﻿using Bogus;
 using Bogus.DataSets;
-using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.DataTransferObjects;
 using System.Net;
 using Xunit;
 

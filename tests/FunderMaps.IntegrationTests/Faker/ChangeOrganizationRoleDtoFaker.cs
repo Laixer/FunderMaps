@@ -1,5 +1,5 @@
 using Bogus;
-using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Types;
 
 namespace FunderMaps.IntegrationTests.Faker

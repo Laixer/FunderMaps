@@ -2,12 +2,12 @@ using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.AspNetCore.HealthChecks;
+namespace FunderMaps.Core.HealthChecks;
 
 /// <summary>
-///     Check if the blob storage backend is alive.
+///     Check if the tile generator backend is alive.
 /// </summary>
-public class MapboxHealthCheck(IMapboxService mapboxService, ILogger<MapboxHealthCheck> logger) : IHealthCheck
+public class TippecanoeHealthCheck(ITilesetGeneratorService tilesetGeneratorService, ILogger<TippecanoeHealthCheck> logger) : IHealthCheck
 {
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
@@ -19,14 +19,14 @@ public class MapboxHealthCheck(IMapboxService mapboxService, ILogger<MapboxHealt
     {
         try
         {
-            await mapboxService.HealthCheck();
+            await tilesetGeneratorService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
             logger.LogTrace(exception, "Health check failed");
 
-            return HealthCheckResult.Unhealthy("mapbox service");
+            return HealthCheckResult.Unhealthy("blob storage service");
         }
     }
 }

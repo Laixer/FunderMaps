@@ -10,7 +10,8 @@ await Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices((hostBuilderContext, services) =>
     {
-        services.AddFunderMapsAspNetCoreServices();
+        services.AddFunderMapsCoreServices();
+        services.AddFunderMapsDataServices();
         services.AddHostedService<TaskRunner>();
     })
     .UseSystemd()

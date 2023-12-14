@@ -1,7 +1,6 @@
-using FunderMaps.Core;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects;
+namespace FunderMaps.Core.DataTransferObjects;
 
 /// <summary>
 ///     Pagination model.

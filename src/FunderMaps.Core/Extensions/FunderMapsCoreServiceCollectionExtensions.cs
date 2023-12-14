@@ -3,7 +3,9 @@ using FunderMaps.Core.Authorization;
 using FunderMaps.Core.Components;
 using FunderMaps.Core.DataProtection;
 using FunderMaps.Core.ExternalServices;
+using FunderMaps.Core.HealthChecks;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Options;
 using FunderMaps.Core.Services;
 using FunderMaps.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -18,6 +20,9 @@ namespace Microsoft.Extensions.DependencyInjection;
 /// </summary>
 public static class FunderMapsCoreServiceCollectionExtensions
 {
+    private static readonly string[] externalTags = ["extern"];
+    private static readonly string[] localTags = ["local"];
+
     /// <summary>
     ///     Adds the core services to the container.
     /// </summary>
@@ -60,13 +65,47 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddSingleton<OpenAIService>();
         services.AddSingleton<FunderMapsClient>();
 
+        // NOTE: Register the HttpContextAccessor service to the container.
+        //       The HttpContextAccessor exposes a singleton holding the
+        //       HttpContext within a scoped resolver, or null outside the scope.
+        //       Some components require the HttpContext and its features when the
+        //       related service is being resolved within the scope.
+        services.AddHttpContextAccessor();
+
+        services.AddHealthChecks()
+            .AddCheck<MapboxHealthCheck>("mapbox_health_check", tags: externalTags)
+            .AddCheck<RepositoryHealthCheck>("data_health_check", tags: externalTags)
+            .AddCheck<EmailHealthCheck>("email_health_check", tags: externalTags)
+            .AddCheck<BlobStorageHealthCheck>("blob_storage_health_check", tags: externalTags)
+            .AddCheck<IOHealthCheck>("io_health_check", tags: localTags)
+            .AddCheck<TippecanoeHealthCheck>("tileset_generator_health_check", tags: localTags);
+
+        var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        // Configure services with configuration.
+        // Any application depending on ASP.NET Core should have an IConfiguration service registered.
+        services.Configure<MailgunOptions>(configuration.GetSection(MailgunOptions.Section));
+        services.Configure<MapboxOptions>(configuration.GetSection(MapboxOptions.Section));
+        services.Configure<S3StorageOptions>(configuration.GetSection(S3StorageOptions.Section));
+        services.Configure<OpenAIOptions>(configuration.GetSection(OpenAIOptions.Section));
+        services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
+        services.Configure<FunderMapsOptions>(configuration.GetSection(FunderMapsOptions.Section));
+
         return services;
     }
 
+    // public static IServiceCollection AddFunderMapsAspNetCoreServices(this IServiceCollection services)
+    // {
+    //     // var connectionString = configuration.GetConnectionString("FunderMapsConnection");
+    //     // services.Configure<DbProviderOptions>(options =>
+    //     // {
+    //     //     options.ConnectionString = connectionString;
+    //     //     options.ApplicationName = FunderMaps.AspNetCore.Constants.ApplicationName;
+    //     // });
 
-
-
-
+    //     return services;
+    // }
 
     public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
     {
@@ -115,6 +154,21 @@ public static class FunderMapsCoreServiceCollectionExtensions
                 .Build();
 
             options.AddFunderMapsPolicy();
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddCorsAllowAny(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyHeader();
+                policy.AllowAnyMethod();
+                policy.AllowAnyOrigin();
+            });
         });
 
         return services;

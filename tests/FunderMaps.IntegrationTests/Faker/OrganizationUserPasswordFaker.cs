@@ -1,6 +1,5 @@
 using Bogus;
 using Bogus.DataSets;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;
 

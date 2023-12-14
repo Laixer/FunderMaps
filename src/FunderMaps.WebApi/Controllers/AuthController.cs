@@ -1,7 +1,7 @@
 using System.Security.Authentication;
-using FunderMaps.AspNetCore.DataTransferObjects;
 using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Controllers;
+using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

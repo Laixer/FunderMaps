@@ -1,5 +1,5 @@
-using FunderMaps.AspNetCore.DataTransferObjects;
 using System.Net.Http.Headers;
+using FunderMaps.Core.DataTransferObjects;
 
 namespace FunderMaps.IntegrationTests;
 

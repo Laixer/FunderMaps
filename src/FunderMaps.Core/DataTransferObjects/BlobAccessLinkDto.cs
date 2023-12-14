@@ -1,4 +1,4 @@
-namespace FunderMaps.AspNetCore.DataTransferObjects;
+namespace FunderMaps.Core.DataTransferObjects;
 
 // TODO: Move to core?
 /// <summary>

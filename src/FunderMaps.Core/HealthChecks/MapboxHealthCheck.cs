@@ -1,12 +1,13 @@
-using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.AspNetCore.HealthChecks;
+namespace FunderMaps.Core.HealthChecks;
 
 /// <summary>
-///     Check if the data backend is alive.
+///     Check if the blob storage backend is alive.
 /// </summary>
-public class RepositoryHealthCheck(ITestRepository testRepository) : IHealthCheck
+public class MapboxHealthCheck(IMapboxService mapboxService, ILogger<MapboxHealthCheck> logger) : IHealthCheck
 {
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
@@ -15,7 +16,17 @@ public class RepositoryHealthCheck(ITestRepository testRepository) : IHealthChec
     /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
     /// <returns>Instance of <see cref="HealthCheckResult"/>.</returns>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-        => await testRepository.IsAliveAsync()
-            ? HealthCheckResult.Healthy()
-            : HealthCheckResult.Unhealthy();
+    {
+        try
+        {
+            await mapboxService.HealthCheck();
+            return HealthCheckResult.Healthy();
+        }
+        catch (Exception exception)
+        {
+            logger.LogTrace(exception, "Health check failed");
+
+            return HealthCheckResult.Unhealthy("mapbox service");
+        }
+    }
 }

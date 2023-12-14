@@ -4,6 +4,7 @@ using FunderMaps.Data.Abstractions;
 using FunderMaps.Data.Providers;
 using FunderMaps.Data.Repositories;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -77,6 +78,16 @@ public static class FunderMapsDataServiceCollectionExtensions
         services.AddContextRepository<IUserRepository, UserRepository>();
 
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+        var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        var connectionString = configuration.GetConnectionString("FunderMapsConnection");
+        services.Configure<DbProviderOptions>(options =>
+        {
+            options.ConnectionString = connectionString;
+            options.ApplicationName = FunderMaps.Core.Constants.ApplicationName;
+        });
 
         return services;
     }

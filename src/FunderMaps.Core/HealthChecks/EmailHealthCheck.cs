@@ -2,12 +2,12 @@ using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.AspNetCore.HealthChecks;
+namespace FunderMaps.Core.HealthChecks;
 
 /// <summary>
-///     Check if the tile generator backend is alive.
+///     Check if the email backend is alive.
 /// </summary>
-public class TippecanoeHealthCheck(ITilesetGeneratorService tilesetGeneratorService, ILogger<TippecanoeHealthCheck> logger) : IHealthCheck
+public class EmailHealthCheck(IEmailService emailService, ILogger<EmailHealthCheck> logger) : IHealthCheck
 {
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
@@ -19,14 +19,14 @@ public class TippecanoeHealthCheck(ITilesetGeneratorService tilesetGeneratorServ
     {
         try
         {
-            await tilesetGeneratorService.HealthCheck();
+            await emailService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
             logger.LogTrace(exception, "Health check failed");
 
-            return HealthCheckResult.Unhealthy("blob storage service");
+            return HealthCheckResult.Unhealthy("email service");
         }
     }
 }

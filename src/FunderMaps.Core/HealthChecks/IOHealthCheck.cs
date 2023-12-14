@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace FunderMaps.AspNetCore.HealthChecks;
+namespace FunderMaps.Core.HealthChecks;
 
 /// <summary>
 ///     Check if filesystem is writable.

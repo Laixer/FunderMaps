@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects;
+namespace FunderMaps.Core.DataTransferObjects;
 
 /// <summary>
 ///     Reset user password DTO.

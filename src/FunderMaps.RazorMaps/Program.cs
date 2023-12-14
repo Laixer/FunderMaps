@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddFunderMapsAspNetCoreServices();
-builder.Services.AddFunderMapsAuthServices();
+builder.Services.AddFunderMapsCoreServices();
+builder.Services.AddFunderMapsDataServices();
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>

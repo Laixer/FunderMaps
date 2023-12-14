@@ -1,8 +1,5 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using FunderMaps.IntegrationTests.Faker;
-using FunderMaps.Testing.Faker;
 using System.Net;
 using Xunit;
 

@@ -1,7 +1,7 @@
 using FunderMaps.Core.Types;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataTransferObjects;
+namespace FunderMaps.Core.DataTransferObjects;
 
 /// <summary>
 ///     Change user organization role DTO.

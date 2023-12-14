@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.DataTransferObjects;
+using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
 using FunderMaps.IntegrationTests.Faker;

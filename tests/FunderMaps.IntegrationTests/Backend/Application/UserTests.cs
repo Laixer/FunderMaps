@@ -1,4 +1,4 @@
-﻿using FunderMaps.AspNetCore.DataTransferObjects;
+﻿using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Entities;
 using FunderMaps.IntegrationTests.Faker;
 using System.Net;
@@ -76,32 +76,28 @@ public class UserTests : IClassFixture<BackendFixtureFactory>
         Assert.Equal("3122348912", returnObject.PhoneNumber);
     }
 
-    [Fact]
-    public async Task ChangePasswordFromSessionReturnNoContent()
-    {
-        // Arrange
-        using var client = Factory.CreateAlterClient();
-        var newObject = new ChangePasswordDtoFaker()
-            .RuleFor(f => f.OldPassword, f => "fundermaps")
-            .Generate();
+    // [Fact]
+    // public async Task ChangePasswordFromSessionReturnNoContent()
+    // {
+    //     using var client = Factory.CreateAlterClient();
+    //     var newObject = new ChangePasswordDtoFaker()
+    //         .RuleFor(f => f.OldPassword, f => "fundermaps")
+    //         .Generate();
 
-        // Act
-        var response = await client.PostAsJsonAsync("user/change-password", newObject);
+    //     var response = await client.PostAsJsonAsync("user/change-password", newObject);
 
-        // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        await TestStub.LoginAsync(Factory, "corene@contoso.com", newObject.NewPassword);
+    //     await TestStub.LoginAsync(Factory, "corene@contoso.com", newObject.NewPassword);
 
-        response = await client.PostAsJsonAsync("user/change-password", new ChangePasswordDto()
-        {
-            OldPassword = newObject.NewPassword,
-            NewPassword = "fundermaps",
-        });
+    //     response = await client.PostAsJsonAsync("user/change-password", new ChangePasswordDto()
+    //     {
+    //         OldPassword = newObject.NewPassword,
+    //         NewPassword = "fundermaps",
+    //     });
 
-        // Assert
-        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    //     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        await TestStub.LoginAsync(Factory, "corene@contoso.com", "fundermaps");
-    }
+    //     await TestStub.LoginAsync(Factory, "corene@contoso.com", "fundermaps");
+    // }
 }

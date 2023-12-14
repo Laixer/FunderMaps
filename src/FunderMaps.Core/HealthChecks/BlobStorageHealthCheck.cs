@@ -2,12 +2,12 @@ using FunderMaps.Core.Interfaces;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 
-namespace FunderMaps.AspNetCore.HealthChecks;
+namespace FunderMaps.Core.HealthChecks;
 
 /// <summary>
-///     Check if the email backend is alive.
+///     Check if the blob storage backend is alive.
 /// </summary>
-public class EmailHealthCheck(IEmailService emailService, ILogger<EmailHealthCheck> logger) : IHealthCheck
+public class BlobStorageHealthCheck(IBlobStorageService blobStorageService, ILogger<BlobStorageHealthCheck> logger) : IHealthCheck
 {
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
@@ -19,14 +19,14 @@ public class EmailHealthCheck(IEmailService emailService, ILogger<EmailHealthChe
     {
         try
         {
-            await emailService.HealthCheck();
+            await blobStorageService.HealthCheck();
             return HealthCheckResult.Healthy();
         }
         catch (Exception exception)
         {
             logger.LogTrace(exception, "Health check failed");
 
-            return HealthCheckResult.Unhealthy("email service");
+            return HealthCheckResult.Unhealthy("blob storage service");
         }
     }
 }
