@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFunderMapsAspNetCoreServices();
 builder.Services.AddFunderMapsAuthServices();
-builder.Services.AddFunderMapsAspNetCoreControllers();
+// builder.Services.AddFunderMapsAspNetCoreControllers();
 
 if (!builder.Environment.IsDevelopment())
 {

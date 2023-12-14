@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace FunderMaps.AspNetCore.DataAnnotations;
+namespace FunderMaps.Core.DataAnnotations;
 
 /// <summary>
 ///     Form file mime type validation attribute.

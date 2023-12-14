@@ -21,6 +21,7 @@ public class VersionController : FunderMapsController
     ///     often and this call is primarily used to check if the
     ///     backend is responding.
     /// </remarks>
+    [HttpGet("api/version")] // FUTURE: Remove api prefix
     [HttpGet("version"), ResponseCache(Duration = 60 * 60 * 24)]
     public ActionResult<AppVersionDto> Get()
         => Ok(new AppVersionDto
