@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace FunderMaps.Core;
 
 /// <summary>
@@ -5,6 +7,21 @@ namespace FunderMaps.Core;
 /// </summary>
 public static class Constants
 {
+    /// <summary>
+    ///     Application name.
+    /// </summary>
+    public static string? ApplicationName => Assembly.GetEntryAssembly()?.GetName().Name;
+
+    /// <summary>
+    ///     Application revision.
+    /// </summary>
+    public const string ApplicationVersion = "@@VERSION@@";
+
+    /// <summary>
+    ///     Application commit.
+    /// </summary>
+    public const string ApplicationCommit = "@@COMMIT@@";
+
     /// <summary>
     ///     Incident storage destination folder name.
     /// </summary>
