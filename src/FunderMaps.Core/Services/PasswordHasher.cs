@@ -7,7 +7,7 @@ namespace FunderMaps.Core.Services;
 /// <summary>
 ///     Password hasher.
 /// </summary>
-public class PasswordHasher(RandomGenerator random, ILogger<PasswordHasher> logger) : IDisposable
+public class PasswordHasher(ILogger<PasswordHasher> logger) : IDisposable
 {
     private const int iterRounds = 10_000;
     private const int subkeyLength = 256 / 8; // 256 bits

@@ -41,7 +41,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         // NOTE: These services are rarely used and should therefore be
         //       registered as transient. They are re-instantiated on every
         //       resolve and disposed right after.
-        services.AddTransient<RandomGenerator>();
         services.AddTransient<PasswordHasher>();
         services.AddTransient<GeocoderTranslation>();
         services.AddTransient<ModelService>();
