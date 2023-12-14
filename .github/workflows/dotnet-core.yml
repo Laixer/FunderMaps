@@ -69,6 +69,8 @@ jobs:
         Jwt__SignatureKey: somelargetextstringusedinsignatures
         Incident__ClientId: 42
         Incident__Recipients__0: info@example.com
+        Authentication__Cookie__Name: FunderMaps.Authentication.Realm
+        Authentication__Cookie__Domain: localhost
         DataProtection__ApplicationName: FunderMapsTest
         ConnectionStrings__FunderMapsConnection: "Server=localhost;Database=fundermaps;User Id=fundermaps_webapp"
 
