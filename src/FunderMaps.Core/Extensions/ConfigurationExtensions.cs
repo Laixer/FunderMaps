@@ -21,24 +21,6 @@ public static class ConfigurationExtensions
     }
 
     /// <summary>
-    ///     Get the issuer from the configuration.
-    /// </summary>
-    /// <param name="configuration">The configuration.</param>
-    public static string GetJwtIssuer(this IConfiguration configuration)
-    {
-        return configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not found in configuration.");
-    }
-
-    /// <summary>
-    ///     Get the audience from the configuration.
-    /// </summary>
-    /// <param name="configuration">The configuration.</param>
-    public static string GetJwtAudience(this IConfiguration configuration)
-    {
-        return configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience not found in configuration.");
-    }
-
-    /// <summary>
     ///     Get the token expiration time in minutes from the configuration.
     /// </summary>
     /// <param name="configuration">The configuration.</param>

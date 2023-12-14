@@ -118,8 +118,8 @@ public static class FunderMapsCoreServiceCollectionExtensions
             {
                 options.TokenValidationParameters = new JwtTokenValidationParameters
                 {
-                    ValidIssuer = configuration.GetJwtIssuer(), // TODO: Fetch directly from configuration.
-                    ValidAudience = configuration.GetJwtAudience(),
+                    ValidIssuer = configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not found in configuration."),
+                    ValidAudience = configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience not found in configuration."),
                     IssuerSigningKey = configuration.GetJwtSigningKey(),
                     Valid = configuration.GetJwtTokenExpirationInMinutes(),
                 };
