@@ -8,7 +8,7 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// <summary>
 ///     Integration test for the statistics controller.
 /// </summary>
-public class StatisticsTests(WebApplicationFactory<Program> factory) : IClassFixture<WebApplicationFactory<Program>>
+public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
     [Fact(Skip = "Needs FIX")]
     public async Task GetProductByIdReturnProduct()
