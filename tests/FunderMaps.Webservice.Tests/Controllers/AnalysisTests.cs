@@ -1,5 +1,7 @@
-﻿using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.DataTransferObjects;
+using FunderMaps.Core.Types.Products;
 using System.Net;
+using System.Net.Http.Headers;
 using Xunit;
 
 namespace FunderMaps.Webservice.Tests.Controllers;
@@ -9,12 +11,24 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
-    [Fact(Skip = "Needs FIX")]
+    [Fact]
     public async Task GetProductByIdReturnProduct()
     {
         using var client = factory.CreateClient();
 
-        var response = await client.GetAsync($"api/v3/product/analysis?id=gfm-4f5e73d478ff452b86023a06e5b8d834");
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        {
+            Email = "lester@contoso.com",
+            Password = "fundermaps",
+        });
+        var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
+
+        Assert.NotNull(returnToken);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/v3/product/analysis?id=gfm-4f5e73d478ff452b86023a06e5b8d834");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+
+        var response = await client.SendAsync(request);
         var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);

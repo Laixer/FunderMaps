@@ -4,9 +4,9 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Xunit.Sdk;
 
 namespace FunderMaps.Webservice.Tests;
 
@@ -131,11 +131,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         },
     };
 
-    /// <summary>
-    ///     Create new <see cref="User"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
-    /// <returns>Created <see cref="User"/>.</returns>
     public async Task<Guid> AddAsync(User entity)
     {
         await Task.CompletedTask;
@@ -173,10 +168,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         //     RETURNING id";
     }
 
-    /// <summary>
-    ///     Retrieve number of entities.
-    /// </summary>
-    /// <returns>Number of entities.</returns>
     public async Task<long> CountAsync()
     {
         await Task.CompletedTask;
@@ -184,12 +175,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         return memory.Count;
     }
 
-    // FUTURE: If user is in use it violates foreign key constraint, returning
-    //         a ReferenceNotFoundException, which is invalid.
-    /// <summary>
-    ///     Delete <see cref="User"/>.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
     public async Task DeleteAsync(Guid id)
     {
         await Task.CompletedTask;
@@ -197,11 +182,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         memory.Remove(id);
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="User"/> by id.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByIdAsync(Guid id)
     {
         await Task.CompletedTask;
@@ -209,11 +189,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         return memory[id];
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="User"/> by email and password hash.
-    /// </summary>
-    /// <param name="email">Unique identifier.</param>
-    /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByEmailAsync(string email)
     {
         await Task.CompletedTask;
@@ -221,11 +196,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         return memory.Values.FirstOrDefault(x => x.Email == email) ?? throw new EntityNotFoundException(nameof(User));
     }
 
-    /// <summary>
-    ///     Retrieve <see cref="User"/> by authentication key.
-    /// </summary>
-    /// <param name="key">Authentication key.</param>
-    /// <returns><see cref="User"/>.</returns>
     public async Task<User> GetByAuthKeyAsync(string key)
     {
         await Task.CompletedTask;
@@ -235,11 +205,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         return memory.Values.FirstOrDefault(x => x.Email == key) ?? throw new EntityNotFoundException(nameof(User));
     }
 
-    /// <summary>
-    ///     Get password hash.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <returns>Password hash as string.</returns>
     public async Task<string?> GetPasswordHashAsync(Guid id)
     {
         await Task.CompletedTask;
@@ -247,11 +212,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         return memory[id].PasswordHash;
     }
 
-    /// <summary>
-    ///     Get access failed count.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <returns>Failed access count.</returns>
     public async Task<int> GetAccessFailedCount(Guid id)
     {
         await Task.CompletedTask;
@@ -259,19 +219,11 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         return memory[id].AccessFailedCount;
     }
 
-    /// <summary>
-    ///     Retrieve all <see cref="User"/>.
-    /// </summary>
-    /// <returns>List of <see cref="User"/>.</returns>
     public IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
     {
         return memory.Values.ToAsyncEnumerable();
     }
 
-    /// <summary>
-    ///     Update <see cref="User"/>.
-    /// </summary>
-    /// <param name="entity">Entity object.</param>
     public async Task UpdateAsync(User entity)
     {
         await Task.CompletedTask;
@@ -289,11 +241,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         };
     }
 
-    /// <summary>
-    ///     Update user password.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
-    /// <param name="passwordHash">New password hash.</param>
     public async Task SetPasswordHashAsync(Guid id, string passwordHash)
     {
         await Task.CompletedTask;
@@ -301,10 +248,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         memory[id].PasswordHash = passwordHash;
     }
 
-    /// <summary>
-    ///     Increase signin failure count.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
     public async Task BumpAccessFailed(Guid id)
     {
         await Task.CompletedTask;
@@ -312,10 +255,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         memory[id].AccessFailedCount++;
     }
 
-    /// <summary>
-    ///     Reset signin failure count.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
     public async Task ResetAccessFailed(Guid id)
     {
         await Task.CompletedTask;
@@ -323,10 +262,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         memory[id].AccessFailedCount = 0;
     }
 
-    /// <summary>
-    ///     Register a new user login.
-    /// </summary>
-    /// <param name="id">Entity identifier.</param>
     public async Task RegisterAccess(Guid id)
     {
         await Task.CompletedTask;
@@ -335,9 +270,80 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     }
 }
 
-/// <summary>
-///     Organization user repository.
-/// </summary>
+internal class MemoryOrganizationRepository : IOrganizationRepository
+{
+    private readonly Dictionary<Guid, Organization> memory = new()
+    {
+        [Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114")] = new()
+        {
+            Id = Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114"),
+            Name = "FunderMaps",
+            Email = "info@fundermaps.com",
+            Area = new SpatialBox { },
+            Center = new SpatialPoint { }
+
+        },
+        [Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91")] = new()
+        {
+            Id = Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91"),
+            Name = "Contoso",
+            Email = "info@contoso.com",
+            Area = new SpatialBox { },
+            Center = new SpatialPoint { }
+
+        },
+    };
+
+    public async Task<Guid> AddAsync(Organization entity)
+    {
+        await Task.CompletedTask;
+
+        memory.Add(entity.Id, entity);
+
+        return entity.Id;
+    }
+
+    public async Task<long> CountAsync()
+    {
+        await Task.CompletedTask;
+
+        return memory.Count;
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        await Task.CompletedTask;
+
+        memory.Remove(id);
+    }
+
+    public async Task<Organization> GetByIdAsync(Guid id)
+    {
+        await Task.CompletedTask;
+
+        return memory[id];
+    }
+
+    public async Task<Organization> GetByNameAsync(string name)
+    {
+        await Task.CompletedTask;
+
+        return memory.Values.FirstOrDefault(x => x.Name == name) ?? throw new EntityNotFoundException(nameof(Organization));
+    }
+
+    public IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation)
+    {
+        return memory.Values.ToAsyncEnumerable();
+    }
+
+    public async Task UpdateAsync(Organization entity)
+    {
+        await Task.CompletedTask;
+
+        memory[entity.Id] = entity;
+    }
+}
+
 internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
 {
     private readonly Dictionary<Guid, User> memory = [];
@@ -469,7 +475,7 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
         //     yield return reader.GetGuid(0);
         // }
 
-        Guid[] staticArray = [Guid.NewGuid()];
+        Guid[] staticArray = [Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114")];
 
         return staticArray.ToAsyncEnumerable();
 
@@ -517,9 +523,164 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
     }
 }
 
-/// <summary>
-///     Construct new instance.
-/// </summary>
+internal class MemoryBuildingRepository : IBuildingRepository
+{
+    private readonly Dictionary<string, Building> memory = new()
+    {
+        ["gfm-4f5e73d478ff452b86023a06e5b8d834"] = new()
+        {
+            Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
+            BuiltYear = new DateTime(1908, 1, 1),
+            IsActive = true,
+            ExternalId = "NL.IMBAG.PAND.0599100000685769",
+            NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
+        },
+    };
+
+    public async Task<string> AddAsync(Building entity)
+    {
+        await Task.CompletedTask;
+
+        memory.Add(entity.Id, entity);
+
+        return entity.Id;
+    }
+
+    public async Task<long> CountAsync()
+    {
+        await Task.CompletedTask;
+
+        return memory.Count;
+    }
+
+    public async Task DeleteAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        memory.Remove(id);
+    }
+
+    public async Task<Building> GetByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory[id];
+    }
+
+    public async Task<Building> GetByExternalIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
+    }
+
+    public Task<Building> GetByExternalAddressIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<Building> ListAllAsync(Navigation navigation)
+    {
+        return memory.Values.ToAsyncEnumerable();
+    }
+
+    public async Task UpdateAsync(Building entity)
+    {
+        await Task.CompletedTask;
+
+        memory[entity.Id] = entity;
+    }
+}
+
+internal class MemoryAnalysisRepository : IAnalysisRepository
+{
+    private readonly Dictionary<string, AnalysisProduct> memory = new()
+    {
+        ["gfm-4f5e73d478ff452b86023a06e5b8d834"] = new()
+        {
+            BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
+            ExternalBuildingId = "NL.IMBAG.PAND.0599100000685769",
+            NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
+            ConstructionYear = 1908,
+            ConstructionYearReliability = Reliability.Indicative,
+            RestorationCosts = 306_200,
+            Height = 14.18,
+            Velocity = -1.90,
+            GroundWaterLevel = 1.50,
+            GroundLevel = -1.63,
+            Soil = "ni-zk",
+            SurfaceArea = 157.05,
+            InquiryType = InquiryType.ArchieveResearch,
+            FoundationType = FoundationType.Wood,
+            FoundationTypeReliability = Reliability.Cluster,
+            Drystand = -0.001449942588809927,
+            DrystandReliability = Reliability.Indicative,
+            DrystandRisk = FoundationRisk.C,
+            DewateringDepthReliability = Reliability.Indicative,
+            BioInfectionReliability = Reliability.Indicative,
+            BioInfectionRisk = FoundationRisk.B,
+        },
+    };
+
+    public async Task<string> AddAsync(AnalysisProduct entity)
+    {
+        await Task.CompletedTask;
+
+        memory.Add(entity.BuildingId, entity);
+
+        return entity.BuildingId;
+    }
+
+    public async Task<long> CountAsync()
+    {
+        await Task.CompletedTask;
+
+        return memory.Count;
+    }
+
+    public async Task DeleteAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        memory.Remove(id);
+    }
+
+    public async Task<AnalysisProduct> GetAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory[id];
+    }
+
+    public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory.Values.FirstOrDefault(x => x.ExternalBuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
+    }
+
+    public async Task<bool> GetRiskIndexAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return true;
+    }
+
+    public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)
+    {
+        await Task.CompletedTask;
+
+        return true;
+    }
+
+    public async Task RegisterProductMismatch(string id, Guid tenantId)
+    {
+        await Task.CompletedTask;
+
+        return;
+    }
+}
+
 public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.Repositories.IXmlRepository
 {
     private readonly Dictionary<string, System.Xml.Linq.XElement> memory = [];
@@ -535,8 +696,6 @@ public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.R
     }
 }
 
-
-
 public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -544,8 +703,8 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
         builder.ConfigureServices(services =>
         {
             // services.AddScoped<IAddressRepository, AddressRepository>();
-            // services.AddScoped<IAnalysisRepository, AnalysisRepository>();
-            // services.AddScoped<IBuildingRepository, BuildingRepository>();
+            services.Replace(ServiceDescriptor.Scoped<IAnalysisRepository, MemoryAnalysisRepository>());
+            services.Replace(ServiceDescriptor.Scoped<IBuildingRepository, MemoryBuildingRepository>());
             // services.AddScoped<IBundleRepository, BundleRepository>();
             // services.AddScoped<IContractorRepository, ContractorRepository>();
             // services.AddScoped<IIncidentRepository, IncidentRepository>();
@@ -553,7 +712,7 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
             // services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
             // services.AddScoped<IMapsetRepository, MapsetRepository>();
             // services.AddScoped<INeighborhoodRepository, NeighborhoodRepository>();
-            // services.AddScoped<IOrganizationRepository, OrganizationRepository>();
+            services.Replace(ServiceDescriptor.Scoped<IOrganizationRepository, MemoryOrganizationRepository>());
             // services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             // services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
             // services.AddScoped<IStatisticsRepository, StatisticsRepository>();
