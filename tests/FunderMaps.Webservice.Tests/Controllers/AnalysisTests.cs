@@ -63,6 +63,43 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
     [InlineData("0599100000685769")]
     [InlineData("NL.IMBAG.NUMMERAANDUIDING.0599200000499204")]
     [InlineData("0599200000499204")]
+    public async Task AuthKeyGetProductByIdReturnProduct(string address)
+    {
+        using var client = factory.CreateClient();
+
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis?id={address}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+
+            var response = await client.SendAsync(request);
+            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
+            Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
+            Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
+        }
+
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+
+            var response = await client.SendAsync(request);
+            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
+            Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
+            Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
+        }
+    }
+
+    [Theory]
+    [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
+    [InlineData("NL.IMBAG.PAND.0599100000685769")]
+    [InlineData("0599100000685769")]
+    [InlineData("NL.IMBAG.NUMMERAANDUIDING.0599200000499204")]
+    [InlineData("0599200000499204")]
     public async Task GetRiskIndexByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
