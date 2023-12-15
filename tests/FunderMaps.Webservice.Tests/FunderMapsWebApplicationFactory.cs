@@ -23,9 +23,7 @@ internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncReposito
     }
 
     public Task<long> CountAsync()
-    {
-        return Task.FromResult((long)memory.Count);
-    }
+        => Task.FromResult((long)memory.Count);
 
     public Task DeleteAsync(TEntityPrimaryKey id)
     {
@@ -35,14 +33,10 @@ internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncReposito
     }
 
     public Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
-    {
-        return Task.FromResult(memory[id]);
-    }
+        => Task.FromResult(memory[id]);
 
     public IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
-    {
-        return memory.Values.ToAsyncEnumerable();
-    }
+        => memory.Values.ToAsyncEnumerable();
 
     public Task UpdateAsync(TEntity entity)
     {

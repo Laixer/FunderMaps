@@ -22,10 +22,8 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     ///     Request the analysis product.
     /// </summary>
     [HttpGet("analysis/{id}")]
-    public async Task<AnalysisProduct> GetAnalysisAsync(string id)
-    {
-        return await modelService.GetAnalysisAsync(id, TenantId);
-    }
+    public Task<AnalysisProduct> GetAnalysisAsync(string id)
+        => modelService.GetAnalysisAsync(id, TenantId);
 
     // TODO: LEGACY
     // GET: api/v3/product/at_risk
@@ -41,10 +39,8 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     ///     Request the risk index per id.
     /// </summary>
     [HttpGet("at_risk/{id}")]
-    public async Task<bool> GetRiskIndexAsync(string id)
-    {
-        return await modelService.GetRiskIndexAsync(id, TenantId);
-    }
+    public Task<bool> GetRiskIndexAsync(string id)
+        => modelService.GetRiskIndexAsync(id, TenantId);
 
     // TODO: LEGACY
     // GET: api/v3/product/statistics
@@ -61,7 +57,5 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// </summary>
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
-    {
-        return modelService.GetStatisticsAsync(id, TenantId);
-    }
+        => modelService.GetStatisticsAsync(id, TenantId);
 }

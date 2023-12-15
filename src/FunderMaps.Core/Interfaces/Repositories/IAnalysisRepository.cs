@@ -19,6 +19,7 @@ public interface IAnalysisRepository
     /// <param name="id">Internal building id.</param>
     Task<bool> GetRiskIndexAsync(string id);
 
+    // TODO: Move to ITraceRepository
     /// <summary>
     ///     Register a product match.
     /// </summary>
@@ -28,6 +29,7 @@ public interface IAnalysisRepository
     /// <param name="tenantId">Tenant identifier.</param>
     Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId);
 
+    // TODO: Move to ITraceRepository
     /// <summary>
     ///     Register a product mismatch.
     /// </summary>

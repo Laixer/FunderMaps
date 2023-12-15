@@ -13,6 +13,7 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
 {
+    // TODO: Move NULLIF and REGEXP_REPLACE to UserService.
     /// <summary>
     ///     Create new <see cref="User"/>.
     /// </summary>
