@@ -54,15 +54,15 @@ public sealed class UserExtended : User
 {
     public string? PasswordHash { get; set; }
 
-    public int AccessFailedCount { get; set; }
+    public int AccessFailedCount { get; set; } = 0;
 
-    public int LoginCount { get; set; }
+    public int LoginCount { get; set; } = 0;
 
     /// <summary>
     ///     User role in organization.
     /// </summary>
     // [Required]
-    public OrganizationRole OrganizationRole { get; set; }
+    public OrganizationRole OrganizationRole { get; set; } = OrganizationRole.Reader;
 }
 
 
@@ -76,13 +76,19 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             GivenName = "Lester",
             LastName = "Bednar",
             Email = "lester@contoso.com",
-            JobTitle = "Developer",
+            JobTitle = "Reader",
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-            AccessFailedCount = 0,
-            LoginCount = 0,
-            OrganizationRole = OrganizationRole.Reader,
+        },
+        [Guid.Parse("81209a70-08d9-42da-8ce7-1922fc63cbaf")] = new()
+        {
+            Id = Guid.Parse("81209a70-08d9-42da-8ce7-1922fc63cbaf"),
+            Email = "corene@contoso.com",
+            JobTitle = "Reader",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.User,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
         },
     };
 
