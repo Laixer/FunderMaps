@@ -1,7 +1,7 @@
 using FunderMaps.Core.Middleware;
 using Microsoft.AspNetCore.Builder;
 
-namespace FunderMaps.AspNetCore.Extensions;
+namespace FunderMaps.Core.Extensions;
 
 /// <summary>
 ///     Extension functionality for <see cref="AspAppContextMiddleware"/>.

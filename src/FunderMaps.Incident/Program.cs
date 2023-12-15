@@ -1,4 +1,4 @@
-using FunderMaps.AspNetCore.Extensions;
+using FunderMaps.Core.Extensions;
 using FunderMaps.Core.ExternalServices;
 using FunderMaps.Incident.Components;
 using Microsoft.AspNetCore.Authorization;
