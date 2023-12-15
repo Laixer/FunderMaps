@@ -11,12 +11,12 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
-    // TODO: Add NL.IMBAG.NUMMERAANDUIDING.0599200000308423
-    // TODO: Add 0599200000337325
     [Theory]
     [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
     [InlineData("NL.IMBAG.PAND.0599100000685769")]
     [InlineData("0599100000685769")]
+    [InlineData("NL.IMBAG.NUMMERAANDUIDING.0599200000499204")]
+    [InlineData("0599200000499204")]
     public async Task GetProductByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
@@ -42,12 +42,12 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
         Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
     }
 
-    // TODO: Add NL.IMBAG.NUMMERAANDUIDING.0599200000308423
-    // TODO: Add 0599200000337325
     [Theory]
     [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
     [InlineData("NL.IMBAG.PAND.0599100000685769")]
     [InlineData("0599100000685769")]
+    [InlineData("NL.IMBAG.NUMMERAANDUIDING.0599200000499204")]
+    [InlineData("0599200000499204")]
     public async Task GetRiskIndexByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();

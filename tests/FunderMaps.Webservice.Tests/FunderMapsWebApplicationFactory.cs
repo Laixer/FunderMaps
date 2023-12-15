@@ -523,6 +523,73 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
     }
 }
 
+internal class MemoryAddressRepository : IAddressRepository
+{
+    private readonly Dictionary<string, Address> memory = new()
+    {
+        ["gfm-c36dcd7b53c84b5eb39ad880c0955fed"] = new()
+        {
+            Id = "gfm-c36dcd7b53c84b5eb39ad880c0955fed",
+            BuildingNumber = "8b",
+            PostalCode = "3023AM",
+            Street = "Vierambachtsstraat",
+            IsActive = true,
+            ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0599200000499204",
+            City = "Rotterdam",
+            BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
+        },
+    };
+
+    public async Task<string> AddAsync(Address entity)
+    {
+        await Task.CompletedTask;
+
+        memory.Add(entity.Id, entity);
+
+        return entity.Id;
+    }
+
+    public async Task<long> CountAsync()
+    {
+        await Task.CompletedTask;
+
+        return memory.Count;
+    }
+
+    public async Task DeleteAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        memory.Remove(id);
+    }
+
+    public async Task<Address> GetByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory[id];
+    }
+
+    public async Task<Address> GetByExternalIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
+    }
+
+    public IAsyncEnumerable<Address> ListAllAsync(Navigation navigation)
+    {
+        return memory.Values.ToAsyncEnumerable();
+    }
+
+    public async Task UpdateAsync(Address entity)
+    {
+        await Task.CompletedTask;
+
+        memory[entity.Id] = entity;
+    }
+}
+
 internal class MemoryBuildingRepository : IBuildingRepository
 {
     private readonly Dictionary<string, Building> memory = new()
@@ -534,6 +601,21 @@ internal class MemoryBuildingRepository : IBuildingRepository
             IsActive = true,
             ExternalId = "NL.IMBAG.PAND.0599100000685769",
             NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
+        },
+    };
+
+    private readonly Dictionary<string, Address> memoryAddress = new()
+    {
+        ["gfm-c36dcd7b53c84b5eb39ad880c0955fed"] = new()
+        {
+            Id = "gfm-c36dcd7b53c84b5eb39ad880c0955fed",
+            BuildingNumber = "8b",
+            PostalCode = "3023AM",
+            Street = "Vierambachtsstraat",
+            IsActive = true,
+            ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0599200000499204",
+            City = "Rotterdam",
+            BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
         },
     };
 
@@ -574,9 +656,12 @@ internal class MemoryBuildingRepository : IBuildingRepository
         return memory.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
     }
 
-    public Task<Building> GetByExternalAddressIdAsync(string id)
+    public async Task<Building> GetByExternalAddressIdAsync(string id)
     {
-        throw new NotImplementedException();
+        await Task.CompletedTask;
+
+        var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
+        return await GetByIdAsync(address.BuildingId);
     }
 
     public IAsyncEnumerable<Building> ListAllAsync(Navigation navigation)
@@ -702,7 +787,7 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
     {
         builder.ConfigureServices(services =>
         {
-            // services.AddScoped<IAddressRepository, AddressRepository>();
+            services.Replace(ServiceDescriptor.Scoped<IAddressRepository, MemoryAddressRepository>());
             services.Replace(ServiceDescriptor.Scoped<IAnalysisRepository, MemoryAnalysisRepository>());
             services.Replace(ServiceDescriptor.Scoped<IBuildingRepository, MemoryBuildingRepository>());
             // services.AddScoped<IBundleRepository, BundleRepository>();
