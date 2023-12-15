@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Authorization;
-using FunderMaps.Core.Components;
 using FunderMaps.Core.DataProtection;
 using FunderMaps.Core.ExternalServices;
 using FunderMaps.Core.HealthChecks;
@@ -53,8 +52,8 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       in order for core services to be functional. This registration is
         //       merely a placeholder. The front framework should bootstrap the application
         //       context if possible.
-        services.AddSingleton<IAppContextFactory, AppContextFactory>();
-        services.AddScoped(serviceProvider => serviceProvider.GetRequiredService<IAppContextFactory>().Create());
+        // services.AddSingleton<IAppContextFactory, AppContextFactory>();
+        services.AddScoped<FunderMaps.Core.AppContext>();
 
         // Register external services in DI container.
         services.AddSingleton<IEmailService, MailgunService>();
