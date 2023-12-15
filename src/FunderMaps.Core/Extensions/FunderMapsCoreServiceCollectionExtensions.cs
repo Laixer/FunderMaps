@@ -52,7 +52,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         //       in order for core services to be functional. This registration is
         //       merely a placeholder. The front framework should bootstrap the application
         //       context if possible.
-        // services.AddSingleton<IAppContextFactory, AppContextFactory>();
         services.AddScoped<FunderMaps.Core.AppContext>();
 
         // Register external services in DI container.
