@@ -11,8 +11,13 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
-    [Fact]
-    public async Task GetProductByIdReturnProduct()
+    // TODO: Add NL.IMBAG.NUMMERAANDUIDING.0599200000308423
+    // TODO: Add 0599200000337325
+    [Theory]
+    [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
+    [InlineData("NL.IMBAG.PAND.0599100000685769")]
+    [InlineData("0599100000685769")]
+    public async Task GetProductByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
 
@@ -25,7 +30,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         Assert.NotNull(returnToken);
 
-        var request = new HttpRequestMessage(HttpMethod.Get, "api/v3/product/analysis?id=gfm-4f5e73d478ff452b86023a06e5b8d834");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis?id={address}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
 
         var response = await client.SendAsync(request);
@@ -33,79 +38,33 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(returnObject);
+        Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
         Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
     }
 
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetProductByExternalIdReturnProduct()
+    // TODO: Add NL.IMBAG.NUMMERAANDUIDING.0599200000308423
+    // TODO: Add 0599200000337325
+    [Theory]
+    [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
+    [InlineData("NL.IMBAG.PAND.0599100000685769")]
+    [InlineData("0599100000685769")]
+    public async Task GetRiskIndexByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
 
-        var response = await client.GetAsync($"api/v3/product/analysis?id=NL.IMBAG.PAND.0599100000661262");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        {
+            Email = "lester@contoso.com",
+            Password = "fundermaps",
+        });
+        var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(returnObject);
-        Assert.Equal("gfm-39bd02bbc79e4ed08c97fd6afbbf5fee", returnObject.BuildingId);
-    }
+        Assert.NotNull(returnToken);
 
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetProductByExternalIdBag1ReturnProduct()
-    {
-        using var client = factory.CreateClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/at_risk?id={address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
 
-        var response = await client.GetAsync($"api/v3/product/analysis?id=0599100000630926");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(returnObject);
-        Assert.Equal("gfm-d6cc2bda840249209291b125174c07fc", returnObject.BuildingId);
-    }
-
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetProductByExternalAddressIdReturnProduct()
-    {
-        using var client = factory.CreateClient();
-
-        var response = await client.GetAsync($"api/v3/product/analysis?id=NL.IMBAG.NUMMERAANDUIDING.0599200000308423");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(returnObject);
-        Assert.Equal("gfm-21621a43af364bdb86f192201473ccf9", returnObject.BuildingId);
-    }
-
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetProductByExternalAddressIdBag1ReturnProduct()
-    {
-        using var client = factory.CreateClient();
-
-        var response = await client.GetAsync($"api/v3/product/analysis?id=0599200000337325");
-        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(returnObject);
-        Assert.Equal("gfm-a724269605954e9285ca378b77dafcda", returnObject.BuildingId);
-    }
-
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetRiskIndexByIdReturnProduct()
-    {
-        using var client = factory.CreateClient();
-
-        var response = await client.GetAsync($"api/v3/product/at_risk?id=gfm-1eec772e31634092bc4c3f0cf18e38b8");
-        var returnObject = await response.Content.ReadFromJsonAsync<bool>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.True(returnObject);
-    }
-
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetRiskIndexByExternalIdReturnProduct()
-    {
-        using var client = factory.CreateClient();
-
-        var response = await client.GetAsync($"api/v3/product/at_risk?id=NL.IMBAG.PAND.0599100000669737");
+        var response = await client.SendAsync(request);
         var returnObject = await response.Content.ReadFromJsonAsync<bool>();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
