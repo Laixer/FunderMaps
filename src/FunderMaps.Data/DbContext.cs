@@ -21,8 +21,8 @@ internal class DbContext : IAsyncDisposable
     /// </summary>
     public DbContext(DbProvider dbProvider, Core.AppContext appContext, string cmdText)
     {
-        _dbProvider = dbProvider ?? throw new ArgumentNullException(nameof(dbProvider));
-        _appContext = appContext ?? throw new ArgumentNullException(nameof(appContext));
+        _dbProvider = dbProvider;
+        _appContext = appContext;
 
         _dbConnection = _dbProvider.ConnectionScope();
         _dbCommand = _dbProvider.CreateCommand(cmdText, _dbConnection);
