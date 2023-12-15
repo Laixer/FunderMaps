@@ -65,7 +65,6 @@ public sealed class UserExtended : User
     public OrganizationRole OrganizationRole { get; set; } = OrganizationRole.Reader;
 }
 
-
 internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserRepository
 {
     private readonly Dictionary<Guid, UserExtended> memory = new()
@@ -83,7 +82,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         [Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077")] = new()
         {
             Id = Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077"),
-            Email = "Javier40@yahoo.com",
+            Email = "javier40@yahoo.com",
             JobTitle = "Superuser",
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
@@ -93,7 +92,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         {
             Id = Guid.Parse("8b0b6d53-3418-41c4-bad2-908288b421c7"),
             GivenName = "kihn",
-            Email = "Freda@contoso.com",
+            Email = "freda@contoso.com",
             JobTitle = "Reviewer",
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
@@ -151,10 +150,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             JobTitle = entity.JobTitle,
             PhoneNumber = entity.PhoneNumber,
             Role = entity.Role,
-            PasswordHash = string.Empty,
-            AccessFailedCount = 0,
-            LoginCount = 0,
-            OrganizationRole = OrganizationRole.Reader,
         });
 
         return entity.Id;
@@ -250,14 +245,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         return memory[id].PasswordHash;
-
-        // return passwordHasher.HashPassword("fundermaps");
-
-        // var sql = @"
-        //     SELECT  u.password_hash
-        //     FROM    application.user AS u
-        //     WHERE   u.id = @id
-        //     LIMIT   1";
     }
 
     /// <summary>
@@ -299,10 +286,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             JobTitle = entity.JobTitle,
             PhoneNumber = entity.PhoneNumber,
             Role = entity.Role,
-            PasswordHash = string.Empty,
-            AccessFailedCount = 0,
-            LoginCount = 0,
-            OrganizationRole = OrganizationRole.Reader,
         };
     }
 
@@ -316,11 +299,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         memory[id].PasswordHash = passwordHash;
-
-        // var sql = @"
-        //     UPDATE  application.user
-        //     SET     password_hash = @password_hash
-        //     WHERE   id = @id";
     }
 
     /// <summary>
@@ -332,11 +310,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         memory[id].AccessFailedCount++;
-
-        // var sql = @"
-        //     UPDATE  application.user
-        //     SET     access_failed_count = access_failed_count + 1
-        //     WHERE   id = @id";
     }
 
     /// <summary>
@@ -348,11 +321,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         memory[id].AccessFailedCount = 0;
-
-        // var sql = @"
-        //     UPDATE  application.user
-        //     SET     access_failed_count = 0
-        //     WHERE   id = @id";
     }
 
     /// <summary>
@@ -362,8 +330,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     public async Task RegisterAccess(Guid id)
     {
         await Task.CompletedTask;
-
-        // var sql = @"SELECT application.log_access(@id)";
 
         memory[id].LoginCount++;
     }

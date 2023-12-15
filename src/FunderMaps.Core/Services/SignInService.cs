@@ -34,7 +34,7 @@ public class SignInService(
     {
         try
         {
-            var user = await userRepository.GetByEmailAsync(email.Trim());
+            var user = await userRepository.GetByEmailAsync(email.Trim().ToLowerInvariant());
 
             // TOOD: Generate random code and send with email.
             await emailService.SendAsync(new EmailMessage
@@ -100,7 +100,7 @@ public class SignInService(
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.ToString()),
-            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Email, user.Email.Trim().ToLowerInvariant()),
             new(ClaimTypes.Role, user.Role.ToString()),
         };
 
@@ -180,7 +180,7 @@ public class SignInService(
     {
         try
         {
-            if (await userRepository.GetByEmailAsync(email.Trim()) is not User user)
+            if (await userRepository.GetByEmailAsync(email.Trim().ToLowerInvariant()) is not User user)
             {
                 throw new AuthenticationException();
             }
