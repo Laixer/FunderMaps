@@ -1,20 +1,16 @@
-﻿using FunderMaps.Core.DataTransferObjects;
-using FunderMaps.Core.Entities;
+﻿using FunderMaps.Core.Entities;
 using FunderMaps.IntegrationTests.Faker;
 using System.Net;
 using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application;
 
-public class UserTests : IClassFixture<BackendFixtureFactory>
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class UserTests(BackendFixtureFactory factory) : IClassFixture<BackendFixtureFactory>
 {
-    private BackendFixtureFactory Factory { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public UserTests(BackendFixtureFactory factory)
-        => Factory = factory;
+    private BackendFixtureFactory Factory { get; } = factory;
 
     [Fact]
     public async Task GetUserFromSessionReturnSingleUser()

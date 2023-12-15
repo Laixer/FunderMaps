@@ -5,15 +5,12 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application;
 
-public class OrganizationUserTests : IClassFixture<BackendFixtureFactory>
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class OrganizationUserTests(BackendFixtureFactory factory) : IClassFixture<BackendFixtureFactory>
 {
-    private BackendFixtureFactory Factory { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public OrganizationUserTests(BackendFixtureFactory factory)
-        => Factory = factory;
+    private BackendFixtureFactory Factory { get; } = factory;
 
     // [Fact]
     // public async Task CreateOrganizationUserFromSessionReturnOrganizationUser()

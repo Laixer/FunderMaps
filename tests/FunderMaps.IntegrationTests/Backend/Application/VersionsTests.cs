@@ -1,35 +1,31 @@
 ﻿using System.Net;
 using Xunit;
 
-namespace FunderMaps.IntegrationTests.Backend.Application
+namespace FunderMaps.IntegrationTests.Backend.Application;
+
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class VersionsTests(BackendFixtureFactory factory) : IClassFixture<BackendFixtureFactory>
 {
-    public class VersionsTests : IClassFixture<BackendFixtureFactory>
+    private BackendFixtureFactory Factory { get; } = factory;
+
+    [Fact]
+    public async Task GetVersionUnauthorizedReturnSuccessAndCorrectContentType()
     {
-        private BackendFixtureFactory Factory { get; }
+        await TestStub.VersionAsync(Factory);
+    }
 
-        /// <summary>
-        ///     Create new instance.
-        /// </summary>
-        public VersionsTests(BackendFixtureFactory factory)
-            => Factory = factory;
+    [Fact]
+    public async Task GetVersionAuthorizedReturnSuccessAndCorrectContentType()
+    {
+        // Arrange
+        using var client = Factory.CreateClient();
 
-        [Fact]
-        public async Task GetVersionUnauthorizedReturnSuccessAndCorrectContentType()
-        {
-            await TestStub.VersionAsync(Factory);
-        }
+        // Act
+        var response = await client.GetAsync("api/version");
 
-        [Fact]
-        public async Task GetVersionAuthorizedReturnSuccessAndCorrectContentType()
-        {
-            // Arrange
-            using var client = Factory.CreateClient();
-
-            // Act
-            var response = await client.GetAsync("api/version");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 }

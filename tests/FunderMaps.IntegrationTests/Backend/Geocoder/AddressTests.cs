@@ -6,15 +6,12 @@ using Xunit;
 namespace FunderMaps.IntegrationTests.Backend.Geocoder;
 
 // TODO: Include test for inactive address
-public class AddressTests : IClassFixture<BackendFixtureFactory>
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class AddressTests(BackendFixtureFactory factory) : IClassFixture<BackendFixtureFactory>
 {
-    private BackendFixtureFactory Factory { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public AddressTests(BackendFixtureFactory factory)
-        => Factory = factory;
+    private BackendFixtureFactory Factory { get; } = factory;
 
     [Fact]
     public async Task GetAddressByIdReturnSingleAddress()

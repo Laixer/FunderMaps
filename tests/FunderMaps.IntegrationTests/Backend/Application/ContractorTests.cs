@@ -5,15 +5,12 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Application;
 
-public class ContractorTests : IClassFixture<BackendFixtureFactory>
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class ContractorTests(BackendFixtureFactory factory) : IClassFixture<BackendFixtureFactory>
 {
-    private BackendFixtureFactory Factory { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public ContractorTests(BackendFixtureFactory factory)
-        => Factory = factory;
+    private BackendFixtureFactory Factory { get; } = factory;
 
     [Theory]
     [InlineData(OrganizationRole.Superuser)]

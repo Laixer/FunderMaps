@@ -7,15 +7,12 @@ using Xunit;
 
 namespace FunderMaps.IntegrationTests.Backend.Report;
 
-public class RecoverySampleTests : IClassFixture<BackendFixtureFactory>
+/// <summary>
+///     Create new instance.
+/// </summary>
+public class RecoverySampleTests(BackendFixtureFactory factory) : IClassFixture<BackendFixtureFactory>
 {
-    private BackendFixtureFactory Factory { get; }
-
-    /// <summary>
-    ///     Create new instance.
-    /// </summary>
-    public RecoverySampleTests(BackendFixtureFactory factory)
-        => Factory = factory;
+    private BackendFixtureFactory Factory { get; } = factory;
 
     [Fact]
     public async Task RecoverySampleLifeCycle()
