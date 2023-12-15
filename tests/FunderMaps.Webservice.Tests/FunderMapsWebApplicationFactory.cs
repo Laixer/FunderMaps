@@ -70,6 +70,46 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
 {
     private readonly Dictionary<Guid, UserExtended> memory = new()
     {
+        [Guid.Parse("c85e80f3-0ba9-481a-9a69-eb43794e1894")] = new()
+        {
+            Id = Guid.Parse("c85e80f3-0ba9-481a-9a69-eb43794e1894"),
+            GivenName = "Administrator",
+            Email = "admin@fundermaps.com",
+            JobTitle = "Administrator",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.Administrator,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
+        },
+        [Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077")] = new()
+        {
+            Id = Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077"),
+            Email = "Javier40@yahoo.com",
+            JobTitle = "Superuser",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.User,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
+        },
+        [Guid.Parse("8b0b6d53-3418-41c4-bad2-908288b421c7")] = new()
+        {
+            Id = Guid.Parse("8b0b6d53-3418-41c4-bad2-908288b421c7"),
+            GivenName = "kihn",
+            Email = "Freda@contoso.com",
+            JobTitle = "Reviewer",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.User,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
+        },
+        [Guid.Parse("5415f7f7-72ec-4e3f-b2f9-68d7c9ee2868")] = new()
+        {
+            Id = Guid.Parse("5415f7f7-72ec-4e3f-b2f9-68d7c9ee2868"),
+            GivenName = "Patsy",
+            LastName = "Brekke",
+            Email = "patsy@contoso.com",
+            JobTitle = "Writer",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.User,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
+        },
         [Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872")] = new()
         {
             Id = Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872"),

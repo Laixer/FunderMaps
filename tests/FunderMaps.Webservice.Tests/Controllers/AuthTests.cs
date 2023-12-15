@@ -13,15 +13,14 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
     [Theory]
+    [InlineData("admin@fundermaps.com")]
+    [InlineData("Javier40@yahoo.com")]
+    [InlineData("Freda@contoso.com")]
+    [InlineData("patsy@contoso.com")]
     [InlineData("lester@contoso.com")]
     [InlineData("corene@contoso.com")]
     public async Task SignInReturnSuccessAndToken(string email)
     {
-        // await TestStub.LoginAsync(Factory, "Javier40@yahoo.com", "fundermaps");
-        // await TestStub.LoginAsync(Factory, "Freda@contoso.com", "fundermaps");
-        // await TestStub.LoginAsync(Factory, "patsy@contoso.com", "fundermaps");
-        // await TestStub.LoginAsync(Factory, "lester@contoso.com", "fundermaps");
-
         using var client = factory.CreateClient();
 
         var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
