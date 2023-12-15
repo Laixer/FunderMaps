@@ -10,10 +10,10 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace FunderMaps.Webservice.Tests;
 
-internal class MemoryDatabase<TEntity, TEntityPrimaryKey>
+internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncRepository<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
 {
-    private readonly Dictionary<TEntityPrimaryKey, TEntity> memory = [];
+    protected readonly Dictionary<TEntityPrimaryKey, TEntity> memory = [];
 
     public async Task<TEntityPrimaryKey> AddAsync(TEntity entity)
     {
@@ -44,32 +44,33 @@ internal class MemoryDatabase<TEntity, TEntityPrimaryKey>
 
         return memory[id];
     }
+
+    public IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
+    {
+        return memory.Values.ToAsyncEnumerable();
+    }
+
+    public async Task UpdateAsync(TEntity entity)
+    {
+        await Task.CompletedTask;
+
+        memory[entity.Identifier] = entity;
+    }
 }
 
-// TODO: Maybe this should be a type or a model.
-/// <summary>
-///     User entity.
-/// </summary>
 public sealed class UserExtended : User
 {
     public string? PasswordHash { get; set; }
-
     public int AccessFailedCount { get; set; } = 0;
-
     public int LoginCount { get; set; } = 0;
-
-    /// <summary>
-    ///     User role in organization.
-    /// </summary>
-    // [Required]
     public OrganizationRole OrganizationRole { get; set; } = OrganizationRole.Reader;
 }
 
-internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserRepository
+internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, IUserRepository
 {
-    private readonly Dictionary<Guid, UserExtended> memory = new()
+    public MemoryUserRepository(PasswordHasher passwordHasher)
     {
-        [Guid.Parse("c85e80f3-0ba9-481a-9a69-eb43794e1894")] = new()
+        memory.Add(Guid.Parse("c85e80f3-0ba9-481a-9a69-eb43794e1894"), new()
         {
             Id = Guid.Parse("c85e80f3-0ba9-481a-9a69-eb43794e1894"),
             GivenName = "Administrator",
@@ -78,8 +79,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.Administrator,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-        },
-        [Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077")] = new()
+        });
+        memory.Add(Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077"), new()
         {
             Id = Guid.Parse("648f3fa6-d74a-4b82-b981-c1f2d30f4077"),
             Email = "javier40@yahoo.com",
@@ -87,8 +88,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-        },
-        [Guid.Parse("8b0b6d53-3418-41c4-bad2-908288b421c7")] = new()
+        });
+        memory.Add(Guid.Parse("8b0b6d53-3418-41c4-bad2-908288b421c7"), new()
         {
             Id = Guid.Parse("8b0b6d53-3418-41c4-bad2-908288b421c7"),
             GivenName = "kihn",
@@ -97,8 +98,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-        },
-        [Guid.Parse("5415f7f7-72ec-4e3f-b2f9-68d7c9ee2868")] = new()
+        });
+        memory.Add(Guid.Parse("5415f7f7-72ec-4e3f-b2f9-68d7c9ee2868"), new()
         {
             Id = Guid.Parse("5415f7f7-72ec-4e3f-b2f9-68d7c9ee2868"),
             GivenName = "Patsy",
@@ -108,8 +109,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-        },
-        [Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872")] = new()
+        });
+        memory.Add(Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872"), new()
         {
             Id = Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872"),
             GivenName = "Lester",
@@ -119,8 +120,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-        },
-        [Guid.Parse("81209a70-08d9-42da-8ce7-1922fc63cbaf")] = new()
+        });
+        memory.Add(Guid.Parse("81209a70-08d9-42da-8ce7-1922fc63cbaf"), new()
         {
             Id = Guid.Parse("81209a70-08d9-42da-8ce7-1922fc63cbaf"),
             Email = "corene@contoso.com",
@@ -128,8 +129,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
-        },
-    };
+        });
+    }
 
     public async Task<Guid> AddAsync(User entity)
     {
@@ -168,27 +169,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         //     RETURNING id";
     }
 
-    public async Task<long> CountAsync()
-    {
-        await Task.CompletedTask;
-
-        return memory.Count;
-    }
-
-    public async Task DeleteAsync(Guid id)
-    {
-        await Task.CompletedTask;
-
-        memory.Remove(id);
-    }
-
-    public async Task<User> GetByIdAsync(Guid id)
-    {
-        await Task.CompletedTask;
-
-        return memory[id];
-    }
-
     public async Task<User> GetByEmailAsync(string email)
     {
         await Task.CompletedTask;
@@ -217,11 +197,6 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         return memory[id].AccessFailedCount;
-    }
-
-    public IAsyncEnumerable<User> ListAllAsync(Navigation navigation)
-    {
-        return memory.Values.ToAsyncEnumerable();
     }
 
     public async Task UpdateAsync(User entity)
@@ -268,79 +243,38 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
 
         memory[id].LoginCount++;
     }
+
+    async Task<User> IAsyncRepository<User, Guid>.GetByIdAsync(Guid id)
+    {
+        return await GetByIdAsync(id);
+    }
+
+    IAsyncEnumerable<User> IAsyncRepository<User, Guid>.ListAllAsync(Navigation navigation)
+    {
+        return ListAllAsync(navigation);
+    }
 }
 
-internal class MemoryOrganizationRepository : IOrganizationRepository
+internal class MemoryOrganizationRepository : MemoryRepositoryBase<Organization, Guid>, IOrganizationRepository
 {
-    private readonly Dictionary<Guid, Organization> memory = new()
+    public MemoryOrganizationRepository()
     {
-        [Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114")] = new()
+        memory.Add(Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114"), new()
         {
             Id = Guid.Parse("a44aa6d6-714a-4d5e-a6c7-25c9a840d114"),
             Name = "FunderMaps",
             Email = "info@fundermaps.com",
             Area = new SpatialBox { },
             Center = new SpatialPoint { }
-
-        },
-        [Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91")] = new()
+        });
+        memory.Add(Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91"), new()
         {
             Id = Guid.Parse("7b6f6e29-24b6-41ff-a433-6f2aaddf2d91"),
             Name = "Contoso",
             Email = "info@contoso.com",
             Area = new SpatialBox { },
             Center = new SpatialPoint { }
-
-        },
-    };
-
-    public async Task<Guid> AddAsync(Organization entity)
-    {
-        await Task.CompletedTask;
-
-        memory.Add(entity.Id, entity);
-
-        return entity.Id;
-    }
-
-    public async Task<long> CountAsync()
-    {
-        await Task.CompletedTask;
-
-        return memory.Count;
-    }
-
-    public async Task DeleteAsync(Guid id)
-    {
-        await Task.CompletedTask;
-
-        memory.Remove(id);
-    }
-
-    public async Task<Organization> GetByIdAsync(Guid id)
-    {
-        await Task.CompletedTask;
-
-        return memory[id];
-    }
-
-    public async Task<Organization> GetByNameAsync(string name)
-    {
-        await Task.CompletedTask;
-
-        return memory.Values.FirstOrDefault(x => x.Name == name) ?? throw new EntityNotFoundException(nameof(Organization));
-    }
-
-    public IAsyncEnumerable<Organization> ListAllAsync(Navigation navigation)
-    {
-        return memory.Values.ToAsyncEnumerable();
-    }
-
-    public async Task UpdateAsync(Organization entity)
-    {
-        await Task.CompletedTask;
-
-        memory[entity.Id] = entity;
+        });
     }
 }
 
@@ -523,11 +457,11 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
     }
 }
 
-internal class MemoryAddressRepository : IAddressRepository
+internal class MemoryAddressRepository : MemoryRepositoryBase<Address, string>, IAddressRepository
 {
-    private readonly Dictionary<string, Address> memory = new()
+    public MemoryAddressRepository()
     {
-        ["gfm-c36dcd7b53c84b5eb39ad880c0955fed"] = new()
+        memory.Add("gfm-c36dcd7b53c84b5eb39ad880c0955fed", new()
         {
             Id = "gfm-c36dcd7b53c84b5eb39ad880c0955fed",
             BuildingNumber = "8b",
@@ -537,37 +471,7 @@ internal class MemoryAddressRepository : IAddressRepository
             ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0599200000499204",
             City = "Rotterdam",
             BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
-        },
-    };
-
-    public async Task<string> AddAsync(Address entity)
-    {
-        await Task.CompletedTask;
-
-        memory.Add(entity.Id, entity);
-
-        return entity.Id;
-    }
-
-    public async Task<long> CountAsync()
-    {
-        await Task.CompletedTask;
-
-        return memory.Count;
-    }
-
-    public async Task DeleteAsync(string id)
-    {
-        await Task.CompletedTask;
-
-        memory.Remove(id);
-    }
-
-    public async Task<Address> GetByIdAsync(string id)
-    {
-        await Task.CompletedTask;
-
-        return memory[id];
+        });
     }
 
     public async Task<Address> GetByExternalIdAsync(string id)
@@ -576,34 +480,10 @@ internal class MemoryAddressRepository : IAddressRepository
 
         return memory.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
     }
-
-    public IAsyncEnumerable<Address> ListAllAsync(Navigation navigation)
-    {
-        return memory.Values.ToAsyncEnumerable();
-    }
-
-    public async Task UpdateAsync(Address entity)
-    {
-        await Task.CompletedTask;
-
-        memory[entity.Id] = entity;
-    }
 }
 
-internal class MemoryBuildingRepository : IBuildingRepository
+internal class MemoryBuildingRepository : MemoryRepositoryBase<Building, string>, IBuildingRepository
 {
-    private readonly Dictionary<string, Building> memory = new()
-    {
-        ["gfm-4f5e73d478ff452b86023a06e5b8d834"] = new()
-        {
-            Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
-            BuiltYear = new DateTime(1908, 1, 1),
-            IsActive = true,
-            ExternalId = "NL.IMBAG.PAND.0599100000685769",
-            NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
-        },
-    };
-
     private readonly Dictionary<string, Address> memoryAddress = new()
     {
         ["gfm-c36dcd7b53c84b5eb39ad880c0955fed"] = new()
@@ -619,34 +499,16 @@ internal class MemoryBuildingRepository : IBuildingRepository
         },
     };
 
-    public async Task<string> AddAsync(Building entity)
+    public MemoryBuildingRepository()
     {
-        await Task.CompletedTask;
-
-        memory.Add(entity.Id, entity);
-
-        return entity.Id;
-    }
-
-    public async Task<long> CountAsync()
-    {
-        await Task.CompletedTask;
-
-        return memory.Count;
-    }
-
-    public async Task DeleteAsync(string id)
-    {
-        await Task.CompletedTask;
-
-        memory.Remove(id);
-    }
-
-    public async Task<Building> GetByIdAsync(string id)
-    {
-        await Task.CompletedTask;
-
-        return memory[id];
+        memory.Add("gfm-4f5e73d478ff452b86023a06e5b8d834", new()
+        {
+            Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
+            BuiltYear = new DateTime(1908, 1, 1),
+            IsActive = true,
+            ExternalId = "NL.IMBAG.PAND.0599100000685769",
+            NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
+        });
     }
 
     public async Task<Building> GetByExternalIdAsync(string id)
@@ -663,25 +525,15 @@ internal class MemoryBuildingRepository : IBuildingRepository
         var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
         return await GetByIdAsync(address.BuildingId);
     }
-
-    public IAsyncEnumerable<Building> ListAllAsync(Navigation navigation)
-    {
-        return memory.Values.ToAsyncEnumerable();
-    }
-
-    public async Task UpdateAsync(Building entity)
-    {
-        await Task.CompletedTask;
-
-        memory[entity.Id] = entity;
-    }
 }
 
 internal class MemoryAnalysisRepository : IAnalysisRepository
 {
-    private readonly Dictionary<string, AnalysisProduct> memory = new()
+    protected readonly Dictionary<string, AnalysisProduct> memory = [];
+
+    public MemoryAnalysisRepository()
     {
-        ["gfm-4f5e73d478ff452b86023a06e5b8d834"] = new()
+        memory.Add("gfm-4f5e73d478ff452b86023a06e5b8d834", new()
         {
             BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
             ExternalBuildingId = "NL.IMBAG.PAND.0599100000685769",
@@ -704,37 +556,14 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
             DewateringDepthReliability = Reliability.Indicative,
             BioInfectionReliability = Reliability.Indicative,
             BioInfectionRisk = FoundationRisk.B,
-        },
-    };
-
-    public async Task<string> AddAsync(AnalysisProduct entity)
-    {
-        await Task.CompletedTask;
-
-        memory.Add(entity.BuildingId, entity);
-
-        return entity.BuildingId;
-    }
-
-    public async Task<long> CountAsync()
-    {
-        await Task.CompletedTask;
-
-        return memory.Count;
-    }
-
-    public async Task DeleteAsync(string id)
-    {
-        await Task.CompletedTask;
-
-        memory.Remove(id);
+        });
     }
 
     public async Task<AnalysisProduct> GetAsync(string id)
     {
         await Task.CompletedTask;
 
-        return memory[id];
+        return memory.Values.FirstOrDefault(x => x.BuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
     }
 
     public async Task<AnalysisProduct> GetByExternalIdAsync(string id)
