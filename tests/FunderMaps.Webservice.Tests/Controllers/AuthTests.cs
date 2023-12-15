@@ -12,7 +12,6 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
-    // TODO: Test auth key.
     [Theory]
     [InlineData("admin@fundermaps.com")]
     [InlineData("Javier40@yahoo.com")]
@@ -56,6 +55,25 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
 
         var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/token-refresh");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
+        Assert.NotNull(returnObject.Id);
+        Assert.NotNull(returnObject.Token);
+        Assert.NotNull(returnObject.Issuer);
+        Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
+    }
+
+    [Fact]
+    public async Task RefreshAuthKeyReturnSuccessAndToken()
+    {
+        using var client = factory.CreateClient();
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/token-refresh");
+        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
 
         var response = await client.SendAsync(request);
         var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();

@@ -15,34 +15,28 @@ internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncReposito
 {
     protected readonly Dictionary<TEntityPrimaryKey, TEntity> memory = [];
 
-    public async Task<TEntityPrimaryKey> AddAsync(TEntity entity)
+    public Task<TEntityPrimaryKey> AddAsync(TEntity entity)
     {
-        await Task.CompletedTask;
-
         memory.Add(entity.Identifier, entity);
 
-        return entity.Identifier;
+        return Task.FromResult(entity.Identifier);
     }
 
-    public async Task<long> CountAsync()
+    public Task<long> CountAsync()
     {
-        await Task.CompletedTask;
-
-        return memory.Count;
+        return Task.FromResult((long)memory.Count);
     }
 
-    public async Task DeleteAsync(TEntityPrimaryKey id)
+    public Task DeleteAsync(TEntityPrimaryKey id)
     {
-        await Task.CompletedTask;
-
         memory.Remove(id);
+
+        return Task.CompletedTask;
     }
 
-    public async Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
+    public Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
     {
-        await Task.CompletedTask;
-
-        return memory[id];
+        return Task.FromResult(memory[id]);
     }
 
     public IAsyncEnumerable<TEntity> ListAllAsync(Navigation navigation)
@@ -50,17 +44,18 @@ internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncReposito
         return memory.Values.ToAsyncEnumerable();
     }
 
-    public async Task UpdateAsync(TEntity entity)
+    public Task UpdateAsync(TEntity entity)
     {
-        await Task.CompletedTask;
-
         memory[entity.Identifier] = entity;
+
+        return Task.CompletedTask;
     }
 }
 
 public sealed class UserExtended : User
 {
     public string? PasswordHash { get; set; }
+    public string? AuthKey { get; set; }
     public int AccessFailedCount { get; set; } = 0;
     public int LoginCount { get; set; } = 0;
     public OrganizationRole OrganizationRole { get; set; } = OrganizationRole.Reader;
@@ -129,6 +124,7 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
             PhoneNumber = "+31612345678",
             Role = ApplicationRole.User,
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
+            AuthKey = "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI",
         });
     }
 
@@ -180,9 +176,7 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
     {
         await Task.CompletedTask;
 
-        // TODO: Implement
-
-        return memory.Values.FirstOrDefault(x => x.Email == key) ?? throw new EntityNotFoundException(nameof(User));
+        return memory.Values.FirstOrDefault(x => x.AuthKey == key) ?? throw new EntityNotFoundException(nameof(User));
     }
 
     public async Task<string?> GetPasswordHashAsync(Guid id)
@@ -523,7 +517,7 @@ internal class MemoryBuildingRepository : MemoryRepositoryBase<Building, string>
         await Task.CompletedTask;
 
         var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
-        return await GetByIdAsync(address.BuildingId);
+        return await GetByIdAsync(address?.BuildingId ?? throw new EntityNotFoundException(nameof(Building)));
     }
 }
 
