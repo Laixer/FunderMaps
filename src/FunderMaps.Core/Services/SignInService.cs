@@ -34,7 +34,7 @@ public class SignInService(
     {
         try
         {
-            var user = await userRepository.GetByEmailAsync(email);
+            var user = await userRepository.GetByEmailAsync(email.Trim());
 
             // TOOD: Generate random code and send with email.
             await emailService.SendAsync(new EmailMessage
@@ -64,7 +64,7 @@ public class SignInService(
     public virtual async Task<bool> CheckPasswordAsync(Guid id, string password)
     {
         var passwordHash = await userRepository.GetPasswordHashAsync(id);
-        return passwordHash is not null && passwordHasher.IsPasswordValid(passwordHash, password);
+        return passwordHash is not null && passwordHasher.IsPasswordValid(passwordHash, password.Trim());
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class SignInService(
     /// <param name="password">The plaintext password to be set on the user.</param>
     public virtual async Task SetPasswordAsync(Guid id, string password)
     {
-        var passwordHash = passwordHasher.HashPassword(password);
+        var passwordHash = passwordHasher.HashPassword(password.Trim());
         await userRepository.SetPasswordHashAsync(id, passwordHash);
     }
 
@@ -155,7 +155,7 @@ public class SignInService(
     {
         try
         {
-            if (await userRepository.GetByAuthKeyAsync(key) is not User user)
+            if (await userRepository.GetByAuthKeyAsync(key.Trim()) is not User user)
             {
                 throw new AuthenticationException();
             }
@@ -180,12 +180,12 @@ public class SignInService(
     {
         try
         {
-            if (await userRepository.GetByEmailAsync(email) is not User user)
+            if (await userRepository.GetByEmailAsync(email.Trim()) is not User user)
             {
                 throw new AuthenticationException();
             }
 
-            if (!await CheckPasswordAsync(user.Id, password))
+            if (!await CheckPasswordAsync(user.Id, password.Trim()))
             {
                 logger.LogWarning("User '{user}' failed to provide the correct password.", user);
 
