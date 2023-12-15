@@ -2,6 +2,7 @@
 using Bogus.DataSets;
 using FunderMaps.Core.DataTransferObjects;
 using System.Net;
+using System.Net.Http.Headers;
 using Xunit;
 
 namespace FunderMaps.Webservice.Tests.Controllers;
@@ -36,21 +37,33 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
         Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
     }
 
-    // [Fact]
-    // public async Task RefreshSignInReturnSuccessAndToken()
-    // {
-    //     using var client = factory.CreateClient();
+    [Fact]
+    public async Task RefreshSignInReturnSuccessAndToken()
+    {
+        using var client = factory.CreateClient();
 
-    //     var response = await client.GetAsync("api/auth/token-refresh");
-    //     var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        {
+            Email = "lester@contoso.com",
+            Password = "fundermaps",
+        });
+        var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
-    //     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    //     Assert.NotNull(returnObject);
-    //     Assert.NotNull(returnObject.Id);
-    //     Assert.NotNull(returnObject.Token);
-    //     Assert.NotNull(returnObject.Issuer);
-    //     Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
-    // }
+        Assert.NotNull(returnToken);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "api/auth/token-refresh");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
+        Assert.NotNull(returnObject.Id);
+        Assert.NotNull(returnObject.Token);
+        Assert.NotNull(returnObject.Issuer);
+        Assert.True(returnObject.ValidTo > returnObject.ValidFrom);
+    }
 
     [Fact]
     public async Task SignInInvalidCredentialsReturnError()
