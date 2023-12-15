@@ -12,6 +12,7 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
+    // TODO: Test auth key.
     [Theory]
     [InlineData("admin@fundermaps.com")]
     [InlineData("Javier40@yahoo.com")]
@@ -19,6 +20,7 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
     [InlineData("patsy@contoso.com")]
     [InlineData("lester@contoso.com")]
     [InlineData("corene@contoso.com")]
+    [InlineData("PATSY@CONTOSO.COM")]
     public async Task SignInReturnSuccessAndToken(string email)
     {
         using var client = factory.CreateClient();
