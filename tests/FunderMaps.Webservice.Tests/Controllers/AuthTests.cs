@@ -23,7 +23,7 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
 
         var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
         {
-            Email = "Javier40@yahoo.com",
+            Email = "lester@contoso.com",
             Password = "fundermaps",
         });
         var returnObject = await response.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();

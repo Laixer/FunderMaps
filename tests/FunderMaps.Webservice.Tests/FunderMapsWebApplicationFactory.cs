@@ -1,16 +1,90 @@
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Xunit.Sdk;
 
 namespace FunderMaps.Webservice.Tests;
 
+internal class MemoryDatabase<TEntity, TEntityPrimaryKey>
+    where TEntity : IEntityIdentifier<TEntityPrimaryKey>
+{
+    private readonly Dictionary<TEntityPrimaryKey, TEntity> memory = [];
+
+    public async Task<TEntityPrimaryKey> AddAsync(TEntity entity)
+    {
+        await Task.CompletedTask;
+
+        memory.Add(entity.Identifier, entity);
+
+        return entity.Identifier;
+    }
+
+    public async Task<long> CountAsync()
+    {
+        await Task.CompletedTask;
+
+        return memory.Count;
+    }
+
+    public async Task DeleteAsync(TEntityPrimaryKey id)
+    {
+        await Task.CompletedTask;
+
+        memory.Remove(id);
+    }
+
+    public async Task<TEntity> GetByIdAsync(TEntityPrimaryKey id)
+    {
+        await Task.CompletedTask;
+
+        return memory[id];
+    }
+}
+
+// TODO: Maybe this should be a type or a model.
+/// <summary>
+///     User entity.
+/// </summary>
+public sealed class UserExtended : User
+{
+    public string? PasswordHash { get; set; }
+
+    public int AccessFailedCount { get; set; }
+
+    public int LoginCount { get; set; }
+
+    /// <summary>
+    ///     User role in organization.
+    /// </summary>
+    // [Required]
+    public OrganizationRole OrganizationRole { get; set; }
+}
+
+
 internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserRepository
 {
-    private readonly Dictionary<Guid, User> memory = [];
+    private readonly Dictionary<Guid, UserExtended> memory = new()
+    {
+        [Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872")] = new()
+        {
+            Id = Guid.Parse("07a86d13-1c02-46ab-a2a8-c2342f829872"),
+            GivenName = "Lester",
+            LastName = "Bednar",
+            Email = "lester@contoso.com",
+            JobTitle = "Developer",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.User,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
+            AccessFailedCount = 0,
+            LoginCount = 0,
+            OrganizationRole = OrganizationRole.Reader,
+        },
+    };
 
     /// <summary>
     ///     Create new <see cref="User"/>.
@@ -21,7 +95,21 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        memory.Add(entity.Id, entity);
+        memory.Add(entity.Id, new()
+        {
+            Id = entity.Id,
+            GivenName = entity.GivenName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Avatar = entity.Avatar,
+            JobTitle = entity.JobTitle,
+            PhoneNumber = entity.PhoneNumber,
+            Role = entity.Role,
+            PasswordHash = string.Empty,
+            AccessFailedCount = 0,
+            LoginCount = 0,
+            OrganizationRole = OrganizationRole.Reader,
+        });
 
         return entity.Id;
 
@@ -89,7 +177,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        return memory.Values.FirstOrDefault(x => x.Email == email);
+        return memory.Values.FirstOrDefault(x => x.Email == email) ?? throw new EntityNotFoundException(nameof(User));
     }
 
     /// <summary>
@@ -103,7 +191,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
 
         // TODO: Implement
 
-        return memory.Values.FirstOrDefault(x => x.Email == key);
+        return memory.Values.FirstOrDefault(x => x.Email == key) ?? throw new EntityNotFoundException(nameof(User));
     }
 
     /// <summary>
@@ -115,7 +203,9 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        return passwordHasher.HashPassword("fundermaps");
+        return memory[id].PasswordHash;
+
+        // return passwordHasher.HashPassword("fundermaps");
 
         // var sql = @"
         //     SELECT  u.password_hash
@@ -133,7 +223,7 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        return 0;
+        return memory[id].AccessFailedCount;
     }
 
     /// <summary>
@@ -153,7 +243,21 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
-        memory[entity.Id] = entity;
+        memory[entity.Id] = new()
+        {
+            Id = entity.Id,
+            GivenName = entity.GivenName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            Avatar = entity.Avatar,
+            JobTitle = entity.JobTitle,
+            PhoneNumber = entity.PhoneNumber,
+            Role = entity.Role,
+            PasswordHash = string.Empty,
+            AccessFailedCount = 0,
+            LoginCount = 0,
+            OrganizationRole = OrganizationRole.Reader,
+        };
     }
 
     /// <summary>
@@ -164,6 +268,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     public async Task SetPasswordHashAsync(Guid id, string passwordHash)
     {
         await Task.CompletedTask;
+
+        memory[id].PasswordHash = passwordHash;
 
         // var sql = @"
         //     UPDATE  application.user
@@ -179,6 +285,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     {
         await Task.CompletedTask;
 
+        memory[id].AccessFailedCount++;
+
         // var sql = @"
         //     UPDATE  application.user
         //     SET     access_failed_count = access_failed_count + 1
@@ -192,6 +300,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
     public async Task ResetAccessFailed(Guid id)
     {
         await Task.CompletedTask;
+
+        memory[id].AccessFailedCount = 0;
 
         // var sql = @"
         //     UPDATE  application.user
@@ -208,6 +318,8 @@ internal class MemoryUserRepository(PasswordHasher passwordHasher) : IUserReposi
         await Task.CompletedTask;
 
         // var sql = @"SELECT application.log_access(@id)";
+
+        memory[id].LoginCount++;
     }
 }
 
@@ -410,6 +522,8 @@ public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.R
         memory.Add(friendlyName, element);
     }
 }
+
+
 
 public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
