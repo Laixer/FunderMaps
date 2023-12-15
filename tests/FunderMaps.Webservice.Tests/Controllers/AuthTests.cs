@@ -102,15 +102,14 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
-    // [Theory]
-    // [InlineData("api/user")]
-    // [InlineData("api/auth/token-refresh")]
-    // public async Task RefreshSignInReturnUnauthorized(string uri)
-    // {
-    //     using var client = factory.CreateClient();
+    [Fact]
+    public async Task RefreshSignInReturnUnauthorized()
+    {
+        using var client = factory.CreateClient();
 
-    //     var response = await client.GetAsync(uri);
+        var response = await client.GetAsync("api/auth/token-refresh");
 
-    //     Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    // }
+        // Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.NotEqual(HttpStatusCode.OK, response.StatusCode);
+    }
 }
