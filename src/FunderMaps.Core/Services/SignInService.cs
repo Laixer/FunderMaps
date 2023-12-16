@@ -111,10 +111,13 @@ public class SignInService(
         }
 
         // FUTURE: There is a role per organization, but we only support one role for now.
-        var organizationRole = await organizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
-        if (organizationRole is not null)
+        if (organizationIds.Count != 0)
         {
-            claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString() ?? string.Empty));
+            var organizationRole = await organizationUserRepository.GetOrganizationRoleByUserIdAsync(user.Id, organizationIds.First());
+            if (organizationRole is not null)
+            {
+                claims.Add(new Claim(FunderMapsAuthenticationClaimTypes.TenantRole, organizationRole.ToString() ?? string.Empty));
+            }
         }
 
         logger.LogDebug("User '{user}' signin was successful.", user);
