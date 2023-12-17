@@ -90,6 +90,11 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
         services.Configure<FunderMapsOptions>(configuration.GetSection(FunderMapsOptions.Section));
 
+        services.AddDataProtection(options =>
+        {
+            options.ApplicationDiscriminator = configuration["DataProtection:ApplicationName"] ?? "FunderMaps";
+        });
+
         return services;
     }
 
@@ -106,7 +111,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
             options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
         });
 
-        services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
+        // services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
 
         services.AddAuthentication("FunderMapsHybridAuth")
             .AddFunderMapsScheme()
