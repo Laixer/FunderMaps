@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddFunderMapsDataServices();
-builder.Services.AddFunderMapsAuthServices();
+builder.Services.AddFunderMapsAuth2Services();
 
 builder.Services.AddControllers(options => options.Filters.Add(typeof(FunderMapsCoreExceptionFilter)));
 

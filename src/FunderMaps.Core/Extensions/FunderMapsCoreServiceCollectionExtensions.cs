@@ -90,6 +90,8 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.Configure<IncidentOptions>(configuration.GetSection(IncidentOptions.Section));
         services.Configure<FunderMapsOptions>(configuration.GetSection(FunderMapsOptions.Section));
 
+        // The application discriminator is used to isolate data protection keys. Using the same
+        // discriminator for multiple applications will result in the same keys being used.
         services.AddDataProtection(options =>
         {
             options.ApplicationDiscriminator = configuration["DataProtection:ApplicationName"] ?? "FunderMaps";
@@ -110,8 +112,6 @@ public static class FunderMapsCoreServiceCollectionExtensions
         {
             options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
         });
-
-        // services.AddDataProtection().SetApplicationName(configuration["DataProtection:ApplicationName"] ?? throw new InvalidOperationException("Application name not set"));
 
         services.AddAuthentication("FunderMapsHybridAuth")
             .AddFunderMapsScheme()
@@ -135,6 +135,45 @@ public static class FunderMapsCoreServiceCollectionExtensions
             {
                 //
             });
+
+        services.AddAuthorization(options =>
+        {
+            options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .Build();
+
+            options.AddFunderMapsPolicy();
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection AddFunderMapsAuth2Services(this IServiceCollection services)
+    {
+        var serviceProvider = services.BuildServiceProvider();
+        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
+
+        // TODO: Requesting the repository directly is not the best way to do this. This cannot be replaced later on.
+        var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
+
+        services.Configure<KeyManagementOptions>(options =>
+        {
+            options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
+        });
+
+        services.AddAuthentication("FunderMapsHybridAuth")
+            .AddFunderMapsScheme2()
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new JwtTokenValidationParameters
+                {
+                    ValidIssuer = configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not found in configuration."),
+                    ValidAudience = configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience not found in configuration."),
+                    IssuerSigningKey = configuration.GetJwtSigningKey(),
+                    Valid = configuration.GetJwtTokenExpirationInMinutes(),
+                };
+            })
+            .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options => { });
 
         services.AddAuthorization(options =>
         {
