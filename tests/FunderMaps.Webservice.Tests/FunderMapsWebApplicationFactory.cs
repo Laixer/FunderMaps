@@ -4,6 +4,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types;
+using FunderMaps.Core.Types.Distributions;
 using FunderMaps.Core.Types.Products;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -583,6 +584,162 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
     }
 }
 
+internal class MemoryStatisticsRepository : IStatisticsRepository
+{
+    public async Task<ConstructionYearDistribution> GetConstructionYearDistributionByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return new()
+        {
+            Decades =
+            [
+                new()
+                {
+                    Decade = Years.FromDecade(1950),
+                    TotalCount = 10,
+                },
+                new()
+                {
+                    Decade = Years.FromDecade(1980),
+                    TotalCount = 63,
+                },
+            ]
+        };
+    }
+
+    public async Task<decimal> GetDataCollectedPercentageByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return 89;
+    }
+
+    public async Task<FoundationRiskDistribution> GetFoundationRiskDistributionByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return new()
+        {
+            PercentageA = 10,
+            PercentageB = 20,
+            PercentageC = 30,
+            PercentageD = 40,
+            PercentageE = 50,
+        };
+    }
+
+    public async Task<FoundationTypeDistribution> GetFoundationTypeDistributionByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return new()
+        {
+            FoundationTypes =
+            [
+                new()
+                {
+                    FoundationType = FoundationType.Wood,
+                    Percentage = 80,
+                },
+                new()
+                {
+                    FoundationType = FoundationType.Concrete,
+                    Percentage = 10,
+                },
+                new()
+                {
+                    FoundationType = FoundationType.Combined,
+                    Percentage = 15,
+                },
+            ],
+        };
+    }
+
+    public async Task<IEnumerable<IncidentYearPair>> GetMunicipalityIncidentCountByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return
+        [
+            new()
+            {
+                Year = 2019,
+                TotalCount = 10,
+            },
+            new()
+            {
+                Year = 2020,
+                TotalCount = 20,
+            },
+        ];
+    }
+
+    public async Task<IEnumerable<InquiryYearPair>> GetMunicipalityReportCountByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return
+        [
+            new()
+            {
+                Year = 2019,
+                TotalCount = 10,
+            },
+            new()
+            {
+                Year = 2020,
+                TotalCount = 20,
+            },
+        ];
+    }
+
+    public async Task<long> GetTotalBuildingRestoredCountByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return 56;
+    }
+
+    public async Task<IEnumerable<IncidentYearPair>> GetTotalIncidentCountByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return
+        [
+            new()
+            {
+                Year = 1952,
+                TotalCount = 18,
+            },
+            new()
+            {
+                Year = 1929,
+                TotalCount = 220,
+            },
+        ];
+    }
+
+    public async Task<List<InquiryYearPair>> GetTotalReportCountByIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return
+        [
+            new()
+            {
+                Year = 2013,
+                TotalCount = 150,
+            },
+            new()
+            {
+                Year = 2021,
+                TotalCount = 841,
+            },
+        ];
+    }
+}
+
 public class MemoryKeystoreXmlRepository : Microsoft.AspNetCore.DataProtection.Repositories.IXmlRepository
 {
     private readonly Dictionary<string, System.Xml.Linq.XElement> memory = [];
@@ -617,7 +774,7 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
             services.Replace(ServiceDescriptor.Scoped<IOrganizationRepository, MemoryOrganizationRepository>());
             // services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             // services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
-            // services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+            services.Replace(ServiceDescriptor.Scoped<IStatisticsRepository, MemoryStatisticsRepository>());
             // services.AddScoped<ITestRepository, TestRepository>();
             // services.AddScoped<ITelemetryRepository, TelemetryRepository>();
 

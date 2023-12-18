@@ -1,5 +1,7 @@
-﻿using FunderMaps.Core.Types.Products;
+﻿using FunderMaps.Core.DataTransferObjects;
+using FunderMaps.Core.Types.Products;
 using System.Net;
+using System.Net.Http.Headers;
 using Xunit;
 
 namespace FunderMaps.Webservice.Tests.Controllers;
@@ -9,39 +11,98 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 /// </summary>
 public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetProductByIdReturnProduct()
+    [Theory]
+    [InlineData("gfm-6aae47cb5aa4416abdf19d98ba8218ac")]
+    [InlineData("BU05031403")]
+    public async Task GetProductByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
 
-        var response = await client.GetAsync("api/v3/product/statistics/gfm-6aae47cb5aa4416abdf19d98ba8218ac");
-        var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
+        {
+            Email = "lester@contoso.com",
+            Password = "fundermaps",
+        });
+        var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnToken);
+
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics?id={address}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+
+            var response = await client.SendAsync(request);
+            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
+        }
+
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+
+            var response = await client.SendAsync(request);
+            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
+        }
     }
 
-    [Fact(Skip = "Needs FIX")]
-    public async Task GetProductByExternalIdReturnProduct()
+    [Theory]
+    [InlineData("gfm-6aae47cb5aa4416abdf19d98ba8218ac")]
+    [InlineData("BU05031403")]
+    public async Task AuthKeyGetProductByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
 
-        var response = await client.GetAsync("api/v3/product/statistics/BU05031403");
-        var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics?id={address}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var response = await client.SendAsync(request);
+            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
+        }
+
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+
+            var response = await client.SendAsync(request);
+            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(returnObject);
+        }
     }
 
-    [Theory(Skip = "Needs FIX")]
-    [InlineData("id=3kjhr834dhfjdeh")]
-    [InlineData("bagid=4928374hfdkjsfh")]
-    [InlineData("query=thisismyquerystringyes")]
+    [Theory]
+    [InlineData("sdf-sd3kjhr834dhfjdeh")]
+    [InlineData("343545435_4928374hfdkjsfh")]
+    [InlineData("thisismyquerystringyes")]
     [InlineData("fdshjbf438gi")]
     public async Task GetByIdInvalidAddressThrows(string address)
     {
         using var client = factory.CreateClient();
 
-        var response = await client.GetAsync($"api/v3/product/statistics/{address}");
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
+        {
+            Email = "lester@contoso.com",
+            Password = "fundermaps",
+        });
+        var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(returnToken);
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+
+        var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

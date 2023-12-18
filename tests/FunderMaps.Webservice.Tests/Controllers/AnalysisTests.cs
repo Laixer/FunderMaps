@@ -21,7 +21,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
     {
         using var client = factory.CreateClient();
 
-        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
             Email = "lester@contoso.com",
             Password = "fundermaps",
@@ -104,7 +104,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
     {
         using var client = factory.CreateClient();
 
-        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
             Email = "lester@contoso.com",
             Password = "fundermaps",
@@ -156,7 +156,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         Assert.NotNull(returnToken);
 
-        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis?id={address}");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
 
         var response = await client.SendAsync(request);
