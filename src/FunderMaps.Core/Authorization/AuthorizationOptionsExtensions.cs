@@ -18,17 +18,17 @@ public static class AuthorizationOptionsExtensions
     ///     <para>
     ///        Authorization policy matrix.
     ///
-    ///                                      || ApplicationRole                || OrganizationRole
-    ///                                      || Administrator   | User | Guest || Superuser | Verifier | Writer | Reader
-    ///         AdministratorPolicy          || Yes             | No   | No    || No        | No       | No     | No
-    ///         SuperuserAdministratorPolicy || Yes             | No   | No    || Yes       | No       | No     | No
-    ///         SuperuserPolicy              || Yes             | Yes  | Yes   || Yes       | No       | No     | No
-    ///         VerifierAdministratorPolicy  || Yes             | No   | No    || Yes       | Yes      | No     | No
-    ///         VerifierPolicy               || Yes             | Yes  | Yes   || Yes       | Yes      | No     | No
-    ///         WriterAdministratorPolicy    || Yes             | No   | No    || Yes       | Yes      | Yes    | No
-    ///         WriterPolicy                 || Yes             | Yes  | Yes   || Yes       | Yes      | Yes    | No
-    ///         ReaderAdministratorPolicy    || Yes             | No   | No    || Yes       | Yes      | Yes    | Yes
-    ///         ReaderPolicy                 || Yes             | Yes  | Yes   || Yes       | Yes      | Yes    | Yes
+    ///                                      || ApplicationRole        || OrganizationRole
+    ///                                      || Administrator   | User || Superuser | Verifier | Writer | Reader
+    ///         AdministratorPolicy          || Yes             | No   || No        | No       | No     | No
+    ///         SuperuserAdministratorPolicy || Yes             | No   || Yes       | No       | No     | No
+    ///         SuperuserPolicy              || Yes             | Yes  || Yes       | No       | No     | No
+    ///         VerifierAdministratorPolicy  || Yes             | No   || Yes       | Yes      | No     | No
+    ///         VerifierPolicy               || Yes             | Yes  || Yes       | Yes      | No     | No
+    ///         WriterAdministratorPolicy    || Yes             | No   || Yes       | Yes      | Yes    | No
+    ///         WriterPolicy                 || Yes             | Yes  || Yes       | Yes      | Yes    | No
+    ///         ReaderAdministratorPolicy    || Yes             | No   || Yes       | Yes      | Yes    | Yes
+    ///         ReaderPolicy                 || Yes             | Yes  || Yes       | Yes      | Yes    | Yes
     ///     </para>
     /// </remarks>
     /// <param name="options">The authorization policy options.</param>
