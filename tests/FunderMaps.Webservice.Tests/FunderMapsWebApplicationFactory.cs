@@ -556,14 +556,14 @@ internal class MemoryNeighborhoodRepository : MemoryRepositoryBase<Neighborhood,
         });
     }
 
-    public Task<Neighborhood> GetByExternalAddressIdAsync(string id)
+    public async Task<Neighborhood> GetByExternalAddressIdAsync(string id)
     {
-        // await Task.CompletedTask;
+        await Task.CompletedTask;
 
-        // var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
-        // return await GetByIdAsync(address?.BuildingId ?? throw new EntityNotFoundException(nameof(Building)));
+        var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
+        var building = memoryBuilding.Values.FirstOrDefault(x => x.Id == address.BuildingId) ?? throw new EntityNotFoundException(nameof(Building));
 
-        throw new NotImplementedException();
+        return await GetByIdAsync(building?.NeighborhoodId ?? throw new EntityNotFoundException(nameof(Neighborhood)));
     }
 
     public async Task<Neighborhood> GetByExternalBuildingIdAsync(string id)
