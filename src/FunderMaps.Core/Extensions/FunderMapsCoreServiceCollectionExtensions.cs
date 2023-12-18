@@ -7,8 +7,8 @@ using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Options;
 using FunderMaps.Core.Services;
 using FunderMaps.Extensions;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
 
@@ -100,8 +100,11 @@ public static class FunderMapsCoreServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services)
+    public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services, Action<FunderMapsAuthenticationOptions>? configureOptions = null)
     {
+        var options = new FunderMapsAuthenticationOptions();
+        configureOptions?.Invoke(options);
+
         var serviceProvider = services.BuildServiceProvider();
         var configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
@@ -113,56 +116,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
             options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
         });
 
-        services.AddAuthentication("FunderMapsHybridAuth")
-            .AddFunderMapsScheme()
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new JwtTokenValidationParameters
-                {
-                    ValidIssuer = configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not found in configuration."),
-                    ValidAudience = configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience not found in configuration."),
-                    IssuerSigningKey = configuration.GetJwtSigningKey(),
-                    Valid = configuration.GetJwtTokenExpirationInMinutes(),
-                };
-            })
-            .AddCookie(options =>
-            {
-                options.SlidingExpiration = true;
-                options.Cookie.Name = configuration["Authentication:Cookie:Name"];
-                options.Cookie.Domain = configuration["Authentication:Cookie:Domain"];
-            })
-            .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options =>
-            {
-                //
-            });
-
-        services.AddAuthorization(options =>
-        {
-            options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                .RequireAuthenticatedUser()
-                .Build();
-
-            options.AddFunderMapsPolicy();
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection AddFunderMapsAuth2Services(this IServiceCollection services)
-    {
-        var serviceProvider = services.BuildServiceProvider();
-        var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-
-        // TODO: Requesting the repository directly is not the best way to do this. This cannot be replaced later on.
-        var keystoreRepository = serviceProvider.GetRequiredService<FunderMaps.Core.Interfaces.Repositories.IKeystoreRepository>();
-
-        services.Configure<KeyManagementOptions>(options =>
-        {
-            options.XmlRepository = new KeystoreXmlRepository(keystoreRepository);
-        });
-
-        services.AddAuthentication("FunderMapsHybridAuth")
-            .AddFunderMapsScheme2()
+        var authBuilder = services.AddAuthentication("FunderMapsHybridAuth")
             .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new JwtTokenValidationParameters
@@ -174,6 +128,21 @@ public static class FunderMapsCoreServiceCollectionExtensions
                 };
             })
             .AddScheme<AuthKeyAuthenticationOptions, AuthKeyAuthenticationHandler>(AuthKeyAuthenticationOptions.DefaultScheme, options => { });
+
+        if (options.CookieAuthentication)
+        {
+            authBuilder.AddFunderMapsScheme(CookieAuthenticationDefaults.AuthenticationScheme);
+            authBuilder.AddCookie(options =>
+            {
+                options.SlidingExpiration = true;
+                options.Cookie.Name = configuration["Authentication:Cookie:Name"];
+                options.Cookie.Domain = configuration["Authentication:Cookie:Domain"];
+            });
+        }
+        else
+        {
+            authBuilder.AddFunderMapsScheme(AuthKeyAuthenticationOptions.DefaultScheme);
+        }
 
         services.AddAuthorization(options =>
         {

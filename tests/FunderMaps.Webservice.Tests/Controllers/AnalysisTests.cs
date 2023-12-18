@@ -147,7 +147,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
     {
         using var client = factory.CreateClient();
 
-        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
             Email = "lester@contoso.com",
             Password = "fundermaps",
