@@ -114,7 +114,7 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
             Password = password,
         });
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
