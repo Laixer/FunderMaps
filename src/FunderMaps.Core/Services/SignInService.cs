@@ -45,7 +45,7 @@ public class SignInService(
                 Varaibles = new Dictionary<string, object>
                 {
                     { "creatorName", user.ToString() },
-                    { "resetToken", "123456" },
+                    { "resetToken", Guid.NewGuid().ToString() },
                 }
             });
         }
