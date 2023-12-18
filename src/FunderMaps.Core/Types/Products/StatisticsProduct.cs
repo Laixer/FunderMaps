@@ -10,18 +10,18 @@ public sealed record StatisticsProduct
     /// <summary>
     ///     Represents the distribution of foundation types.
     /// </summary>
-    public FoundationTypeDistribution FoundationTypeDistribution { get; set; }
+    public FoundationTypeDistribution FoundationTypeDistribution { get; set; } = default!;
 
     /// <summary>
     ///     Represents the distribution of building construction years in the
     ///     given region.
     /// </summary>
-    public ConstructionYearDistribution ConstructionYearDistribution { get; set; }
+    public ConstructionYearDistribution ConstructionYearDistribution { get; set; } = default!;
 
     /// <summary>
     ///     Represents the distribution of foundation risks in the given region.
     /// </summary>
-    public FoundationRiskDistribution FoundationRiskDistribution { get; set; }
+    public FoundationRiskDistribution FoundationRiskDistribution { get; set; } = default!;
 
     /// <summary>
     ///     Represents the percentage of collected data in the given region.
@@ -36,20 +36,20 @@ public sealed record StatisticsProduct
     /// <summary>
     ///     Total amount of incidents in the given region.
     /// </summary>
-    public IEnumerable<IncidentYearPair> TotalIncidentCount { get; set; }
+    public IEnumerable<IncidentYearPair> TotalIncidentCount { get; set; } = default!;
 
     /// <summary>
     ///     Total amount of incidents in the given region.
     /// </summary>
-    public IEnumerable<IncidentYearPair> MunicipalityIncidentCount { get; set; }
+    public IEnumerable<IncidentYearPair> MunicipalityIncidentCount { get; set; } = default!;
 
     /// <summary>
     ///     Total amount of reports in the given region.
     /// </summary>
-    public IEnumerable<InquiryYearPair> TotalReportCount { get; set; }
+    public IEnumerable<InquiryYearPair> TotalReportCount { get; set; } = default!;
 
     /// <summary>
     ///     Total amount of reports in the given region.
     /// </summary>
-    public IEnumerable<InquiryYearPair> MunicipalityReportCount { get; set; }
+    public IEnumerable<InquiryYearPair> MunicipalityReportCount { get; set; } = default!;
 }

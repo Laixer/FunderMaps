@@ -10,7 +10,7 @@ public sealed class ConstructionYearPair
     /// <summary>
     ///     Decade that represents this construction year pair.
     /// </summary>
-    public Years Decade { get; set; }
+    public Years Decade { get; set; } = default!;
 
     /// <summary>
     ///     Total amount of items that fall into this decade.

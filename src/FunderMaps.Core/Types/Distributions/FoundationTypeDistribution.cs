@@ -8,5 +8,5 @@ public sealed class FoundationTypeDistribution
     /// <summary>
     ///     Contains a <see cref="FoundationTypePair"/> for each present foundation type.
     /// </summary>
-    public IEnumerable<FoundationTypePair> FoundationTypes { get; set; }
+    public IEnumerable<FoundationTypePair> FoundationTypes { get; set; } = [];
 }

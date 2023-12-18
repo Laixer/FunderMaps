@@ -10,5 +10,5 @@ public sealed record ConstructionYearDistribution
     ///     more buildings exist, including the total amount of buildings per
     ///     decade.
     /// </summary>
-    public IEnumerable<ConstructionYearPair> Decades { get; set; }
+    public IEnumerable<ConstructionYearPair> Decades { get; set; } = [];
 }
