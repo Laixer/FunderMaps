@@ -12,7 +12,7 @@ namespace FunderMaps.Webservice.Tests.Controllers;
 public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) : IClassFixture<FunderMapsWebApplicationFactory<Program>>
 {
     [Theory]
-    [InlineData("gfm-6aae47cb5aa4416abdf19d98ba8218ac")]
+    [InlineData("gfm-7bc9bb6497984a13a2cc95ea1a284825")]
     [InlineData("BU05990324")]
     public async Task GetProductByIdReturnProduct(string address)
     {
@@ -51,7 +51,7 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
     }
 
     [Theory]
-    [InlineData("gfm-6aae47cb5aa4416abdf19d98ba8218ac")]
+    [InlineData("gfm-7bc9bb6497984a13a2cc95ea1a284825")]
     [InlineData("BU05990324")]
     public async Task AuthKeyGetProductByIdReturnProduct(string address)
     {
