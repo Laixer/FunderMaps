@@ -2,8 +2,6 @@ using System.Security.Authentication;
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.DataTransferObjects;
 using FunderMaps.Core.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,8 +25,6 @@ public class AuthController(SignInService signInService, JwtSecurityTokenService
     {
         var principal = await signInService.PasswordSignInAsync(input.Email, input.Password, "FunderMapsHybridAuth");
 
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
         var tokenContext = tokenService.GetTokenContext(principal);
         return new SignInSecurityTokenDto()
         {
@@ -50,8 +46,6 @@ public class AuthController(SignInService signInService, JwtSecurityTokenService
     public async Task<SignInSecurityTokenDto> RefreshSignInAsync()
     {
         var principal = await signInService.UserIdSignInAsync(UserId, "FunderMapsHybridAuth");
-
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
         var tokenContext = tokenService.GetTokenContext(principal);
         return new SignInSecurityTokenDto()

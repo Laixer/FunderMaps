@@ -24,7 +24,7 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
     {
         using var client = factory.CreateClient();
 
-        var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        var response = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
             Email = email,
             Password = "fundermaps",
@@ -44,7 +44,7 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
     {
         using var client = factory.CreateClient();
 
-        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto()
+        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
             Email = "lester@contoso.com",
             Password = "fundermaps",
@@ -96,14 +96,8 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
             Email = "lester@contoso.com",
             Password = new Randomizer().Password(64),
         });
-        // var returnObject = await response.Content.ReadFromJsonAsync<ProblemModel>();
 
-        Assert.NotEqual(HttpStatusCode.OK, response.StatusCode);
-
-        // Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        // Assert.NotNull(returnObject);
-        // Assert.Equal((short)HttpStatusCode.Unauthorized, returnObject.Status);
-        // Assert.Contains("Login", returnObject.Title, StringComparison.InvariantCultureIgnoreCase);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Theory]
@@ -130,7 +124,6 @@ public class AuthTests(FunderMapsWebApplicationFactory<Program> factory) : IClas
 
         var response = await client.GetAsync("api/auth/token-refresh");
 
-        // Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        Assert.NotEqual(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }
