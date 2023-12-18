@@ -516,6 +516,72 @@ internal class MemoryBuildingRepository : MemoryRepositoryBase<Building, string>
     }
 }
 
+internal class MemoryNeighborhoodRepository : MemoryRepositoryBase<Neighborhood, string>, INeighborhoodRepository
+{
+    private readonly Dictionary<string, Address> memoryAddress = new()
+    {
+        ["gfm-c36dcd7b53c84b5eb39ad880c0955fed"] = new()
+        {
+            Id = "gfm-c36dcd7b53c84b5eb39ad880c0955fed",
+            BuildingNumber = "8b",
+            PostalCode = "3023AM",
+            Street = "Vierambachtsstraat",
+            IsActive = true,
+            ExternalId = "NL.IMBAG.NUMMERAANDUIDING.0599200000499204",
+            City = "Rotterdam",
+            BuildingId = "gfm-4f5e73d478ff452b86023a06e5b8d834",
+        },
+    };
+
+    private readonly Dictionary<string, Building> memoryBuilding = new()
+    {
+        ["gfm-4f5e73d478ff452b86023a06e5b8d834"] = new()
+        {
+            Id = "gfm-4f5e73d478ff452b86023a06e5b8d834",
+            BuiltYear = new DateTime(1908, 1, 1),
+            IsActive = true,
+            ExternalId = "NL.IMBAG.PAND.0599100000685769",
+            NeighborhoodId = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
+        },
+    };
+
+    public MemoryNeighborhoodRepository()
+    {
+        memory.Add("gfm-7bc9bb6497984a13a2cc95ea1a284825", new()
+        {
+            Id = "gfm-7bc9bb6497984a13a2cc95ea1a284825",
+            Name = "Nieuwe Westen",
+            ExternalId = "BU05990324",
+            DistrictId = "gfm-eaaa46d890124aa7ba85a22cfb463a54",
+        });
+    }
+
+    public Task<Neighborhood> GetByExternalAddressIdAsync(string id)
+    {
+        // await Task.CompletedTask;
+
+        // var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
+        // return await GetByIdAsync(address?.BuildingId ?? throw new EntityNotFoundException(nameof(Building)));
+
+        throw new NotImplementedException();
+    }
+
+    public async Task<Neighborhood> GetByExternalBuildingIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        var building = memoryBuilding.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
+        return await GetByIdAsync(building?.NeighborhoodId ?? throw new EntityNotFoundException(nameof(Neighborhood)));
+    }
+
+    public async Task<Neighborhood> GetByExternalIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        return memory.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Neighborhood));
+    }
+}
+
 internal class MemoryAnalysisRepository : IAnalysisRepository
 {
     protected readonly Dictionary<string, AnalysisProduct> memory = [];

@@ -13,7 +13,7 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 {
     [Theory]
     [InlineData("gfm-6aae47cb5aa4416abdf19d98ba8218ac")]
-    [InlineData("BU05031403")]
+    [InlineData("BU05990324")]
     public async Task GetProductByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
@@ -52,7 +52,7 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 
     [Theory]
     [InlineData("gfm-6aae47cb5aa4416abdf19d98ba8218ac")]
-    [InlineData("BU05031403")]
+    [InlineData("BU05990324")]
     public async Task AuthKeyGetProductByIdReturnProduct(string address)
     {
         using var client = factory.CreateClient();
