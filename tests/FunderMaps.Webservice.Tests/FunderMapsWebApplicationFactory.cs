@@ -13,6 +13,7 @@ namespace FunderMaps.Webservice.Tests;
 
 internal class MemoryRepositoryBase<TEntity, TEntityPrimaryKey> : IAsyncRepository<TEntity, TEntityPrimaryKey>
     where TEntity : IEntityIdentifier<TEntityPrimaryKey>
+    where TEntityPrimaryKey : notnull
 {
     protected readonly Dictionary<TEntityPrimaryKey, TEntity> memory = [];
 
@@ -302,6 +303,8 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
     /// <returns>List of user identifiers.</returns>
     public async IAsyncEnumerable<OrganizationUser> ListAllAsync(Guid organizationId, Navigation navigation)
     {
+        await Task.CompletedTask;
+
         // var sql = @"
         //     SELECT
         //             u.id,
@@ -348,6 +351,8 @@ internal class MemoryOrganizationUserRepository : IOrganizationUserRepository
 
     public async IAsyncEnumerable<Guid> ListAllByRoleAsync(Guid organizationId, OrganizationRole[] role, Navigation navigation)
     {
+        await Task.CompletedTask;
+
         // var sql = @"
         //     SELECT  user_id
         //     FROM    application.organization_user
