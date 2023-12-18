@@ -16,7 +16,7 @@ public enum ApplicationRole
     User = 1,
 
     /// <summary>
-    ///     Guest.
+    ///     Service.
     /// </summary>
-    Guest = 2,
+    Service = 2,
 }
