@@ -121,6 +121,16 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
             PasswordHash = passwordHasher.HashPassword("fundermaps"),
             AuthKey = "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI",
         });
+        memory.Add(Guid.Parse("5ddfe853-2c33-4030-b7eb-91b2ed62c16c"), new()
+        {
+            Id = Guid.Parse("5ddfe853-2c33-4030-b7eb-91b2ed62c16c"),
+            Email = "service@contoso.com",
+            JobTitle = "Service Account",
+            PhoneNumber = "+31612345678",
+            Role = ApplicationRole.Service,
+            PasswordHash = passwordHasher.HashPassword("fundermaps"),
+            AuthKey = "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW",
+        });
     }
 
     public async Task<Guid> AddAsync(User entity)

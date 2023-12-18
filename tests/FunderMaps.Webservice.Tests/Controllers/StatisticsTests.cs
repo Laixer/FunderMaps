@@ -22,7 +22,7 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 
         var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
-            Email = "lester@contoso.com",
+            Email = "service@contoso.com",
             Password = "fundermaps",
         });
         var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
@@ -63,9 +63,10 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
 
             var response = await client.SendAsync(request);
+
             var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
 
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -74,7 +75,7 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
 
             var response = await client.SendAsync(request);
             var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
@@ -82,6 +83,19 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(returnObject);
         }
+    }
+
+    [Fact]
+    public async Task AuthKeyGetProductByIdReturnForbiddenProduct()
+    {
+        using var client = factory.CreateClient();
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/gfm-4f5e73d478ff452b86023a06e5b8d834");
+        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+
+        var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
     [Theory]
@@ -95,7 +109,7 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 
         var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
-            Email = "lester@contoso.com",
+            Email = "service@contoso.com",
             Password = "fundermaps",
         });
         var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();

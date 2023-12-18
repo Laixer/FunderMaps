@@ -23,7 +23,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
-            Email = "lester@contoso.com",
+            Email = "service@contoso.com",
             Password = "fundermaps",
         });
         var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
@@ -69,7 +69,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
 
             var response = await client.SendAsync(request);
             var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
@@ -82,7 +82,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         {
             var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
 
             var response = await client.SendAsync(request);
             var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
@@ -106,7 +106,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
-            Email = "lester@contoso.com",
+            Email = "service@contoso.com",
             Password = "fundermaps",
         });
         var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
@@ -136,6 +136,19 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
         }
     }
 
+    [Fact]
+    public async Task AuthKeyGetProductByIdReturnForbiddenProduct()
+    {
+        using var client = factory.CreateClient();
+
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/gfm-4f5e73d478ff452b86023a06e5b8d834");
+        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.a1LKIR7nUT8SPELGdCNnT2ngQV8RDQXI");
+
+        var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     [Theory]
     [InlineData("sdf-sd3kjhr834dhfjdeh")]
     [InlineData("343545435_4928374hfdkjsfh")]
@@ -149,7 +162,7 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
         {
-            Email = "lester@contoso.com",
+            Email = "service@contoso.com",
             Password = "fundermaps",
         });
         var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();

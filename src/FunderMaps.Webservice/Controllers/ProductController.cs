@@ -1,6 +1,7 @@
 ﻿using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Services;
 using FunderMaps.Core.Types.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.Webservice.Controllers;
@@ -13,6 +14,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
 {
     // TODO: LEGACY
     // GET: api/v3/product/analysis
+    [Authorize(Roles = "Service,Administrator")]
     [HttpGet("analysis")]
     public Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
         => GetAnalysisAsync(id);
@@ -21,6 +23,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
+    [Authorize(Roles = "Service,Administrator")]
     [HttpGet("analysis/{id}")]
     public Task<AnalysisProduct> GetAnalysisAsync(string id)
         => modelService.GetAnalysisAsync(id, TenantId);
@@ -30,6 +33,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
+    [Authorize(Roles = "Service,Administrator")]
     [HttpGet("at_risk")]
     public Task<bool> GetRiskIndexLegacyAsync([FromQuery] string id)
         => GetRiskIndexAsync(id);
@@ -38,6 +42,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
+    [Authorize(Roles = "Service,Administrator")]
     [HttpGet("at_risk/{id}")]
     public Task<bool> GetRiskIndexAsync(string id)
         => modelService.GetRiskIndexAsync(id, TenantId);
@@ -47,6 +52,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
+    [Authorize(Roles = "Service,Administrator")]
     [HttpGet("statistics")]
     public Task<StatisticsProduct> GetStatisticsLegacyAsync([FromQuery] string id)
         => GetStatisticsAsync(id);
@@ -55,6 +61,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
+    [Authorize(Roles = "Service,Administrator")]
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
