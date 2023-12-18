@@ -836,7 +836,7 @@ public class FunderMapsWebApplicationFactory<TProgram> : WebApplicationFactory<T
             // services.AddScoped<IInquiryRepository, InquiryRepository>();
             // services.AddScoped<IInquirySampleRepository, InquirySampleRepository>();
             // services.AddScoped<IMapsetRepository, MapsetRepository>();
-            // services.AddScoped<INeighborhoodRepository, NeighborhoodRepository>();
+            services.Replace(ServiceDescriptor.Scoped<INeighborhoodRepository, MemoryNeighborhoodRepository>());
             services.Replace(ServiceDescriptor.Scoped<IOrganizationRepository, MemoryOrganizationRepository>());
             // services.AddScoped<IRecoveryRepository, RecoveryRepository>();
             // services.AddScoped<IRecoverySampleRepository, RecoverySampleRepository>();
