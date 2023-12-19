@@ -1,6 +1,7 @@
 using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
@@ -53,7 +54,8 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Bundle>(sql, new { tileset = id }));
+        var bundle = await connection.QuerySingleOrDefaultAsync<Bundle>(sql, new { tileset = id });
+        return bundle is null ? throw new EntityNotFoundException(nameof(bundle)) : CacheEntity(bundle);
     }
 
     /// <summary>

@@ -1,5 +1,6 @@
 using Dapper;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Abstractions;
 
@@ -10,6 +11,7 @@ namespace FunderMaps.Data.Repositories;
 /// </summary>
 internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 {
+    // FUTURE: Add caching.
     /// <summary>
     ///     Gets an analysis product by its internal building id.
     /// </summary>
@@ -45,7 +47,8 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id });
+        var mapset = await connection.QuerySingleOrDefaultAsync<Mapset>(sql, new { id });
+        return mapset is null ? throw new EntityNotFoundException(nameof(mapset)) : mapset;
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using FunderMaps.Core;
 using FunderMaps.Core.Entities;
+using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces.Repositories;
 
 namespace FunderMaps.Data.Repositories;
@@ -39,7 +40,8 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        return CacheEntity(await connection.QuerySingleOrDefaultAsync<Contractor>(sql, new { id }));
+        var contractor = await connection.QuerySingleOrDefaultAsync<Contractor>(sql, new { id });
+        return contractor is null ? throw new EntityNotFoundException(nameof(contractor)) : CacheEntity(contractor);
     }
 
     /// <summary>
