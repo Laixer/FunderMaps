@@ -47,6 +47,8 @@ internal sealed class DownloadBagTask(
             var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
             gdalService.Convert(destinationPath, output);
 
+            logger.LogInformation("Copying BAG file to building table");
+
             await operationRepository.CopyPandToBuildingAsync();
         }
         finally
