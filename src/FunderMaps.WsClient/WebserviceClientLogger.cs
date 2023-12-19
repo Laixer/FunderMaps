@@ -43,6 +43,10 @@ public class WebserviceClientLogger(FunderMapsClient webserviceClient, ILogger<W
                     logger.LogError("Webservice call unauthorized");
                     break;
 
+                case HttpStatusCode.Forbidden:
+                    logger.LogError("Webservice call forbidden");
+                    break;
+
                 default:
                     logger.LogError(ex, "Error while calling webservice");
                     break;
@@ -75,6 +79,10 @@ public class WebserviceClientLogger(FunderMapsClient webserviceClient, ILogger<W
 
                 case HttpStatusCode.Unauthorized:
                     logger.LogError("Webservice call unauthorized");
+                    break;
+
+                case HttpStatusCode.Forbidden:
+                    logger.LogError("Webservice call forbidden");
                     break;
 
                 default:
