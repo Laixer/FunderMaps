@@ -40,12 +40,9 @@ public static class FunderMapsCoreServiceCollectionExtensions
         // NOTE: These services are rarely used and should therefore be
         //       registered as transient. They are re-instantiated on every
         //       resolve and disposed right after.
-        services.AddTransient<PasswordHasher>();
         services.AddTransient<GeocoderTranslation>();
         services.AddTransient<ModelService>();
-        services.AddTransient<JwtSecurityTokenService>();
         services.AddScoped<IncidentService>(); // TODO: Should be transient?
-        services.AddScoped<SignInService>(); // TODO: Should be transient?
 
         // Register application context in DI container
         // NOTE: The application context *must* be registered with the container
@@ -102,6 +99,10 @@ public static class FunderMapsCoreServiceCollectionExtensions
 
     public static IServiceCollection AddFunderMapsAuthServices(this IServiceCollection services, Action<FunderMapsAuthenticationOptions>? configureOptions = null)
     {
+        services.AddTransient<PasswordHasher>();
+        services.AddTransient<JwtSecurityTokenService>();
+        services.AddScoped<SignInService>(); // TODO: Should be transient?
+
         var options = new FunderMapsAuthenticationOptions();
         configureOptions?.Invoke(options);
 

@@ -12,9 +12,7 @@ namespace FunderMaps.Core.Services;
 /// <summary>
 ///     Jwt bearer token provider.
 /// </summary>
-public class JwtSecurityTokenService(
-    IOptionsMonitor<JwtBearerOptions> options,
-    TimeProvider timeProvider)
+public class JwtSecurityTokenService(IOptionsMonitor<JwtBearerOptions> options, TimeProvider timeProvider)
 {
     /// <summary>
     ///     The <see cref="JwtBearerOptions"/> used.
