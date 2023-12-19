@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using TokenContext = FunderMaps.Core.Authentication.TokenContext;
 
@@ -21,19 +20,6 @@ public class JwtSecurityTokenService(
     ///     The <see cref="JwtBearerOptions"/> used.
     /// </summary>
     public JwtBearerOptions Options { get; private set; } = options.Get(JwtBearerDefaults.AuthenticationScheme);
-
-    /// <summary>
-    ///     Find the first security token handler that can write a token.
-    /// </summary>
-    private SecurityTokenHandler GetHandler()
-    {
-        var securityToken = Options.SecurityTokenValidators.FirstOrDefault(securityToken =>
-        {
-            var securityTokenHandler = securityToken as SecurityTokenHandler;
-            return securityTokenHandler?.CanWriteToken ?? false;
-        });
-        return securityToken as SecurityTokenHandler ?? throw new InvalidOperationException();
-    }
 
     /// <summary>
     ///     Generate a <see cref="SecurityToken"/> from a <see cref="ClaimsPrincipal"/>.
@@ -86,25 +72,16 @@ public class JwtSecurityTokenService(
     }
 
     /// <summary>
-    ///     Generate a <see cref="SecurityToken"/> from a <see cref="ClaimsPrincipal"/>.
-    /// </summary>
-    /// <param name="principal">Claims principal.</param>
-    /// <returns>Instance of <see cref="SecurityToken"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public SecurityToken GetToken(ClaimsPrincipal principal)
-        => GenerateSecurityToken(principal);
-
-    /// <summary>
     ///     Generate a <see cref="TokenContext"/> from a <see cref="ClaimsPrincipal"/>.
     /// </summary>
     /// <param name="principal">Claims principal.</param>
     /// <returns>Instance of <see cref="TokenContext"/>.</returns>
     public TokenContext GetTokenContext(ClaimsPrincipal principal)
     {
-        SecurityToken token = GetToken(principal);
+        SecurityToken token = GenerateSecurityToken(principal);
         return new()
         {
-            TokenString = GetHandler().WriteToken(token),
+            TokenString = new JwtSecurityTokenHandler().WriteToken(token),
             Token = token,
         };
     }
