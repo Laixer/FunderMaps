@@ -35,7 +35,9 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             REFRESH MATERIALIZED VIEW CONCURRENTLY data.cluster_sample;
             REFRESH MATERIALIZED VIEW CONCURRENTLY data.supercluster_sample;
 
-            CALL data.model_risk_manifest();";
+            CALL data.model_risk_manifest();
+            
+            REINDEX TABLE CONCURRENTLY data.model_risk_static;";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
