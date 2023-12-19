@@ -5,7 +5,7 @@
 <div class="Finish">
     <div class="Finish__Wrapper">
 
-        @if (State.Feedback)
+        @if (State?.Feedback ?? false)
         {
             <Title Message="Afgerond!" />
 
