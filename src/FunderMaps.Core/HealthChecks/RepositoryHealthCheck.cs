@@ -6,7 +6,7 @@ namespace FunderMaps.Core.HealthChecks;
 /// <summary>
 ///     Check if the data backend is alive.
 /// </summary>
-public class RepositoryHealthCheck(ITestRepository testRepository) : IHealthCheck
+public class RepositoryHealthCheck(IOperationRepository operationRepository) : IHealthCheck
 {
     /// <summary>
     ///     Runs the health check, returning the status of the component being checked.
@@ -15,7 +15,7 @@ public class RepositoryHealthCheck(ITestRepository testRepository) : IHealthChec
     /// <param name="cancellationToken">A System.Threading.CancellationToken that can be used to cancel the health check.</param>
     /// <returns>Instance of <see cref="HealthCheckResult"/>.</returns>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken)
-        => await testRepository.IsAliveAsync()
+        => await operationRepository.IsAliveAsync()
             ? HealthCheckResult.Healthy()
             : HealthCheckResult.Unhealthy();
 }
