@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddFunderMapsCoreServices();
 builder.Services.AddFunderMapsDataServices();
+builder.Services.AddFunderMapsAuthServices();
 
 builder.Services.AddControllers();
 builder.Services.AddRazorPages(options =>
