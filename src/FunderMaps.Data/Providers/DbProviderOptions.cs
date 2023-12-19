@@ -6,11 +6,6 @@ namespace FunderMaps.Data.Providers;
 public class DbProviderOptions
 {
     /// <summary>
-    ///     Database connection name.
-    /// </summary>
-    public string? ConnectionStringName { get; set; }
-
-    /// <summary>
     ///     Database connection string.
     /// </summary>
     public string? ConnectionString { get; set; }

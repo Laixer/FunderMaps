@@ -11,7 +11,7 @@ namespace FunderMaps.Webservice.Controllers;
 ///     Endpoint controller for application authentication.
 /// </summary>
 [Route("api/auth")]
-public class AuthController(SignInService signInService, JwtSecurityTokenService tokenService) : FunderMapsController
+public sealed class AuthController(SignInService signInService, JwtSecurityTokenService tokenService) : FunderMapsController
 {
     // POST: api/auth/signin
     /// <summary>

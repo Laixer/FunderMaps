@@ -9,7 +9,7 @@ namespace FunderMaps.Webservice.Controllers;
 ///     Return application versioning information.
 /// </summary>
 [AllowAnonymous]
-public class VersionController : ControllerBase
+public sealed class VersionController : ControllerBase
 {
     // GET: version
     /// <summary>

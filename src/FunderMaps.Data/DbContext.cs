@@ -22,7 +22,7 @@ internal class DbContext : IAsyncDisposable
     public DbContext(DbProvider dbProvider, Core.AppContext appContext, string cmdText)
     {
         _dbProvider = dbProvider;
-        _appContext = appContext;
+        _appContext = appContext; // TODO: Remove appContext dependency.
 
         _dbConnection = _dbProvider.ConnectionScope();
         _dbCommand = _dbProvider.CreateCommand(cmdText, _dbConnection);
