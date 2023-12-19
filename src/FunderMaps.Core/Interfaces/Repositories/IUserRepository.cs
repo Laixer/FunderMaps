@@ -22,6 +22,13 @@ public interface IUserRepository : IAsyncRepository<User, Guid>
     Task<User> GetByAuthKeyAsync(string key);
 
     /// <summary>
+    ///     Retrieve <see cref="User"/> by password reset key.
+    /// </summary>
+    /// <param name="key">Authentication key.</param>
+    /// <returns><see cref="User"/>.</returns>
+    Task<User> GetByResetKeyAsync(Guid key);
+
+    /// <summary>
     ///     Get password hash.
     /// </summary>
     /// <param name="id">Entity identifier.</param>

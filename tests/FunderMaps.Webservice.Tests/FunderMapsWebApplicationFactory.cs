@@ -185,6 +185,13 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
         return memory.Values.FirstOrDefault(x => x.AuthKey == key) ?? throw new EntityNotFoundException(nameof(User));
     }
 
+    public async Task<User> GetByResetKeyAsync(Guid key)
+    {
+        await Task.CompletedTask;
+
+        throw new NotImplementedException();
+    }
+
     public async Task<string?> GetPasswordHashAsync(Guid id)
     {
         await Task.CompletedTask;

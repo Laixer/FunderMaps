@@ -207,6 +207,39 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     }
 
     /// <summary>
+    ///     Retrieve <see cref="User"/> by password reset key.
+    /// </summary>
+    /// <param name="key">Authentication key.</param>
+    /// <returns><see cref="User"/>.</returns>
+    public async Task<User> GetByResetKeyAsync(Guid key)
+    {
+        // TODO: Check if key is still valid.
+        var sql = @"
+            SELECT  -- User
+                    u.id,
+                    u.given_name,
+                    u.last_name,
+                    u.email,
+                    u.avatar,
+                    u.job_title,
+                    u.phone_number,
+                    u.role
+            FROM    application.user AS u
+            JOIN    application.reset_key rk ON rk.user_id = u.id
+            WHERE   rk.key = @key
+            AND     rk.create_date > NOW() - INTERVAL '2 hours'
+            LIMIT   1";
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("key", key);
+
+        await using var reader = await context.ReaderAsync();
+
+        return CacheEntity(MapFromReader(reader));
+    }
+
+    /// <summary>
     ///     Get password hash.
     /// </summary>
     /// <param name="id">Entity identifier.</param>
