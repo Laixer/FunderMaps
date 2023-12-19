@@ -1,5 +1,6 @@
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
+using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Data.Providers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,6 +13,7 @@ namespace FunderMaps.Worker.Tasks;
 internal sealed class DownloadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
     IGDALService gdalService,
+    IOperationRepository operationRepository,
     ILogger<DownloadBagTask> logger) : ITaskService
 {
     private const string FileUrl = "https://service.pdok.nl/lv/bag/atom/downloads/bag-light.gpkg";
@@ -44,6 +46,8 @@ internal sealed class DownloadBagTask(
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
             var output = $"PG:dbname='{dataSourceBuilder.Database}' host='{dataSourceBuilder.Host}' port='{dataSourceBuilder.Port}' user='{dataSourceBuilder.Username}' password='{dataSourceBuilder.Password}'";
             gdalService.Convert(destinationPath, output);
+
+            await operationRepository.CopyPandToBuildingAsync();
         }
         finally
         {

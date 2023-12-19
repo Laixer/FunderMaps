@@ -19,4 +19,9 @@ public interface IOperationRepository
     ///   Refresh statistics.
     /// </summary>
     Task RefreshStatisticsAsync();
+
+    /// <summary>
+    ///   Copy BAG data to building table.
+    /// </summary>
+    Task CopyPandToBuildingAsync();
 }
