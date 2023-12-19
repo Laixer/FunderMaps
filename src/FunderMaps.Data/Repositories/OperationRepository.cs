@@ -133,7 +133,6 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
                 SET geom = excluded.geom;
             DROP TABLE IF EXISTS public.standplaats;
             
-            VACUUM ANALYZE geocoder.building;
             REINDEX TABLE CONCURRENTLY geocoder.building;";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
