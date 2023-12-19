@@ -129,7 +129,10 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             ON CONFLICT (external_id)
             DO UPDATE
                 SET geom = excluded.geom;
-            DROP TABLE IF EXISTS public.standplaats;";
+            DROP TABLE IF EXISTS public.standplaats;
+            
+            VACUUM ANALYZE geocoder.building;
+            REINDEX TABLE CONCURRENTLY geocoder.building;";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
