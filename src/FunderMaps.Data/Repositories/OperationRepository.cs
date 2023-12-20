@@ -65,6 +65,20 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
         await connection.ExecuteAsync(sql, commandTimeout: 3600);
     }
 
+    public async Task PreCopyPandToBuildingAsync()
+    {
+        var sql = @"
+            DROP TABLE IF EXISTS public.woonplaats;
+            DROP TABLE IF EXISTS public.verblijfsobject;
+            DROP TABLE IF EXISTS public.pand;
+            DROP TABLE IF EXISTS public.ligplaats;
+            DROP TABLE IF EXISTS public.standplaats;";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        await connection.ExecuteAsync(sql, commandTimeout: 10800);
+    }
+
     /// <summary>
     ///   Copy BAG data to building table.
     /// </summary>
