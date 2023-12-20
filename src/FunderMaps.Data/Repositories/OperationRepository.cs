@@ -35,9 +35,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             REFRESH MATERIALIZED VIEW CONCURRENTLY data.cluster_sample;
             REFRESH MATERIALIZED VIEW CONCURRENTLY data.supercluster_sample;
 
-            CALL data.model_risk_manifest();
-            
-            REINDEX TABLE CONCURRENTLY data.model_risk_static;";
+            CALL data.model_risk_manifest();";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
@@ -131,9 +129,7 @@ internal sealed class OperationRepository : DbServiceBase, IOperationRepository
             ON CONFLICT (external_id)
             DO UPDATE
                 SET geom = excluded.geom;
-            DROP TABLE IF EXISTS public.standplaats;
-            
-            REINDEX TABLE CONCURRENTLY geocoder.building;";
+            DROP TABLE IF EXISTS public.standplaats;";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
