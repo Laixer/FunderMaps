@@ -49,7 +49,7 @@ public class TaskRunner(
                             logger.LogInformation("Running loading BAG task");
 
                             using var scope = serviceScopeFactory.CreateScope();
-                            await ActivatorUtilities.CreateInstance<DownloadBagTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            await ActivatorUtilities.CreateInstance<LoadBagTask>(scope.ServiceProvider).RunAsync(cancellationToken);
                             break;
                         }
 

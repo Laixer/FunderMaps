@@ -20,7 +20,10 @@ public interface IOperationRepository
     /// </summary>
     Task RefreshStatisticsAsync();
 
-    Task PreCopyPandToBuildingAsync();
+    /// <summary>
+    ///   Cleanup BAG data.
+    /// </summary>
+    Task CleanupBAGAsync();
 
     /// <summary>
     ///   Copy BAG data to building table.

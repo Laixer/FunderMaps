@@ -40,6 +40,13 @@ internal sealed class MapBundleTask(
                 }
             }
 
+            var currentDirectory = Directory.GetCurrentDirectory();
+
+            FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg");
+            FileHelper.DeleteFilesWithExtension(currentDirectory, "gpkg-journal");
+            FileHelper.DeleteFilesWithExtension(currentDirectory, "geojson");
+            FileHelper.DeleteFilesWithExtension(currentDirectory, "mbtiles");
+
             logger.LogInformation("Processing tileset '{Tileset}'", bundle.Tileset);
 
             var dataSourceBuilder = new Npgsql.NpgsqlConnectionStringBuilder(_dbProviderOptions.ConnectionString);
