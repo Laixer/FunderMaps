@@ -61,17 +61,20 @@ internal class S3StorageService : IBlobStorageService
     /// <summary>
     ///     Upload an object to the bucket.
     /// </summary>
+    /// <remarks
+    ///     This method is can accept a file with any size.
+    /// </remarks>
     /// <param name="fileName">The file name.</param>
     /// <param name="filePath">The file path.</param>
     /// <param name="storageObject">Storage object settings.</param>
     /// <returns>See <see cref="ValueTask"/>.</returns>
     public async Task StoreFileAsync(string fileName, string filePath, StorageObject? storageObject)
     {
-        var request = new PutObjectRequest
+        var request = new TransferUtilityUploadRequest
         {
             BucketName = _options.BucketName,
-            Key = fileName,
             FilePath = filePath,
+            Key = fileName,
         };
 
         if (storageObject is not null)
@@ -83,12 +86,16 @@ internal class S3StorageService : IBlobStorageService
             request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
         }
 
-        await _s3Client.PutObjectAsync(request);
+        using var transferUtility = new TransferUtility(_s3Client);
+        await transferUtility.UploadAsync(request);
     }
 
     /// <summary>
     ///     Stores a file.
     /// </summary>
+    /// <remarks
+    ///     This method is can accept a file with any size.
+    /// </remarks>
     /// <param name="containerName">The container name.</param>
     /// <param name="fileName">The file name.</param>
     /// <param name="contentType">The content type.</param>
@@ -97,7 +104,7 @@ internal class S3StorageService : IBlobStorageService
     /// <returns>See <see cref="ValueTask"/>.</returns>
     public async Task StoreFileAsync(string containerName, string fileName, string contentType, Stream stream, StorageObject? storageObject)
     {
-        var request = new PutObjectRequest
+        var request = new TransferUtilityUploadRequest
         {
             BucketName = _options.BucketName,
             ContentType = contentType,
@@ -114,7 +121,8 @@ internal class S3StorageService : IBlobStorageService
             request.Headers.ContentEncoding = storageObject.ContentEncoding ?? request.Headers.ContentEncoding;
         }
 
-        await _s3Client.PutObjectAsync(request);
+        using var transferUtility = new TransferUtility(_s3Client);
+        await transferUtility.UploadAsync(request);
     }
 
     /// <summary>
