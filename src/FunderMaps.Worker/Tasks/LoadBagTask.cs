@@ -12,6 +12,7 @@ namespace FunderMaps.Worker.Tasks;
 /// </summary>
 internal sealed class LoadBagTask(
     IOptions<DbProviderOptions> dbProviderOptions,
+    IBlobStorageService blobStorageService,
     IGDALService gdalService,
     IOperationRepository operationRepository,
     ILogger<LoadBagTask> logger) : ITaskService
@@ -41,10 +42,17 @@ internal sealed class LoadBagTask(
 
             var destinationPath = Path.GetFileName(FileUrl);
 
-            using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
-            using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
-            await contentStream.CopyToAsync(fileStream, cancellationToken);
-            await fileStream.FlushAsync(cancellationToken);
+            {
+                using var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken);
+                using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None);
+                await contentStream.CopyToAsync(fileStream, cancellationToken);
+                await fileStream.FlushAsync(cancellationToken);
+            }
+
+            DateTime currentDate = DateTime.Now;
+            string dateString = currentDate.ToString("yyyy-MM-dd");
+
+            await blobStorageService.StoreFileAsync($"lvbag/archive/{dateString}/bag-light.gpkg", destinationPath);
 
             var fileInfo = new FileInfo(destinationPath);
             if (fileInfo.Exists && fileInfo.Length > 1048576) // 1 MB
