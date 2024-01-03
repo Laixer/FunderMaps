@@ -657,6 +657,9 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
         return true;
     }
 
+    public IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
+        => memory.Values.ToAsyncEnumerable();
+
     public async Task<bool> RegisterProductMatch(string buildingId, string id, string product, Guid tenantId)
     {
         await Task.CompletedTask;

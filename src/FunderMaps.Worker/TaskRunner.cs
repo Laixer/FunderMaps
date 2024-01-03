@@ -62,6 +62,15 @@ public class TaskRunner(
                             break;
                         }
 
+                    case "modelexport":
+                        {
+                            logger.LogInformation("Running model export task");
+
+                            using var scope = serviceScopeFactory.CreateScope();
+                            await ActivatorUtilities.CreateInstance<ModelExportTask>(scope.ServiceProvider).RunAsync(cancellationToken);
+                            break;
+                        }
+
                     case "productexport":
                         {
                             logger.LogInformation("Running product export task");

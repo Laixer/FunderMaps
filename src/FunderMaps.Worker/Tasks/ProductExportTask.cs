@@ -9,7 +9,6 @@ namespace FunderMaps.Worker.Tasks;
 /// <summary>
 ///     Construct new instance.
 /// </summary>
-// [SingleShotTask("product-export")]
 internal sealed class ProductExportTask(
     IBlobStorageService blobStorageService,
     ITelemetryRepository telemetryRepository,
