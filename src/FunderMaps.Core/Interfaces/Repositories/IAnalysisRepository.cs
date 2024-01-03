@@ -36,4 +36,10 @@ public interface IAnalysisRepository
     /// <param name="id">External identifier.</param>
     /// <param name="tenantId">Tenant identifier.</param>
     Task RegisterProductMismatch(string id, Guid tenantId);
+
+    /// <summary>
+    ///     Retrieve all <typeparamref name="AnalysisProduct"/>.
+    /// </summary>
+    /// <returns>List of <typeparamref name="AnalysisProduct"/>.</returns>
+    IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation);
 }

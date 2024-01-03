@@ -1,4 +1,5 @@
 using Dapper;
+using FunderMaps.Core;
 using FunderMaps.Core.Interfaces.Repositories;
 using FunderMaps.Core.Types;
 using FunderMaps.Core.Types.Products;
@@ -26,7 +27,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
                     mrs.building_id,
                     mrs.external_building_id,
                     a.id as address_id,
-				    a.external_id as address_external_id,
+                    a.external_id as address_external_id,
                     mrs.neighborhood_id,
                     mrs.construction_year,
                     mrs.construction_year_reliability,
@@ -180,4 +181,50 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
             UnclassifiedRisk = reader.GetFieldValue<FoundationRisk?>(offset++),
             RecoveryType = reader.GetFieldValue<RecoveryType?>(offset++),
         };
+
+    /// <summary>
+    ///     Retrieve all <see cref="AnalysisProduct"/>.
+    /// </summary>
+    /// <returns>List of <see cref="AnalysisProduct"/>.</returns>
+    public async IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
+    {
+        var sql = @"
+            SELECT
+                    mrs.building_id,
+                    mrs.external_building_id,
+                    mrs.neighborhood_id,
+                    mrs.construction_year,
+                    mrs.construction_year_reliability,
+                    mrs.foundation_type,
+                    mrs.foundation_type_reliability,
+                    mrs.restoration_costs,
+                    mrs.height,
+                    mrs.velocity,
+                    mrs.ground_water_level,
+                    mrs.ground_level,
+                    mrs.soil,
+                    mrs.surface_area,
+                    mrs.damage_cause,
+                    mrs.enforcement_term,
+                    mrs.overall_quality,
+                    mrs.inquiry_type,
+                    mrs.drystand,
+                    mrs.drystand_risk,
+                    mrs.drystand_risk_reliability,
+                    mrs.bio_infection_risk,
+                    mrs.bio_infection_risk_reliability,
+                    mrs.dewatering_depth,
+                    mrs.dewatering_depth_risk,
+                    mrs.dewatering_depth_risk_reliability,
+                    mrs.unclassified_risk,
+                    mrs.recovery_type
+            FROM    data.model_risk_static mrs";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        foreach (var item in await connection.QueryAsync<AnalysisProduct>(sql, navigation))
+        {
+            yield return item;
+        }
+    }
 }
