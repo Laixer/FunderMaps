@@ -9,6 +9,9 @@ public partial class Contact : ComponentBase, IDisposable
     [Inject]
     private IncidentService IncidentService { get; set; } = default!;
 
+    [Inject]
+    private FeedbackService FeedbackService { get; set; } = default!;
+
     [CascadingParameter]
     State State { get; set; } = default!;
 
@@ -20,6 +23,10 @@ public partial class Contact : ComponentBase, IDisposable
         if (!State.Feedback)
         {
             await IncidentService.AddAsync(State.Model);
+        }
+        else
+        {
+            await FeedbackService.AddAsync(State.Model);
         }
     }
 

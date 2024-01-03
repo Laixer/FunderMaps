@@ -43,6 +43,7 @@ public static class FunderMapsCoreServiceCollectionExtensions
         services.AddTransient<GeocoderTranslation>();
         services.AddTransient<ModelService>();
         services.AddScoped<IncidentService>(); // TODO: Should be transient?
+        services.AddScoped<FeedbackService>(); // TODO: Should be transient?
 
         // Register application context in DI container
         // NOTE: The application context *must* be registered with the container
