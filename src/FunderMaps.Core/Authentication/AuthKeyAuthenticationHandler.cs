@@ -49,7 +49,7 @@ public class AuthKeyAuthenticationHandler(
                 return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
             }
 
-            return AuthenticateResult.Fail("Missing authorization header");
+            return AuthenticateResult.NoResult();
         }
         catch (AuthenticationException ex)
         {
