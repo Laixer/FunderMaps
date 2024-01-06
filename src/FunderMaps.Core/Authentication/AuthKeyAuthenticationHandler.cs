@@ -49,6 +49,14 @@ public class AuthKeyAuthenticationHandler(
                 return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
             }
 
+            var apiKeyHeader = Request.Headers["X-API-Key"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(apiKeyHeader))
+            {
+                var principal = await signInService.AuthKeySignInAsync(apiKeyHeader, Scheme.Name);
+
+                return AuthenticateResult.Success(new AuthenticationTicket(principal, Scheme.Name));
+            }
+
             return AuthenticateResult.NoResult();
         }
         catch (AuthenticationException ex)
