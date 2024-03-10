@@ -107,7 +107,7 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Address>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<Address>(sql, navigation))
         {
             yield return CacheEntity(item);
         }

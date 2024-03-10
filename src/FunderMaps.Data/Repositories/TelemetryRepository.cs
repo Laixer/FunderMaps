@@ -80,7 +80,7 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Guid>(sql))
+        await foreach (var item in connection.QueryUnbufferedAsync<Guid>(sql))
         {
             yield return item;
         }
@@ -104,7 +104,7 @@ internal class TelemetryRepository : DbServiceBase, ITelemetryRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<ProductCall>(sql, new { id }))
+        await foreach (var item in connection.QueryUnbufferedAsync<ProductCall>(sql, new { id }))
         {
             yield return item;
         }

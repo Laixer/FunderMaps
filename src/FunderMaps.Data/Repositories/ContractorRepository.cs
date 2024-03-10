@@ -54,7 +54,7 @@ internal class ContractorRepository : RepositoryBase<Contractor, int>, IContract
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Contractor>(sql))
+        await foreach (var item in connection.QueryUnbufferedAsync<Contractor>(sql))
         {
             yield return CacheEntity(item);
         }

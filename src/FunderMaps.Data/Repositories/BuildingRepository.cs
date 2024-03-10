@@ -117,7 +117,7 @@ internal class BuildingRepository : RepositoryBase<Building, string>, IBuildingR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Building>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<Building>(sql, navigation))
         {
             yield return CacheEntity(item);
         }

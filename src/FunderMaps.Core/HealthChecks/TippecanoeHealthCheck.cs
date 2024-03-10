@@ -26,7 +26,7 @@ public class TippecanoeHealthCheck(ITilesetGeneratorService tilesetGeneratorServ
         {
             logger.LogTrace(exception, "Health check failed");
 
-            return HealthCheckResult.Unhealthy("blob storage service");
+            return HealthCheckResult.Unhealthy("tileset generator is unhealthy");
         }
     }
 }
