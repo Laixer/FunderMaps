@@ -15,6 +15,16 @@ builder.Services.AddSingleton<PDOKLocationService>(); // TODO: Move to FunderMap
 
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowAnyOrigin();
+    });
+});
+
 builder.Services.AddHsts(options =>
 {
     options.Preload = true;
@@ -50,6 +60,8 @@ if (app.Environment.IsDevelopment())
 
     app.UseDeveloperExceptionPage();
 }
+
+app.UseCors();
 
 app.UseStaticFiles();
 
