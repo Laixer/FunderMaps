@@ -29,27 +29,14 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
 
         Assert.NotNull(returnToken);
 
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
 
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-        }
-
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
-
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
     }
 
     [Theory]
@@ -61,28 +48,14 @@ public class StatisticsTests(FunderMapsWebApplicationFactory<Program> factory) :
     {
         using var client = factory.CreateClient();
 
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
 
-            var response = await client.SendAsync(request);
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
 
-            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-        }
-
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/statistics/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
-
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<StatisticsProduct>();
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
     }
 
     [Fact]
