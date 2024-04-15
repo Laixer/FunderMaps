@@ -316,7 +316,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     last_name = @last_name,
                     avatar = @avatar,
                     job_title = NULLIF(trim(@job_title), ''),
-                    phone_number = REGEXP_REPLACE(@phone_number,'\D','','g'),
+                    phone_number = REGEXP_REPLACE(@phone_number,'\D','','g')
             WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
