@@ -267,11 +267,10 @@ public sealed class InquiryController(
 
         await emailService.SendAsync(new EmailMessage
         {
-            ToAddresses = new[]
-            {
+            ToAddresses = [
                 new EmailAddress(creator.Email, creator.ToString()),
                 new EmailAddress(reviewer.Email, reviewer.ToString())
-            },
+            ],
             Subject = "FunderMaps - Rapportage is goedgekeurd",
             Template = "report-approved",
             Varaibles = new Dictionary<string, object>

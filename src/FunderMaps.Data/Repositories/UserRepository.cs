@@ -301,6 +301,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         }
     }
 
+    // FUTURE: Move 'Role' cannot be changed here.
     /// <summary>
     ///     Update <see cref="User"/>.
     /// </summary>
@@ -316,7 +317,6 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
                     avatar = @avatar,
                     job_title = NULLIF(trim(@job_title), ''),
                     phone_number = REGEXP_REPLACE(@phone_number,'\D','','g'),
-                    role = @role
             WHERE   id = @id";
 
         await using var context = await DbContextFactory.CreateAsync(sql);
