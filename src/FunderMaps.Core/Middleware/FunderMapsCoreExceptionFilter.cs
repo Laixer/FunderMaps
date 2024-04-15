@@ -35,21 +35,24 @@ public class FunderMapsCoreExceptionFilter(ProblemDetailsFactory problemDetailsF
     /// </summary>
     public void OnException(ExceptionContext context)
     {
-        if (context.Exception is FunderMapsCoreException exception)
+        if (exceptionMap.TryGetValue(context.Exception.GetType(), out HttpStatusCode statusCode))
         {
-            if (exceptionMap.TryGetValue(exception.GetType(), out HttpStatusCode statusCode))
+            var title = context.Exception.Message;
+            if (context.Exception is FunderMapsCoreException exception)
             {
-                ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
-                    context.HttpContext,
-                    statusCode: (int)statusCode,
-                    title: exception.Title);
-
-                context.Result = new ObjectResult(problemDetails)
-                {
-                    StatusCode = problemDetails.Status,
-                };
-                context.ExceptionHandled = true;
+                title = exception.Title;
             }
+
+            ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
+                context.HttpContext,
+                statusCode: (int)statusCode,
+                title: title);
+
+            context.Result = new ObjectResult(problemDetails)
+            {
+                StatusCode = problemDetails.Status,
+            };
+            context.ExceptionHandled = true;
         }
     }
 }

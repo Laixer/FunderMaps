@@ -11,6 +11,7 @@ namespace FunderMaps.Core.Exceptions;
 /// </remarks>
 public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception>
 {
+    // TODO: Remove title property, set error in message
     /// <summary>
     ///     Exception title
     /// </summary>
@@ -20,6 +21,7 @@ public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception
     ///     Create new instance.
     /// </summary>
     public FunderMapsCoreException()
+        : base("Application was unable to process the request.")
     {
     }
 
@@ -37,18 +39,6 @@ public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception
     public FunderMapsCoreException(string message, Exception innerException)
         : base(message, innerException)
     {
-    }
-
-    /// <summary>
-    ///     Deconstruct this exception into a title and a message.
-    /// </summary>
-    /// <remarks>
-    ///     The returned message value will have the messages of all the inner exceptions joined.
-    /// </remarks>
-    public void Deconstruct(out string title, out string message)
-    {
-        title = Title;
-        message = string.Join("; caused by: ", this.Select(e => e.Message));
     }
 
     /// <summary>
