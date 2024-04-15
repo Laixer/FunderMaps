@@ -6,14 +6,10 @@ namespace FunderMaps.Core.Exceptions;
 public class EntityReadOnlyException : FunderMapsCoreException
 {
     /// <summary>
-    ///     Exception title
-    /// </summary>
-    public override string Title => "Requested entity is immutable.";
-
-    /// <summary>
     ///     Create new instance.
     /// </summary>
     public EntityReadOnlyException()
+        : base("Requested entity is immutable.")
     {
     }
 

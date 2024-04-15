@@ -11,12 +11,6 @@ namespace FunderMaps.Core.Exceptions;
 /// </remarks>
 public abstract class FunderMapsCoreException : Exception, IEnumerable<Exception>
 {
-    // TODO: Remove title property, set error in message
-    /// <summary>
-    ///     Exception title
-    /// </summary>
-    public virtual string Title => "Application was unable to process the request.";
-
     /// <summary>
     ///     Create new instance.
     /// </summary>

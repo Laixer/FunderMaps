@@ -37,16 +37,10 @@ public class FunderMapsCoreExceptionFilter(ProblemDetailsFactory problemDetailsF
     {
         if (exceptionMap.TryGetValue(context.Exception.GetType(), out HttpStatusCode statusCode))
         {
-            var title = context.Exception.Message;
-            if (context.Exception is FunderMapsCoreException exception)
-            {
-                title = exception.Title;
-            }
-
             ProblemDetails problemDetails = problemDetailsFactory.CreateProblemDetails(
                 context.HttpContext,
                 statusCode: (int)statusCode,
-                title: title);
+                title: context.Exception.Message);
 
             context.Result = new ObjectResult(problemDetails)
             {

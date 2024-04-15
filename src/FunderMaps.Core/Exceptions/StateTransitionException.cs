@@ -8,11 +8,6 @@ namespace FunderMaps.Core.Exceptions;
 public class StateTransitionException : FunderMapsCoreException
 {
     /// <summary>
-    ///     Exception title
-    /// </summary>
-    public override string Title => "Requested entity cannot change state.";
-
-    /// <summary>
     ///     State in which entity currently operates.
     /// </summary>
     public AuditStatus CurrentState { get; }
@@ -26,6 +21,7 @@ public class StateTransitionException : FunderMapsCoreException
     ///     Create new instance.
     /// </summary>
     public StateTransitionException()
+        : base("Requested entity cannot change state.")
     {
     }
 

@@ -6,14 +6,10 @@ namespace FunderMaps.Core.Exceptions;
 public sealed class QueueOverflowException : FunderMapsCoreException
 {
     /// <summary>
-    ///     Exception title
-    /// </summary>
-    public override string Title => "Application was unable to process the request.";
-
-    /// <summary>
     ///     Create new instance.
     /// </summary>
     public QueueOverflowException()
+        : base("Application was unable to process the request.")
     {
     }
 

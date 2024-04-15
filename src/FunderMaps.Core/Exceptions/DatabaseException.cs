@@ -6,14 +6,10 @@ namespace FunderMaps.Core.Exceptions;
 public sealed class DatabaseException : FunderMapsCoreException
 {
     /// <summary>
-    ///     Exception title
-    /// </summary>
-    public override string Title => "Unhandled database error.";
-
-    /// <summary>
     ///     Create new instance.
     /// </summary>
     public DatabaseException()
+        : base("Unhandled database error.")
     {
     }
 
