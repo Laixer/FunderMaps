@@ -80,7 +80,7 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Bundle>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<Bundle>(sql, navigation))
         {
             yield return CacheEntity(item);
         }
@@ -108,7 +108,7 @@ internal class BundleRepository : RepositoryBase<Bundle, string>, IBundleReposit
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Bundle>(sql))
+        await foreach (var item in connection.QueryUnbufferedAsync<Bundle>(sql))
         {
             yield return CacheEntity(item);
         }

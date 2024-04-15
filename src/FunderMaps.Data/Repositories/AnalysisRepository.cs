@@ -222,7 +222,7 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<AnalysisProduct>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<AnalysisProduct>(sql, navigation))
         {
             yield return item;
         }

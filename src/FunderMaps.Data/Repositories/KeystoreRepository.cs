@@ -52,7 +52,7 @@ internal class KeystoreRepository : RepositoryBase<KeyStore, string>, IKeystoreR
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<KeyStore>(sql))
+        await foreach (var item in connection.QueryUnbufferedAsync<KeyStore>(sql))
         {
             yield return item;
         }

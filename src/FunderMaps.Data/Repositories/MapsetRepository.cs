@@ -87,7 +87,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Mapset>(sql, new { id }))
+        await foreach (var item in connection.QueryUnbufferedAsync<Mapset>(sql, new { id }))
         {
             yield return item;
         }

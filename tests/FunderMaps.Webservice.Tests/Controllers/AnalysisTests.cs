@@ -30,31 +30,16 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         Assert.NotNull(returnToken);
 
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
 
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-            Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
-            Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
-        }
-
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
-
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-            Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
-            Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
+        Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
+        Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
     }
 
     [Theory]
@@ -67,31 +52,16 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
     {
         using var client = factory.CreateClient();
 
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
 
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-            Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
-            Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
-        }
-
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/analysis/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("AuthKey", "fmsk.k0hEiTT0vDBvEqFHItz6wg0U6ejxceDW");
-
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<AnalysisProduct>();
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.NotNull(returnObject);
-            Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
-            Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(returnObject);
+        Assert.Equal("gfm-4f5e73d478ff452b86023a06e5b8d834", returnObject.BuildingId);
+        Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
     }
 
     [Theory]
@@ -113,27 +83,14 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
 
         Assert.NotNull(returnToken);
 
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/at_risk?id={address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
+        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/at_risk/{address}");
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
 
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<bool>();
+        var response = await client.SendAsync(request);
+        var returnObject = await response.Content.ReadFromJsonAsync<bool>();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnObject);
-        }
-
-        {
-            var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/at_risk/{address}");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
-
-            var response = await client.SendAsync(request);
-            var returnObject = await response.Content.ReadFromJsonAsync<bool>();
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.True(returnObject);
-        }
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(returnObject);
     }
 
     [Fact]

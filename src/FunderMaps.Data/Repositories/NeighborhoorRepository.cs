@@ -145,7 +145,7 @@ internal class NeighborhoodRepository : RepositoryBase<Neighborhood, string>, IN
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
-        foreach (var item in await connection.QueryAsync<Neighborhood>(sql, navigation))
+        await foreach (var item in connection.QueryUnbufferedAsync<Neighborhood>(sql, navigation))
         {
             yield return CacheEntity(item);
         }
