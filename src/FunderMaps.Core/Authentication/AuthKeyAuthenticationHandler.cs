@@ -1,8 +1,8 @@
-using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Authentication;
 using System.Text.Encodings.Web;
 
 namespace FunderMaps.Core.Authentication;

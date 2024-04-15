@@ -1,10 +1,11 @@
-using FunderMaps.Core.Authentication;
+﻿using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
 using Microsoft.Extensions.Logging;
+using System.Security.Authentication;
 using System.Security.Claims;
 
 namespace FunderMaps.Core.Services;
