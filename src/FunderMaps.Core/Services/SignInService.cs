@@ -1,4 +1,4 @@
-﻿using FunderMaps.Core.Authentication;
+using FunderMaps.Core.Authentication;
 using FunderMaps.Core.Email;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Exceptions;
@@ -39,7 +39,7 @@ public class SignInService(
             // TOOD: Generate random code and send with email.
             await emailService.SendAsync(new EmailMessage
             {
-                ToAddresses = new[] { new EmailAddress(user.Email, user.ToString()) },
+                ToAddresses = [new EmailAddress(user.Email, user.ToString())],
                 Subject = "FunderMaps - Wachtwoord reset",
                 Template = "reset-password",
                 Varaibles = new Dictionary<string, object>

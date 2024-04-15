@@ -1,6 +1,5 @@
 ﻿using FunderMaps.Core.Entities;
 using FunderMaps.Core.Types;
-using FunderMaps.WebApi.DataTransferObjects;
 using System.Net;
 using Xunit;
 

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Runtime.Serialization;
 
 namespace FunderMaps.Core.Exceptions;
 
