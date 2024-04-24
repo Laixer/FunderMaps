@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
+[Obsolete]
 public class Layer
 {
     public string? Id { get; set; }
@@ -10,6 +11,7 @@ public class Layer
     public List<Field> Fields { get; set; } = new();
 }
 
+[Obsolete]
 public class Field
 {
     public string? Color { get; set; }
@@ -62,6 +64,11 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     ///     Consent text.
     /// </summary>
     public string? Consent { get; set; }
+
+    /// <summary>
+    ///    Note for the map.
+    /// </summary>
+    public string? Note { get; set; }
 
     /// <summary>
     ///     Unique identifier.
