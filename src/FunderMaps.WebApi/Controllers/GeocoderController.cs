@@ -11,8 +11,8 @@ public sealed class GeocoderInfo
     public Address Address { get; set; } = default!;
     public Neighborhood? Neighborhood { get; set; }
     public District? District { get; set; }
-    // TODO: Add Municipality
-    // TODO: Add Province
+    public Municipality? Municipality { get; set; }
+    public State? State { get; set; }
 }
 
 /// <summary>
