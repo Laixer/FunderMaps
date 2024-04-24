@@ -2,22 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
-[Obsolete]
-public class Layer
-{
-    public string? Id { get; set; }
-    public string? Name { get; set; }
-    public bool isVisible { get; set; } = true;
-    public List<Field> Fields { get; set; } = new();
-}
-
-[Obsolete]
-public class Field
-{
-    public string? Color { get; set; }
-    public string? Name { get; set; }
-}
-
 /// <summary>
 ///     Mapset entity.
 /// </summary>
@@ -79,10 +63,4 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     ///     Map layers sets.
     /// </summary>
     public object? LayerSet { get; set; }
-
-    // TODO: Has been replaced by LayerSet
-    /// <summary>
-    ///     List of layers in this mapset.
-    /// </summary>
-    public List<Layer> LayerNavigation { get; set; } = [];
 }
