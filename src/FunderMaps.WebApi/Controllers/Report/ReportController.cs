@@ -9,6 +9,7 @@ namespace FunderMaps.WebApi.Controllers.Geocoder;
 /// <summary>
 ///     Endpoint controller for address operations.
 /// </summary>
+[Obsolete("This controller is obsolete.")]
 [Route("api/report")]
 public sealed class ReportController(
     IIncidentRepository incidentRepository,
