@@ -77,6 +77,19 @@ public class AuthController(SignInService signInService, JwtSecurityTokenService
         return NoContent();
     }
 
+    // POST: api/auth/reset-new-password
+    /// <summary>
+    ///     Send password reset email.
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPost("reset-new-password")]
+    public async Task<IActionResult> ResetNewPasswordAsync([FromBody] ResetNewPasswordDto input)
+    {
+        await signInService.ResetNewPasswordAsync(input.Email, input.ResetKey, input.NewPassword);
+
+        return NoContent();
+    }
+
     // POST: api/auth/change-password
     /// <summary>
     ///     Set password for session user.

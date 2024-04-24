@@ -234,6 +234,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         await using var context = await DbContextFactory.CreateAsync(sql);
 
         context.AddParameterWithValue("key", key);
+        context.AddParameterWithValue("email", email);
 
         await using var reader = await context.ReaderAsync();
 

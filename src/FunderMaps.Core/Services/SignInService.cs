@@ -60,6 +60,23 @@ public class SignInService(
         }
     }
 
+    public async Task ResetNewPasswordAsync(string email, Guid resetKey, string newPassword)
+    {
+        try
+        {
+            var user = await userRepository.GetByResetKeyAsync(email.Trim().ToLowerInvariant(), resetKey);
+            await SetPasswordAsync(user.Id, newPassword.Trim());
+        }
+        catch (EntityNotFoundException)
+        {
+            logger.LogWarning("User '{email}' requested password reset, but does not exist.", email);
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Failed to reset password for '{email}'.", email);
+        }
+    }
+
     /// <summary>
     ///     Test if the provided password is valid for the user.
     /// </summary>
