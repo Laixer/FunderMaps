@@ -16,7 +16,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
-    [Authorize(Roles = "Service,Administrator")]
+    [Authorize(Roles = "Service, Administrator")]
     [HttpGet("analysis/{id}")]
     public Task<AnalysisProduct> GetAnalysisAsync(string id)
         => modelService.GetAnalysisAsync(id, TenantId);
@@ -25,7 +25,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the risk index per id.
     /// </summary>
-    [Authorize(Roles = "Service,Administrator")]
+    [Authorize(Roles = "Service, Administrator")]
     [HttpGet("at_risk/{id}")]
     public Task<bool> GetRiskIndexAsync(string id)
         => modelService.GetRiskIndexAsync(id, TenantId);
@@ -34,7 +34,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
-    [Authorize(Roles = "Service,Administrator")]
+    [Authorize(Roles = "Service, Administrator")]
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
