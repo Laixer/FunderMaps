@@ -379,6 +379,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         await connection.ExecuteAsync(sql, new { id });
     }
 
+    // TODO: Move reset key to separate method.
     /// <summary>
     ///     Reset signin failure count.
     /// </summary>
@@ -388,7 +389,10 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         var sql = @"
             UPDATE  application.user
             SET     access_failed_count = 0
-            WHERE   id = @id";
+            WHERE   id = @id;
+
+            DELETE FROM application.reset_key
+            WHERE   user_id = @id";
 
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
