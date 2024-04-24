@@ -288,6 +288,58 @@ internal class InquiryRepository : RepositoryBase<Inquiry, int>, IInquiryReposit
         }
     }
 
+    public async IAsyncEnumerable<Inquiry> ListAllByBuildingIdAsync(Navigation navigation, Guid tenantId, string id)
+    {
+        var sql = @"
+            SELECT  -- Inquiry
+                    i.id,
+                    i.document_name,
+                    i.inspection,
+                    i.joint_measurement,
+                    i.floor_measurement,
+                    i.note,
+                    i.document_date,
+                    i.document_file,
+                    i.type,
+                    i.standard_f3o,
+
+                    -- Attribution
+                    a.reviewer,
+                    a.creator,
+                    a.owner,
+                    a.contractor,
+
+                    -- State control
+                    i.audit_status,
+
+                    -- Access control
+                    i.access_policy,
+
+                    -- Record control
+                    i.create_date,
+                    i.update_date,
+                    i.delete_date
+            FROM    report.inquiry_sample AS s
+            JOIN 	report.inquiry AS i ON i.id = s.inquiry
+            JOIN 	application.attribution AS a ON a.id = i.attribution
+            WHERE   s.building = @building
+            AND     a.owner = @tenant
+            GROUP BY i.id, a.reviewer, a.creator, a.owner, a.contractor
+            ORDER BY coalesce(i.update_date, i.create_date) DESC";
+
+        sql = ConstructNavigation(sql, navigation);
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+        context.AddParameterWithValue("tenant", tenantId);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
+        }
+    }
+
     /// <summary>
     ///     Update <see cref="InquiryFull"/>.
     /// </summary>

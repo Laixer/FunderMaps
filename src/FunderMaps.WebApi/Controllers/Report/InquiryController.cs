@@ -7,6 +7,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Services;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,8 @@ public sealed class InquiryController(
     IUserRepository userRepository,
     IInquiryRepository inquiryRepository,
     IBlobStorageService blobStorageService,
-    IEmailService emailService) : FunderMapsController
+    IEmailService emailService,
+    GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
     // GET: api/inquiry/stats
     /// <summary>
@@ -50,8 +52,21 @@ public sealed class InquiryController(
     /// </summary>
     [HttpGet("{id:int}")]
     public async Task<Inquiry> GetAsync(int id)
+        => await inquiryRepository.GetByIdAsync(id, TenantId);
+
+    // GET: api/inquiry/building/{id}
+    /// <summary>
+    ///    Return all inquiries by building id.
+    /// </summary>
+    [HttpGet("building/{id}")]
+    public async IAsyncEnumerable<Inquiry> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
     {
-        return await inquiryRepository.GetByIdAsync(id, TenantId);
+        var building = await geocoderTranslation.GetBuildingIdAsync(id);
+
+        await foreach (var inquiry in inquiryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
+        {
+            yield return inquiry;
+        }
     }
 
     // GET: api/inquiry

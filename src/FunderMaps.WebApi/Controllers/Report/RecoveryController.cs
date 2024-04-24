@@ -7,6 +7,7 @@ using FunderMaps.Core.Exceptions;
 using FunderMaps.Core.Helpers;
 using FunderMaps.Core.Interfaces;
 using FunderMaps.Core.Interfaces.Repositories;
+using FunderMaps.Core.Services;
 using FunderMaps.Core.Types;
 using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,8 @@ public sealed class RecoveryController(
     IUserRepository userRepository,
     IRecoveryRepository recoveryRepository,
     IBlobStorageService blobStorageService,
-    IEmailService emailService) : FunderMapsController
+    IEmailService emailService,
+    GeocoderTranslation geocoderTranslation) : FunderMapsController
 {
     // GET: api/recovery/stats
     /// <summary>
@@ -51,6 +53,21 @@ public sealed class RecoveryController(
     [HttpGet("{id:int}")]
     public Task<Recovery> GetAsync(int id)
         => recoveryRepository.GetByIdAsync(id, TenantId);
+
+    // GET: api/recovery/building/{id}
+    /// <summary>
+    ///    Return all recoveries for a building by identifier.
+    /// </summary>
+    [HttpGet("building/{id}")]
+    public async IAsyncEnumerable<Recovery> GetAllByBuildingIdAsync(string id, [FromQuery] PaginationDto pagination)
+    {
+        var building = await geocoderTranslation.GetBuildingIdAsync(id);
+
+        await foreach (var recovery in recoveryRepository.ListAllByBuildingIdAsync(pagination.Navigation, TenantId, building.Id))
+        {
+            yield return recovery;
+        }
+    }
 
     // GET: api/recovery
     /// <summary>

@@ -15,6 +15,8 @@ public interface IInquiryRepository : IAsyncRepository<Inquiry, int>
 
     IAsyncEnumerable<Inquiry> ListAllAsync(Navigation navigation, Guid tenantId);
 
+    IAsyncEnumerable<Inquiry> ListAllByBuildingIdAsync(Navigation navigation, Guid tenantId, string id);
+
     /// <summary>
     ///     Set <see cref="InquiryFull"/> audit status.
     /// </summary>

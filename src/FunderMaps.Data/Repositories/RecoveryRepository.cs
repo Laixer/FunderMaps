@@ -264,6 +264,54 @@ internal class RecoveryRepository : RepositoryBase<Recovery, int>, IRecoveryRepo
         }
     }
 
+    public async IAsyncEnumerable<Recovery> ListAllByBuildingIdAsync(Navigation navigation, Guid tenantId, string id)
+    {
+        var sql = @"
+            SELECT  -- Recovery
+                    r.id,
+                    r.note,
+                    r.type,
+                    r.document_date,
+                    r.document_file,
+                    r.document_name,
+
+                    -- Attribution
+                    a.reviewer,
+                    a.creator,
+                    a.owner,
+                    a.contractor,
+
+                    -- State control
+                    r.audit_status,
+
+                    -- Access control
+                    r.access_policy,
+
+                    -- Record control
+                    r.create_date,
+                    r.update_date,
+                    r.delete_date
+            FROM    report.recovery_sample AS s
+            JOIN    report.recovery AS r ON r.id = s.recovery
+            JOIN    application.attribution AS a ON a.id = r.attribution
+            WHERE   s.building = @building
+            AND     a.owner = @tenant
+            GROUP BY r.id, a.reviewer, a.creator, a.owner, a.contractor
+            ORDER BY coalesce(r.update_date, r.create_date) DESC";
+
+        sql = ConstructNavigation(sql, navigation);
+
+        await using var context = await DbContextFactory.CreateAsync(sql);
+
+        context.AddParameterWithValue("building", id);
+        context.AddParameterWithValue("tenant", tenantId);
+
+        await foreach (var reader in context.EnumerableReaderAsync())
+        {
+            yield return CacheEntity(MapFromReader(reader));
+        }
+    }
+
     /// <summary>
     ///     Update <see cref="Recovery"/>.
     /// </summary>

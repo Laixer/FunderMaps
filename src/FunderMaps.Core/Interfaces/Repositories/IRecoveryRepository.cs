@@ -19,4 +19,6 @@ public interface IRecoveryRepository : IAsyncRepository<Recovery, int>
     /// <param name="id">Entity identifier.</param>
     /// <param name="entity">Entity object.</param>
     Task SetAuditStatusAsync(int id, Recovery entity, Guid tenantId);
+
+    IAsyncEnumerable<Recovery> ListAllByBuildingIdAsync(Navigation navigation, Guid tenantId, string id);
 }
