@@ -1,12 +1,12 @@
-﻿using FunderMaps.Core.DataAnnotations;
+using FunderMaps.Core.DataAnnotations;
 using System.ComponentModel.DataAnnotations;
 
 namespace FunderMaps.Core.Entities;
 
 /// <summary>
-///     Neighborhood entity.
+///     Municipality entity.
 /// </summary>
-public sealed class Neighborhood : IEntityIdentifier<string>
+public sealed class Municipality : IEntityIdentifier<string>
 {
     /// <summary>
     ///     Entity identifier.
@@ -20,12 +20,15 @@ public sealed class Neighborhood : IEntityIdentifier<string>
     public string Id { get; set; } = default!;
 
     /// <summary>
-    ///     Neighborhood name.
+    ///     Municipality name.
     /// </summary>
     [Required]
     public string Name { get; set; } = default!;
 
-    // TODO: Missing Water property
+    /// <summary>
+    ///    Is water municipality.
+    /// </summary>
+    public bool Water { get; set; }
 
     /// <summary>
     ///     External data source id.
@@ -34,8 +37,8 @@ public sealed class Neighborhood : IEntityIdentifier<string>
     public string ExternalId { get; set; } = default!;
 
     /// <summary>
-    ///     District identifier.
+    ///     State identifier.
     /// </summary>
     [Geocoder]
-    public string? DistrictId { get; set; }
+    public string? StateId { get; set; }
 }
