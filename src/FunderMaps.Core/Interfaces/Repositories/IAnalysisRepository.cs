@@ -13,12 +13,6 @@ public interface IAnalysisRepository
     /// <param name="id">Internal building id.</param>
     Task<AnalysisProduct> GetAsync(string id);
 
-    /// <summary>
-    ///     Gets the risk index by its internal building id.
-    /// </summary>
-    /// <param name="id">Internal building id.</param>
-    Task<bool> GetRiskIndexAsync(string id);
-
     // TODO: Move to ITraceRepository
     /// <summary>
     ///     Register a product match.

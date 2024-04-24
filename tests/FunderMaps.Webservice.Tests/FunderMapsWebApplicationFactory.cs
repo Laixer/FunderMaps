@@ -658,13 +658,6 @@ internal class MemoryAnalysisRepository : IAnalysisRepository
         return memory.Values.FirstOrDefault(x => x.ExternalBuildingId == id) ?? throw new EntityNotFoundException(nameof(AnalysisProduct));
     }
 
-    public async Task<bool> GetRiskIndexAsync(string id)
-    {
-        await Task.CompletedTask;
-
-        return true;
-    }
-
     public IAsyncEnumerable<AnalysisProduct> ListAllAsync(Navigation navigation)
         => memory.Values.ToAsyncEnumerable();
 

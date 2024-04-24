@@ -64,49 +64,6 @@ public class ModelService(
     }
 
     /// <summary>
-    ///   Get risk index product.
-    /// </summary>
-    /// <param name="id">External identifier.</param>
-    /// <param name="tenantId">Tenant identifier.</param>
-    /// <param name="track_request">Tracker request.</param>
-    public async Task<bool> GetRiskIndexAsync(string id, Guid tenantId, bool track_request = true)
-    {
-        var organization = await organizationRepository.GetByIdAsync(tenantId);
-
-        try
-        {
-            var building = await geocoderTranslation.GetBuildingIdAsync(id);
-            var product = await analysisRepository.GetRiskIndexAsync(building.Id);
-
-            if (track_request)
-            {
-                var registered = await analysisRepository.RegisterProductMatch(building.Id, id, "riskindex", tenantId);
-                if (registered)
-                {
-                    logger.LogInformation("{Name} registered 'riskindex' match for identifier: {id}", organization.Name, id);
-                }
-                else
-                {
-                    logger.LogInformation("{Name} retrieved 'riskindex' match for identifier: {id}", organization.Name, id);
-                }
-            }
-
-            return product;
-        }
-        catch (EntityNotFoundException)
-        {
-            if (track_request)
-            {
-                await analysisRepository.RegisterProductMismatch(id, tenantId);
-
-                logger.LogInformation("{Name} requested product 'analysis3' mismatch for identifier: {id}", organization.Name, id);
-            }
-
-            throw;
-        }
-    }
-
-    /// <summary>
     ///    Get statistics product.
     /// </summary>
     /// <param name="id">External identifier.</param>

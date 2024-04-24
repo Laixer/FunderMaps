@@ -68,37 +68,6 @@ internal sealed class AnalysisRepository : DbServiceBase, IAnalysisRepository
     }
 
     /// <summary>
-    ///     Gets the risk index by its internal building id.
-    /// </summary>
-    /// <param name="id">Internal building id.</param>
-    public async Task<bool> GetRiskIndexAsync(string id)
-    {
-        var sql = @"
-            SELECT EXISTS
-            (
-                SELECT TRUE
-                FROM data.model_risk_static mrs
-                WHERE mrs.building_id = @id
-                AND
-                (
-                    (mrs.drystand_risk IS NOT NULL AND mrs.drystand_risk <> 'a')
-                    OR
-                    (mrs.bio_infection_risk IS NOT NULL AND mrs.bio_infection_risk <> 'a')
-                    OR
-                    (mrs.dewatering_depth_risk IS NOT NULL AND mrs.dewatering_depth_risk <> 'a')
-                    OR
-                    (mrs.unclassified_risk IS NOT NULL AND mrs.unclassified_risk <> 'a')
-                )
-                LIMIT 1
-            )
-            LIMIT 1";
-
-        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
-
-        return await connection.ExecuteScalarAsync<bool>(sql, new { id });
-    }
-
-    /// <summary>
     ///     Register a product match.
     /// </summary>
     /// <param name="buildingId">Internal building id.</param>

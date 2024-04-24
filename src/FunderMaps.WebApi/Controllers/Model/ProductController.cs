@@ -19,14 +19,6 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     public Task<AnalysisProduct> GetAnalysisAsync(string id)
         => modelService.GetAnalysisAsync(id, TenantId);
 
-    // GET: api/product/at_risk
-    /// <summary>
-    ///     Request the risk index per id.
-    /// </summary>
-    [HttpGet("at_risk/{id}")]
-    public Task<bool> GetRiskIndexAsync(string id)
-        => modelService.GetRiskIndexAsync(id, TenantId);
-
     // GET: api/product/statistics
     /// <summary>
     ///     Request the statistics product.

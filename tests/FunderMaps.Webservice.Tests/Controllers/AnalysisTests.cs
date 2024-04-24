@@ -64,35 +64,6 @@ public class AnalysisTests(FunderMapsWebApplicationFactory<Program> factory) : I
         Assert.Equal("NL.IMBAG.PAND.0599100000685769", returnObject.ExternalBuildingId);
     }
 
-    [Theory]
-    [InlineData("gfm-4f5e73d478ff452b86023a06e5b8d834")]
-    [InlineData("NL.IMBAG.PAND.0599100000685769")]
-    [InlineData("0599100000685769")]
-    [InlineData("NL.IMBAG.NUMMERAANDUIDING.0599200000499204")]
-    [InlineData("0599200000499204")]
-    public async Task GetRiskIndexByIdReturnProduct(string address)
-    {
-        using var client = factory.CreateClient();
-
-        var authResponse = await client.PostAsJsonAsync("api/auth/signin", new SignInDto
-        {
-            Email = "service@contoso.com",
-            Password = "fundermaps",
-        });
-        var returnToken = await authResponse.Content.ReadFromJsonAsync<SignInSecurityTokenDto>();
-
-        Assert.NotNull(returnToken);
-
-        var request = new HttpRequestMessage(HttpMethod.Get, $"api/v3/product/at_risk/{address}");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", returnToken.Token);
-
-        var response = await client.SendAsync(request);
-        var returnObject = await response.Content.ReadFromJsonAsync<bool>();
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.True(returnObject);
-    }
-
     [Fact]
     public async Task AuthKeyGetProductByIdReturnForbiddenProduct()
     {
