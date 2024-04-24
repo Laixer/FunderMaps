@@ -73,8 +73,9 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     /// </summary>
     public object? LayerSet { get; set; }
 
+    // TODO: Has been replaced by LayerSet
     /// <summary>
     ///     List of layers in this mapset.
     /// </summary>
-    public List<Layer> LayerNavigation { get; set; } = new();
+    public List<Layer> LayerNavigation { get; set; } = [];
 }
