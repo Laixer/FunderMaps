@@ -23,7 +23,10 @@ public class ModelService(
     /// <summary>
     ///    Get analysis product.
     /// </summary>
-    public async Task<AnalysisProduct> GetAnalysisAsync(string id, Guid tenantId, bool tracker_request = true)
+    /// <param name="id">External identifier.</param>
+    /// <param name="tenantId">Tenant identifier.</param>
+    /// <param name="track_request">Tracker request.</param>
+    public async Task<AnalysisProduct> GetAnalysisAsync(string id, Guid tenantId, bool track_request = true)
     {
         var organization = await organizationRepository.GetByIdAsync(tenantId);
 
@@ -32,7 +35,7 @@ public class ModelService(
             var building = await geocoderTranslation.GetBuildingIdAsync(id);
             var product = await analysisRepository.GetAsync(building.Id);
 
-            if (tracker_request)
+            if (track_request)
             {
                 var registered = await analysisRepository.RegisterProductMatch(building.Id, id, "analysis3", tenantId);
                 if (registered)
@@ -49,7 +52,7 @@ public class ModelService(
         }
         catch (EntityNotFoundException)
         {
-            if (tracker_request)
+            if (track_request)
             {
                 await analysisRepository.RegisterProductMismatch(id, tenantId);
 
@@ -63,7 +66,10 @@ public class ModelService(
     /// <summary>
     ///   Get risk index product.
     /// </summary>
-    public async Task<bool> GetRiskIndexAsync(string id, Guid tenantId, bool tracker_request = true)
+    /// <param name="id">External identifier.</param>
+    /// <param name="tenantId">Tenant identifier.</param>
+    /// <param name="track_request">Tracker request.</param>
+    public async Task<bool> GetRiskIndexAsync(string id, Guid tenantId, bool track_request = true)
     {
         var organization = await organizationRepository.GetByIdAsync(tenantId);
 
@@ -72,7 +78,7 @@ public class ModelService(
             var building = await geocoderTranslation.GetBuildingIdAsync(id);
             var product = await analysisRepository.GetRiskIndexAsync(building.Id);
 
-            if (tracker_request)
+            if (track_request)
             {
                 var registered = await analysisRepository.RegisterProductMatch(building.Id, id, "riskindex", tenantId);
                 if (registered)
@@ -89,7 +95,7 @@ public class ModelService(
         }
         catch (EntityNotFoundException)
         {
-            if (tracker_request)
+            if (track_request)
             {
                 await analysisRepository.RegisterProductMismatch(id, tenantId);
 
@@ -103,7 +109,10 @@ public class ModelService(
     /// <summary>
     ///    Get statistics product.
     /// </summary>
-    public async Task<StatisticsProduct> GetStatisticsAsync(string id, Guid tenantId, bool tracker_request = true)
+    /// <param name="id">External identifier.</param>
+    /// <param name="tenantId">Tenant identifier.</param>
+    /// <param name="track_request">Tracker request.</param>
+    public async Task<StatisticsProduct> GetStatisticsAsync(string id, Guid tenantId, bool track_request = true)
     {
         var organization = await organizationRepository.GetByIdAsync(tenantId);
 
@@ -129,7 +138,7 @@ public class ModelService(
         }
         catch (EntityNotFoundException)
         {
-            if (tracker_request)
+            if (track_request)
             {
                 await analysisRepository.RegisterProductMismatch(id, tenantId);
 
