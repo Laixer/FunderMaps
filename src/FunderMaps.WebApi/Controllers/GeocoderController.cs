@@ -10,7 +10,7 @@ public sealed class GeocoderInfo
     public Building Building { get; set; } = default!;
     public Address Address { get; set; } = default!;
     public Neighborhood? Neighborhood { get; set; }
-    // TODO: Add Wijk
+    public District? District { get; set; }
     // TODO: Add Municipality
     // TODO: Add Province
 }
@@ -56,7 +56,7 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
 
     // GET: api/geocoder/{id}
     /// <summary>
-    ///     Get building by identifier.
+    ///     Get geocoder information by identifier.
     /// </summary>
     /// <remarks>
     ///     Cache response for 8 hours. Building will not change often.
