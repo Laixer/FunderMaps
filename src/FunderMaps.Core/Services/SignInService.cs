@@ -91,7 +91,7 @@ public class SignInService(
         {
             logger.LogWarning("User '{user}' locked out.", user);
 
-            throw new AuthenticationException();
+            throw new AuthenticationException("Authentication failed.");
         }
 
         await userRepository.ResetAccessFailed(user.Id);
@@ -137,7 +137,7 @@ public class SignInService(
         {
             if (await userRepository.GetByIdAsync(id) is not User user)
             {
-                throw new AuthenticationException();
+                throw new AuthenticationException("Authentication failed.");
             }
 
             var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
@@ -146,7 +146,7 @@ public class SignInService(
         }
         catch (EntityNotFoundException)
         {
-            throw new AuthenticationException();
+            throw new AuthenticationException("Authentication failed.");
         }
     }
 
@@ -161,7 +161,7 @@ public class SignInService(
         {
             if (await userRepository.GetByAuthKeyAsync(key.Trim()) is not User user)
             {
-                throw new AuthenticationException();
+                throw new AuthenticationException("Authentication failed.");
             }
 
             var claimsIdentity = await CreateClaimsIdentityAsync(user, authenticationType);
@@ -170,7 +170,7 @@ public class SignInService(
         }
         catch (EntityNotFoundException)
         {
-            throw new AuthenticationException();
+            throw new AuthenticationException("Authentication failed.");
         }
     }
 
@@ -186,7 +186,7 @@ public class SignInService(
         {
             if (await userRepository.GetByEmailAsync(email.Trim().ToLowerInvariant()) is not User user)
             {
-                throw new AuthenticationException();
+                throw new AuthenticationException("Authentication failed.");
             }
 
             if (!await CheckPasswordAsync(user.Id, password.Trim()))
@@ -195,7 +195,7 @@ public class SignInService(
 
                 await userRepository.BumpAccessFailed(user.Id);
 
-                throw new AuthenticationException();
+                throw new AuthenticationException("Authentication failed.");
             }
 
             logger.LogInformation("User '{user}' password signin was successful.", user);
@@ -206,7 +206,7 @@ public class SignInService(
         }
         catch (EntityNotFoundException)
         {
-            throw new AuthenticationException();
+            throw new AuthenticationException("Authentication failed.");
         }
     }
 }
