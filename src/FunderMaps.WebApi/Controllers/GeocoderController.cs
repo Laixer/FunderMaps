@@ -5,6 +5,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
 
+public sealed class GeocoderInfo
+{
+    public Building Building { get; set; } = default!;
+    public Address Address { get; set; } = default!;
+    public Neighborhood? Neighborhood { get; set; }
+    // TODO: Add Wijk
+    // TODO: Add Municipality
+    // TODO: Add Province
+}
+
 /// <summary>
 ///     Endpoint controller for address operations.
 /// </summary>
@@ -43,4 +53,28 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     [HttpGet("neighborhood/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<Neighborhood> GetNeighborhoodAsync(string id)
         => geocoderTranslation.GetNeighborhoodIdAsync(id);
+
+    // GET: api/geocoder/{id}
+    /// <summary>
+    ///     Get building by identifier.
+    /// </summary>
+    /// <remarks>
+    ///     Cache response for 8 hours. Building will not change often.
+    /// </remarks>
+    [HttpGet("{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public async Task<GeocoderInfo> GetAsync(string id)
+    {
+        var building = await geocoderTranslation.GetBuildingIdAsync(id);
+        var address = await geocoderTranslation.GetAddressIdAsync(building.ExternalId);
+        var neighborhood = building.NeighborhoodId is not null
+            ? await geocoderTranslation.GetNeighborhoodIdAsync(building.NeighborhoodId)
+            : null;
+
+        return new GeocoderInfo
+        {
+            Building = building,
+            Address = address,
+            Neighborhood = neighborhood,
+        };
+    }
 }
