@@ -67,7 +67,8 @@ public class SignInService(
             var user = await userRepository.GetByResetKeyAsync(email.Trim().ToLowerInvariant(), resetKey);
             await SetPasswordAsync(user.Id, newPassword.Trim());
 
-            // TODO: Clear ALL reset keys for user.
+            await userRepository.ResetAccessFailed(user.Id);
+            await userRepository.ResetResetKey(user.Id);
         }
         catch (EntityNotFoundException)
         {

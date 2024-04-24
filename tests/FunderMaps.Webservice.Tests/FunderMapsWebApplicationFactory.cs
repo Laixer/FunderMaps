@@ -251,6 +251,13 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
         memory[id].AccessFailedCount = 0;
     }
 
+    public async Task ResetResetKey(Guid id)
+    {
+        await Task.CompletedTask;
+
+        throw new NotImplementedException();
+    }
+
     public async Task RegisterAccess(Guid id)
     {
         await Task.CompletedTask;

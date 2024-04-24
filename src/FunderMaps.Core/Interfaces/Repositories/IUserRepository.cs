@@ -69,6 +69,12 @@ public interface IUserRepository : IAsyncRepository<User, Guid>
     Task ResetAccessFailed(Guid id);
 
     /// <summary>
+    ///    Reset password reset key.
+    /// </summary>
+    /// <param name="id">Entity identifier.</param>
+    Task ResetResetKey(Guid id);
+
+    /// <summary>
     ///     Register a new user login.
     /// </summary>
     /// <param name="id">Entity identifier.</param>
