@@ -14,7 +14,7 @@ internal sealed class ProductExportTask(
     ITelemetryRepository telemetryRepository,
     ILogger<ProductExportTask> logger) : ITaskService
 {
-    // TODO: Move into service/helper.
+    // TODO: Move into service/helper. See #801
     /// <summary>
     ///    Write CSV file.
     /// </summary>

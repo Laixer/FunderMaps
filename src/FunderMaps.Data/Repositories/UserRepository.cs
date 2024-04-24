@@ -209,11 +209,11 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
     /// <summary>
     ///     Retrieve <see cref="User"/> by password reset key.
     /// </summary>
+    /// <param name="email">User email.</param>
     /// <param name="key">Authentication key.</param>
     /// <returns><see cref="User"/>.</returns>
-    public async Task<User> GetByResetKeyAsync(Guid key)
+    public async Task<User> GetByResetKeyAsync(string email, Guid key)
     {
-        // TODO: Check if key is still valid.
         var sql = @"
             SELECT  -- User
                     u.id,
@@ -227,6 +227,7 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
             FROM    application.user AS u
             JOIN    application.reset_key rk ON rk.user_id = u.id
             WHERE   rk.key = @key
+            AND     u.normalized_email = application.normalize(@email)
             AND     rk.create_date > NOW() - INTERVAL '2 hours'
             LIMIT   1";
 
@@ -343,6 +344,22 @@ internal class UserRepository : RepositoryBase<User, Guid>, IUserRepository
         await using var connection = DbContextFactory.DbProvider.ConnectionScope();
 
         await connection.ExecuteAsync(sql, new { id, password_hash = passwordHash });
+    }
+
+    /// <summary>
+    ///    Create a new password reset key.
+    /// </summary>
+    /// <param name="id">Entity identifier.</param>
+    public async Task<Guid> CreateResetKeyAsync(Guid id)
+    {
+        var sql = @"
+            INSERT INTO application.reset_key(user_id)
+            VALUES (@id)
+            RETURNING key";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        return await connection.ExecuteScalarAsync<Guid>(sql, new { id });
     }
 
     /// <summary>

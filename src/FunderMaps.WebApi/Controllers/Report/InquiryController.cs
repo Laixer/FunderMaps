@@ -127,7 +127,7 @@ public sealed class InquiryController(
         return Ok(output);
     }
 
-    // GET: api/inquiry/download
+    // GET: api/inquiry/{id}/download
     /// <summary>
     ///     Retrieve document access link.
     /// </summary>

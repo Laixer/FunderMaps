@@ -36,8 +36,8 @@ public class SignInService(
         try
         {
             var user = await userRepository.GetByEmailAsync(email.Trim().ToLowerInvariant());
+            var reset_key = await userRepository.CreateResetKeyAsync(user.Id);
 
-            // TOOD: Generate random code and send with email.
             await emailService.SendAsync(new EmailMessage
             {
                 ToAddresses = [new EmailAddress(user.Email, user.ToString())],
@@ -46,13 +46,17 @@ public class SignInService(
                 Varaibles = new Dictionary<string, object>
                 {
                     { "creatorName", user.ToString() },
-                    { "resetToken", Guid.NewGuid().ToString() },
+                    { "resetToken", reset_key },
                 }
             });
         }
-        catch
+        catch (EntityNotFoundException)
         {
             logger.LogWarning("User '{email}' requested password reset, but does not exist.", email);
+        }
+        catch (Exception exception)
+        {
+            logger.LogError(exception, "Failed to send password reset email to '{email}'.", email);
         }
     }
 

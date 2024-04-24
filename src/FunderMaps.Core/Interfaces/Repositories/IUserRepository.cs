@@ -24,9 +24,10 @@ public interface IUserRepository : IAsyncRepository<User, Guid>
     /// <summary>
     ///     Retrieve <see cref="User"/> by password reset key.
     /// </summary>
+    /// <param name="email">User email.</param>
     /// <param name="key">Authentication key.</param>
     /// <returns><see cref="User"/>.</returns>
-    Task<User> GetByResetKeyAsync(Guid key);
+    Task<User> GetByResetKeyAsync(string email, Guid key);
 
     /// <summary>
     ///     Get password hash.
@@ -48,6 +49,12 @@ public interface IUserRepository : IAsyncRepository<User, Guid>
     /// <param name="id">Entity identifier.</param>
     /// <param name="passwordHash">New password hash.</param>
     Task SetPasswordHashAsync(Guid id, string passwordHash);
+
+    /// <summary>
+    ///    Create a new password reset key.
+    /// </summary>
+    /// <param name="id">Entity identifier.</param>
+    Task<Guid> CreateResetKeyAsync(Guid id);
 
     /// <summary>
     ///     Increase signin failure count.
