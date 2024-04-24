@@ -13,4 +13,11 @@ public interface IAddressRepository : IAsyncRepository<Address, string>
     /// <param name="id">External identifier.</param>
     /// <returns>A single address.</returns>
     Task<Address> GetByExternalIdAsync(string id);
+
+    /// <summary>
+    ///     Get address by external id.
+    /// </summary>
+    /// <param name="id">External identifier.</param>
+    /// <returns>A single address.</returns>
+    Task<Address> GetByExternalBuildingIdAsync(string id);
 }

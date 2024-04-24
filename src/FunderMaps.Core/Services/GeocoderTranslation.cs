@@ -122,6 +122,7 @@ public class GeocoderTranslation(
     {
         GeocoderDatasource.FunderMaps => await addressRepository.GetByIdAsync(id),
         GeocoderDatasource.NlBagAddress => await addressRepository.GetByExternalIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await addressRepository.GetByExternalBuildingIdAsync(id),
         _ => throw new EntityNotFoundException("Requested address entity could not be found."),
     };
 

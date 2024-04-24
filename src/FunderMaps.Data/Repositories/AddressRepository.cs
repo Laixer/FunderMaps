@@ -53,6 +53,35 @@ internal class AddressRepository : RepositoryBase<Address, string>, IAddressRepo
         return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
     }
 
+    public async Task<Address> GetByExternalBuildingIdAsync(string id)
+    {
+        if (TryGetEntity(id, out Address? entity))
+        {
+            return entity ?? throw new InvalidOperationException();
+        }
+
+        var sql = @"
+            SELECT  -- Address
+                    a.id,
+                    a.building_number,
+                    a.postal_code,
+                    a.street,
+                    a.is_active,
+                    a.external_id,
+                    a.city,
+                    a.building_id
+            FROM    geocoder.address AS a
+            JOIN    geocoder.address_building AS ab ON ab.address_id = a.id
+            JOIN    geocoder.building_active AS ba ON ba.id = ab.building_id
+            WHERE   ba.external_id = upper(@external_id)
+            LIMIT   1";
+
+        await using var connection = DbContextFactory.DbProvider.ConnectionScope();
+
+        var address = await connection.QuerySingleOrDefaultAsync<Address>(sql, new { external_id = id });
+        return address is null ? throw new EntityNotFoundException(nameof(Address)) : CacheEntity(address);
+    }
+
     /// <summary>
     ///     Retrieve <see cref="Address"/> by id.
     /// </summary>
