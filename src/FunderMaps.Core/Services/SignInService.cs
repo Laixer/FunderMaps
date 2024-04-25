@@ -119,6 +119,7 @@ public class SignInService(
         }
 
         await userRepository.ResetAccessFailed(user.Id);
+        await userRepository.ResetResetKey(user.Id);
         await userRepository.RegisterAccess(user.Id);
 
         var claims = new List<Claim>
