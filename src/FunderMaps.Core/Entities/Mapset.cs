@@ -55,6 +55,11 @@ public sealed class Mapset : IEntityIdentifier<Guid>
     public string? Note { get; set; }
 
     /// <summary>
+    ///     Icon.
+    /// </summary>
+    public string? Icon { get; set; }
+
+    /// <summary>
     ///     Unique identifier.
     /// </summary>
     public string? FenceMunicipality { get; set; }

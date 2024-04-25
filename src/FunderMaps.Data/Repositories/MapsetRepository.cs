@@ -28,6 +28,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.public,
                     m.consent,
                     m.note,
+                    m.icon,
                     NULL as fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)
@@ -68,6 +69,7 @@ internal sealed class MapsetRepository : DbServiceBase, IMapsetRepository
                     m.public,
                     m.consent,
                     m.note,
+                    m.icon,
                     o.fence_municipality,
                     (
                         SELECT jsonb_agg(maplayers.layer)

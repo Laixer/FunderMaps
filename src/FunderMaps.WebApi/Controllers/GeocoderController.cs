@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
 
+// TODO: Move
 public sealed class GeocoderInfo
 {
     public Building Building { get; set; } = default!;
