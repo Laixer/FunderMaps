@@ -10,7 +10,7 @@ namespace FunderMaps.Webservice.Controllers;
 ///     Controller for all product endpoints.
 /// </summary>
 [Route("api/v3/product")]
-public sealed class ProductController(ModelService modelService) : FunderMapsController
+public sealed class ProductController(ModelService modelService, ILogger<ProductController> logger) : FunderMapsController
 {
     // GET: api/v3/product/analysis
     /// <summary>
@@ -30,13 +30,16 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
 
-
     // TODO: LEGACY
     // GET: api/v3/product/analysis
     [Authorize(Roles = "Service, Administrator")]
     [HttpGet("analysis")]
     public Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
-        => GetAnalysisAsync(id);
+    {
+        logger.LogWarning("Legacy endpoint called: {Endpoint}", HttpContext.Request.Path);
+
+        return GetAnalysisAsync(id);
+    }
 
     // TODO: LEGACY
     // GET: api/v3/product/statistics
@@ -46,5 +49,9 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     [Authorize(Roles = "Service,Administrator")]
     [HttpGet("statistics")]
     public Task<StatisticsProduct> GetStatisticsLegacyAsync([FromQuery] string id)
-        => GetStatisticsAsync(id);
+    {
+        logger.LogWarning("Legacy endpoint called: {Endpoint}", HttpContext.Request.Path);
+
+        return GetStatisticsAsync(id);
+    }
 }
