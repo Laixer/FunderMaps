@@ -255,7 +255,7 @@ internal class MemoryUserRepository : MemoryRepositoryBase<UserExtended, Guid>, 
     {
         await Task.CompletedTask;
 
-        throw new NotImplementedException();
+        // TODO: Implement.
     }
 
     public async Task RegisterAccess(Guid id)

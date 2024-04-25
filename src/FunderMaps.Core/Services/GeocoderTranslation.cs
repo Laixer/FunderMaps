@@ -11,7 +11,10 @@ namespace FunderMaps.Core.Services;
 public class GeocoderTranslation(
     IAddressRepository addressRepository,
     IBuildingRepository buildingRepository,
-    INeighborhoodRepository neighborhoodRepository)
+    INeighborhoodRepository neighborhoodRepository,
+    IDistrictRepository districtRepository,
+    IMunicipalityRepository municipalityRepository,
+    IStateRepository stateRepository)
 {
     /// <summary>
     ///     Identify the geocoder datasource from the input.
@@ -157,5 +160,38 @@ public class GeocoderTranslation(
         GeocoderDatasource.NlBagBuilding => await neighborhoodRepository.GetByExternalBuildingIdAsync(id),
         GeocoderDatasource.NlCbsNeighborhood => await neighborhoodRepository.GetByExternalIdAsync(id),
         _ => throw new EntityNotFoundException("Requested neighborhood entity could not be found."),
+    };
+
+    public async Task<District> GetDistrictIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.FunderMaps => await districtRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await districtRepository.GetByExternalAddressIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await districtRepository.GetByExternalBuildingIdAsync(id),
+        GeocoderDatasource.NlCbsNeighborhood => await districtRepository.GetByExternalNeighborhoodIdAsync(id),
+        GeocoderDatasource.NlCbsDistrict => await districtRepository.GetByExternalIdAsync(id),
+        _ => throw new EntityNotFoundException("Requested district entity could not be found."),
+    };
+
+    public async Task<Municipality> GetMunicipalityIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.FunderMaps => await municipalityRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await municipalityRepository.GetByExternalAddressIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await municipalityRepository.GetByExternalBuildingIdAsync(id),
+        GeocoderDatasource.NlCbsNeighborhood => await municipalityRepository.GetByExternalNeighborhoodIdAsync(id),
+        GeocoderDatasource.NlCbsDistrict => await municipalityRepository.GetByExternalDistrictIdAsync(id),
+        GeocoderDatasource.NlCbsMunicipality => await municipalityRepository.GetByExternalIdAsync(id),
+        _ => throw new EntityNotFoundException("Requested municipality entity could not be found."),
+    };
+
+    public async Task<State> GetStateIdAsync(string input) => FromIdentifier(input, out string id) switch
+    {
+        GeocoderDatasource.FunderMaps => await stateRepository.GetByIdAsync(id),
+        GeocoderDatasource.NlBagAddress => await stateRepository.GetByExternalAddressIdAsync(id),
+        GeocoderDatasource.NlBagBuilding => await stateRepository.GetByExternalBuildingIdAsync(id),
+        GeocoderDatasource.NlCbsNeighborhood => await stateRepository.GetByExternalNeighborhoodIdAsync(id),
+        GeocoderDatasource.NlCbsDistrict => await stateRepository.GetByExternalDistrictIdAsync(id),
+        GeocoderDatasource.NlCbsMunicipality => await stateRepository.GetByExternalMunicipalityIdAsync(id),
+        GeocoderDatasource.NlCbsState => await stateRepository.GetByExternalIdAsync(id),
+        _ => throw new EntityNotFoundException("Requested state entity could not be found."),
     };
 }

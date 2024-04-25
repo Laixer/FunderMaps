@@ -54,6 +54,39 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
     public Task<Neighborhood> GetNeighborhoodAsync(string id)
         => geocoderTranslation.GetNeighborhoodIdAsync(id);
 
+    // GET: api/geocoder/district/{id}
+    /// <summary>
+    ///    Get district by identifier.
+    /// </summary>
+    /// <remarks>
+    ///    Cache response for 8 hours. District will not change often.
+    /// </remarks>
+    [HttpGet("district/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public Task<District> GetDistrictAsync(string id)
+        => geocoderTranslation.GetDistrictIdAsync(id);
+
+    // GET: api/geocoder/municipality/{id}
+    /// <summary>
+    ///    Get municipality by identifier.
+    /// </summary>
+    /// <remarks>
+    ///   Cache response for 8 hours. Municipality will not change often.
+    /// </remarks>
+    [HttpGet("municipality/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public Task<Municipality> GetMunicipalityAsync(string id)
+        => geocoderTranslation.GetMunicipalityIdAsync(id);
+
+    // GET: api/geocoder/state/{id}
+    /// <summary>
+    ///   Get state by identifier.
+    /// </summary>
+    /// <remarks>
+    ///   Cache response for 8 hours. State will not change often.
+    /// </remarks>
+    [HttpGet("state/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public Task<State> GetStateAsync(string id)
+        => geocoderTranslation.GetStateIdAsync(id);
+
     // GET: api/geocoder/{id}
     /// <summary>
     ///     Get geocoder information by identifier.
@@ -69,12 +102,25 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
         var neighborhood = building.NeighborhoodId is not null
             ? await geocoderTranslation.GetNeighborhoodIdAsync(building.NeighborhoodId)
             : null;
+        // TODO: Get district from geocoderTranslation
+        var district = neighborhood!.DistrictId is not null
+            ? await geocoderTranslation.GetDistrictIdAsync(neighborhood.DistrictId)
+            : null;
+        var municipality = district!.MunicipalityId is not null
+            ? await geocoderTranslation.GetMunicipalityIdAsync(district.MunicipalityId)
+            : null;
+        var state = municipality!.StateId is not null
+            ? await geocoderTranslation.GetStateIdAsync(municipality.StateId)
+            : null;
 
         return new GeocoderInfo
         {
             Building = building,
             Address = address,
             Neighborhood = neighborhood,
+            District = district,
+            Municipality = municipality,
+            State = state,
         };
     }
 }
