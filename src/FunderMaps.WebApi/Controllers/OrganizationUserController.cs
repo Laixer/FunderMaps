@@ -45,7 +45,7 @@ public class OrganizationUserController(
     {
         user.Id = id;
 
-        // TODO: Move to db
+        // FUTURE: Move to db
         if (!await organizationUserRepository.IsUserInOrganization(TenantId, user.Id))
         {
             throw new AuthorizationException();
@@ -63,7 +63,7 @@ public class OrganizationUserController(
     [HttpPost("{id:guid}/change-organization-role")]
     public async Task<IActionResult> ChangeOrganizationUserRoleAsync(Guid id, [FromBody] ChangeOrganizationRoleDto input)
     {
-        // TODO: Move to db
+        // FUTURE: Move to db
         if (!await organizationUserRepository.IsUserInOrganization(TenantId, id))
         {
             throw new AuthorizationException();
@@ -82,7 +82,7 @@ public class OrganizationUserController(
     [HttpPost("{id:guid}/change-password")]
     public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ChangePasswordDto input)
     {
-        // TODO: Move to db
+        // FUTURE: Move to db
         if (!await organizationUserRepository.IsUserInOrganization(TenantId, id))
         {
             throw new AuthorizationException();
@@ -104,7 +104,7 @@ public class OrganizationUserController(
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteUserAsync(Guid id)
     {
-        // TODO: Move to db
+        // FUTURE: Move to db
         if (!await organizationUserRepository.IsUserInOrganization(TenantId, id))
         {
             throw new AuthorizationException();

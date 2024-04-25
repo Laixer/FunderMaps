@@ -103,7 +103,6 @@ public sealed class GeocoderController(GeocoderTranslation geocoderTranslation) 
         var neighborhood = building.NeighborhoodId is not null
             ? await geocoderTranslation.GetNeighborhoodIdAsync(building.NeighborhoodId)
             : null;
-        // TODO: Get district from geocoderTranslation
         var district = neighborhood!.DistrictId is not null
             ? await geocoderTranslation.GetDistrictIdAsync(neighborhood.DistrictId)
             : null;
