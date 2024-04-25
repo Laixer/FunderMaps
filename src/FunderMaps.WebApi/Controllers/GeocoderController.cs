@@ -1,20 +1,10 @@
 using FunderMaps.Core.Controllers;
 using FunderMaps.Core.Entities;
 using FunderMaps.Core.Services;
+using FunderMaps.WebApi.DataTransferObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FunderMaps.WebApi.Controllers;
-
-// TODO: Move
-public sealed class GeocoderInfo
-{
-    public Building Building { get; set; } = default!;
-    public Address Address { get; set; } = default!;
-    public Neighborhood? Neighborhood { get; set; }
-    public District? District { get; set; }
-    public Municipality? Municipality { get; set; }
-    public State? State { get; set; }
-}
 
 /// <summary>
 ///     Endpoint controller for address operations.
