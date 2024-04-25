@@ -60,6 +60,12 @@ public class SignInService(
         }
     }
 
+    /// <summary>
+    ///     Reset the password for the user.
+    /// </summary>
+    /// <param name="email">User email.</param>
+    /// <param name="resetKey">Reset key.</param>
+    /// <param name="newPassword">New password.</param>
     public async Task ResetNewPasswordAsync(string email, Guid resetKey, string newPassword)
     {
         try
