@@ -29,4 +29,22 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     [HttpGet("statistics/{id}")]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
+
+
+    // TODO: LEGACY
+    // GET: api/v3/product/analysis
+    [Authorize(Roles = "Service, Administrator")]
+    [HttpGet("analysis")]
+    public Task<AnalysisProduct> GetAnalysisLegacyAsync([FromQuery] string id)
+        => GetAnalysisAsync(id);
+
+    // TODO: LEGACY
+    // GET: api/v3/product/statistics
+    /// <summary>
+    ///     Request the statistics product.
+    /// </summary>
+    [Authorize(Roles = "Service,Administrator")]
+    [HttpGet("statistics")]
+    public Task<StatisticsProduct> GetStatisticsLegacyAsync([FromQuery] string id)
+        => GetStatisticsAsync(id);
 }
