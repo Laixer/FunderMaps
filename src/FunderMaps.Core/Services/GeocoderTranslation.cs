@@ -142,6 +142,7 @@ public class GeocoderTranslation(
         GeocoderDatasource.FunderMaps => await buildingRepository.GetByIdAsync(id),
         GeocoderDatasource.NlBagAddress => await buildingRepository.GetByExternalAddressIdAsync(id),
         GeocoderDatasource.NlBagBuilding => await buildingRepository.GetByExternalIdAsync(id),
+        GeocoderDatasource.FundermapsIncidentReport => await buildingRepository.GetByIncidentIdAsync(id),
         _ => throw new EntityNotFoundException("Requested building entity could not be found."),
     };
 

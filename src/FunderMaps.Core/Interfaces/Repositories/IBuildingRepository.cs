@@ -20,4 +20,6 @@ public interface IBuildingRepository : IAsyncRepository<Building, string>
     /// <param name="id">External address identifier.</param>
     /// <returns>A single building.</returns>
     Task<Building> GetByExternalAddressIdAsync(string id);
+
+    Task<Building> GetByIncidentIdAsync(string id);
 }

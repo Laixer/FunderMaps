@@ -558,6 +558,13 @@ internal class MemoryBuildingRepository : MemoryRepositoryBase<Building, string>
         var address = memoryAddress.Values.FirstOrDefault(x => x.ExternalId == id) ?? throw new EntityNotFoundException(nameof(Building));
         return await GetByIdAsync(address?.BuildingId ?? throw new EntityNotFoundException(nameof(Building)));
     }
+
+    public async Task<Building> GetByIncidentIdAsync(string id)
+    {
+        await Task.CompletedTask;
+
+        throw new NotImplementedException();
+    }
 }
 
 internal class MemoryNeighborhoodRepository : MemoryRepositoryBase<Neighborhood, string>, INeighborhoodRepository
