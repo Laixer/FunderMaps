@@ -11,7 +11,7 @@ namespace FunderMaps.WebApi.Controllers.Model;
 [Route("api/product")]
 public sealed class ProductController(ModelService modelService) : FunderMapsController
 {
-    // GET: api/product/analysis
+    // GET: api/product/analysis/{id}
     /// <summary>
     ///     Request the analysis product.
     /// </summary>
@@ -22,7 +22,7 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     public Task<AnalysisProduct> GetAnalysisAsync(string id)
         => modelService.GetAnalysisAsync(id, TenantId);
 
-    // GET: api/product/statistics
+    // GET: api/product/statistics/{id}
     /// <summary>
     ///     Request the statistics product.
     /// </summary>
@@ -32,4 +32,15 @@ public sealed class ProductController(ModelService modelService) : FunderMapsCon
     [HttpGet("statistics/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
     public Task<StatisticsProduct> GetStatisticsAsync(string id)
         => modelService.GetStatisticsAsync(id, TenantId);
+
+    // GET: api/product/building/{id}
+    /// <summary>
+    ///     Request the statistics product.
+    /// </summary>
+    /// <remarks>
+    ///   Cache response for 12 hours. Statistics will not change often.
+    /// </remarks>
+    [HttpGet("statistics/building/{id}"), ResponseCache(Duration = 60 * 60 * 12)]
+    public Task<StatisticsProduct> GetStatistics2Async(string id)
+        => modelService.GetStatistics2Async(id, TenantId);
 }

@@ -105,4 +105,42 @@ public class ModelService(
             throw;
         }
     }
+
+    // TODO: This is a temporary solution. The statistics product should be retrieved by building id.
+    public async Task<StatisticsProduct> GetStatistics2Async(string id, Guid tenantId, bool track_request = true)
+    {
+        var organization = await organizationRepository.GetByIdAsync(tenantId);
+
+        try
+        {
+            var building = await geocoderTranslation.GetBuildingIdAsync(id);
+
+            var product = new StatisticsProduct()
+            {
+                FoundationTypeDistribution = await statisticsRepository.GetFoundationTypeDistributionByIdAsync(building.NeighborhoodId),
+                ConstructionYearDistribution = await statisticsRepository.GetConstructionYearDistributionByIdAsync(building.NeighborhoodId),
+                DataCollectedPercentage = await statisticsRepository.GetDataCollectedPercentageByIdAsync(building.NeighborhoodId),
+                FoundationRiskDistribution = await statisticsRepository.GetFoundationRiskDistributionByIdAsync(building.NeighborhoodId),
+                TotalBuildingRestoredCount = await statisticsRepository.GetTotalBuildingRestoredCountByIdAsync(building.NeighborhoodId),
+                TotalIncidentCount = await statisticsRepository.GetTotalIncidentCountByIdAsync(building.NeighborhoodId),
+                MunicipalityIncidentCount = await statisticsRepository.GetMunicipalityIncidentCountByIdAsync(building.NeighborhoodId),
+                TotalReportCount = await statisticsRepository.GetTotalReportCountByIdAsync(building.NeighborhoodId),
+                MunicipalityReportCount = await statisticsRepository.GetMunicipalityReportCountByIdAsync(building.NeighborhoodId),
+            };
+
+            return product;
+
+        }
+        catch (EntityNotFoundException)
+        {
+            if (track_request)
+            {
+                await analysisRepository.RegisterProductMismatch(id, tenantId);
+
+                logger.LogInformation("{Name} requested product 'statistics' mismatch for identifier: {id}", organization.Name, id);
+            }
+
+            throw;
+        }
+    }
 }
